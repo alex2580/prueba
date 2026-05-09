@@ -1,0 +1,2342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#F97316">
+<title>TodasMisCosas · Guardá cerca</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ══════════════════════════════════════════════════════
+   TMC FOR MOBILE — Design System
+   Inspiración: Airbnb iOS + Google Maps Mobile
+   Paleta: Orange #F97316 · Navy #0F172A · Sky #0EA5E9
+══════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --or:  #F97316;
+  --or-d:#EA6C0A;
+  --or-l:#FED7AA;
+  --sky: #0EA5E9;
+  --sky-d:#0284C7;
+  --mint:#10B981;
+  --red: #EF4444;
+  --navy:#0F172A;
+  --bg:  #F8FAFC;
+  --surf:#FFFFFF;
+  --s2:  #F1F5F9;
+  --s3:  #E2E8F0;
+  --txt: #0F172A;
+  --t2:  #475569;
+  --t3:  #94A3B8;
+  --sh1: 0 1px 4px rgba(15,23,42,.06);
+  --sh2: 0 4px 20px rgba(15,23,42,.10);
+  --sh3: 0 8px 32px rgba(15,23,42,.15);
+  --sh4: 0 20px 60px rgba(15,23,42,.20);
+  --r1:12px; --r2:18px; --r3:24px; --r4:32px;
+  --nav-h:72px;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+
+html,body{
+  height:100%; width:100%;
+  overflow:hidden;
+  background:var(--bg);
+  font-family:'Sora',sans-serif;
+  color:var(--txt);
+  -webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+}
+
+button{cursor:pointer;font-family:'Sora',sans-serif;-webkit-tap-highlight-color:transparent}
+input,select,textarea{
+  font-family:'Sora',sans-serif;
+  background:var(--surf);
+  border:1.5px solid var(--s3);
+  border-radius:var(--r2);
+  padding:.65rem 1rem;
+  color:var(--txt);
+  font-size:.9rem;
+  width:100%;
+  box-sizing:border-box;
+  outline:none;
+  transition:border-color .15s;
+}
+input:focus{border-color:var(--or);box-shadow:0 0 0 3px rgba(249,115,22,.12)}
+input::placeholder{color:var(--t3)}
+
+/* ── LAYOUT ROOT ──────────────────────────────────────── */
+#app{
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+
+/* ── SCREENS ──────────────────────────────────────────── */
+.screen{
+  display:none;
+  flex:1;
+  flex-direction:column;
+  overflow:hidden;
+  position:absolute;
+  inset:0;
+  bottom:calc(var(--nav-h) + var(--safe-bottom));
+  animation:fadeScreen .2s ease;
+}
+.screen.active{display:flex}
+@keyframes fadeScreen{from{opacity:.6;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ── BOTTOM NAV ───────────────────────────────────────── */
+#bottom-nav{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  height:calc(var(--nav-h) + var(--safe-bottom));
+  padding-bottom:var(--safe-bottom);
+  background:rgba(255,255,255,.96);
+  backdrop-filter:blur(20px) saturate(1.5);
+  border-top:1px solid var(--s3);
+  display:flex;align-items:flex-start;
+  padding-top:.5rem;
+  z-index:200;
+  box-shadow:0 -4px 24px rgba(15,23,42,.08);
+}
+.nav-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:none;border:none;padding:.35rem 0;
+  color:var(--t3);transition:color .15s;
+  font-size:.62rem;font-weight:600;letter-spacing:.02em;
+}
+.nav-btn.active{color:var(--or)}
+.nav-btn svg{transition:transform .18s cubic-bezier(.34,1.4,.64,1)}
+.nav-btn.active svg{transform:scale(1.15)}
+.nav-dot{
+  width:4px;height:4px;border-radius:99px;
+  background:var(--or);margin-top:1px;
+  opacity:0;transition:opacity .15s;
+}
+.nav-btn.active .nav-dot{opacity:1}
+
+/* ── SCREEN: MAPA ─────────────────────────────────────── */
+#screen-map{position:relative}
+#map-container{
+  position:absolute;inset:0;
+  background:#f2efe9;
+}
+#gmap-mobile{width:100%;height:100%}
+
+/* Top search bar flotante */
+#map-topbar{
+  position:absolute;top:0;left:0;right:0;
+  padding:.75rem .85rem .5rem;
+  z-index:30;
+  background:linear-gradient(to bottom,rgba(248,250,252,.98) 75%,transparent);
+  pointer-events:none;
+}
+#map-topbar > *{pointer-events:all}
+.search-bar{
+  display:flex;align-items:center;gap:.6rem;
+  background:var(--surf);
+  border-radius:var(--r3);
+  padding:.62rem 1rem;
+  box-shadow:var(--sh3);
+  border:1px solid var(--s3);
+  transition:box-shadow .15s;
+}
+.search-bar:focus-within{box-shadow:var(--sh4);border-color:var(--or)}
+.search-bar input{
+  flex:1;border:none;background:none;
+  font-size:.88rem;font-weight:500;
+  padding:0;box-shadow:none;border-radius:0;
+}
+.search-badge{
+  background:var(--s2);border-radius:99px;
+  padding:3px 8px;font-size:.66rem;font-weight:700;
+  color:var(--t2);white-space:nowrap;flex-shrink:0;
+}
+
+/* Filtros chip row */
+.chip-row{
+  display:flex;gap:.45rem;margin-top:.5rem;
+  overflow-x:auto;padding:.1rem .05rem;
+  scrollbar-width:none;
+}
+.chip-row::-webkit-scrollbar{display:none}
+.chip{
+  flex-shrink:0;
+  padding:.3rem .75rem;
+  border-radius:99px;
+  font-size:.72rem;font-weight:600;
+  border:1.5px solid var(--s3);
+  background:var(--surf);
+  color:var(--t2);
+  transition:all .15s;
+  white-space:nowrap;
+}
+.chip.on{
+  background:var(--or);
+  border-color:var(--or);
+  color:#fff;
+  box-shadow:0 2px 10px rgba(249,115,22,.3);
+}
+
+/* Bottom sheet de espacios */
+#map-sheet{
+  position:absolute;
+  left:0;right:0;bottom:0;
+  background:var(--surf);
+  border-radius:var(--r3) var(--r3) 0 0;
+  box-shadow:0 -8px 40px rgba(15,23,42,.18);
+  z-index:25;
+  transition:transform .32s cubic-bezier(.34,1.1,.64,1);
+  transform:translateY(calc(100% - 140px));
+  max-height:82vh;
+  display:flex;flex-direction:column;
+}
+#map-sheet.expanded{transform:translateY(0)}
+.sheet-handle{
+  display:flex;justify-content:center;padding:.75rem 0 .25rem;
+  cursor:grab;
+}
+.sheet-handle-bar{
+  width:38px;height:4px;border-radius:99px;
+  background:var(--s3);
+}
+.sheet-peek{
+  padding:.25rem 1rem .6rem;
+  border-bottom:1px solid var(--s2);
+}
+.sheet-peek-title{
+  font-size:.8rem;font-weight:700;color:var(--txt);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.sheet-count{
+  font-size:.72rem;font-weight:600;
+  background:rgba(249,115,22,.1);
+  color:var(--or);
+  padding:2px 8px;border-radius:99px;
+}
+#sheet-cards{
+  flex:1;overflow-y:auto;padding:.6rem .85rem 1rem;
+  display:flex;flex-direction:column;gap:.6rem;
+}
+
+/* Space card mobile */
+.mcard{
+  background:var(--surf);
+  border:1px solid var(--s3);
+  border-radius:var(--r2);
+  overflow:hidden;
+  display:flex;
+  box-shadow:var(--sh1);
+  transition:all .18s;
+  cursor:pointer;
+  min-height:84px;
+}
+.mcard:active{transform:scale(.98);box-shadow:var(--sh2)}
+.mcard-img{
+  width:90px;flex-shrink:0;
+  background:var(--s2);
+  position:relative;overflow:hidden;
+}
+.mcard-img img{width:100%;height:100%;object-fit:cover;display:block}
+.mcard-img-placeholder{
+  width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.8rem;
+  background:linear-gradient(135deg,var(--s2),var(--s3));
+}
+.mcard-body{
+  flex:1;padding:.6rem .75rem;
+  display:flex;flex-direction:column;gap:.22rem;
+  min-width:0;
+}
+.mcard-name{
+  font-size:.84rem;font-weight:700;color:var(--txt);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.mcard-loc{font-size:.72rem;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mcard-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
+.mcard-price{
+  font-size:.88rem;font-weight:800;color:var(--or);
+}
+.mcard-badge{
+  font-size:.62rem;font-weight:700;
+  padding:2px 7px;border-radius:99px;
+  background:rgba(14,165,233,.1);
+  color:var(--sky-d);
+}
+.mcard-badge.excl{background:rgba(99,102,241,.1);color:#4F46E5}
+.mcard-rating{font-size:.7rem;color:var(--t2);display:flex;align-items:center;gap:.2rem}
+
+/* ── SPACE DETAIL SHEET ───────────────────────────────── */
+#detail-sheet{
+  position:fixed;
+  left:0;right:0;bottom:0;
+  background:var(--surf);
+  border-radius:var(--r3) var(--r3) 0 0;
+  box-shadow:0 -12px 60px rgba(15,23,42,.25);
+  z-index:150;
+  transform:translateY(100%);
+  transition:transform .32s cubic-bezier(.34,1.1,.64,1);
+  max-height:90vh;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+#detail-sheet.open{transform:translateY(0)}
+.detail-gallery{
+  position:relative;height:220px;background:var(--s2);flex-shrink:0;
+  overflow:hidden;
+}
+.detail-gallery img{width:100%;height:100%;object-fit:cover;display:block}
+.detail-gallery-placeholder{
+  width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:4rem;
+  background:linear-gradient(135deg,#FED7AA,#FDBA74);
+}
+.detail-close{
+  position:absolute;top:12px;right:12px;
+  width:32px;height:32px;border-radius:99px;
+  background:rgba(255,255,255,.92);
+  border:none;color:var(--navy);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;box-shadow:var(--sh2);
+}
+.detail-body{
+  flex:1;overflow-y:auto;padding:1.1rem 1.1rem 1.5rem;
+}
+.detail-name{
+  font-size:1.2rem;font-weight:800;color:var(--txt);margin-bottom:.3rem;line-height:1.25;
+}
+.detail-loc{font-size:.8rem;color:var(--t2);margin-bottom:.75rem;display:flex;align-items:center;gap:.3rem}
+.detail-chips{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.9rem}
+.detail-chip{
+  padding:.28rem .75rem;border-radius:99px;font-size:.72rem;font-weight:600;
+  background:var(--s2);color:var(--t2);border:1px solid var(--s3);
+}
+.detail-chip.hi{background:rgba(249,115,22,.1);color:var(--or);border-color:rgba(249,115,22,.2)}
+.detail-section{margin-bottom:.9rem}
+.detail-section-title{
+  font-size:.7rem;font-weight:700;color:var(--t3);
+  text-transform:uppercase;letter-spacing:.08em;
+  margin-bottom:.4rem;
+}
+.detail-desc{font-size:.84rem;color:var(--t2);line-height:1.65}
+.price-row{
+  display:flex;gap:.75rem;margin-bottom:1rem;
+}
+.price-box{
+  flex:1;background:var(--s2);border-radius:var(--r1);
+  padding:.7rem .85rem;text-align:center;
+}
+.price-box-val{font-size:1.05rem;font-weight:800;color:var(--or)}
+.price-box-lbl{font-size:.65rem;color:var(--t3);margin-top:.1rem}
+.host-row{
+  display:flex;align-items:center;gap:.75rem;
+  background:var(--s2);border-radius:var(--r2);
+  padding:.75rem 1rem;margin-bottom:1rem;
+}
+.host-avatar{
+  width:38px;height:38px;border-radius:99px;
+  background:linear-gradient(135deg,var(--or),var(--or-d));
+  display:flex;align-items:center;justify-content:center;
+  font-size:.95rem;font-weight:800;color:#fff;
+  flex-shrink:0;
+}
+.host-info{flex:1;min-width:0}
+.host-name{font-size:.84rem;font-weight:700;color:var(--txt)}
+.host-tag{font-size:.7rem;color:var(--t3)}
+.detail-cta{
+  position:sticky;bottom:0;
+  background:var(--surf);
+  padding:.85rem 1.1rem;
+  border-top:1px solid var(--s2);
+  display:flex;gap:.65rem;
+  flex-shrink:0;
+}
+.btn-reservar{
+  flex:1;
+  background:linear-gradient(135deg,var(--or),var(--or-d));
+  border:none;color:#fff;
+  padding:.78rem;
+  border-radius:var(--r2);
+  font-size:.92rem;font-weight:800;
+  box-shadow:0 4px 16px rgba(249,115,22,.32);
+  transition:transform .15s,box-shadow .15s;
+}
+.btn-reservar:active{transform:scale(.97)}
+.btn-fav{
+  width:48px;height:48px;
+  border-radius:var(--r1);
+  border:1.5px solid var(--s3);
+  background:var(--surf);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;
+  transition:all .15s;
+  flex-shrink:0;
+}
+.btn-fav:active{background:var(--s2)}
+
+/* ── SCREEN: BUSCAR ───────────────────────────────────── */
+#screen-search{background:var(--bg)}
+.screen-header{
+  background:var(--surf);
+  padding:1rem 1rem .75rem;
+  border-bottom:1px solid var(--s2);
+  flex-shrink:0;
+}
+.screen-title{
+  font-size:1.1rem;font-weight:800;color:var(--txt);margin-bottom:.7rem;
+}
+.search-full{
+  display:flex;align-items:center;gap:.6rem;
+  background:var(--s2);
+  border-radius:var(--r2);
+  padding:.62rem 1rem;
+  border:1.5px solid transparent;
+  transition:all .15s;
+}
+.search-full:focus-within{background:var(--surf);border-color:var(--or);box-shadow:0 0 0 3px rgba(249,115,22,.1)}
+.search-full input{
+  flex:1;border:none;background:none;
+  font-size:.88rem;padding:0;box-shadow:none;border-radius:0;
+}
+.filter-group{padding:.85rem 1rem;background:var(--surf);border-bottom:1px solid var(--s2);flex-shrink:0}
+.filter-label{font-size:.67rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.45rem;display:block}
+.filter-chips{display:flex;gap:.4rem;flex-wrap:wrap}
+.filter-chip{
+  padding:.32rem .8rem;border-radius:99px;
+  font-size:.74rem;font-weight:600;
+  border:1.5px solid var(--s3);background:var(--surf);color:var(--t2);
+  transition:all .15s;
+}
+.filter-chip.on{background:var(--or);border-color:var(--or);color:#fff}
+.results-list{
+  flex:1;overflow-y:auto;padding:.75rem .85rem;
+  display:flex;flex-direction:column;gap:.65rem;
+}
+.result-card{
+  background:var(--surf);border:1px solid var(--s3);border-radius:var(--r2);
+  overflow:hidden;box-shadow:var(--sh1);cursor:pointer;
+  transition:all .18s;
+}
+.result-card:active{transform:scale(.99)}
+.result-card-img{
+  height:150px;background:var(--s2);position:relative;overflow:hidden;
+}
+.result-card-img img{width:100%;height:100%;object-fit:cover;display:block}
+.result-card-img-placeholder{
+  width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  font-size:3rem;background:linear-gradient(135deg,#FED7AA,#FDBA74);
+}
+.result-card-body{padding:.85rem 1rem}
+.result-card-name{font-size:.92rem;font-weight:700;color:var(--txt);margin-bottom:.2rem}
+.result-card-loc{font-size:.75rem;color:var(--t2);margin-bottom:.55rem;display:flex;align-items:center;gap:.25rem}
+.result-card-footer{display:flex;align-items:center;justify-content:space-between}
+.result-price-big{font-size:1rem;font-weight:800;color:var(--or)}
+.result-price-unit{font-size:.7rem;color:var(--t3);font-weight:500}
+.result-rating{display:flex;align-items:center;gap:.25rem;font-size:.75rem;color:var(--t2)}
+
+/* ── SCREEN: PUBLICAR ─────────────────────────────────── */
+#screen-publish{background:var(--bg)}
+.pub-hero{
+  background:linear-gradient(135deg,var(--or) 0%,var(--or-d) 100%);
+  padding:2rem 1.25rem 1.5rem;
+  flex-shrink:0;
+}
+.pub-hero-emoji{font-size:2.5rem;margin-bottom:.6rem}
+.pub-hero-title{font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:.35rem}
+.pub-hero-sub{font-size:.82rem;color:rgba(255,255,255,.8);line-height:1.5}
+.pub-form{
+  flex:1;overflow-y:auto;padding:1rem .9rem 2rem;
+  display:flex;flex-direction:column;gap:1rem;
+}
+.field-group{display:flex;flex-direction:column;gap:.35rem}
+.field-label{font-size:.72rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em}
+.tipo-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.tipo-btn{
+  display:flex;flex-direction:column;align-items:center;gap:.3rem;
+  padding:.8rem .5rem;border-radius:var(--r2);
+  border:2px solid var(--s3);background:var(--surf);
+  transition:all .18s;cursor:pointer;font-family:'Sora',sans-serif;
+}
+.tipo-btn.on{border-color:var(--or);background:rgba(249,115,22,.06)}
+.tipo-btn-icon{font-size:1.6rem}
+.tipo-btn-name{font-size:.74rem;font-weight:700;color:var(--t2)}
+.tipo-btn.on .tipo-btn-name{color:var(--or)}
+.tipo-btn-desc{font-size:.64rem;color:var(--t3);line-height:1.35;text-align:center}
+.esp-tipos{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem}
+.esp-tipo-btn{
+  display:flex;flex-direction:column;align-items:center;gap:.25rem;
+  padding:.65rem .4rem;border-radius:var(--r1);
+  border:1.5px solid var(--s3);background:var(--surf);
+  transition:all .18s;cursor:pointer;font-family:'Sora',sans-serif;
+}
+.esp-tipo-btn.on{border-color:var(--or);background:rgba(249,115,22,.07);}
+.esp-tipo-btn-icon{font-size:1.3rem}
+.esp-tipo-btn-name{font-size:.65rem;font-weight:600;color:var(--t2);text-align:center}
+.esp-tipo-btn.on .esp-tipo-btn-name{color:var(--or)}
+.price-inputs{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.price-input-box{
+  background:var(--s2);border-radius:var(--r1);padding:.7rem .85rem;
+}
+.price-input-lbl{font-size:.67rem;font-weight:700;color:var(--t3);margin-bottom:.25rem;display:block}
+.price-input-row{display:flex;align-items:center;gap:.25rem}
+.price-input-cur{font-size:.85rem;color:var(--t3);font-weight:700}
+.price-input-row input{
+  border:none;background:none;font-size:1.1rem;font-weight:800;color:var(--or);
+  padding:0;box-shadow:none;border-radius:0;
+}
+.dir-container{position:relative}
+#pub-dir-drop{
+  position:absolute;top:calc(100% + 4px);left:0;right:0;
+  background:var(--surf);border:1.5px solid var(--s3);
+  border-radius:var(--r2);overflow:hidden;
+  box-shadow:var(--sh3);display:none;z-index:99;
+  max-height:200px;overflow-y:auto;
+}
+.dir-option{
+  padding:.65rem 1rem;border-bottom:1px solid var(--s2);
+  cursor:pointer;transition:background .12s;
+}
+.dir-option:hover{background:rgba(249,115,22,.05)}
+.dir-option-main{font-size:.82rem;font-weight:600;color:var(--txt)}
+.dir-option-sub{font-size:.7rem;color:var(--t3);margin-top:.1rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pub-submit{
+  background:linear-gradient(135deg,var(--or),var(--or-d));
+  border:none;color:#fff;
+  width:100%;padding:.85rem;
+  border-radius:var(--r2);
+  font-size:.95rem;font-weight:800;
+  box-shadow:0 4px 20px rgba(249,115,22,.3);
+  margin-top:.5rem;
+}
+
+/* ── SCREEN: PERFIL ───────────────────────────────────── */
+#screen-profile{background:var(--bg)}
+.profile-hero{
+  background:var(--surf);
+  padding:1.5rem 1.25rem 1.1rem;
+  border-bottom:1px solid var(--s2);
+  flex-shrink:0;
+  display:flex;align-items:center;gap:1rem;
+}
+.profile-avatar-big{
+  width:64px;height:64px;border-radius:99px;
+  background:linear-gradient(135deg,var(--or),var(--or-d));
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.6rem;font-weight:800;color:#fff;
+  flex-shrink:0;box-shadow:0 4px 16px rgba(249,115,22,.3);
+}
+.profile-info{flex:1;min-width:0}
+.profile-name{font-size:1.05rem;font-weight:800;color:var(--txt)}
+.profile-email{font-size:.78rem;color:var(--t3);margin-top:.15rem;overflow:hidden;text-overflow:ellipsis}
+.profile-badge{
+  display:inline-flex;align-items:center;gap:.3rem;
+  background:rgba(16,185,129,.1);color:var(--mint);
+  padding:3px 10px;border-radius:99px;
+  font-size:.68rem;font-weight:700;margin-top:.4rem;
+}
+.profile-sections{flex:1;overflow-y:auto;padding:.75rem .9rem}
+.profile-section{
+  background:var(--surf);border-radius:var(--r2);
+  overflow:hidden;margin-bottom:.75rem;
+  border:1px solid var(--s2);box-shadow:var(--sh1);
+}
+.profile-section-header{
+  padding:.85rem 1rem;border-bottom:1px solid var(--s2);
+  font-size:.82rem;font-weight:700;color:var(--t2);
+  text-transform:uppercase;letter-spacing:.05em;
+}
+.profile-item{
+  display:flex;align-items:center;gap:.85rem;
+  padding:.8rem 1rem;border-bottom:1px solid var(--s2);
+  cursor:pointer;transition:background .12s;
+}
+.profile-item:last-child{border-bottom:none}
+.profile-item:active{background:var(--s2)}
+.profile-item-icon{
+  width:36px;height:36px;border-radius:var(--r1);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;flex-shrink:0;
+  background:var(--s2);
+}
+.profile-item-text{flex:1;min-width:0}
+.profile-item-name{font-size:.86rem;font-weight:600;color:var(--txt)}
+.profile-item-sub{font-size:.72rem;color:var(--t3);margin-top:.08rem}
+.profile-item-arrow{color:var(--t3);font-size:.8rem}
+.profile-logout{
+  background:rgba(239,68,68,.08);color:var(--red);
+  border:1.5px solid rgba(239,68,68,.2);
+  border-radius:var(--r2);padding:.78rem;
+  width:100%;font-size:.9rem;font-weight:700;margin-top:.25rem;
+}
+
+/* ── MODAL RESERVA (reutilizado del desktop) ──────────── */
+.mover{
+  position:fixed;inset:0;z-index:250;
+  display:none;align-items:flex-end;
+  background:rgba(15,23,42,.4);backdrop-filter:blur(8px);
+}
+.mover.on{display:flex}
+.mbox{
+  width:100%;background:var(--surf);
+  border-radius:var(--r3) var(--r3) 0 0;
+  max-height:96vh;overflow-y:auto;
+  animation:sheetUp .28s cubic-bezier(.34,1.1,.64,1);
+}
+@keyframes sheetUp{from{transform:translateY(60px);opacity:.6}to{transform:none;opacity:1}}
+.macc{height:5px;background:linear-gradient(90deg,var(--or),#F59E0B,var(--sky),var(--mint))}
+.mhdr{padding:1.1rem 1.2rem .8rem;display:flex;justify-content:space-between;align-items:flex-start}
+.mtitle{font-size:1.05rem;font-weight:800;color:var(--txt);margin-bottom:.2rem}
+.msub{font-size:.74rem;color:var(--t2);line-height:1.5}
+.mclose{
+  background:var(--s2);border:none;color:var(--t2);
+  width:30px;height:30px;border-radius:99px;font-size:13px;
+  display:flex;align-items:center;justify-content:center;
+}
+.mbody{padding:0 1.2rem 1.5rem;display:grid;gap:.8rem}
+.flab{font-size:.67rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem;display:block}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.bprim{
+  background:linear-gradient(135deg,var(--or),var(--or-d));
+  border:none;color:#fff;padding:.75rem;border-radius:var(--r2);
+  font-size:.9rem;font-weight:800;width:100%;
+  display:flex;align-items:center;justify-content:center;gap:.5rem;
+  box-shadow:0 4px 14px rgba(249,115,22,.28);
+}
+.bsec{
+  background:var(--s2);border:1.5px solid var(--s3);
+  color:var(--t2);padding:.68rem;border-radius:var(--r2);
+  font-size:.85rem;font-weight:600;width:100%;
+}
+.aerr{padding:.65rem .9rem;border-radius:var(--r2);font-size:.82rem;background:rgba(239,68,68,.08);border:1.5px solid rgba(239,68,68,.22);color:#B91C1C}
+.aok{padding:.65rem .9rem;border-radius:var(--r2);font-size:.82rem;background:rgba(16,185,129,.08);border:1.5px solid rgba(16,185,129,.22);color:#065F46}
+.tsw{display:flex;margin:0 1.2rem .8rem;background:var(--s2);border-radius:var(--r2);padding:3px;gap:3px;border:1px solid var(--s3)}
+.tsb{flex:1;padding:.42rem;border-radius:13px;border:none;font-size:.82rem;font-weight:500;color:var(--t2);background:transparent;transition:all .15s}
+.tsb.on{background:var(--surf);color:var(--or);font-weight:700;box-shadow:var(--sh1)}
+.comp-row{display:flex;justify-content:space-between}
+.dhint{background:var(--s2);border:1px solid var(--s3);border-radius:var(--r2);padding:.65rem .9rem;font-size:.73rem;color:var(--t2);line-height:1.7}
+/* Pago MP */
+.mph{padding:1rem 1.2rem;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#0099A8,#007A87)}
+.mpl{background:rgba(255,255,255,.96);border-radius:8px;padding:3px 8px;font-weight:900;font-size:.85rem;color:#008898;letter-spacing:-1px}
+.mam{background:rgba(0,153,168,.05);border-bottom:1.5px solid rgba(0,153,168,.15);padding:.7rem 1.2rem;display:flex;justify-content:space-between;align-items:center}
+.mbtns{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.mbtn{padding:.55rem;border-radius:var(--r2);border:1.5px solid var(--s3);background:var(--s2);color:var(--t2);font-size:.8rem;font-weight:500;transition:all .15s;font-family:'Sora',sans-serif}
+.mbtn.on{border-color:var(--sky);background:rgba(14,165,233,.08);color:var(--sky);font-weight:700}
+.cviz{border-radius:var(--r2);padding:1.1rem 1.25rem;height:130px;position:relative;overflow:hidden;box-shadow:var(--sh2)}
+.cchip{width:32px;height:24px;background:linear-gradient(135deg,#CFB53B,#F5D76E);border-radius:4px;margin-bottom:.75rem}
+.cnum{font-family:'Courier New',monospace;font-size:1.05rem;color:rgba(255,255,255,.92);letter-spacing:2px;margin-bottom:.5rem}
+.crow{display:flex;justify-content:space-between;align-items:flex-end}
+.clbl{font-size:.54rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em}
+.cval{font-size:.78rem;color:rgba(255,255,255,.9);text-transform:uppercase;letter-spacing:1px}
+.cbrn{position:absolute;top:1rem;right:1rem;font-size:.7rem;font-weight:900;color:rgba(255,255,255,.65)}
+.cshine{position:absolute;top:0;left:0;right:0;height:42%;background:linear-gradient(to bottom,rgba(255,255,255,.12),transparent);pointer-events:none;border-radius:var(--r2) var(--r2) 0 0}
+.i2{display:grid;grid-template-columns:1fr 1fr;gap:.65rem}
+.sbdg{display:flex;justify-content:center;gap:1rem;font-size:.68rem;color:var(--t2)}
+.mpw{background:rgba(0,153,168,.05);border:1.5px solid rgba(0,153,168,.18);border-radius:var(--r2);padding:1.25rem;text-align:center}
+.bpag{background:linear-gradient(135deg,#009EE3,#0077B6);border:none;color:#fff;padding:.76rem;border-radius:var(--r2);font-weight:800;font-size:1rem;width:100%;box-shadow:0 4px 16px rgba(0,158,227,.28);font-family:'Sora',sans-serif}
+.pbw{height:7px;background:var(--s2);border-radius:99px;overflow:hidden}
+.pbf{height:100%;background:linear-gradient(90deg,var(--or),#F59E0B,var(--sky),var(--mint));background-size:300% 100%;border-radius:99px;transition:width .55s ease;animation:shimmer 2s linear infinite}
+@keyframes shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+
+/* ── AUTH MODAL ───────────────────────────────────────── */
+#amod{z-index:300}
+
+/* ── TOAST ────────────────────────────────────────────── */
+#toast{
+  position:fixed;top:calc(100% - var(--nav-h) - 70px);
+  left:50%;transform:translateX(-50%);
+  background:rgba(15,23,42,.92);color:#fff;
+  padding:.65rem 1.2rem;border-radius:99px;
+  font-size:.8rem;font-weight:600;
+  opacity:0;transition:opacity .25s;
+  pointer-events:none;z-index:400;white-space:nowrap;
+  backdrop-filter:blur(10px);
+}
+#toast.show{opacity:1}
+
+/* ── LOADING SCREEN ───────────────────────────────────── */
+#loading{
+  position:fixed;inset:0;z-index:999;
+  background:var(--surf);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;
+}
+.load-logo{height:70px;width:auto;margin-bottom:.5rem;animation:logoPulse 1.5s ease-in-out infinite}
+@keyframes logoPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.04);opacity:.9}}
+.load-spinner{
+  width:36px;height:36px;border-radius:99px;
+  border:3px solid var(--s3);
+  border-top-color:var(--or);
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-text{font-size:.78rem;color:var(--t3);font-weight:500}
+</style>
+</head>
+<body>
+
+<!-- ── LOADING ──────────────────────────────────────── -->
+<div id="loading">
+  <img src="data:image/gif;base64,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" class="load-logo" alt="TMC">
+  <div class="load-spinner"></div>
+  <div class="load-text">Cargando espacios…</div>
+</div>
+
+<!-- ── APP ROOT ─────────────────────────────────────── -->
+<div id="app" style="display:none">
+
+  <!-- SCREENS -->
+
+  <!-- 1. MAPA -->
+  <div id="screen-map" class="screen active">
+    <div id="map-container">
+      <div id="gmap-mobile"></div>
+    </div>
+    <div id="map-topbar">
+      <div class="search-bar">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="var(--t3)" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="m-sinp" placeholder="Barrio, tipo de espacio…" oninput="mobileFilter()" autocomplete="off">
+        <span class="search-badge"><span id="m-scnt">8</span> espacios</span>
+      </div>
+      <div class="chip-row">
+        <div class="chip on" id="mc-all"  onclick="mSetTipo('')">Todos</div>
+        <div class="chip" id="mc-excl" onclick="mSetTipo('exclusivo')">🔒 Exclusivo</div>
+        <div class="chip" id="mc-comp" onclick="mSetTipo('compartido')">🤝 Compartido</div>
+        <div class="chip" id="mc-price-chip" onclick="togglePriceChip()">💰 Precio</div>
+      </div>
+      <div id="price-slider-row" style="display:none;align-items:center;gap:.6rem;padding:.4rem .1rem">
+        <span style="font-size:.72rem;color:var(--t2)">$0</span>
+        <input type="range" id="m-prng" min="0" max="4000" step="100" value="4000" oninput="mOnPrecio()" style="flex:1;accent-color:var(--or)">
+        <span id="m-pval" style="font-size:.72rem;font-weight:700;color:var(--or);min-width:55px;text-align:right">$4.000+</span>
+      </div>
+    </div>
+
+    <!-- Bottom sheet -->
+    <div id="map-sheet" ontouchstart="sheetTouchStart(event)" ontouchmove="sheetTouchMove(event)" ontouchend="sheetTouchEnd(event)">
+      <div class="sheet-handle" onclick="toggleSheet()">
+        <div class="sheet-handle-bar"></div>
+      </div>
+      <div class="sheet-peek">
+        <div class="sheet-peek-title">
+          <span>Espacios disponibles</span>
+          <span class="sheet-count" id="sheet-count">8</span>
+        </div>
+      </div>
+      <div id="sheet-cards"></div>
+    </div>
+  </div>
+
+  <!-- 2. BUSCAR -->
+  <div id="screen-search" class="screen">
+    <div class="screen-header">
+      <div class="screen-title">Explorar espacios</div>
+      <div class="search-full">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="var(--t3)" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="s-sinp" placeholder="Barrio, cochera, galpón…" oninput="searchFilter()" autocomplete="off">
+      </div>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Tipo</span>
+      <div class="filter-chips">
+        <div class="filter-chip on" id="sc-all"  onclick="sSetTipo('')">Todos</div>
+        <div class="filter-chip" id="sc-excl" onclick="sSetTipo('exclusivo')">🔒 Exclusivo</div>
+        <div class="filter-chip" id="sc-comp" onclick="sSetTipo('compartido')">🤝 Compartido</div>
+      </div>
+    </div>
+    <div class="results-list" id="results-list"></div>
+  </div>
+
+  <!-- 3. PUBLICAR -->
+  <div id="screen-publish" class="screen">
+    <div class="pub-hero">
+      <div class="pub-hero-emoji">📦</div>
+      <div class="pub-hero-title">Publicá tu espacio</div>
+      <div class="pub-hero-sub">Convertí tu cochera, habitación o depósito en ingresos extra</div>
+    </div>
+    <div class="pub-form" id="pub-form">
+      <!-- Se renderiza con JS -->
+    </div>
+  </div>
+
+  <!-- 4. PERFIL -->
+  <div id="screen-profile" class="screen">
+    <div class="profile-hero" id="profile-hero">
+      <!-- Se renderiza con JS -->
+    </div>
+    <div class="profile-sections" id="profile-sections">
+      <!-- Se renderiza con JS -->
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- ── DETAIL SHEET ──────────────────────────────────── -->
+<div id="detail-sheet">
+  <div class="detail-gallery" id="detail-gallery">
+    <button class="detail-close" onclick="closeDetail()">✕</button>
+  </div>
+  <div class="detail-body" id="detail-body"></div>
+  <div class="detail-cta">
+    <button class="btn-fav" id="btn-fav" onclick="toggleFav()">♡</button>
+    <button class="btn-reservar" onclick="mobileReservar()">Reservar ahora</button>
+  </div>
+</div>
+
+<!-- ── BOTTOM NAV ────────────────────────────────────── -->
+<nav id="bottom-nav">
+  <button class="nav-btn active" id="nb-map" onclick="navTo('map')">
+    <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polygon points="1,6 1,22 8,18 16,22 23,18 23,2 16,6 8,2"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+    <span>Mapa</span>
+    <div class="nav-dot"></div>
+  </button>
+  <button class="nav-btn" id="nb-search" onclick="navTo('search')">
+    <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <span>Buscar</span>
+    <div class="nav-dot"></div>
+  </button>
+  <button class="nav-btn" id="nb-publish" onclick="navTo('publish')">
+    <div style="width:48px;height:48px;border-radius:16px;background:linear-gradient(135deg,var(--or),var(--or-d));display:flex;align-items:center;justify-content:center;margin-top:-18px;box-shadow:0 4px 16px rgba(249,115,22,.4)">
+      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </div>
+    <span style="margin-top:2px">Publicar</span>
+    <div class="nav-dot"></div>
+  </button>
+  <button class="nav-btn" id="nb-profile" onclick="navTo('profile')">
+    <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    <span>Perfil</span>
+    <div class="nav-dot"></div>
+  </button>
+</nav>
+
+<!-- ── MODALES ───────────────────────────────────────── -->
+<div id="rmod" class="mover"><div id="rbody" class="mbox"></div></div>
+<div id="amod" class="mover"><div class="mbox">
+  <div class="macc"></div>
+  <div class="mhdr">
+    <div><div class="mtitle">Ingresá a tu cuenta</div><div class="msub">Reservá espacios y gestioná tus publicaciones</div></div>
+    <button class="mclose" onclick="closeAuth()">✕</button>
+  </div>
+  <div class="tsw">
+    <button class="tsb on" id="tab-login" onclick="swTab('login')">Iniciar sesión</button>
+    <button class="tsb" id="tab-reg" onclick="swTab('registro')">Registrarse</button>
+  </div>
+  <div class="mbody" id="abody"></div>
+</div></div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- ══════════════════════════════════════════════════════
+     CAPA 1: GuardaloStorage + GuardaloAPI (reutilizado)
+══════════════════════════════════════════════════════ -->
+<script>
+
+// ═══════════════════════════════════════════════════════════════════
+//  CAPA 1 — STORAGE LAYER
+// ═══════════════════════════════════════════════════════════════════
+const GuardaloStorage = (() => {
+
+  // ── CLAVES localStorage ────────────────────────────────────────────
+  const K = {
+    espacios : 'g_espacios',
+    usuarios : 'g_usuarios',
+    reservas : 'g_reservas',
+    version  : 'g_version',
+  };
+  const VERSION = '1.0';
+
+  // ── IndexedDB para fotos ───────────────────────────────────────────
+  // Cada foto se guarda como Blob bajo la clave "foto:{espacioId}:{index}"
+  let _db = null;
+
+  function openDB() {
+    return new Promise((res, rej) => {
+      if (_db) return res(_db);
+      const req = indexedDB.open('GuardaloDB', 1);
+      req.onupgradeneeded = e => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains('fotos')) {
+          db.createObjectStore('fotos');
+        }
+      };
+      req.onsuccess = e => { _db = e.target.result; res(_db); };
+      req.onerror   = e => rej(e.target.error);
+    });
+  }
+
+  // ── FOTOS ─────────────────────────────────────────────────────────
+  // Guarda un array de dataURLs para un espacio
+  async function saveFotos(espacioId, dataUrls) {
+    const db = await openDB();
+    const tx = db.transaction('fotos', 'readwrite');
+    const store = tx.objectStore('fotos');
+    // Limpiar fotos anteriores del espacio
+    const oldKeys = await new Promise(res => {
+      const req = store.getAllKeys();
+      req.onsuccess = e => res(e.target.result.filter(k => k.startsWith(`foto:${espacioId}:`)));
+    });
+    for (const k of oldKeys) store.delete(k);
+    // Guardar nuevas
+    dataUrls.forEach((url, i) => store.put(url, `foto:${espacioId}:${i}`));
+    return new Promise((res, rej) => {
+      tx.oncomplete = () => res(true);
+      tx.onerror    = e  => rej(e.target.error);
+    });
+  }
+
+  // Devuelve array de dataURLs para un espacio
+  async function loadFotos(espacioId) {
+    const db = await openDB();
+    return new Promise((res, rej) => {
+      const tx    = db.transaction('fotos', 'readonly');
+      const store = tx.objectStore('fotos');
+      const req   = store.getAllKeys();
+      req.onsuccess = async e => {
+        const keys = e.target.result.filter(k => k.startsWith(`foto:${espacioId}:`));
+        if (!keys.length) return res([]);
+        const urls = await Promise.all(
+          keys.sort().map(k => new Promise((r, j) => {
+            const r2 = store.get(k);
+            r2.onsuccess = ev => r(ev.target.result);
+            r2.onerror   = ev => j(ev.target.error);
+          }))
+        );
+        res(urls.filter(Boolean));
+      };
+      req.onerror = e => rej(e.target.error);
+    });
+  }
+
+  async function deleteFotos(espacioId) {
+    const db = await openDB();
+    const tx  = db.transaction('fotos', 'readwrite');
+    const store = tx.objectStore('fotos');
+    const keys = await new Promise(res => {
+      const req = store.getAllKeys();
+      req.onsuccess = e => res(e.target.result.filter(k => k.startsWith(`foto:${espacioId}:`)));
+    });
+    keys.forEach(k => store.delete(k));
+    return new Promise((res, rej) => {
+      tx.oncomplete = () => res(true);
+      tx.onerror    = e  => rej(e.target.error);
+    });
+  }
+
+  // ── ESPACIOS ──────────────────────────────────────────────────────
+  function getEspacios() {
+    try {
+      const raw = localStorage.getItem(K.espacios);
+      return raw ? JSON.parse(raw) : null; // null = usar datos default
+    } catch { return null; }
+  }
+
+  function saveEspacios(lista) {
+    // Las fotos NO se guardan aquí, solo metadata
+    const limpia = lista.map(e => ({ ...e, imgs: e.imgs?.map(img => img?.length > 200 ? '__blob__' : img) }));
+    localStorage.setItem(K.espacios, JSON.stringify(limpia));
+  }
+
+  function saveEspacio(espacio) {
+    const lista = getEspacios() || [];
+    const idx   = lista.findIndex(e => e.id === espacio.id);
+    if (idx >= 0) lista[idx] = espacio;
+    else lista.unshift(espacio);
+    saveEspacios(lista);
+  }
+
+  function deleteEspacio(id) {
+    const lista = (getEspacios() || []).filter(e => e.id !== id);
+    saveEspacios(lista);
+    deleteFotos(id);
+  }
+
+  // ── USUARIOS ──────────────────────────────────────────────────────
+  function getUsuarios() {
+    try {
+      const raw = localStorage.getItem(K.usuarios);
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  }
+
+  function saveUsuario(user) {
+    const lista = getUsuarios() || [];
+    const idx   = lista.findIndex(u => u.id === user.id);
+    if (idx >= 0) lista[idx] = user;
+    else lista.push(user);
+    localStorage.setItem(K.usuarios, JSON.stringify(lista));
+  }
+
+  // ── RESERVAS ──────────────────────────────────────────────────────
+  function getReservas() {
+    try {
+      const raw = localStorage.getItem(K.reservas);
+      return raw ? JSON.parse(raw) : [];
+    } catch { return []; }
+  }
+
+  function saveReserva(reserva) {
+    const lista = getReservas();
+    const idx   = lista.findIndex(r => r.id === reserva.id);
+    if (idx >= 0) lista[idx] = reserva;
+    else lista.unshift(reserva);
+    localStorage.setItem(K.reservas, JSON.stringify(lista));
+  }
+
+  function deleteReserva(id) {
+    const lista = getReservas().filter(r => r.id !== id);
+    localStorage.setItem(K.reservas, JSON.stringify(lista));
+  }
+
+  // ── RESET ─────────────────────────────────────────────────────────
+  async function resetAll() {
+    Object.values(K).forEach(k => localStorage.removeItem(k));
+    const db = await openDB();
+    const tx = db.transaction('fotos', 'readwrite');
+    tx.objectStore('fotos').clear();
+    return new Promise(res => { tx.oncomplete = res; });
+  }
+
+  // ── INFO DIAGNÓSTICO ──────────────────────────────────────────────
+  function storageInfo() {
+    let lsSize = 0;
+    for (const k of Object.values(K)) {
+      const v = localStorage.getItem(k);
+      if (v) lsSize += v.length * 2; // UTF-16
+    }
+    return {
+      localStorage_kb : Math.round(lsSize / 1024),
+      espacios_count  : (getEspacios() || []).length,
+      reservas_count  : getReservas().length,
+      usuarios_count  : (getUsuarios() || []).length,
+    };
+  }
+
+  // ── API PÚBLICA ───────────────────────────────────────────────────
+  return {
+    // Fotos (IndexedDB)
+    saveFotos,
+    loadFotos,
+    deleteFotos,
+    // Espacios (localStorage)
+    getEspacios,
+    saveEspacios,
+    saveEspacio,
+    deleteEspacio,
+    // Usuarios
+    getUsuarios,
+    saveUsuario,
+    // Reservas
+    getReservas,
+    saveReserva,
+    deleteReserva,
+    // Utilidades
+    resetAll,
+    storageInfo,
+  };
+})()
+
+// ═══════════════════════════════════════════════════════════════════
+//  CAPA 2 — API LAYER
+//  REVIEWS_DEMO está GLOBAL (fuera del closure de GuardaloAPI)
+//  para que renderPanelOferente() pueda accederlo sin problemas.
+// ═══════════════════════════════════════════════════════════════════
+// ── REVIEWS DEMO ─────────────────────────────────────────────────
+// En producción: POST /api/reviews → persiste en DB y recalcula rating
+const REVIEWS_DEMO = {
+  e1: [
+    {id:'r1',autor:'Ana G.',  avatar:'A',fecha:'Marzo 2025', rating:5, texto:'Excelente cochera, muy limpia y segura. Carlos me respondió al toque para coordinar el acceso. 100% recomendable.', util:12},
+    {id:'r2',autor:'Pablo T.',avatar:'P',fecha:'Feb 2025',   rating:5, texto:'Todo perfecto. La cochera es amplia, bien iluminada y el portón eléctrico funciona muy bien. Ya la volví a reservar.', util:8},
+    {id:'r3',autor:'Martina L.',avatar:'M',fecha:'Feb 2025', rating:4, texto:'Muy buena experiencia. Cámara de seguridad funcionando, acceso 24hs como prometido. Le saco una estrella porque el portón tarda un poco.', util:5},
+    {id:'r4',autor:'Diego R.',  avatar:'D',fecha:'Ene 2025', rating:5, texto:'Ideal para guardar la moto durante el viaje. Coordinamos todo por WhatsApp sin problema. Carlos es muy atento.', util:9},
+    {id:'r5',autor:'Laura S.',  avatar:'L',fecha:'Ene 2025', rating:5, texto:'Cochera perfecta, seca y segura. Guardé muebles durante la mudanza y todo llegó sin daños. Muy conforme.', util:6},
+  ],
+  e3: [
+    {id:'r6',autor:'Sofía M.', avatar:'S',fecha:'Marzo 2025',rating:5, texto:'Baulera enorme para el tamaño. Cabe mucho más de lo que parece. Edificio con vigilancia 24hs. Volveré a usarla.', util:7},
+    {id:'r7',autor:'Tomás V.', avatar:'T',fecha:'Feb 2025',  rating:5, texto:'Perfecta para guardar cajas de mudanza. Carlos es súper prolijo y puntual. La recomendaría sin dudarlo.', util:4},
+    {id:'r8',autor:'Celeste A.',avatar:'C',fecha:'Ene 2025', rating:4, texto:'Buena baulera, bien ubicada en Belgrano. El edificio es muy seguro. La ventaja es el ascensor, muy cómodo para subir cosas.', util:3},
+  ],
+  e6: [
+    {id:'r9', autor:'LogiSur S.A.',avatar:'L',fecha:'Marzo 2025',rating:5, texto:'Excelente galpón. Acceso perfecto para camiones de hasta 9 metros. Vigilancia privada real, muy prolijos.', util:11},
+    {id:'r10',autor:'E-store BA', avatar:'E',fecha:'Feb 2025',  rating:5, texto:'Lo usamos para stock de temporada alta. Espacio limpio, seco, con estanterías. Muy recomendable para e-commerce.', util:9},
+    {id:'r11',autor:'Dist. Norte',avatar:'D',fecha:'Ene 2025', rating:4, texto:'Buena logística, bien ubicado en zona norte. Solo mejoraría la iluminación en el sector B.', util:4},
+  ],
+};
+
+const GuardaloAPI = (() => {
+
+  // ── CONFIG ─────────────────────────────────────────────────────────
+  const USE_REAL_API = false;           // ← cambiar a true para conectar al backend
+  const API_URL      = 'http://localhost:8000'; // URL del servidor FastAPI
+  let   _token       = null;            // JWT token cuando USE_REAL_API = true
+
+  // ── FOTOS REALISTAS POR TIPO DE ESPACIO ───────────────────────────
+  // SVGs detallados que representan fielmente cada tipo de espacio.
+  // En producción: reemplazar por URLs reales de S3/Cloudinary.
+
+  function mkCochera(seed) {
+    const c = seed % 3 === 0 ? '#1a2a3a' : seed % 3 === 1 ? '#0f1e2d' : '#162030';
+    return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='520' viewBox='0 0 800 520'>
+      <defs>
+        <linearGradient id='sky${seed}' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%23${seed%2===0?'1a2a3a':'0e1c2b'}'/><stop offset='100%' stop-color='%230a1520'/></linearGradient>
+        <linearGradient id='fl${seed}' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%23243040'/><stop offset='100%' stop-color='%231a2535'/></linearGradient>
+        <linearGradient id='wall${seed}' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%23c8b89a'/><stop offset='100%' stop-color='%23a89878'/></linearGradient>
+      </defs>
+      <rect width='800' height='520' fill='url(%23sky${seed})'/>
+      <rect y='340' width='800' height='180' fill='url(%23fl${seed})'/>
+      <rect x='100' y='120' width='600' height='280' rx='4' fill='url(%23wall${seed})'/>
+      <rect x='100' y='80' width='600' height='50' fill='%23b8a888'/>
+      <rect x='80' y='70' width='640' height='20' rx='2' fill='%238a7a5a'/>
+      <rect x='200' y='150' width='180' height='200' rx='2' fill='%231a1a2a'/>
+      <rect x='420' y='150' width='180' height='200' rx='2' fill='%231a1a2a'/>
+      <line x1='200' y1='150' x2='380' y2='350' stroke='%23555' stroke-width='1.5'/>
+      <line x1='380' y1='150' x2='200' y2='350' stroke='%23555' stroke-width='1.5'/>
+      <line x1='290' y1='150' x2='290' y2='350' stroke='%23555' stroke-width='1.5'/>
+      <line x1='200' y1='250' x2='380' y2='250' stroke='%23555' stroke-width='1.5'/>
+      <line x1='420' y1='150' x2='600' y2='350' stroke='%23555' stroke-width='1.5'/>
+      <line x1='600' y1='150' x2='420' y2='350' stroke='%23555' stroke-width='1.5'/>
+      <line x1='510' y1='150' x2='510' y2='350' stroke='%23555' stroke-width='1.5'/>
+      <line x1='420' y1='250' x2='600' y2='250' stroke='%23555' stroke-width='1.5'/>
+      <rect x='320' y='260' width='40' height='90' rx='2' fill='%23222'/>
+      <circle cx='350' cy='305' r='5' fill='%23e8622a'/>
+      <rect x='150' y='340' width='500' height='14' rx='2' fill='%23c8a830' opacity='.7'/>
+      <rect x='40' y='180' width='50' height='160' rx='3' fill='%23334'/>
+      <rect x='44' y='200' width='20' height='40' rx='1' fill='%2382c4ff' opacity='.6'/>
+      <circle cx='520' cy='200' r='18' fill='%23fff' opacity='.08'/>
+      <circle cx='520' cy='200' r='14' fill='%23fff' opacity='.06'/>
+      <circle cx='520' cy='200' r='6'  fill='%23fff' opacity='.25'/>
+      <rect x='0' y='490' width='800' height='30' fill='%230a1218' opacity='.7'/>
+      <text x='16' y='510' font-size='11' fill='%2382c4ff' opacity='.7' font-family='sans-serif' font-weight='700' letter-spacing='2'>EXCLUSIVO · COCHERA TECHADA · ACCESO 24HS</text>
+    </svg>`;
+  }
+
+  function mkGalpon(seed) {
+    return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='520' viewBox='0 0 800 520'>
+      <defs>
+        <linearGradient id='gbg${seed}' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%230e1c28'/><stop offset='100%' stop-color='%230a1520'/></linearGradient>
+        <linearGradient id='roof${seed}' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%234a5a6a'/><stop offset='100%' stop-color='%233a4a5a'/></linearGradient>
+        <linearGradient id='inner${seed}' x1='0' y1='0' x2='1' y2='0'><stop offset='0%' stop-color='%23c8d8e8' stop-opacity='.15'/><stop offset='100%' stop-color='%23c8d8e8' stop-opacity='.03'/></linearGradient>
+      </defs>
+      <rect width='800' height='520' fill='url(%23gbg${seed})'/>
+      <polygon points='0,200 400,60 800,200 800,520 0,520' fill='%23556070'/>
+      <polygon points='0,200 400,60 800,200 800,210 400,70 0,210' fill='%236a7a8a'/>
+      ${Array.from({length:8},(_,i)=>`<line x1='${i*115}' y1='${200-i*17}' x2='${i*115}' y2='520' stroke='%23445' stroke-width='2'/>`).join('')}
+      <rect x='60' y='280' width='680' height='240' fill='url(%23inner${seed})'/>
+      <rect x='80'  y='300' width='120' height='160' rx='2' fill='%23223040'/>
+      <rect x='220' y='300' width='120' height='160' rx='2' fill='%23223040'/>
+      <rect x='360' y='300' width='120' height='160' rx='2' fill='%23223040'/>
+      <rect x='500' y='300' width='120' height='160' rx='2' fill='%23223040'/>
+      <rect x='640' y='300' width='100' height='160' rx='2' fill='%23223040'/>
+      ${Array.from({length:5},(_,i)=>`
+        <rect x='${85+i*140}' y='310' width='110' height='14' rx='1' fill='%23e8622a' opacity='.6'/>
+        <rect x='${85+i*140}' y='332' width='110' height='14' rx='1' fill='%23e8622a' opacity='.45'/>
+        <rect x='${85+i*140}' y='354' width='110' height='14' rx='1' fill='%23e8622a' opacity='.3'/>
+        <rect x='${85+i*140}' y='376' width='110' height='14' rx='1' fill='%23e8622a' opacity='.2'/>
+      `).join('')}
+      <rect x='330' y='380' width='140' height='140' rx='1' fill='%230a1520'/>
+      <rect x='340' y='385' width='120' height='130' rx='1' fill='%23142030'/>
+      <rect x='360' y='415' width='35' height='100' rx='1' fill='%23223'/>
+      <rect x='405' y='415' width='35' height='100' rx='1' fill='%23223'/>
+      <circle cx='400' cy='410' r='8' fill='%23e8622a' opacity='.8'/>
+      <rect x='0' y='490' width='800' height='30' fill='%230a1218' opacity='.7'/>
+      <text x='16' y='510' font-size='11' fill='%23e8622a' opacity='.8' font-family='sans-serif' font-weight='700' letter-spacing='2'>COMPARTIDO · GALPÓN INDUSTRIAL · ACCESO CAMIONES</text>
+    </svg>`;
+  }
+
+  function mkBaulera(seed) {
+    return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='520' viewBox='0 0 800 520'>
+      <defs>
+        <linearGradient id='bbg${seed}' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%23182030'/><stop offset='100%' stop-color='%230e1820'/></linearGradient>
+      </defs>
+      <rect width='800' height='520' fill='url(%23bbg${seed})'/>
+      <rect x='0' y='0' width='800' height='520' fill='%23182028'/>
+      ${Array.from({length:4},(_,row)=>Array.from({length:5},(_,col)=>`
+        <rect x='${30+col*154}' y='${20+row*122}' width='140' height='108' rx='4'
+          fill='${(row+col)%2===0?"%231e2e3e":"%231a2838"}' stroke='%23334455' stroke-width='1.5'/>
+        <rect x='${44+col*154}' y='${34+row*122}' width='112' height='80' rx='2' fill='%23243444'/>
+        <circle cx='${100+col*154}' cy='${90+row*122}' r='7' fill='%23445566'/>
+        <circle cx='${100+col*154}' cy='${90+row*122}' r='4' fill='%23556677'/>
+        <rect x='${44+col*154}' y='${110+row*122}' width='112' height='6' rx='1' fill='%2382c4ff' opacity='${(row+col)%3===0?".5":".2"}'/>
+      `).join('')).join('')}
+      <rect x='0'   y='0' width='20' height='520' fill='%230a1018'/>
+      <rect x='780' y='0' width='20' height='520' fill='%230a1018'/>
+      <rect x='0'   y='500' width='800' height='20' fill='%230a1018'/>
+      <rect x='0' y='490' width='800' height='30' fill='%230a1218' opacity='.8'/>
+      <text x='16' y='510' font-size='11' fill='%2382c4ff' opacity='.8' font-family='sans-serif' font-weight='700' letter-spacing='2'>EXCLUSIVO · BAULERA PRIVADA · EDIFICIO SEGURO</text>
+    </svg>`;
+  }
+
+  function mkDeposito(seed) {
+    return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='520' viewBox='0 0 800 520'>
+      <defs>
+        <linearGradient id='dbg${seed}' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%230e1c2a'/><stop offset='100%' stop-color='%230a1520'/></linearGradient>
+      </defs>
+      <rect width='800' height='520' fill='url(%23dbg${seed})'/>
+      <rect x='0' y='300' width='800' height='220' fill='%23283848'/>
+      <rect x='0' y='295' width='800' height='10'  fill='%23344454'/>
+      ${Array.from({length:6},(_,i)=>`
+        <rect x='${20+i*132}' y='180' width='118' height='120' rx='3' fill='%23c8b898'/>
+        <rect x='${24+i*132}' y='184' width='110' height='112' rx='2' fill='%23b8a888'/>
+        <rect x='${55+i*132}' y='225' width='40'  height='70'  rx='1' fill='%231a2838'/>
+        <circle cx='${80+i*132}' cy='262' r='5' fill='%23e8622a'/>
+      `).join('')}
+      ${Array.from({length:4},(_,i)=>`
+        <rect x='${40+i*185}' y='310' width='60' height='80'  rx='2' fill='%23e8d8b8'/>
+        <rect x='${40+i*185}' y='395' width='60' height='30'  rx='1' fill='%23d8c8a8'/>
+        <rect x='${120+i*185}' y='330' width='50' height='60' rx='2' fill='%23e8e0c8'/>
+        <rect x='${120+i*185}' y='395' width='50' height='30' rx='1' fill='%23d8d0b8'/>
+      `).join('')}
+      <rect x='340' y='190' width='120' height='20' rx='2' fill='%23e8622a' opacity='.7'/>
+      <text x='347' y='205' font-size='10' fill='white' font-family='sans-serif' font-weight='700'>ESPACIO DISPONIBLE</text>
+      <rect x='0' y='490' width='800' height='30' fill='%230a1218' opacity='.7'/>
+      <text x='16' y='510' font-size='11' fill='%23e8622a' opacity='.8' font-family='sans-serif' font-weight='700' letter-spacing='2'>COMPARTIDO · DEPÓSITO · SEGURIDAD 24HS</text>
+    </svg>`;
+  }
+
+  function mkBox(seed) {
+    return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='520' viewBox='0 0 800 520'>
+      <defs>
+        <linearGradient id='xbg${seed}' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%23101820'/><stop offset='100%' stop-color='%230c1418'/></linearGradient>
+      </defs>
+      <rect width='800' height='520' fill='url(%23xbg${seed})'/>
+      <rect x='150' y='60'  width='500' height='400' rx='4' fill='%231e2e3e'/>
+      <rect x='155' y='65'  width='490' height='390' rx='3' fill='%23243444'/>
+      <rect x='155' y='65'  width='490' height='30'  fill='%232e4050'/>
+      <text x='320' y='86' font-size='13' fill='%2382c4ff' font-family='sans-serif' font-weight='700' letter-spacing='3'>BOX PRIVADO N° ${seed+7}</text>
+      <rect x='175' y='110' width='210' height='240' rx='3' fill='%230e1c2a'/>
+      <rect x='415' y='110' width='210' height='240' rx='3' fill='%230e1c2a'/>
+      <rect x='175' y='365' width='210' height='60'  rx='2' fill='%230e1c2a'/>
+      <rect x='415' y='365' width='210' height='60'  rx='2' fill='%230e1c2a'/>
+      <text x='242' y='238' font-size='40' text-anchor='middle' dominant-baseline='middle' font-family='sans-serif'>📦</text>
+      <text x='520' y='238' font-size='40' text-anchor='middle' dominant-baseline='middle' font-family='sans-serif'>🔒</text>
+      <rect x='355' y='140' width='90' height='240' rx='2' fill='%230e1c2a'/>
+      <rect x='375' y='300' width='50' height='80'  rx='1' fill='%23162030'/>
+      <circle cx='400' cy='345' r='10' fill='%23334455'/>
+      <circle cx='400' cy='345' r='6'  fill='%2344556a'/>
+      <rect x='220' y='150' width='30' height='6' rx='1' fill='%2382c4ff' opacity='.5'/>
+      <rect x='220' y='162' width='50' height='6' rx='1' fill='%2382c4ff' opacity='.3'/>
+      <rect x='220' y='174' width='40' height='6' rx='1' fill='%2382c4ff' opacity='.2'/>
+      <rect x='450' y='150' width='60' height='6' rx='1' fill='%233dd68c' opacity='.6'/>
+      <rect x='450' y='162' width='40' height='6' rx='1' fill='%233dd68c' opacity='.4'/>
+      <rect x='0' y='490' width='800' height='30' fill='%230a1218' opacity='.8'/>
+      <text x='16' y='510' font-size='11' fill='%2382c4ff' opacity='.8' font-family='sans-serif' font-weight='700' letter-spacing='2'>EXCLUSIVO · BOX PRIVADO · PLANTA BAJA · RAMPA</text>
+    </svg>`;
+  }
+
+  // Asignar fotos reales (SVG detallados) a cada espacio
+  // Cada espacio tiene 3 imágenes: exterior / interior / detalle
+  const IMGS = {
+    e1: [mkCochera(1), mkCochera(2), mkCochera(3)],
+    e2: [mkGalpon(1),  mkGalpon(2),  mkDeposito(1)],
+    e3: [mkBaulera(1), mkBaulera(2), mkBaulera(3)],
+    e4: [mkDeposito(2),mkGalpon(3),  mkDeposito(3)],
+    e5: [mkBox(1),     mkBaulera(4), mkBox(2)],
+    e6: [mkGalpon(4),  mkGalpon(5),  mkDeposito(4)],
+    e7: [mkBox(3),     mkCochera(4), mkBox(4)],
+    e8: [mkGalpon(6),  mkGalpon(7),  mkDeposito(5)],
+  };
+
+  // Placeholders de respaldo (solo si falla la generación)
+  const PHE = [mkBaulera(9), mkCochera(9), mkBox(9)];
+  const PHC = [mkGalpon(9),  mkDeposito(9),mkGalpon(8)];
+
+  const DEFAULT_ESPACIOS = [
+    {id:'e1',n:'Cochera Palermo',        d:'Thames 1842, Palermo, CABA',          b:'Palermo',      m2:18,  t:'exclusivo', pd:850,  pm:18000,desc:'Cochera techada, acceso 24hs, cámara de seguridad. Portón eléctrico.',  of:'Carlos Méndez',    of_email:'carlos@todasmiscosas.com', of_tel:'+54 11 4523-8871', lat:-34.5885,lng:-58.4278,ok:true, imgs:IMGS.e1,pi:0, rating:4.9,reviews:38,resmes:12,badge:'⭐ Más reservado', reviewsData:'e1'},
+    {id:'e2',n:'Depósito Logístico N.',  d:'Av. Libertador 4500, Vte. López',     b:'Vicente López',m2:120, t:'compartido',pd:2200, pm:45000,desc:'Galpón industrial con estanterías metálicas. Acceso para camiones.',      of:'Logística S.A.',   of_email:'depositos@logisticasa.com.ar', of_tel:'+54 11 5544-2200', lat:-34.5159,lng:-58.4788,ok:true, imgs:IMGS.e2,pi:0, rating:4.7,reviews:21,resmes:6, badge:'🏭 Industrial'},
+    {id:'e3',n:'Baulera Belgrano',       d:'Sucre 2100, Belgrano, CABA',          b:'Belgrano',     m2:6,   t:'exclusivo', pd:350,  pm:6500, desc:'Baulera en edificio con vigilancia. 3er piso, ascensor.',               of:'Carlos Méndez',    of_email:'carlos@todasmiscosas.com', of_tel:'+54 11 4523-8871', lat:-34.5571,lng:-58.4534,ok:true, imgs:IMGS.e3,pi:0, rating:4.8,reviews:54,resmes:9, badge:'💎 Súper anfitrión', reviewsData:'e3'},
+    {id:'e4',n:'Sala Recoleta',          d:'Av. Santa Fe 3200, Recoleta, CABA',   b:'Recoleta',     m2:25,  t:'compartido',pd:1100, pm:22000,desc:'Espacio multiuso con seguridad 24hs y cámaras.',                          of:'Logística S.A.',   of_email:'depositos@logisticasa.com.ar', of_tel:'+54 11 5544-2200', lat:-34.5883,lng:-58.3964,ok:true, imgs:IMGS.e4,pi:0, rating:4.6,reviews:17,resmes:4, badge:null},
+    {id:'e5',n:'Mini Storage V. Crespo', d:'Corrientes 5100, Villa Crespo, CABA', b:'Villa Crespo', m2:10,  t:'exclusivo', pd:480,  pm:9500, desc:'Módulos individuales con cerradura propia. Planta baja.',               of:'Marta R.',         of_email:'marta@todasmiscosas.com',  of_tel:'+54 11 6778-4490', lat:-34.6018,lng:-58.4428,ok:false,imgs:IMGS.e5,pi:0, rating:4.5,reviews:8, resmes:0, badge:null},
+    {id:'e6',n:'Depósito San Isidro',    d:'Av. Libertador 16200, San Isidro',    b:'San Isidro',   m2:80,  t:'compartido',pd:1800, pm:38000,desc:'Galpón en zona exclusiva norte. Vigilancia privada.',                    of:'Norte Storage SRL',of_email:'info@nortestorage.com.ar', of_tel:'+54 11 4798-3300', lat:-34.4734,lng:-58.5273,ok:true, imgs:IMGS.e6,pi:0, rating:4.8,reviews:29,resmes:8, badge:'✅ Verificado'},
+    {id:'e7',n:'Box Caballito',          d:'Av. Rivadavia 5400, Caballito, CABA', b:'Caballito',    m2:12,  t:'exclusivo', pd:620,  pm:13000,desc:'Box privado planta baja con rampa de acceso. Ideal motos y bicicletas.',  of:'Jorge P.',         of_email:'jorge.perez@gmail.com',    of_tel:'+54 11 1534-7892', lat:-34.6183,lng:-58.4367,ok:true, imgs:IMGS.e7,pi:0, rating:4.7,reviews:33,resmes:7, badge:'🔒 Exclusivo premium'},
+    {id:'e8',n:'Galpón Quilmes',         d:'Av. Calchaquí 1200, Quilmes',         b:'Quilmes',      m2:200, t:'compartido',pd:3200, pm:68000,desc:'Gran galpón industrial. Ideal empresas logísticas y e-commerce.',        of:'Sur Logística SA', of_email:'operaciones@surlogistica.com', of_tel:'+54 11 4224-6600', lat:-34.7219,lng:-58.2557,ok:true, imgs:IMGS.e8,pi:0, rating:4.9,reviews:45,resmes:15,badge:'🚚 Top Logística'},
+  ];
+
+  const DEFAULT_USERS = [
+    {id:'u1',nombre:'Carlos Méndez',  email:'carlos@todasmiscosas.com', tel:'+54 11 4523-8871', pass:'demo1234', tipo:'oferente'  },
+    {id:'u2',nombre:'Marta Rodríguez',email:'marta@todasmiscosas.com',  tel:'+54 11 6778-4490', pass:'demo1234', tipo:'oferente'  },
+    {id:'u3',nombre:'Ana García',     email:'ana@gmail.com',            tel:'+54 11 1562-3344', pass:'demo1234', tipo:'demandante'},
+    {id:'u4',nombre:'Pablo Torres',   email:'pablo@empresa.com',        tel:'+54 11 1578-9900', pass:'demo1234', tipo:'demandante'},
+    {id:'u5',nombre:'Admin TMC',      email:'admin@todasmiscosas.com',  tel:'',                 pass:'admin1234',tipo:'admin'     },
+  ];
+
+  // ── HELPERS ────────────────────────────────────────────────────────
+  const ok  = data  => ({ ok: true,  data, error: null });
+  const err = msg   => ({ ok: false, data: null, error: msg });
+  const uid = ()    => Math.random().toString(36).slice(2, 10);
+  const delay = ms  => new Promise(r => setTimeout(r, ms));
+
+  function authHeaders() {
+    const h = { 'Content-Type': 'application/json' };
+    if (_token) h['Authorization'] = `Bearer ${_token}`;
+    return h;
+  }
+
+  // ── ESPACIOS ───────────────────────────────────────────────────────
+
+  async function getEspacios() {
+    if (USE_REAL_API) {
+      try {
+        const r = await fetch(`${API_URL}/api/espacios`, { headers: authHeaders() });
+        const d = await r.json();
+        return ok(d);
+      } catch (e) { return err('Error conectando al servidor: ' + e.message); }
+    }
+    // MOCK: cargar desde storage o usar defaults
+    const saved = GuardaloStorage.getEspacios();
+    let lista = saved || DEFAULT_ESPACIOS;
+    // Hidratar fotos desde IndexedDB para los que las tengan
+    lista = await Promise.all(lista.map(async e => {
+      // Solo hidratar si las imgs son placeholders (guardadas como '__blob__')
+      if (e.imgs?.some(img => img === '__blob__')) {
+        const fotos = await GuardaloStorage.loadFotos(e.id);
+        return { ...e, imgs: fotos.length > 0 ? fotos : (e.t === 'exclusivo' ? PHE : PHC) };
+      }
+      return e;
+    }));
+    return ok(lista);
+  }
+
+  async function createEspacio(data) {
+    if (USE_REAL_API) {
+      try {
+        const r = await fetch(`${API_URL}/api/espacios`, {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify(data),
+        });
+        const d = await r.json();
+        return r.ok ? ok(d) : err(d.detail || 'Error al crear espacio');
+      } catch (e) { return err(e.message); }
+    }
+    // MOCK
+    await delay(300);
+    const nuevo = { ...data, id: uid() };
+    // Guardar fotos en IndexedDB si las hay
+    if (nuevo.imgs?.length && nuevo.imgs.some(img => img?.startsWith('data:'))) {
+      await GuardaloStorage.saveFotos(nuevo.id, nuevo.imgs);
+    }
+    GuardaloStorage.saveEspacio(nuevo);
+    return ok(nuevo);
+  }
+
+  async function updateEspacio(id, data) {
+    if (USE_REAL_API) {
+      try {
+        const r = await fetch(`${API_URL}/api/espacios/${id}`, {
+          method: 'PUT',
+          headers: authHeaders(),
+          body: JSON.stringify(data),
+        });
+        const d = await r.json();
+        return r.ok ? ok(d) : err(d.detail || 'Error al actualizar');
+      } catch (e) { return err(e.message); }
+    }
+    await delay(200);
+    if (data.imgs?.length && data.imgs.some(img => img?.startsWith('data:'))) {
+      await GuardaloStorage.saveFotos(id, data.imgs);
+    }
+    GuardaloStorage.saveEspacio({ ...data, id });
+    return ok({ ...data, id });
+  }
+
+  async function deleteEspacio(id) {
+    if (USE_REAL_API) {
+      try {
+        const r = await fetch(`${API_URL}/api/espacios/${id}`, { method: 'DELETE', headers: authHeaders() });
+        return r.ok ? ok({ id }) : err('Error al eliminar');
+      } catch (e) { return err(e.message); }
+    }
+    await delay(200);
+    GuardaloStorage.deleteEspacio(id);
+    return ok({ id });
+  }
+
+  // ── FOTOS ─────────────────────────────────────────────────────────
+  // En producción: POST /api/fotos con FormData (multipart)
+  // El backend sube a S3/R2 y devuelve array de URLs firmadas
+
+  async function uploadFotos(espacioId, dataUrls) {
+    if (USE_REAL_API) {
+      try {
+        const formData = new FormData();
+        for (let i = 0; i < dataUrls.length; i++) {
+          // Convertir dataURL a Blob
+          const res   = await fetch(dataUrls[i]);
+          const blob  = await res.blob();
+          formData.append('fotos', blob, `foto_${i}.jpg`);
+        }
+        formData.append('espacio_id', espacioId);
+        const r = await fetch(`${API_URL}/api/fotos`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${_token}` }, // NO Content-Type para multipart
+          body: formData,
+        });
+        const d = await r.json();
+        return r.ok ? ok(d.urls) : err(d.detail || 'Error al subir fotos');
+      } catch (e) { return err(e.message); }
+    }
+    // MOCK: guardar en IndexedDB
+    await GuardaloStorage.saveFotos(espacioId, dataUrls);
+    return ok(dataUrls); // devuelve las mismas URLs (en prod serían URLs S3)
+  }
+
+  // ── AUTENTICACIÓN ──────────────────────────────────────────────────
+
+  async function login(email, password) {
+    if (USE_REAL_API) {
+      try {
+        const r = await fetch(`${API_URL}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        const d = await r.json();
+        if (!r.ok) return err(d.detail || 'Credenciales incorrectas');
+        _token = d.access_token;
+        return ok({ id: d.user_id, nombre: d.nombre, email, tipo: d.tipo });
+      } catch (e) { return err(e.message); }
+    }
+    // MOCK
+    await delay(700);
+    const users = GuardaloStorage.getUsuarios() || DEFAULT_USERS;
+    const u = users.find(u => u.email === email && u.pass === password);
+    if (!u) return err('Email o contraseña incorrectos.');
+    return ok({ id: u.id, nombre: u.nombre, email: u.email, tipo: u.tipo });
+  }
+
+  async function register(nombre, email, password, tipo = 'demandante', tel = '') {
+    if (USE_REAL_API) {
+      try {
+        const r = await fetch(`${API_URL}/api/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombre, email, password, tipo, tel }),
+        });
+        const d = await r.json();
+        if (!r.ok) return err(d.detail || 'Error al registrar');
+        _token = d.access_token;
+        return ok({ id: d.user_id, nombre, email, tipo });
+      } catch (e) { return err(e.message); }
+    }
+    // MOCK
+    await delay(700);
+    const users = GuardaloStorage.getUsuarios() || DEFAULT_USERS;
+    if (users.find(u => u.email === email)) return err('Ese email ya está registrado.');
+    const nuevo = { id: uid(), nombre, email, pass: password, tipo, tel };
+    GuardaloStorage.saveUsuario(nuevo);
+    return ok({ id: nuevo.id, nombre, email, tipo, nuevo: true });
+  }
+
+  // ── RESERVAS ──────────────────────────────────────────────────────
+
+  async function createReserva(data) {
+    if (USE_REAL_API) {
+      try {
+        const r = await fetch(`${API_URL}/api/reservas`, {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify(data),
+        });
+        const d = await r.json();
+        return r.ok ? ok(d) : err(d.detail || 'Error al crear reserva');
+      } catch (e) { return err(e.message); }
+    }
+    await delay(300);
+    const reserva = {
+      ...data,
+      id     : 'r' + uid(),
+      estado : 'confirmada',
+      created: new Date().toISOString().slice(0, 10),
+    };
+    GuardaloStorage.saveReserva(reserva);
+    return ok(reserva);
+  }
+
+  async function getReservas(userId = null) {
+    if (USE_REAL_API) {
+      try {
+        const url = userId ? `${API_URL}/api/reservas?user_id=${userId}` : `${API_URL}/api/reservas`;
+        const r = await fetch(url, { headers: authHeaders() });
+        const d = await r.json();
+        return ok(d);
+      } catch (e) { return err(e.message); }
+    }
+    const lista = GuardaloStorage.getReservas();
+    return ok(userId ? lista.filter(r => r.userId === userId) : lista);
+  }
+
+  // ── PAGOS (simulado → MercadoPago Checkout Pro real) ───────────────
+  // En producción: POST /api/pagos/crear-preferencia → devuelve init_point (URL MP)
+  // El browser redirige a la URL de MP, el usuario paga, MP llama al webhook.
+
+  async function crearPago({ espacioId, monto, desde, hasta, userId, cuotas = 1 }) {
+    if (USE_REAL_API) {
+      try {
+        const r = await fetch(`${API_URL}/api/pagos/preferencia`, {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify({ espacio_id: espacioId, monto, desde, hasta, user_id: userId, cuotas }),
+        });
+        const d = await r.json();
+        if (!r.ok) return err(d.detail || 'Error al crear pago');
+        // d.init_point = URL de MercadoPago donde se redirige al usuario
+        return ok({ preferenceId: d.preference_id, initPoint: d.init_point });
+      } catch (e) { return err(e.message); }
+    }
+    // MOCK: simular resultado
+    await delay(700);
+    return ok({ preferenceId: 'mock_' + uid(), initPoint: null, mock: true });
+  }
+
+  // ── STATUS ─────────────────────────────────────────────────────────
+  async function healthCheck() {
+    if (!USE_REAL_API) return ok({ mode: 'mock', storage: GuardaloStorage.storageInfo() });
+    try {
+      const r = await fetch(`${API_URL}/health`);
+      const d = await r.json();
+      return ok({ mode: 'real', backend: d });
+    } catch { return err('Backend no disponible en ' + API_URL); }
+  }
+
+  // ── API PÚBLICA ────────────────────────────────────────────────────
+  return {
+    // Config
+    get isRealAPI() { return USE_REAL_API; },
+    get apiUrl()    { return API_URL; },
+    // Espacios
+    getEspacios,
+    createEspacio,
+    updateEspacio,
+    deleteEspacio,
+    // Fotos
+    uploadFotos,
+    // Auth
+    login,
+    register,
+    // Reservas
+    createReserva,
+    getReservas,
+    // Pagos
+    crearPago,
+    // Utils
+    healthCheck,
+    PHE,
+    PHC,
+  };
+})()
+
+</script>
+
+<!-- ══════════════════════════════════════════════════════
+     CAPA 2: MOBILE UI
+══════════════════════════════════════════════════════ -->
+<script>
+// ── Reutilizar del core ───────────────────────────────
+const fcur  = n => n!=null ? '$'+Number(n).toLocaleString('es-ar') : '—';
+const fcurG = n => n>=1e6 ? '$'+( n/1e6 ).toFixed(1)+'M' : n>=1e3 ? '$'+(n/1e3).toFixed(0)+'K' : fcur(n);
+
+// ── Estado global mobile ──────────────────────────────
+let ESP=[], CU=null, SEL=null, APend=null;
+let FT='', FP=4000, SQ='', GEO_USER=null;
+let _gmap=null, _gmarkers=[], _gUserMarker=null;
+let _sheetExpanded=false, _sheetTouchY=0, _sheetStartY=0;
+let _favs=new Set(JSON.parse(localStorage.getItem('tmc_favs')||'[]'));
+let _pubData={t:'exclusivo',te:'',n:'',d:'',b:'',m2:'',pd:'',pm:'',desc:''};
+let _pubDirTimer=null, _pubDirSugs=[];
+let AT='login', IVMP=null;
+let RE=null, RD='', RH='', RM='dia', MCN='', MCNm='', MCE='', MCV='', MMet='card', MCu='1';
+
+// ── Fotos placeholder por tipo ─────────────────────────
+const PHE=['🚗','📦','🏚','🔒','🌿'];
+const PHC=['🤝','🏭','📐','🏗','📦'];
+function getIcon(e){
+  const ti=e.te||'';
+  const m={Cochera:'🚗',Habitación:'🛏',Sótano:'🏚',Terraza:'🌿','Espacio abierto':'🏕',Estante:'📦'};
+  return m[ti]||(e.t==='exclusivo'?'🔒':'🤝');
+}
+
+// ── TOAST ──────────────────────────────────────────────
+function toast(msg,ms=2200){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),ms);
+}
+
+// ── INIT ──────────────────────────────────────────────
+window.addEventListener('load',async()=>{
+  const r=await GuardaloAPI.getEspacios();
+  ESP=r.ok?r.data:[];
+  renderSheetCards();
+  renderResults();
+  renderPubForm();
+  renderProfile();
+  document.getElementById('loading').style.opacity='0';
+  setTimeout(()=>document.getElementById('loading').style.display='none',300);
+  document.getElementById('app').style.display='flex';
+  // Geolocalización
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(pos=>{
+      GEO_USER={lat:pos.coords.latitude,lng:pos.coords.longitude};
+      if(_gmap){_gmap.panTo(GEO_USER);_gmap.setZoom(14);drawUserPin();}
+    },()=>{});
+  }
+});
+
+// ── NAVEGACIÓN BOTTOM NAV ─────────────────────────────
+function navTo(screen){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('screen-'+screen).classList.add('active');
+  document.getElementById('nb-'+screen).classList.add('active');
+  if(screen==='search')renderResults();
+  if(screen==='profile')renderProfile();
+  if(screen==='publish')renderPubForm();
+  if(screen==='map'&&_gmap)setTimeout(()=>google?.maps?.event?.trigger(_gmap,'resize'),80);
+}
+
+// ── GOOGLE MAPS MOBILE ────────────────────────────────
+function initGoogleMapReal(){
+  const div=document.getElementById('gmap-mobile');
+  if(!div||_gmap)return;
+  const center=GEO_USER||{lat:-34.6037,lng:-58.3816};
+  _gmap=new google.maps.Map(div,{
+    center, zoom:GEO_USER?14:11,
+    mapTypeId:'roadmap',
+    disableDefaultUI:true,
+    zoomControl:false,
+    styles:[
+      {featureType:'poi',stylers:[{visibility:'off'}]},
+      {featureType:'transit',stylers:[{visibility:'off'}]},
+      {featureType:'road.highway',elementType:'geometry',stylers:[{color:'#f5f1eb'}]},
+      {featureType:'road.arterial',elementType:'geometry',stylers:[{color:'#ffffff'}]},
+      {featureType:'road.local',elementType:'geometry',stylers:[{color:'#f9f9f9'}]},
+      {featureType:'landscape',elementType:'geometry',stylers:[{color:'#f2efe9'}]},
+      {featureType:'water',elementType:'geometry',stylers:[{color:'#c9e4f0'}]},
+      {featureType:'road',elementType:'labels.text.fill',stylers:[{color:'#546e7a'}]},
+      {featureType:'administrative.locality',elementType:'labels.text.fill',stylers:[{color:'#263238'}]},
+    ],
+  });
+  drawMapPins();
+  if(GEO_USER)drawUserPin();
+  _gmap.addListener('click',()=>closeDetail());
+}
+
+function drawMapPins(){
+  if(!_gmap)return;
+  _gmarkers.forEach(m=>m.setMap(null));_gmarkers=[];
+  const fil=getFiltered();
+  fil.forEach(e=>{
+    if(!e.lat||!e.lng)return;
+    const col=e.t==='exclusivo'?'#6366F1':'#F97316';
+    const marker=new google.maps.Marker({
+      position:{lat:e.lat,lng:e.lng},map:_gmap,
+      icon:{
+        url:'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(`
+          <svg xmlns="http://www.w3.org/2000/svg" width="86" height="36">
+            <rect x="1" y="1" width="84" height="30" rx="15" fill="white" stroke="${col}" stroke-width="2.5"/>
+            <text x="43" y="21" text-anchor="middle" font-family="Arial" font-size="12" font-weight="800" fill="${col}">${fcur(e.pd)}</text>
+          </svg>`),
+        scaledSize:new google.maps.Size(86,36),
+        anchor:new google.maps.Point(43,36),
+      },title:e.n,
+    });
+    marker.addListener('click',()=>openDetail(e.id));
+    _gmarkers.push(marker);
+  });
+}
+
+function drawUserPin(){
+  if(!_gmap||!GEO_USER)return;
+  if(_gUserMarker)_gUserMarker.setMap(null);
+  _gUserMarker=new google.maps.Marker({
+    position:GEO_USER,map:_gmap,
+    icon:{
+      url:'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(`
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40">
+          <circle cx="20" cy="20" r="10" fill="#0EA5E9" stroke="white" stroke-width="3"/>
+          <circle cx="20" cy="20" r="4" fill="white"/>
+        </svg>`),
+      scaledSize:new google.maps.Size(40,40),
+      anchor:new google.maps.Point(20,20),
+    },zIndex:999,title:'Tu ubicación',
+  });
+}
+
+// ── FILTROS ───────────────────────────────────────────
+function getFiltered(){
+  const q=SQ.toLowerCase().trim();
+  return ESP.filter(e=>{
+    if(!e.ok)return false;
+    if(FT&&e.t!==FT)return false;
+    if(FP<4000&&e.pd>FP)return false;
+    if(q&&!e.n.toLowerCase().includes(q)&&!e.b.toLowerCase().includes(q)&&!e.d.toLowerCase().includes(q))return false;
+    return true;
+  });
+}
+
+function mobileFilter(){
+  SQ=document.getElementById('m-sinp').value;
+  renderSheetCards();
+  drawMapPins();
+  document.getElementById('m-scnt').textContent=getFiltered().length;
+}
+
+function searchFilter(){
+  SQ=document.getElementById('s-sinp').value;
+  renderResults();
+}
+
+function mSetTipo(t){
+  FT=t;
+  ['all','excl','comp'].forEach(k=>document.getElementById('mc-'+k).classList.remove('on'));
+  document.getElementById('mc-'+(t===''?'all':t==='exclusivo'?'excl':'comp')).classList.add('on');
+  renderSheetCards();drawMapPins();
+  document.getElementById('m-scnt').textContent=getFiltered().length;
+}
+
+function sSetTipo(t){
+  FT=t;
+  ['all','excl','comp'].forEach(k=>document.getElementById('sc-'+k).classList.remove('on'));
+  document.getElementById('sc-'+(t===''?'all':t==='exclusivo'?'excl':'comp')).classList.add('on');
+  renderResults();
+}
+
+function togglePriceChip(){
+  const row=document.getElementById('price-slider-row');
+  const chip=document.getElementById('mc-price-chip');
+  const vis=row.style.display!=='none'&&row.style.display!=='';
+  row.style.display=vis?'none':'flex';
+  chip.classList.toggle('on',!vis);
+}
+
+function mOnPrecio(){
+  FP=+document.getElementById('m-prng').value;
+  const pv=document.getElementById('m-pval');
+  pv.textContent=FP>=4000?'$4.000+':fcur(FP);
+  renderSheetCards();drawMapPins();
+}
+
+// ── SHEET CARDS ───────────────────────────────────────
+function renderSheetCards(){
+  const fil=getFiltered();
+  document.getElementById('sheet-count').textContent=fil.length;
+  const cont=document.getElementById('sheet-cards');
+  if(!fil.length){cont.innerHTML='<div style="padding:2rem;text-align:center;color:var(--t3);font-size:.85rem">Sin resultados — probá otros filtros</div>';return;}
+  cont.innerHTML=fil.map(e=>{
+    const ic=getIcon(e);
+    const hasImg=e.imgs&&e.imgs.length>0&&e.imgs[0]&&!e.imgs[0].startsWith('SVG');
+    const rating=e.rating?`<div class="mcard-rating">⭐ ${e.rating} (${e.reviews||0})</div>`:'';
+    return `<div class="mcard" onclick="openDetail('${e.id}')">
+      <div class="mcard-img">
+        ${hasImg?`<img src="${e.imgs[e.pi||0]}" loading="lazy">`:
+          `<div class="mcard-img-placeholder">${ic}</div>`}
+      </div>
+      <div class="mcard-body">
+        <div class="mcard-name">${e.n}</div>
+        <div class="mcard-loc">📍 ${e.b}${e.m2?' · '+e.m2+'m²':''}</div>
+        <div class="mcard-footer">
+          <div class="mcard-price">${fcur(e.pd)}<span style="font-size:.65rem;color:var(--t3);font-weight:500">/día</span></div>
+          <div class="mcard-badge ${e.t==='exclusivo'?'excl':''}">${e.t==='exclusivo'?'Exclusivo':'Compartido'}</div>
+        </div>
+        ${rating}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── RESULTS LIST ──────────────────────────────────────
+function renderResults(){
+  const fil=getFiltered();
+  const cont=document.getElementById('results-list');
+  if(!fil.length){cont.innerHTML='<div style="padding:2rem;text-align:center;color:var(--t3)">Sin resultados</div>';return;}
+  cont.innerHTML=fil.map(e=>{
+    const ic=getIcon(e);
+    const hasImg=e.imgs&&e.imgs.length>0&&e.imgs[0]&&!e.imgs[0].startsWith('SVG');
+    return `<div class="result-card" onclick="openDetail('${e.id}')">
+      <div class="result-card-img">
+        ${hasImg?`<img src="${e.imgs[e.pi||0]}" loading="lazy">`:
+          `<div class="result-card-img-placeholder">${ic}</div>`}
+      </div>
+      <div class="result-card-body">
+        <div class="result-card-name">${e.n}</div>
+        <div class="result-card-loc">📍 ${e.b}${e.m2?' · '+e.m2+'m²':''}</div>
+        <div class="result-card-footer">
+          <div>
+            <span class="result-price-big">${fcur(e.pd)}</span>
+            <span class="result-price-unit">/día</span>
+            ${e.pm?`<span style="font-size:.72rem;color:var(--t2);margin-left:.4rem">${fcur(e.pm)}/mes</span>`:''}
+          </div>
+          ${e.rating?`<div class="result-rating">⭐ ${e.rating}</div>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── DETAIL SHEET ──────────────────────────────────────
+function openDetail(id){
+  const e=ESP.find(x=>x.id===id);
+  if(!e)return;
+  SEL=e;
+  // Galería
+  const gal=document.getElementById('detail-gallery');
+  const ic=getIcon(e);
+  const hasImg=e.imgs&&e.imgs.length>0&&e.imgs[0]&&!e.imgs[0].startsWith('SVG');
+  gal.innerHTML=`${hasImg?`<img src="${e.imgs[e.pi||0]}" style="width:100%;height:100%;object-fit:cover">`:
+    `<div class="detail-gallery-placeholder">${ic}</div>`}
+    <button class="detail-close" onclick="closeDetail()">✕</button>`;
+  // Favorito
+  document.getElementById('btn-fav').textContent=_favs.has(id)?'♥':'♡';
+  document.getElementById('btn-fav').style.color=_favs.has(id)?'var(--red)':'var(--t2)';
+  // Body
+  const col=e.t==='exclusivo'?'#6366F1':'#F97316';
+  document.getElementById('detail-body').innerHTML=`
+    <div class="detail-name">${e.n}</div>
+    <div class="detail-loc">📍 ${e.d||e.b}</div>
+    <div class="detail-chips">
+      <div class="detail-chip hi">${e.t==='exclusivo'?'🔒 Exclusivo':'🤝 Compartido'}</div>
+      ${e.te?`<div class="detail-chip">${getIcon(e)} ${e.te}</div>`:''}
+      ${e.m2?`<div class="detail-chip">📐 ${e.m2}m²</div>`:''}
+      ${e.badge?`<div class="detail-chip hi">${e.badge}</div>`:''}
+    </div>
+    <div class="price-row">
+      ${e.pd?`<div class="price-box"><div class="price-box-val">${fcur(e.pd)}</div><div class="price-box-lbl">por día</div></div>`:''}
+      ${e.pm?`<div class="price-box"><div class="price-box-val">${fcur(e.pm)}</div><div class="price-box-lbl">por mes</div></div>`:''}
+    </div>
+    ${e.desc?`<div class="detail-section"><div class="detail-section-title">Descripción</div><div class="detail-desc">${e.desc}</div></div>`:''}
+    <div class="detail-section">
+      <div class="detail-section-title">Anfitrión</div>
+      <div class="host-row">
+        <div class="host-avatar">${(e.of||'A').charAt(0).toUpperCase()}</div>
+        <div class="host-info">
+          <div class="host-name">${e.of||'Anfitrión'}</div>
+          <div class="host-tag">⭐ ${e.rating||'Nuevo'} ${e.reviews?'· '+e.reviews+' reseñas':''}</div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('detail-sheet').classList.add('open');
+  if(_gmap&&e.lat&&e.lng)_gmap.panTo({lat:e.lat,lng:e.lng});
+}
+
+function closeDetail(){
+  document.getElementById('detail-sheet').classList.remove('open');
+  SEL=null;
+}
+
+function toggleFav(){
+  if(!SEL)return;
+  if(_favs.has(SEL.id)){_favs.delete(SEL.id);toast('Removido de favoritos')}
+  else{_favs.add(SEL.id);toast('❤️ Guardado en favoritos')}
+  localStorage.setItem('tmc_favs',JSON.stringify([..._favs]));
+  document.getElementById('btn-fav').textContent=_favs.has(SEL.id)?'♥':'♡';
+  document.getElementById('btn-fav').style.color=_favs.has(SEL.id)?'var(--red)':'var(--t2)';
+}
+
+// ── SHEET DRAG ────────────────────────────────────────
+function toggleSheet(){
+  _sheetExpanded=!_sheetExpanded;
+  document.getElementById('map-sheet').classList.toggle('expanded',_sheetExpanded);
+}
+function sheetTouchStart(e){_sheetStartY=_sheetTouchY=e.touches[0].clientY;}
+function sheetTouchMove(e){_sheetTouchY=e.touches[0].clientY;}
+function sheetTouchEnd(){
+  const dy=_sheetStartY-_sheetTouchY;
+  if(dy>30&&!_sheetExpanded){_sheetExpanded=true;document.getElementById('map-sheet').classList.add('expanded');}
+  else if(dy<-30&&_sheetExpanded){_sheetExpanded=false;document.getElementById('map-sheet').classList.remove('expanded');}
+}
+
+// ── RESERVA (reutiliza lógica del desktop) ────────────
+function mobileReservar(){
+  if(!SEL)return;
+  if(!CU){openAuth(SEL);return;}
+  RE=SEL;RD='';RH='';RM='dia';MCN='';MCNm='';MCE='';MCV='';MMet='card';
+  renderRF();
+  document.getElementById('rmod').classList.add('on');
+}
+
+// ── CALC ──────────────────────────────────────────────
+function calc(){
+  if(!RE)return{dias:0,base:0,com:0,total:0};
+  const d1=new Date(RD),d2=new Date(RH);
+  let dias=0,base=0;
+  if(RM==='dia'&&RD&&RH&&d2>d1){dias=Math.round((d2-d1)/(864e5));base=dias*RE.pd;}
+  else if(RM==='mes'&&RE.pm){dias=30;base=RE.pm;}
+  const total=Math.round(base*1.1);
+  return{dias,base,com:total-base,total};
+}
+
+function renderRF(){
+  const e=RE;if(!e)return;
+  const{dias,base,total}=calc();
+  const c=e.t==='exclusivo'?'#6366F1':'#F97316';
+  document.getElementById('rbody').innerHTML=`
+    <div class="macc"></div>
+    <div class="mhdr">
+      <div><div class="mtitle">Reservar espacio</div><div class="msub">${e.n} · ${e.b}</div></div>
+      <button class="mclose" onclick="closeResv()">✕</button>
+    </div>
+    <div class="mbody">
+      ${e.pm?`<div>
+        <div class="frow">
+          <button onclick="RM='dia';renderRF()" style="padding:.5rem;border-radius:12px;border:1.5px solid ${RM==='dia'?c:'var(--s3)'};background:${RM==='dia'?c+'18':'var(--s2)'};color:${RM==='dia'?c:'var(--t2)'};font-family:'Sora',sans-serif;font-weight:${RM==='dia'?700:500};font-size:.8rem">💰 Por día<br><strong>${fcur(e.pd)}</strong></button>
+          <button onclick="RM='mes';renderRF()" style="padding:.5rem;border-radius:12px;border:1.5px solid ${RM==='mes'?c:'var(--s3)'};background:${RM==='mes'?c+'18':'var(--s2)'};color:${RM==='mes'?c:'var(--t2)'};font-family:'Sora',sans-serif;font-weight:${RM==='mes'?700:500};font-size:.8rem">📅 Por mes<br><strong>${fcur(e.pm)}</strong></button>
+        </div></div>`:''}
+      <div class="frow">
+        <div><label class="flab">Desde</label><input type="date" value="${RD}" onchange="RD=this.value;renderRF()"></div>
+        <div><label class="flab">Hasta</label><input type="date" value="${RH}" onchange="RH=this.value;renderRF()"></div>
+      </div>
+      ${base>0?`<div style="background:rgba(249,115,22,.06);border:1.5px solid rgba(249,115,22,.18);border-radius:12px;padding:.75rem 1rem">
+        <div style="font-size:.78rem;color:var(--t2);margin-bottom:.3rem">Subtotal (${dias} día${dias!==1?'s':''}): <strong>${fcur(base)}</strong></div>
+        <div style="font-size:1.1rem;font-weight:800;color:${c}">Total: ${fcur(total)}</div>
+      </div>`:''}
+      <div style="font-size:.68rem;color:var(--t3);text-align:center">Al continuar aceptás las <span onclick="toast('Ver sección Legal en la web')" style="color:var(--or);cursor:pointer">Condiciones del Demandante</span></div>
+      <button onclick="${base>0?'renderCK()':''}" ${!base?'disabled':''} class="bpag" style="${!base?'opacity:.4':''}">💳 Continuar al pago</button>
+    </div>`;
+}
+
+function renderCK(){
+  const{total}=calc();
+  const br=brand(MCN),bg=br?`linear-gradient(135deg,${br.c}dd,${br.c}88)`:'linear-gradient(135deg,#1b2d42,#0d1b2a)';
+  const ca=total/+MCu;
+  document.getElementById('rbody').innerHTML=`
+    <div class="mph"><div style="display:flex;align-items:center;gap:.6rem"><div class="mpl">mercadopago</div><div style="font-size:.72rem;color:rgba(255,255,255,.75)">Checkout seguro</div></div>
+    <button onclick="renderRF()" style="background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:8px;padding:4px 10px;font-size:.72rem;font-family:inherit">← Volver</button></div>
+    <div class="mam"><div style="font-size:.8rem;color:var(--t2)"><div style="font-weight:600;color:var(--txt);margin-bottom:.1rem">${RE.n}</div><div>${RD} → ${RH} · ${calc().dias} días</div></div>
+    <div style="font-family:'Sora';font-weight:800;font-size:1.25rem;color:#009ee3">${fcur(total)}</div></div>
+    <div class="mbody">
+      <div class="mbtns">
+        <button class="mbtn ${MMet==='card'?'on':''}" onclick="MMet='card';renderCK()">💳 Tarjeta</button>
+        <button class="mbtn ${MMet==='mp_wallet'?'on':''}" onclick="MMet='mp_wallet';renderCK()">🔵 Cuenta MP</button>
+      </div>
+      ${MMet==='card'?`
+      <div class="cviz" style="background:${bg}">
+        <div class="cchip"></div>
+        <div class="cnum">${MCN||'•••• •••• •••• ••••'}</div>
+        <div class="crow">
+          <div><div class="clbl">Titular</div><div class="cval">${MCNm||'NOMBRE APELLIDO'}</div></div>
+          <div style="text-align:right"><div class="clbl">Vence</div><div class="cval">${MCE||'MM/AA'}</div></div>
+        </div>
+        ${br?`<div class="cbrn">${br.l}</div>`:''}
+        <div class="cshine"></div>
+      </div>
+      <input placeholder="Número de tarjeta" value="${MCN}" oninput="MCN=fmtC(this.value);this.value=MCN;renderCK()" maxlength="19" inputmode="numeric">
+      <input placeholder="Titular" value="${MCNm}" oninput="MCNm=this.value.toUpperCase();renderCK()">
+      <div class="i2">
+        <input placeholder="MM/AA" value="${MCE}" oninput="MCE=fmtE(this.value);this.value=MCE" maxlength="5" inputmode="numeric">
+        <input placeholder="CVV" value="${MCV}" oninput="MCV=this.value.replace(/\D/g,'').slice(0,4)" maxlength="4" inputmode="numeric">
+      </div>
+      <select onchange="MCu=this.value">
+        <option value="1">1 cuota de ${fcur(Math.round(ca))}</option>
+        <option value="3">3 cuotas de ${fcur(Math.round(ca/3))} (+15%)</option>
+        <option value="6">6 cuotas de ${fcur(Math.round(ca*1.18/6))} (+18%)</option>
+        <option value="12">12 cuotas de ${fcur(Math.round(ca*1.25/12))} (+25%)</option>
+      </select>
+      <div class="sbdg"><span>🔒 SSL</span><span>🛡 3D Secure</span><span>✅ MP</span></div>
+      <button onclick="pagar()" class="bpag">Pagar ${fcur(total)}</button>`
+      :MMet==='mp_wallet'?`
+      <div class="mpw"><div style="font-size:2rem;margin-bottom:.5rem">🔵</div><div style="font-size:.9rem;font-weight:700;color:#009ee3;margin-bottom:.3rem">MercadoPago</div><div style="font-size:.78rem;color:var(--t2)">Pagá con tu saldo disponible</div></div>
+      <button onclick="pagar()" class="bpag">Pagar con cuenta MP</button>`:''}
+    </div>`;
+}
+
+function pagar(){
+  const{total}=calc();
+  const el=document.getElementById('rbody');
+  el.innerHTML=`<div class="mbody" style="padding:1.5rem">
+    <div style="text-align:center;margin-bottom:1.25rem"><div style="font-size:1.8rem;margin-bottom:.5rem">⏳</div><div style="font-size:.9rem;font-weight:700;color:var(--txt)">Procesando pago…</div></div>
+    <div class="pbw"><div class="pbf" id="pbf" style="width:0%"></div></div>
+    <div id="pst" style="text-align:center;font-size:.75rem;color:var(--t3);margin-top:.75rem">Verificando datos…</div>
+  </div>`;
+  const steps=['Verificando datos…','Consultando banco…','Validando tarjeta…','Procesando…','Confirmando…'];
+  let st=0;
+  IVMP=setInterval(()=>{
+    st++;
+    const pct=st*20;
+    document.getElementById('pbf').style.width=pct+'%';
+    if(document.getElementById('pst'))document.getElementById('pst').textContent=steps[st-1]||'';
+    if(st>=5){
+      clearInterval(IVMP);
+      const num=MCN.replace(/\s/g,'');
+      const lastDig=+num.slice(-1);
+      if(MMet==='mp_wallet'||lastDig%2===0)renderOK();
+      else renderKO();
+    }
+  },700);
+}
+
+function renderOK(){
+  const{total,dias}=calc();
+  const opId='MP-'+Date.now().toString().slice(-8);
+  const ofEmail=RE.of_email||'';
+  const waNum=(RE.of_wa||RE.of_tel||'').replace(/[^0-9]/g,'');
+  const waLink=waNum?`https://wa.me/${waNum.startsWith('54')?waNum:'54'+waNum}?text=${encodeURIComponent('Hola '+RE.of+', reservé tu espacio "'+RE.n+'" (op. '+opId+')')}`:null;
+  document.getElementById('rbody').innerHTML=`
+    <div class="macc"></div>
+    <div style="padding:1.5rem 1.2rem;text-align:center">
+      <div style="font-size:3rem;margin-bottom:.5rem">✅</div>
+      <div style="font-size:1.1rem;font-weight:800;color:var(--txt);margin-bottom:.25rem">¡Reserva confirmada!</div>
+      <div style="font-size:.8rem;color:var(--t2);margin-bottom:.1rem">Op. <strong>${opId}</strong></div>
+      <div style="font-size:.8rem;color:var(--t2);margin-bottom:1rem">Total cobrado: <strong style="color:var(--or)">${fcur(total)}</strong></div>
+    </div>
+    <div class="mbody">
+      <div style="background:var(--s2);border-radius:var(--r2);padding:.9rem 1rem">
+        <div style="font-size:.72rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem">Contactá al anfitrión</div>
+        <div style="font-size:.86rem;font-weight:600;color:var(--txt);margin-bottom:.5rem">${RE.of||'Anfitrión'}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+          ${ofEmail?`<a href="mailto:${ofEmail}" style="display:flex;align-items:center;justify-content:center;gap:.35rem;padding:.55rem;background:var(--surf);border:1.5px solid var(--s3);border-radius:var(--r1);color:var(--or);font-size:.78rem;font-weight:600;text-decoration:none">✉️ Email</a>`:''}
+          ${waLink?`<a href="${waLink}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:.35rem;padding:.55rem;background:#25d366;border:none;border-radius:var(--r1);color:#fff;font-size:.78rem;font-weight:600;text-decoration:none">💬 WhatsApp</a>`:''}
+        </div>
+      </div>
+      <button onclick="closeResv();toast('¡Reserva guardada! 🎉')" class="bprim">Ver mis reservas</button>
+    </div>`;
+  if(CU)setTimeout(()=>enviarMailTyCDemandante(CU.nombre,CU.email,RE.n,opId),700);
+}
+
+function renderKO(){
+  document.getElementById('rbody').innerHTML=`
+    <div class="mbody" style="padding:1.5rem">
+      <div style="text-align:center;margin-bottom:1rem">
+        <div style="font-size:2.5rem;margin-bottom:.5rem">❌</div>
+        <div style="font-size:1rem;font-weight:800;color:var(--red)">Pago rechazado</div>
+        <div style="font-size:.8rem;color:var(--t2);margin-top:.35rem;line-height:1.55">Tu banco no autorizó el pago.<br>Revisá los datos o usá otro medio.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+        <button onclick="renderCK()" style="background:rgba(14,165,233,.12);border:1.5px solid rgba(14,165,233,.3);border-radius:var(--r2);padding:.65rem;color:var(--sky-d);font-family:'Sora',sans-serif;font-weight:600;font-size:.85rem">🔄 Reintentar</button>
+        <button onclick="closeResv()" class="bsec">Cancelar</button>
+      </div>
+    </div>`;
+}
+
+function closeResv(){
+  if(IVMP)clearInterval(IVMP);
+  document.getElementById('rmod').classList.remove('on');
+}
+
+function fmtC(v){return v.replace(/\D/g,'').slice(0,16).replace(/(.{4})/g,'$1 ').trim();}
+function fmtE(v){return v.replace(/\D/g,'').slice(0,4).replace(/^(\d{2})(\d)/,'$1/$2');}
+function brand(n){const d=n.replace(/\s/g,'');if(d.startsWith('4'))return{c:'#1a1f71',l:'VISA'};if(d.startsWith('5'))return{c:'#eb001b',l:'MC'};if(d.startsWith('37'))return{c:'#2e77bc',l:'AMEX'};if(d.startsWith('6'))return{c:'#ff6600',l:'NAR'};return null;}
+
+// ── AUTH ──────────────────────────────────────────────
+let APend_e=null;
+function openAuth(e){APend_e=e||null;swTab('login');document.getElementById('amod').classList.add('on');}
+function closeAuth(){document.getElementById('amod').classList.remove('on');}
+function swTab(t){
+  AT=t;
+  document.getElementById('tab-login').classList.toggle('on',t==='login');
+  document.getElementById('tab-reg').classList.toggle('on',t==='registro');
+  const b=document.getElementById('abody');
+  if(t==='login'){
+    b.innerHTML=`<div id="aerr"></div>
+      <input id="ae" type="email" placeholder="tu@email.com" onkeydown="if(event.key==='Enter')doLogin()">
+      <input id="ap" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')doLogin()">
+      <button class="bprim" onclick="doLogin()">→ Iniciar sesión</button>`;
+  }else{
+    b.innerHTML=`<div id="aerr"></div>
+      <input id="an" placeholder="Tu nombre">
+      <input id="ae" type="email" placeholder="tu@email.com">
+      <input id="ap" type="password" placeholder="Contraseña (mín. 6 caracteres)">
+      <button class="bprim" onclick="doReg()">🚀 Crear cuenta</button>`;
+  }
+}
+function aerr(msg){const el=document.getElementById('aerr');if(el)el.innerHTML=`<div class="aerr">${msg}</div>`;}
+function doLogin(){
+  const e=document.getElementById('ae')?.value?.trim();
+  const p=document.getElementById('ap')?.value;
+  if(!e||!p)return aerr('Completá email y contraseña.');
+  GuardaloAPI.login(e,p).then(r=>{
+    if(!r.ok)return aerr(r.error);
+    authOK(r.data);
+  });
+}
+function doReg(){
+  const n=document.getElementById('an')?.value?.trim();
+  const e=document.getElementById('ae')?.value?.trim();
+  const p=document.getElementById('ap')?.value;
+  if(!n||!e||!p)return aerr('Completá todos los campos.');
+  if(p.length<6)return aerr('Mín. 6 caracteres.');
+  GuardaloAPI.register(n,e,p,'demandante').then(r=>{
+    if(!r.ok)return aerr(r.error);
+    authOK(r.data);
+    setTimeout(()=>enviarMailBienvenida(n,e),600);
+  });
+}
+function authOK(u){
+  CU=u;closeAuth();
+  renderProfile();
+  toast('¡Bienvenido/a, '+u.nombre+'! 👋');
+  if(APend_e){APend_e=null;mobileReservar();}
+}
+function logout(){CU=null;renderProfile();toast('Sesión cerrada');}
+
+// ── PUBLICAR ──────────────────────────────────────────
+function renderPubForm(){
+  const f=document.getElementById('pub-form');
+  if(!f)return;
+  f.innerHTML=`
+    <div class="field-group">
+      <label class="field-label">Tipo de espacio</label>
+      <div class="tipo-grid">
+        <button class="tipo-btn ${_pubData.t==='exclusivo'?'on':''}" onclick="_pubData.t='exclusivo';renderPubForm()">
+          <div class="tipo-btn-icon">🔒</div>
+          <div class="tipo-btn-name">Exclusivo</div>
+          <div class="tipo-btn-desc">Solo un cliente a la vez</div>
+        </button>
+        <button class="tipo-btn ${_pubData.t==='compartido'?'on':''}" onclick="_pubData.t='compartido';renderPubForm()">
+          <div class="tipo-btn-icon">🤝</div>
+          <div class="tipo-btn-name">Compartido</div>
+          <div class="tipo-btn-desc">Varios clientes al mismo tiempo</div>
+        </button>
+      </div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">¿Qué tipo de espacio es? *</label>
+      <div class="esp-tipos">
+        ${[['🚗','Cochera'],['🛏','Habitación'],['🏚','Sótano'],['🌿','Terraza'],['🏕','Al aire libre'],['📦','Estante']].map(([ic,nm])=>
+          `<button class="esp-tipo-btn ${_pubData.te===nm?'on':''}" onclick="_pubData.te='${nm}';renderPubForm()">
+            <div class="esp-tipo-btn-icon">${ic}</div>
+            <div class="esp-tipo-btn-name">${nm}</div>
+          </button>`).join('')}
+      </div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Nombre del espacio *</label>
+      <input placeholder="Ej: Cochera techada Palermo" value="${_pubData.n}" oninput="_pubData.n=this.value">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Dirección *</label>
+      <div class="dir-container">
+        <input id="pub-dir" placeholder="Calle y número, ciudad" value="${_pubData.d}"
+          oninput="_pubData.d=this.value;pubDirChange(this.value)" autocomplete="off">
+        <div id="pub-dir-drop"></div>
+      </div>
+      ${_pubData.b?`<div style="font-size:.72rem;color:var(--mint);margin-top:.3rem;font-weight:600">📍 Barrio: ${_pubData.b}</div>`:''}
+    </div>
+    <div class="field-group">
+      <label class="field-label">Precio</label>
+      <div class="price-inputs">
+        <div class="price-input-box">
+          <span class="price-input-lbl">Por día</span>
+          <div class="price-input-row">
+            <span class="price-input-cur">$</span>
+            <input type="number" placeholder="850" value="${_pubData.pd}" oninput="_pubData.pd=this.value">
+          </div>
+        </div>
+        <div class="price-input-box">
+          <span class="price-input-lbl">Por mes (opcional)</span>
+          <div class="price-input-row">
+            <span class="price-input-cur">$</span>
+            <input type="number" placeholder="18.000" value="${_pubData.pm}" oninput="_pubData.pm=this.value">
+          </div>
+        </div>
+      </div>
+      <div style="font-size:.68rem;color:var(--t3);margin-top:.3rem">Ingresá al menos uno</div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Descripción</label>
+      <textarea placeholder="Acceso, equipamiento, horarios…" oninput="_pubData.desc=this.value" rows="3">${_pubData.desc}</textarea>
+    </div>
+    <div id="pub-err"></div>
+    <button class="pub-submit" onclick="pubSubmitMobile()">
+      ${CU?'🚀 Publicar espacio':'📲 Registrarme y publicar'}
+    </button>
+  `;
+}
+
+let _pubDirTimer2=null;
+function pubDirChange(v){
+  clearTimeout(_pubDirTimer2);
+  const barrio=pubDetectBarrio(v);
+  if(barrio){_pubData.b=barrio;renderPubForm();return;}
+  if(v.length<4)return;
+  _pubDirTimer2=setTimeout(async()=>{
+    try{
+      const url=`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(v+', Buenos Aires, Argentina')}&format=json&limit=4&addressdetails=1&accept-language=es`;
+      const res=await fetch(url,{headers:{'Accept-Language':'es'}});
+      const data=await res.json();
+      const drop=document.getElementById('pub-dir-drop');
+      if(!drop||!data.length)return;
+      drop.innerHTML=data.map((r,i)=>{
+        const lbl=r.display_name.split(',').slice(0,3).join(',').trim();
+        const barr=r.address?.suburb||r.address?.neighbourhood||'';
+        return `<div class="dir-option" onclick="pubSelectMobile(${i})">
+          <div class="dir-option-main">${lbl}</div>
+          ${barr?`<div class="dir-option-sub">${barr}</div>`:''}
+        </div>`;
+      }).join('');
+      drop.style.display='block';
+      window._pubMobileSugs=data.map(r=>{
+        const lbl=r.display_name.split(',').slice(0,3).join(',').trim();
+        return{label:lbl,lat:+r.lat,lng:+r.lon,barrio:r.address?.suburb||r.address?.neighbourhood||pubDetectBarrio(r.display_name)||''};
+      });
+    }catch(e){}
+  },500);
+}
+
+function pubSelectMobile(i){
+  const s=window._pubMobileSugs?.[i];if(!s)return;
+  _pubData.d=s.label;_pubData.b=s.barrio;
+  _pubData._lat=s.lat;_pubData._lng=s.lng;
+  document.getElementById('pub-dir-drop').style.display='none';
+  renderPubForm();
+}
+
+// Reutilizar pubDetectBarrio del desktop
+const BARRIO_KW={'palermo':['palermo'],'belgrano':['belgrano'],'recoleta':['recoleta'],'villa crespo':['villa crespo'],'caballito':['caballito','rivadavia'],'san isidro':['san isidro'],'vicente lópez':['vicente lopez','vicente lópez'],'quilmes':['quilmes'],'flores':['flores'],'almagro':['almagro'],'barracas':['barracas'],'la boca':['la boca'],'san telmo':['san telmo'],'retiro':['retiro'],'tigre':['tigre']};
+function pubDetectBarrio(dir){
+  const norm=dir.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  for(const[barrio,keys]of Object.entries(BARRIO_KW)){
+    if(keys.some(k=>norm.includes(k)))return barrio.split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
+  }
+  return '';
+}
+
+async function pubSubmitMobile(){
+  const err=document.getElementById('pub-err');
+  const setErr=m=>{if(err)err.innerHTML=`<div class="aerr">${m}</div>`;toast('⚠️ '+m)};
+  if(!_pubData.n.trim())return setErr('El nombre es obligatorio.');
+  if(!_pubData.d.trim())return setErr('La dirección es obligatoria.');
+  if(!_pubData.te)return setErr('Seleccioná el tipo de espacio.');
+  if(!_pubData.pd&&!_pubData.pm)return setErr('Ingresá al menos un precio.');
+  if(!CU){openAuth();toast('Registrate primero para publicar');return;}
+  const j=()=>(Math.random()-.5)*.013;
+  const COORDS={'Palermo':[-34.5885,-58.4278],'Belgrano':[-34.5571,-58.4534],'Recoleta':[-34.5883,-58.3964],'Villa Crespo':[-34.6018,-58.4428],'Caballito':[-34.6183,-58.4367],'San Isidro':[-34.4734,-58.5273],'Vicente López':[-34.5159,-58.4788],'Quilmes':[-34.7219,-58.2557]};
+  const[la,lo]=_pubData._lat?[_pubData._lat,_pubData._lng]:(COORDS[_pubData.b]||[-34.60,-58.40]);
+  const espData={n:_pubData.n,d:_pubData.d,b:_pubData.b,m2:_pubData.m2?+_pubData.m2:null,t:_pubData.t,te:_pubData.te,pd:+_pubData.pd,pm:_pubData.pm?+_pubData.pm:null,desc:_pubData.desc,of:CU.nombre,of_email:CU.email,of_tel:CU.tel||'',of_wa:CU.wa||'',lat:la+j(),lng:lo+j(),ok:true,imgs:[],pi:0};
+  const r=await GuardaloAPI.createEspacio(espData);
+  if(!r.ok)return setErr('Error: '+r.error);
+  ESP.unshift(r.data);
+  renderSheetCards();renderResults();drawMapPins();
+  _pubData={t:'exclusivo',te:'',n:'',d:'',b:'',m2:'',pd:'',pm:'',desc:''};
+  renderPubForm();
+  navTo('map');
+  toast('🎉 ¡Espacio publicado con éxito!');
+  if(CU)setTimeout(()=>enviarMailTyCOferente(CU.nombre,CU.email),800);
+}
+
+// ── PERFIL ────────────────────────────────────────────
+function renderProfile(){
+  const hero=document.getElementById('profile-hero');
+  const secs=document.getElementById('profile-sections');
+  if(!hero||!secs)return;
+  if(!CU){
+    hero.innerHTML=`
+      <div style="flex:1;text-align:center;padding:.5rem 0">
+        <div style="font-size:2rem;margin-bottom:.4rem">👤</div>
+        <div style="font-size:1rem;font-weight:800;color:var(--txt);margin-bottom:.3rem">Tu perfil</div>
+        <div style="font-size:.82rem;color:var(--t2);margin-bottom:1rem">Iniciá sesión para ver tus reservas y espacios</div>
+        <button onclick="openAuth()" style="background:linear-gradient(135deg,var(--or),var(--or-d));border:none;color:#fff;padding:.65rem 1.5rem;border-radius:var(--r2);font-family:'Sora';font-weight:700;font-size:.88rem">Iniciar sesión</button>
+      </div>`;
+    secs.innerHTML='';return;
+  }
+  const av=CU.nombre.charAt(0).toUpperCase();
+  hero.innerHTML=`
+    <div class="profile-avatar-big">${av}</div>
+    <div class="profile-info">
+      <div class="profile-name">${CU.nombre}</div>
+      <div class="profile-email">${CU.email}</div>
+      <div class="profile-badge">✅ Cuenta verificada</div>
+    </div>`;
+  const misEsp=ESP.filter(e=>e.of_email===CU.email);
+  secs.innerHTML=`
+    ${CU.tipo==='oferente'?`
+    <div class="profile-section">
+      <div class="profile-section-header">Mis espacios (${misEsp.length})</div>
+      ${misEsp.length?misEsp.map(e=>`
+        <div class="profile-item" onclick="openDetail('${e.id}')">
+          <div class="profile-item-icon">${getIcon(e)}</div>
+          <div class="profile-item-text">
+            <div class="profile-item-name">${e.n}</div>
+            <div class="profile-item-sub">📍 ${e.b} · ${fcur(e.pd)}/día · ${e.ok?'✅ Activo':'❌ Pausado'}</div>
+          </div>
+          <span class="profile-item-arrow">›</span>
+        </div>`).join(''):
+        '<div style="padding:1rem;font-size:.82rem;color:var(--t3);text-align:center">No tenés espacios publicados aún</div>'}
+    </div>`:''}
+    <div class="profile-section">
+      <div class="profile-section-header">Cuenta</div>
+      <div class="profile-item">
+        <div class="profile-item-icon">👤</div>
+        <div class="profile-item-text">
+          <div class="profile-item-name">${CU.nombre}</div>
+          <div class="profile-item-sub">Nombre de perfil</div>
+        </div>
+      </div>
+      <div class="profile-item">
+        <div class="profile-item-icon">✉️</div>
+        <div class="profile-item-text">
+          <div class="profile-item-name">${CU.email}</div>
+          <div class="profile-item-sub">Email de contacto</div>
+        </div>
+      </div>
+      <div class="profile-item">
+        <div class="profile-item-icon">📱</div>
+        <div class="profile-item-text">
+          <div class="profile-item-name">${CU.tel||'Sin teléfono'}</div>
+          <div class="profile-item-sub">Teléfono</div>
+        </div>
+      </div>
+    </div>
+    <div class="profile-section">
+      <div class="profile-section-header">Soporte</div>
+      <div class="profile-item" onclick="window.open('mailto:soporte@todasmiscosas.com')">
+        <div class="profile-item-icon">💬</div>
+        <div class="profile-item-text">
+          <div class="profile-item-name">Centro de ayuda</div>
+          <div class="profile-item-sub">soporte@todasmiscosas.com</div>
+        </div>
+        <span class="profile-item-arrow">›</span>
+      </div>
+      <div class="profile-item" onclick="toast('Términos disponibles en todasmiscosas.com')">
+        <div class="profile-item-icon">⚖️</div>
+        <div class="profile-item-text">
+          <div class="profile-item-name">Términos y Condiciones</div>
+          <div class="profile-item-sub">Legal · Privacidad</div>
+        </div>
+        <span class="profile-item-arrow">›</span>
+      </div>
+    </div>
+    <button class="profile-logout" onclick="logout()">↩ Cerrar sesión</button>
+  `;
+}
+
+// ── MAIL HELPERS (reutilizados del desktop) ───────────
+function enviarMailBienvenida(nombre,email){
+  const asunto=encodeURIComponent('¡Bienvenido/a a TodasMisCosas.com!');
+  const cuerpo=encodeURIComponent('Hola '+nombre+',\n\n¡Tu cuenta fue creada exitosamente!\n\nYa podés buscar y reservar espacios en el AMBA.\n\nEl equipo de TodasMisCosas.com');
+  window.open('mailto:'+email+'?subject='+asunto+'&body='+cuerpo,'_blank');
+}
+function enviarMailTyCDemandante(nombre,email,espacio,opId){
+  const asunto=encodeURIComponent('Confirmación reserva '+opId+' — TodasMisCosas.com');
+  const cuerpo=encodeURIComponent('Hola '+nombre+',\n\n¡Tu reserva de "'+espacio+'" fue confirmada!\nOperación: '+opId+'\n\nCondiciones del Demandante: todasmiscosas.com/legal\n\nEl equipo de TodasMisCosas.com');
+  window.open('mailto:'+email+'?subject='+asunto+'&body='+cuerpo,'_blank');
+}
+function enviarMailTyCOferente(nombre,email){
+  const asunto=encodeURIComponent('Publicación confirmada — TodasMisCosas.com');
+  const cuerpo=encodeURIComponent('Hola '+nombre+',\n\n¡Tu espacio fue publicado exitosamente!\n\nCondiciones del Oferente: todasmiscosas.com/legal\n\nEl equipo de TodasMisCosas.com');
+  window.open('mailto:'+email+'?subject='+asunto+'&body='+cuerpo,'_blank');
+}
+function enviarSolicitudServicios(opId,espacio,emailCliente){
+  const asunto=encodeURIComponent('[SOLICITUD] Servicios adicionales — Reserva '+opId);
+  const cuerpo=encodeURIComponent('Reserva: '+opId+'\nEspacio: '+espacio+'\nCliente: '+emailCliente+'\n\nPor favor contactar para coordinar los servicios.');
+  window.open('mailto:contacto@todasmiscosas.com?subject='+asunto+'&body='+cuerpo,'_blank');
+}
+</script>
+
+<!-- Google Maps (al final del body) -->
+<script>
+function initGoogleMaps(){
+  window._googleMapsReady=true;
+  if(typeof initGoogleMapReal==='function')initGoogleMapReal();
+}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDi7zgB5VB3zzWWzf4i2z7ruXWTbZEmTZ4&libraries=places,geocoding&callback=initGoogleMaps&language=es&region=AR" async defer></script>
+
+</body>
+</html>
