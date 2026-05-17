@@ -182,7 +182,7 @@ export default function HomePage() {
           <LoginForm
             onLogin={async (email, password) => {
               const ok = await login(email, password);
-              if (ok) setAuthModal(false);
+              if (ok) { setAuthModal(false); router.push('/panel'); }
               return ok;
             }}
             onSwitch={() => setAuthTab('register')}
