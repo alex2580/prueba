@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import type { Espacio } from '@/types';
 
@@ -17,10 +17,12 @@ const MAP_ID = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || '';
 const DEFAULT_CENTER = { lat: -34.6037, lng: -58.3816 };
 
 export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: MapaEspaciosProps) {
-  const mapRef  = useRef<HTMLDivElement>(null);
-  const mapObj  = useRef<google.maps.Map | null>(null);
-  const markers = useRef<Map<string, google.maps.marker.AdvancedMarkerElement>>(new Map());
-  const heatmap = useRef<google.maps.visualization.HeatmapLayer | null>(null);
+  const mapRef        = useRef<HTMLDivElement>(null);
+  const mapObj        = useRef<google.maps.Map | null>(null);
+  const markers       = useRef<Map<string, google.maps.Marker>>(new Map());
+  const markerIcons   = useRef<Map<string, google.maps.Icon>>(new Map());
+  const markerLabels  = useRef<Map<string, string>>(new Map());
+  const heatmap       = useRef<google.maps.visualization.HeatmapLayer | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,7 +33,7 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
     const loader = new Loader({
       apiKey: MAP_ID,
       version: 'weekly',
-      libraries: ['marker', 'visualization'],
+      libraries: ['visualization'],
     });
 
     loader.load().then(async (google) => {
@@ -42,7 +44,6 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
       mapObj.current = new Map(mapRef.current, {
         center: center || DEFAULT_CENTER,
         zoom: 12,
-        mapId: 'todasmiscosas_dark',
         disableDefaultUI: false,
         streetViewControl: false,
         mapTypeControl: false,
@@ -71,54 +72,48 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
     const existingIds = new Set(markers.current.keys());
 
     // Add new markers
-    espacios.forEach(async (espacio) => {
+    espacios.forEach((espacio) => {
       if (markers.current.has(espacio.id)) {
         existingIds.delete(espacio.id);
         return;
       }
 
-      const { AdvancedMarkerElement } = await google.maps.importLibrary('marker') as google.maps.MarkerLibrary;
+      const iconColor = espacio.disponible ? '#e8622a' : '#5a6d8a';
+      const iconLabel = `$${Math.round(Number(espacio.precio_mes) / 1000)}k`;
+      const defaultIcon: google.maps.Icon = {
+        url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
+          <svg xmlns="http://www.w3.org/2000/svg" width="60" height="28">
+            <rect width="60" height="28" rx="14" fill="${iconColor}"/>
+            <text x="30" y="18" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="white">${iconLabel}</text>
+          </svg>
+        `)}`,
+        scaledSize: new google.maps.Size(60, 28),
+        anchor: new google.maps.Point(30, 14),
+      };
 
-      const pin = document.createElement('div');
-      pin.style.cssText = `
-        background: ${espacio.disponible ? '#e8622a' : '#5a6d8a'};
-        color: white;
-        border: 2px solid ${espacio.disponible ? 'rgba(232,98,42,.4)' : 'rgba(90,109,138,.4)'};
-        border-radius: 99px;
-        padding: 4px 9px;
-        font-family: Sora, sans-serif;
-        font-size: 11px;
-        font-weight: 700;
-        white-space: nowrap;
-        box-shadow: 0 3px 12px rgba(0,0,0,.5);
-        cursor: pointer;
-        transition: transform .15s;
-      `;
-      pin.textContent = `$${Math.round(espacio.precio_mes / 1000)}k`;
-      pin.addEventListener('mouseenter', () => { pin.style.transform = 'scale(1.12)'; });
-      pin.addEventListener('mouseleave', () => { pin.style.transform = ''; });
-
-      const marker = new AdvancedMarkerElement({
+      const marker = new google.maps.Marker({
         map,
-        position: { lat: espacio.lat, lng: espacio.lng },
-        content: pin,
+        position: { lat: parseFloat(String(espacio.lat)), lng: parseFloat(String(espacio.lng)) },
         title: espacio.nombre,
+        icon: defaultIcon,
       });
 
       marker.addListener('click', () => onMarkerClick?.(espacio));
       markers.current.set(espacio.id, marker);
+      markerIcons.current.set(espacio.id, defaultIcon);
+      markerLabels.current.set(espacio.id, iconLabel);
       existingIds.delete(espacio.id);
     });
 
     // Remove stale markers
     existingIds.forEach(id => {
       const m = markers.current.get(id);
-      if (m) { m.map = null; markers.current.delete(id); }
+      if (m) { m.setMap(null); markers.current.delete(id); markerIcons.current.delete(id); markerLabels.current.delete(id); }
     });
 
     // Heatmap of espacio locations
     const points = espacios.map(e => ({
-      location: new google.maps.LatLng(e.lat, e.lng),
+      location: new google.maps.LatLng(parseFloat(String(e.lat)), parseFloat(String(e.lng))),
       weight: e.reservas_mes + 1,
     }));
 
@@ -141,18 +136,26 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
   // Highlight selected marker
   useEffect(() => {
     markers.current.forEach((marker, id) => {
-      const pin = marker.content as HTMLElement;
-      if (!pin) return;
       if (id === selectedId) {
-        pin.style.background = 'var(--blue)';
-        pin.style.transform = 'scale(1.18)';
-        pin.style.zIndex = '10';
-        marker.zIndex = 10;
+        const label = markerLabels.current.get(id) ?? '';
+        marker.setIcon({
+          url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" width="66" height="30">
+              <rect width="66" height="30" rx="15" fill="#82c4ff"/>
+              <text x="33" y="19" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="white">${label}</text>
+            </svg>
+          `)}`,
+          scaledSize: new google.maps.Size(66, 30),
+          anchor: new google.maps.Point(33, 15),
+        });
+        marker.setZIndex(10);
       } else {
-        pin.style.background = '#e8622a';
-        pin.style.transform = '';
-        pin.style.zIndex = '';
-        marker.zIndex = undefined as unknown as number;
+        // Restore original icon
+        const originalIcon = markerIcons.current.get(id);
+        if (originalIcon) {
+          marker.setIcon(originalIcon);
+          marker.setZIndex(undefined as unknown as number);
+        }
       }
     });
   }, [selectedId]);

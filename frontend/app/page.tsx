@@ -55,30 +55,6 @@ export default function HomePage() {
           <span>Todas<span style={{ color: 'var(--orange)' }}>Mis</span>Cosas <span style={{ fontSize: '.6rem', color: 'var(--orange)', verticalAlign: 'super' }}>v2.0</span></span>
         </div>
 
-        {/* Search */}
-        <div style={{
-          background: 'var(--surface2)',
-          border: '1.5px solid var(--border)',
-          borderRadius: '999px',
-          display: 'flex', alignItems: 'center',
-          padding: '.1rem 1rem', gap: '.5rem',
-          maxWidth: 400, width: '100%', margin: '0 auto',
-          transition: 'border-color .15s, box-shadow .15s',
-        }}>
-          <span style={{ color: 'var(--text3)', fontSize: '1rem' }}>🔍</span>
-          <input
-            type="text"
-            value={busqueda}
-            onChange={e => handleBusqueda(e.target.value)}
-            placeholder="Buscar por barrio, tipo, descripción…"
-            style={{
-              flex: 1, background: 'none', border: 'none',
-              color: 'var(--text)', fontSize: '.88rem',
-              padding: '.6rem 0', width: '100%',
-            }}
-          />
-        </div>
-
         {/* Actions */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
           {/* Vista toggle */}
@@ -129,6 +105,37 @@ export default function HomePage() {
         {/* Mapa */}
         {vista === 'mapa' && (
           <div style={{ height: '100%', position: 'relative' }}>
+            {/* Floating search bar */}
+            <div style={{
+              position: 'absolute',
+              top: '1rem',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 100,
+              background: 'rgba(15, 20, 35, 0.85)',
+              backdropFilter: 'blur(10px)',
+              border: '1.5px solid var(--border)',
+              borderRadius: '999px',
+              display: 'flex', alignItems: 'center',
+              padding: '.1rem 1rem', gap: '.5rem',
+              width: 'min(480px, calc(100vw - 2rem))',
+              boxShadow: '0 4px 24px rgba(0,0,0,.5)',
+              transition: 'border-color .15s, box-shadow .15s',
+            }}>
+              <span style={{ color: 'var(--text3)', fontSize: '1rem' }}>🔍</span>
+              <input
+                type="text"
+                value={busqueda}
+                onChange={e => handleBusqueda(e.target.value)}
+                placeholder="Buscar por barrio, tipo, descripción…"
+                style={{
+                  flex: 1, background: 'none', border: 'none',
+                  color: 'var(--text)', fontSize: '.88rem',
+                  padding: '.6rem 0', width: '100%',
+                  outline: 'none',
+                }}
+              />
+            </div>
             <MapaEspacios
               espacios={espacios}
               onMarkerClick={handleMarkerClick}
