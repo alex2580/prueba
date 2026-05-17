@@ -52,7 +52,7 @@ export default function HomePage() {
       <header className="site-header">
         <div className="logo" onClick={() => router.push('/')}>
           <span style={{ fontSize: '1.4rem' }}>📦</span>
-          <span>Todas<span style={{ color: 'var(--orange)' }}>Mis</span>Cosas</span>
+          <span>Todas<span style={{ color: 'var(--orange)' }}>Mis</span>Cosas <span style={{ fontSize: '.6rem', color: 'var(--orange)', verticalAlign: 'super' }}>v2.0</span></span>
         </div>
 
         {/* Search */}
