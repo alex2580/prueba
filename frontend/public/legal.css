@@ -1,0 +1,341 @@
+/* ═══════════════════════════════════════════════════════
+   TODASMISCOSAS.COM — legal.css
+   Estilos de la página legal — extraídos del v56
+   Importar en cualquier página con: <link rel="stylesheet" href="legal.css">
+════════════════════════════════════════════════════════ */
+
+/* ── Tokens heredados del sistema TMC ─────────────────── */
+:root {
+  --bg:      #0f0f1a;
+  --surface: #1a1a2e;
+  --surface2:#22223b;
+  --border:  rgba(255,255,255,.09);
+  --text:    #f0f0f5;
+  --text2:   #aaaacc;
+  --gray:    #8888aa;
+  --orange:  #e8622a;
+  --blue:    #82c4ff;
+  --green:   #3dd68c;
+  --yellow:  #f5c842;
+  --red:     #e85252;
+}
+
+/* ── Contenedor principal ─────────────────────────────── */
+#page-legal {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Sora', system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+.pscroll {
+  overflow-y: auto;
+}
+
+/* ── Hero ─────────────────────────────────────────────── */
+.ihero {
+  background: #ffffff;
+  border-bottom: 1px solid #E2E8F0;
+  padding: 3rem 1.5rem 2rem;
+}
+
+.ihero-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.ihero-icon {
+  font-size: 2.6rem;
+  margin-bottom: .75rem;
+}
+
+.ihero h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin-bottom: .5rem;
+  font-family: 'Sora', sans-serif;
+}
+
+.ihero h1 span {
+  color: var(--orange);
+}
+
+.ihero p {
+  font-size: .9rem;
+  color: #555577;
+  line-height: 1.75;
+  margin-bottom: .5rem;
+}
+
+/* ── Nav de secciones ─────────────────────────────────── */
+.sec-nav {
+  display: flex;
+  justify-content: center;
+  gap: .75rem;
+  flex-wrap: wrap;
+  margin-top: 1.25rem;
+}
+
+.sec-pill {
+  border-radius: 99px;
+  padding: .35rem .9rem;
+  font-size: .75rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid;
+  cursor: pointer;
+}
+
+.pill-yellow { background: rgba(245,200,66,.15); border-color: rgba(245,200,66,.3); color: #f5c842; }
+.pill-blue   { background: rgba(130,196,255,.12); border-color: rgba(130,196,255,.25); color: #82c4ff; }
+.pill-green  { background: rgba(61,214,140,.12); border-color: rgba(61,214,140,.25); color: #3dd68c; }
+.pill-orange { background: rgba(232,98,42,.12); border-color: rgba(232,98,42,.25); color: #e8622a; }
+
+/* ── Sección interior ─────────────────────────────────── */
+.isec {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.legal-section {
+  scroll-margin-top: 70px;
+  margin-bottom: 2.5rem;
+}
+
+/* ── Encabezado de sección ────────────────────────────── */
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin-bottom: 1.1rem;
+}
+
+.section-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  border: 1px solid;
+}
+
+.icon-yellow { background: rgba(245,200,66,.15); border-color: rgba(245,200,66,.3); }
+.icon-blue   { background: rgba(130,196,255,.12); border-color: rgba(130,196,255,.25); }
+.icon-green  { background: rgba(61,214,140,.12); border-color: rgba(61,214,140,.25); }
+.icon-orange { background: rgba(232,98,42,.12); border-color: rgba(232,98,42,.25); }
+
+.section-title {
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 1.3rem;
+  color: var(--text);
+}
+
+.section-sub {
+  font-size: .8rem;
+  color: var(--gray);
+}
+
+/* ── Grilla etiqueta ──────────────────────────────────── */
+.grid-label {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: .85rem;
+  color: var(--text);
+  margin-bottom: .75rem;
+}
+
+/* ── Alert boxes ──────────────────────────────────────── */
+.alert-box {
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  font-size: .85rem;
+  line-height: 1.85;
+  border: 1px solid;
+}
+
+.alert-box p { margin-top: .5rem; }
+.alert-box a { text-decoration: underline; cursor: pointer; }
+
+.alert-title {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: .88rem;
+  margin-bottom: .6rem;
+}
+
+.alert-yellow { background: rgba(245,200,66,.08); border-color: rgba(245,200,66,.2); color: var(--text2); }
+.alert-yellow .alert-title { color: var(--yellow); }
+
+.alert-red    { background: rgba(232,82,82,.07); border-color: rgba(232,82,82,.2); color: var(--text2); }
+.alert-red .alert-title { color: var(--red); }
+
+.alert-blue   { background: rgba(130,196,255,.07); border-color: rgba(130,196,255,.2); color: var(--text2); }
+.alert-blue strong { color: var(--blue); }
+.alert-blue a { color: var(--blue); }
+
+.alert-green  { background: rgba(61,214,140,.06); border-color: rgba(61,214,140,.18); color: var(--text2); }
+.alert-green .alert-title { color: var(--green); }
+.alert-green strong { color: var(--text); }
+
+.legal-ref {
+  font-size: .74rem;
+  color: #8a9bb0;
+  margin-top: .5rem;
+}
+
+/* ── Grid de prohibiciones ────────────────────────────── */
+.proh-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .55rem;
+  margin-bottom: 1.25rem;
+}
+
+.proh-item {
+  background: rgba(245,200,66,.05);
+  border: 1px solid rgba(245,200,66,.15);
+  border-radius: 11px;
+  padding: .8rem;
+  display: flex;
+  gap: .65rem;
+  align-items: flex-start;
+}
+
+.proh-item.proh-orange {
+  background: rgba(232,98,42,.06);
+  border-color: rgba(232,98,42,.15);
+}
+
+.proh-icon { font-size: 1.2rem; flex-shrink: 0; }
+.proh-name { font-size: .8rem; font-weight: 700; color: var(--text); margin-bottom: .18rem; }
+.proh-desc { font-size: .72rem; color: var(--gray); line-height: 1.5; }
+
+/* ── Lista de obligaciones ────────────────────────────── */
+.obl-list {
+  display: grid;
+  gap: .75rem;
+  margin-bottom: 1.25rem;
+}
+
+.obl-item {
+  background: var(--surface);
+  border: 1px solid rgba(130,196,255,.15);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  display: flex;
+  gap: .85rem;
+  align-items: flex-start;
+}
+
+.obl-item.obl-orange { border-color: rgba(232,98,42,.15); }
+
+.obl-icon  { font-size: 1.3rem; flex-shrink: 0; margin-top: .1rem; }
+.obl-title { font-family: 'Sora', sans-serif; font-weight: 700; font-size: .88rem; color: var(--text); margin-bottom: .35rem; }
+.obl-body  { font-size: .8rem; color: var(--text2); line-height: 1.75; }
+
+/* ── Seguros ──────────────────────────────────────────── */
+.seg-list { display: grid; gap: .65rem; margin-bottom: 1.5rem; }
+
+.seg-item {
+  background: var(--surface);
+  border: 1px solid rgba(61,214,140,.15);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  position: relative;
+}
+
+.seg-item.seg-featured { border-color: rgba(61,214,140,.35); }
+
+.seg-badge-top {
+  position: absolute;
+  top: -10px;
+  right: 12px;
+  background: var(--green);
+  color: #f1f5f9;
+  font-size: .62rem;
+  font-weight: 800;
+  padding: 2px 10px;
+  border-radius: 99px;
+  letter-spacing: .04em;
+}
+
+.seg-head {
+  display: flex;
+  gap: .85rem;
+  align-items: flex-start;
+  margin-bottom: .5rem;
+}
+
+.seg-icon  { font-size: 1.4rem; flex-shrink: 0; }
+.seg-info  { flex: 1; }
+.seg-name  { font-family: 'Sora', sans-serif; font-weight: 700; font-size: .9rem; color: var(--text); }
+.seg-sub   { font-size: .72rem; color: var(--gray); }
+
+.seg-price  { text-align: right; flex-shrink: 0; }
+.seg-amount { font-size: .88rem; font-weight: 700; color: var(--green); }
+.seg-badge  { font-size: .62rem; background: rgba(61,214,140,.12); color: var(--green); padding: 1px 7px; border-radius: 99px; white-space: nowrap; }
+
+.seg-detail { font-size: .78rem; color: var(--text2); line-height: 1.65; }
+.seg-detail strong { color: #e8e4dc; }
+
+/* ── Modelo de reglamento ─────────────────────────────── */
+.modelo-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  font-size: .8rem;
+  color: var(--gray);
+  line-height: 1.9;
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.modelo-box p { margin-top: .65rem; }
+.modelo-box strong { color: var(--text); }
+
+.modelo-badge {
+  position: absolute;
+  top: .6rem;
+  right: .75rem;
+  font-size: .65rem;
+  background: rgba(232,98,42,.15);
+  color: var(--orange);
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-weight: 700;
+}
+
+.modelo-title {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: .9rem;
+  color: var(--text);
+  margin-bottom: .75rem;
+  text-align: center;
+}
+
+.modelo-disclaimer {
+  margin-top: 1rem;
+  padding-top: .75rem;
+  border-top: 1px solid rgba(255,255,255,.08);
+  font-size: .72rem;
+  color: #8a9bb0;
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 600px) {
+  .proh-grid { grid-template-columns: 1fr; }
+  .seg-head  { flex-wrap: wrap; }
+  .seg-price { text-align: left; }
+  .ihero h1  { font-size: 1.5rem; }
+  .isec      { padding: 1.5rem 1rem; }
+}

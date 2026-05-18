@@ -72,6 +72,10 @@ export default function HomePage() {
             ))}
           </div>
 
+          <a href="/legal.html" target="_blank" rel="noopener noreferrer" className="nav-btn" style={{ fontSize: '.75rem', opacity: .7 }}>
+            ⚖️ Legal
+          </a>
+
           {user ? (
             <>
               <button className="nav-btn" onClick={() => router.push('/panel')}>Panel</button>
