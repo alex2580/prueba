@@ -35,7 +35,7 @@ export default function ReservaPage() {
       <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)', color: 'var(--text2)', gap: '1rem' }}>
         <span style={{ fontSize: '3rem' }}>😕</span>
         <p>{error || 'Reserva no encontrada'}</p>
-        <Button variant="secondary" onClick={() => router.push('/panel')}>Ver mis reservas</Button>
+        <Button variant="secondary" onClick={() => router.push('/panel')}>Ir a Mi Panel</Button>
       </div>
     );
   }
@@ -48,7 +48,7 @@ export default function ReservaPage() {
           <span>Todas<span style={{ color: 'var(--orange)' }}>Mis</span>Cosas</span>
         </div>
         <div />
-        <button className="nav-btn" onClick={() => router.push('/panel')}>← Mi panel</button>
+        <button className="nav-btn" onClick={() => router.push('/panel')}>← Mi Panel</button>
       </header>
 
       <div className="page-scroll">

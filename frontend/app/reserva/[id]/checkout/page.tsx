@@ -49,7 +49,7 @@ export default function CheckoutPage() {
     return (
       <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)', color: 'var(--text2)', gap: '1rem' }}>
         <p>{error}</p>
-        <button className="btn-secondary" onClick={() => router.push('/panel')}>Ver mis reservas</button>
+        <button className="btn-secondary" onClick={() => router.push('/panel')}>Ir a Mi Panel</button>
       </div>
     );
   }

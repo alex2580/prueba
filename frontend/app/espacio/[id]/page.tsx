@@ -24,9 +24,14 @@ export default function EspacioPage() {
   const [authTab, setAuthTab]             = useState<'login' | 'register'>('login');
   const [reservaError, setReservaError]   = useState<string | null>(null);
   const [reservaLoading, setReservaLoading] = useState(false);
+  const [intentoReservar, setIntentoReservar] = useState(false);
 
   function handleReservar() {
-    if (!user) { setAuthModal(true); return; }
+    if (!user) {
+      setIntentoReservar(true);
+      setAuthModal(true);
+      return;
+    }
     setReservarModal(true);
   }
 
@@ -79,7 +84,7 @@ export default function EspacioPage() {
         <div />
         <div style={{ display: 'flex', gap: '.5rem' }}>
           {user ? (
-            <button className="nav-btn" onClick={() => router.push('/panel')}>Mi panel</button>
+            <button className="nav-btn" onClick={() => router.push('/panel')}>Mi Panel</button>
           ) : (
             <button className="nav-btn" onClick={() => setAuthModal(true)}>Iniciar sesión</button>
           )}
@@ -126,7 +131,10 @@ export default function EspacioPage() {
           <LoginForm
             onLogin={async (email, password) => {
               const ok = await login(email, password);
-              if (ok) setAuthModal(false);
+              if (ok) {
+                setAuthModal(false);
+                if (intentoReservar) { setIntentoReservar(false); setReservarModal(true); }
+              }
               return ok;
             }}
             onSwitch={() => setAuthTab('register')}
@@ -137,7 +145,10 @@ export default function EspacioPage() {
           <RegisterForm
             onRegister={async (nombre, email, password, tipo, tel) => {
               const ok = await register(nombre, email, password, tipo, tel);
-              if (ok) setAuthModal(false);
+              if (ok) {
+                setAuthModal(false);
+                if (intentoReservar) { setIntentoReservar(false); setReservarModal(true); }
+              }
               return ok;
             }}
             onSwitch={() => setAuthTab('login')}

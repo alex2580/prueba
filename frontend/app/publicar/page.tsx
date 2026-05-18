@@ -90,7 +90,7 @@ export default function PublicarPage() {
           <span>Todas<span style={{ color: 'var(--orange)' }}>Mis</span>Cosas</span>
         </div>
         <div />
-        <button className="nav-btn" onClick={() => router.push('/panel')}>← Mi panel</button>
+        <button className="nav-btn" onClick={() => router.push('/panel')}>← Mi Panel</button>
       </header>
 
       <div className="page-scroll">
@@ -222,6 +222,14 @@ export default function PublicarPage() {
                 📦 Publicar espacio
               </Button>
             </div>
+
+            <p style={{ fontSize: '.75rem', color: 'var(--text3)', textAlign: 'center', marginTop: '.25rem' }}>
+              Al publicar aceptás los{' '}
+              <a href="/legal.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--orange)', textDecoration: 'underline' }}>
+                Términos y Condiciones
+              </a>
+              {' '}de TodasMisCosas.com
+            </p>
           </form>
         </div>
       </div>

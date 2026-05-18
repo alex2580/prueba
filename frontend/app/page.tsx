@@ -78,7 +78,7 @@ export default function HomePage() {
 
           {user ? (
             <>
-              <button className="nav-btn" onClick={() => router.push('/panel')}>Panel</button>
+              <button className="nav-btn" onClick={() => router.push('/panel')}>Mi Panel</button>
               <button className="nav-btn" onClick={logout}>Salir</button>
               {user.tipo === 'oferente' && (
                 <button className="btn-publish" onClick={() => router.push('/publicar')}>

@@ -10,7 +10,7 @@ export function formatFecha(dateStr: string, fmt = "d 'de' MMMM 'de' yyyy"): str
 }
 
 export function formatFechaCorta(dateStr: string): string {
-  return formatFecha(dateStr, 'dd/MM/yyyy');
+  return formatFecha(dateStr, 'dd-MM-yyyy');
 }
 
 export function diasEntre(desde: string, hasta: string): number {

@@ -25,11 +25,11 @@ export function StatsOferente({ espacios, reservas }: StatsOferenteProps) {
   const totalReviews = espacios.reduce((acc, e) => acc + e.reviews_count, 0);
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1rem' }}>
-      <StatCard emoji="💰" label="Este mes" value={formatARS(ingresosMes)} color="var(--mint)" />
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
+      <StatCard emoji="💰" label="Ingresos del mes" value={formatARS(ingresosMes)} color="var(--mint)" />
       <StatCard emoji="🏦" label="Ingresos totales" value={formatARS(ingresosTotal)} color="var(--orange)" />
       <StatCard emoji="🏠" label="Espacios activos" value={String(espacios.filter(e => e.disponible).length)} />
-      <StatCard emoji="📅" label="Reservas totales" value={String(reservas.length)} />
+      <StatCard emoji="📅" label="Reservas recibidas" value={String(reservas.length)} />
       <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '1rem' }}>
         <div style={{ fontSize: '1.5rem', marginBottom: '.3rem' }}>⭐</div>
         <div style={{ marginBottom: '.15rem' }}>
