@@ -15,6 +15,7 @@ const reviewsRouter   = require('./routes/reviews');
 const pagosRouter     = require('./routes/pagos');
 const chatRouter      = require('./routes/chat');
 const emailRouter     = require('./routes/email');
+const adminRouter     = require('./routes/admin');
 
 const app = express();
 
@@ -56,6 +57,7 @@ app.use('/api/reviews',   reviewsRouter);
 app.use('/api/pagos',     pagosRouter);
 app.use('/api/chat',      chatRouter);
 app.use('/api/email',     emailRouter);
+app.use('/api/admin',     adminRouter);
 
 // ── 404 ────────────────────────────────────────────────────────
 app.use((req, res) => {

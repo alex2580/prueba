@@ -12,6 +12,7 @@ import { Modal } from '@/components/ui/Modal';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { SiteLogo } from '@/components/ui/SiteLogo';
+import { Button } from '@/components/ui/Button';
 
 // Dynamic import to avoid SSR issues with Google Maps
 const MapaEspacios = dynamic(() => import('@/components/mapa/MapaEspacios').then(m => ({ default: m.MapaEspacios })), { ssr: false });
@@ -21,7 +22,7 @@ type Vista = 'mapa' | 'lista';
 
 export default function HomePage() {
   const router = useRouter();
-  const { user, token, loading: authLoading, login, register, logout, error: authError } = useAuth();
+  const { user, token, loading: authLoading, login, register, logout, error: authError, isAdmin } = useAuth();
   const { espacios, loading, filtros, aplicarFiltros, limpiarFiltros } = useEspacios();
 
   const [vista, setVista] = useState<Vista>('mapa');
@@ -29,6 +30,35 @@ export default function HomePage() {
   const [authModal, setAuthModal] = useState(false);
   const [authTab, setAuthTab] = useState<'login' | 'register'>('login');
   const [busqueda, setBusqueda] = useState('');
+
+  // Contacto modal state
+  const [contactoOpen, setContactoOpen] = useState(false);
+  const [contactoForm, setContactoForm] = useState({
+    nombre: '', email: '', asunto: '', tipo: 'consulta', mensaje: '',
+  });
+  const [contactoSending, setContactoSending] = useState(false);
+  const [contactoSuccess, setContactoSuccess] = useState(false);
+  const [contactoError, setContactoError] = useState('');
+
+  async function enviarContacto() {
+    if (!contactoForm.nombre || !contactoForm.email || !contactoForm.asunto || !contactoForm.mensaje) return;
+    setContactoSending(true);
+    setContactoError('');
+    try {
+      const res = await fetch('/api/admin/consultas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(contactoForm),
+      });
+      if (!res.ok) throw new Error('No se pudo enviar el mensaje');
+      setContactoSuccess(true);
+      setContactoForm({ nombre: '', email: '', asunto: '', tipo: 'consulta', mensaje: '' });
+    } catch (e: unknown) {
+      setContactoError(e instanceof Error ? e.message : 'Error al enviar');
+    } finally {
+      setContactoSending(false);
+    }
+  }
 
   function handleMarkerClick(espacio: Espacio) {
     setSelectedEspacio(espacio);
@@ -76,6 +106,11 @@ export default function HomePage() {
 
           {user ? (
             <>
+              {isAdmin && (
+                <button className="nav-btn" style={{ color: 'var(--orange)', fontWeight: 700 }} onClick={() => router.push('/admin')}>
+                  ⚙️ Admin
+                </button>
+              )}
               <button className="nav-btn" onClick={() => router.push('/panel')}>Mi Panel</button>
               <button className="nav-btn" onClick={logout}>Salir</button>
               {user.tipo === 'oferente' && (
@@ -172,6 +207,112 @@ export default function HomePage() {
           </div>
         )}
       </div>
+
+      {/* Floating Contacto button */}
+      <button
+        onClick={() => { setContactoOpen(true); setContactoSuccess(false); setContactoError(''); }}
+        style={{
+          position: 'fixed', bottom: '1.5rem', right: '1.5rem',
+          background: 'var(--surface)', border: '1.5px solid var(--border2)',
+          borderRadius: 'var(--r4)', padding: '.6rem 1.1rem',
+          color: 'var(--text2)', fontSize: '.82rem', fontWeight: 600,
+          boxShadow: 'var(--s3)', zIndex: 200, cursor: 'pointer',
+          display: 'flex', alignItems: 'center', gap: '.4rem',
+          transition: 'border-color .15s, color .15s',
+        }}
+        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--orange)'; (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--orange)'; }}
+        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--text2)'; (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border2)'; }}
+      >
+        💬 Contacto
+      </button>
+
+      {/* Contacto modal */}
+      <Modal
+        open={contactoOpen}
+        onClose={() => setContactoOpen(false)}
+        title="💬 Contactanos"
+        subtitle="Consultás, quejas o sugerencias. Te respondemos a la brevedad."
+        maxWidth="520px"
+      >
+        {contactoSuccess ? (
+          <div style={{ textAlign: 'center', padding: '1.5rem 0' }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '.5rem' }}>✅</div>
+            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, marginBottom: '.4rem' }}>Mensaje enviado</div>
+            <p style={{ color: 'var(--text2)', fontSize: '.88rem' }}>Gracias por escribirnos. Te responderemos a la brevedad.</p>
+            <button className="btn-secondary" style={{ marginTop: '1.25rem' }} onClick={() => setContactoOpen(false)}>
+              Cerrar
+            </button>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gap: '1rem' }}>
+            {contactoError && <p className="alert alert--error">{contactoError}</p>}
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <label className="form-label">
+                Nombre *
+                <input
+                  value={contactoForm.nombre}
+                  onChange={e => setContactoForm(f => ({ ...f, nombre: e.target.value }))}
+                  placeholder="Tu nombre"
+                  style={{ marginTop: '.4rem' }}
+                />
+              </label>
+              <label className="form-label">
+                Email *
+                <input
+                  type="email"
+                  value={contactoForm.email}
+                  onChange={e => setContactoForm(f => ({ ...f, email: e.target.value }))}
+                  placeholder="tu@email.com"
+                  style={{ marginTop: '.4rem' }}
+                />
+              </label>
+            </div>
+
+            <label className="form-label">
+              Asunto *
+              <input
+                value={contactoForm.asunto}
+                onChange={e => setContactoForm(f => ({ ...f, asunto: e.target.value }))}
+                placeholder="¿En qué te podemos ayudar?"
+                style={{ marginTop: '.4rem' }}
+              />
+            </label>
+
+            <label className="form-label">
+              Tipo
+              <select
+                value={contactoForm.tipo}
+                onChange={e => setContactoForm(f => ({ ...f, tipo: e.target.value }))}
+                style={{ marginTop: '.4rem' }}
+              >
+                <option value="consulta">Consulta</option>
+                <option value="queja">Queja</option>
+                <option value="sugerencia">Sugerencia</option>
+              </select>
+            </label>
+
+            <label className="form-label">
+              Mensaje *
+              <textarea
+                rows={4}
+                value={contactoForm.mensaje}
+                onChange={e => setContactoForm(f => ({ ...f, mensaje: e.target.value }))}
+                placeholder="Escribí tu mensaje acá…"
+                style={{ marginTop: '.4rem' }}
+              />
+            </label>
+
+            <Button
+              onClick={enviarContacto}
+              loading={contactoSending}
+              disabled={!contactoForm.nombre || !contactoForm.email || !contactoForm.asunto || !contactoForm.mensaje}
+            >
+              Enviar mensaje
+            </Button>
+          </div>
+        )}
+      </Modal>
 
       {/* Auth Modal */}
       <Modal

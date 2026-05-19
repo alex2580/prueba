@@ -1,0 +1,28 @@
+const express = require('express');
+const router = express.Router();
+
+const ctrl = require('../controllers/adminController');
+const { requireAuth, requireAdmin } = require('../middleware/auth');
+
+// ── Public ─────────────────────────────────────────────────────
+// Contact form — no auth required
+router.post('/consultas', ctrl.crearConsulta);
+
+// ── All routes below require admin auth ───────────────────────
+router.use(requireAuth, requireAdmin);
+
+// Notificaciones
+router.get('/notificaciones',           ctrl.getNotificaciones);
+router.patch('/notificaciones/:id/leido', ctrl.marcarLeido);
+
+// Consultas (admin side)
+router.get('/consultas',                ctrl.getConsultas);
+router.post('/consultas/:id/responder', ctrl.responderConsulta);
+router.patch('/consultas/:id/estado',   ctrl.actualizarEstadoConsulta);
+
+// Campañas
+router.get('/campanas',                 ctrl.getCampanas);
+router.post('/campanas',                ctrl.crearCampana);
+router.delete('/campanas/:id',          ctrl.eliminarCampana);
+
+module.exports = router;

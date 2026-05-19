@@ -16,7 +16,7 @@ import { SiteLogo } from '@/components/ui/SiteLogo';
 
 export default function PanelPage() {
   const router = useRouter();
-  const { user, token, loading: authLoading, logout } = useAuth();
+  const { user, token, loading: authLoading, logout, isAdmin } = useAuth();
   const isOferente = user?.tipo === 'oferente' || user?.tipo === 'admin';
 
   // Reservas propias (as demandante — for all users)
@@ -102,6 +102,11 @@ export default function PanelPage() {
             <div style={{ fontSize: '.82rem', fontWeight: 600, lineHeight: 1.2 }}>{user.nombre}</div>
             <div style={{ fontSize: '.7rem', color: 'var(--text3)', textTransform: 'capitalize' }}>{user.tipo}</div>
           </div>
+          {isAdmin && (
+            <button className="nav-btn" style={{ color: 'var(--orange)', fontWeight: 700 }} onClick={() => router.push('/admin')}>
+              ⚙️ Admin
+            </button>
+          )}
           <button className="nav-btn" onClick={logout} style={{ marginLeft: '.25rem' }}>Salir</button>
         </div>
       </header>

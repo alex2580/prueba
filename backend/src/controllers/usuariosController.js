@@ -70,9 +70,14 @@ async function sync(req, res, next) {
       return res.json(user);
     }
 
+    // Auto-promote admin emails
+    const adminEmails = (process.env.ADMIN_EMAILS || '')
+      .split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
+    const tipoFinal = adminEmails.includes(email.toLowerCase()) ? 'admin' : (tipo || 'demandante');
+
     await query(
       'INSERT INTO usuarios (supabase_id, nombre, email, tipo, tel) VALUES (?, ?, ?, ?, ?)',
-      [supabase_id, nombre, email, tipo || 'demandante', tel || '']
+      [supabase_id, nombre, email, tipoFinal, tel || '']
     );
 
     const nuevo = await queryOne(
