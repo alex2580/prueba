@@ -12,6 +12,7 @@ import { EstadoBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Avatar } from '@/components/ui/Avatar';
 import { formatARS, formatFechaCorta } from '@/lib/utils';
+import { SiteLogo } from '@/components/ui/SiteLogo';
 
 export default function PanelPage() {
   const router = useRouter();
@@ -90,10 +91,7 @@ export default function PanelPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
       <header className="site-header">
-        <div className="logo" onClick={() => router.push('/')}>
-          <span style={{ fontSize: '1.4rem' }}>📦</span>
-          <span>Todas<span style={{ color: 'var(--orange)' }}>Mis</span>Cosas</span>
-        </div>
+        <SiteLogo onClick={() => router.push('/')} />
         <nav className="nav">
           <button className="nav-btn active">Mi Panel</button>
           <button className="nav-btn" onClick={() => router.push('/')}>Explorar</button>

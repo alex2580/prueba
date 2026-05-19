@@ -11,6 +11,7 @@ import { ChatModal } from '@/components/chat/ChatModal';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { reservasAPI } from '@/lib/api';
+import { SiteLogo } from '@/components/ui/SiteLogo';
 
 export default function EspacioPage() {
   const { id } = useParams<{ id: string }>();
@@ -77,10 +78,7 @@ export default function EspacioPage() {
     <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
       {/* Minimal header */}
       <header className="site-header">
-        <div className="logo" onClick={() => router.push('/')}>
-          <span style={{ fontSize: '1.4rem' }}>📦</span>
-          <span>Todas<span style={{ color: 'var(--orange)' }}>Mis</span>Cosas</span>
-        </div>
+        <SiteLogo onClick={() => router.push('/')} />
         <div />
         <div style={{ display: 'flex', gap: '.5rem' }}>
           {user ? (

@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { pagosAPI } from '@/lib/api';
 import { parseMPReturnParams, formatARS } from '@/lib/mercadopago';
 import { Button } from '@/components/ui/Button';
+import { SiteLogo } from '@/components/ui/SiteLogo';
 
 export default function ConfirmacionPage() {
   const { id }   = useParams<{ id: string }>();
@@ -50,10 +51,7 @@ export default function ConfirmacionPage() {
     <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
       {/* Header */}
       <header className="site-header">
-        <div className="logo" onClick={() => router.push('/')}>
-          <span style={{ fontSize: '1.4rem' }}>📦</span>
-          <span>Todas<span style={{ color: 'var(--orange)' }}>Mis</span>Cosas</span>
-        </div>
+        <SiteLogo onClick={() => router.push('/')} />
         <div />
         <button className="nav-btn" onClick={() => router.push('/panel')}>Mi Panel</button>
       </header>

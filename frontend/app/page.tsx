@@ -11,6 +11,7 @@ import { FiltrosEspacios } from '@/components/espacios/FiltrosEspacios';
 import { Modal } from '@/components/ui/Modal';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
+import { SiteLogo } from '@/components/ui/SiteLogo';
 
 // Dynamic import to avoid SSR issues with Google Maps
 const MapaEspacios = dynamic(() => import('@/components/mapa/MapaEspacios').then(m => ({ default: m.MapaEspacios })), { ssr: false });
@@ -50,10 +51,7 @@ export default function HomePage() {
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
       {/* Header */}
       <header className="site-header">
-        <div className="logo" onClick={() => router.push('/')}>
-          <span style={{ fontSize: '1.4rem' }}>📦</span>
-          <span>Todas<span style={{ color: 'var(--orange)' }}>Mis</span>Cosas <span style={{ fontSize: '.6rem', color: 'var(--orange)', verticalAlign: 'super' }}>v2.0</span></span>
-        </div>
+        <SiteLogo onClick={() => router.push('/')} />
 
         {/* Actions */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>

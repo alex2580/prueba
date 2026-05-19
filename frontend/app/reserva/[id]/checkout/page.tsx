@@ -7,6 +7,7 @@ import { reservasAPI, pagosAPI } from '@/lib/api';
 import type { Reserva } from '@/types';
 import { CheckoutReserva } from '@/components/reservas/CheckoutReserva';
 import { redirectToMP } from '@/lib/mercadopago';
+import { SiteLogo } from '@/components/ui/SiteLogo';
 
 export default function CheckoutPage() {
   const { id } = useParams<{ id: string }>();
@@ -57,10 +58,7 @@ export default function CheckoutPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
       <header className="site-header">
-        <div className="logo" onClick={() => router.push('/')}>
-          <span style={{ fontSize: '1.4rem' }}>📦</span>
-          <span>Todas<span style={{ color: 'var(--orange)' }}>Mis</span>Cosas</span>
-        </div>
+        <SiteLogo onClick={() => router.push('/')} />
         <div />
         <button className="nav-btn" onClick={() => router.back()}>← Volver</button>
       </header>

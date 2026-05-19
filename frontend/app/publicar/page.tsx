@@ -7,6 +7,7 @@ import { espaciosAPI } from '@/lib/api';
 import { Button } from '@/components/ui/Button';
 import { BARRIOS } from '@/types';
 import type { EspacioTipo } from '@/types';
+import { SiteLogo } from '@/components/ui/SiteLogo';
 
 export default function PublicarPage() {
   const router = useRouter();
@@ -85,10 +86,7 @@ export default function PublicarPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
       <header className="site-header">
-        <div className="logo" onClick={() => router.push('/')}>
-          <span style={{ fontSize: '1.4rem' }}>📦</span>
-          <span>Todas<span style={{ color: 'var(--orange)' }}>Mis</span>Cosas</span>
-        </div>
+        <SiteLogo onClick={() => router.push('/')} />
         <div />
         <button className="nav-btn" onClick={() => router.push('/panel')}>← Mi Panel</button>
       </header>
