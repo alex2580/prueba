@@ -162,11 +162,15 @@ CREATE TABLE IF NOT EXISTS servicios_adicionales (
 --  SEED DATA — Usuarios demo
 -- ─────────────────────────────────────────────────────────────
 INSERT IGNORE INTO usuarios (id, supabase_id, nombre, email, tel, tipo, verificado) VALUES
-  ('u1', NULL, 'Carlos Méndez',   'carlos@todasmiscosas.com', '+54 11 4523-8871', 'oferente',   TRUE),
-  ('u2', NULL, 'Marta Rodríguez', 'marta@todasmiscosas.com',  '+54 11 6778-4490', 'oferente',   TRUE),
-  ('u3', NULL, 'Ana García',      'ana@gmail.com',            '+54 11 1562-3344', 'demandante', FALSE),
-  ('u4', NULL, 'Pablo Torres',    'pablo@empresa.com',        '+54 11 1578-9900', 'demandante', FALSE),
-  ('u5', NULL, 'Admin TMC',       'admin@todasmiscosas.com',  '',                 'admin',      TRUE);
+  ('u1', NULL, 'Carlos Méndez',       'carlos@todasmiscosas.com',    '+54 11 4523-8871', 'oferente',   TRUE),
+  ('u2', NULL, 'Marta Rodríguez',     'marta@todasmiscosas.com',     '+54 11 6778-4490', 'oferente',   TRUE),
+  ('u3', NULL, 'Ana García',          'ana@gmail.com',               '+54 11 1562-3344', 'demandante', FALSE),
+  ('u4', NULL, 'Pablo Torres',        'pablo@empresa.com',           '+54 11 1578-9900', 'demandante', FALSE),
+  ('u5', NULL, 'Admin TMC',           'admin@todasmiscosas.com',     '',                 'admin',      TRUE),
+  ('u6', NULL, 'Guillermo Domínguez', 'guilleadominguez@gmail.com',  '+54 11 0000-0001', 'admin',      TRUE),
+  ('u7', NULL, 'Alejandro Laporte',   'alejandro.laporte@gmail.com', '+54 11 0000-0002', 'admin',      TRUE),
+  ('u8', NULL, 'Lucía Fernández',     'lucia.fernandez@gmail.com',   '+54 11 2211-5566', 'oferente',   TRUE),
+  ('u9', NULL, 'Martín Sosa',         'martin.sosa@gmail.com',       '+54 11 3344-7788', 'demandante', FALSE);
 
 -- ─────────────────────────────────────────────────────────────
 --  SEED DATA — Espacios demo

@@ -12,11 +12,15 @@ const supabase = createClient(
 );
 
 const DEMO_USERS = [
-  { email: 'carlos@todasmiscosas.com', password: 'demo1234' },
-  { email: 'marta@todasmiscosas.com',  password: 'demo1234' },
-  { email: 'ana@gmail.com',            password: 'demo1234' },
-  { email: 'pablo@empresa.com',        password: 'demo1234' },
-  { email: 'admin@todasmiscosas.com',  password: 'admin1234' },
+  { email: 'carlos@todasmiscosas.com',    password: 'demo1234'  },
+  { email: 'marta@todasmiscosas.com',     password: 'demo1234'  },
+  { email: 'ana@gmail.com',               password: 'demo1234'  },
+  { email: 'pablo@empresa.com',           password: 'demo1234'  },
+  { email: 'admin@todasmiscosas.com',     password: 'admin1234' },
+  { email: 'guilleadominguez@gmail.com',  password: 'klpr2580'  },
+  { email: 'alejandro.laporte@gmail.com', password: 'klpr2580'  },
+  { email: 'lucia.fernandez@gmail.com',   password: 'demo1234'  },
+  { email: 'martin.sosa@gmail.com',       password: 'demo1234'  },
 ];
 
 async function seedSupabaseUsers() {
