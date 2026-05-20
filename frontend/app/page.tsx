@@ -104,6 +104,7 @@ export default function HomePage() {
 
         {/* Col 3: Acciones */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem', justifyContent: 'flex-end' }}>
+          <button className="nav-btn" onClick={() => router.push('/servicios')}>🏷️ Servicios</button>
           {user ? (
             <>
               {isAdmin && (
