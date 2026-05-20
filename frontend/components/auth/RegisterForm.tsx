@@ -26,24 +26,31 @@ export function RegisterForm({ onRegister, onSwitch, loading, error }: RegisterF
   return (
     <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '.85rem' }}>
       {/* Tipo switch */}
-      <div style={{ display: 'flex', background: 'var(--surface2)', borderRadius: 'var(--r2)', padding: 3, gap: 3 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.6rem' }}>
         {(['demandante', 'oferente'] as const).map(t => (
           <button
             key={t}
             type="button"
             onClick={() => setTipo(t)}
             style={{
-              flex: 1, padding: '.44rem', borderRadius: 13, border: 'none',
-              fontFamily: 'DM Sans, sans-serif', fontSize: '.83rem',
-              fontWeight: tipo === t ? 700 : 500,
-              color: tipo === t ? 'var(--orange)' : 'var(--text2)',
-              background: tipo === t ? 'var(--surface)' : 'transparent',
-              boxShadow: tipo === t ? 'var(--s1)' : 'none',
-              transition: 'all .2s',
+              padding: '.75rem .5rem',
+              borderRadius: 'var(--r2)',
+              border: tipo === t ? '2px solid var(--orange)' : '2px solid var(--border)',
+              fontFamily: 'Sora, sans-serif',
+              fontSize: '.82rem',
+              fontWeight: 700,
+              color: tipo === t ? '#fff' : 'var(--text2)',
+              background: tipo === t ? 'var(--orange)' : 'var(--surface2)',
               cursor: 'pointer',
+              transition: 'all .18s',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '.3rem',
             }}
           >
-            {t === 'demandante' ? '📦 Quiero almacenar' : '🏠 Ofrezco espacio'}
+            <span style={{ fontSize: '1.3rem' }}>{t === 'demandante' ? '📦' : '🏠'}</span>
+            {t === 'demandante' ? 'Quiero almacenar' : 'Ofrezco espacio'}
           </button>
         ))}
       </div>
