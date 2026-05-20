@@ -30,7 +30,7 @@ export function FiltrosEspacios({ filtros, onChange, onReset }: FiltrosEspaciosP
           color: filtros.barrio ? 'var(--orange)' : 'var(--text2)',
         }}
       >
-        <option value="">📍 Todos los barrios</option>
+        <option value="">🗺️ Todos los barrios</option>
         {BARRIOS.map(b => <option key={b} value={b}>{b}</option>)}
       </select>
 
@@ -53,7 +53,7 @@ export function FiltrosEspacios({ filtros, onChange, onReset }: FiltrosEspaciosP
             transition: 'all .15s',
           }}
         >
-          {t === 'exclusivo' ? '🔒 Exclusivo' : '🤝 Compartido'}
+          {t === 'exclusivo' ? '🔐 Exclusivo' : '🤲 Compartido'}
         </button>
       ))}
 

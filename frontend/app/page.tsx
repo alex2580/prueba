@@ -109,9 +109,9 @@ export default function HomePage() {
 
         {/* Col 3: Acciones */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem', justifyContent: 'flex-end' }}>
-          <button className="nav-btn" onClick={() => router.push('/como-funciona')}>💡 Cómo funciona</button>
-          <button className="nav-btn" onClick={() => router.push('/servicios')}>🏷️ Servicios</button>
-          <button className="nav-btn" onClick={() => router.push('/legal.html')}>⚖️ Legal</button>
+          <button className="nav-btn" onClick={() => router.push('/como-funciona')}>🧭 Cómo funciona</button>
+          <button className="nav-btn" onClick={() => router.push('/servicios')}>📦 Servicios</button>
+          <button className="nav-btn" onClick={() => router.push('/legal.html')}>📋 Legal</button>
           {user ? (
             <>
               {isAdmin && (
@@ -119,12 +119,12 @@ export default function HomePage() {
                   ⚙️ Admin
                 </button>
               )}
-              <button className="nav-btn" onClick={() => router.push('/panel')}>👤 Mi cuenta</button>
+              <button className="nav-btn" onClick={() => router.push('/panel')}>🙍 Mi cuenta</button>
               <button className="nav-btn" onClick={logout}>Salir</button>
             </>
           ) : (
             <button className="nav-btn" onClick={() => { setAuthTab('login'); setAuthModal(true); }}>
-              👤 Mi cuenta
+              🙍 Mi cuenta
             </button>
           )}
           {/* Publicar — siempre visible, pide login si no está autenticado */}
@@ -132,7 +132,7 @@ export default function HomePage() {
             if (!user) { setAuthTab('register'); setAuthModal(true); return; }
             router.push('/publicar');
           }}>
-            ➕ Publicar
+            🏠 Publicar
           </button>
         </div>
       </header>
