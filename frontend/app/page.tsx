@@ -106,6 +106,7 @@ export default function HomePage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem', justifyContent: 'flex-end' }}>
           <button className="nav-btn" onClick={() => router.push('/como-funciona')}>💡 Cómo funciona</button>
           <button className="nav-btn" onClick={() => router.push('/servicios')}>🏷️ Servicios</button>
+          <button className="nav-btn" onClick={() => router.push('/legal.html')}>⚖️ Legal</button>
           {user ? (
             <>
               {isAdmin && (
