@@ -16,6 +16,17 @@ const MAP_ID = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || '';
 // Centro: Buenos Aires
 const DEFAULT_CENTER = { lat: -34.6037, lng: -58.3816 };
 
+const DARK_STYLES: google.maps.MapTypeStyle[] = [
+  { elementType: 'geometry', stylers: [{ color: '#0a0e1a' }] },
+  { elementType: 'labels.text.fill', stylers: [{ color: '#9aacc5' }] },
+  { elementType: 'labels.text.stroke', stylers: [{ color: '#0a0e1a' }] },
+  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#1a2035' }] },
+  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0f1525' }] },
+  { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+];
+
+const LIGHT_STYLES: google.maps.MapTypeStyle[] = [];
+
 export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: MapaEspaciosProps) {
   const mapRef        = useRef<HTMLDivElement>(null);
   const mapObj        = useRef<google.maps.Map | null>(null);
@@ -23,8 +34,10 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
   const markerIcons   = useRef<Map<string, google.maps.Icon>>(new Map());
   const markerLabels  = useRef<Map<string, string>>(new Map());
   const heatmap       = useRef<google.maps.visualization.HeatmapLayer | null>(null);
+  const infoWindow    = useRef<google.maps.InfoWindow | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mapTheme, setMapTheme] = useState<'dark' | 'light'>('dark');
 
   // Initialize map
   useEffect(() => {
@@ -40,6 +53,7 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
       if (!mapRef.current) return;
 
       const { Map } = await google.maps.importLibrary('maps') as google.maps.MapsLibrary;
+      const { InfoWindow } = await google.maps.importLibrary('maps') as google.maps.MapsLibrary;
 
       mapObj.current = new Map(mapRef.current, {
         center: center || DEFAULT_CENTER,
@@ -47,15 +61,10 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
         disableDefaultUI: false,
         streetViewControl: false,
         mapTypeControl: false,
-        styles: [
-          { elementType: 'geometry', stylers: [{ color: '#0a0e1a' }] },
-          { elementType: 'labels.text.fill', stylers: [{ color: '#9aacc5' }] },
-          { elementType: 'labels.text.stroke', stylers: [{ color: '#0a0e1a' }] },
-          { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#1a2035' }] },
-          { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0f1525' }] },
-          { featureType: 'poi', stylers: [{ visibility: 'off' }] },
-        ],
+        styles: DARK_STYLES,
       });
+
+      infoWindow.current = new InfoWindow();
 
       setLoaded(true);
     }).catch(err => {
@@ -63,6 +72,12 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
       setError('No se pudo cargar el mapa');
     });
   }, []);
+
+  // Apply theme when toggled
+  useEffect(() => {
+    if (!mapObj.current) return;
+    mapObj.current.setOptions({ styles: mapTheme === 'dark' ? DARK_STYLES : LIGHT_STYLES });
+  }, [mapTheme]);
 
   // Add/update markers and heatmap when espacios change
   useEffect(() => {
@@ -99,6 +114,24 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
       });
 
       marker.addListener('click', () => onMarkerClick?.(espacio));
+
+      // Show address on hover
+      marker.addListener('mouseover', () => {
+        if (!infoWindow.current) return;
+        infoWindow.current.setContent(`
+          <div style="font-family:sans-serif;font-size:12px;line-height:1.5;max-width:200px;padding:2px 4px;">
+            <strong style="font-size:13px;">${espacio.nombre}</strong><br>
+            <span style="color:#555;">📍 ${espacio.direccion}</span><br>
+            <span style="color:#888;">${espacio.barrio} · ${espacio.m2} m²</span>
+          </div>
+        `);
+        infoWindow.current.open(map, marker);
+      });
+
+      marker.addListener('mouseout', () => {
+        infoWindow.current?.close();
+      });
+
       markers.current.set(espacio.id, marker);
       markerIcons.current.set(espacio.id, defaultIcon);
       markerLabels.current.set(espacio.id, iconLabel);
@@ -179,13 +212,42 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
   }
 
   return (
-    <div className="map-container">
+    <div className="map-container" style={{ position: 'relative', width: '100%', height: '100%' }}>
       <div ref={mapRef} style={{ width: '100%', height: '100%' }} />
       {!loaded && (
         <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
           background: 'var(--bg)', color: 'var(--text3)' }}>
           <span style={{ fontSize: '.9rem' }}>Cargando mapa…</span>
         </div>
+      )}
+      {/* Dark/Light toggle */}
+      {loaded && (
+        <button
+          onClick={() => setMapTheme(t => t === 'dark' ? 'light' : 'dark')}
+          title={mapTheme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+          style={{
+            position: 'absolute',
+            bottom: '1.5rem',
+            left: '1rem',
+            zIndex: 10,
+            background: mapTheme === 'dark' ? 'rgba(8,12,22,0.92)' : 'rgba(255,255,255,0.92)',
+            border: '1.5px solid var(--border2)',
+            borderRadius: '999px',
+            padding: '.4rem .85rem',
+            fontSize: '.8rem',
+            fontWeight: 700,
+            color: mapTheme === 'dark' ? '#9aacc5' : '#333',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '.35rem',
+            boxShadow: '0 2px 8px rgba(0,0,0,.35)',
+            backdropFilter: 'blur(8px)',
+            transition: 'all .15s',
+          }}
+        >
+          {mapTheme === 'dark' ? '☀️ Modo claro' : '🌙 Modo oscuro'}
+        </button>
       )}
     </div>
   );

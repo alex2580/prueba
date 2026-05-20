@@ -23,7 +23,7 @@ type Vista = 'mapa' | 'lista';
 export default function HomePage() {
   const router = useRouter();
   const { user, token, loading: authLoading, login, register, logout, error: authError, isAdmin } = useAuth();
-  const { espacios, loading, filtros, aplicarFiltros, limpiarFiltros } = useEspacios();
+  const { espacios, loading, error: espaciosError, filtros, aplicarFiltros, limpiarFiltros } = useEspacios();
 
   const [vista, setVista] = useState<Vista>('mapa');
   const [selectedEspacio, setSelectedEspacio] = useState<Espacio | null>(null);
@@ -204,13 +204,18 @@ export default function HomePage() {
 
         {/* Lista */}
         {vista === 'lista' && (
-          <div className="page-scroll" style={{ padding: '1.5rem' }}>
+          <div className="page-scroll" style={{ padding: '1.5rem', boxSizing: 'border-box' }}>
             <div style={{ maxWidth: 1200, margin: '0 auto' }}>
               <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '1rem', color: 'var(--text2)' }}>
-                  {loading ? 'Cargando…' : `${espacios.length} espacio${espacios.length !== 1 ? 's' : ''} encontrado${espacios.length !== 1 ? 's' : ''}`}
+                  {loading ? 'Cargando…' : espaciosError ? 'Error al cargar espacios' : `${espacios.length} espacio${espacios.length !== 1 ? 's' : ''} encontrado${espacios.length !== 1 ? 's' : ''}`}
                 </h2>
               </div>
+              {espaciosError && !loading && (
+                <div className="alert alert--error" style={{ marginBottom: '1rem' }}>
+                  {espaciosError} — Verificá tu conexión o recargá la página.
+                </div>
+              )}
               <GridEspacios
                 espacios={espacios}
                 loading={loading}
