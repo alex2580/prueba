@@ -113,24 +113,21 @@ export default function HomePage() {
                   ⚙️ Admin
                 </button>
               )}
-              <button className="nav-btn" onClick={() => router.push('/panel')}>Mi Panel</button>
+              <button className="nav-btn" onClick={() => router.push('/panel')}>👤 Mi cuenta</button>
               <button className="nav-btn" onClick={logout}>Salir</button>
-              {(user.tipo === 'oferente' || user.tipo === 'admin') && (
-                <button className="btn-publish" onClick={() => router.push('/publicar')}>
-                  ➕ Publicar
-                </button>
-              )}
             </>
           ) : (
-            <>
-              <button className="nav-btn" onClick={() => { setAuthTab('login'); setAuthModal(true); }}>
-                Iniciar sesión
-              </button>
-              <button className="btn-publish" onClick={() => { setAuthTab('register'); setAuthModal(true); }}>
-                Registrarse
-              </button>
-            </>
+            <button className="nav-btn" onClick={() => { setAuthTab('login'); setAuthModal(true); }}>
+              👤 Mi cuenta
+            </button>
           )}
+          {/* Publicar — siempre visible, pide login si no está autenticado */}
+          <button className="btn-publish" onClick={() => {
+            if (!user) { setAuthTab('register'); setAuthModal(true); return; }
+            router.push('/publicar');
+          }}>
+            ➕ Publicar
+          </button>
         </div>
       </header>
 
