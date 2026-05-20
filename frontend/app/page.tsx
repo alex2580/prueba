@@ -113,7 +113,7 @@ export default function HomePage() {
               )}
               <button className="nav-btn" onClick={() => router.push('/panel')}>Mi Panel</button>
               <button className="nav-btn" onClick={logout}>Salir</button>
-              {user.tipo === 'oferente' && (
+              {(user.tipo === 'oferente' || user.tipo === 'admin') && (
                 <button className="btn-publish" onClick={() => router.push('/publicar')}>
                   ➕ Publicar
                 </button>
@@ -146,7 +146,7 @@ export default function HomePage() {
             <div style={{
               position: 'absolute',
               top: '1.25rem',
-              left: '50%',
+              left: 'calc(50% + 80px)',
               transform: 'translateX(-50%)',
               zIndex: 100,
               background: 'rgba(8, 12, 22, 0.96)',
