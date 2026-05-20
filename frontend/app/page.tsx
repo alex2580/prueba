@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import type { Espacio } from '@/types';
@@ -72,10 +72,15 @@ export default function HomePage() {
     router.push(`/reserva/${espacio.id}`);
   }
 
-  function handleBusqueda(q: string) {
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleBusqueda = useCallback((q: string) => {
     setBusqueda(q);
-    aplicarFiltros({ ...filtros, q: q || undefined });
-  }
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      aplicarFiltros({ ...filtros, q: q || undefined });
+    }, 350);
+  }, [filtros, aplicarFiltros]);
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>

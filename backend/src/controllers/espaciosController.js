@@ -52,9 +52,9 @@ async function listar(req, res, next) {
     if (precio_min)  { sql += ' AND e.precio_mes >= ?';          params.push(Number(precio_min)); }
     if (disponible !== undefined) { sql += ' AND e.disponible = ?'; params.push(disponible === 'true' ? 1 : 0); }
     if (q) {
-      sql += ' AND (e.nombre LIKE ? OR e.descripcion LIKE ? OR e.barrio LIKE ?)';
+      sql += ' AND (e.nombre LIKE ? OR e.descripcion LIKE ? OR e.barrio LIKE ? OR e.direccion LIKE ?)';
       const like = `%${q}%`;
-      params.push(like, like, like);
+      params.push(like, like, like, like);
     }
 
     sql += ' ORDER BY e.reservas_mes DESC, e.rating DESC';
