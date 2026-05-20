@@ -1,6 +1,6 @@
 const { createClient } = require('@supabase/supabase-js');
 const ws = require('ws');
-const { queryOne } = require('../db/connection');
+const { queryOne, query } = require('../db/connection');
 require('dotenv').config();
 
 const supabase = createClient(
@@ -27,11 +27,39 @@ async function requireAuth(req, res, next) {
       return res.status(401).json({ error: 'Token inválido o expirado' });
     }
 
-    // Buscar usuario en nuestra DB por supabase_id
-    const usuario = await queryOne(
+    // Buscar usuario en nuestra DB por supabase_id o email
+    let usuario = await queryOne(
       'SELECT id, nombre, email, tel, tipo, verificado, activo FROM usuarios WHERE supabase_id = ?',
       [data.user.id]
     );
+
+    // Si no existe por supabase_id, buscar por email y linkear
+    if (!usuario) {
+      usuario = await queryOne(
+        'SELECT id, nombre, email, tel, tipo, verificado, activo FROM usuarios WHERE email = ?',
+        [data.user.email]
+      );
+      if (usuario) {
+        await query('UPDATE usuarios SET supabase_id = ? WHERE id = ?', [data.user.id, usuario.id]);
+      }
+    }
+
+    // Si definitivamente no existe, crearlo automáticamente
+    if (!usuario) {
+      const adminEmails = (process.env.ADMIN_EMAILS || '')
+        .split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
+      const tipo = adminEmails.includes(data.user.email.toLowerCase()) ? 'admin' : 'demandante';
+      const nombre = data.user.user_metadata?.nombre || data.user.email.split('@')[0];
+
+      await query(
+        'INSERT INTO usuarios (supabase_id, nombre, email, tipo, tel) VALUES (?, ?, ?, ?, ?)',
+        [data.user.id, nombre, data.user.email, tipo, '']
+      );
+      usuario = await queryOne(
+        'SELECT id, nombre, email, tel, tipo, verificado, activo FROM usuarios WHERE supabase_id = ?',
+        [data.user.id]
+      );
+    }
 
     if (!usuario) {
       return res.status(401).json({ error: 'Usuario no encontrado en el sistema' });
