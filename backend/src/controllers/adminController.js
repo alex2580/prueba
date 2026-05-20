@@ -1,4 +1,5 @@
 const { query, queryOne } = require('../db/connection');
+const { sendContacto } = require('../services/emailService');
 
 // ── Bootstrap tables ───────────────────────────────────────────
 async function initTables() {
@@ -91,6 +92,15 @@ async function crearConsulta(req, res, next) {
        VALUES (?, ?, ?, ?, ?, ?, NOW())`,
       [id, nombre, email, asunto, mensaje, tipo || 'consulta']
     );
+
+    // Notificar a los admins por email (sin bloquear la respuesta)
+    const adminEmails = (process.env.ADMIN_EMAILS || 'alejandro.laporte@gmail.com')
+      .split(',').map(e => e.trim()).filter(Boolean);
+    for (const adminEmail of adminEmails) {
+      sendContacto(adminEmail, { nombre, emailRemitente: email, asunto: `[${tipo || 'consulta'}] ${asunto}`, mensaje })
+        .catch(err => console.error('Email admin error:', err.message));
+    }
+
     res.status(201).json({ id });
   } catch (err) {
     next(err);
