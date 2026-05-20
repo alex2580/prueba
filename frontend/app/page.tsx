@@ -80,26 +80,29 @@ export default function HomePage() {
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
       {/* Header */}
-      <header className="site-header">
+      <header className="site-header" style={{ gap: '.5rem' }}>
         <SiteLogo onClick={() => router.push('/')} />
 
-        {/* Actions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
-          {/* Vista toggle */}
-          <div style={{ display: 'flex', background: 'var(--surface2)', borderRadius: 'var(--r1)', padding: '3px', gap: '2px' }}>
-            {(['mapa', 'lista'] as Vista[]).map(v => (
-              <button key={v} onClick={() => setVista(v)} style={{
-                padding: '.28rem .7rem', borderRadius: 8, border: 'none', cursor: 'pointer',
-                background: vista === v ? 'var(--surface)' : 'transparent',
-                color: vista === v ? 'var(--orange)' : 'var(--text2)',
-                fontSize: '.78rem', fontWeight: vista === v ? 700 : 500,
-                boxShadow: vista === v ? 'var(--s0)' : 'none',
-              }}>
-                {v === 'mapa' ? '🗺️ Mapa' : '☰ Lista'}
-              </button>
-            ))}
-          </div>
+        {/* Vista toggle — always visible, left of center */}
+        <div style={{ display: 'flex', background: 'var(--surface2)', borderRadius: 'var(--r1)', padding: '3px', gap: '2px', flexShrink: 0 }}>
+          {(['mapa', 'lista'] as Vista[]).map(v => (
+            <button key={v} onClick={() => setVista(v)} style={{
+              padding: '.28rem .7rem', borderRadius: 8, border: 'none', cursor: 'pointer',
+              background: vista === v ? 'var(--surface)' : 'transparent',
+              color: vista === v ? 'var(--orange)' : 'var(--text2)',
+              fontSize: '.78rem', fontWeight: vista === v ? 700 : 500,
+              boxShadow: vista === v ? 'var(--s0)' : 'none',
+              whiteSpace: 'nowrap',
+            }}>
+              {v === 'mapa' ? '🗺️ Mapa' : '☰ Lista'}
+            </button>
+          ))}
+        </div>
 
+        <div style={{ flex: 1 }} />
+
+        {/* Actions */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem', flexShrink: 0 }}>
           <a href="/legal.html" target="_blank" rel="noopener noreferrer" className="nav-btn" style={{ fontSize: '.75rem', opacity: .7 }}>
             ⚖️ Legal
           </a>
@@ -149,17 +152,19 @@ export default function HomePage() {
               left: '50%',
               transform: 'translateX(-50%)',
               zIndex: 100,
-              background: 'rgba(15, 20, 35, 0.85)',
-              backdropFilter: 'blur(10px)',
-              border: '1.5px solid var(--border)',
+              background: 'rgba(10, 14, 26, 0.92)',
+              backdropFilter: 'blur(16px)',
+              border: '1.5px solid rgba(232,98,42,0.45)',
               borderRadius: '999px',
               display: 'flex', alignItems: 'center',
-              padding: '.1rem 1rem', gap: '.5rem',
-              width: 'min(480px, calc(100vw - 2rem))',
-              boxShadow: '0 4px 24px rgba(0,0,0,.5)',
-              transition: 'border-color .15s, box-shadow .15s',
-            }}>
-              <span style={{ color: 'var(--text3)', fontSize: '1rem' }}>🔍</span>
+              padding: '.15rem .5rem .15rem 1rem', gap: '.5rem',
+              width: 'min(500px, calc(100vw - 2rem))',
+              boxShadow: '0 4px 32px rgba(232,98,42,.18), 0 2px 12px rgba(0,0,0,.6)',
+              transition: 'border-color .2s, box-shadow .2s',
+            }}
+            onFocus={() => {}}
+            >
+              <span style={{ color: 'var(--orange)', fontSize: '1rem', flexShrink: 0 }}>🔍</span>
               <input
                 type="text"
                 value={busqueda}
@@ -167,11 +172,23 @@ export default function HomePage() {
                 placeholder="Buscar por barrio, tipo, descripción…"
                 style={{
                   flex: 1, background: 'none', border: 'none',
-                  color: 'var(--text)', fontSize: '.88rem',
-                  padding: '.6rem 0', width: '100%',
+                  color: 'var(--text)', fontSize: '.9rem',
+                  padding: '.65rem 0', width: '100%',
                   outline: 'none',
                 }}
               />
+              {busqueda && (
+                <button
+                  onClick={() => handleBusqueda('')}
+                  style={{
+                    background: 'rgba(232,98,42,.15)', border: 'none',
+                    color: 'var(--orange)', borderRadius: '50%',
+                    width: 24, height: 24, cursor: 'pointer',
+                    fontSize: '.8rem', flexShrink: 0,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}
+                >✕</button>
+              )}
             </div>
             <MapaEspacios
               espacios={espacios}
