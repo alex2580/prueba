@@ -220,33 +220,32 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
           <span style={{ fontSize: '.9rem' }}>Cargando mapa…</span>
         </div>
       )}
-      {/* Dark/Light toggle */}
+      {/* Dark/Light toggle — top right */}
       {loaded && (
         <button
           onClick={() => setMapTheme(t => t === 'dark' ? 'light' : 'dark')}
           title={mapTheme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
           style={{
             position: 'absolute',
-            bottom: '1.5rem',
-            left: '1rem',
-            zIndex: 10,
-            background: mapTheme === 'dark' ? 'rgba(8,12,22,0.92)' : 'rgba(255,255,255,0.92)',
-            border: '1.5px solid var(--border2)',
+            top: '1.25rem',
+            right: '1rem',
+            zIndex: 100,
+            background: mapTheme === 'dark' ? 'rgba(8,12,22,0.92)' : 'rgba(255,255,255,0.95)',
+            border: `2px solid ${mapTheme === 'dark' ? '#344060' : '#ccc'}`,
             borderRadius: '999px',
-            padding: '.4rem .85rem',
-            fontSize: '.8rem',
-            fontWeight: 700,
-            color: mapTheme === 'dark' ? '#9aacc5' : '#333',
+            width: 42,
+            height: 42,
+            fontSize: '1.25rem',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            gap: '.35rem',
-            boxShadow: '0 2px 8px rgba(0,0,0,.35)',
+            justifyContent: 'center',
+            boxShadow: '0 2px 10px rgba(0,0,0,.4)',
             backdropFilter: 'blur(8px)',
             transition: 'all .15s',
           }}
         >
-          {mapTheme === 'dark' ? '☀️ Modo claro' : '🌙 Modo oscuro'}
+          {mapTheme === 'dark' ? '☀️' : '🌙'}
         </button>
       )}
     </div>
