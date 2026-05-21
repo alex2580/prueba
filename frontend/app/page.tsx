@@ -90,22 +90,7 @@ export default function HomePage() {
         <SiteLogo onClick={() => router.push('/')} />
 
         {/* Col 2: Vista toggle centrado */}
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <div style={{ display: 'flex', background: 'var(--surface2)', borderRadius: 'var(--r1)', padding: '3px', gap: '2px' }}>
-            {(['mapa', 'lista'] as Vista[]).map(v => (
-              <button key={v} onClick={() => setVista(v)} style={{
-                padding: '.3rem .9rem', borderRadius: 8, border: 'none', cursor: 'pointer',
-                background: vista === v ? 'var(--surface)' : 'transparent',
-                color: vista === v ? 'var(--orange)' : 'var(--text2)',
-                fontSize: '.82rem', fontWeight: vista === v ? 700 : 500,
-                boxShadow: vista === v ? 'var(--s0)' : 'none',
-                whiteSpace: 'nowrap', transition: 'all .15s',
-              }}>
-                {v === 'mapa' ? '🗺️ Mapa' : '☰ Lista'}
-              </button>
-            ))}
-          </div>
-        </div>
+        <div />
 
         {/* Col 3: Acciones */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem', justifyContent: 'flex-end' }}>
