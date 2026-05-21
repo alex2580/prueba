@@ -4636,7 +4636,7 @@ function enviarSolicitudServicios(opId, espacio, emailCliente){
     'Por favor contactar al cliente para coordinar.\n\n' +
     'TodasMisCosas.com — Notificación automática'
   );
-  window.open('mailto:consultas@todasmiscosas.com?subject=' + asunto + '&body=' + cuerpo, '_blank');
+  window.open('mailto:contacto@todasmiscosas.com?subject=' + asunto + '&body=' + cuerpo, '_blank');
 
   // Feedback visual
   const btn = document.querySelector('[onclick*="enviarSolicitudServicios"]');
@@ -5067,12 +5067,12 @@ function enviarMailTyCOferente(nombre, email){
     'Gracias por publicar tu espacio en TodasMisCosas.com.\n\n'+
     'A continuación encontrás las condiciones que aceptaste al darte de alta como Oferente:\n\n'+
     tycTexto+'\n\n'+
-    'Ante cualquier consulta: consultas@todasmiscosas.com\n\n'+
+    'Ante cualquier consulta: contacto@todasmiscosas.com\n\n'+
     'El equipo de TodasMisCosas.com'
   );
   window.open('mailto:'+email+'?subject='+asuntoOf+'&body='+cuerpoOf,'_blank');
 
-  // Copia a consultas@todasmiscosas.com (segundo mailto tras un delay)
+  // Copia a contacto@todasmiscosas.com (segundo mailto tras un delay)
   setTimeout(()=>{
     const asuntoCopia=encodeURIComponent('[COPIA] Nuevo oferente: '+nombre+' — T&C enviados');
     const cuerpoCopia=encodeURIComponent(
@@ -5083,7 +5083,7 @@ function enviarMailTyCOferente(nombre, email){
       'Se enviaron las Condiciones del Oferente al usuario.\n\n'+
       tycTexto
     );
-    window.open('mailto:consultas@todasmiscosas.com?subject='+asuntoCopia+'&body='+cuerpoCopia,'_blank');
+    window.open('mailto:contacto@todasmiscosas.com?subject='+asuntoCopia+'&body='+cuerpoCopia,'_blank');
   }, 1200);
 }
 
