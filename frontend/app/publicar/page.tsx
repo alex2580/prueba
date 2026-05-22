@@ -1,17 +1,20 @@
 'use client';
 
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { espaciosAPI } from '@/lib/api';
 import { Button } from '@/components/ui/Button';
+import { Modal } from '@/components/ui/Modal';
+import { LoginForm } from '@/components/auth/LoginForm';
+import { RegisterForm } from '@/components/auth/RegisterForm';
+import { SiteLogo } from '@/components/ui/SiteLogo';
 import { BARRIOS } from '@/types';
 import type { EspacioTipo } from '@/types';
-import { SiteLogo } from '@/components/ui/SiteLogo';
 
 export default function PublicarPage() {
   const router = useRouter();
-  const { user, token, loading: authLoading } = useAuth();
+  const { user, token, login, register, loading: authLoading, error: authError } = useAuth();
 
   const [form, setForm] = useState({
     nombre: '',
@@ -26,30 +29,22 @@ export default function PublicarPage() {
     lng: '',
   });
 
-  const [fotos, setFotos]       = useState<File[]>([]);
-  const [previews, setPreviews] = useState<string[]>([]);
-  const [loading, setLoading]   = useState(false);
-  const [error, setError]       = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!authLoading && (!user || user.tipo === 'demandante')) {
-      router.push('/');
-    }
-  }, [authLoading, user, router]);
+  const [fotos, setFotos]         = useState<File[]>([]);
+  const [previews, setPreviews]   = useState<string[]>([]);
+  const [loading, setLoading]     = useState(false);
+  const [error, setError]         = useState<string | null>(null);
+  const [authModal, setAuthModal] = useState(false);
+  const [authTab, setAuthTab]     = useState<'login' | 'register'>('register');
 
   function handleFotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || []).slice(0, 10);
     setFotos(files);
-    const urls = files.map(f => URL.createObjectURL(f));
-    setPreviews(urls);
+    setPreviews(files.map(f => URL.createObjectURL(f)));
   }
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    if (!token) return;
+  async function submitEspacio(tkn: string) {
     setLoading(true);
     setError(null);
-
     try {
       const espacio = await espaciosAPI.crear({
         nombre: form.nombre,
@@ -62,11 +57,10 @@ export default function PublicarPage() {
         descripcion: form.descripcion,
         lat: Number(form.lat) || -34.6037,
         lng: Number(form.lng) || -58.3816,
-      }, token);
+      }, tkn);
 
-      // Upload fotos
       if (fotos.length > 0) {
-        await espaciosAPI.subirFotos(espacio.id, fotos, token);
+        await espaciosAPI.subirFotos(espacio.id, fotos, tkn);
       }
 
       router.push('/panel');
@@ -77,28 +71,69 @@ export default function PublicarPage() {
     }
   }
 
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    if (!form.nombre || !form.direccion || !form.barrio || !form.m2 || !form.precio_dia || !form.precio_mes) {
+      setError('Completá todos los campos obligatorios');
+      return;
+    }
+
+    if (token) {
+      await submitEspacio(token);
+    } else {
+      // Mostrar modal de auth — después del login se envía automáticamente
+      setAuthModal(true);
+    }
+  }
+
+  async function handleLogin(email: string, password: string) {
+    const ok = await login(email, password);
+    if (ok) {
+      setAuthModal(false);
+      // token se actualiza en useAuth, pero necesitamos el nuevo token
+      // usamos un pequeño delay para que el estado se propague
+      setTimeout(async () => {
+        const tkn = localStorage.getItem('tmc_token');
+        if (tkn) await submitEspacio(tkn);
+      }, 300);
+    }
+    return ok;
+  }
+
+  async function handleRegister(nombre: string, email: string, password: string, tipo: 'oferente' | 'demandante', tel?: string) {
+    const ok = await register(nombre, email, password, tipo, tel);
+    if (ok) {
+      setAuthModal(false);
+      setTimeout(async () => {
+        const tkn = localStorage.getItem('tmc_token');
+        if (tkn) await submitEspacio(tkn);
+      }, 300);
+    }
+    return ok;
+  }
+
   function set(field: string, value: string) {
     setForm(f => ({ ...f, [field]: value }));
   }
-
-  if (authLoading) return null;
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
       <header className="site-header">
         <SiteLogo onClick={() => router.push('/')} />
         <div />
-        <button className="nav-btn" onClick={() => router.push('/panel')}>← Mi Panel</button>
+        {user && (
+          <button className="nav-btn" onClick={() => router.push('/panel')}>← Mi Panel</button>
+        )}
       </header>
 
       <div className="page-scroll">
         <div style={{ maxWidth: 640, margin: '0 auto', padding: '2rem 1rem' }}>
           <div style={{ marginBottom: '2rem' }}>
             <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.8rem', marginBottom: '.4rem' }}>
-              📦 Publicar espacio
+              🏠 Publicar espacio
             </h1>
             <p style={{ color: 'var(--text2)', fontSize: '.92rem' }}>
-              Completá los datos de tu espacio para que los demandantes puedan encontrarlo.
+              Completá los datos de tu espacio. Vas a poder crear tu cuenta al final si todavía no tenés una.
             </p>
           </div>
 
@@ -128,7 +163,7 @@ export default function PublicarPage() {
 
             {/* Nombre */}
             <div>
-              <label className="form-label">Nombre del espacio</label>
+              <label className="form-label">Nombre del espacio *</label>
               <input type="text" value={form.nombre} onChange={e => set('nombre', e.target.value)}
                 placeholder="Ej: Cochera techada Palermo" required />
             </div>
@@ -136,12 +171,12 @@ export default function PublicarPage() {
             {/* Dirección + Barrio */}
             <div className="form-row">
               <div>
-                <label className="form-label">Dirección</label>
+                <label className="form-label">Dirección *</label>
                 <input type="text" value={form.direccion} onChange={e => set('direccion', e.target.value)}
                   placeholder="Thames 1842, CABA" required />
               </div>
               <div>
-                <label className="form-label">Barrio</label>
+                <label className="form-label">Barrio *</label>
                 <select value={form.barrio} onChange={e => set('barrio', e.target.value)} required>
                   <option value="">Seleccioná barrio</option>
                   {BARRIOS.map(b => <option key={b} value={b}>{b}</option>)}
@@ -151,7 +186,7 @@ export default function PublicarPage() {
 
             {/* M2 */}
             <div>
-              <label className="form-label">Superficie (m²)</label>
+              <label className="form-label">Superficie (m²) *</label>
               <input type="number" value={form.m2} onChange={e => set('m2', e.target.value)}
                 placeholder="18" min="1" required />
             </div>
@@ -159,12 +194,12 @@ export default function PublicarPage() {
             {/* Precios */}
             <div className="form-row">
               <div>
-                <label className="form-label">Precio por día ($)</label>
+                <label className="form-label">Precio por día ($) *</label>
                 <input type="number" value={form.precio_dia} onChange={e => set('precio_dia', e.target.value)}
                   placeholder="850" min="0" required />
               </div>
               <div>
-                <label className="form-label">Precio por mes ($)</label>
+                <label className="form-label">Precio por mes ($) *</label>
                 <input type="number" value={form.precio_mes} onChange={e => set('precio_mes', e.target.value)}
                   placeholder="18000" min="0" required />
               </div>
@@ -213,13 +248,19 @@ export default function PublicarPage() {
             {error && <div className="alert alert--error">{error}</div>}
 
             <div style={{ display: 'flex', gap: '.75rem', paddingTop: '.5rem' }}>
-              <Button type="button" variant="secondary" onClick={() => router.push('/panel')} style={{ flex: 1 }}>
+              <Button type="button" variant="secondary" onClick={() => router.push('/')} style={{ flex: 1 }}>
                 Cancelar
               </Button>
               <Button type="submit" loading={loading} style={{ flex: 2 }}>
-                📦 Publicar espacio
+                🏠 Publicar espacio
               </Button>
             </div>
+
+            {!user && (
+              <p style={{ fontSize: '.78rem', color: 'var(--text3)', textAlign: 'center' }}>
+                Al publicar te pediremos crear una cuenta o iniciar sesión.
+              </p>
+            )}
 
             <p style={{ fontSize: '.75rem', color: 'var(--text3)', textAlign: 'center', marginTop: '.25rem' }}>
               Al publicar aceptás los{' '}
@@ -231,6 +272,32 @@ export default function PublicarPage() {
           </form>
         </div>
       </div>
+
+      {/* Auth Modal — aparece solo al intentar publicar sin sesión */}
+      <Modal
+        open={authModal}
+        onClose={() => setAuthModal(false)}
+        title={authTab === 'login' ? '👋 Iniciar sesión' : '🚀 Crear cuenta'}
+        subtitle={authTab === 'login'
+          ? 'Iniciá sesión para publicar tu espacio'
+          : 'Creá tu cuenta para publicar tu espacio'}
+      >
+        {authTab === 'login' ? (
+          <LoginForm
+            onLogin={handleLogin}
+            onSwitch={() => setAuthTab('register')}
+            error={authError}
+            loading={authLoading}
+          />
+        ) : (
+          <RegisterForm
+            onRegister={handleRegister}
+            onSwitch={() => setAuthTab('login')}
+            error={authError}
+            loading={authLoading}
+          />
+        )}
+      </Modal>
     </div>
   );
 }

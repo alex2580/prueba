@@ -113,10 +113,7 @@ export default function HomePage() {
             </button>
           )}
           {/* Publicar — siempre visible, pide login si no está autenticado */}
-          <button className="btn-publish" onClick={() => {
-            if (!user) { setAuthTab('register'); setAuthModal(true); return; }
-            router.push('/publicar');
-          }}>
+          <button className="btn-publish" onClick={() => router.push('/publicar')}>
             🏠 Publicar
           </button>
         </div>
