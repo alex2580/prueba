@@ -2,16 +2,16 @@ const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.hostinger.com',
+  host: process.env.SMTP_HOST || 'smtp.resend.com',
   port: parseInt(process.env.SMTP_PORT) || 465,
   secure: process.env.SMTP_SECURE !== 'false',
   auth: {
-    user: process.env.SMTP_USER || 'noreply@todasmiscosas.com',
+    user: process.env.SMTP_USER || 'resend',
     pass: process.env.SMTP_PASS || '',
   },
 });
 
-const FROM = `"📦 TodasMisCosas" <${process.env.SMTP_USER || 'noreply@todasmiscosas.com'}>`;
+const FROM = `"📦 TodasMisCosas" <${process.env.SMTP_FROM || 'contacto@todasmiscosas.com'}>`;
 
 function baseTemplate(titulo, contenido) {
   return `
