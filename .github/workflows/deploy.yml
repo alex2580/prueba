@@ -14,4 +14,5 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASS }}
-          script: /var/www/todasmiscosas/deploy.sh
+          script: |
+            cd /var/www/todasmiscosas && git reset --hard HEAD && /var/www/todasmiscosas/deploy.sh
