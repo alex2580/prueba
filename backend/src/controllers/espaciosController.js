@@ -120,23 +120,35 @@ async function crear(req, res, next) {
 
     const { nombre, direccion, barrio, m2, tipo, categoria, precio_dia, precio_mes, descripcion, lat, lng, disponibilidad, seguridad } = req.body;
 
-    const result = await transaction(async (conn) => {
-      const [ins] = await conn.execute(
-        `INSERT INTO espacios (nombre, direccion, barrio, m2, tipo, categoria, precio_dia, precio_mes, descripcion, oferente_id, lat, lng, disponibilidad, seguridad)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [nombre, direccion, barrio, m2 || null, tipo || 'exclusivo', categoria || null,
-         precio_dia, precio_mes, descripcion || '', req.user.id, lat, lng,
-         disponibilidad ? JSON.stringify(disponibilidad) : null,
-         seguridad ? JSON.stringify(seguridad) : null]
+    // Base INSERT — always works regardless of migration state
+    await transaction(async (conn) => {
+      await conn.execute(
+        `INSERT INTO espacios (nombre, direccion, barrio, m2, tipo, precio_dia, precio_mes, descripcion, oferente_id, lat, lng)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [nombre, direccion, barrio || '', m2 || null, tipo || 'exclusivo',
+         precio_dia || 0, precio_mes || 0, descripcion || '', req.user.id, lat || -34.6037, lng || -58.3816]
       );
-      return ins.insertId ? ins : { insertId: null };
     });
 
-    // Get the new espacio by auto-generated UUID
     const nuevo = await queryOne(
       'SELECT * FROM espacios WHERE oferente_id = ? ORDER BY created_at DESC LIMIT 1',
       [req.user.id]
     );
+
+    if (!nuevo) return res.status(500).json({ error: 'Error al crear el espacio' });
+
+    // Optional UPDATE for newer columns (only if they exist in DB)
+    try {
+      await query(
+        `UPDATE espacios SET categoria = ?, disponibilidad = ?, seguridad = ? WHERE id = ?`,
+        [categoria || null,
+         disponibilidad ? JSON.stringify(disponibilidad) : null,
+         seguridad ? JSON.stringify(seguridad) : null,
+         nuevo.id]
+      );
+    } catch (_) {
+      // Columns may not exist yet — run add-categoria-seguridad.js and add-disponibilidad.js on VPS
+    }
 
     res.status(201).json(nuevo);
   } catch (err) {

@@ -55,6 +55,7 @@ export default function PublicarPage() {
 
   const [fotos, setFotos]                   = useState<File[]>([]);
   const [previews, setPreviews]             = useState<string[]>([]);
+  const [fotoPrincipal, setFotoPrincipal]   = useState(0);
   const [disponibilidad, setDisponibilidad] = useState<Disponibilidad>({});
   const [seguridad, setSeguridad]           = useState<Record<string, boolean>>({});
   const [loading, setLoading]               = useState(false);
@@ -136,9 +137,10 @@ export default function PublicarPage() {
   }, [paso]);
 
   function handleFotoChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(e.target.files || []).slice(0, 10);
+    const files = Array.from(e.target.files || []).slice(0, 5);
     setFotos(files);
     setPreviews(files.map(f => URL.createObjectURL(f)));
+    setFotoPrincipal(0);
   }
 
   function toggleSeguridad(key: string) {
@@ -196,7 +198,13 @@ export default function PublicarPage() {
       }, tkn);
 
       if (fotos.length > 0) {
-        await espaciosAPI.subirFotos(espacio.id, fotos, tkn);
+        // Reordenar para que la foto principal quede primera
+        const ordenadas = [...fotos];
+        if (fotoPrincipal > 0) {
+          const [principal] = ordenadas.splice(fotoPrincipal, 1);
+          ordenadas.unshift(principal);
+        }
+        await espaciosAPI.subirFotos(espacio.id, ordenadas, tkn);
       }
 
       router.push('/panel');
@@ -354,7 +362,7 @@ export default function PublicarPage() {
 
               {/* M2 */}
               <div>
-                <label className="form-label">Superficie (m²)</label>
+                <label className="form-label">Superficie (m²) <span style={{ color: 'var(--text3)', fontWeight: 400, fontSize: '.75rem' }}>— opcional</span></label>
                 <input type="number" value={form.m2} onChange={e => set('m2', e.target.value)}
                   placeholder="18" min="1" />
               </div>
@@ -388,30 +396,37 @@ export default function PublicarPage() {
             <div style={{ display: 'grid', gap: '1.2rem' }}>
               <div style={cardStyle}>
                 <label className="form-label" style={{ marginBottom: '.6rem', display: 'block' }}>
-                  📷 Fotos del espacio (máx. 10)
+                  📷 Fotos del espacio <span style={{ color: 'var(--text3)', fontWeight: 400, fontSize: '.75rem' }}>— máx. 5</span>
                 </label>
                 <p style={{ fontSize: '.8rem', color: 'var(--text3)', marginBottom: '.8rem' }}>
-                  Subí fotos claras del espacio. La primera foto será la imagen principal.
+                  Subí fotos claras del espacio. Hacé click en una foto para marcarla como principal.
                 </p>
                 <input
                   type="file" accept="image/*" multiple onChange={handleFotoChange}
                   style={{ padding: '.5rem', borderRadius: 'var(--r2)', cursor: 'pointer', width: '100%' }}
                 />
                 {previews.length > 0 && (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '.5rem', marginTop: '.8rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '.5rem', marginTop: '.8rem' }}>
                     {previews.map((url, i) => (
-                      <div key={i} style={{ position: 'relative' }}>
+                      <div
+                        key={i}
+                        onClick={() => setFotoPrincipal(i)}
+                        style={{ position: 'relative', cursor: 'pointer' }}
+                      >
                         <img src={url} alt="" style={{
                           width: '100%', aspectRatio: '4/3', objectFit: 'cover',
-                          borderRadius: 8, border: i === 0 ? '2px solid var(--orange)' : '2px solid var(--border)',
+                          borderRadius: 8,
+                          border: `2.5px solid ${i === fotoPrincipal ? 'var(--orange)' : 'var(--border)'}`,
+                          transition: 'border-color .15s',
                         }} />
-                        {i === 0 && (
-                          <span style={{
-                            position: 'absolute', bottom: 4, left: 4,
-                            background: 'var(--orange)', color: '#fff',
-                            fontSize: '.58rem', fontWeight: 700, padding: '2px 6px', borderRadius: 4,
-                          }}>Principal</span>
-                        )}
+                        <span style={{
+                          position: 'absolute', bottom: 5, left: 5,
+                          background: i === fotoPrincipal ? 'var(--orange)' : 'rgba(0,0,0,.5)',
+                          color: '#fff', fontSize: '.6rem', fontWeight: 700,
+                          padding: '2px 7px', borderRadius: 4, transition: 'background .15s',
+                        }}>
+                          {i === fotoPrincipal ? '⭐ Principal' : `Foto ${i + 1}`}
+                        </span>
                       </div>
                     ))}
                   </div>
