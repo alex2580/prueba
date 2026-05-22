@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, useRef, useEffect, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import { Loader } from '@googlemaps/js-api-loader';
 import { useAuth } from '@/hooks/useAuth';
 import { espaciosAPI } from '@/lib/api';
 import { Button } from '@/components/ui/Button';
@@ -9,8 +10,9 @@ import { Modal } from '@/components/ui/Modal';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { SiteLogo } from '@/components/ui/SiteLogo';
-import { BARRIOS } from '@/types';
 import type { EspacioTipo } from '@/types';
+
+const MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || '';
 
 export default function PublicarPage() {
   const router = useRouter();
@@ -36,6 +38,97 @@ export default function PublicarPage() {
   const [authModal, setAuthModal] = useState(false);
   const [authTab, setAuthTab]     = useState<'login' | 'register'>('register');
 
+  const direccionRef  = useRef<HTMLInputElement>(null);
+  const mapPreviewRef = useRef<HTMLDivElement>(null);
+  const mapObjRef     = useRef<google.maps.Map | null>(null);
+  const markerRef     = useRef<google.maps.Marker | null>(null);
+
+  // Load Google Maps + Places Autocomplete
+  useEffect(() => {
+    if (!MAPS_KEY) return;
+
+    const loader = new Loader({ apiKey: MAPS_KEY, version: 'weekly', libraries: ['places'] });
+
+    loader.load().then(async (google) => {
+      if (!direccionRef.current) return;
+
+      const { Autocomplete } = await google.maps.importLibrary('places') as google.maps.PlacesLibrary;
+
+      const autocomplete = new Autocomplete(direccionRef.current, {
+        componentRestrictions: { country: 'ar' },
+        fields: ['formatted_address', 'geometry', 'address_components'],
+      });
+
+      autocomplete.addListener('place_changed', async () => {
+        const place = autocomplete.getPlace();
+        if (!place.geometry?.location) return;
+
+        const lat = place.geometry.location.lat();
+        const lng = place.geometry.location.lng();
+
+        // Extraer barrio de address_components
+        let barrio = '';
+        for (const comp of place.address_components || []) {
+          if (comp.types.includes('sublocality_level_1') || comp.types.includes('neighborhood') || comp.types.includes('locality')) {
+            barrio = comp.long_name;
+            break;
+          }
+        }
+
+        setForm(f => ({
+          ...f,
+          direccion: place.formatted_address || f.direccion,
+          lat: String(lat),
+          lng: String(lng),
+          barrio,
+        }));
+
+        // Mostrar mapa preview
+        if (mapPreviewRef.current) {
+          const { Map } = await google.maps.importLibrary('maps') as google.maps.MapsLibrary;
+
+          if (!mapObjRef.current) {
+            mapObjRef.current = new Map(mapPreviewRef.current, {
+              center: { lat, lng },
+              zoom: 15,
+              disableDefaultUI: true,
+              zoomControl: true,
+              styles: [
+                { elementType: 'geometry', stylers: [{ color: '#0a0e1a' }] },
+                { elementType: 'labels.text.fill', stylers: [{ color: '#9aacc5' }] },
+                { elementType: 'labels.text.stroke', stylers: [{ color: '#0a0e1a' }] },
+                { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#1a2035' }] },
+                { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0f1525' }] },
+                { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+              ],
+            });
+          } else {
+            mapObjRef.current.panTo({ lat, lng });
+            mapObjRef.current.setZoom(15);
+          }
+
+          if (markerRef.current) {
+            markerRef.current.setPosition({ lat, lng });
+          } else {
+            markerRef.current = new google.maps.Marker({
+              map: mapObjRef.current,
+              position: { lat, lng },
+              icon: {
+                url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="#e8622a">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  </svg>
+                `)}`,
+                scaledSize: new google.maps.Size(32, 32),
+                anchor: new google.maps.Point(16, 32),
+              },
+            });
+          }
+        }
+      });
+    });
+  }, []);
+
   function handleFotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || []).slice(0, 10);
     setFotos(files);
@@ -49,7 +142,7 @@ export default function PublicarPage() {
       const espacio = await espaciosAPI.crear({
         nombre: form.nombre,
         direccion: form.direccion,
-        barrio: form.barrio,
+        barrio: form.barrio || 'Buenos Aires',
         m2: Number(form.m2),
         tipo: form.tipo,
         precio_dia: Number(form.precio_dia),
@@ -73,15 +166,13 @@ export default function PublicarPage() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!form.nombre || !form.direccion || !form.barrio || !form.m2 || !form.precio_dia || !form.precio_mes) {
+    if (!form.nombre || !form.direccion || !form.m2 || !form.precio_dia || !form.precio_mes) {
       setError('Completá todos los campos obligatorios');
       return;
     }
-
     if (token) {
       await submitEspacio(token);
     } else {
-      // Mostrar modal de auth — después del login se envía automáticamente
       setAuthModal(true);
     }
   }
@@ -90,8 +181,6 @@ export default function PublicarPage() {
     const ok = await login(email, password);
     if (ok) {
       setAuthModal(false);
-      // token se actualiza en useAuth, pero necesitamos el nuevo token
-      // usamos un pequeño delay para que el estado se propague
       setTimeout(async () => {
         const tkn = localStorage.getItem('tmc_token');
         if (tkn) await submitEspacio(tkn);
@@ -133,7 +222,7 @@ export default function PublicarPage() {
               🏠 Publicar espacio
             </h1>
             <p style={{ color: 'var(--text2)', fontSize: '.92rem' }}>
-              Completá los datos de tu espacio. Vas a poder crear tu cuenta al final si todavía no tenés una.
+              Completá los datos de tu espacio. Podés crear tu cuenta al final si todavía no tenés una.
             </p>
           </div>
 
@@ -168,21 +257,36 @@ export default function PublicarPage() {
                 placeholder="Ej: Cochera techada Palermo" required />
             </div>
 
-            {/* Dirección + Barrio */}
-            <div className="form-row">
-              <div>
-                <label className="form-label">Dirección *</label>
-                <input type="text" value={form.direccion} onChange={e => set('direccion', e.target.value)}
-                  placeholder="Thames 1842, CABA" required />
-              </div>
-              <div>
-                <label className="form-label">Barrio *</label>
-                <select value={form.barrio} onChange={e => set('barrio', e.target.value)} required>
-                  <option value="">Seleccioná barrio</option>
-                  {BARRIOS.map(b => <option key={b} value={b}>{b}</option>)}
-                </select>
-              </div>
+            {/* Dirección con autocomplete */}
+            <div>
+              <label className="form-label">Dirección *</label>
+              <input
+                ref={direccionRef}
+                type="text"
+                value={form.direccion}
+                onChange={e => set('direccion', e.target.value)}
+                placeholder="Escribí la dirección y seleccioná de la lista…"
+                required
+              />
+              {form.lat && (
+                <div style={{ fontSize: '.75rem', color: 'var(--mint)', marginTop: '.3rem' }}>
+                  ✅ Ubicación detectada{form.barrio ? ` · ${form.barrio}` : ''}
+                </div>
+              )}
             </div>
+
+            {/* Mapa preview */}
+            <div
+              ref={mapPreviewRef}
+              style={{
+                width: '100%',
+                height: form.lat ? 220 : 0,
+                borderRadius: 'var(--r2)',
+                overflow: 'hidden',
+                border: form.lat ? '1.5px solid var(--border)' : 'none',
+                transition: 'height .3s ease',
+              }}
+            />
 
             {/* M2 */}
             <div>
@@ -211,18 +315,6 @@ export default function PublicarPage() {
               <textarea value={form.descripcion} onChange={e => set('descripcion', e.target.value)}
                 placeholder="Describí tu espacio: acceso, seguridad, características especiales…"
                 rows={4} />
-            </div>
-
-            {/* Coordenadas */}
-            <div>
-              <label className="form-label">Coordenadas (opcional)</label>
-              <div className="form-row">
-                <input type="number" value={form.lat} onChange={e => set('lat', e.target.value)}
-                  placeholder="Latitud (-34.5885)" step="any" />
-                <input type="number" value={form.lng} onChange={e => set('lng', e.target.value)}
-                  placeholder="Longitud (-58.4278)" step="any" />
-              </div>
-              <div className="form-hint">Si no las sabés, se usarán coordenadas aproximadas del barrio.</div>
             </div>
 
             {/* Fotos */}
@@ -262,7 +354,7 @@ export default function PublicarPage() {
               </p>
             )}
 
-            <p style={{ fontSize: '.75rem', color: 'var(--text3)', textAlign: 'center', marginTop: '.25rem' }}>
+            <p style={{ fontSize: '.75rem', color: 'var(--text3)', textAlign: 'center' }}>
               Al publicar aceptás los{' '}
               <a href="/legal.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--orange)', textDecoration: 'underline' }}>
                 Términos y Condiciones
@@ -273,7 +365,7 @@ export default function PublicarPage() {
         </div>
       </div>
 
-      {/* Auth Modal — aparece solo al intentar publicar sin sesión */}
+      {/* Auth Modal */}
       <Modal
         open={authModal}
         onClose={() => setAuthModal(false)}
