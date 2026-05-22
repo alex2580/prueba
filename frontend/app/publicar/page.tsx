@@ -11,6 +11,7 @@ import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { SiteLogo } from '@/components/ui/SiteLogo';
 import type { EspacioTipo } from '@/types';
+import { CalendarioDisponibilidad, type Disponibilidad } from '@/components/publicar/CalendarioDisponibilidad';
 
 const MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || '';
 
@@ -31,12 +32,13 @@ export default function PublicarPage() {
     lng: '',
   });
 
-  const [fotos, setFotos]         = useState<File[]>([]);
-  const [previews, setPreviews]   = useState<string[]>([]);
-  const [loading, setLoading]     = useState(false);
-  const [error, setError]         = useState<string | null>(null);
-  const [authModal, setAuthModal] = useState(false);
-  const [authTab, setAuthTab]     = useState<'login' | 'register'>('register');
+  const [fotos, setFotos]               = useState<File[]>([]);
+  const [previews, setPreviews]         = useState<string[]>([]);
+  const [disponibilidad, setDisponibilidad] = useState<Disponibilidad>({});
+  const [loading, setLoading]           = useState(false);
+  const [error, setError]               = useState<string | null>(null);
+  const [authModal, setAuthModal]       = useState(false);
+  const [authTab, setAuthTab]           = useState<'login' | 'register'>('register');
 
   const direccionRef  = useRef<HTMLInputElement>(null);
   const mapPreviewRef = useRef<HTMLDivElement>(null);
@@ -146,13 +148,14 @@ export default function PublicarPage() {
         nombre: form.nombre,
         direccion: form.direccion,
         barrio: form.barrio || 'Buenos Aires',
-        m2: Number(form.m2),
+        m2: form.m2 ? Number(form.m2) : 0,
         tipo: form.tipo,
         precio_dia: Number(form.precio_dia),
         precio_mes: Number(form.precio_mes),
         descripcion: form.descripcion,
         lat: Number(form.lat) || -34.6037,
         lng: Number(form.lng) || -58.3816,
+        disponibilidad,
       }, tkn);
 
       if (fotos.length > 0) {
@@ -293,9 +296,9 @@ export default function PublicarPage() {
 
             {/* M2 */}
             <div>
-              <label className="form-label">Superficie (m²) *</label>
+              <label className="form-label">Superficie (m²)</label>
               <input type="number" value={form.m2} onChange={e => set('m2', e.target.value)}
-                placeholder="18" min="1" required />
+                placeholder="18" min="1" />
             </div>
 
             {/* Precios */}
@@ -311,6 +314,14 @@ export default function PublicarPage() {
                   placeholder="18000" min="0" required />
               </div>
             </div>
+
+            {/* Calendario disponibilidad */}
+            <CalendarioDisponibilidad
+              precioDia={Number(form.precio_dia) || 0}
+              precioMes={Number(form.precio_mes) || 0}
+              value={disponibilidad}
+              onChange={setDisponibilidad}
+            />
 
             {/* Descripción */}
             <div>
