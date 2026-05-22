@@ -14,7 +14,7 @@ import { Modal } from '@/components/ui/Modal';
 import { Avatar } from '@/components/ui/Avatar';
 import { formatARS, formatFechaCorta } from '@/lib/utils';
 import { SiteLogo } from '@/components/ui/SiteLogo';
-import { BARRIOS } from '@/types';
+import { CalendarioDisponibilidad, type Disponibilidad } from '@/components/publicar/CalendarioDisponibilidad';
 
 const CATEGORIAS = [
   { value: 'cochera',    label: '🚗 Cochera' },
@@ -42,9 +42,10 @@ export default function PanelPage() {
   // Edit modal
   const [editando, setEditando] = useState<Espacio | null>(null);
   const [editForm, setEditForm] = useState({
-    nombre: '', descripcion: '', direccion: '', barrio: '',
+    nombre: '', descripcion: '', direccion: '',
     precio_dia: '', precio_mes: '', categoria: '',
   });
+  const [editDisponibilidad, setEditDisponibilidad] = useState<Disponibilidad>({});
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
 
@@ -94,11 +95,11 @@ export default function PanelPage() {
       nombre: esp.nombre || '',
       descripcion: esp.descripcion || '',
       direccion: esp.direccion || '',
-      barrio: esp.barrio || '',
       precio_dia: String(esp.precio_dia || ''),
       precio_mes: String(esp.precio_mes || ''),
       categoria: (esp as any).categoria || '',
     });
+    setEditDisponibilidad((esp as any).disponibilidad || {});
     setEditError(null);
   }
 
@@ -112,7 +113,7 @@ export default function PanelPage() {
         nombre: editForm.nombre,
         descripcion: editForm.descripcion,
         direccion: editForm.direccion,
-        barrio: editForm.barrio,
+        barrio: editando.barrio,
         precio_dia: Number(editForm.precio_dia) || 0,
         precio_mes: Number(editForm.precio_mes) || 0,
         m2: editando.m2,
@@ -120,6 +121,7 @@ export default function PanelPage() {
         lat: editando.lat,
         lng: editando.lng,
         categoria: editForm.categoria || undefined,
+        disponibilidad: editDisponibilidad,
       }, token);
       setEditando(null);
       setRefreshKey(k => k + 1);
@@ -391,20 +393,11 @@ export default function PanelPage() {
               placeholder="Describí tu espacio…" />
           </div>
 
-          {/* Dirección + Barrio */}
-          <div className="form-row">
-            <div>
-              <label className="form-label">Dirección</label>
-              <input value={editForm.direccion} onChange={e => setEditForm(f => ({ ...f, direccion: e.target.value }))}
-                placeholder="Calle y número" />
-            </div>
-            <div>
-              <label className="form-label">Barrio</label>
-              <select value={editForm.barrio} onChange={e => setEditForm(f => ({ ...f, barrio: e.target.value }))}>
-                <option value="">Seleccioná</option>
-                {BARRIOS.map(b => <option key={b} value={b}>{b}</option>)}
-              </select>
-            </div>
+          {/* Dirección */}
+          <div>
+            <label className="form-label">Dirección</label>
+            <input value={editForm.direccion} onChange={e => setEditForm(f => ({ ...f, direccion: e.target.value }))}
+              placeholder="Calle y número" />
           </div>
 
           {/* Precios */}
@@ -422,6 +415,14 @@ export default function PanelPage() {
                 placeholder="18000" />
             </div>
           </div>
+
+          {/* Calendario disponibilidad */}
+          <CalendarioDisponibilidad
+            precioDia={Number(editForm.precio_dia) || 0}
+            precioMes={Number(editForm.precio_mes) || 0}
+            value={editDisponibilidad}
+            onChange={setEditDisponibilidad}
+          />
 
           {editError && <div className="alert alert--error">{editError}</div>}
 
