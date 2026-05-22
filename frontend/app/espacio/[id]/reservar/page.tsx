@@ -250,7 +250,7 @@ export default function ReservarPage() {
     setPayLoading(true);
     setPayError('');
     try {
-      const reserva = await reservasAPI.crear({ espacio_id: espacioId, fecha_desde: fechaDesde, fecha_hasta: fechaHasta });
+      const reserva = await reservasAPI.crear({ espacio_id: espacioId, fecha_desde: fechaDesde, fecha_hasta: fechaHasta }, token);
 
       if (servicios.length) {
         await adminAPI.notificarServicios({
