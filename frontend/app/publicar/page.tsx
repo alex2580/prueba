@@ -25,12 +25,14 @@ const CATEGORIAS = [
 ];
 
 const SEGURIDAD_OPCIONES = [
-  { key: 'camaras',     label: '📹 Cámaras de seguridad' },
-  { key: 'cerradura',   label: '🔒 Cerradura propia' },
-  { key: 'acceso_24h',  label: '🕐 Acceso 24 horas' },
-  { key: 'vigilancia',  label: '👮 Vigilancia' },
-  { key: 'alarma',      label: '🚨 Alarma' },
-  { key: 'iluminacion', label: '💡 Iluminación' },
+  { key: 'techo_impermeable',  label: 'Techo y paredes impermeables',  emoji: '🏠', detalle: 'Protege contra lluvia, humedad y filtraciones.' },
+  { key: 'cerradura',          label: 'Acceso con llave o candado propio', emoji: '🔑', detalle: 'El inquilino tiene llave exclusiva del espacio.' },
+  { key: 'camaras',            label: 'Cámara de seguridad en el área', emoji: '📷', detalle: 'Vigilancia visual del acceso al espacio.' },
+  { key: 'iluminacion',        label: 'Iluminación adecuada',           emoji: '💡', detalle: 'Hay buena iluminación natural o artificial.' },
+  { key: 'acceso_controlado',  label: 'Acceso controlado al edificio',  emoji: '🚧', detalle: 'Portón, guardia o sistema de control de acceso.' },
+  { key: 'seco_ventilado',     label: 'Espacio seco y ventilado',       emoji: '💨', detalle: 'Evita humedad y malos olores para objetos guardados.' },
+  { key: 'acceso_24h',         label: 'Acceso 24hs disponible',         emoji: '⏰', detalle: 'El demandante puede ingresar en cualquier momento.' },
+  { key: 'extintor',           label: 'Extintor en las cercanías',      emoji: '🔥', detalle: 'Hay extintor accesible cerca del espacio.' },
 ];
 
 const PASOS = ['Datos', 'Fotos', 'Seguridad', 'Cuenta'];
@@ -481,41 +483,83 @@ export default function PublicarPage() {
           )}
 
           {/* ── PASO 3: SEGURIDAD ─────────────────────────── */}
-          {paso === 2 && (
-            <div style={{ display: 'grid', gap: '1.2rem' }}>
-              <div style={cardStyle}>
-                <label className="form-label" style={{ marginBottom: '.6rem', display: 'block' }}>
-                  🔐 Características de seguridad
-                </label>
-                <p style={{ fontSize: '.8rem', color: 'var(--text3)', marginBottom: '1rem' }}>
-                  Marcá las medidas de seguridad que tiene tu espacio. Esto ayuda a generar más confianza.
-                </p>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.6rem' }}>
-                  {SEGURIDAD_OPCIONES.map(opt => (
-                    <button
-                      key={opt.key}
-                      type="button"
-                      onClick={() => toggleSeguridad(opt.key)}
-                      style={{
-                        padding: '.75rem',
-                        borderRadius: 'var(--r2)',
-                        border: `2px solid ${seguridad[opt.key] ? 'var(--orange)' : 'var(--border)'}`,
-                        background: seguridad[opt.key] ? 'rgba(232,98,42,.1)' : 'var(--surface)',
-                        color: seguridad[opt.key] ? 'var(--orange)' : 'var(--text2)',
-                        fontFamily: 'Sora, sans-serif', fontWeight: 600, fontSize: '.82rem',
-                        cursor: 'pointer', transition: 'all .15s', textAlign: 'left',
-                      }}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
+          {paso === 2 && (() => {
+            const total = SEGURIDAD_OPCIONES.length;
+            const selected = Object.values(seguridad).filter(Boolean).length;
+            const stars = Math.round((selected / total) * 5);
+            return (
+              <div style={{ display: 'grid', gap: '1.2rem' }}>
+                <div style={cardStyle}>
+                  {/* Header con estrellas */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '.25rem' }}>
+                        <span style={{ fontSize: '1.1rem' }}>🛡️</span>
+                        <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.95rem' }}>
+                          Nivel de seguridad
+                        </span>
+                      </div>
+                      <p style={{ fontSize: '.75rem', color: 'var(--text3)' }}>
+                        Pasá el cursor sobre cada ítem para ver detalles
+                      </p>
+                    </div>
+                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                      <div style={{ fontSize: '1rem', letterSpacing: 2, color: 'var(--orange)', lineHeight: 1 }}>
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <span key={i} style={{ opacity: i < stars ? 1 : 0.25 }}>★</span>
+                        ))}
+                      </div>
+                      <div style={{ fontSize: '.7rem', color: 'var(--text3)', marginTop: '.2rem' }}>
+                        {selected}/{total} ítems
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Lista de checkboxes */}
+                  <div style={{ display: 'grid', gap: '.5rem' }}>
+                    {SEGURIDAD_OPCIONES.map(opt => (
+                      <label
+                        key={opt.key}
+                        title={opt.detalle}
+                        onClick={() => toggleSeguridad(opt.key)}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: '.75rem',
+                          padding: '.6rem .8rem',
+                          borderRadius: 'var(--r2)',
+                          border: `1.5px solid ${seguridad[opt.key] ? 'rgba(232,98,42,.35)' : 'var(--border)'}`,
+                          background: seguridad[opt.key] ? 'rgba(232,98,42,.07)' : 'var(--surface)',
+                          cursor: 'pointer', transition: 'all .15s',
+                        }}
+                      >
+                        {/* Checkbox visual */}
+                        <div style={{
+                          width: 20, height: 20, borderRadius: 5, flexShrink: 0,
+                          border: `2px solid ${seguridad[opt.key] ? 'var(--orange)' : 'var(--border2)'}`,
+                          background: seguridad[opt.key] ? 'var(--orange)' : 'transparent',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          color: '#fff', fontSize: 13, fontWeight: 700, transition: 'all .15s',
+                        }}>
+                          {seguridad[opt.key] ? '✓' : ''}
+                        </div>
+                        <span style={{ fontSize: '1rem' }}>{opt.emoji}</span>
+                        <span style={{
+                          fontSize: '.85rem', fontWeight: seguridad[opt.key] ? 600 : 400,
+                          color: seguridad[opt.key] ? 'var(--text)' : 'var(--text2)',
+                          transition: 'color .15s',
+                        }}>
+                          {opt.label}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
+
+                <p style={{ fontSize: '.75rem', color: 'var(--text3)', textAlign: 'center' }}>
+                  Este paso es opcional. Podés saltearlo y completarlo después desde Mi Panel.
+                </p>
               </div>
-              <p style={{ fontSize: '.75rem', color: 'var(--text3)', textAlign: 'center' }}>
-                Este paso es opcional. Podés saltearlo y completarlo después.
-              </p>
-            </div>
-          )}
+            );
+          })()}
 
           {/* ── PASO 4: CUENTA ────────────────────────────── */}
           {paso === 3 && (
