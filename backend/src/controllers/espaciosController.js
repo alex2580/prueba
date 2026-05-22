@@ -118,14 +118,16 @@ async function crear(req, res, next) {
       return res.status(422).json({ error: 'Datos inválidos', details: errors.array() });
     }
 
-    const { nombre, direccion, barrio, m2, tipo, precio_dia, precio_mes, descripcion, lat, lng, disponibilidad } = req.body;
+    const { nombre, direccion, barrio, m2, tipo, categoria, precio_dia, precio_mes, descripcion, lat, lng, disponibilidad, seguridad } = req.body;
 
     const result = await transaction(async (conn) => {
       const [ins] = await conn.execute(
-        `INSERT INTO espacios (nombre, direccion, barrio, m2, tipo, precio_dia, precio_mes, descripcion, oferente_id, lat, lng, disponibilidad)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [nombre, direccion, barrio, m2 || null, tipo, precio_dia, precio_mes, descripcion || '', req.user.id, lat, lng,
-         disponibilidad ? JSON.stringify(disponibilidad) : null]
+        `INSERT INTO espacios (nombre, direccion, barrio, m2, tipo, categoria, precio_dia, precio_mes, descripcion, oferente_id, lat, lng, disponibilidad, seguridad)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [nombre, direccion, barrio, m2 || null, tipo || 'exclusivo', categoria || null,
+         precio_dia, precio_mes, descripcion || '', req.user.id, lat, lng,
+         disponibilidad ? JSON.stringify(disponibilidad) : null,
+         seguridad ? JSON.stringify(seguridad) : null]
       );
       return ins.insertId ? ins : { insertId: null };
     });

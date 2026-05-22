@@ -73,7 +73,9 @@ export interface EspacioFormData {
   descripcion: string;
   lat: number;
   lng: number;
+  categoria?: string;
   disponibilidad?: { dias?: string[]; meses?: string[] };
+  seguridad?: Record<string, boolean>;
 }
 
 export type ReservaEstado = 'pendiente' | 'confirmada' | 'pagada' | 'cancelada' | 'finalizada';
