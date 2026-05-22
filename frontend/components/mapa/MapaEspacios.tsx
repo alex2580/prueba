@@ -35,6 +35,7 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
   const markerLabels  = useRef<Map<string, string>>(new Map());
   const heatmap       = useRef<any>(null);
   const infoWindow    = useRef<google.maps.InfoWindow | null>(null);
+  const userMarker    = useRef<google.maps.Marker | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [mapTheme, setMapTheme] = useState<'dark' | 'light'>('light');
@@ -172,13 +173,45 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
     });
   }, [selectedId]);
 
-  // Pan to center when it changes
+  // Pan to center and show/hide user location marker
   useEffect(() => {
-    if (center && mapObj.current) {
+    if (!loaded || !mapObj.current) return;
+
+    if (center) {
       mapObj.current.panTo(center);
-      mapObj.current.setZoom(14); // ~2km radius
+      mapObj.current.setZoom(14);
+
+      const iconSvg = encodeURIComponent(`
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48">
+          <circle cx="24" cy="24" r="22" fill="rgba(16,185,129,0.18)" stroke="#10b981" stroke-width="2"/>
+          <circle cx="24" cy="24" r="9" fill="#10b981"/>
+          <circle cx="24" cy="24" r="4" fill="white"/>
+        </svg>
+      `);
+
+      if (userMarker.current) {
+        userMarker.current.setPosition(center);
+        userMarker.current.setMap(mapObj.current);
+      } else {
+        userMarker.current = new google.maps.Marker({
+          map: mapObj.current,
+          position: center,
+          title: 'Tu ubicación',
+          icon: {
+            url: `data:image/svg+xml;charset=UTF-8,${iconSvg}`,
+            scaledSize: new google.maps.Size(48, 48),
+            anchor: new google.maps.Point(24, 24),
+          },
+          zIndex: 20,
+        });
+      }
+    } else {
+      if (userMarker.current) {
+        userMarker.current.setMap(null);
+        userMarker.current = null;
+      }
     }
-  }, [center]);
+  }, [loaded, center]);
 
   if (error) {
     return (

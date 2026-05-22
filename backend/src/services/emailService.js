@@ -138,4 +138,41 @@ async function sendContacto(toEmail, { nombre, emailRemitente, asunto, mensaje }
   });
 }
 
-module.exports = { sendReservaConfirmada, sendPagoConfirmado, sendBienvenida, sendContacto };
+async function sendServiciosAdicionales(toEmail, { nombreDemandante, emailDemandante, telDemandante, espacioNombre, servicios, fechaDesde, fechaHasta }) {
+  const etiquetas = {
+    transporte: '🚚 Servicio de Transporte',
+    seguro:     '🛡️ Seguro de Contenido',
+    embalaje:   '📦 Kit de Embalaje',
+    limpieza:   '🧹 Limpieza del Espacio',
+  };
+  const lista = servicios.map(s => `<li style="padding:4px 0">${etiquetas[s] || s}</li>`).join('');
+
+  const html = baseTemplate('Solicitud de servicios adicionales', `
+    <h2>🛎️ Nueva solicitud de servicios adicionales</h2>
+    <p>Un demandante solicitó servicios adicionales al reservar un espacio. Contactarlo a la brevedad.</p>
+    <div class="info-row">
+      <div><div class="info-label">Demandante</div><div class="info-val">${nombreDemandante}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Email</div><div class="info-val">${emailDemandante}</div></div>
+    </div>
+    ${telDemandante ? `<div class="info-row"><div><div class="info-label">Teléfono</div><div class="info-val">${telDemandante}</div></div></div>` : ''}
+    <div class="info-row">
+      <div><div class="info-label">Espacio</div><div class="info-val">${espacioNombre}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Fechas</div><div class="info-val">${fechaDesde} → ${fechaHasta}</div></div>
+    </div>
+    <p style="margin-top:16px;color:#f1f5f9;font-weight:700">Servicios solicitados:</p>
+    <ul style="color:#e2e8f0;line-height:1.9;padding-left:20px">${lista}</ul>
+  `);
+
+  await transporter.sendMail({
+    from: FROM,
+    to: toEmail,
+    subject: `🛎️ Servicios adicionales — ${espacioNombre}`,
+    html,
+  });
+}
+
+module.exports = { sendReservaConfirmada, sendPagoConfirmado, sendBienvenida, sendContacto, sendServiciosAdicionales };

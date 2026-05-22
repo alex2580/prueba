@@ -145,6 +145,23 @@ export const chatAPI = {
     }, token),
 };
 
+// ── Admin ────────────────────────────────────────────────────
+
+export const adminAPI = {
+  notificarServicios: (data: {
+    nombreDemandante: string;
+    emailDemandante: string;
+    telDemandante?: string;
+    espacioNombre: string;
+    servicios: string[];
+    fechaDesde: string;
+    fechaHasta: string;
+  }) => fetchAPI<{ ok: boolean }>('/api/admin/notificar-servicios', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  }),
+};
+
 // ── Usuarios ────────────────────────────────────────────────────
 
 export const usuariosAPI = {

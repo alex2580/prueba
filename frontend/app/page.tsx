@@ -83,11 +83,7 @@ export default function HomePage() {
   }
 
   function handleReservar(espacio: Espacio) {
-    if (!user) {
-      setAuthModal(true);
-      return;
-    }
-    router.push(`/reserva/${espacio.id}`);
+    router.push(`/espacio/${espacio.id}/reservar`);
   }
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);

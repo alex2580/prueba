@@ -7,6 +7,8 @@ const { requireAuth, requireAdmin } = require('../middleware/auth');
 // ── Public ─────────────────────────────────────────────────────
 // Contact form — no auth required
 router.post('/consultas', ctrl.crearConsulta);
+// Additional services notification — no auth required
+router.post('/notificar-servicios', ctrl.notificarServicios);
 
 // ── All routes below require admin auth ───────────────────────
 router.use(requireAuth, requireAdmin);

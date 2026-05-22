@@ -1,5 +1,5 @@
 const { query, queryOne } = require('../db/connection');
-const { sendContacto } = require('../services/emailService');
+const { sendContacto, sendServiciosAdicionales } = require('../services/emailService');
 
 // ── Bootstrap tables ───────────────────────────────────────────
 async function initTables() {
@@ -201,6 +201,28 @@ async function eliminarCampana(req, res, next) {
   }
 }
 
+// POST /api/admin/notificar-servicios  (public)
+async function notificarServicios(req, res, next) {
+  try {
+    const { nombreDemandante, emailDemandante, telDemandante, espacioNombre, servicios, fechaDesde, fechaHasta } = req.body;
+    if (!emailDemandante || !espacioNombre || !Array.isArray(servicios) || !servicios.length) {
+      return res.status(400).json({ error: 'Faltan datos requeridos' });
+    }
+    await sendServiciosAdicionales('contacto@todasmiscosas.com', {
+      nombreDemandante: nombreDemandante || 'Sin nombre',
+      emailDemandante,
+      telDemandante,
+      espacioNombre,
+      servicios,
+      fechaDesde: fechaDesde || '—',
+      fechaHasta: fechaHasta || '—',
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getNotificaciones,
   marcarLeido,
@@ -211,4 +233,5 @@ module.exports = {
   getCampanas,
   crearCampana,
   eliminarCampana,
+  notificarServicios,
 };
