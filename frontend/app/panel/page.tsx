@@ -1,11 +1,15 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+'use client';
+
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { Loader } from '@googlemaps/js-api-loader';
 import { useAuth } from '@/hooks/useAuth';
 import { useReservas } from '@/hooks/useReservas';
-import { espaciosAPI, reservasAPI } from '@/lib/api';
+import { espaciosAPI, reservasAPI, usuariosAPI } from '@/lib/api';
 import type { Espacio, Reserva } from '@/types';
+import { MONEDAS } from '@/types';
 import { StatsOferente } from '@/components/panel/StatsOferente';
 import { EstadoReserva } from '@/components/reservas/EstadoReserva';
 import { EstadoBadge } from '@/components/ui/Badge';
@@ -15,6 +19,8 @@ import { Avatar } from '@/components/ui/Avatar';
 import { formatARS, formatFechaCorta } from '@/lib/utils';
 import { SiteLogo } from '@/components/ui/SiteLogo';
 import { CalendarioDisponibilidad, type Disponibilidad } from '@/components/publicar/CalendarioDisponibilidad';
+
+const MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || '';
 
 const CATEGORIAS = [
   { value: 'cochera',    label: '🚗 Cochera' },
@@ -43,8 +49,16 @@ export default function PanelPage() {
   const [editando, setEditando] = useState<Espacio | null>(null);
   const [editForm, setEditForm] = useState({
     nombre: '', descripcion: '', direccion: '',
-    precio_dia: '', precio_mes: '', categoria: '',
+    precio_dia: '', precio_mes: '', categoria: '', moneda: 'ARS',
   });
+
+  // Profile edit
+  const [perfilOpen, setPerfilOpen] = useState(false);
+  const [perfilForm, setPerfilForm] = useState({ nombre: '', tel: '', direccion: '', lat: '', lng: '' });
+  const [perfilLoading, setPerfilLoading] = useState(false);
+  const [perfilError, setPerfilError] = useState('');
+  const [perfilOk, setPerfilOk] = useState(false);
+  const perfilDireccionRef = useRef<HTMLInputElement>(null);
   const [editDisponibilidad, setEditDisponibilidad] = useState<Disponibilidad>({});
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
@@ -98,9 +112,68 @@ export default function PanelPage() {
       precio_dia: String(esp.precio_dia || ''),
       precio_mes: String(esp.precio_mes || ''),
       categoria: (esp as any).categoria || '',
+      moneda: esp.moneda || 'ARS',
     });
     setEditDisponibilidad((esp as any).disponibilidad || {});
     setEditError(null);
+  }
+
+  function abrirPerfil() {
+    setPerfilForm({
+      nombre: user?.nombre || '',
+      tel: user?.tel || '',
+      direccion: user?.direccion || '',
+      lat: user?.lat ? String(user.lat) : '',
+      lng: user?.lng ? String(user.lng) : '',
+    });
+    setPerfilError('');
+    setPerfilOk(false);
+    setPerfilOpen(true);
+  }
+
+  // Google Maps autocomplete for profile address
+  useEffect(() => {
+    if (!perfilOpen || !MAPS_KEY || !perfilDireccionRef.current) return;
+    const loader = new Loader({ apiKey: MAPS_KEY, version: 'weekly' });
+    loader.load().then(async (google) => {
+      if (!perfilDireccionRef.current) return;
+      const { Autocomplete } = await google.maps.importLibrary('places') as any;
+      const ac = new Autocomplete(perfilDireccionRef.current, {
+        fields: ['formatted_address', 'geometry'],
+      });
+      ac.addListener('place_changed', () => {
+        const place = ac.getPlace();
+        if (!place.geometry?.location) return;
+        setPerfilForm(f => ({
+          ...f,
+          direccion: place.formatted_address || f.direccion,
+          lat: String(place.geometry.location.lat()),
+          lng: String(place.geometry.location.lng()),
+        }));
+      });
+    });
+  }, [perfilOpen]);
+
+  async function handleGuardarPerfil() {
+    if (!token) return;
+    if (!perfilForm.nombre.trim()) { setPerfilError('El nombre es obligatorio'); return; }
+    setPerfilLoading(true);
+    setPerfilError('');
+    try {
+      await usuariosAPI.actualizar({
+        nombre: perfilForm.nombre,
+        tel: perfilForm.tel,
+        direccion: perfilForm.direccion || undefined,
+        lat: perfilForm.lat ? Number(perfilForm.lat) : undefined,
+        lng: perfilForm.lng ? Number(perfilForm.lng) : undefined,
+      }, token);
+      setPerfilOk(true);
+      setTimeout(() => setPerfilOpen(false), 1500);
+    } catch (err) {
+      setPerfilError(err instanceof Error ? err.message : 'Error al guardar');
+    } finally {
+      setPerfilLoading(false);
+    }
   }
 
   async function handleGuardarEdicion() {
@@ -120,6 +193,7 @@ export default function PanelPage() {
         tipo: editando.tipo,
         lat: editando.lat,
         lng: editando.lng,
+        moneda: editForm.moneda || 'ARS',
         categoria: editForm.categoria || undefined,
         disponibilidad: editDisponibilidad,
       }, token);
@@ -179,15 +253,29 @@ export default function PanelPage() {
         <div style={{ maxWidth: 1000, margin: '0 auto', padding: '2rem 1rem' }}>
 
           {/* Welcome */}
-          <div style={{ marginBottom: '2rem' }}>
-            <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.8rem', marginBottom: '.3rem' }}>
-              Hola, {user.nombre.split(' ')[0]} 👋
-            </h1>
-            <p style={{ color: 'var(--text2)', fontSize: '.92rem' }}>
-              {isOferente
-                ? 'Gestioná tus espacios y reservas desde acá.'
-                : 'Revisá el estado de tus reservas y encontrá nuevos espacios.'}
-            </p>
+          <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+            <div>
+              <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.8rem', marginBottom: '.3rem' }}>
+                Hola, {user.nombre.split(' ')[0]} 👋
+              </h1>
+              <p style={{ color: 'var(--text2)', fontSize: '.92rem' }}>
+                {isOferente
+                  ? 'Gestioná tus espacios y reservas desde acá.'
+                  : 'Revisá el estado de tus reservas y encontrá nuevos espacios.'}
+              </p>
+              {user.direccion && (
+                <p style={{ fontSize: '.78rem', color: 'var(--text3)', marginTop: '.25rem' }}>
+                  📍 {user.direccion}
+                </p>
+              )}
+            </div>
+            <button
+              className="btn-secondary"
+              style={{ fontSize: '.8rem', padding: '.4rem .9rem', whiteSpace: 'nowrap' }}
+              onClick={abrirPerfil}
+            >
+              ✏️ Editar perfil
+            </button>
           </div>
 
           {/* Stats — oferente only */}
@@ -349,6 +437,72 @@ export default function PanelPage() {
 
         </div>
       </div>
+      {/* Modal perfil */}
+      <Modal
+        open={perfilOpen}
+        onClose={() => setPerfilOpen(false)}
+        title="✏️ Editar perfil"
+        subtitle="Actualizá tus datos personales y tu dirección"
+        maxWidth="500px"
+      >
+        <div style={{ display: 'grid', gap: '1rem' }}>
+          {perfilOk ? (
+            <div style={{ textAlign: 'center', padding: '1rem 0' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: '.5rem' }}>✅</div>
+              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>Perfil actualizado</div>
+            </div>
+          ) : (
+            <>
+              <div className="form-row">
+                <div>
+                  <label className="form-label">Nombre *</label>
+                  <input value={perfilForm.nombre}
+                    onChange={e => setPerfilForm(f => ({ ...f, nombre: e.target.value }))}
+                    placeholder="Tu nombre completo" />
+                </div>
+                <div>
+                  <label className="form-label">Teléfono</label>
+                  <input value={perfilForm.tel}
+                    onChange={e => setPerfilForm(f => ({ ...f, tel: e.target.value }))}
+                    placeholder="+54 9 11 ..." />
+                </div>
+              </div>
+
+              <div>
+                <label className="form-label">Dirección personal</label>
+                <input
+                  ref={perfilDireccionRef}
+                  value={perfilForm.direccion}
+                  onChange={e => setPerfilForm(f => ({ ...f, direccion: e.target.value, lat: '', lng: '' }))}
+                  placeholder="Escribí tu dirección para autocompletar…"
+                />
+                {perfilForm.lat && (
+                  <div style={{ fontSize: '.73rem', color: 'var(--mint)', marginTop: '.3rem' }}>
+                    ✅ Ubicación guardada — el mapa te centrará automáticamente al iniciar sesión
+                  </div>
+                )}
+                {perfilForm.direccion && !perfilForm.lat && (
+                  <div style={{ fontSize: '.73rem', color: 'var(--text3)', marginTop: '.3rem' }}>
+                    💡 Seleccioná una opción del autocompletado para guardar la ubicación exacta
+                  </div>
+                )}
+              </div>
+
+              {perfilError && <div className="alert alert--error">{perfilError}</div>}
+
+              <div style={{ display: 'flex', gap: '.75rem' }}>
+                <Button variant="secondary" onClick={() => setPerfilOpen(false)} style={{ flex: 1 }}>
+                  Cancelar
+                </Button>
+                <Button onClick={handleGuardarPerfil} loading={perfilLoading} style={{ flex: 2 }}>
+                  Guardar perfil
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
+      </Modal>
+
       {/* Modal edición espacio */}
       <Modal
         open={!!editando}
@@ -400,16 +554,26 @@ export default function PanelPage() {
               placeholder="Calle y número" />
           </div>
 
+          {/* Moneda */}
+          <div>
+            <label className="form-label">Moneda</label>
+            <select value={editForm.moneda} onChange={e => setEditForm(f => ({ ...f, moneda: e.target.value }))}>
+              {MONEDAS.map(m => (
+                <option key={m.value} value={m.value}>{m.flag} {m.label} ({m.simbolo})</option>
+              ))}
+            </select>
+          </div>
+
           {/* Precios */}
           <div className="form-row">
             <div>
-              <label className="form-label">Precio por día ($)</label>
+              <label className="form-label">Precio por día</label>
               <input type="number" value={editForm.precio_dia} min="0"
                 onChange={e => setEditForm(f => ({ ...f, precio_dia: e.target.value }))}
                 placeholder="850" />
             </div>
             <div>
-              <label className="form-label">Precio por mes ($)</label>
+              <label className="form-label">Precio por mes</label>
               <input type="number" value={editForm.precio_mes} min="0"
                 onChange={e => setEditForm(f => ({ ...f, precio_mes: e.target.value }))}
                 placeholder="18000" />

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import type { Espacio } from '@/types';
+import { getMonedaSimbolo } from '@/types';
 
 interface MapaEspaciosProps {
   espacios: Espacio[];
@@ -93,17 +94,32 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
         return;
       }
 
-      const iconColor = espacio.disponible ? '#e8622a' : '#5a6d8a';
-      const iconLabel = `$${Math.round(Number(espacio.precio_mes) / 1000)}k`;
+      const iconColor = !espacio.disponible ? '#94a3b8'
+        : espacio.tipo === 'exclusivo' ? '#3b82f6'
+        : '#e8622a';
+
+      const sim = getMonedaSimbolo(espacio.moneda);
+      const precio = Number(espacio.precio_mes);
+      let iconLabel: string;
+      if (!espacio.moneda || espacio.moneda === 'ARS') {
+        iconLabel = precio >= 1000 ? `${sim}${Math.round(precio / 1000)}k` : `${sim}${Math.round(precio)}`;
+      } else {
+        iconLabel = precio >= 1000 ? `${sim}${Math.round(precio / 1000)}k` : `${sim}${Math.round(precio)}`;
+      }
+
+      const pinSvg = (color: string, w = 68, h = 56, textSize = 11) => `
+        <svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">
+          <rect x="1" y="1" width="${w-2}" height="${Math.round(h*0.65)}" rx="${Math.round(h*0.325)}" fill="${color}"/>
+          <polygon points="${Math.round(w*0.32)},${Math.round(h*0.62)} ${Math.round(w*0.68)},${Math.round(h*0.62)} ${Math.round(w/2)},${h-2}" fill="${color}"/>
+          <circle cx="${Math.round(w/2)}" cy="${h-2}" r="2.5" fill="rgba(255,255,255,0.85)"/>
+          <text x="${Math.round(w/2)}" y="${Math.round(h*0.42)}" text-anchor="middle" font-family="Sora,sans-serif" font-size="${textSize}" font-weight="bold" fill="white">${iconLabel}</text>
+        </svg>
+      `;
+
       const defaultIcon: google.maps.Icon = {
-        url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
-          <svg xmlns="http://www.w3.org/2000/svg" width="60" height="28">
-            <rect width="60" height="28" rx="14" fill="${iconColor}"/>
-            <text x="30" y="18" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="white">${iconLabel}</text>
-          </svg>
-        `)}`,
-        scaledSize: new google.maps.Size(60, 28),
-        anchor: new google.maps.Point(30, 14),
+        url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(pinSvg(iconColor))}`,
+        scaledSize: new google.maps.Size(68, 56),
+        anchor: new google.maps.Point(34, 54),
       };
 
       const marker = new google.maps.Marker({
@@ -151,15 +167,19 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
     markers.current.forEach((marker, id) => {
       if (id === selectedId) {
         const label = markerLabels.current.get(id) ?? '';
+        const selSvg = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="80" height="66">
+            <rect x="1" y="1" width="78" height="43" rx="22" fill="#f59e0b"/>
+            <rect x="4" y="4" width="72" height="37" rx="19" fill="#fbbf24" opacity="0.5"/>
+            <polygon points="27,41 53,41 40,62" fill="#f59e0b"/>
+            <circle cx="40" cy="62" r="3" fill="rgba(255,255,255,0.9)"/>
+            <text x="40" y="28" text-anchor="middle" font-family="Sora,sans-serif" font-size="13" font-weight="bold" fill="white">${label}</text>
+          </svg>
+        `;
         marker.setIcon({
-          url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
-            <svg xmlns="http://www.w3.org/2000/svg" width="66" height="30">
-              <rect width="66" height="30" rx="15" fill="#82c4ff"/>
-              <text x="33" y="19" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="white">${label}</text>
-            </svg>
-          `)}`,
-          scaledSize: new google.maps.Size(66, 30),
-          anchor: new google.maps.Point(33, 15),
+          url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(selSvg)}`,
+          scaledSize: new google.maps.Size(80, 66),
+          anchor: new google.maps.Point(40, 64),
         });
         marker.setZIndex(10);
       } else {

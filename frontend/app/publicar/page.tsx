@@ -11,6 +11,7 @@ import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { SiteLogo } from '@/components/ui/SiteLogo';
 import { CalendarioDisponibilidad, type Disponibilidad } from '@/components/publicar/CalendarioDisponibilidad';
+import { MONEDAS } from '@/types';
 
 const MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || '';
 
@@ -51,6 +52,8 @@ export default function PublicarPage() {
     precio_mes: '',
     lat: '',
     lng: '',
+    tipo: 'exclusivo',
+    moneda: 'ARS',
   });
 
   const [fotos, setFotos]                   = useState<File[]>([]);
@@ -186,13 +189,14 @@ export default function PublicarPage() {
         direccion: form.direccion,
         barrio: form.barrio || 'Buenos Aires',
         m2: form.m2 ? Number(form.m2) : 0,
-        tipo: 'exclusivo',
+        tipo: (form.tipo || 'exclusivo') as 'exclusivo' | 'compartido',
         categoria: form.categoria,
         precio_dia: Number(form.precio_dia) || 0,
         precio_mes: Number(form.precio_mes) || 0,
         descripcion: form.descripcion,
         lat: Number(form.lat) || -34.6037,
         lng: Number(form.lng) || -58.3816,
+        moneda: form.moneda || 'ARS',
         disponibilidad,
         seguridad,
       }, tkn);
@@ -364,15 +368,54 @@ export default function PublicarPage() {
               }} />
 
 
+              {/* Tipo de alquiler */}
+              <div>
+                <label className="form-label">Tipo de alquiler *</label>
+                <div style={{ display: 'flex', gap: '.5rem', marginTop: '.4rem' }}>
+                  {[
+                    { value: 'exclusivo', label: '🔐 Exclusivo', desc: 'Uso exclusivo del espacio' },
+                    { value: 'compartido', label: '🤲 Compartido', desc: 'Espacio compartido con otros' },
+                  ].map(t => (
+                    <button
+                      key={t.value}
+                      type="button"
+                      onClick={() => set('tipo', t.value)}
+                      style={{
+                        flex: 1, padding: '.65rem .5rem',
+                        borderRadius: 'var(--r2)',
+                        border: `2px solid ${form.tipo === t.value ? (t.value === 'exclusivo' ? '#3b82f6' : 'var(--orange)') : 'var(--border)'}`,
+                        background: form.tipo === t.value ? (t.value === 'exclusivo' ? 'rgba(59,130,246,.1)' : 'rgba(232,98,42,.1)') : 'var(--surface2)',
+                        color: form.tipo === t.value ? (t.value === 'exclusivo' ? '#3b82f6' : 'var(--orange)') : 'var(--text2)',
+                        fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.78rem',
+                        cursor: 'pointer', transition: 'all .15s', textAlign: 'center',
+                      }}
+                    >
+                      <div>{t.label}</div>
+                      <div style={{ fontSize: '.65rem', fontWeight: 400, marginTop: '.15rem', opacity: .8 }}>{t.desc}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Moneda */}
+              <div>
+                <label className="form-label">Moneda de publicación</label>
+                <select value={form.moneda} onChange={e => set('moneda', e.target.value)} style={{ marginTop: '.4rem' }}>
+                  {MONEDAS.map(m => (
+                    <option key={m.value} value={m.value}>{m.flag} {m.label} ({m.simbolo})</option>
+                  ))}
+                </select>
+              </div>
+
               {/* Precios */}
               <div className="form-row">
                 <div>
-                  <label className="form-label">Precio por día ($)</label>
+                  <label className="form-label">Precio por día</label>
                   <input type="number" value={form.precio_dia} onChange={e => set('precio_dia', e.target.value)}
                     placeholder="850" min="0" />
                 </div>
                 <div>
-                  <label className="form-label">Precio por mes ($)</label>
+                  <label className="form-label">Precio por mes</label>
                   <input type="number" value={form.precio_mes} onChange={e => set('precio_mes', e.target.value)}
                     placeholder="18000" min="0" />
                 </div>

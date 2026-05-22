@@ -6,7 +6,7 @@ const supabaseService = require('../services/supabaseService');
 async function perfil(req, res, next) {
   try {
     const usuario = await queryOne(
-      'SELECT id, nombre, email, tel, tipo, verificado, avatar_url, created_at FROM usuarios WHERE id = ?',
+      'SELECT id, nombre, email, tel, tipo, verificado, avatar_url, created_at, direccion, lat, lng FROM usuarios WHERE id = ?',
       [req.user.id]
     );
     if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
@@ -24,14 +24,23 @@ async function actualizar(req, res, next) {
       return res.status(422).json({ error: 'Datos inválidos', details: errors.array() });
     }
 
-    const { nombre, tel } = req.body;
+    const { nombre, tel, direccion, lat, lng } = req.body;
     await query(
       'UPDATE usuarios SET nombre = ?, tel = ? WHERE id = ?',
       [nombre, tel || '', req.user.id]
     );
+    // Update profile address if columns exist
+    try {
+      if (direccion !== undefined) {
+        await query(
+          'UPDATE usuarios SET direccion = ?, lat = ?, lng = ? WHERE id = ?',
+          [direccion || null, lat || null, lng || null, req.user.id]
+        );
+      }
+    } catch (_) { /* columns may not exist yet */ }
 
     const updated = await queryOne(
-      'SELECT id, nombre, email, tel, tipo, verificado, avatar_url FROM usuarios WHERE id = ?',
+      'SELECT id, nombre, email, tel, tipo, verificado, avatar_url, direccion, lat, lng FROM usuarios WHERE id = ?',
       [req.user.id]
     );
     res.json(updated);

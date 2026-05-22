@@ -38,6 +38,7 @@ async function listar(req, res, next) {
              e.precio_dia, e.precio_mes, e.descripcion,
              e.lat, e.lng, e.disponible, e.rating, e.reviews_count,
              e.reservas_mes, e.badge, e.created_at,
+             IFNULL(e.moneda, 'ARS') AS moneda,
              u.nombre AS oferente_nombre, u.email AS oferente_email, u.tel AS oferente_tel,
              (SELECT url FROM espacio_fotos ef WHERE ef.espacio_id = e.id ORDER BY ef.orden LIMIT 1) AS img_principal
       FROM espacios e
@@ -118,7 +119,7 @@ async function crear(req, res, next) {
       return res.status(422).json({ error: 'Datos inválidos', details: errors.array() });
     }
 
-    const { nombre, direccion, barrio, m2, tipo, categoria, precio_dia, precio_mes, descripcion, lat, lng, disponibilidad, seguridad } = req.body;
+    const { nombre, direccion, barrio, m2, tipo, categoria, precio_dia, precio_mes, descripcion, lat, lng, disponibilidad, seguridad, moneda } = req.body;
 
     // Base INSERT — always works regardless of migration state
     await transaction(async (conn) => {
@@ -140,14 +141,15 @@ async function crear(req, res, next) {
     // Optional UPDATE for newer columns (only if they exist in DB)
     try {
       await query(
-        `UPDATE espacios SET categoria = ?, disponibilidad = ?, seguridad = ? WHERE id = ?`,
+        `UPDATE espacios SET categoria = ?, disponibilidad = ?, seguridad = ?, moneda = ? WHERE id = ?`,
         [categoria || null,
          disponibilidad ? JSON.stringify(disponibilidad) : null,
          seguridad ? JSON.stringify(seguridad) : null,
+         moneda || 'ARS',
          nuevo.id]
       );
     } catch (_) {
-      // Columns may not exist yet — run add-categoria-seguridad.js and add-disponibilidad.js on VPS
+      // Columns may not exist yet — run migrations on VPS
     }
 
     res.status(201).json(nuevo);
@@ -170,7 +172,7 @@ async function actualizar(req, res, next) {
       return res.status(403).json({ error: 'Sin permisos para modificar este espacio' });
     }
 
-    const { nombre, direccion, barrio, m2, tipo, precio_dia, precio_mes, descripcion, lat, lng, disponible } = req.body;
+    const { nombre, direccion, barrio, m2, tipo, precio_dia, precio_mes, descripcion, lat, lng, disponible, moneda, categoria, disponibilidad } = req.body;
 
     await query(
       `UPDATE espacios SET nombre=?, direccion=?, barrio=?, m2=?, tipo=?, precio_dia=?,
@@ -180,6 +182,14 @@ async function actualizar(req, res, next) {
        disponible !== undefined ? Boolean(disponible) : espacio.disponible,
        req.params.id]
     );
+
+    // Update newer columns if they exist
+    try {
+      await query(
+        `UPDATE espacios SET moneda = ?, categoria = ?, disponibilidad = ? WHERE id = ?`,
+        [moneda || 'ARS', categoria || null, disponibilidad ? JSON.stringify(disponibilidad) : null, req.params.id]
+      );
+    } catch (_) { /* columns may not exist yet */ }
 
     const updated = await getEspacioWithFotos(req.params.id);
     res.json(updated);

@@ -15,6 +15,10 @@ export interface Usuario {
   verificado: boolean;
   activo?: boolean;
   created_at?: string;
+  // Profile address
+  direccion?: string;
+  lat?: number;
+  lng?: number;
 }
 
 export interface PerfilPublico {
@@ -41,6 +45,7 @@ export interface Espacio {
   precio_dia: number;
   precio_mes: number;
   descripcion?: string;
+  moneda?: string;
   oferente_id: string;
   oferente_nombre?: string;
   oferente_email?: string;
@@ -73,9 +78,25 @@ export interface EspacioFormData {
   descripcion: string;
   lat: number;
   lng: number;
+  moneda?: string;
   categoria?: string;
   disponibilidad?: { dias?: string[]; meses?: string[] };
   seguridad?: Record<string, boolean>;
+}
+
+export const MONEDAS = [
+  { value: 'ARS', label: 'Pesos argentinos', simbolo: '$',    flag: '🇦🇷' },
+  { value: 'USD', label: 'Dólares (USD)',     simbolo: 'US$', flag: '🇺🇸' },
+  { value: 'EUR', label: 'Euros',             simbolo: '€',   flag: '🇪🇺' },
+  { value: 'BRL', label: 'Reales brasileños', simbolo: 'R$',  flag: '🇧🇷' },
+  { value: 'MXN', label: 'Pesos mexicanos',   simbolo: 'MX$', flag: '🇲🇽' },
+  { value: 'UYU', label: 'Pesos uruguayos',   simbolo: '$U',  flag: '🇺🇾' },
+  { value: 'CLP', label: 'Pesos chilenos',    simbolo: 'CL$', flag: '🇨🇱' },
+  { value: 'COP', label: 'Pesos colombianos', simbolo: 'COL$',flag: '🇨🇴' },
+] as const;
+
+export function getMonedaSimbolo(moneda?: string): string {
+  return MONEDAS.find(m => m.value === moneda)?.simbolo ?? '$';
 }
 
 export type ReservaEstado = 'pendiente' | 'confirmada' | 'pagada' | 'cancelada' | 'finalizada';

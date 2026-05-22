@@ -35,6 +35,14 @@ export default function HomePage() {
   const [geoLoading, setGeoLoading] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
 
+  // Auto-locate from saved profile address on login
+  useEffect(() => {
+    if (user?.lat && user?.lng && !userLocation) {
+      setUserLocation({ lat: Number(user.lat), lng: Number(user.lng) });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
+
   function handleCercaMio() {
     if (!navigator.geolocation) { setGeoError('Tu navegador no soporta geolocalización'); return; }
     setGeoLoading(true);

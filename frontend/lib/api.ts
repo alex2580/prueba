@@ -168,7 +168,7 @@ export const usuariosAPI = {
   me: (token: string) =>
     fetchAPI<Usuario>('/api/usuarios/me', {}, token),
 
-  actualizar: (data: { nombre: string; tel?: string }, token: string) =>
+  actualizar: (data: { nombre: string; tel?: string; direccion?: string; lat?: number; lng?: number }, token: string) =>
     fetchAPI<Usuario>('/api/usuarios/me', { method: 'PUT', body: JSON.stringify(data) }, token),
 
   sync: (data: { supabase_id: string; nombre: string; email: string; tipo?: string; tel?: string }) =>
