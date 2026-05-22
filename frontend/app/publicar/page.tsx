@@ -360,12 +360,6 @@ export default function PublicarPage() {
                 transition: 'height .3s ease',
               }} />
 
-              {/* M2 */}
-              <div>
-                <label className="form-label">Superficie (m²) <span style={{ color: 'var(--text3)', fontWeight: 400, fontSize: '.75rem' }}>— opcional</span></label>
-                <input type="number" value={form.m2} onChange={e => set('m2', e.target.value)}
-                  placeholder="18" min="1" />
-              </div>
 
               {/* Precios */}
               <div className="form-row">
