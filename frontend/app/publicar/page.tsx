@@ -37,6 +37,109 @@ const SEGURIDAD_OPCIONES = [
 
 const PASOS = ['Datos', 'Fotos', 'Seguridad', 'Cuenta'];
 
+// ── Componente separado para el paso de seguridad ─────────────
+function PasoSeguridad({
+  seguridad,
+  onToggle,
+  cardStyle,
+}: {
+  seguridad: Record<string, boolean>;
+  onToggle: (key: string) => void;
+  cardStyle: React.CSSProperties;
+}) {
+  const total    = SEGURIDAD_OPCIONES.length;
+  const selected = SEGURIDAD_OPCIONES.filter(o => seguridad[o.key]).length;
+  const stars    = Math.round((selected / total) * 5);
+
+  return (
+    <div style={{ display: 'grid', gap: '1.2rem' }}>
+      <div style={cardStyle}>
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '.2rem' }}>
+              <span style={{ fontSize: '1.15rem' }}>🛡️</span>
+              <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.95rem' }}>
+                Nivel de seguridad
+              </span>
+            </div>
+            <p style={{ fontSize: '.74rem', color: 'var(--text3)', margin: 0 }}>
+              Pasá el cursor sobre cada ítem para ver detalles
+            </p>
+          </div>
+          <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: '1rem' }}>
+            <div style={{ fontSize: '1.15rem', color: 'var(--orange)', letterSpacing: 1, lineHeight: 1 }}>
+              {[1, 2, 3, 4, 5].map(n => (
+                <span
+                  key={n}
+                  style={{
+                    opacity: n <= stars ? 1 : 0.2,
+                    transition: 'opacity .2s',
+                  }}
+                >★</span>
+              ))}
+            </div>
+            <div style={{ fontSize: '.7rem', color: 'var(--text3)', marginTop: '.25rem' }}>
+              {selected}/{total} ítems
+            </div>
+          </div>
+        </div>
+
+        {/* Lista */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '.45rem' }}>
+          {SEGURIDAD_OPCIONES.map(opt => {
+            const activo = !!seguridad[opt.key];
+            return (
+              <div
+                key={opt.key}
+                title={opt.detalle}
+                onClick={() => onToggle(opt.key)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '.75rem',
+                  padding: '.6rem .85rem',
+                  borderRadius: 'var(--r2)',
+                  border: `1.5px solid ${activo ? 'rgba(232,98,42,.4)' : 'var(--border)'}`,
+                  background: activo ? 'rgba(232,98,42,.07)' : 'var(--surface)',
+                  cursor: 'pointer',
+                  transition: 'background .15s, border-color .15s',
+                  userSelect: 'none',
+                }}
+              >
+                {/* Checkbox */}
+                <div style={{
+                  width: 20, height: 20, borderRadius: 5, flexShrink: 0,
+                  border: `2px solid ${activo ? 'var(--orange)' : '#ccc'}`,
+                  background: activo ? 'var(--orange)' : 'transparent',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: '#fff', fontSize: 13, fontWeight: 800,
+                  transition: 'background .15s, border-color .15s',
+                }}>
+                  {activo ? '✓' : ''}
+                </div>
+                {/* Emoji */}
+                <span style={{ fontSize: '1rem', flexShrink: 0 }}>{opt.emoji}</span>
+                {/* Label */}
+                <span style={{
+                  fontSize: '.85rem',
+                  fontWeight: activo ? 600 : 400,
+                  color: activo ? 'var(--text)' : 'var(--text2)',
+                  transition: 'color .15s',
+                }}>
+                  {opt.label}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <p style={{ fontSize: '.74rem', color: 'var(--text3)', textAlign: 'center', margin: 0 }}>
+        Este paso es opcional — podés completarlo después desde Mi Panel.
+      </p>
+    </div>
+  );
+}
+
 export default function PublicarPage() {
   const router = useRouter();
   const { user, token, login, register, loading: authLoading, error: authError } = useAuth();
@@ -483,83 +586,13 @@ export default function PublicarPage() {
           )}
 
           {/* ── PASO 3: SEGURIDAD ─────────────────────────── */}
-          {paso === 2 && (() => {
-            const total = SEGURIDAD_OPCIONES.length;
-            const selected = Object.values(seguridad).filter(Boolean).length;
-            const stars = Math.round((selected / total) * 5);
-            return (
-              <div style={{ display: 'grid', gap: '1.2rem' }}>
-                <div style={cardStyle}>
-                  {/* Header con estrellas */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '.25rem' }}>
-                        <span style={{ fontSize: '1.1rem' }}>🛡️</span>
-                        <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.95rem' }}>
-                          Nivel de seguridad
-                        </span>
-                      </div>
-                      <p style={{ fontSize: '.75rem', color: 'var(--text3)' }}>
-                        Pasá el cursor sobre cada ítem para ver detalles
-                      </p>
-                    </div>
-                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                      <div style={{ fontSize: '1rem', letterSpacing: 2, color: 'var(--orange)', lineHeight: 1 }}>
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <span key={i} style={{ opacity: i < stars ? 1 : 0.25 }}>★</span>
-                        ))}
-                      </div>
-                      <div style={{ fontSize: '.7rem', color: 'var(--text3)', marginTop: '.2rem' }}>
-                        {selected}/{total} ítems
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Lista de checkboxes */}
-                  <div style={{ display: 'grid', gap: '.5rem' }}>
-                    {SEGURIDAD_OPCIONES.map(opt => (
-                      <label
-                        key={opt.key}
-                        title={opt.detalle}
-                        onClick={() => toggleSeguridad(opt.key)}
-                        style={{
-                          display: 'flex', alignItems: 'center', gap: '.75rem',
-                          padding: '.6rem .8rem',
-                          borderRadius: 'var(--r2)',
-                          border: `1.5px solid ${seguridad[opt.key] ? 'rgba(232,98,42,.35)' : 'var(--border)'}`,
-                          background: seguridad[opt.key] ? 'rgba(232,98,42,.07)' : 'var(--surface)',
-                          cursor: 'pointer', transition: 'all .15s',
-                        }}
-                      >
-                        {/* Checkbox visual */}
-                        <div style={{
-                          width: 20, height: 20, borderRadius: 5, flexShrink: 0,
-                          border: `2px solid ${seguridad[opt.key] ? 'var(--orange)' : 'var(--border2)'}`,
-                          background: seguridad[opt.key] ? 'var(--orange)' : 'transparent',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          color: '#fff', fontSize: 13, fontWeight: 700, transition: 'all .15s',
-                        }}>
-                          {seguridad[opt.key] ? '✓' : ''}
-                        </div>
-                        <span style={{ fontSize: '1rem' }}>{opt.emoji}</span>
-                        <span style={{
-                          fontSize: '.85rem', fontWeight: seguridad[opt.key] ? 600 : 400,
-                          color: seguridad[opt.key] ? 'var(--text)' : 'var(--text2)',
-                          transition: 'color .15s',
-                        }}>
-                          {opt.label}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                <p style={{ fontSize: '.75rem', color: 'var(--text3)', textAlign: 'center' }}>
-                  Este paso es opcional. Podés saltearlo y completarlo después desde Mi Panel.
-                </p>
-              </div>
-            );
-          })()}
+          {paso === 2 && (
+            <PasoSeguridad
+              seguridad={seguridad}
+              onToggle={toggleSeguridad}
+              cardStyle={cardStyle}
+            />
+          )}
 
           {/* ── PASO 4: CUENTA ────────────────────────────── */}
           {paso === 3 && (
