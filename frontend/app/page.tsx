@@ -31,6 +31,23 @@ export default function HomePage() {
   const [authTab, setAuthTab] = useState<'login' | 'register'>('login');
   const [busqueda, setBusqueda] = useState('');
   const [filtrosOpen, setFiltrosOpen] = useState(false);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [geoLoading, setGeoLoading] = useState(false);
+  const [geoError, setGeoError] = useState<string | null>(null);
+
+  function handleCercaMio() {
+    if (!navigator.geolocation) { setGeoError('Tu navegador no soporta geolocalización'); return; }
+    setGeoLoading(true);
+    setGeoError(null);
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setGeoLoading(false);
+        setFiltrosOpen(false);
+      },
+      () => { setGeoError('No se pudo obtener tu ubicación'); setGeoLoading(false); }
+    );
+  }
 
   // Contacto modal state
   const [contactoOpen, setContactoOpen] = useState(false);
@@ -173,6 +190,35 @@ export default function HomePage() {
                   }}>✕</button>
                 </div>
                 <FiltrosEspacios filtros={filtros} onChange={aplicarFiltros} onReset={limpiarFiltros} />
+
+                {/* Cerca mío */}
+                <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #eee' }}>
+                  <button
+                    onClick={handleCercaMio}
+                    disabled={geoLoading}
+                    style={{
+                      width: '100%', padding: '.55rem',
+                      borderRadius: '99px', cursor: geoLoading ? 'wait' : 'pointer',
+                      border: `1.5px solid ${userLocation ? 'var(--mint)' : '#ddd'}`,
+                      background: userLocation ? 'rgba(16,185,129,.1)' : 'var(--surface)',
+                      color: userLocation ? 'var(--mint)' : '#333',
+                      fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.82rem',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.5rem',
+                      transition: 'all .15s',
+                    }}
+                  >
+                    {geoLoading ? '⏳ Buscando ubicación…' : userLocation ? '✅ Cerca mío (2 km)' : '📍 Cerca mío'}
+                  </button>
+                  {userLocation && (
+                    <button
+                      onClick={() => setUserLocation(null)}
+                      style={{ width: '100%', marginTop: '.4rem', background: 'none', border: 'none', color: '#999', fontSize: '.72rem', cursor: 'pointer' }}
+                    >
+                      Quitar
+                    </button>
+                  )}
+                  {geoError && <p style={{ color: 'red', fontSize: '.72rem', marginTop: '.4rem', textAlign: 'center' }}>{geoError}</p>}
+                </div>
               </div>
             )}
 
@@ -180,6 +226,7 @@ export default function HomePage() {
               espacios={espacios}
               onMarkerClick={handleMarkerClick}
               selectedId={selectedEspacio?.id}
+              center={userLocation ?? undefined}
             />
             {selectedEspacio && (
               <MarkerEspacioCard

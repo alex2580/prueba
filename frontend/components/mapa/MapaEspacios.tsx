@@ -176,7 +176,7 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
   useEffect(() => {
     if (center && mapObj.current) {
       mapObj.current.panTo(center);
-      mapObj.current.setZoom(15);
+      mapObj.current.setZoom(14); // ~2km radius
     }
   }, [center]);
 

@@ -253,7 +253,10 @@ export default function PublicarPage() {
       <header className="site-header">
         <SiteLogo onClick={() => router.push('/')} />
         <div />
-        {user && <button className="nav-btn" onClick={() => router.push('/panel')}>← Mi Panel</button>}
+        <div style={{ display: 'flex', gap: '.5rem', alignItems: 'center' }}>
+          <button className="nav-btn" onClick={() => router.push('/')}>← Volver al inicio</button>
+          {user && <button className="nav-btn" onClick={() => router.push('/panel')}>Mi Panel</button>}
+        </div>
       </header>
 
       <div className="page-scroll">
