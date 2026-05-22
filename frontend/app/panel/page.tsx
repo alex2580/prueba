@@ -10,9 +10,20 @@ import { StatsOferente } from '@/components/panel/StatsOferente';
 import { EstadoReserva } from '@/components/reservas/EstadoReserva';
 import { EstadoBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { Modal } from '@/components/ui/Modal';
 import { Avatar } from '@/components/ui/Avatar';
 import { formatARS, formatFechaCorta } from '@/lib/utils';
 import { SiteLogo } from '@/components/ui/SiteLogo';
+import { BARRIOS } from '@/types';
+
+const CATEGORIAS = [
+  { value: 'cochera',    label: '🚗 Cochera' },
+  { value: 'habitacion', label: '🛏️ Habitación' },
+  { value: 'sotano',     label: '🏚️ Sótano' },
+  { value: 'terraza',    label: '🌿 Terraza' },
+  { value: 'abierto',    label: '🌳 Abierto' },
+  { value: 'estante',    label: '📦 Estantería' },
+];
 
 export default function PanelPage() {
   const router = useRouter();
@@ -27,6 +38,15 @@ export default function PanelPage() {
   const [reservasRecibidas, setReservasRecibidas] = useState<Reserva[]>([]);
   const [loadingOferente, setLoadingOferente] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+
+  // Edit modal
+  const [editando, setEditando] = useState<Espacio | null>(null);
+  const [editForm, setEditForm] = useState({
+    nombre: '', descripcion: '', direccion: '', barrio: '',
+    precio_dia: '', precio_mes: '', categoria: '',
+  });
+  const [editLoading, setEditLoading] = useState(false);
+  const [editError, setEditError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) router.push('/');
@@ -65,6 +85,48 @@ export default function PanelPage() {
       setRefreshKey(k => k + 1);
     } catch (err) {
       console.error(err);
+    }
+  }
+
+  function abrirEditar(esp: Espacio) {
+    setEditando(esp);
+    setEditForm({
+      nombre: esp.nombre || '',
+      descripcion: esp.descripcion || '',
+      direccion: esp.direccion || '',
+      barrio: esp.barrio || '',
+      precio_dia: String(esp.precio_dia || ''),
+      precio_mes: String(esp.precio_mes || ''),
+      categoria: (esp as any).categoria || '',
+    });
+    setEditError(null);
+  }
+
+  async function handleGuardarEdicion() {
+    if (!token || !editando) return;
+    if (!editForm.nombre.trim()) { setEditError('El nombre es obligatorio'); return; }
+    setEditLoading(true);
+    setEditError(null);
+    try {
+      await espaciosAPI.actualizar(editando.id, {
+        nombre: editForm.nombre,
+        descripcion: editForm.descripcion,
+        direccion: editForm.direccion,
+        barrio: editForm.barrio,
+        precio_dia: Number(editForm.precio_dia) || 0,
+        precio_mes: Number(editForm.precio_mes) || 0,
+        m2: editando.m2,
+        tipo: editando.tipo,
+        lat: editando.lat,
+        lng: editando.lng,
+        categoria: editForm.categoria || undefined,
+      }, token);
+      setEditando(null);
+      setRefreshKey(k => k + 1);
+    } catch (err) {
+      setEditError(err instanceof Error ? err.message : 'Error al guardar');
+    } finally {
+      setEditLoading(false);
     }
   }
 
@@ -217,6 +279,13 @@ export default function PanelPage() {
                             <div style={{ display: 'flex', gap: '.4rem' }}>
                               <button
                                 className="btn-ghost"
+                                style={{ fontSize: '.73rem', color: 'var(--orange)' }}
+                                onClick={() => abrirEditar(esp)}
+                              >
+                                ✏️ Editar
+                              </button>
+                              <button
+                                className="btn-ghost"
                                 style={{ fontSize: '.73rem' }}
                                 onClick={() => handleToggleDisponible(esp.id, !esp.disponible)}
                               >
@@ -278,6 +347,94 @@ export default function PanelPage() {
 
         </div>
       </div>
+      {/* Modal edición espacio */}
+      <Modal
+        open={!!editando}
+        onClose={() => setEditando(null)}
+        title="✏️ Editar espacio"
+        subtitle={editando?.nombre}
+        maxWidth="560px"
+      >
+        <div style={{ display: 'grid', gap: '1rem' }}>
+          {/* Categoría */}
+          <div>
+            <label className="form-label">Tipo de espacio</label>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '.4rem', marginTop: '.4rem' }}>
+              {CATEGORIAS.map(c => (
+                <button key={c.value} type="button"
+                  onClick={() => setEditForm(f => ({ ...f, categoria: c.value }))}
+                  style={{
+                    padding: '.5rem', borderRadius: 'var(--r2)', cursor: 'pointer',
+                    border: `2px solid ${editForm.categoria === c.value ? 'var(--orange)' : 'var(--border)'}`,
+                    background: editForm.categoria === c.value ? 'rgba(232,98,42,.1)' : 'var(--surface2)',
+                    color: editForm.categoria === c.value ? 'var(--orange)' : 'var(--text2)',
+                    fontFamily: 'Sora, sans-serif', fontWeight: 600, fontSize: '.75rem', textAlign: 'center',
+                  }}>
+                  {c.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Nombre */}
+          <div>
+            <label className="form-label">Nombre *</label>
+            <input value={editForm.nombre} onChange={e => setEditForm(f => ({ ...f, nombre: e.target.value }))}
+              placeholder="Nombre del espacio" />
+          </div>
+
+          {/* Descripción */}
+          <div>
+            <label className="form-label">Descripción</label>
+            <textarea rows={3} value={editForm.descripcion}
+              onChange={e => setEditForm(f => ({ ...f, descripcion: e.target.value }))}
+              placeholder="Describí tu espacio…" />
+          </div>
+
+          {/* Dirección + Barrio */}
+          <div className="form-row">
+            <div>
+              <label className="form-label">Dirección</label>
+              <input value={editForm.direccion} onChange={e => setEditForm(f => ({ ...f, direccion: e.target.value }))}
+                placeholder="Calle y número" />
+            </div>
+            <div>
+              <label className="form-label">Barrio</label>
+              <select value={editForm.barrio} onChange={e => setEditForm(f => ({ ...f, barrio: e.target.value }))}>
+                <option value="">Seleccioná</option>
+                {BARRIOS.map(b => <option key={b} value={b}>{b}</option>)}
+              </select>
+            </div>
+          </div>
+
+          {/* Precios */}
+          <div className="form-row">
+            <div>
+              <label className="form-label">Precio por día ($)</label>
+              <input type="number" value={editForm.precio_dia} min="0"
+                onChange={e => setEditForm(f => ({ ...f, precio_dia: e.target.value }))}
+                placeholder="850" />
+            </div>
+            <div>
+              <label className="form-label">Precio por mes ($)</label>
+              <input type="number" value={editForm.precio_mes} min="0"
+                onChange={e => setEditForm(f => ({ ...f, precio_mes: e.target.value }))}
+                placeholder="18000" />
+            </div>
+          </div>
+
+          {editError && <div className="alert alert--error">{editError}</div>}
+
+          <div style={{ display: 'flex', gap: '.75rem' }}>
+            <Button variant="secondary" onClick={() => setEditando(null)} style={{ flex: 1 }}>
+              Cancelar
+            </Button>
+            <Button onClick={handleGuardarEdicion} loading={editLoading} style={{ flex: 2 }}>
+              Guardar cambios
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
