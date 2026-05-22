@@ -30,6 +30,7 @@ export default function HomePage() {
   const [authModal, setAuthModal] = useState(false);
   const [authTab, setAuthTab] = useState<'login' | 'register'>('login');
   const [busqueda, setBusqueda] = useState('');
+  const [filtrosOpen, setFiltrosOpen] = useState(false);
 
   // Contacto modal state
   const [contactoOpen, setContactoOpen] = useState(false);
@@ -119,60 +120,62 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Filters bar */}
-      <div style={{ background: 'var(--surface2)', borderBottom: '1px solid var(--border)', padding: '.6rem 1.2rem', flexShrink: 0, overflowX: 'auto' }}>
-        <FiltrosEspacios filtros={filtros} onChange={aplicarFiltros} onReset={limpiarFiltros} />
-      </div>
-
       {/* Content */}
       <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
         {/* Mapa */}
         {vista === 'mapa' && (
           <div style={{ height: '100%', position: 'relative' }}>
-            {/* Floating search bar */}
-            <div style={{
-              position: 'absolute',
-              top: '1.25rem',
-              left: 'calc(50% + 80px)',
-              transform: 'translateX(-50%)',
-              zIndex: 100,
-              background: 'rgba(8, 12, 22, 0.96)',
-              backdropFilter: 'blur(20px)',
-              border: '2px solid var(--orange)',
-              borderRadius: '999px',
-              display: 'flex', alignItems: 'center',
-              padding: '.2rem .6rem .2rem 1.2rem', gap: '.6rem',
-              width: 'min(520px, calc(100vw - 2rem))',
-              boxShadow: '0 0 0 4px rgba(232,98,42,.12), 0 8px 32px rgba(0,0,0,.7)',
-            }}>
-              <span style={{ fontSize: '1.1rem', flexShrink: 0 }}>🔍</span>
-              <input
-                type="text"
-                value={busqueda}
-                onChange={e => handleBusqueda(e.target.value)}
-                placeholder="Buscar por barrio, tipo, descripción…"
-                style={{
-                  flex: 1, background: 'none', border: 'none',
-                  color: 'var(--text)', fontSize: '.92rem',
-                  padding: '.75rem 0', width: '100%',
-                  outline: 'none', fontFamily: 'inherit',
-                }}
-              />
-              {busqueda ? (
-                <button onClick={() => handleBusqueda('')} style={{
-                  background: 'rgba(232,98,42,.2)', border: 'none',
-                  color: 'var(--orange)', borderRadius: '50%',
-                  width: 28, height: 28, cursor: 'pointer', fontSize: '.85rem',
-                  flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>✕</button>
-              ) : (
+            {/* Botón flotante de filtros */}
+            <button
+              onClick={() => setFiltrosOpen(o => !o)}
+              style={{
+                position: 'absolute', top: '1.25rem', left: '1rem',
+                zIndex: 110, display: 'flex', alignItems: 'center', gap: '.45rem',
+                background: 'rgba(255,255,255,0.97)', border: '1.5px solid #ddd',
+                borderRadius: '999px', padding: '.45rem 1rem',
+                fontSize: '.82rem', fontWeight: 700, fontFamily: 'Sora, sans-serif',
+                cursor: 'pointer', boxShadow: '0 2px 12px rgba(0,0,0,.15)',
+                color: (filtros.tipo || filtros.precio_max) ? 'var(--orange)' : '#333',
+                transition: 'all .15s',
+              }}
+            >
+              <span>⚙️</span>
+              Filtros
+              {(filtros.tipo || filtros.precio_max) && (
                 <span style={{
                   background: 'var(--orange)', color: '#fff',
-                  borderRadius: '999px', fontSize: '.7rem', fontWeight: 700,
-                  padding: '.3rem .85rem', flexShrink: 0, whiteSpace: 'nowrap',
-                }}>Buscar</span>
+                  borderRadius: '50%', width: 18, height: 18,
+                  fontSize: '.65rem', fontWeight: 800,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  {[filtros.tipo, filtros.precio_max].filter(Boolean).length}
+                </span>
               )}
-            </div>
+            </button>
+
+            {/* Panel flotante de filtros */}
+            {filtrosOpen && (
+              <div style={{
+                position: 'absolute', top: '4rem', left: '1rem',
+                zIndex: 110, background: 'rgba(255,255,255,0.98)',
+                border: '1.5px solid #ddd', borderRadius: 16,
+                padding: '1.2rem', width: 280,
+                boxShadow: '0 8px 32px rgba(0,0,0,.18)',
+                backdropFilter: 'blur(12px)',
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.9rem', color: '#111' }}>
+                    Filtros
+                  </span>
+                  <button onClick={() => setFiltrosOpen(false)} style={{
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    color: '#888', fontSize: '1.1rem', lineHeight: 1,
+                  }}>✕</button>
+                </div>
+                <FiltrosEspacios filtros={filtros} onChange={aplicarFiltros} onReset={limpiarFiltros} />
+              </div>
+            )}
+
             <MapaEspacios
               espacios={espacios}
               onMarkerClick={handleMarkerClick}

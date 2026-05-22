@@ -37,7 +37,7 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
   const infoWindow    = useRef<google.maps.InfoWindow | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [mapTheme, setMapTheme] = useState<'dark' | 'light'>('dark');
+  const [mapTheme, setMapTheme] = useState<'dark' | 'light'>('light');
 
   // Initialize map
   useEffect(() => {
@@ -60,7 +60,7 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
         disableDefaultUI: false,
         streetViewControl: false,
         mapTypeControl: false,
-        styles: DARK_STYLES,
+        styles: LIGHT_STYLES,
       });
 
       infoWindow.current = new InfoWindow();
