@@ -189,36 +189,16 @@ export default function HomePage() {
                     color: '#888', fontSize: '1.1rem', lineHeight: 1,
                   }}>✕</button>
                 </div>
-                <FiltrosEspacios filtros={filtros} onChange={aplicarFiltros} onReset={limpiarFiltros} />
-
-                {/* Cerca mío */}
-                <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #eee' }}>
-                  <button
-                    onClick={handleCercaMio}
-                    disabled={geoLoading}
-                    style={{
-                      width: '100%', padding: '.55rem',
-                      borderRadius: '99px', cursor: geoLoading ? 'wait' : 'pointer',
-                      border: `1.5px solid ${userLocation ? 'var(--mint)' : '#ddd'}`,
-                      background: userLocation ? 'rgba(16,185,129,.1)' : 'var(--surface)',
-                      color: userLocation ? 'var(--mint)' : '#333',
-                      fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.82rem',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.5rem',
-                      transition: 'all .15s',
-                    }}
-                  >
-                    {geoLoading ? '⏳ Buscando ubicación…' : userLocation ? '✅ Cerca mío (2 km)' : '📍 Cerca mío'}
-                  </button>
-                  {userLocation && (
-                    <button
-                      onClick={() => setUserLocation(null)}
-                      style={{ width: '100%', marginTop: '.4rem', background: 'none', border: 'none', color: '#999', fontSize: '.72rem', cursor: 'pointer' }}
-                    >
-                      Quitar
-                    </button>
-                  )}
-                  {geoError && <p style={{ color: 'red', fontSize: '.72rem', marginTop: '.4rem', textAlign: 'center' }}>{geoError}</p>}
-                </div>
+                <FiltrosEspacios
+                  filtros={filtros}
+                  onChange={aplicarFiltros}
+                  onReset={limpiarFiltros}
+                  onCercaMio={handleCercaMio}
+                  cercaMioActive={!!userLocation}
+                  cercaMioLoading={geoLoading}
+                  onQuitarCercaMio={() => setUserLocation(null)}
+                  geoError={geoError}
+                />
               </div>
             )}
 
