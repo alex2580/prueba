@@ -175,4 +175,131 @@ async function sendServiciosAdicionales(toEmail, { nombreDemandante, emailDemand
   });
 }
 
-module.exports = { sendReservaConfirmada, sendPagoConfirmado, sendBienvenida, sendContacto, sendServiciosAdicionales };
+// ── Oferente: nueva solicitud de reserva recibida ───────────────
+async function sendNuevaReserva(toEmail, nombreOferente, { demandanteNombre, demandanteTel, espacioNombre, fechaDesde, fechaHasta, precioTotal, reservaId }) {
+  const html = baseTemplate('Nueva solicitud de reserva', `
+    <h2>🔔 Nueva solicitud de reserva</h2>
+    <p>Hola <span class="highlight">${nombreOferente}</span>, recibiste una solicitud para tu espacio.</p>
+    <div class="info-row">
+      <div><div class="info-label">Espacio</div><div class="info-val">${espacioNombre}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Solicitante</div><div class="info-val">${demandanteNombre}</div></div>
+    </div>
+    ${demandanteTel ? `<div class="info-row"><div><div class="info-label">Teléfono</div><div class="info-val">${demandanteTel}</div></div></div>` : ''}
+    <div class="info-row">
+      <div><div class="info-label">Fechas</div><div class="info-val">${fechaDesde} → ${fechaHasta}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Monto estimado</div><div class="info-val">$${Number(precioTotal).toLocaleString('es-AR')}</div></div>
+    </div>
+    <p>Ingresá a tu panel para confirmar o rechazar la solicitud.</p>
+    <a class="btn" href="${process.env.FRONTEND_URL}/panel">Ver solicitud en mi panel →</a>
+  `);
+  await transporter.sendMail({
+    from: FROM, to: toEmail,
+    subject: `🔔 Nueva reserva — ${espacioNombre}`,
+    html,
+  });
+}
+
+// ── Demandante: el oferente aprobó su reserva ────────────────────
+async function sendReservaAprobada(toEmail, nombreDemandante, { espacioNombre, fechaDesde, fechaHasta, precioTotal, reservaId }) {
+  const html = baseTemplate('Tu reserva fue aprobada', `
+    <h2>✅ ¡Tu reserva fue aprobada!</h2>
+    <p>Hola <span class="highlight">${nombreDemandante}</span>, el oferente confirmó tu solicitud.</p>
+    <div class="info-row">
+      <div><div class="info-label">Espacio</div><div class="info-val">${espacioNombre}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Fechas</div><div class="info-val">${fechaDesde} → ${fechaHasta}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Total a pagar</div><div class="info-val">$${Number(precioTotal).toLocaleString('es-AR')}</div></div>
+    </div>
+    <p>Ya podés completar el pago para asegurar tu espacio.</p>
+    <a class="btn" href="${process.env.FRONTEND_URL}/reserva/${reservaId}/checkout">Ir al pago →</a>
+  `);
+  await transporter.sendMail({
+    from: FROM, to: toEmail,
+    subject: `✅ Reserva aprobada — ${espacioNombre}`,
+    html,
+  });
+}
+
+// ── Oferente: se acreditó el pago de su espacio ──────────────────
+async function sendPagoRecibidoOferente(toEmail, nombreOferente, { demandanteNombre, espacioNombre, monto, reservaId }) {
+  const html = baseTemplate('Pago recibido por tu espacio', `
+    <h2>💰 Pago recibido</h2>
+    <p>Hola <span class="highlight">${nombreOferente}</span>, se acreditó el pago de tu espacio.</p>
+    <div class="info-row">
+      <div><div class="info-label">Espacio</div><div class="info-val">${espacioNombre}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Inquilino</div><div class="info-val">${demandanteNombre}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Monto acreditado</div><div class="info-val">$${Number(monto).toLocaleString('es-AR')}</div></div>
+    </div>
+    <p>La reserva está activa. Coordiná el acceso con tu inquilino.</p>
+    <a class="btn" href="${process.env.FRONTEND_URL}/panel">Ver en mi panel →</a>
+  `);
+  await transporter.sendMail({
+    from: FROM, to: toEmail,
+    subject: `💰 Pago recibido — ${espacioNombre}`,
+    html,
+  });
+}
+
+// ── Ambos: la reserva fue cancelada ─────────────────────────────
+async function sendReservaCancelada(toEmail, nombre, { espacioNombre, fechaDesde, fechaHasta, canceladoPor }) {
+  const html = baseTemplate('Reserva cancelada', `
+    <h2>❌ Reserva cancelada</h2>
+    <p>Hola <span class="highlight">${nombre}</span>, la siguiente reserva fue cancelada.</p>
+    <div class="info-row">
+      <div><div class="info-label">Espacio</div><div class="info-val">${espacioNombre}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Fechas</div><div class="info-val">${fechaDesde} → ${fechaHasta}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Cancelada por</div><div class="info-val">${canceladoPor}</div></div>
+    </div>
+    <p>Si tenés alguna consulta, contactanos por la plataforma.</p>
+    <a class="btn" href="${process.env.FRONTEND_URL}/panel">Ir a mi panel →</a>
+  `);
+  await transporter.sendMail({
+    from: FROM, to: toEmail,
+    subject: `❌ Reserva cancelada — ${espacioNombre}`,
+    html,
+  });
+}
+
+// ── Demandante: reserva finalizada — invitación a dejar reseña ──
+async function sendReservaFinalizada(toEmail, nombreDemandante, { espacioNombre, reservaId }) {
+  const html = baseTemplate('Tu estadía finalizó', `
+    <h2>🏁 Tu estadía finalizó</h2>
+    <p>Hola <span class="highlight">${nombreDemandante}</span>, tu reserva en <strong>${espacioNombre}</strong> fue marcada como finalizada.</p>
+    <p>¿Qué tal fue tu experiencia? Tu opinión ayuda a otros usuarios a elegir el mejor espacio.</p>
+    <a class="btn" href="${process.env.FRONTEND_URL}/panel">Dejar una reseña →</a>
+    <p style="font-size:12px;color:#64748b;margin-top:16px">¡Gracias por usar TodasMisCosas!</p>
+  `);
+  await transporter.sendMail({
+    from: FROM, to: toEmail,
+    subject: `🏁 Estadía finalizada — ${espacioNombre}`,
+    html,
+  });
+}
+
+module.exports = {
+  sendReservaConfirmada,
+  sendPagoConfirmado,
+  sendBienvenida,
+  sendContacto,
+  sendServiciosAdicionales,
+  sendNuevaReserva,
+  sendReservaAprobada,
+  sendPagoRecibidoOferente,
+  sendReservaCancelada,
+  sendReservaFinalizada,
+};

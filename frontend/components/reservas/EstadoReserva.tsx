@@ -4,14 +4,16 @@ import type { Reserva } from '@/types';
 import { EstadoBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { formatARS, formatFechaCorta, diasEntre } from '@/lib/utils';
+import { TimelineReserva } from '@/components/reservas/TimelineReserva';
 
 interface EstadoReservaProps {
   reserva: Reserva;
   onCancelar?: () => void;
   onPagar?: () => void;
+  onCalificar?: () => void;
 }
 
-export function EstadoReserva({ reserva, onCancelar, onPagar }: EstadoReservaProps) {
+export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar }: EstadoReservaProps) {
   const dias = diasEntre(reserva.fecha_desde, reserva.fecha_hasta);
 
   return (
@@ -31,7 +33,9 @@ export function EstadoReserva({ reserva, onCancelar, onPagar }: EstadoReservaPro
         <EstadoBadge estado={reserva.estado} />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.5rem', marginBottom: '.9rem' }}>
+      <TimelineReserva estado={reserva.estado} />
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.5rem', margin: '1rem 0 .9rem' }}>
         {[
           ['📅 Desde', formatFechaCorta(reserva.fecha_desde)],
           ['📅 Hasta',  formatFechaCorta(reserva.fecha_hasta)],
@@ -58,6 +62,13 @@ export function EstadoReserva({ reserva, onCancelar, onPagar }: EstadoReservaPro
               Cancelar
             </Button>
           )}
+        </div>
+      )}
+      {(reserva.estado === 'pagada' || reserva.estado === 'finalizada') && onCalificar && (
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button variant="secondary" onClick={onCalificar} size="sm">
+            ⭐ Calificar espacio
+          </Button>
         </div>
       )}
     </div>

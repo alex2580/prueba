@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { espaciosAPI, reservasAPI, pagosAPI, adminAPI } from '@/lib/api';
@@ -12,6 +12,7 @@ import type { Espacio } from '@/types';
 import { SERVICIOS_ADICIONALES } from '@/types';
 import type { ServicioTipo } from '@/types';
 import { formatARS, calcularPrecio, diasEntre } from '@/lib/utils';
+import QRCode from 'qrcode';
 
 // ─── Mini Calendar ──────────────────────────────────────────────
 
@@ -214,6 +215,18 @@ export default function ReservarPage() {
   const [payLoading, setPayLoading] = useState(false);
   const [payError, setPayError] = useState('');
 
+  // QR state
+  const [qrDataUrl, setQrDataUrl] = useState('');
+  const [qrReservaId, setQrReservaId] = useState('');
+  const [qrLoading, setQrLoading] = useState(false);
+  const [qrPolling, setQrPolling] = useState(false);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Cleanup polling on unmount
+  useEffect(() => {
+    return () => { if (pollRef.current) clearInterval(pollRef.current); };
+  }, []);
+
   useEffect(() => {
     espaciosAPI.obtener(espacioId)
       .then(setEspacio)
@@ -269,6 +282,54 @@ export default function ReservarPage() {
     } catch (err: unknown) {
       setPayError(err instanceof Error ? err.message : 'Error al procesar el pago');
       setPayLoading(false);
+    }
+  }
+
+  async function handlePagarQR() {
+    if (!user || !token || !espacio) return;
+    setQrLoading(true);
+    setPayError('');
+    try {
+      const reserva = await reservasAPI.crear({ espacio_id: espacioId, fecha_desde: fechaDesde, fecha_hasta: fechaHasta }, token);
+
+      if (servicios.length) {
+        await adminAPI.notificarServicios({
+          nombreDemandante: user.nombre,
+          emailDemandante: user.email,
+          telDemandante: user.tel,
+          espacioNombre: espacio.nombre,
+          servicios,
+          fechaDesde,
+          fechaHasta,
+        }).catch(() => {});
+      }
+
+      const pref = await pagosAPI.crearPreferencia(reserva.id, token);
+      const dataUrl = await QRCode.toDataURL(pref.init_point, {
+        width: 260,
+        margin: 2,
+        color: { dark: '#1a1a2e', light: '#ffffff' },
+      });
+
+      setQrDataUrl(dataUrl);
+      setQrReservaId(reserva.id);
+      setQrPolling(true);
+
+      // Poll every 4 seconds for payment confirmation
+      pollRef.current = setInterval(async () => {
+        try {
+          const estado = await pagosAPI.estado(reserva.id, token);
+          if (estado.estado === 'pagada') {
+            if (pollRef.current) clearInterval(pollRef.current);
+            router.push(`/reserva/${reserva.id}/confirmacion?estado=success`);
+          }
+        } catch { /* ignore polling errors */ }
+      }, 4000);
+
+    } catch (err: unknown) {
+      setPayError(err instanceof Error ? err.message : 'Error al generar el QR');
+    } finally {
+      setQrLoading(false);
     }
   }
 
@@ -602,11 +663,61 @@ export default function ReservarPage() {
                         <div className="alert alert--error">{payError}</div>
                       )}
 
-                      <Button variant="primary" onClick={handlePagar} loading={payLoading} style={{ width: '100%', fontSize: '1rem', padding: '.9rem' }}>
-                        🛡️ Pagar con MercadoPago
-                      </Button>
+                      {/* QR panel — shown after clicking "Pagar por QR" */}
+                      {qrDataUrl && (
+                        <div style={{
+                          textAlign: 'center',
+                          background: 'var(--surface2)',
+                          border: '1.5px solid var(--border)',
+                          borderRadius: 'var(--r3)',
+                          padding: '1.5rem 1rem',
+                        }}>
+                          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.95rem', marginBottom: '.4rem' }}>
+                            📱 Escaneá con tu app de MercadoPago
+                          </div>
+                          <p style={{ fontSize: '.75rem', color: 'var(--text3)', marginBottom: '1.1rem' }}>
+                            Abrí MercadoPago → Escaneá → Listo. Esta pantalla se actualiza sola cuando se confirme el pago.
+                          </p>
+                          <img
+                            src={qrDataUrl}
+                            alt="QR MercadoPago"
+                            style={{ width: 220, height: 220, borderRadius: 12, border: '1.5px solid var(--border)' }}
+                          />
+                          {qrPolling && (
+                            <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.4rem', fontSize: '.75rem', color: 'var(--text3)' }}>
+                              <span style={{ display: 'inline-block', animation: 'spin 1.2s linear infinite' }}>⟳</span>
+                              Esperando confirmación del pago…
+                            </div>
+                          )}
+                          <style>{`@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }`}</style>
+                          <button
+                            className="btn-secondary"
+                            style={{ marginTop: '1rem', fontSize: '.75rem' }}
+                            onClick={() => window.open(qrDataUrl ? `https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=${qrReservaId}` : '#', '_blank')}
+                          >
+                            Abrí el link en otro dispositivo
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Payment buttons — hidden once QR is shown */}
+                      {!qrDataUrl && (
+                        <div style={{ display: 'grid', gap: '.6rem' }}>
+                          <Button variant="primary" onClick={handlePagar} loading={payLoading} style={{ width: '100%', fontSize: '1rem', padding: '.9rem' }}>
+                            💳 Pagar online con MercadoPago
+                          </Button>
+                          <Button
+                            variant="secondary"
+                            onClick={handlePagarQR}
+                            loading={qrLoading}
+                            style={{ width: '100%', fontSize: '1rem', padding: '.75rem' }}
+                          >
+                            📱 Pagar por QR con MercadoPago
+                          </Button>
+                        </div>
+                      )}
                       <p style={{ textAlign: 'center', fontSize: '.72rem', color: 'var(--text3)' }}>
-                        Serás redirigido a MercadoPago de forma segura 🔒
+                        Pago seguro procesado por MercadoPago 🔒
                       </p>
                     </div>
                   )}

@@ -135,17 +135,27 @@ async function crear(req, res, next) {
       return rows[0];
     });
 
-    // Send notification email
-    try {
-      await emailService.sendReservaConfirmada(req.user.email, req.user.nombre, {
+    // Email al demandante: reserva recibida
+    emailService.sendReservaConfirmada(req.user.email, req.user.nombre, {
+      espacioNombre: espacio.nombre,
+      fechaDesde: fecha_desde,
+      fechaHasta: fecha_hasta,
+      precioTotal: precio_total,
+      reservaId: reserva.id,
+    }).catch(e => console.warn('Email demandante:', e.message));
+
+    // Email al oferente: nueva solicitud recibida
+    const oferente = await queryOne('SELECT email, nombre FROM usuarios WHERE id = ?', [espacio.oferente_id]);
+    if (oferente) {
+      emailService.sendNuevaReserva(oferente.email, oferente.nombre, {
+        demandanteNombre: req.user.nombre,
+        demandanteTel: req.user.tel || '',
         espacioNombre: espacio.nombre,
         fechaDesde: fecha_desde,
         fechaHasta: fecha_hasta,
         precioTotal: precio_total,
         reservaId: reserva.id,
-      });
-    } catch (emailErr) {
-      console.warn('Email notification failed:', emailErr.message);
+      }).catch(e => console.warn('Email oferente:', e.message));
     }
 
     res.status(201).json(reserva);
@@ -164,7 +174,13 @@ async function cambiarEstado(req, res, next) {
     }
 
     const reserva = await queryOne(
-      `SELECT r.*, e.oferente_id FROM reservas r JOIN espacios e ON r.espacio_id = e.id WHERE r.id = ?`,
+      `SELECT r.*,
+              e.oferente_id, e.nombre AS espacio_nombre,
+              u.nombre AS usuario_nombre, u.email AS usuario_email
+       FROM reservas r
+       JOIN espacios e ON r.espacio_id = e.id
+       JOIN usuarios u ON r.usuario_id = u.id
+       WHERE r.id = ?`,
       [req.params.id]
     );
     if (!reserva) return res.status(404).json({ error: 'Reserva no encontrada' });
@@ -180,6 +196,46 @@ async function cambiarEstado(req, res, next) {
 
     await query('UPDATE reservas SET estado = ? WHERE id = ?', [estado, reserva.id]);
     const updated = await queryOne('SELECT * FROM reservas WHERE id = ?', [reserva.id]);
+
+    // Emails según nuevo estado
+    const oferente = await queryOne('SELECT email, nombre FROM usuarios WHERE id = ?', [reserva.oferente_id]);
+
+    if (estado === 'confirmada') {
+      // Avisar al demandante que el oferente aprobó
+      emailService.sendReservaAprobada(reserva.usuario_email, reserva.usuario_nombre, {
+        espacioNombre: reserva.espacio_nombre,
+        fechaDesde: reserva.fecha_desde,
+        fechaHasta: reserva.fecha_hasta,
+        precioTotal: reserva.precio_total,
+        reservaId: reserva.id,
+      }).catch(e => console.warn('Email aprobada:', e.message));
+    }
+
+    if (estado === 'cancelada') {
+      const canceladoPor = req.user.id === reserva.usuario_id ? 'el demandante' : 'el oferente';
+      emailService.sendReservaCancelada(reserva.usuario_email, reserva.usuario_nombre, {
+        espacioNombre: reserva.espacio_nombre,
+        fechaDesde: reserva.fecha_desde,
+        fechaHasta: reserva.fecha_hasta,
+        canceladoPor,
+      }).catch(e => console.warn('Email cancelada (demandante):', e.message));
+      if (oferente) {
+        emailService.sendReservaCancelada(oferente.email, oferente.nombre, {
+          espacioNombre: reserva.espacio_nombre,
+          fechaDesde: reserva.fecha_desde,
+          fechaHasta: reserva.fecha_hasta,
+          canceladoPor,
+        }).catch(e => console.warn('Email cancelada (oferente):', e.message));
+      }
+    }
+
+    if (estado === 'finalizada') {
+      emailService.sendReservaFinalizada(reserva.usuario_email, reserva.usuario_nombre, {
+        espacioNombre: reserva.espacio_nombre,
+        reservaId: reserva.id,
+      }).catch(e => console.warn('Email finalizada:', e.message));
+    }
+
     res.json(updated);
   } catch (err) {
     next(err);
@@ -190,7 +246,13 @@ async function cambiarEstado(req, res, next) {
 async function cancelar(req, res, next) {
   try {
     const reserva = await queryOne(
-      `SELECT r.*, e.oferente_id FROM reservas r JOIN espacios e ON r.espacio_id = e.id WHERE r.id = ?`,
+      `SELECT r.*,
+              e.oferente_id, e.nombre AS espacio_nombre,
+              u.nombre AS usuario_nombre, u.email AS usuario_email
+       FROM reservas r
+       JOIN espacios e ON r.espacio_id = e.id
+       JOIN usuarios u ON r.usuario_id = u.id
+       WHERE r.id = ?`,
       [req.params.id]
     );
     if (!reserva) return res.status(404).json({ error: 'Reserva no encontrada' });
@@ -208,6 +270,23 @@ async function cancelar(req, res, next) {
     }
 
     await query('UPDATE reservas SET estado = ? WHERE id = ?', ['cancelada', reserva.id]);
+
+    // Avisar a ambas partes
+    const canceladoPor = req.user.id === reserva.usuario_id ? 'el demandante' : 'el oferente';
+    const emailData = {
+      espacioNombre: reserva.espacio_nombre,
+      fechaDesde: reserva.fecha_desde,
+      fechaHasta: reserva.fecha_hasta,
+      canceladoPor,
+    };
+    emailService.sendReservaCancelada(reserva.usuario_email, reserva.usuario_nombre, emailData)
+      .catch(e => console.warn('Email cancelada (demandante):', e.message));
+    const oferente = await queryOne('SELECT email, nombre FROM usuarios WHERE id = ?', [reserva.oferente_id]);
+    if (oferente) {
+      emailService.sendReservaCancelada(oferente.email, oferente.nombre, emailData)
+        .catch(e => console.warn('Email cancelada (oferente):', e.message));
+    }
+
     res.json({ message: 'Reserva cancelada', id: reserva.id });
   } catch (err) {
     next(err);

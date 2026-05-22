@@ -90,17 +90,28 @@ async function webhook(req, res, next) {
         [nuevoEstado, String(paymentId), status, reservaId]
       );
 
-      // Notify user
+      // Notify both parties on payment
       if (nuevoEstado === 'pagada') {
         const usuario = await queryOne('SELECT * FROM usuarios WHERE id = ?', [reserva.usuario_id]);
-        const espacio = await queryOne('SELECT nombre FROM espacios WHERE id = ?', [reserva.espacio_id]);
+        const espacio = await queryOne('SELECT nombre, oferente_id FROM espacios WHERE id = ?', [reserva.espacio_id]);
         if (usuario && espacio) {
-          await emailService.sendPagoConfirmado(usuario.email, usuario.nombre, {
+          // Email al demandante
+          emailService.sendPagoConfirmado(usuario.email, usuario.nombre, {
             espacioNombre: espacio.nombre,
             monto: reserva.precio_total,
             reservaId: reserva.id,
             paymentId,
-          }).catch(e => console.warn('Email error:', e.message));
+          }).catch(e => console.warn('Email pago demandante:', e.message));
+          // Email al oferente
+          const oferente = await queryOne('SELECT email, nombre FROM usuarios WHERE id = ?', [espacio.oferente_id]);
+          if (oferente) {
+            emailService.sendPagoRecibidoOferente(oferente.email, oferente.nombre, {
+              demandanteNombre: usuario.nombre,
+              espacioNombre: espacio.nombre,
+              monto: reserva.precio_total,
+              reservaId: reserva.id,
+            }).catch(e => console.warn('Email pago oferente:', e.message));
+          }
         }
       }
     }

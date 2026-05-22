@@ -7,7 +7,8 @@ import { useRouter } from 'next/navigation';
 import { Loader } from '@googlemaps/js-api-loader';
 import { useAuth } from '@/hooks/useAuth';
 import { useReservas } from '@/hooks/useReservas';
-import { espaciosAPI, reservasAPI, usuariosAPI } from '@/lib/api';
+import { espaciosAPI, reservasAPI, usuariosAPI, reviewsAPI } from '@/lib/api';
+import { SeguridadChecklist } from '@/components/publicar/SeguridadChecklist';
 import type { Espacio, Reserva } from '@/types';
 import { MONEDAS } from '@/types';
 import { StatsOferente } from '@/components/panel/StatsOferente';
@@ -60,8 +61,19 @@ export default function PanelPage() {
   const [perfilOk, setPerfilOk] = useState(false);
   const perfilDireccionRef = useRef<HTMLInputElement>(null);
   const [editDisponibilidad, setEditDisponibilidad] = useState<Disponibilidad>({});
+  const [editSeguridad, setEditSeguridad] = useState<Record<string, boolean>>({});
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
+
+  // Review modal
+  const [reviewModal, setReviewModal] = useState(false);
+  const [reviewEspacioId, setReviewEspacioId] = useState('');
+  const [reviewEspacioNombre, setReviewEspacioNombre] = useState('');
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewTexto, setReviewTexto] = useState('');
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [reviewError, setReviewError] = useState('');
+  const [reviewOk, setReviewOk] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) router.push('/');
@@ -115,6 +127,7 @@ export default function PanelPage() {
       moneda: esp.moneda || 'ARS',
     });
     setEditDisponibilidad((esp as any).disponibilidad || {});
+    setEditSeguridad((esp as any).seguridad || {});
     setEditError(null);
   }
 
@@ -196,6 +209,7 @@ export default function PanelPage() {
         moneda: editForm.moneda || 'ARS',
         categoria: editForm.categoria || undefined,
         disponibilidad: editDisponibilidad,
+        seguridad: editSeguridad,
       }, token);
       setEditando(null);
       setRefreshKey(k => k + 1);
@@ -203,6 +217,31 @@ export default function PanelPage() {
       setEditError(err instanceof Error ? err.message : 'Error al guardar');
     } finally {
       setEditLoading(false);
+    }
+  }
+
+  function abrirReview(r: { espacio_id: string; espacio_nombre?: string }) {
+    setReviewEspacioId(r.espacio_id);
+    setReviewEspacioNombre(r.espacio_nombre || '');
+    setReviewRating(0);
+    setReviewTexto('');
+    setReviewError('');
+    setReviewOk(false);
+    setReviewModal(true);
+  }
+
+  async function handleEnviarReview() {
+    if (!token || !reviewRating) return;
+    setReviewLoading(true);
+    setReviewError('');
+    try {
+      await reviewsAPI.crear({ espacio_id: reviewEspacioId, rating: reviewRating, texto: reviewTexto }, token);
+      setReviewOk(true);
+      setTimeout(() => setReviewModal(false), 1800);
+    } catch (err) {
+      setReviewError(err instanceof Error ? err.message : 'Error al enviar');
+    } finally {
+      setReviewLoading(false);
     }
   }
 
@@ -312,6 +351,7 @@ export default function PanelPage() {
                     reserva={r}
                     onCancelar={!['cancelada', 'finalizada'].includes(r.estado) ? () => cancelar(r.id) : undefined}
                     onPagar={r.estado === 'confirmada' ? () => router.push(`/reserva/${r.id}/checkout`) : undefined}
+                    onCalificar={['pagada', 'finalizada'].includes(r.estado) ? () => abrirReview(r) : undefined}
                   />
                 ))}
               </div>
@@ -503,6 +543,78 @@ export default function PanelPage() {
         </div>
       </Modal>
 
+      {/* Modal calificación */}
+      <Modal
+        open={reviewModal}
+        onClose={() => setReviewModal(false)}
+        title="⭐ Calificar espacio"
+        subtitle={reviewEspacioNombre}
+        maxWidth="440px"
+      >
+        {reviewOk ? (
+          <div style={{ textAlign: 'center', padding: '1.5rem 0' }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '.5rem' }}>🎉</div>
+            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>¡Gracias por tu reseña!</div>
+            <p style={{ color: 'var(--text2)', fontSize: '.85rem', marginTop: '.3rem' }}>Tu opinión ayuda a la comunidad.</p>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gap: '1.25rem' }}>
+            {/* Star picker */}
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '.82rem', color: 'var(--text2)', marginBottom: '.5rem' }}>¿Cuántas estrellas le das?</div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '.3rem' }}>
+                {[1, 2, 3, 4, 5].map(n => (
+                  <button
+                    key={n}
+                    onClick={() => setReviewRating(n)}
+                    style={{
+                      background: 'none', border: 'none', cursor: 'pointer',
+                      fontSize: '2rem', lineHeight: 1,
+                      color: n <= reviewRating ? 'var(--orange)' : '#ccc',
+                      transition: 'color .15s, transform .1s',
+                      transform: n <= reviewRating ? 'scale(1.15)' : 'scale(1)',
+                    }}
+                  >★</button>
+                ))}
+              </div>
+              {reviewRating > 0 && (
+                <div style={{ fontSize: '.75rem', color: 'var(--text3)', marginTop: '.3rem' }}>
+                  {['', 'Muy malo', 'Malo', 'Regular', 'Bueno', 'Excelente'][reviewRating]}
+                </div>
+              )}
+            </div>
+
+            {/* Texto */}
+            <div>
+              <label className="form-label">Comentario (opcional)</label>
+              <textarea
+                rows={3}
+                value={reviewTexto}
+                onChange={e => setReviewTexto(e.target.value)}
+                placeholder="Contanos tu experiencia con el espacio…"
+                style={{ marginTop: '.4rem' }}
+              />
+            </div>
+
+            {reviewError && <div className="alert alert--error">{reviewError}</div>}
+
+            <div style={{ display: 'flex', gap: '.75rem' }}>
+              <Button variant="secondary" onClick={() => setReviewModal(false)} style={{ flex: 1 }}>
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleEnviarReview}
+                loading={reviewLoading}
+                disabled={!reviewRating}
+                style={{ flex: 2 }}
+              >
+                Enviar calificación
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
       {/* Modal edición espacio */}
       <Modal
         open={!!editando}
@@ -586,6 +698,12 @@ export default function PanelPage() {
             precioMes={Number(editForm.precio_mes) || 0}
             value={editDisponibilidad}
             onChange={setEditDisponibilidad}
+          />
+
+          {/* Seguridad */}
+          <SeguridadChecklist
+            seguridad={editSeguridad}
+            onChange={key => setEditSeguridad(s => ({ ...s, [key]: !s[key] }))}
           />
 
           {editError && <div className="alert alert--error">{editError}</div>}

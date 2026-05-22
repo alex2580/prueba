@@ -69,9 +69,21 @@ export function MarkerEspacioCard({ espacio, onClose, onVerDetalle, onReservar }
         <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '1rem', marginBottom: '.2rem' }}>
           {espacio.nombre}
         </div>
-        <div style={{ fontSize: '.8rem', color: 'var(--text3)', marginBottom: '.7rem' }}>
+        <div style={{ fontSize: '.8rem', color: 'var(--text3)', marginBottom: espacio.rating > 0 ? '.4rem' : '.7rem' }}>
           📍 {espacio.barrio} · {espacio.m2} m²
         </div>
+        {espacio.rating > 0 && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '.3rem', marginBottom: '.7rem' }}>
+            <span style={{ color: 'var(--orange)', fontSize: '.9rem', letterSpacing: 1 }}>
+              {[1,2,3,4,5].map(n => (
+                <span key={n} style={{ opacity: n <= Math.round(espacio.rating) ? 1 : 0.2 }}>★</span>
+              ))}
+            </span>
+            <span style={{ fontSize: '.75rem', color: 'var(--text3)', fontWeight: 600 }}>
+              {espacio.rating.toFixed(1)}
+            </span>
+          </div>
+        )}
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '.5rem' }}>
           <div>
