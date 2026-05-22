@@ -150,7 +150,7 @@ export default function HomePage() {
             <button
               onClick={() => setFiltrosOpen(o => !o)}
               style={{
-                position: 'absolute', top: '1.25rem', right: '1rem',
+                position: 'absolute', top: '1.25rem', right: '8rem',
                 zIndex: 110, display: 'flex', alignItems: 'center', gap: '.45rem',
                 background: (filtros.tipo || filtros.precio_max)
                   ? 'rgba(232,98,42,.18)'
@@ -182,7 +182,7 @@ export default function HomePage() {
             {/* Panel flotante de filtros */}
             {filtrosOpen && (
               <div style={{
-                position: 'absolute', top: '4rem', right: '1rem',
+                position: 'absolute', top: '4rem', right: '8rem',
                 zIndex: 110, background: 'rgba(255,255,255,0.98)',
                 border: '1.5px solid #ddd', borderRadius: 16,
                 padding: '1.2rem', width: 280,
