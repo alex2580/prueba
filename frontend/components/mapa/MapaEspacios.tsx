@@ -33,7 +33,7 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
   const markers       = useRef<Map<string, google.maps.Marker>>(new Map());
   const markerIcons   = useRef<Map<string, google.maps.Icon>>(new Map());
   const markerLabels  = useRef<Map<string, string>>(new Map());
-  const heatmap       = useRef<google.maps.visualization.HeatmapLayer | null>(null);
+  const heatmap       = useRef<any>(null);
   const infoWindow    = useRef<google.maps.InfoWindow | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +46,6 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
     const loader = new Loader({
       apiKey: MAP_ID,
       version: 'weekly',
-      libraries: ['visualization'],
     });
 
     loader.load().then(async (google) => {
@@ -144,26 +143,6 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
       if (m) { m.setMap(null); markers.current.delete(id); markerIcons.current.delete(id); markerLabels.current.delete(id); }
     });
 
-    // Heatmap of espacio locations
-    const points = espacios.map(e => ({
-      location: new google.maps.LatLng(parseFloat(String(e.lat)), parseFloat(String(e.lng))),
-      weight: e.reservas_mes + 1,
-    }));
-
-    if (heatmap.current) {
-      heatmap.current.setData(points);
-    } else {
-      google.maps.importLibrary('visualization').then((lib) => {
-        const { HeatmapLayer } = lib as google.maps.VisualizationLibrary;
-        heatmap.current = new HeatmapLayer({
-          data: points,
-          map,
-          radius: 40,
-          opacity: 0.35,
-          gradient: ['rgba(0,0,0,0)', 'rgba(232,98,42,.3)', 'rgba(232,98,42,.6)', 'rgba(232,98,42,.9)'],
-        });
-      });
-    }
   }, [loaded, espacios, onMarkerClick]);
 
   // Highlight selected marker

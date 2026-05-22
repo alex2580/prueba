@@ -49,7 +49,7 @@ export default function PublicarPage() {
   useEffect(() => {
     if (!MAPS_KEY) return;
 
-    const loader = new Loader({ apiKey: MAPS_KEY, version: 'weekly', libraries: ['places'] });
+    const loader = new Loader({ apiKey: MAPS_KEY, version: 'weekly' });
 
     loader.load().then(async (google) => {
       if (!direccionRef.current) return;
