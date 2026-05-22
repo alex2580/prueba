@@ -40,8 +40,10 @@ export default function PublicarPage() {
 
   const direccionRef  = useRef<HTMLInputElement>(null);
   const mapPreviewRef = useRef<HTMLDivElement>(null);
-  const mapObjRef     = useRef<google.maps.Map | null>(null);
-  const markerRef     = useRef<google.maps.Marker | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mapObjRef     = useRef<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const markerRef     = useRef<any>(null);
 
   // Load Google Maps + Places Autocomplete
   useEffect(() => {
@@ -52,7 +54,8 @@ export default function PublicarPage() {
     loader.load().then(async (google) => {
       if (!direccionRef.current) return;
 
-      const { Autocomplete } = await google.maps.importLibrary('places') as google.maps.PlacesLibrary;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { Autocomplete } = await google.maps.importLibrary('places') as any;
 
       const autocomplete = new Autocomplete(direccionRef.current, {
         componentRestrictions: { country: 'ar' },
