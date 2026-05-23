@@ -142,4 +142,98 @@ Los oferentes pueden elegir la moneda al publicar o editar un espacio: ARS, USD,
 
 ---
 
+---
+
+## 23 de Mayo 2026
+
+### Recordatorios de Vencimiento de Reserva — Emails 8a/8b/8c/8d
+
+Se implementó un sistema automático de alertas por email que avisa al demandante cuando su reserva está próxima a vencer, con cuatro mensajes distintos según la urgencia.
+
+| # | Cuándo se envía | Asunto | Contenido |
+|---|-----------------|--------|-----------|
+| 8a | 5 días antes del vencimiento | ⏰ Tu reserva vence en 5 días | Espacio, fecha de vencimiento, botón "Extender mi reserva" |
+| 8b | 2 días antes del vencimiento | ⚡ Tu reserva vence en 2 días | Ídem, tono más urgente |
+| 8c | 1 día antes del vencimiento | 🚨 Tu reserva vence mañana | Ídem, máxima urgencia |
+| 8d | El día del vencimiento | 🔔 Hoy finaliza tu reserva | Aviso de último día + CTA de extensión |
+
+**Mecanismo técnico:**
+- Se usa `node-cron` dentro del proceso del backend (sin procesos externos)
+- El cron corre todos los días a las **09:00 hs Argentina** (`America/Argentina/Buenos_Aires`)
+- Consulta reservas con `estado='pagada'` cuya `fecha_hasta` coincide con la fecha objetivo
+- Usa 4 columnas booleanas en la tabla `reservas` (`recordatorio_5d`, `recordatorio_2d`, `recordatorio_1d`, `recordatorio_0d`) para garantizar que cada email se envíe **una sola vez**
+- Si la reserva se extiende, las 4 columnas se resetean a 0 y los recordatorios se reenvían respecto a la nueva fecha
+
+Archivos: `backend/src/jobs/recordatorios.js` (nuevo), `backend/src/services/emailService.js`, `backend/src/app.js`
+
+---
+
+### Sistema de Extensión de Reservas
+
+El demandante puede prorrogar su reserva pagada antes de que venza, sin interrumpir el uso del espacio.
+
+#### Flujo completo
+
+```
+Panel → botón "📅 Extender reserva"
+      → Modal: elige nueva fecha de vencimiento
+      → Backend calcula días adicionales y precio
+      → Crea preferencia MercadoPago para el monto de la extensión
+      → Usuario paga en MP (Checkout Pro)
+      → Webhook recibe confirmación → actualiza fecha_hasta en la reserva
+      → Resetea recordatorios → Email "✅ Extensión confirmada" al demandante
+```
+
+#### Detalle técnico
+
+- **Endpoint:** `POST /api/reservas/:id/extender` (solo reservas con `estado='pagada'`)
+- **Validaciones:** la nueva fecha debe ser posterior a la actual; no puede haber solapamiento con otra reserva del mismo espacio en ese período
+- **Precio:** se calcula igual que la reserva original (precio por día o precio mensual si son ≥28 días adicionales)
+- **Diferenciación en webhook:** las preferencias de extensión usan `external_reference = "ext_<extensionId>"` y `metadata.tipo = "extension"`, permitiendo que el webhook las procese por separado de los pagos normales
+- **Historial:** cada extensión queda registrada en la tabla `reserva_extensiones` con su estado (`pendiente` / `pagada` / `cancelada`)
+
+#### Email adicional
+
+| # | Asunto | Para | Datos incluidos |
+|---|--------|------|-----------------|
+| 9 | ✅ Extensión confirmada | Demandante | Espacio, vencimiento anterior, nuevo vencimiento, monto pagado |
+
+#### Cambios en base de datos (se aplican automáticamente en cada deploy)
+
+```sql
+-- En tabla reservas:
+recordatorio_5d TINYINT(1) DEFAULT 0
+recordatorio_2d TINYINT(1) DEFAULT 0
+recordatorio_1d TINYINT(1) DEFAULT 0
+recordatorio_0d TINYINT(1) DEFAULT 0
+
+-- Nueva tabla:
+CREATE TABLE reserva_extensiones (
+  id                VARCHAR(36) PRIMARY KEY,
+  reserva_id        VARCHAR(36),
+  nueva_fecha_hasta DATE,
+  precio            DECIMAL(10,2),
+  mp_preference_id  VARCHAR(200),
+  mp_payment_id     VARCHAR(200),
+  mp_status         VARCHAR(50),
+  estado            ENUM('pendiente','pagada','cancelada'),
+  created_at        DATETIME
+)
+```
+
+Archivos modificados:
+- `backend/src/db/add-recordatorios-extensiones.js` (nuevo — migración idempotente)
+- `backend/src/jobs/recordatorios.js` (nuevo — cron job)
+- `backend/src/services/emailService.js` (funciones: `sendRecordatorio5/2/1/0Dias`, `sendExtensionConfirmada`)
+- `backend/src/services/mercadopagoService.js` (función: `crearPreferenciaExtension`)
+- `backend/src/controllers/reservasController.js` (función: `extender`)
+- `backend/src/controllers/pagosController.js` (webhook actualizado para detectar extensiones)
+- `backend/src/routes/reservas.js` (ruta: `POST /:id/extender`)
+- `backend/src/app.js` (inicialización del cron al arrancar)
+- `frontend/components/reservas/EstadoReserva.tsx` (prop `onExtender`, botón "📅 Extender reserva")
+- `frontend/app/panel/page.tsx` (modal de extensión con selector de fecha + redirect a MP)
+- `.github/workflows/deploy.yml` (agrega migración al pipeline)
+
+---
+
 *Para agregar nuevas novedades: editar este archivo y agregar una sección con la fecha correspondiente.*
