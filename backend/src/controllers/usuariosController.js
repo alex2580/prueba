@@ -5,10 +5,19 @@ const supabaseService = require('../services/supabaseService');
 // GET /api/usuarios/me
 async function perfil(req, res, next) {
   try {
-    const usuario = await queryOne(
-      'SELECT id, nombre, email, tel, tipo, verificado, avatar_url, created_at, direccion, lat, lng FROM usuarios WHERE id = ?',
-      [req.user.id]
-    );
+    let usuario;
+    try {
+      usuario = await queryOne(
+        'SELECT id, nombre, email, tel, tipo, verificado, avatar_url, created_at, direccion, lat, lng FROM usuarios WHERE id = ?',
+        [req.user.id]
+      );
+    } catch (_) {
+      // Fallback: columnas nuevas aún no existen en la DB
+      usuario = await queryOne(
+        'SELECT id, nombre, email, tel, tipo, verificado, avatar_url, created_at FROM usuarios WHERE id = ?',
+        [req.user.id]
+      );
+    }
     if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
     res.json(usuario);
   } catch (err) {
@@ -39,10 +48,18 @@ async function actualizar(req, res, next) {
       }
     } catch (_) { /* columns may not exist yet */ }
 
-    const updated = await queryOne(
-      'SELECT id, nombre, email, tel, tipo, verificado, avatar_url, direccion, lat, lng FROM usuarios WHERE id = ?',
-      [req.user.id]
-    );
+    let updated;
+    try {
+      updated = await queryOne(
+        'SELECT id, nombre, email, tel, tipo, verificado, avatar_url, direccion, lat, lng FROM usuarios WHERE id = ?',
+        [req.user.id]
+      );
+    } catch (_) {
+      updated = await queryOne(
+        'SELECT id, nombre, email, tel, tipo, verificado, avatar_url FROM usuarios WHERE id = ?',
+        [req.user.id]
+      );
+    }
     res.json(updated);
   } catch (err) {
     next(err);

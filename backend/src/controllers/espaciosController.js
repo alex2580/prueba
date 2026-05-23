@@ -38,7 +38,6 @@ async function listar(req, res, next) {
              e.precio_dia, e.precio_mes, e.descripcion,
              e.lat, e.lng, e.disponible, e.rating, e.reviews_count,
              e.reservas_mes, e.badge, e.created_at,
-             IFNULL(e.moneda, 'ARS') AS moneda,
              u.nombre AS oferente_nombre, u.email AS oferente_email, u.tel AS oferente_tel,
              (SELECT url FROM espacio_fotos ef WHERE ef.espacio_id = e.id ORDER BY ef.orden LIMIT 1) AS img_principal
       FROM espacios e
@@ -78,6 +77,7 @@ async function listar(req, res, next) {
 
     const result = espacios.map(e => ({
       ...e,
+      moneda: e.moneda || 'ARS',
       imgs: fotoMap[e.id] || (e.img_principal ? [e.img_principal] : []),
     }));
 
