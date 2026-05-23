@@ -79,6 +79,34 @@ Se actualiza con cada nueva mejora incorporada al producto.
 
 ---
 
+## 23 de Mayo 2026 — Revisión flujo de reserva
+
+### Correcciones flujo de reserva (`/espacio/:id/reservar`)
+
+Se auditó el flujo completo de reserva end-to-end y se corrigieron los siguientes problemas:
+
+#### 1. OTP no aparecía al hacer login dentro del flujo (sesión anterior)
+El paso 3 ("Cuenta & Pago") mostraba el formulario de login pero al iniciar sesión no aparecía la pantalla de verificación OTP. El usuario quedaba "colgado" sin poder avanzar.
+
+- **Causa:** la página no escuchaba `otpPending` del hook `useAuth`. Tras `login()`, `otpPending` pasa a `true` pero `user` sigue en `null` → la página no cambiaba de estado.
+- **Fix:** se agregó el componente `OTPStep` con detección de `otpPending` en el paso 3.
+
+#### 2. Error "datos inválidos" al publicar espacio (`/publicar`)
+Al llegar al paso 4 y hacer click en "Publicar espacio", el backend devolvía 422.
+
+- **Causa:** el formulario no tenía campo `m2`. La función `publicar()` enviaba `m2: 0` y la validación de backend tenía `isFloat({ min: 1 })`.
+- **Fix backend:** `body('m2').optional({ nullable: true }).isFloat({ min: 0 })` — ahora es opcional.
+- **Fix frontend:** se agregó campo `m2` opcional en el paso 1 del formulario; fallback cambiado de `0` a `1`.
+
+#### 3. URL incorrecta en botón QR "Abrí en otro dispositivo"
+El botón generaba `mercadopago.com.ar/checkout/v1/redirect?pref_id=<UUID-interno>` usando el ID de reserva en vez del `init_point` real de MercadoPago.
+
+- **Fix:** se guarda `pref.init_point` en estado (`qrInitPoint`) y el botón abre esa URL directamente.
+
+Archivos modificados: `frontend/app/espacio/[id]/reservar/page.tsx`, `frontend/app/publicar/page.tsx`, `backend/src/routes/espacios.js`
+
+---
+
 ## 22 de Mayo 2026
 
 ### Notificaciones por Email — Nivel 1
