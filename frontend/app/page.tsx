@@ -146,70 +146,75 @@ export default function HomePage() {
         {/* Mapa */}
         {vista === 'mapa' && (
           <div style={{ height: '100%', position: 'relative' }}>
-            {/* Botón flotante de filtros */}
-            <button
-              onClick={() => setFiltrosOpen(o => !o)}
-              style={{
-                position: 'absolute', top: '1.25rem', right: '8rem',
-                zIndex: 110, display: 'flex', alignItems: 'center', gap: '.45rem',
-                background: (filtros.tipo || filtros.precio_max)
-                  ? 'rgba(232,98,42,.18)'
-                  : 'rgba(186,230,253,.55)',
-                border: `1.5px solid ${(filtros.tipo || filtros.precio_max) ? 'rgba(232,98,42,.45)' : 'rgba(125,211,252,.7)'}`,
-                borderRadius: '999px', padding: '.45rem 1.1rem',
-                fontSize: '.82rem', fontWeight: 700, fontFamily: 'Sora, sans-serif',
-                cursor: 'pointer',
-                boxShadow: '0 2px 14px rgba(0,0,0,.13)',
-                color: (filtros.tipo || filtros.precio_max) ? 'var(--orange)' : '#0369a1',
-                backdropFilter: 'blur(10px)',
-                transition: 'all .15s',
-              }}
+            {/* Botón flotante de filtros + panel — hover abre, salir cierra */}
+            <div
+              style={{ position: 'absolute', top: '1.25rem', right: '8rem', zIndex: 110 }}
+              onMouseEnter={() => setFiltrosOpen(true)}
+              onMouseLeave={() => setFiltrosOpen(false)}
             >
-              <span>⚙️</span>
-              Filtros
-              {(filtros.tipo || filtros.precio_max) && (
-                <span style={{
-                  background: 'var(--orange)', color: '#fff',
-                  borderRadius: '50%', width: 18, height: 18,
-                  fontSize: '.65rem', fontWeight: 800,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  {[filtros.tipo, filtros.precio_max].filter(Boolean).length}
-                </span>
-              )}
-            </button>
-
-            {/* Panel flotante de filtros */}
-            {filtrosOpen && (
-              <div style={{
-                position: 'absolute', top: '4rem', right: '8rem',
-                zIndex: 110, background: 'rgba(255,255,255,0.98)',
-                border: '1.5px solid #ddd', borderRadius: 16,
-                padding: '1.2rem', width: 280,
-                boxShadow: '0 8px 32px rgba(0,0,0,.18)',
-                backdropFilter: 'blur(12px)',
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                  <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.9rem', color: '#111' }}>
-                    Filtros
+              <button
+                onClick={() => setFiltrosOpen(o => !o)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '.45rem',
+                  background: (filtros.tipo || filtros.precio_max)
+                    ? 'rgba(232,98,42,.18)'
+                    : 'rgba(186,230,253,.55)',
+                  border: `1.5px solid ${(filtros.tipo || filtros.precio_max) ? 'rgba(232,98,42,.45)' : 'rgba(125,211,252,.7)'}`,
+                  borderRadius: '999px', padding: '.45rem 1.1rem',
+                  fontSize: '.82rem', fontWeight: 700, fontFamily: 'Sora, sans-serif',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 14px rgba(0,0,0,.13)',
+                  color: (filtros.tipo || filtros.precio_max) ? 'var(--orange)' : '#0369a1',
+                  backdropFilter: 'blur(10px)',
+                  transition: 'all .15s',
+                }}
+              >
+                <span>⚙️</span>
+                Filtros
+                {(filtros.tipo || filtros.precio_max) && (
+                  <span style={{
+                    background: 'var(--orange)', color: '#fff',
+                    borderRadius: '50%', width: 18, height: 18,
+                    fontSize: '.65rem', fontWeight: 800,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    {[filtros.tipo, filtros.precio_max].filter(Boolean).length}
                   </span>
-                  <button onClick={() => setFiltrosOpen(false)} style={{
-                    background: 'none', border: 'none', cursor: 'pointer',
-                    color: '#888', fontSize: '1.1rem', lineHeight: 1,
-                  }}>✕</button>
+                )}
+              </button>
+
+              {/* Panel flotante de filtros */}
+              {filtrosOpen && (
+                <div style={{
+                  position: 'absolute', top: 'calc(100% + .5rem)', right: 0,
+                  background: 'rgba(255,255,255,0.98)',
+                  border: '1.5px solid #ddd', borderRadius: 16,
+                  padding: '1.2rem', width: 280,
+                  boxShadow: '0 8px 32px rgba(0,0,0,.18)',
+                  backdropFilter: 'blur(12px)',
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                    <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.9rem', color: '#111' }}>
+                      Filtros
+                    </span>
+                    <button onClick={() => setFiltrosOpen(false)} style={{
+                      background: 'none', border: 'none', cursor: 'pointer',
+                      color: '#888', fontSize: '1.1rem', lineHeight: 1,
+                    }}>✕</button>
+                  </div>
+                  <FiltrosEspacios
+                    filtros={filtros}
+                    onChange={aplicarFiltros}
+                    onReset={limpiarFiltros}
+                    onCercaMio={handleCercaMio}
+                    cercaMioActive={!!userLocation}
+                    cercaMioLoading={geoLoading}
+                    onQuitarCercaMio={() => setUserLocation(null)}
+                    geoError={geoError}
+                  />
                 </div>
-                <FiltrosEspacios
-                  filtros={filtros}
-                  onChange={aplicarFiltros}
-                  onReset={limpiarFiltros}
-                  onCercaMio={handleCercaMio}
-                  cercaMioActive={!!userLocation}
-                  cercaMioLoading={geoLoading}
-                  onQuitarCercaMio={() => setUserLocation(null)}
-                  geoError={geoError}
-                />
-              </div>
-            )}
+              )}
+            </div>
 
             <MapaEspacios
               espacios={espacios}
