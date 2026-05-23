@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { espaciosAPI, reservasAPI, pagosAPI, adminAPI } from '@/lib/api';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
+import { OTPStep } from '@/components/auth/OTPStep';
 import { SiteLogo } from '@/components/ui/SiteLogo';
 import { Button } from '@/components/ui/Button';
 import type { Espacio } from '@/types';
@@ -196,7 +197,8 @@ export default function ReservarPage() {
   const router = useRouter();
   const params = useParams();
   const espacioId = params.id as string;
-  const { user, token, login, register, loading: authLoading, error: authError } = useAuth();
+  const { user, token, login, register, loading: authLoading, error: authError,
+          otpPending, otpEmailHint, otpCanales, verifyOTP, reenviarOTP } = useAuth();
 
   const [espacio, setEspacio] = useState<Espacio | null>(null);
   const [loadingEspacio, setLoadingEspacio] = useState(true);
@@ -567,57 +569,71 @@ export default function ReservarPage() {
               {step === 3 && (
                 <div style={{ display: 'grid', gap: '1.4rem' }}>
                   {!user ? (
-                    /* Not logged in: show auth */
+                    /* Not logged in: show auth or OTP */
                     <div>
-                      <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.15rem', marginBottom: '.3rem' }}>
-                        🙍 Iniciá sesión para continuar
-                      </h2>
-                      <p style={{ fontSize: '.83rem', color: 'var(--text2)', marginBottom: '1.25rem' }}>
-                        Necesitás una cuenta para reservar y proceder con el pago.
-                      </p>
-
-                      {/* Tab selector */}
-                      <div style={{ display: 'flex', background: 'var(--surface2)', borderRadius: 'var(--r2)', padding: 3, marginBottom: '1.25rem' }}>
-                        {(['login', 'register'] as const).map(tab => (
-                          <button
-                            key={tab}
-                            onClick={() => setAuthTab(tab)}
-                            style={{
-                              flex: 1, padding: '.5rem',
-                              background: authTab === tab ? 'var(--surface)' : 'transparent',
-                              border: 'none', borderRadius: 'var(--r2)',
-                              fontFamily: 'Sora, sans-serif', fontWeight: 700,
-                              fontSize: '.82rem', cursor: 'pointer',
-                              color: authTab === tab ? 'var(--orange)' : 'var(--text3)',
-                              boxShadow: authTab === tab ? 'var(--s1)' : 'none',
-                              transition: 'all .15s',
-                            }}
-                          >
-                            {tab === 'login' ? '→ Ingresar' : '✚ Crear cuenta'}
-                          </button>
-                        ))}
-                      </div>
-
-                      {authTab === 'login' ? (
-                        <LoginForm
-                          onLogin={async (email, password) => {
-                            const ok = await login(email, password);
-                            return ok;
-                          }}
-                          onSwitch={() => setAuthTab('register')}
-                          error={authError}
+                      {otpPending ? (
+                        /* OTP pending — show verification step */
+                        <OTPStep
+                          emailHint={otpEmailHint}
+                          canales={otpCanales}
+                          onVerify={verifyOTP}
+                          onReenviar={reenviarOTP}
                           loading={authLoading}
+                          error={authError}
                         />
                       ) : (
-                        <RegisterForm
-                          onRegister={async (nombre, email, password, tipo, tel) => {
-                            const ok = await register(nombre, email, password, tipo, tel);
-                            return ok;
-                          }}
-                          onSwitch={() => setAuthTab('login')}
-                          error={authError}
-                          loading={authLoading}
-                        />
+                        <>
+                          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.15rem', marginBottom: '.3rem' }}>
+                            🙍 Iniciá sesión para continuar
+                          </h2>
+                          <p style={{ fontSize: '.83rem', color: 'var(--text2)', marginBottom: '1.25rem' }}>
+                            Necesitás una cuenta para reservar y proceder con el pago.
+                          </p>
+
+                          {/* Tab selector */}
+                          <div style={{ display: 'flex', background: 'var(--surface2)', borderRadius: 'var(--r2)', padding: 3, marginBottom: '1.25rem' }}>
+                            {(['login', 'register'] as const).map(tab => (
+                              <button
+                                key={tab}
+                                onClick={() => setAuthTab(tab)}
+                                style={{
+                                  flex: 1, padding: '.5rem',
+                                  background: authTab === tab ? 'var(--surface)' : 'transparent',
+                                  border: 'none', borderRadius: 'var(--r2)',
+                                  fontFamily: 'Sora, sans-serif', fontWeight: 700,
+                                  fontSize: '.82rem', cursor: 'pointer',
+                                  color: authTab === tab ? 'var(--orange)' : 'var(--text3)',
+                                  boxShadow: authTab === tab ? 'var(--s1)' : 'none',
+                                  transition: 'all .15s',
+                                }}
+                              >
+                                {tab === 'login' ? '→ Ingresar' : '✚ Crear cuenta'}
+                              </button>
+                            ))}
+                          </div>
+
+                          {authTab === 'login' ? (
+                            <LoginForm
+                              onLogin={async (email, password) => {
+                                const ok = await login(email, password);
+                                return ok;
+                              }}
+                              onSwitch={() => setAuthTab('register')}
+                              error={authError}
+                              loading={authLoading}
+                            />
+                          ) : (
+                            <RegisterForm
+                              onRegister={async (nombre, email, password, tipo, tel) => {
+                                const ok = await register(nombre, email, password, tipo, tel);
+                                return ok;
+                              }}
+                              onSwitch={() => setAuthTab('login')}
+                              error={authError}
+                              loading={authLoading}
+                            />
+                          )}
+                        </>
                       )}
                     </div>
                   ) : (
