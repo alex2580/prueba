@@ -59,6 +59,8 @@ Todos los emails comparten el mismo diseño: fondo azul marino oscuro, logo nara
 
 Preview visual disponible en: `docs/email-previews.html` (abrir en navegador)
 
+Flujograma completo del circuito de reservas: `docs/flujo-reservas.html` (abrir en navegador)
+
 ---
 
 ### Timeline Visual de Reservas — Nivel 2

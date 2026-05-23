@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TMC — Flujo de Reservas</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0a0e1a;
+      color: #e2e8f0;
+      padding: 2rem 1rem 4rem;
+      min-width: 900px;
+    }
+
+    /* ── HEADER ── */
+    .header { text-align: center; margin-bottom: 2.5rem; }
+    .header .logo { font-size: 1.6rem; font-weight: 800; color: #e8622a; }
+    .header .logo span { color: #82c4ff; }
+    .header h1 { font-size: 1.15rem; color: #94a3b8; font-weight: 400; margin-top: .4rem; }
+
+    /* ── SWIM LANES ── */
+    .lanes-wrap { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; position: relative; }
+
+    .lane-header {
+      text-align: center; padding: .7rem 1rem;
+      font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+      border-radius: 12px 12px 0 0;
+    }
+    .lane-header.dem  { background: rgba(59,130,246,.25);  color: #93c5fd; border: 1.5px solid rgba(59,130,246,.4); }
+    .lane-header.sys  { background: rgba(232,98,42,.2);    color: #fdba74; border: 1.5px solid rgba(232,98,42,.4); }
+    .lane-header.ofe  { background: rgba(16,185,129,.2);   color: #6ee7b7; border: 1.5px solid rgba(16,185,129,.4); }
+
+    .lane {
+      padding: 1.2rem .75rem;
+      display: flex; flex-direction: column; align-items: center; gap: 0;
+      border-left: 1px dashed #1e293b;
+      border-right: 1px dashed #1e293b;
+      position: relative;
+    }
+    .lane.dem { border-left: none; }
+    .lane.ofe { border-right: none; }
+
+    /* ── NODES ── */
+    .node {
+      width: 100%; max-width: 220px;
+      border-radius: 10px; padding: .7rem .9rem;
+      font-size: .78rem; text-align: center; line-height: 1.45;
+      position: relative; z-index: 2;
+    }
+    .node-action {
+      background: #1e293b; border: 1.5px solid #334155; color: #e2e8f0;
+    }
+    .node-state {
+      font-weight: 700; font-size: .75rem; padding: .5rem .9rem;
+      border-radius: 999px; letter-spacing: .05em;
+    }
+    .node-state.pendiente  { background: rgba(251,191,36,.15);  border: 1.5px solid #f59e0b; color: #fcd34d; }
+    .node-state.confirmada { background: rgba(59,130,246,.15);  border: 1.5px solid #3b82f6; color: #93c5fd; }
+    .node-state.pagada     { background: rgba(16,185,129,.15);  border: 1.5px solid #10b981; color: #6ee7b7; }
+    .node-state.cancelada  { background: rgba(239,68,68,.15);   border: 1.5px solid #ef4444; color: #fca5a5; }
+    .node-state.finalizada { background: rgba(139,92,246,.15);  border: 1.5px solid #8b5cf6; color: #c4b5fd; }
+    .node-start {
+      background: linear-gradient(135deg,#e8622a,#d4521a);
+      color: #fff; font-weight: 700; font-size: .82rem;
+      border: none; box-shadow: 0 4px 14px rgba(232,98,42,.4);
+    }
+    .node-end {
+      background: linear-gradient(135deg,#8b5cf6,#7c3aed);
+      color: #fff; font-weight: 700; font-size: .82rem;
+      border: none; box-shadow: 0 4px 14px rgba(139,92,246,.4);
+    }
+
+    /* ── EMAIL BADGE ── */
+    .email-badge {
+      display: inline-flex; align-items: center; gap: .35rem;
+      background: #0f172a; border: 1px solid #334155;
+      border-radius: 6px; padding: .3rem .6rem;
+      font-size: .68rem; color: #94a3b8;
+      white-space: nowrap;
+    }
+    .email-badge .dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+    }
+    .dot-dem  { background: #3b82f6; }
+    .dot-ofe  { background: #10b981; }
+    .dot-both { background: #f59e0b; }
+
+    /* ── ARROWS / SPACERS ── */
+    .arrow-down {
+      width: 2px; height: 28px; background: #334155;
+      margin: 0 auto; position: relative; z-index: 1;
+    }
+    .arrow-down::after {
+      content: '▼'; position: absolute; bottom: -10px; left: 50%;
+      transform: translateX(-50%); color: #475569; font-size: .6rem;
+    }
+    .arrow-down.green::after  { color: #10b981; }
+    .arrow-down.green { background: #10b981; }
+    .arrow-down.red::after    { color: #ef4444; }
+    .arrow-down.red   { background: #ef4444; }
+    .arrow-down.blue::after   { color: #3b82f6; }
+    .arrow-down.blue  { background: #3b82f6; }
+    .arrow-down.orange::after { color: #e8622a; }
+    .arrow-down.orange{ background: #e8622a; }
+    .arrow-down.purple::after { color: #8b5cf6; }
+    .arrow-down.purple{ background: #8b5cf6; }
+
+    .spacer { height: 28px; }
+    .spacer-sm { height: 14px; }
+
+    /* ── DECISION DIAMOND ── */
+    .decision {
+      width: 130px; height: 50px;
+      background: #1e293b; border: 1.5px solid #475569;
+      transform: rotate(0deg); border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .72rem; font-weight: 700; color: #94a3b8;
+      text-align: center; padding: .3rem .5rem;
+      position: relative; z-index: 2;
+      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+      width: 140px; height: 60px;
+      background: #1e293b;
+    }
+
+    /* ── HORIZONTAL CONNECTOR ── */
+    .row-connector {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; position: relative; margin: 0;
+    }
+    .h-line {
+      position: absolute; top: 50%; height: 1.5px; background: #334155;
+      left: 0; right: 0; transform: translateY(-50%);
+    }
+
+    /* ── FULL ROW (spans 3 cols) ── */
+    .full-row {
+      grid-column: 1 / -1;
+      display: flex; align-items: center; justify-content: center;
+      padding: .3rem 0; gap: 1.5rem; position: relative;
+    }
+    .full-row .line-h {
+      flex: 1; height: 1.5px; background: #1e293b;
+    }
+
+    /* ── EMAIL CLUSTER ── */
+    .email-cluster {
+      display: flex; flex-direction: column; gap: .3rem;
+      align-items: center; padding: .5rem 0;
+    }
+    .email-label {
+      font-size: .65rem; color: #475569; text-transform: uppercase;
+      letter-spacing: .1em; margin-bottom: .2rem;
+    }
+
+    /* ── CHOICE LABEL ── */
+    .choice { font-size: .68rem; font-weight: 700; padding: .15rem .5rem;
+              border-radius: 4px; }
+    .choice.si  { background: rgba(16,185,129,.2); color: #6ee7b7; }
+    .choice.no  { background: rgba(239,68,68,.2);  color: #fca5a5; }
+
+    /* ── LEGEND ── */
+    .legend {
+      max-width: 700px; margin: 3rem auto 0;
+      background: #1e293b; border: 1px solid #334155;
+      border-radius: 12px; padding: 1.2rem 1.5rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: .5rem 2rem;
+    }
+    .legend-title {
+      grid-column: 1/-1; font-size: .78rem; font-weight: 700;
+      color: #94a3b8; text-transform: uppercase; letter-spacing: .1em;
+      margin-bottom: .4rem;
+    }
+    .legend-item {
+      display: flex; align-items: center; gap: .5rem; font-size: .75rem; color: #64748b;
+    }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">📦 TodasMisCosas<span>.com</span></div>
+  <h1>Flujo completo de una reserva — Estados, actores y emails automáticos</h1>
+</div>
+
+<div class="lanes-wrap">
+
+  <!-- HEADERS -->
+  <div class="lane-header dem">🙋 Demandante</div>
+  <div class="lane-header sys">⚙️ Plataforma / Sistema</div>
+  <div class="lane-header ofe">🏠 Oferente</div>
+
+  <!-- ROW 1: INICIO -->
+  <div class="lane dem">
+    <div class="node node-start">Encuentra un espacio en el mapa y hace click en <strong>Reservar</strong></div>
+    <div class="arrow-down orange"></div>
+    <div class="node node-action">Completa el wizard:<br>📅 Fechas → ⚡ Servicios → 🔐 Login</div>
+    <div class="arrow-down orange"></div>
+  </div>
+  <div class="lane sys">
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+  </div>
+  <div class="lane ofe">
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- ROW 2: RESERVA CREADA + ESTADO PENDIENTE -->
+  <div class="lane dem">
+    <div class="email-cluster">
+      <div class="email-label">📧 Email automático</div>
+      <div class="email-badge"><span class="dot dot-dem"></span>Email 1 — Reserva recibida</div>
+    </div>
+    <div class="arrow-down"></div>
+  </div>
+  <div class="lane sys">
+    <div class="spacer-sm"></div>
+    <div class="node node-state pendiente">⏳ ESTADO: PENDIENTE</div>
+    <div class="spacer-sm"></div>
+    <div class="arrow-down"></div>
+  </div>
+  <div class="lane ofe">
+    <div class="email-cluster">
+      <div class="email-label">📧 Email automático</div>
+      <div class="email-badge"><span class="dot dot-ofe"></span>Email 2 — Nueva solicitud</div>
+    </div>
+    <div class="arrow-down"></div>
+    <div class="node node-action">Ve la solicitud en su panel y decide</div>
+    <div class="arrow-down"></div>
+  </div>
+
+  <!-- ROW 3: DECISION OFERENTE -->
+  <div class="lane dem">
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+  </div>
+  <div class="lane sys">
+    <div class="node node-action" style="font-weight:700; border-color:#475569;">
+      ❓ ¿El oferente confirma?
+    </div>
+    <div style="display:flex; gap:2rem; margin-top:.3rem;">
+      <span class="choice si">✓ Sí</span>
+      <span class="choice no">✗ No</span>
+    </div>
+  </div>
+  <div class="lane ofe">
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- ROW 4: RAMA CANCELADA -->
+  <div class="lane dem">
+    <div class="spacer"></div>
+  </div>
+  <div class="lane sys">
+    <div class="arrow-down red" style="margin-left: 60px;"></div>
+    <div class="node node-state cancelada" style="margin-left: 60px;">❌ ESTADO: CANCELADA</div>
+  </div>
+  <div class="lane ofe">
+    <div class="email-cluster">
+      <div class="email-badge"><span class="dot dot-both"></span>Email 6 — Cancelación (ambos)</div>
+    </div>
+  </div>
+
+  <!-- SEPARADOR -->
+  <div style="grid-column:1/-1; height:1.5rem;"></div>
+
+  <!-- ROW 5: CONFIRMADA -->
+  <div class="lane dem">
+    <div class="email-cluster">
+      <div class="email-label">📧 Email automático</div>
+      <div class="email-badge"><span class="dot dot-dem"></span>Email 3 — Reserva aprobada + link al pago</div>
+    </div>
+    <div class="arrow-down blue"></div>
+    <div class="node node-action">Recibe el email y va a pagar</div>
+    <div class="arrow-down blue"></div>
+  </div>
+  <div class="lane sys">
+    <div class="spacer-sm"></div>
+    <div class="node node-state confirmada">✅ ESTADO: CONFIRMADA</div>
+    <div class="spacer-sm"></div>
+    <div class="arrow-down blue"></div>
+    <div class="spacer-sm"></div>
+    <div class="node node-action">❓ ¿Elige pagar online o QR?</div>
+    <div style="display:flex; gap:1rem; margin-top:.3rem; font-size:.68rem;">
+      <span style="color:#82c4ff;">💻 Online</span>
+      <span style="color:#82c4ff;">📱 QR</span>
+    </div>
+    <div class="arrow-down blue"></div>
+    <div class="node node-action" style="font-size:.72rem;">MercadoPago procesa el pago y notifica vía webhook</div>
+    <div class="arrow-down blue"></div>
+  </div>
+  <div class="lane ofe">
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- ROW 6: DECISION PAGO -->
+  <div class="lane dem">
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+  </div>
+  <div class="lane sys">
+    <div class="node node-action" style="font-weight:700; border-color:#475569;">
+      ❓ ¿Pago aprobado por MP?
+    </div>
+    <div style="display:flex; gap:2rem; margin-top:.3rem;">
+      <span class="choice si">✓ Sí</span>
+      <span class="choice no">✗ No</span>
+    </div>
+    <div style="display:flex; gap:4rem;">
+      <div class="arrow-down green"></div>
+      <div class="arrow-down red"></div>
+    </div>
+    <div style="display:flex; gap:.5rem;">
+      <div class="node node-state pagada" style="font-size:.68rem; padding:.4rem .7rem;">💳 PAGADA</div>
+      <div class="node node-state cancelada" style="font-size:.68rem; padding:.4rem .7rem;">❌ CANCELADA</div>
+    </div>
+  </div>
+  <div class="lane ofe">
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- ROW 7: EMAILS PAGO -->
+  <div class="lane dem">
+    <div class="email-cluster">
+      <div class="email-badge"><span class="dot dot-dem"></span>Email 4 — Pago confirmado + N° MP</div>
+    </div>
+    <div class="arrow-down green"></div>
+    <div class="node node-action" style="font-size:.75rem;">La reserva está activa.<br>Coordina acceso con el oferente.</div>
+    <div class="arrow-down green"></div>
+  </div>
+  <div class="lane sys">
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+  </div>
+  <div class="lane ofe">
+    <div class="email-cluster">
+      <div class="email-badge"><span class="dot dot-ofe"></span>Email 5 — Pago recibido + monto</div>
+    </div>
+    <div class="arrow-down green"></div>
+    <div class="node node-action" style="font-size:.75rem;">La reserva está activa.<br>Coordina el acceso con el inquilino.</div>
+    <div class="arrow-down green"></div>
+  </div>
+
+  <!-- ROW 8: FINALIZADA -->
+  <div class="lane dem">
+    <div class="email-cluster">
+      <div class="email-badge"><span class="dot dot-dem"></span>Email 7 — Invitación a dejar reseña</div>
+    </div>
+    <div class="arrow-down purple"></div>
+    <div class="node node-action" style="font-size:.75rem;">Puede calificar el espacio ⭐ desde su panel</div>
+    <div class="arrow-down purple"></div>
+    <div class="node node-end">🏁 Fin del circuito</div>
+  </div>
+  <div class="lane sys">
+    <div class="spacer-sm"></div>
+    <div class="node node-state finalizada">🏁 ESTADO: FINALIZADA</div>
+    <div class="spacer-sm"></div>
+    <div class="arrow-down purple"></div>
+    <div class="spacer"></div>
+  </div>
+  <div class="lane ofe">
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+  </div>
+
+</div><!-- /lanes-wrap -->
+
+<!-- LEYENDA -->
+<div class="legend">
+  <div class="legend-title">Referencias</div>
+
+  <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Estado PENDIENTE — esperando confirmación del oferente</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>Estado CONFIRMADA — oferente aprobó, falta el pago</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>Estado PAGADA — reserva activa y en curso</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div>Estado CANCELADA — por cualquier motivo</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div>Estado FINALIZADA — estadía completada</div>
+
+  <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>Email al demandante (azul)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>Email al oferente (verde)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Email a ambos (amarillo)</div>
+
+  <div class="legend-item" style="grid-column:1/-1; margin-top:.4rem; color:#475569; font-size:.7rem;">
+    * El estado CANCELADA puede ocurrir en cualquier punto del flujo si el oferente rechaza, el demandante desiste o el pago es rechazado por MP.
+  </div>
+</div>
+
+</body>
+</html>
