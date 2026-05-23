@@ -6,6 +6,7 @@ const path = require('path');
 require('dotenv').config();
 
 const errorHandler = require('./middleware/errorHandler');
+const { iniciarCronRecordatorios } = require('./jobs/recordatorios');
 
 // Routes
 const espaciosRouter  = require('./routes/espacios');
@@ -66,5 +67,8 @@ app.use((req, res) => {
 
 // ── Error handler ─────────────────────────────────────────────
 app.use(errorHandler);
+
+// ── Cron jobs ─────────────────────────────────────────────────
+iniciarCronRecordatorios();
 
 module.exports = app;

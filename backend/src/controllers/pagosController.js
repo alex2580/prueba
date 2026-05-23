@@ -71,7 +71,72 @@ async function webhook(req, res, next) {
       if (!paymentId) return res.sendStatus(200);
 
       const payment = await mercadopagoService.obtenerPago(paymentId);
-      const reservaId = payment?.metadata?.reserva_id || payment?.external_reference;
+      const externalRef = payment?.external_reference || '';
+      const metadataTipo = payment?.metadata?.tipo;
+
+      // ── Pago de extensión de reserva ───────────────────────────
+      if (metadataTipo === 'extension' || externalRef.startsWith('ext_')) {
+        const extensionId = payment?.metadata?.extension_id
+          || (externalRef.startsWith('ext_') ? externalRef.slice(4) : null);
+
+        if (!extensionId) return res.sendStatus(200);
+
+        const extension = await queryOne(
+          'SELECT * FROM reserva_extensiones WHERE id = ?',
+          [extensionId]
+        );
+        if (!extension || extension.estado !== 'pendiente') return res.sendStatus(200);
+
+        const status = payment.status;
+
+        if (status === 'approved') {
+          // Actualizar extensión → pagada
+          await query(
+            'UPDATE reserva_extensiones SET estado = ?, mp_payment_id = ?, mp_status = ? WHERE id = ?',
+            ['pagada', String(paymentId), status, extensionId]
+          );
+          // Extender la fecha_hasta en la reserva y resetear recordatorios
+          await query(
+            `UPDATE reservas
+             SET fecha_hasta = ?, recordatorio_5d = 0, recordatorio_2d = 0,
+                 recordatorio_1d = 0, recordatorio_0d = 0
+             WHERE id = ?`,
+            [extension.nueva_fecha_hasta, extension.reserva_id]
+          );
+          // Email al demandante: extensión confirmada
+          const reserva = await queryOne(
+            `SELECT r.*, e.nombre AS espacio_nombre, u.nombre AS usuario_nombre, u.email AS usuario_email
+             FROM reservas r
+             JOIN espacios e ON r.espacio_id = e.id
+             JOIN usuarios u ON r.usuario_id = u.id
+             WHERE r.id = ?`,
+            [extension.reserva_id]
+          );
+          if (reserva) {
+            emailService.sendExtensionConfirmada(reserva.usuario_email, reserva.usuario_nombre, {
+              espacioNombre: reserva.espacio_nombre,
+              fechaHastaAnterior: reserva.fecha_hasta instanceof Date
+                ? reserva.fecha_hasta.toISOString().slice(0, 10)
+                : String(reserva.fecha_hasta).slice(0, 10),
+              nuevaFechaHasta: extension.nueva_fecha_hasta instanceof Date
+                ? extension.nueva_fecha_hasta.toISOString().slice(0, 10)
+                : String(extension.nueva_fecha_hasta).slice(0, 10),
+              monto: extension.precio,
+              reservaId: reserva.id,
+            }).catch(e => console.warn('Email extension confirmada:', e.message));
+          }
+        } else if (status === 'rejected' || status === 'cancelled') {
+          await query(
+            'UPDATE reserva_extensiones SET estado = ?, mp_status = ? WHERE id = ?',
+            ['cancelada', status, extensionId]
+          );
+        }
+
+        return res.sendStatus(200);
+      }
+
+      // ── Pago normal de reserva ──────────────────────────────────
+      const reservaId = payment?.metadata?.reserva_id || externalRef;
 
       if (!reservaId) return res.sendStatus(200);
 

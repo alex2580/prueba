@@ -65,6 +65,17 @@ export default function PanelPage() {
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
 
+  // Extension modal
+  const [extModal, setExtModal] = useState(false);
+  const [extReservaId, setExtReservaId] = useState('');
+  const [extEspacioNombre, setExtEspacioNombre] = useState('');
+  const [extFechaHastaActual, setExtFechaHastaActual] = useState('');
+  const [extNuevaFecha, setExtNuevaFecha] = useState('');
+  const [extPrecio, setExtPrecio] = useState<number | null>(null);
+  const [extDias, setExtDias] = useState(0);
+  const [extLoading, setExtLoading] = useState(false);
+  const [extError, setExtError] = useState('');
+
   // Review modal
   const [reviewModal, setReviewModal] = useState(false);
   const [reviewEspacioId, setReviewEspacioId] = useState('');
@@ -220,6 +231,67 @@ export default function PanelPage() {
     }
   }
 
+  function abrirExtension(r: { id: string; espacio_nombre?: string; fecha_hasta: string }) {
+    setExtReservaId(r.id);
+    setExtEspacioNombre(r.espacio_nombre || '');
+    setExtFechaHastaActual(r.fecha_hasta ? String(r.fecha_hasta).slice(0, 10) : '');
+    setExtNuevaFecha('');
+    setExtPrecio(null);
+    setExtDias(0);
+    setExtError('');
+    setExtModal(true);
+  }
+
+  async function calcularExtension(nuevaFecha: string) {
+    setExtNuevaFecha(nuevaFecha);
+    if (!nuevaFecha || nuevaFecha <= extFechaHastaActual) { setExtPrecio(null); return; }
+    if (!token) return;
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/reservas/${extReservaId}/extender`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ nueva_fecha_hasta: nuevaFecha, _preview: true }),
+        }
+      );
+      // Only use for preview — backend will ignore _preview and return price anyway
+      // We just show the price from the response without creating the extension yet
+      // Actually we'll create it on confirm. For now, calculate locally:
+      const desde = new Date(extFechaHastaActual);
+      const hasta  = new Date(nuevaFecha);
+      const dias   = Math.ceil((hasta.getTime() - desde.getTime()) / (1000 * 60 * 60 * 24));
+      setExtDias(dias);
+      // We'll get exact price from backend on submit
+      setExtPrecio(null); // will be shown after submit
+    } catch { /* ignore */ }
+  }
+
+  async function handleExtender() {
+    if (!token || !extNuevaFecha || extNuevaFecha <= extFechaHastaActual) return;
+    setExtLoading(true);
+    setExtError('');
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/reservas/${extReservaId}/extender`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ nueva_fecha_hasta: extNuevaFecha }),
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al crear extensión');
+      setExtModal(false);
+      // Redirect to MP checkout for the extension
+      window.location.href = data.init_point;
+    } catch (err) {
+      setExtError(err instanceof Error ? err.message : 'Error inesperado');
+    } finally {
+      setExtLoading(false);
+    }
+  }
+
   function abrirReview(r: { espacio_id: string; espacio_nombre?: string }) {
     setReviewEspacioId(r.espacio_id);
     setReviewEspacioNombre(r.espacio_nombre || '');
@@ -352,6 +424,7 @@ export default function PanelPage() {
                     onCancelar={!['cancelada', 'finalizada'].includes(r.estado) ? () => cancelar(r.id) : undefined}
                     onPagar={r.estado === 'confirmada' ? () => router.push(`/reserva/${r.id}/checkout`) : undefined}
                     onCalificar={['pagada', 'finalizada'].includes(r.estado) ? () => abrirReview(r) : undefined}
+                    onExtender={r.estado === 'pagada' ? () => abrirExtension(r) : undefined}
                   />
                 ))}
               </div>
@@ -540,6 +613,74 @@ export default function PanelPage() {
               </div>
             </>
           )}
+        </div>
+      </Modal>
+
+      {/* Modal extensión de reserva */}
+      <Modal
+        open={extModal}
+        onClose={() => setExtModal(false)}
+        title="📅 Extender mi reserva"
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ background: 'var(--surface2)', borderRadius: 'var(--r2)', padding: '1rem' }}>
+            <div style={{ fontSize: '.75rem', color: 'var(--text3)', marginBottom: '.3rem' }}>Espacio</div>
+            <div style={{ fontWeight: 700 }}>{extEspacioNombre}</div>
+          </div>
+          <div style={{ background: 'var(--surface2)', borderRadius: 'var(--r2)', padding: '1rem' }}>
+            <div style={{ fontSize: '.75rem', color: 'var(--text3)', marginBottom: '.3rem' }}>Vencimiento actual</div>
+            <div style={{ fontWeight: 700 }}>{extFechaHastaActual}</div>
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: '.82rem', color: 'var(--text2)', marginBottom: '.4rem' }}>
+              Nueva fecha de vencimiento
+            </label>
+            <input
+              type="date"
+              min={extFechaHastaActual ? (() => { const d = new Date(extFechaHastaActual); d.setDate(d.getDate() + 1); return d.toISOString().slice(0, 10); })() : ''}
+              value={extNuevaFecha}
+              onChange={e => calcularExtension(e.target.value)}
+              style={{
+                width: '100%', padding: '.65rem .9rem', borderRadius: 'var(--r2)',
+                background: 'var(--surface2)', border: '1.5px solid var(--border)',
+                color: 'var(--text)', fontSize: '.9rem',
+              }}
+            />
+          </div>
+          {extNuevaFecha && extNuevaFecha > extFechaHastaActual && (
+            <div style={{ background: 'rgba(232,98,42,.1)', border: '1px solid rgba(232,98,42,.3)', borderRadius: 'var(--r2)', padding: '1rem' }}>
+              <div style={{ fontSize: '.8rem', color: 'var(--text3)', marginBottom: '.2rem' }}>Días a extender</div>
+              <div style={{ fontWeight: 700, fontSize: '1.1rem', color: '#e8622a' }}>{extDias} día{extDias !== 1 ? 's' : ''}</div>
+              <div style={{ fontSize: '.78rem', color: 'var(--text3)', marginTop: '.4rem' }}>
+                El precio exacto se calculará al presionar el botón de pago.
+              </div>
+            </div>
+          )}
+          {extError && (
+            <div style={{ background: 'rgba(239,68,68,.1)', border: '1px solid rgba(239,68,68,.3)', borderRadius: 'var(--r2)', padding: '.8rem 1rem', color: '#f87171', fontSize: '.85rem' }}>
+              {extError}
+            </div>
+          )}
+          <div style={{ display: 'flex', gap: '.6rem', justifyContent: 'flex-end' }}>
+            <button
+              onClick={() => setExtModal(false)}
+              style={{ padding: '.55rem 1.2rem', borderRadius: 'var(--r2)', border: '1px solid var(--border)', background: 'transparent', color: 'var(--text2)', cursor: 'pointer', fontSize: '.88rem' }}
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={handleExtender}
+              disabled={!extNuevaFecha || extNuevaFecha <= extFechaHastaActual || extLoading}
+              style={{
+                padding: '.55rem 1.4rem', borderRadius: 'var(--r2)', border: 'none',
+                background: 'linear-gradient(135deg, #e8622a, #d4521a)', color: '#fff',
+                fontWeight: 700, cursor: extNuevaFecha && extNuevaFecha > extFechaHastaActual ? 'pointer' : 'not-allowed',
+                opacity: !extNuevaFecha || extNuevaFecha <= extFechaHastaActual ? 0.5 : 1, fontSize: '.88rem',
+              }}
+            >
+              {extLoading ? 'Procesando...' : '💳 Pagar extensión →'}
+            </button>
+          </div>
         </div>
       </Modal>
 

@@ -1,6 +1,8 @@
 const { query, queryOne, transaction } = require('../db/connection');
 const { validationResult } = require('express-validator');
+const { v4: uuidv4 } = require('uuid');
 const emailService = require('../services/emailService');
+const mercadopagoService = require('../services/mercadopagoService');
 
 // GET /api/reservas  (admin: all; user: own)
 async function listar(req, res, next) {
@@ -293,4 +295,95 @@ async function cancelar(req, res, next) {
   }
 }
 
-module.exports = { listar, recibidas, obtener, crear, cambiarEstado, cancelar };
+// POST /api/reservas/:id/extender
+// Crea una preferencia de pago para extender la fecha_hasta de una reserva pagada.
+async function extender(req, res, next) {
+  try {
+    const { nueva_fecha_hasta } = req.body;
+    if (!nueva_fecha_hasta) {
+      return res.status(400).json({ error: 'nueva_fecha_hasta requerida (YYYY-MM-DD)' });
+    }
+
+    const reserva = await queryOne(
+      `SELECT r.*,
+              e.nombre AS espacio_nombre, e.precio_dia, e.precio_mes, e.oferente_id,
+              u.nombre AS usuario_nombre, u.email AS usuario_email
+       FROM reservas r
+       JOIN espacios e ON r.espacio_id = e.id
+       JOIN usuarios u ON r.usuario_id = u.id
+       WHERE r.id = ?`,
+      [req.params.id]
+    );
+
+    if (!reserva) return res.status(404).json({ error: 'Reserva no encontrada' });
+    if (reserva.usuario_id !== req.user.id) {
+      return res.status(403).json({ error: 'Sin permisos' });
+    }
+    if (reserva.estado !== 'pagada') {
+      return res.status(409).json({ error: 'Solo podés extender reservas con estado pagada' });
+    }
+
+    const fechaHastaActual = new Date(reserva.fecha_hasta);
+    const fechaNueva       = new Date(nueva_fecha_hasta);
+
+    if (fechaNueva <= fechaHastaActual) {
+      return res.status(400).json({ error: 'La nueva fecha debe ser posterior a la fecha actual de vencimiento' });
+    }
+
+    // Verificar que no hay otra reserva que ocupe ese espacio en el período de extensión
+    const overlap = await queryOne(
+      `SELECT id FROM reservas
+       WHERE espacio_id = ? AND id != ? AND estado NOT IN ('cancelada','finalizada')
+         AND fecha_desde <= ? AND fecha_hasta >= ?`,
+      [reserva.espacio_id, reserva.id, nueva_fecha_hasta, reserva.fecha_hasta]
+    );
+    if (overlap) {
+      return res.status(409).json({ error: 'El espacio ya está ocupado en ese período' });
+    }
+
+    // Calcular precio de la extensión (días adicionales)
+    const diasExtra = Math.ceil((fechaNueva - fechaHastaActual) / (1000 * 60 * 60 * 24));
+    const precio = diasExtra >= 28
+      ? Math.ceil(diasExtra / 30) * parseFloat(reserva.precio_mes)
+      : diasExtra * parseFloat(reserva.precio_dia);
+
+    // Crear registro de extensión pendiente
+    const extensionId = uuidv4();
+    await query(
+      `INSERT INTO reserva_extensiones (id, reserva_id, nueva_fecha_hasta, precio)
+       VALUES (?, ?, ?, ?)`,
+      [extensionId, reserva.id, nueva_fecha_hasta, precio]
+    );
+
+    // Crear preferencia MP
+    const preference = await mercadopagoService.crearPreferenciaExtension({
+      extensionId,
+      reservaId: reserva.id,
+      espacioNombre: reserva.espacio_nombre,
+      monto: precio,
+      nuevaFechaHasta: nueva_fecha_hasta,
+      usuarioEmail: reserva.usuario_email,
+      usuarioNombre: reserva.usuario_nombre,
+    });
+
+    // Guardar preference_id
+    await query(
+      'UPDATE reserva_extensiones SET mp_preference_id = ? WHERE id = ?',
+      [preference.id, extensionId]
+    );
+
+    res.json({
+      extension_id: extensionId,
+      precio,
+      dias_extra: diasExtra,
+      nueva_fecha_hasta,
+      preference_id: preference.id,
+      init_point: preference.init_point,
+      sandbox_init_point: preference.sandbox_init_point,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { listar, recibidas, obtener, crear, cambiarEstado, cancelar, extender };

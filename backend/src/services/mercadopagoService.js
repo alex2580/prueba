@@ -52,6 +52,43 @@ async function crearPreferencia({ titulo, monto, reservaId, usuarioEmail, usuari
 }
 
 /**
+ * Crea una preferencia de pago para una extensión de reserva.
+ * external_reference = "ext_<extensionId>" para distinguirla en el webhook.
+ */
+async function crearPreferenciaExtension({ extensionId, reservaId, espacioNombre, monto, nuevaFechaHasta, usuarioEmail, usuarioNombre }) {
+  const body = {
+    items: [
+      {
+        id: extensionId,
+        title: `Extensión de reserva — ${espacioNombre}`,
+        quantity: 1,
+        unit_price: Number(monto),
+        currency_id: 'ARS',
+        description: `Extensión hasta ${nuevaFechaHasta}`,
+      },
+    ],
+    payer: { email: usuarioEmail, name: usuarioNombre },
+    back_urls: {
+      success: `${FRONTEND_URL}/panel?extension=success`,
+      failure: `${FRONTEND_URL}/panel?extension=failure`,
+      pending: `${FRONTEND_URL}/panel?extension=pending`,
+    },
+    auto_return: 'approved',
+    external_reference: `ext_${extensionId}`,
+    metadata: { tipo: 'extension', extension_id: extensionId, reserva_id: reservaId },
+    notification_url: `${process.env.API_BASE_URL || 'http://localhost:4000'}/api/pagos/webhook`,
+    expires: false,
+  };
+
+  const result = await preferenceAPI.create({ body });
+  return {
+    id: result.id,
+    init_point: result.init_point,
+    sandbox_init_point: result.sandbox_init_point,
+  };
+}
+
+/**
  * Obtiene un pago de MercadoPago por ID.
  */
 async function obtenerPago(paymentId) {
@@ -59,4 +96,4 @@ async function obtenerPago(paymentId) {
   return payment;
 }
 
-module.exports = { crearPreferencia, obtenerPago };
+module.exports = { crearPreferencia, crearPreferenciaExtension, obtenerPago };

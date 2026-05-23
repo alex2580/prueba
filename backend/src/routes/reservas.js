@@ -15,6 +15,7 @@ router.get('/',              requireAuth, ctrl.listar);
 router.get('/recibidas',     requireAuth, requireOferente, ctrl.recibidas);
 router.get('/:id',           requireAuth, ctrl.obtener);
 router.post('/',             requireAuth, validarReserva, ctrl.crear);
+router.post('/:id/extender', requireAuth, ctrl.extender);
 router.patch('/:id/estado',  requireAuth, ctrl.cambiarEstado);
 router.delete('/:id',        requireAuth, ctrl.cancelar);
 

@@ -11,9 +11,10 @@ interface EstadoReservaProps {
   onCancelar?: () => void;
   onPagar?: () => void;
   onCalificar?: () => void;
+  onExtender?: () => void;
 }
 
-export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar }: EstadoReservaProps) {
+export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar, onExtender }: EstadoReservaProps) {
   const dias = diasEntre(reserva.fecha_desde, reserva.fecha_hasta);
 
   return (
@@ -64,11 +65,18 @@ export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar }: Est
           )}
         </div>
       )}
-      {(reserva.estado === 'pagada' || reserva.estado === 'finalizada') && onCalificar && (
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <Button variant="secondary" onClick={onCalificar} size="sm">
-            ⭐ Calificar espacio
-          </Button>
+      {(reserva.estado === 'pagada' || reserva.estado === 'finalizada') && (
+        <div style={{ display: 'flex', gap: '.6rem', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+          {reserva.estado === 'pagada' && onExtender && (
+            <Button variant="secondary" onClick={onExtender} size="sm">
+              📅 Extender reserva
+            </Button>
+          )}
+          {onCalificar && (
+            <Button variant="secondary" onClick={onCalificar} size="sm">
+              ⭐ Calificar espacio
+            </Button>
+          )}
         </div>
       )}
     </div>

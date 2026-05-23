@@ -275,6 +275,87 @@ async function sendReservaCancelada(toEmail, nombre, { espacioNombre, fechaDesde
   });
 }
 
+// ── Demandante: recordatorios de vencimiento de reserva ─────────
+
+function _recordatorioBase(diasRestantes, { nombre, espacioNombre, fechaHasta, reservaId }) {
+  const configs = {
+    5: { emoji: '⏰', titulo: 'Tu reserva vence en 5 días', bajada: 'Quedan <strong>5 días</strong> para que expire tu reserva.' },
+    2: { emoji: '⚡', titulo: 'Tu reserva vence en 2 días', bajada: 'Quedan solo <strong>2 días</strong> para que expire tu reserva.' },
+    1: { emoji: '🚨', titulo: 'Tu reserva vence mañana',   bajada: '<strong>¡Mañana vence</strong> tu reserva!' },
+    0: { emoji: '🔔', titulo: 'Tu reserva vence hoy',      bajada: '<strong>¡Hoy es el último día</strong> de tu reserva.' },
+  };
+  const { emoji, titulo, bajada } = configs[diasRestantes];
+  return baseTemplate(titulo, `
+    <h2>${emoji} ${titulo}</h2>
+    <p>Hola <span class="highlight">${nombre}</span>, ${bajada}</p>
+    <div class="info-row">
+      <div><div class="info-label">Espacio</div><div class="info-val">${espacioNombre}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Vencimiento</div><div class="info-val">${fechaHasta}</div></div>
+    </div>
+    <p>¿Querés seguir usando el espacio? Extendé tu reserva antes de que venza pagando por anticipado.</p>
+    <a class="btn" href="${process.env.FRONTEND_URL}/panel">📅 Extender mi reserva →</a>
+    <p style="font-size:12px;color:#64748b;margin-top:12px">Si no extendés, tu reserva finalizará automáticamente al vencer el plazo.</p>
+  `);
+}
+
+async function sendRecordatorio5Dias(toEmail, nombre, datos) {
+  await transporter.sendMail({
+    from: FROM, to: toEmail,
+    subject: `⏰ Tu reserva en ${datos.espacioNombre} vence en 5 días`,
+    html: _recordatorioBase(5, { nombre, ...datos }),
+  });
+}
+async function sendRecordatorio2Dias(toEmail, nombre, datos) {
+  await transporter.sendMail({
+    from: FROM, to: toEmail,
+    subject: `⚡ Tu reserva en ${datos.espacioNombre} vence en 2 días`,
+    html: _recordatorioBase(2, { nombre, ...datos }),
+  });
+}
+async function sendRecordatorio1Dia(toEmail, nombre, datos) {
+  await transporter.sendMail({
+    from: FROM, to: toEmail,
+    subject: `🚨 Tu reserva en ${datos.espacioNombre} vence mañana`,
+    html: _recordatorioBase(1, { nombre, ...datos }),
+  });
+}
+async function sendRecordatorio0Dias(toEmail, nombre, datos) {
+  await transporter.sendMail({
+    from: FROM, to: toEmail,
+    subject: `🔔 Hoy finaliza tu reserva en ${datos.espacioNombre}`,
+    html: _recordatorioBase(0, { nombre, ...datos }),
+  });
+}
+
+// ── Demandante: extensión de reserva confirmada ──────────────────
+async function sendExtensionConfirmada(toEmail, nombre, { espacioNombre, fechaHastaAnterior, nuevaFechaHasta, monto, reservaId }) {
+  const html = baseTemplate('Extensión confirmada', `
+    <h2>✅ Extensión de reserva confirmada</h2>
+    <p>Hola <span class="highlight">${nombre}</span>, tu extensión fue procesada exitosamente.</p>
+    <div class="info-row">
+      <div><div class="info-label">Espacio</div><div class="info-val">${espacioNombre}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Vencimiento anterior</div><div class="info-val">${fechaHastaAnterior}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Nuevo vencimiento</div><div class="info-val">${nuevaFechaHasta}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Monto pagado</div><div class="info-val">$${Number(monto).toLocaleString('es-AR')}</div></div>
+    </div>
+    <p>¡Seguís usando tu espacio sin interrupciones!</p>
+    <a class="btn" href="${process.env.FRONTEND_URL}/panel">Ver mis reservas →</a>
+  `);
+  await transporter.sendMail({
+    from: FROM, to: toEmail,
+    subject: `✅ Extensión confirmada — ${espacioNombre}`,
+    html,
+  });
+}
+
 // ── Demandante: reserva finalizada — invitación a dejar reseña ──
 async function sendReservaFinalizada(toEmail, nombreDemandante, { espacioNombre, reservaId }) {
   const html = baseTemplate('Tu estadía finalizó', `
@@ -302,4 +383,9 @@ module.exports = {
   sendPagoRecibidoOferente,
   sendReservaCancelada,
   sendReservaFinalizada,
+  sendRecordatorio5Dias,
+  sendRecordatorio2Dias,
+  sendRecordatorio1Dia,
+  sendRecordatorio0Dias,
+  sendExtensionConfirmada,
 };
