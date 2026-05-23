@@ -10,7 +10,7 @@ const validarEspacio = [
   body('nombre').trim().notEmpty().withMessage('Nombre requerido').isLength({ max: 200 }),
   body('direccion').trim().notEmpty().withMessage('Dirección requerida'),
   body('barrio').trim().notEmpty().withMessage('Barrio requerido'),
-  body('m2').isFloat({ min: 1 }).withMessage('m2 debe ser mayor a 0'),
+  body('m2').optional({ nullable: true }).isFloat({ min: 0 }).withMessage('m2 inválido'),
   body('tipo').isIn(['exclusivo', 'compartido']).withMessage('Tipo inválido'),
   body('precio_dia').isFloat({ min: 0 }).withMessage('Precio día inválido'),
   body('precio_mes').isFloat({ min: 0 }).withMessage('Precio mes inválido'),

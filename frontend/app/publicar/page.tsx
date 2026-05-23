@@ -306,7 +306,7 @@ export default function PublicarPage() {
         nombre: form.nombre,
         direccion: form.direccion,
         barrio: form.barrio || 'Buenos Aires',
-        m2: form.m2 ? Number(form.m2) : 0,
+        m2: form.m2 ? Number(form.m2) : 1,
         tipo: (form.tipo || 'exclusivo') as 'exclusivo' | 'compartido',
         categoria: form.categoria,
         precio_dia: Number(form.precio_dia) || 0,
@@ -546,6 +546,18 @@ export default function PublicarPage() {
                 transition: 'height .3s ease',
               }} />
 
+
+              {/* Superficie */}
+              <div>
+                <label className="form-label">Superficie (m²) <span style={{ color: 'var(--text3)', fontWeight: 400 }}>— opcional</span></label>
+                <input
+                  type="number"
+                  value={form.m2}
+                  onChange={e => set('m2', e.target.value)}
+                  placeholder="Ej: 12"
+                  min="0"
+                />
+              </div>
 
               {/* Tipo de alquiler */}
               <div>
