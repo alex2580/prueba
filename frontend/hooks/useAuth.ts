@@ -1,37 +1,58 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { supabase, signIn, signOut as sbSignOut, signUp, getToken } from '@/lib/supabase';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { supabase, signIn, signOut as sbSignOut, signUp } from '@/lib/supabase';
 import { usuariosAPI } from '@/lib/api';
 import type { Usuario } from '@/types';
+
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+
+interface OtpCanales { email: boolean; sms: boolean; whatsapp: boolean; }
 
 interface AuthState {
   user: Usuario | null;
   token: string | null;
   loading: boolean;
   error: string | null;
+  otpPending: boolean;
+  otpToken: string | null;
+  otpEmailHint: string;
+  otpCanales: OtpCanales;
 }
 
+const INITIAL: AuthState = {
+  user: null, token: null, loading: true, error: null,
+  otpPending: false, otpToken: null, otpEmailHint: '', otpCanales: { email: true, sms: false, whatsapp: false },
+};
+
 export function useAuth() {
-  const [state, setState] = useState<AuthState>({
-    user: null,
-    token: null,
-    loading: true,
-    error: null,
-  });
+  const [state, setState] = useState<AuthState>(INITIAL);
+  // Ref para saber si el load fue disparado post-OTP (no auto-load)
+  const otpFlowRef = useRef(false);
 
   const loadUser = useCallback(async (token: string) => {
     try {
       const usuario = await usuariosAPI.me(token);
-      setState(s => ({ ...s, user: usuario, token, loading: false, error: null }));
-    } catch {
-      setState(s => ({ ...s, user: null, token: null, loading: false }));
+      setState(s => ({
+        ...s, user: usuario, token, loading: false, error: null,
+        otpPending: false, otpToken: null,
+      }));
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error de autenticación';
+      // Si el backend devuelve cuenta bloqueada, mostrar mensaje claro
+      if (msg.includes('suspendida') || msg.includes('bloqueada')) {
+        setState(s => ({ ...s, loading: false, error: msg }));
+      } else {
+        setState(s => ({ ...s, user: null, token: null, loading: false }));
+      }
     }
   }, []);
 
   useEffect(() => {
+    // Carga inicial de sesión (ej: recarga de página)
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session?.access_token) {
+      if (data.session?.access_token && !otpFlowRef.current) {
+        // Sesión ya verificada anteriormente (browser persistió la sesión)
         loadUser(data.session.access_token);
       } else {
         setState(s => ({ ...s, loading: false }));
@@ -39,29 +60,115 @@ export function useAuth() {
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      // Durante el flujo OTP, ignoramos el auto-load del listener
+      if (otpFlowRef.current) return;
       if (session?.access_token) {
         loadUser(session.access_token);
       } else {
-        setState({ user: null, token: null, loading: false, error: null });
+        setState({ ...INITIAL, loading: false });
       }
     });
 
     return () => subscription.unsubscribe();
   }, [loadUser]);
 
+  // ── login: email + password → solicita OTP ────────────────────
   const login = useCallback(async (email: string, password: string) => {
     setState(s => ({ ...s, loading: true, error: null }));
+    otpFlowRef.current = true; // bloquear auto-load durante el flujo OTP
+
     const { data, error } = await signIn(email, password);
     if (error) {
+      otpFlowRef.current = false;
       setState(s => ({ ...s, loading: false, error: error.message }));
       return false;
     }
-    if (data.session?.access_token) {
-      await loadUser(data.session.access_token);
-    }
-    return true;
-  }, [loadUser]);
 
+    const token = data.session?.access_token;
+    if (!token) {
+      otpFlowRef.current = false;
+      setState(s => ({ ...s, loading: false, error: 'No se pudo obtener sesión' }));
+      return false;
+    }
+
+    // Solicitar OTP al backend
+    try {
+      const res = await fetch(`${API}/api/auth/solicitar-otp`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const body = await res.json();
+
+      if (!res.ok) {
+        // Si la cuenta está bloqueada, el requireAuth ya devuelve 403
+        otpFlowRef.current = false;
+        await sbSignOut();
+        setState(s => ({ ...s, loading: false, error: body.error || 'Error al solicitar código' }));
+        return false;
+      }
+
+      setState(s => ({
+        ...s, loading: false,
+        otpPending: true,
+        otpToken: token,
+        otpEmailHint: body.email_hint || '',
+        otpCanales: body.canales || { email: true, sms: false, whatsapp: false },
+      }));
+      return true;
+    } catch {
+      otpFlowRef.current = false;
+      setState(s => ({ ...s, loading: false, error: 'Error de conexión al solicitar código' }));
+      return false;
+    }
+  }, []);
+
+  // ── verifyOTP: valida el código de 6 dígitos ──────────────────
+  const verifyOTP = useCallback(async (codigo: string) => {
+    const token = state.otpToken;
+    if (!token) return false;
+
+    setState(s => ({ ...s, loading: true, error: null }));
+
+    try {
+      const res = await fetch(`${API}/api/auth/verificar-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ codigo }),
+      });
+      const body = await res.json();
+
+      if (!res.ok) {
+        setState(s => ({ ...s, loading: false, error: body.error || 'Código incorrecto' }));
+        return false;
+      }
+
+      // OTP correcto → cargar usuario completo
+      otpFlowRef.current = false;
+      await loadUser(token);
+      return true;
+    } catch {
+      setState(s => ({ ...s, loading: false, error: 'Error de conexión' }));
+      return false;
+    }
+  }, [state.otpToken, loadUser]);
+
+  // ── reenviarOTP: genera un nuevo código ───────────────────────
+  const reenviarOTP = useCallback(async () => {
+    const token = state.otpToken;
+    if (!token) return;
+    setState(s => ({ ...s, loading: true, error: null }));
+    try {
+      await fetch(`${API}/api/auth/solicitar-otp`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setState(s => ({ ...s, loading: false, error: null }));
+    } catch {
+      setState(s => ({ ...s, loading: false }));
+    }
+  }, [state.otpToken]);
+
+  // ── register: alta + OTP ──────────────────────────────────────
   const register = useCallback(async (
     nombre: string,
     email: string,
@@ -70,37 +177,53 @@ export function useAuth() {
     tel?: string
   ) => {
     setState(s => ({ ...s, loading: true, error: null }));
+    otpFlowRef.current = true;
+
     const { data, error } = await signUp(email, password, { nombre, tipo });
     if (error) {
+      otpFlowRef.current = false;
       setState(s => ({ ...s, loading: false, error: error.message }));
       return false;
     }
 
     if (data.user) {
       try {
-        await usuariosAPI.sync({
-          supabase_id: data.user.id,
-          nombre,
-          email,
-          tipo,
-          tel,
-        });
-      } catch (e) {
-        console.warn('Sync error:', e);
-      }
+        await usuariosAPI.sync({ supabase_id: data.user.id, nombre, email, tipo, tel });
+      } catch (e) { console.warn('Sync error:', e); }
     }
 
-    if (data.session?.access_token) {
-      await loadUser(data.session.access_token);
-    } else {
+    const token = data.session?.access_token;
+    if (!token) {
+      // Supabase pidió confirmar email — informar al usuario
+      otpFlowRef.current = false;
       setState(s => ({ ...s, loading: false }));
+      return true;
     }
-    return true;
-  }, [loadUser]);
+
+    try {
+      const res = await fetch(`${API}/api/auth/solicitar-otp`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const body = await res.json();
+      setState(s => ({
+        ...s, loading: false,
+        otpPending: true, otpToken: token,
+        otpEmailHint: body.email_hint || '',
+        otpCanales: body.canales || { email: true, sms: false, whatsapp: false },
+      }));
+      return true;
+    } catch {
+      otpFlowRef.current = false;
+      setState(s => ({ ...s, loading: false }));
+      return true;
+    }
+  }, []);
 
   const logout = useCallback(async () => {
+    otpFlowRef.current = false;
     await sbSignOut();
-    setState({ user: null, token: null, loading: false, error: null });
+    setState({ ...INITIAL, loading: false });
   }, []);
 
   return {
@@ -108,12 +231,17 @@ export function useAuth() {
     token: state.token,
     loading: state.loading,
     error: state.error,
+    otpPending: state.otpPending,
+    otpEmailHint: state.otpEmailHint,
+    otpCanales: state.otpCanales,
     isAuthenticated: !!state.user,
     isOferente: state.user?.tipo === 'oferente',
     isDemandante: state.user?.tipo === 'demandante',
     isAdmin: state.user?.tipo === 'admin',
     login,
     register,
+    verifyOTP,
+    reenviarOTP,
     logout,
   };
 }

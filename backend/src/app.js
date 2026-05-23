@@ -17,6 +17,7 @@ const pagosRouter     = require('./routes/pagos');
 const chatRouter      = require('./routes/chat');
 const emailRouter     = require('./routes/email');
 const adminRouter     = require('./routes/admin');
+const authRouter      = require('./routes/auth');
 
 const app = express();
 
@@ -59,6 +60,7 @@ app.use('/api/pagos',     pagosRouter);
 app.use('/api/chat',      chatRouter);
 app.use('/api/email',     emailRouter);
 app.use('/api/admin',     adminRouter);
+app.use('/api/auth',      authRouter);
 
 // ── 404 ────────────────────────────────────────────────────────
 app.use((req, res) => {

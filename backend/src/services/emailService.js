@@ -372,6 +372,52 @@ async function sendReservaFinalizada(toEmail, nombreDemandante, { espacioNombre,
   });
 }
 
+// ── OTP: código de verificación de acceso ───────────────────────
+async function sendOTP(toEmail, nombre, { codigo, expiraEn }) {
+  const html = baseTemplate('Código de verificación', `
+    <h2>🔐 Código de verificación</h2>
+    <p>Hola <span class="highlight">${nombre}</span>, alguien (esperemos que seas vos) está intentando ingresar a tu cuenta.</p>
+    <p>Tu código de verificación es:</p>
+    <div style="text-align:center; margin: 24px 0;">
+      <div style="display:inline-block; background:#0f172a; border:2px solid #e8622a; border-radius:14px; padding:18px 36px;">
+        <span style="font-family:monospace; font-size:2.4rem; font-weight:900; color:#e8622a; letter-spacing:.4em;">${codigo}</span>
+      </div>
+    </div>
+    <p style="text-align:center; font-size:.82rem; color:#64748b;">Válido por <strong style="color:#e2e8f0">${expiraEn} minutos</strong>. No lo compartás con nadie.</p>
+    <div style="background:#1a1200; border:1px solid #d97706; border-radius:8px; padding:10px 14px; color:#fcd34d; font-size:13px; margin:16px 0;">
+      ⚠️ Si no fuiste vos, ignorá este mensaje y cambiá tu contraseña inmediatamente.
+    </div>
+  `);
+  await transporter.sendMail({
+    from: FROM, to: toEmail,
+    subject: `🔐 ${codigo} — Código de verificación TodasMisCosas`,
+    html,
+  });
+}
+
+// ── Notificación de acceso exitoso ───────────────────────────────
+async function sendLoginNotificacion(toEmail, nombre, { fecha, ip, dispositivo }) {
+  const html = baseTemplate('Acceso confirmado a tu cuenta', `
+    <h2>✅ Acceso confirmado</h2>
+    <p>Hola <span class="highlight">${nombre}</span>, se registró un acceso exitoso a tu cuenta.</p>
+    <div class="info-row">
+      <div><div class="info-label">Fecha y hora</div><div class="info-val">${fecha}</div></div>
+    </div>
+    ${ip ? `<div class="info-row"><div><div class="info-label">IP</div><div class="info-val">${ip}</div></div></div>` : ''}
+    ${dispositivo ? `<div class="info-row"><div><div class="info-label">Dispositivo</div><div class="info-val">${dispositivo}</div></div></div>` : ''}
+    <div style="background:#1a1200; border:1px solid #d97706; border-radius:8px; padding:12px 16px; margin:16px 0;">
+      <p style="color:#fcd34d; font-size:.88rem; margin:0 0 8px; font-weight:700;">⚠️ ¿No fuiste vos?</p>
+      <p style="color:#fcd34d; font-size:.82rem; margin:0;">Escribinos de inmediato a <a href="mailto:contacto@todasmiscosas.com" style="color:#e8622a; font-weight:700;">contacto@todasmiscosas.com</a> para bloquear tu cuenta y proteger tu información.</p>
+    </div>
+    <a class="btn" href="mailto:contacto@todasmiscosas.com?subject=Acceso no autorizado a mi cuenta&body=Nombre: ${encodeURIComponent(nombre)}%0AFecha: ${encodeURIComponent(fecha)}%0AIP: ${encodeURIComponent(ip || 'desconocida')}">No fui yo — Reportar acceso →</a>
+  `);
+  await transporter.sendMail({
+    from: FROM, to: toEmail,
+    subject: '✅ Acceso confirmado a tu cuenta de TodasMisCosas',
+    html,
+  });
+}
+
 // ── Cuenta bloqueada por admin ───────────────────────────────────
 async function sendCuentaBloqueada(toEmail, nombre, { motivo }) {
   const html = baseTemplate('Cuenta suspendida', `
@@ -425,4 +471,6 @@ module.exports = {
   sendExtensionConfirmada,
   sendCuentaBloqueada,
   sendCuentaDesbloqueada,
+  sendOTP,
+  sendLoginNotificacion,
 };
