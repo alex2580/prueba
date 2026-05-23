@@ -37,18 +37,23 @@ Se actualiza con cada nueva mejora incorporada al producto.
 >
 > ---
 >
-> #### 🛠️ PRÓXIMAS FUNCIONALIDADES A IMPLEMENTAR (backlog)
+> #### 🛠️ BACKLOG — funcionalidades pendientes de implementar
 >
-> Las siguientes mejoras fueron identificadas pero aún no están desarrolladas:
+> Las demás mejoras del backlog original están **completadas** ✅. Solo queda una:
 >
-> | # | Funcionalidad | Descripción |
-> |---|--------------|-------------|
-> | A | **Edición de perfil — teléfono y nombre** | Permitir al usuario actualizar su número de celular (clave para el 2FA) y nombre desde el panel. Incluye validación de formato de teléfono y re-sincronización con Supabase Auth. |
-> | B | **Edición de perfil — dirección física** | Actualizar la dirección del perfil con autocompletado de Google Maps. Ya existe el campo en DB; falta UI de edición más robusta y confirmación. |
-> | C | **Baja automática de publicaciones inactivas** | Desactivar espacios que lleven más de 90 días sin recibir ninguna reserva (configurable). Cron job diario que cambia `activo = false` y notifica al oferente por email con opción de reactivar. |
-> | D | **Historial de cambios de perfil** | Log de auditoría que registra cuándo el usuario cambió su nombre, teléfono o dirección. Útil para soporte y seguridad. |
-> | E | **Verificación de nuevo teléfono por OTP** | Al cambiar el número de celular, enviar un OTP al nuevo número para confirmar que es válido antes de guardarlo. |
-> | F | **Reactivación de publicaciones** | Botón en el panel del oferente para reactivar un espacio dado de baja por inactividad, con confirmación de disponibilidad actualizada. |
+> | # | Funcionalidad | Descripción | Estado |
+> |---|--------------|-------------|--------|
+> | D | **Historial de cambios de perfil** | Log de auditoría que registra cuándo el usuario cambió su nombre, teléfono o dirección. Útil para soporte y seguridad. | 🔴 Pendiente |
+>
+> **Completadas del backlog original:**
+>
+> | # | Funcionalidad | Estado |
+> |---|--------------|--------|
+> | A | Edición de perfil — nombre | ✅ Siempre disponible en el modal de perfil |
+> | B | Edición de perfil — dirección física | ✅ Disponible con autocompletado Google Maps |
+> | C | Baja automática por inactividad 90 días | ✅ Implementado 23/05/2026 |
+> | E | Verificación OTP al cambiar teléfono | ✅ Implementado 23/05/2026 |
+> | F | Reactivación de publicaciones pausadas | ✅ Implementado 23/05/2026 |
 
 ---
 
@@ -411,6 +416,228 @@ Click en **✅ Desbloquear** → confirmar → el usuario recibe email de reacti
 |--------------------|-------|-------|-------|
 | Activo | Normal | — | ⛔ Bloquear |
 | Bloqueado | Rojo | ⛔ BLOQUEADO + motivo | ✅ Desbloquear |
+
+---
+
+### Autenticación en Dos Factores (2FA / OTP)
+
+Cada vez que un usuario inicia sesión o se registra, se genera un código numérico de 6 dígitos que debe ingresar para completar el acceso. El código se envía simultáneamente por hasta 3 canales.
+
+#### Flujo completo
+
+```
+Usuario ingresa email + password
+      → Supabase valida credenciales
+      → Backend genera código OTP de 6 dígitos (válido 10 minutos)
+      → Código se envía por: 📧 email + 📱 SMS (si tiene tel) + 💬 WhatsApp (si tiene tel)
+      → Usuario ingresa el código en la pantalla de verificación
+      → Si es correcto: acceso completo al panel
+      → Notificación de acceso exitoso al usuario (IP, dispositivo, fecha/hora)
+```
+
+#### Pantalla de verificación
+
+- 6 inputs individuales (uno por dígito) con auto-avance al escribir
+- Soporte para pegado del código completo (auto-detecta y completa todos los campos)
+- Auto-submit cuando el sexto dígito se completa
+- Backspace retrocede al campo anterior automáticamente
+- Temporizador de 60 segundos antes de poder reenviar el código
+- Contador de intentos: máximo 3 antes de invalidar el OTP
+
+#### Notificación de acceso exitoso
+
+Luego de verificar el código, el usuario recibe por los mismos 3 canales:
+- IP desde la que se conectó
+- Tipo de dispositivo detectado (📱 Android, 💻 Windows, 💻 Mac, etc.)
+- Fecha y hora en zona Argentina
+- Botón **"¿No fui yo?"** que abre email a contacto@todasmiscosas.com
+
+#### Modo degradado (sin Twilio configurado)
+
+Si las variables de Twilio no están en el `.env`, el sistema **no falla**: los SMS y WhatsApp se loggean en consola del servidor y el email sigue funcionando normalmente. Ver sección PENDIENTE para instrucciones de activación.
+
+#### Emails / notificaciones involucradas
+
+| # | Canal | Contenido |
+|---|-------|-----------|
+| 12 | Email | Código OTP con display monospace grande + advertencia de seguridad |
+| 13 | SMS + WhatsApp | Mensaje corto: "Tu código de verificación es XXXXXX. Válido 10 min." |
+| 14 | Email | Notificación post-login: IP, dispositivo, fecha/hora + botón "¿No fui yo?" |
+| 15 | SMS + WhatsApp | Mensaje post-login: confirmación de acceso + contacto de soporte |
+
+#### Cambios en base de datos
+
+```sql
+CREATE TABLE auth_otp (
+  id          VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  usuario_id  VARCHAR(36) NOT NULL,
+  codigo      VARCHAR(6)  NOT NULL,
+  tipo        VARCHAR(30) NOT NULL DEFAULT 'login',  -- 'login' | 'cambio_tel'
+  tel_nuevo   VARCHAR(30) NULL,                       -- solo para tipo='cambio_tel'
+  expires_at  DATETIME    NOT NULL,
+  usado       TINYINT(1)  NOT NULL DEFAULT 0,
+  intentos    INT         NOT NULL DEFAULT 0,
+  created_at  DATETIME    DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE auth_sesiones (
+  id          VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  usuario_id  VARCHAR(36) NOT NULL,
+  ip          VARCHAR(45),
+  user_agent  TEXT,
+  created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+#### Archivos creados / modificados
+
+- `backend/src/db/add-auth-otp.js` (migración — crea ambas tablas)
+- `backend/src/db/add-perfil-inactividad.js` (migración — agrega columnas `tipo` y `tel_nuevo` a `auth_otp`)
+- `backend/src/services/twilioService.js` (nuevo — `sendSMS`, `sendWhatsApp`, normalización de teléfonos E.164 Argentina)
+- `backend/src/services/emailService.js` (funciones: `sendOTP`, `sendLoginNotificacion`)
+- `backend/src/controllers/authController.js` (nuevo — `solicitarOTP`, `verificarOTP`)
+- `backend/src/routes/auth.js` (nuevo — `POST /api/auth/solicitar-otp`, `POST /api/auth/verificar-otp`)
+- `frontend/hooks/useAuth.ts` (reescrito — agrega `otpPending`, `otpToken`, `otpEmailHint`, `otpCanales`, `verifyOTP`, `reenviarOTP`; `otpFlowRef` bloquea el auto-load de Supabase durante el flujo)
+- `frontend/components/auth/OTPStep.tsx` (nuevo — componente de 6 inputs con paste, auto-avance, countdown)
+- `frontend/app/auth/login/page.tsx` (muestra `OTPStep` cuando `otpPending === true`)
+- `frontend/app/auth/register/page.tsx` (ídem)
+
+#### Consideración técnica — race condition de Supabase
+
+Cuando `signIn()` se completa, `onAuthStateChange` dispara automáticamente con la sesión nueva y llamaría a `loadUser()`, bypasseando el paso de OTP. Se resolvió con `otpFlowRef = useRef(false)`:
+
+```
+signIn() → otpFlowRef = true → solicitar OTP → pantalla OTP
+                                                     ↓
+                                           usuario ingresa código
+                                                     ↓
+                                        verificarOTP OK → otpFlowRef = false → loadUser()
+```
+
+El listener de `onAuthStateChange` chequea el ref y no hace nada mientras sea `true`.
+
+---
+
+### Cambio de Teléfono con Verificación OTP
+
+El teléfono es el canal del 2FA: si alguien pudiera cambiarlo libremente, podría redirigir los códigos de verificación de otra persona a su propio número. Por eso el cambio requiere verificación al nuevo número antes de guardarse.
+
+#### Flujo
+
+```
+Modal "Editar perfil" → usuario modifica el campo Teléfono
+      → Label muestra "🔐 requiere verificación" en tiempo real
+      → Click en "Guardar perfil"
+      → Nombre y dirección se guardan inmediatamente (sin OTP)
+      → Backend genera OTP → lo envía al NUEVO número por SMS + WhatsApp
+      → Modal pasa al paso de verificación (misma UI de 6 dígitos)
+      → Usuario ingresa el código
+      → Backend verifica → guarda el nuevo teléfono
+      → Email de confirmación al usuario: "Tu teléfono fue actualizado"
+```
+
+#### Comportamiento cuando el teléfono NO cambia
+
+Si el usuario solo modifica nombre o dirección, el proceso es directo sin OTP.
+
+#### Comportamiento si se borra el teléfono
+
+Si se deja el campo vacío, el número se borra directamente (no requiere OTP, ya que no hay número nuevo al que enviar el código).
+
+#### Endpoints nuevos
+
+```
+POST /api/usuarios/me/solicitar-cambio-tel   { tel_nuevo: "+54911XXXXXXXX" }
+POST /api/usuarios/me/verificar-cambio-tel   { codigo: "123456" }
+```
+
+#### Archivos modificados
+
+- `backend/src/controllers/usuariosController.js` (funciones: `solicitarCambioTel`, `verificarCambioTel`)
+- `backend/src/routes/usuarios.js` (2 rutas nuevas)
+- `backend/src/services/emailService.js` (función: `sendCambioTelConfirmado`)
+- `frontend/app/panel/page.tsx` (step `otp_tel` en el modal de perfil, indicador "🔐 requiere verificación")
+- `frontend/lib/api.ts` (métodos: `solicitarCambioTel`, `verificarCambioTel`)
+
+---
+
+### Baja Automática de Publicaciones por Inactividad (90 días)
+
+Un cron job diario detecta espacios que llevan más de 90 días sin ningún tipo de actividad y los pausa automáticamente, notificando al oferente para que decida si desea reactivarlos.
+
+#### Lógica de inactividad
+
+Un espacio se considera "inactivo" cuando:
+- Lleva más de 90 días desde su creación **sin que el oferente lo haya editado**, y
+- La columna `ultima_actividad` está vacía o tiene más de 90 días
+
+`ultima_actividad` se actualiza cada vez que el oferente edita el espacio desde el panel (PUT /api/espacios/:id).
+
+#### Diferencia entre "pausado manualmente" y "pausado por inactividad"
+
+| Situación | `activo` | `inactiva_auto` | Puede reactivarse |
+|-----------|----------|-----------------|-------------------|
+| Activo y visible | TRUE | 0 | — |
+| Pausado por el oferente | TRUE | 0 | Sí, con botón "Activar" |
+| Pausado por inactividad (cron) | FALSE | 1 | Sí, con botón "▶ Reactivar" |
+| Eliminado por el oferente | FALSE | 0 | No — eliminación definitiva |
+
+#### Cron job
+
+- Archivo: `backend/src/jobs/inactividad.js`
+- Horario: todos los días a las **08:00 hs Argentina** (`America/Argentina/Buenos_Aires`)
+- Consulta: `COALESCE(ultima_actividad, created_at) < NOW() - INTERVAL 90 DAY`
+
+#### Email automático al oferente
+
+| # | Asunto | Contenido |
+|---|--------|-----------|
+| 16 | ⏸️ Tu publicación "[nombre]" fue pausada por inactividad | Nombre del espacio, días de inactividad, botón "Reactivar publicación →" |
+
+#### Cambios en base de datos
+
+```sql
+-- En tabla espacios:
+ultima_actividad  DATETIME NULL          -- se actualiza al editar el espacio
+inactiva_auto     TINYINT(1) DEFAULT 0   -- 1 = pausada por el cron, 0 = activa o eliminada
+```
+
+#### Archivos creados / modificados
+
+- `backend/src/db/add-perfil-inactividad.js` (migración — agrega ambas columnas)
+- `backend/src/jobs/inactividad.js` (nuevo — cron job)
+- `backend/src/controllers/espaciosController.js` (actualizar toca `ultima_actividad = NOW()`, `misEspacios` incluye espacios con `inactiva_auto = 1`)
+- `backend/src/services/emailService.js` (función: `sendPublicacionDesactivada`)
+- `backend/src/app.js` (inicialización del cron al arrancar)
+- `.github/workflows/deploy.yml` (agrega migración al pipeline)
+
+---
+
+### Reactivación de Publicaciones Pausadas
+
+Cuando una publicación es pausada automáticamente por inactividad, el oferente ve un badge especial y puede reactivarla con un solo click desde su panel.
+
+#### En el panel del oferente
+
+- Las publicaciones pausadas por inactividad muestran badge rojo: **⏸️ Pausada por inactividad**
+- Los botones "Editar" y "Pausar" se reemplazan por un único botón **▶ Reactivar**
+- Al hacer click: `activo = TRUE`, `inactiva_auto = 0`, `ultima_actividad = NOW()`, `disponible = TRUE`
+- La publicación vuelve a aparecer en el mapa y en los resultados de búsqueda inmediatamente
+
+#### Endpoint
+
+```
+POST /api/espacios/:id/reactivar
+```
+
+Solo funciona si `inactiva_auto = 1`. Si alguien intenta reactivar un espacio que fue eliminado manualmente, el backend devuelve error 400.
+
+#### Archivos modificados
+
+- `backend/src/controllers/espaciosController.js` (función: `reactivar`)
+- `backend/src/routes/espacios.js` (ruta: `POST /:id/reactivar`)
+- `frontend/app/panel/page.tsx` (botón "▶ Reactivar", badge diferenciado, handler `handleReactivarEspacio`)
+- `frontend/types/index.ts` (campo `inactiva_auto?: boolean` en interface `Espacio`)
 
 ---
 
