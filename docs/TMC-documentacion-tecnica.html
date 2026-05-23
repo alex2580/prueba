@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">
+<head>
+<meta charset="UTF-8">
+<meta name="Generator" content="Microsoft Word 15">
+<title>TodasMisCosas — Documentación Técnica Completa</title>
+<style>
+  /* ── Tipografía y colores ─────────────────────────────────── */
+  body {
+    font-family: Calibri, 'Segoe UI', Arial, sans-serif;
+    font-size: 11pt;
+    color: #1a1a2e;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background: #fff;
+  }
+  .page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 70px;
+  }
+
+  /* ── Portada ──────────────────────────────────────────────── */
+  .cover {
+    text-align: center;
+    padding: 80px 40px 60px;
+    border-bottom: 4px solid #e8622a;
+    margin-bottom: 48px;
+  }
+  .cover-logo {
+    font-size: 48pt;
+    font-weight: 900;
+    color: #e8622a;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+    font-family: 'Sora', 'Segoe UI', Arial, sans-serif;
+  }
+  .cover-sub {
+    font-size: 16pt;
+    color: #555;
+    margin-bottom: 32px;
+  }
+  .cover-meta {
+    display: inline-block;
+    background: #f4f4f8;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px 32px;
+    text-align: left;
+    font-size: 10pt;
+    color: #444;
+    line-height: 2;
+  }
+  .cover-meta b { color: #1a1a2e; }
+
+  /* ── Índice ───────────────────────────────────────────────── */
+  .toc { margin-bottom: 48px; }
+  .toc h2 { color: #e8622a; border-bottom: 2px solid #e8622a; padding-bottom: 6px; margin-bottom: 16px; }
+  .toc ol { padding-left: 24px; line-height: 2.2; }
+  .toc li { font-size: 10.5pt; }
+  .toc a { color: #1a1a2e; text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+
+  /* ── Secciones ────────────────────────────────────────────── */
+  h1 {
+    font-size: 20pt;
+    font-weight: 700;
+    color: #1a1a2e;
+    border-left: 5px solid #e8622a;
+    padding-left: 14px;
+    margin: 48px 0 20px;
+    page-break-before: always;
+  }
+  h1:first-of-type { page-break-before: avoid; }
+  h2 {
+    font-size: 13pt;
+    font-weight: 700;
+    color: #e8622a;
+    margin: 32px 0 12px;
+    border-bottom: 1px solid #f0d0c0;
+    padding-bottom: 4px;
+  }
+  h3 {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 20px 0 8px;
+  }
+  p { margin: 0 0 10px; }
+
+  /* ── Tablas ───────────────────────────────────────────────── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 24px;
+    font-size: 9.5pt;
+  }
+  th {
+    background: #1a1a2e;
+    color: #fff;
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    padding: 7px 12px;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #f9f9fc; }
+  tr:hover td { background: #fff4ee; }
+
+  /* ── Código ───────────────────────────────────────────────── */
+  pre, code {
+    font-family: 'Cascadia Code', 'Courier New', monospace;
+    font-size: 9pt;
+    background: #f4f4f8;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+  }
+  pre {
+    padding: 14px 16px;
+    margin: 12px 0 20px;
+    overflow-x: auto;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  code { padding: 1px 5px; border-radius: 3px; }
+
+  /* ── Alertas / callouts ───────────────────────────────────── */
+  .alert {
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 9.5pt;
+    line-height: 1.7;
+  }
+  .alert-red    { background: #fff0ef; border-left: 4px solid #e74c3c; }
+  .alert-orange { background: #fff8f0; border-left: 4px solid #e8622a; }
+  .alert-green  { background: #f0fff8; border-left: 4px solid #10b981; }
+  .alert-blue   { background: #f0f4ff; border-left: 4px solid #3b82f6; }
+  .alert b { display: block; margin-bottom: 4px; }
+
+  /* ── Diagramas de flujo en texto ──────────────────────────── */
+  .flow {
+    background: #f4f4f8;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 18px 24px;
+    margin: 16px 0 24px;
+    font-family: 'Cascadia Code', 'Courier New', monospace;
+    font-size: 9pt;
+    line-height: 2;
+  }
+
+  /* ── Badges ───────────────────────────────────────────────── */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 8pt;
+    font-weight: 700;
+    margin-left: 6px;
+  }
+  .badge-green  { background: #d1fae5; color: #065f46; }
+  .badge-red    { background: #fee2e2; color: #991b1b; }
+  .badge-orange { background: #ffedd5; color: #9a3412; }
+
+  /* ── Footer ───────────────────────────────────────────────── */
+  .footer {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 2px solid #eee;
+    text-align: center;
+    font-size: 8.5pt;
+    color: #aaa;
+  }
+
+  /* ── Print ────────────────────────────────────────────────── */
+  @media print {
+    h1 { page-break-before: always; }
+    h1:first-of-type { page-break-before: avoid; }
+    pre { font-size: 8pt; }
+    table { font-size: 8.5pt; }
+    .page { padding: 30px 40px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ══════════════════════════════════════════════════════════════
+     PORTADA
+══════════════════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-logo">TodasMisCosas</div>
+  <div class="cover-sub">Documentación Técnica Completa</div>
+  <div style="font-size:10pt;color:#888;margin-bottom:28px;">Marketplace de almacenamiento urbano — Buenos Aires</div>
+  <div class="cover-meta">
+    <b>Versión:</b> 1.3 — Mayo 2026<br>
+    <b>URL producción:</b> https://todasmiscosas.com<br>
+    <b>Repositorio:</b> github.com/alex2580/prueba (privado)<br>
+    <b>Autores:</b> Alejandro Laporte · Guillermo Domínguez<br>
+    <b>Estado:</b> Producción activa ✅
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     ÍNDICE
+══════════════════════════════════════════════════════════════ -->
+<div class="toc">
+  <h2>Índice</h2>
+  <ol>
+    <li><a href="#s1">Resumen ejecutivo</a></li>
+    <li><a href="#s2">Stack tecnológico</a></li>
+    <li><a href="#s3">Arquitectura general</a></li>
+    <li><a href="#s4">Qué está dónde — Local · GitHub · Hostinger</a></li>
+    <li><a href="#s5">Estructura de carpetas completa</a></li>
+    <li><a href="#s6">Base de datos — Tablas y relaciones</a></li>
+    <li><a href="#s7">Variables de entorno</a></li>
+    <li><a href="#s8">Flujo de seguridad — Autenticación 2FA / OTP</a></li>
+    <li><a href="#s9">Flujo de pagos — MercadoPago</a></li>
+    <li><a href="#s10">Flujo de emails — Oferente y Demandante</a></li>
+    <li><a href="#s11">API — Endpoints completos</a></li>
+    <li><a href="#s12">Deploy y CI/CD</a></li>
+    <li><a href="#s13">Servicios externos</a></li>
+    <li><a href="#s14">Tareas pendientes</a></li>
+  </ol>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     1. RESUMEN EJECUTIVO
+══════════════════════════════════════════════════════════════ -->
+<h1 id="s1">1. Resumen Ejecutivo</h1>
+
+<p><strong>TodasMisCosas.com</strong> es un marketplace de almacenamiento urbano en Buenos Aires que conecta a personas que tienen espacio disponible (<em>oferentes</em>) con personas que necesitan guardar cosas (<em>demandantes</em>).</p>
+
+<table>
+  <tr><th>Qué hace</th><th>Cómo lo hace</th></tr>
+  <tr><td>Publicar y buscar espacios de almacenamiento</td><td>Mapa interactivo + filtros por barrio, tipo, precio</td></tr>
+  <tr><td>Reservar un espacio por días o meses</td><td>Flujo de 3 pasos + cálculo automático de precio</td></tr>
+  <tr><td>Cobrar y pagar de forma segura</td><td>Integración con MercadoPago (Checkout Pro + QR)</td></tr>
+  <tr><td>Comunicar oferente y demandante</td><td>Chat en tiempo real vía WebSocket (Socket.io)</td></tr>
+  <tr><td>Autenticar con doble factor</td><td>Email/contraseña (Supabase) + OTP de 6 dígitos</td></tr>
+  <tr><td>Notificar eventos clave</td><td>Emails automáticos (Nodemailer + Hostinger SMTP)</td></tr>
+  <tr><td>Gestionar el negocio</td><td>Panel de admin con estadísticas, gestión de usuarios y espacios</td></tr>
+</table>
+
+<h2>Roles de usuario</h2>
+<table>
+  <tr><th>Rol</th><th>Qué puede hacer</th></tr>
+  <tr><td><strong>Demandante</strong></td><td>Buscar espacios, reservar, pagar, chatear, dejar reviews</td></tr>
+  <tr><td><strong>Oferente</strong></td><td>Publicar espacios, ver y gestionar reservas recibidas, chatear</td></tr>
+  <tr><td><strong>Admin</strong></td><td>Todo lo anterior + gestionar usuarios, espacios, reservas, ver estadísticas globales</td></tr>
+</table>
+
+<!-- ══════════════════════════════════════════════════════════════
+     2. STACK TECNOLÓGICO
+══════════════════════════════════════════════════════════════ -->
+<h1 id="s2">2. Stack Tecnológico</h1>
+
+<table>
+  <tr><th>Capa</th><th>Tecnología</th><th>Versión</th><th>Para qué se usa</th></tr>
+  <tr><td>Frontend</td><td>Next.js</td><td>14.2.5</td><td>React framework con App Router, SSR/CSR</td></tr>
+  <tr><td>Frontend</td><td>React</td><td>18</td><td>Componentes UI, hooks de estado</td></tr>
+  <tr><td>Frontend</td><td>TypeScript</td><td>5</td><td>Tipado estático en todo el cliente</td></tr>
+  <tr><td>Backend</td><td>Node.js + Express</td><td>4.19.2</td><td>API REST + servidor HTTP</td></tr>
+  <tr><td>Base de datos</td><td>MySQL</td><td>—</td><td>Datos de negocio (usuarios, espacios, reservas)</td></tr>
+  <tr><td>Auth</td><td>Supabase Auth</td><td>2.44.2</td><td>Email/password + JWT tokens</td></tr>
+  <tr><td>Pagos</td><td>MercadoPago</td><td>2.0.15</td><td>Checkout Pro + QR + Webhooks</td></tr>
+  <tr><td>Emails</td><td>Nodemailer</td><td>6.9.14</td><td>Envío de emails vía SMTP</td></tr>
+  <tr><td>SMTP</td><td>Hostinger Mail</td><td>—</td><td>noreply@todasmiscosas.com</td></tr>
+  <tr><td>SMS / WhatsApp</td><td>Twilio</td><td>6.0.2</td><td>Envío de OTP por SMS y WhatsApp</td></tr>
+  <tr><td>Chat</td><td>Socket.io</td><td>4.7.5</td><td>Chat en tiempo real bidireccional</td></tr>
+  <tr><td>Mapas</td><td>Google Maps JS API</td><td>—</td><td>Mapa interactivo de espacios</td></tr>
+  <tr><td>Hosting</td><td>VPS Hostinger</td><td>—</td><td>Servidor de producción</td></tr>
+  <tr><td>CI/CD</td><td>GitHub Actions</td><td>—</td><td>Deploy automático al hacer push a master</td></tr>
+  <tr><td>Proceso</td><td>PM2</td><td>—</td><td>Keep-alive del backend Node.js</td></tr>
+  <tr><td>Upload de fotos</td><td>Multer + Sharp</td><td>1.4.5 / 0.33.4</td><td>Subida y optimización de imágenes</td></tr>
+  <tr><td>Cron jobs</td><td>node-cron</td><td>4.2.1</td><td>Recordatorios de vencimiento e inactividad</td></tr>
+  <tr><td>Fechas</td><td>date-fns</td><td>3.6.0</td><td>Cálculo y formateo de fechas</td></tr>
+  <tr><td>QR</td><td>qrcode</td><td>1.5.4</td><td>Generación de QR para pago MP</td></tr>
+</table>
+
+<!-- ══════════════════════════════════════════════════════════════
+     3. ARQUITECTURA GENERAL
+══════════════════════════════════════════════════════════════ -->
+<h1 id="s3">3. Arquitectura General</h1>
+
+<h2>Diagrama de capas</h2>
+<div class="flow">
+┌─────────────────────────────────────────────────────────────────────────┐
+│  USUARIO (browser / mobile browser)                                     │
+│  https://todasmiscosas.com                                              │
+└──────────────────────────┬──────────────────────────────────────────────┘
+                           │  HTTPS
+┌──────────────────────────▼──────────────────────────────────────────────┐
+│  FRONTEND — Next.js 14 (App Router)                                     │
+│  Puerto 3000 · VPS Hostinger                                            │
+│  Páginas: Home (mapa), Espacio, Reservar, Panel, Publicar, Admin...     │
+│  Hooks: useAuth, useEspacios, useChat                                   │
+│  Lib: api.ts (HTTP client), supabase.ts (auth), mercadopago.ts (pagos) │
+└────────┬─────────────────────────────────────────┬───────────────────────┘
+         │  REST (fetch + JWT Bearer)              │  WebSocket (Socket.io)
+         │  /api/*                                 │  chat
+┌────────▼─────────────────────────────────────────▼───────────────────────┐
+│  BACKEND — Node.js + Express                                              │
+│  Puerto 4000 · VPS Hostinger · PM2 (tmc-backend)                         │
+│                                                                           │
+│  Middleware:  Helmet · CORS · Morgan · Auth (JWT) · Upload (Multer)       │
+│  Rutas: /api/espacios · /api/reservas · /api/usuarios · /api/pagos        │
+│         /api/auth · /api/chat · /api/reviews · /api/admin · /api/email   │
+│  Cron jobs: recordatorios (09:00 hs) · inactividad (08:00 hs)            │
+└────────┬────────────────────────────────────────────────────────────────┘
+         │
+    ┌────┴──────────────────────────────────────────────────────────────┐
+    │                    SERVICIOS EXTERNOS                              │
+    ├────────────────┬──────────────────┬────────────────┬──────────────┤
+    │   MySQL        │   Supabase Auth  │  MercadoPago   │  Twilio      │
+    │   (Hostinger)  │   (Cloud SaaS)   │  (API + WH)    │  SMS/WA      │
+    │   Datos negocio│   JWT + Usuarios │  Pagos         │  OTP 2FA     │
+    └────────────────┴──────────────────┴────────────────┴──────────────┘
+</div>
+
+<h2>Flujo de una request típica</h2>
+<div class="flow">
+Browser
+  → Next.js (frontend)
+    → api.ts : fetchAPI('/api/espacios', { method: 'GET' }, token)
+      → Express backend : GET /api/espacios
+        → middleware/auth.js : valida JWT con Supabase
+        → espaciosController.js : query MySQL
+        → respuesta JSON
+      → api.ts : retorna Espacio[]
+    → React component : renderiza cards en el mapa
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     4. QUÉ ESTÁ DÓNDE
+══════════════════════════════════════════════════════════════ -->
+<h1 id="s4">4. Qué Está Dónde</h1>
+
+<h2>Local (máquina de desarrollo)</h2>
+<p>La carpeta de trabajo en la máquina de desarrollo es:</p>
+<pre>/home/dellnotee/dev/proyectos/todasmiscosas/</pre>
+<p>Contiene todo el código fuente. <strong>No contiene</strong> archivos <code>.env</code> con contraseñas reales (esos solo viven en el VPS).</p>
+
+<h2>GitHub — github.com/alex2580/prueba (privado)</h2>
+<table>
+  <tr><th>Lo que hay en GitHub</th><th>Lo que NO hay en GitHub</th></tr>
+  <tr><td>Todo el código fuente (frontend + backend)</td><td>Archivos <code>.env</code> (secretos y contraseñas)</td></tr>
+  <tr><td>Migraciones de base de datos (<code>add-*.js</code>)</td><td>Carpeta <code>uploads/</code> (fotos subidas por usuarios)</td></tr>
+  <tr><td>Documentación (<code>docs/</code>)</td><td>Archivos de build (<code>.next/</code>, <code>node_modules/</code>)</td></tr>
+  <tr><td>Workflow de CI/CD (<code>.github/workflows/deploy.yml</code>)</td><td>Archivo <code>deploy.sh</code> del VPS</td></tr>
+  <tr><td>Rama principal: <code>master</code></td><td>Base de datos (los datos viven solo en el VPS)</td></tr>
+</table>
+<p>El repositorio es <strong>privado</strong>. Solo Alejandro y Guillermo tienen acceso.</p>
+
+<h2>Hostinger VPS (producción)</h2>
+<table>
+  <tr><th>Ruta en el VPS</th><th>Qué es</th></tr>
+  <tr><td><code>/var/www/todasmiscosas/</code></td><td>Raíz del proyecto (clonado desde GitHub)</td></tr>
+  <tr><td><code>/var/www/todasmiscosas/backend/</code></td><td>API Node.js corriendo con PM2</td></tr>
+  <tr><td><code>/var/www/todasmiscosas/backend/.env</code></td><td>Variables de entorno reales (contraseñas, tokens)</td></tr>
+  <tr><td><code>/var/www/todasmiscosas/backend/uploads/</code></td><td>Fotos de espacios subidas por usuarios</td></tr>
+  <tr><td><code>/var/www/todasmiscosas/frontend/</code></td><td>Next.js compilado y corriendo</td></tr>
+  <tr><td><code>/var/www/todasmiscosas/deploy.sh</code></td><td>Script de deploy (pull + build + restart PM2)</td></tr>
+  <tr><td>Puerto 4000</td><td>Backend Express (API)</td></tr>
+  <tr><td>Puerto 3000</td><td>Frontend Next.js</td></tr>
+  <tr><td>Dominio todasmiscosas.com</td><td>Apunta al VPS vía DNS (Hostinger)</td></tr>
+</table>
+
+<div class="alert alert-blue">
+  <b>🔑 Para conectarse al VPS:</b>
+  SSH con usuario y contraseña guardados en los secrets de GitHub Actions (VPS_HOST, VPS_USER, VPS_PASS).
+  También se puede conectar manualmente vía SSH desde la terminal.
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     5. ESTRUCTURA DE CARPETAS
+══════════════════════════════════════════════════════════════ -->
+<h1 id="s5">5. Estructura de Carpetas Completa</h1>
+
+<h2>Raíz del proyecto</h2>
+<pre>todasmiscosas/
+├── backend/                    ← API Node.js + Express
+├── frontend/                   ← App Next.js (TypeScript)
+├── .github/
+│   └── workflows/
+│       └── deploy.yml          ← CI/CD automático
+├── docs/
+│   ├── novedades.md            ← Changelog interno
+│   └── TMC-documentacion-tecnica.html  ← Este documento
+└── negocio/                    ← Documentos de negocio (no son código)</pre>
+
+<h2>Backend — <code>backend/src/</code></h2>
+<pre>backend/src/
+├── app.js                  ← Express app: middleware, rutas, cron jobs
+├── server.js               ← HTTP server + Socket.io bootstrap (puerto 4000)
+│
+├── db/
+│   ├── connection.js       ← Pool MySQL + helpers: query(), queryOne(), transaction()
+│   ├── schema.sql          ← Definición completa de tablas y datos demo
+│   ├── migrate.js          ← Runner de migraciones
+│   ├── add-disponibilidad.js        ← Migración: disponibilidad de espacios
+│   ├── add-categoria-seguridad.js   ← Migración: categorías de seguridad
+│   ├── add-moneda-perfil.js         ← Migración: moneda y perfil
+│   ├── add-recordatorios-extensiones.js ← Migración: recordatorios y extensiones
+│   ├── add-bloqueo-usuarios.js      ← Migración: bloqueo de cuentas
+│   ├── add-auth-otp.js              ← Migración: tabla OTP para 2FA
+│   └── add-perfil-inactividad.js    ← Migración: inactividad + cambio de tel
+│
+├── middleware/
+│   ├── auth.js             ← Verifica JWT Supabase, adjunta req.user
+│   ├── errorHandler.js     ← Handler global de errores Express
+│   └── upload.js           ← Multer: subida de fotos (max 10 archivos, 5MB c/u)
+│
+├── routes/
+│   ├── auth.js             ← POST /solicitar-otp, POST /verificar-otp
+│   ├── espacios.js         ← CRUD de espacios + fotos + reactivar
+│   ├── reservas.js         ← CRUD de reservas + extensiones
+│   ├── usuarios.js         ← Perfil, cambio de teléfono con OTP
+│   ├── reviews.js          ← Reviews y ratings
+│   ├── pagos.js            ← Preferencias MP + webhook + estado
+│   ├── chat.js             ← Conversaciones + mensajes
+│   ├── email.js            ← Rutas de disparo manual de emails
+│   └── admin.js            ← Panel admin (usuarios, estadísticas)
+│
+├── controllers/
+│   ├── authController.js         ← Lógica OTP: generar, validar, invalidar
+│   ├── espaciosController.js     ← Listar, crear, editar, fotos, reactivar
+│   ├── reservasController.js     ← Crear reserva, cambiar estado, extender
+│   ├── reviewsController.js      ← Alta de reviews, actualización de rating
+│   ├── pagosController.js        ← Crear preferencia MP, webhook, estado
+│   ├── chatController.js         ← Conversaciones y mensajes
+│   ├── usuariosController.js     ← Perfil, sync Supabase, cambio de tel
+│   └── adminController.js        ← Dashboard admin, gestión global
+│
+├── services/
+│   ├── emailService.js           ← Todos los templates de email
+│   ├── twilioService.js          ← SMS y WhatsApp vía Twilio
+│   └── mercadopagoService.js     ← Crear preferencia MP, obtener pago
+│
+└── jobs/
+    ├── recordatorios.js          ← Cron 09:00 hs: avisa vencimiento de reservas
+    └── inactividad.js            ← Cron 08:00 hs: pausa espacios sin actividad 90d</pre>
+
+<h2>Frontend — <code>frontend/</code></h2>
+<pre>frontend/
+├── app/                          ← Next.js App Router (cada carpeta = ruta URL)
+│   ├── layout.tsx                ← Layout raíz: metadata, fuentes, estilos globales
+│   ├── globals.css               ← Variables CSS, clases utilitarias, componentes base
+│   ├── page.tsx                  ← / — Home: mapa + lista + filtros
+│   ├── admin/page.tsx            ← /admin — Dashboard administrador
+│   ├── espacio/[id]/
+│   │   ├── page.tsx              ← /espacio/:id — Detalle del espacio
+│   │   └── reservar/page.tsx     ← /espacio/:id/reservar — Flujo de reserva (3 pasos)
+│   ├── reserva/[id]/
+│   │   ├── page.tsx              ← /reserva/:id — Detalle de reserva
+│   │   ├── checkout/page.tsx     ← /reserva/:id/checkout — Checkout alternativo
+│   │   └── confirmacion/page.tsx ← /reserva/:id/confirmacion — Resultado del pago
+│   ├── panel/page.tsx            ← /panel — Panel de usuario (oferente o demandante)
+│   ├── publicar/page.tsx         ← /publicar — Formulario de 4 pasos para publicar espacio
+│   └── como-funciona/page.tsx   ← /como-funciona — Página explicativa
+│
+├── components/
+│   ├── auth/
+│   │   ├── LoginForm.tsx         ← Formulario de login (email + contraseña)
+│   │   ├── RegisterForm.tsx      ← Formulario de registro
+│   │   └── OTPStep.tsx           ← 6 inputs OTP + reenvío + countdown
+│   ├── ui/
+│   │   ├── Button.tsx            ← Botón con variantes (primary, secondary, ghost)
+│   │   ├── Modal.tsx             ← Modal genérico
+│   │   ├── Badge.tsx             ← Badge de estado
+│   │   └── SiteLogo.tsx          ← Logo naranja "TodasMisCosas"
+│   └── mapa/
+│       └── MapaEspacios.tsx      ← Google Maps con marcadores de espacios
+│
+├── hooks/
+│   ├── useAuth.ts                ← Estado global de autenticación + OTP + logout
+│   ├── useEspacios.ts            ← Fetch y filtrado de espacios
+│   └── useChat.ts                ← Conexión WebSocket para chat
+│
+├── lib/
+│   ├── api.ts                    ← Cliente HTTP tipado para todos los endpoints
+│   ├── supabase.ts               ← Cliente Supabase (signIn, signUp, signOut)
+│   ├── mercadopago.ts            ← Helpers MP (parseMPReturnParams, formatARS)
+│   └── utils.ts                  ← diasEntre, calcularPrecio, formatARS, slugify...
+│
+├── types/
+│   └── index.ts                  ← Interfaces TypeScript: Usuario, Espacio, Reserva, etc.
+│
+├── next.config.js                ← Config Next.js (rewrites, headers de seguridad)
+├── tsconfig.json                 ← TypeScript config
+└── package.json                  ← Dependencias frontend</pre>
+
+<!-- ══════════════════════════════════════════════════════════════
+     6. BASE DE DATOS
+══════════════════════════════════════════════════════════════ -->
+<h1 id="s6">6. Base de Datos — Tablas y Relaciones</h1>
+
+<p>Motor: <strong>MySQL InnoDB</strong> · Charset: <strong>utf8mb4</strong> · Nombre de la DB: <code>u713501758_todasmiscosas</code></p>
+
+<h2>Tablas principales</h2>
+
+<table>
+  <tr><th>Tabla</th><th>Registros clave</th><th>Para qué</th></tr>
+  <tr><td><code>usuarios</code></td><td>id, supabase_id, nombre, email, tel, tipo, activo</td><td>Todos los usuarios del sistema</td></tr>
+  <tr><td><code>espacios</code></td><td>id, nombre, barrio, precio_dia, precio_mes, lat, lng, activo, inactiva_auto</td><td>Publicaciones de espacios de almacenamiento</td></tr>
+  <tr><td><code>espacio_fotos</code></td><td>espacio_id, url, orden</td><td>Fotos asociadas a cada espacio</td></tr>
+  <tr><td><code>reservas</code></td><td>id, espacio_id, usuario_id, fecha_desde, fecha_hasta, precio_total, estado, mp_payment_id</td><td>Reservas entre demandante y espacio</td></tr>
+  <tr><td><code>reserva_extensiones</code></td><td>id, reserva_id, nueva_fecha_hasta, precio, estado</td><td>Extensiones de reservas pagadas</td></tr>
+  <tr><td><code>reviews</code></td><td>espacio_id, autor_id, rating (1-5), texto</td><td>Reseñas de demandantes sobre espacios</td></tr>
+  <tr><td><code>conversaciones</code></td><td>espacio_id, demandante_id, oferente_id, ultimo_msg</td><td>Hilos de chat entre usuarios</td></tr>
+  <tr><td><code>mensajes</code></td><td>conversacion_id, autor_id, texto, leido</td><td>Mensajes individuales del chat</td></tr>
+  <tr><td><code>servicios_adicionales</code></td><td>reserva_id, tipo, precio</td><td>Transporte / seguro / embalaje adjuntos a reservas</td></tr>
+  <tr><td><code>auth_otp</code></td><td>usuario_id, codigo, expires_at, usado, intentos, tipo, tel_nuevo</td><td>Códigos OTP para 2FA y cambio de teléfono</td></tr>
+  <tr><td><code>auth_sesiones</code></td><td>usuario_id, ip, user_agent, created_at</td><td>Log de accesos exitosos</td></tr>
+</table>
+
+<h2>Estados de una reserva</h2>
+<div class="flow">
+pendiente  →  confirmada  →  pagada  →  finalizada
+    ↓              ↓            ↓
+  cancelada    cancelada    cancelada
+</div>
+
+<table>
+  <tr><th>Estado</th><th>Significado</th><th>Quién lo establece</th></tr>
+  <tr><td><code>pendiente</code></td><td>Reserva creada, esperando confirmación del oferente</td><td>Sistema al crear la reserva</td></tr>
+  <tr><td><code>confirmada</code></td><td>Oferente aceptó, demandante debe pagar</td><td>Oferente desde su panel</td></tr>
+  <tr><td><code>pagada</code></td><td>MercadoPago confirmó el pago</td><td>Webhook de MercadoPago</td></tr>
+  <tr><td><code>finalizada</code></td><td>Período de reserva terminado</td><td>Admin o cron job</td></tr>
+  <tr><td><code>cancelada</code></td><td>Cancelada por cualquiera de las partes</td><td>Demandante, oferente o admin</td></tr>
+</table>
+
+<h2>Tipos de usuario en DB</h2>
+<table>
+  <tr><th>tipo</th><th>Puede publicar espacios</th><th>Puede reservar</th><th>Acceso admin</th></tr>
+  <tr><td>demandante</td><td>No</td><td>Sí</td><td>No</td></tr>
+  <tr><td>oferente</td><td>Sí</td><td>No</td><td>No</td></tr>
+  <tr><td>admin</td><td>Sí</td><td>Sí</td><td>Sí</td></tr>
+</table>
+
+<!-- ══════════════════════════════════════════════════════════════
+     7. VARIABLES DE ENTORNO
+══════════════════════════════════════════════════════════════ -->
+<h1 id="s7">7. Variables de Entorno</h1>
+
+<p>El archivo <code>.env</code> vive solo en el VPS en <code>/var/www/todasmiscosas/backend/.env</code> y no se sube a GitHub.</p>
+
+<pre># ── Servidor
+PORT=4000
+NODE_ENV=production
+
+# ── MySQL (Hostinger)
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=u713501758_todasmiscosas
+DB_PASS=&lt;contraseña MySQL&gt;
+DB_NAME=u713501758_todasmiscosas
+
+# ── Supabase (autenticación JWT)
+SUPABASE_URL=https://&lt;project&gt;.supabase.co
+SUPABASE_ANON_KEY=&lt;clave pública&gt;
+SUPABASE_SERVICE_KEY=&lt;clave privada de servicio&gt;
+SUPABASE_JWT_SECRET=&lt;JWT secret de Supabase&gt;
+
+# ── MercadoPago
+MP_ACCESS_TOKEN=&lt;access token de producción&gt;
+MP_PUBLIC_KEY=&lt;public key de producción&gt;
+
+# ── Email (Hostinger SMTP)
+SMTP_HOST=smtp.hostinger.com
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=noreply@todasmiscosas.com
+SMTP_PASS=&lt;contraseña de email&gt;
+
+# ── URLs
+FRONTEND_URL=https://todasmiscosas.com
+API_BASE_URL=https://todasmiscosas.com
+
+# ── Admin
+ADMIN_EMAILS=alejandro.laporte@gmail.com,guilleadominguez@gmail.com
+
+# ── Twilio (SMS + WhatsApp) ⚠️ AÚN NO CONFIGURADO EN PRODUCCIÓN
+TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+TWILIO_PHONE=+15551234567
+TWILIO_WHATSAPP_FROM=whatsapp:+14155238886</pre>
+
+<div class="alert alert-red">
+  <b>⚠️ PENDIENTE — Twilio sin configurar en producción</b>
+  Las 4 variables de Twilio (TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE, TWILIO_WHATSAPP_FROM)
+  no están configuradas en el VPS todavía. El OTP llega por email, pero NO por SMS ni WhatsApp hasta completar esta tarea.
+  Ver sección 14 (Tareas Pendientes) para los pasos a seguir.
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     8. FLUJO DE SEGURIDAD
+══════════════════════════════════════════════════════════════ -->
+<h1 id="s8">8. Flujo de Seguridad — Autenticación 2FA / OTP</h1>
+
+<h2>Visión general</h2>
+<p>La autenticación usa <strong>dos factores</strong>: primero email + contraseña vía Supabase, luego un código OTP de 6 dígitos enviado al usuario.</p>
+
+<h2>Flujo completo de login</h2>
+<div class="flow">
+[1] Usuario ingresa email + contraseña en LoginForm
+         ↓
+[2] Frontend llama a Supabase signIn(email, password)
+    → Supabase verifica credenciales
+    → Devuelve JWT (session.access_token)
+         ↓
+[3] Frontend llama a POST /api/auth/solicitar-otp
+    → Header: Authorization: Bearer &lt;token&gt;
+    → Backend: middleware requireAuth valida el JWT
+    → Backend: invalida OTPs anteriores del usuario
+    → Backend: genera código de 6 dígitos (100000-999999)
+    → Backend: guarda en tabla auth_otp (expira en 10 min, max 3 intentos)
+    → Backend: envía el código por:
+         • Email (Nodemailer + Hostinger SMTP) — SIEMPRE ✅
+         • SMS (Twilio) — solo si el usuario tiene teléfono cargado
+         • WhatsApp (Twilio) — solo si el usuario tiene teléfono cargado
+    → Respuesta: { ok: true, canales: {...}, email_hint: "al***@gmail.com" }
+         ↓
+[4] Frontend muestra pantalla OTPStep (6 inputs de 1 dígito c/u)
+         ↓
+[5] Usuario ingresa código → auto-submit cuando están los 6 dígitos
+         ↓
+[6] Frontend llama a POST /api/auth/verificar-otp
+    → Header: Authorization: Bearer &lt;token&gt;
+    → Body: { codigo: "123456" }
+    → Backend: busca OTP activo más reciente del usuario
+    → Si expiró: error "El código expiró"
+    → Si mal código: incrementa intentos (máx 3), devuelve cuántos quedan
+    → Si 3 intentos fallidos: invalida el OTP, pide nuevo
+    → Si correcto: marca OTP como usado, registra sesión en auth_sesiones
+         ↓
+[7] Backend: envía notificación de acceso exitoso al usuario
+    (email + SMS/WhatsApp con fecha, IP y dispositivo)
+         ↓
+[8] Frontend: llama a GET /api/usuarios/me con el token
+    → Carga el perfil completo del usuario
+    → Setea user + token en el estado global (useAuth)
+         ↓
+[9] Usuario autenticado — acceso completo a la plataforma
+</div>
+
+<h2>Middleware de autenticación (requireAuth)</h2>
+<p>Cada request protegida pasa por <code>backend/src/middleware/auth.js</code>:</p>
+<div class="flow">
+Recibe request con header: Authorization: Bearer &lt;token&gt;
+         ↓
+Llama a supabase.auth.getUser(token)
+         ↓
+Si error o token inválido → 401 "Token inválido o expirado"
+         ↓
+Busca usuario en MySQL por supabase_id
+  → Si no existe por supabase_id → busca por email y linkea
+  → Si no existe en ningún lado → lo crea automáticamente
+         ↓
+Si usuario.activo = false → 403 "Cuenta suspendida"
+         ↓
+Adjunta req.user = { id, nombre, email, tel, tipo, supabase_id }
+         ↓
+Llama a next() → pasa al controller
+</div>
+
+<h2>Cambio de teléfono con OTP</h2>
+<p>Para cambiar el número de teléfono se usa un flujo OTP separado con <code>tipo = 'cambio_tel'</code>:</p>
+<div class="flow">
+[1] Usuario ingresa nuevo número en el modal de perfil
+[2] POST /api/usuarios/me/solicitar-cambio-tel { tel_nuevo }
+    → Genera OTP en auth_otp con tipo='cambio_tel', tel_nuevo=&lt;número&gt;
+    → Envía código al NUEVO número por SMS + WhatsApp
+[3] Usuario ingresa el código de 6 dígitos
+[4] POST /api/usuarios/me/verificar-cambio-tel { codigo }
+    → Valida OTP con tipo='cambio_tel'
+    → Actualiza usuarios.tel = tel_nuevo
+    → Envía email de confirmación "Tu teléfono fue actualizado"
+</div>
+
+<h2>Bloqueo de cuentas</h2>
+<p>Los administradores pueden desactivar cuentas desde el panel de admin. Si <code>usuarios.activo = false</code>, el middleware devuelve 403 en cada request. El usuario no puede entrar hasta que un admin lo reactive.</p>
+
+<h2>Capas de seguridad HTTP</h2>
+<table>
+  <tr><th>Capa</th><th>Qué protege</th></tr>
+  <tr><td>Helmet.js</td><td>Headers de seguridad (X-Frame-Options, HSTS, etc.)</td></tr>
+  <tr><td>CORS restrictivo</td><td>Solo acepta requests desde todasmiscosas.com y localhost:3000</td></tr>
+  <tr><td>JWT (Supabase)</td><td>Cada token expira y es verificado por Supabase en cada request</td></tr>
+  <tr><td>Validación express-validator</td><td>Todos los campos de entrada son validados antes de procesarse</td></tr>
+  <tr><td>2FA OTP</td><td>Incluso con email + contraseña robados, sin el código no se entra</td></tr>
+  <tr><td>Limit de intentos OTP</td><td>Máximo 3 intentos fallidos antes de invalidar el código</td></tr>
+</table>
+
+<!-- ══════════════════════════════════════════════════════════════
+     9. FLUJO DE PAGOS
+══════════════════════════════════════════════════════════════ -->
+<h1 id="s9">9. Flujo de Pagos — MercadoPago</h1>
+
+<h2>Modalidades disponibles</h2>
+<table>
+  <tr><th>Modalidad</th><th>Descripción</th><th>Cómo funciona</th></tr>
+  <tr><td>💳 Pago online</td><td>Checkout Pro de MercadoPago</td><td>Redirige al usuario a la página de pago de MP</td></tr>
+  <tr><td>📱 Pago por QR</td><td>QR generado en pantalla</td><td>Muestra QR, el usuario escanea con la app MP</td></tr>
+</table>
+
+<h2>Flujo completo de pago online</h2>
+<div class="flow">
+[1] Usuario en /espacio/:id/reservar — Paso 3 (Cuenta y Pago)
+    Usuario logueado y verificado ✅
+         ↓
+[2] Click en "💳 Pagar online con MercadoPago"
+         ↓
+[3] Frontend: POST /api/reservas
+    Body: { espacio_id, fecha_desde, fecha_hasta }
+    → Backend verifica: espacio existe, está activo y disponible
+    → Backend verifica: no hay overlap con otras reservas
+    → Backend calcula precio:
+        • Si &lt; 28 días: días × precio_dia
+        • Si ≥ 28 días: ceil(días/30) × precio_mes
+    → Backend crea registro en tabla reservas (estado: "pendiente")
+    → Backend envía emails de notificación (ver Sección 10)
+    → Respuesta: { id: "uuid-de-reserva", precio_total: 18000, ... }
+         ↓
+[4] Frontend: POST /api/pagos/preferencia
+    Body: { reserva_id: "uuid-de-reserva" }
+    → Backend crea preferencia en MercadoPago:
+        • título: "Reserva Cochera Palermo — Palermo"
+        • monto: precio_total
+        • back_urls: success/failure/pending → /reserva/:id/confirmacion
+        • external_reference: reserva_id
+        • notification_url: /api/pagos/webhook
+    → MP devuelve init_point (URL de pago) + preference_id
+    → Backend guarda mp_preference_id en la reserva
+    → Respuesta: { init_point: "https://www.mercadopago.com.ar/..." }
+         ↓
+[5] Frontend: window.location.href = init_point
+    → Usuario va a la página de pago de MercadoPago
+         ↓
+[6] Usuario paga en MercadoPago (tarjeta, débito, dinero MP, etc.)
+         ↓
+[7] MercadoPago llama al webhook: POST /api/pagos/webhook
+    → Backend obtiene el pago por su ID
+    → Si approved → reserva.estado = "pagada", guarda mp_payment_id
+    → Si rejected/cancelled → reserva.estado = "cancelada"
+    → Backend envía emails de confirmación de pago (ver Sección 10)
+         ↓
+[8] MercadoPago redirige al usuario:
+    • Si aprobado → /reserva/:id/confirmacion?estado=success
+    • Si rechazado → /reserva/:id/confirmacion?estado=failure
+    • Si pendiente → /reserva/:id/confirmacion?estado=pending
+         ↓
+[9] Frontend: página de confirmación
+    → Consulta GET /api/pagos/estado/:reservaId para obtener estado real
+    → Muestra: 🎉 "¡Reserva confirmada!" / ❌ "Pago rechazado" / ⏳ "Pago pendiente"
+</div>
+
+<h2>Flujo de pago por QR</h2>
+<div class="flow">
+[1–4] Igual que el flujo online (crea reserva + preferencia en MP)
+         ↓
+[5] Frontend genera QR a partir del init_point:
+    QRCode.toDataURL(pref.init_point) → imagen PNG en base64
+         ↓
+[6] Se muestra el QR en pantalla + botón "Abrí en otro dispositivo"
+         ↓
+[7] Frontend inicia polling cada 4 segundos:
+    GET /api/pagos/estado/:reservaId
+    → Cuando estado === "pagada" → router.push('/reserva/:id/confirmacion')
+         ↓
+[8] Usuario escanea con app de MercadoPago → paga
+         ↓
+[9] MP dispara webhook → estado cambia a "pagada" en DB
+[10] Polling detecta estado "pagada" → redirige a confirmación ✅
+</div>
+
+<h2>Extensión de reservas pagadas</h2>
+<p>Un demandante puede extender la fecha de fin de una reserva ya pagada:</p>
+<div class="flow">
+POST /api/reservas/:id/extender { nueva_fecha_hasta }
+  → Verifica que no hay overlap con otras reservas en ese período
+  → Calcula precio adicional (días extra × tarifa)
+  → Crea registro en reserva_extensiones
+  → Crea nueva preferencia MP
+  → Devuelve init_point para pagar la extensión
+  → Webhook actualiza fecha_hasta en la reserva + envía email de confirmación
+</div>
+
+<h2>Cálculo de precio</h2>
+<table>
+  <tr><th>Duración</th><th>Fórmula</th><th>Ejemplo</th></tr>
+  <tr><td>Menos de 28 días</td><td>días × precio_dia</td><td>10 días × $850 = $8.500</td></tr>
+  <tr><td>28 días o más</td><td>ceil(días / 30) × precio_mes</td><td>35 días = 2 meses × $18.000 = $36.000</td></tr>
+</table>
+
+<!-- ══════════════════════════════════════════════════════════════
+     10. FLUJO DE EMAILS
+══════════════════════════════════════════════════════════════ -->
+<h1 id="s10">10. Flujo de Emails</h1>
+
+<p>Todos los emails se envían desde <strong>noreply@todasmiscosas.com</strong> usando Nodemailer con SMTP de Hostinger (puerto 465, SSL). El diseño es HTML con fondo azul marino oscuro, logo naranja, filas de datos, botón naranja y footer.</p>
+
+<h2>Emails automáticos del sistema</h2>
+
+<table>
+  <tr><th>#</th><th>Evento</th><th>Para quién</th><th>Asunto</th><th>Datos incluidos</th></tr>
+  <tr>
+    <td>1</td>
+    <td>Se crea una reserva</td>
+    <td>Demandante</td>
+    <td>✅ Reserva confirmada — TodasMisCosas</td>
+    <td>Espacio, fechas, precio total, link al checkout</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>Se crea una reserva</td>
+    <td>Oferente</td>
+    <td>🔔 Nueva solicitud de reserva</td>
+    <td>Nombre y teléfono del demandante, espacio, fechas, monto estimado</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>Oferente confirma la reserva</td>
+    <td>Demandante</td>
+    <td>✅ Tu reserva fue aprobada</td>
+    <td>Espacio, fechas, precio total, link al pago</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>Pago aprobado por MercadoPago</td>
+    <td>Demandante</td>
+    <td>💳 Pago confirmado</td>
+    <td>Espacio, monto pagado, número de pago MP</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td>Pago aprobado por MercadoPago</td>
+    <td>Oferente</td>
+    <td>💰 Recibiste un pago por tu espacio</td>
+    <td>Nombre del demandante, espacio, monto acreditado</td>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td>Reserva cancelada</td>
+    <td>Ambos</td>
+    <td>❌ Reserva cancelada</td>
+    <td>Espacio, fechas, quién canceló (demandante u oferente)</td>
+  </tr>
+  <tr>
+    <td>7</td>
+    <td>Reserva finalizada</td>
+    <td>Demandante</td>
+    <td>📦 Tu reserva finalizó</td>
+    <td>Espacio, link para dejar reseña</td>
+  </tr>
+  <tr>
+    <td>8</td>
+    <td>Login (OTP solicitado)</td>
+    <td>Usuario</td>
+    <td>🔐 Tu código de verificación — TodasMisCosas</td>
+    <td>Código de 6 dígitos, vigencia de 10 minutos</td>
+  </tr>
+  <tr>
+    <td>9</td>
+    <td>Login exitoso (OTP verificado)</td>
+    <td>Usuario</td>
+    <td>✅ Acceso confirmado</td>
+    <td>Fecha/hora, IP, tipo de dispositivo</td>
+  </tr>
+  <tr>
+    <td>10</td>
+    <td>Recordatorio 5 días antes del fin</td>
+    <td>Demandante</td>
+    <td>⏰ Tu reserva vence en 5 días</td>
+    <td>Espacio, fecha de vencimiento, link para extender</td>
+  </tr>
+  <tr>
+    <td>11</td>
+    <td>Recordatorio 2 días antes del fin</td>
+    <td>Demandante</td>
+    <td>⏰ Tu reserva vence en 2 días</td>
+    <td>Espacio, fecha de vencimiento</td>
+  </tr>
+  <tr>
+    <td>12</td>
+    <td>Recordatorio 1 día antes del fin</td>
+    <td>Demandante</td>
+    <td>⏰ Mañana vence tu reserva</td>
+    <td>Espacio, fecha de vencimiento</td>
+  </tr>
+  <tr>
+    <td>13</td>
+    <td>Día de vencimiento</td>
+    <td>Demandante</td>
+    <td>📦 Hoy vence tu reserva</td>
+    <td>Espacio</td>
+  </tr>
+  <tr>
+    <td>14</td>
+    <td>Extensión de reserva pagada</td>
+    <td>Demandante</td>
+    <td>📅 Extensión de reserva confirmada</td>
+    <td>Espacio, fecha anterior, nueva fecha, monto pagado</td>
+  </tr>
+  <tr>
+    <td>15</td>
+    <td>Espacio pausado por inactividad 90d</td>
+    <td>Oferente</td>
+    <td>⏸️ Tu publicación fue pausada por inactividad</td>
+    <td>Nombre del espacio, días sin actividad, link para reactivar</td>
+  </tr>
+  <tr>
+    <td>16</td>
+    <td>Cambio de teléfono confirmado</td>
+    <td>Usuario</td>
+    <td>📱 Tu teléfono fue actualizado</td>
+    <td>Nuevo número de teléfono</td>
+  </tr>
+</table>
+
+<h2>Cron jobs de recordatorios</h2>
+<p>Archivo: <code>backend/src/jobs/recordatorios.js</code> — corre todos los días a las 09:00 hs (Argentina).</p>
+<div class="flow">
+Busca todas las reservas en estado "pagada" con fecha_hasta próxima:
+  → Con 5 días para vencer y recordatorio_5d = 0 → envía email → recordatorio_5d = 1
+  → Con 2 días para vencer y recordatorio_2d = 0 → envía email → recordatorio_2d = 1
+  → Con 1 día para vencer y recordatorio_1d = 0 → envía email → recordatorio_1d = 1
+  → Que vence hoy y recordatorio_0d = 0 → envía email → recordatorio_0d = 1
+</div>
+
+<h2>Cron job de inactividad</h2>
+<p>Archivo: <code>backend/src/jobs/inactividad.js</code> — corre todos los días a las 08:00 hs (Argentina).</p>
+<div class="flow">
+Busca espacios activos donde COALESCE(ultima_actividad, created_at) &lt; hace 90 días:
+  → Pone activo = FALSE, inactiva_auto = 1
+  → Envía email al oferente avisando que su publicación fue pausada
+
+El oferente puede reactivar desde su panel → POST /api/espacios/:id/reactivar
+  → activo = TRUE, inactiva_auto = 0, ultima_actividad = NOW()
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     11. API ENDPOINTS
+══════════════════════════════════════════════════════════════ -->
+<h1 id="s11">11. API — Endpoints Completos</h1>
+
+<p>Base URL: <code>https://todasmiscosas.com/api</code> (producción) · <code>http://localhost:4000/api</code> (desarrollo)</p>
+<p>Autenticación: header <code>Authorization: Bearer &lt;token&gt;</code> en todos los endpoints protegidos.</p>
+
+<h2>Autenticación</h2>
+<table>
+  <tr><th>Método</th><th>Ruta</th><th>Auth</th><th>Descripción</th></tr>
+  <tr><td>POST</td><td>/auth/solicitar-otp</td><td>✅</td><td>Genera y envía código OTP al usuario</td></tr>
+  <tr><td>POST</td><td>/auth/verificar-otp</td><td>✅</td><td>Valida el código OTP ingresado</td></tr>
+</table>
+
+<h2>Espacios</h2>
+<table>
+  <tr><th>Método</th><th>Ruta</th><th>Auth</th><th>Descripción</th></tr>
+  <tr><td>GET</td><td>/espacios</td><td>Opcional</td><td>Listar espacios (filtros: barrio, tipo, precio_min, precio_max, disponible, q)</td></tr>
+  <tr><td>GET</td><td>/espacios/mis-espacios</td><td>✅ Oferente</td><td>Espacios del oferente logueado (incluye pausados por inactividad)</td></tr>
+  <tr><td>GET</td><td>/espacios/:id</td><td>Opcional</td><td>Detalle de un espacio con fotos y disponibilidad</td></tr>
+  <tr><td>POST</td><td>/espacios</td><td>✅ Oferente</td><td>Crear nuevo espacio (validación completa)</td></tr>
+  <tr><td>PUT</td><td>/espacios/:id</td><td>✅ Oferente</td><td>Editar espacio (actualiza ultima_actividad)</td></tr>
+  <tr><td>POST</td><td>/espacios/:id/fotos</td><td>✅</td><td>Subir hasta 10 fotos (multipart/form-data)</td></tr>
+  <tr><td>POST</td><td>/espacios/:id/reactivar</td><td>✅</td><td>Reactivar espacio pausado por inactividad</td></tr>
+  <tr><td>DELETE</td><td>/espacios/:id</td><td>✅</td><td>Eliminar espacio (solo si es el dueño o admin)</td></tr>
+</table>
+
+<h2>Reservas</h2>
+<table>
+  <tr><th>Método</th><th>Ruta</th><th>Auth</th><th>Descripción</th></tr>
+  <tr><td>GET</td><td>/reservas</td><td>✅</td><td>Mis reservas (admin: todas)</td></tr>
+  <tr><td>GET</td><td>/reservas/recibidas</td><td>✅ Oferente</td><td>Reservas recibidas en mis espacios</td></tr>
+  <tr><td>GET</td><td>/reservas/:id</td><td>✅</td><td>Detalle de una reserva (con servicios adicionales)</td></tr>
+  <tr><td>POST</td><td>/reservas</td><td>✅</td><td>Crear reserva (verifica disponibilidad y overlap)</td></tr>
+  <tr><td>POST</td><td>/reservas/:id/extender</td><td>✅</td><td>Extender fecha de reserva pagada</td></tr>
+  <tr><td>PATCH</td><td>/reservas/:id/estado</td><td>✅</td><td>Cambiar estado (pendiente/confirmada/pagada/cancelada/finalizada)</td></tr>
+  <tr><td>DELETE</td><td>/reservas/:id</td><td>✅</td><td>Cancelar reserva</td></tr>
+</table>
+
+<h2>Usuarios</h2>
+<table>
+  <tr><th>Método</th><th>Ruta</th><th>Auth</th><th>Descripción</th></tr>
+  <tr><td>GET</td><td>/usuarios/me</td><td>✅</td><td>Perfil del usuario logueado</td></tr>
+  <tr><td>PUT</td><td>/usuarios/me</td><td>✅</td><td>Actualizar nombre, dirección (sin OTP)</td></tr>
+  <tr><td>POST</td><td>/usuarios/me/solicitar-cambio-tel</td><td>✅</td><td>Solicitar OTP para cambiar teléfono</td></tr>
+  <tr><td>POST</td><td>/usuarios/me/verificar-cambio-tel</td><td>✅</td><td>Verificar OTP y guardar nuevo teléfono</td></tr>
+  <tr><td>POST</td><td>/usuarios/sync</td><td>—</td><td>Sincronizar usuario de Supabase a MySQL (post-registro)</td></tr>
+</table>
+
+<h2>Pagos</h2>
+<table>
+  <tr><th>Método</th><th>Ruta</th><th>Auth</th><th>Descripción</th></tr>
+  <tr><td>POST</td><td>/pagos/preferencia</td><td>✅</td><td>Crear preferencia de pago en MercadoPago</td></tr>
+  <tr><td>POST</td><td>/pagos/webhook</td><td>—</td><td>Webhook de MercadoPago (sin auth, lo llama MP)</td></tr>
+  <tr><td>GET</td><td>/pagos/estado/:reservaId</td><td>✅</td><td>Consultar estado de pago de una reserva</td></tr>
+</table>
+
+<h2>Otros</h2>
+<table>
+  <tr><th>Método</th><th>Ruta</th><th>Auth</th><th>Descripción</th></tr>
+  <tr><td>GET</td><td>/reviews</td><td>—</td><td>Reviews de un espacio</td></tr>
+  <tr><td>POST</td><td>/reviews</td><td>✅</td><td>Crear review</td></tr>
+  <tr><td>GET</td><td>/chat/conversaciones</td><td>✅</td><td>Mis conversaciones</td></tr>
+  <tr><td>POST</td><td>/chat/conversaciones</td><td>✅</td><td>Iniciar conversación</td></tr>
+  <tr><td>GET</td><td>/chat/conversaciones/:id/mensajes</td><td>✅</td><td>Mensajes de una conversación</td></tr>
+  <tr><td>POST</td><td>/chat/conversaciones/:id/mensajes</td><td>✅</td><td>Enviar mensaje</td></tr>
+  <tr><td>GET</td><td>/admin/*</td><td>✅ Admin</td><td>Dashboard, usuarios, estadísticas</td></tr>
+  <tr><td>GET</td><td>/health</td><td>—</td><td>Health check del backend</td></tr>
+</table>
+
+<!-- ══════════════════════════════════════════════════════════════
+     12. DEPLOY Y CI/CD
+══════════════════════════════════════════════════════════════ -->
+<h1 id="s12">12. Deploy y CI/CD</h1>
+
+<h2>Flujo de deploy automático</h2>
+<div class="flow">
+Desarrollador hace push a la rama master en GitHub
+         ↓
+GitHub Actions detecta el push → dispara el workflow
+         ↓
+Job: deploy (ubuntu-latest)
+  → Usa appleboy/ssh-action para conectarse al VPS por SSH
+  → Ejecuta en el VPS:
+      cd /var/www/todasmiscosas
+      git reset --hard HEAD       ← descarta cambios locales
+      ./deploy.sh                 ← script de build y restart
+         ↓
+deploy.sh en el VPS hace (aprox):
+  → git pull origin master
+  → cd frontend && npm install && npm run build
+  → cd backend && npm install
+  → pm2 restart tmc-backend
+         ↓
+Migraciones de DB (en el mismo workflow):
+  → node src/db/add-disponibilidad.js
+  → node src/db/add-categoria-seguridad.js
+  → node src/db/add-moneda-perfil.js
+  → node src/db/add-recordatorios-extensiones.js
+  → node src/db/add-bloqueo-usuarios.js
+  → node src/db/add-auth-otp.js
+  → node src/db/add-perfil-inactividad.js
+  (cada script es idempotente: ignora si la columna ya existe)
+         ↓
+App actualizada en producción ✅  (~2-3 minutos desde el push)
+</div>
+
+<h2>Secrets de GitHub (configurados en el repo)</h2>
+<table>
+  <tr><th>Secret</th><th>Qué contiene</th></tr>
+  <tr><td>VPS_HOST</td><td>IP o hostname del VPS de Hostinger</td></tr>
+  <tr><td>VPS_USER</td><td>Usuario SSH del VPS</td></tr>
+  <tr><td>VPS_PASS</td><td>Contraseña SSH del VPS</td></tr>
+</table>
+
+<h2>Proceso PM2</h2>
+<table>
+  <tr><th>Nombre PM2</th><th>Qué es</th><th>Puerto</th></tr>
+  <tr><td>tmc-backend</td><td>API Node.js + Express + Socket.io</td><td>4000</td></tr>
+  <tr><td>(Next.js)</td><td>Frontend Next.js (puede ser servido por PM2 o separado)</td><td>3000</td></tr>
+</table>
+
+<h2>Comandos útiles para el VPS</h2>
+<pre>ssh usuario@IP-del-VPS
+
+# Ver estado de procesos
+pm2 status
+
+# Ver logs del backend en tiempo real
+pm2 logs tmc-backend
+
+# Reiniciar backend manualmente
+pm2 restart tmc-backend
+
+# Ver logs del deploy
+cd /var/www/todasmiscosas && git log --oneline -5
+
+# Verificar que la API responde
+curl http://localhost:4000/health</pre>
+
+<!-- ══════════════════════════════════════════════════════════════
+     13. SERVICIOS EXTERNOS
+══════════════════════════════════════════════════════════════ -->
+<h1 id="s13">13. Servicios Externos</h1>
+
+<h2>Supabase <span class="badge badge-green">activo</span></h2>
+<table>
+  <tr><th>Para qué</th><th>Qué hace en el sistema</th></tr>
+  <tr><td>Autenticación</td><td>Maneja email/contraseña, emite JWT tokens</td></tr>
+  <tr><td>Verificación de JWT</td><td>El backend llama a supabase.auth.getUser(token) en cada request</td></tr>
+  <tr><td>Gestión de usuarios auth</td><td>Panel de Supabase para ver/borrar usuarios de auth (separado de MySQL)</td></tr>
+</table>
+<p><strong>Nota importante:</strong> Supabase maneja la autenticación, pero los datos de negocio (perfil, reservas, espacios) viven en MySQL. Los usuarios se sincronizan por <code>supabase_id</code>.</p>
+
+<h2>MercadoPago <span class="badge badge-green">activo</span></h2>
+<table>
+  <tr><th>Para qué</th><th>Cómo</th></tr>
+  <tr><td>Crear preferencia de pago</td><td>API POST a /v1/checkout/preferences con el monto y datos</td></tr>
+  <tr><td>Recibir notificación de pago</td><td>MP llama al webhook /api/pagos/webhook con el resultado</td></tr>
+  <tr><td>Consultar estado de pago</td><td>API GET /v1/payments/:id para verificar si fue aprobado</td></tr>
+</table>
+<p>Se usa la librería oficial <code>mercadopago</code> v2.0.15. El access token distingue entre producción y sandbox.</p>
+
+<h2>Hostinger SMTP <span class="badge badge-green">activo</span></h2>
+<table>
+  <tr><th>Dato</th><th>Valor</th></tr>
+  <tr><td>Host</td><td>smtp.hostinger.com</td></tr>
+  <tr><td>Puerto</td><td>465 (SSL)</td></tr>
+  <tr><td>Remitente</td><td>noreply@todasmiscosas.com</td></tr>
+</table>
+
+<h2>Twilio <span class="badge badge-red">pendiente de configurar</span></h2>
+<table>
+  <tr><th>Para qué</th><th>Estado</th></tr>
+  <tr><td>Envío de OTP por SMS</td><td>Código implementado, variables de entorno no configuradas en VPS</td></tr>
+  <tr><td>Envío de OTP por WhatsApp</td><td>Código implementado, variables de entorno no configuradas en VPS</td></tr>
+</table>
+
+<h2>Google Maps <span class="badge badge-green">activo</span></h2>
+<p>Se usa Google Maps JavaScript API para el mapa principal de la home. Los espacios se muestran como marcadores con popup de preview. La API key se configura en el frontend.</p>
+
+<!-- ══════════════════════════════════════════════════════════════
+     14. TAREAS PENDIENTES
+══════════════════════════════════════════════════════════════ -->
+<h1 id="s14">14. Tareas Pendientes</h1>
+
+<div class="alert alert-red">
+  <b>🔴 BLOQUEADOR PRODUCCIÓN — Twilio sin configurar</b>
+  El OTP por SMS y WhatsApp no funciona en producción. El OTP por email sí funciona.
+  Para activar SMS y WhatsApp, hay que agregar estas 4 variables en el .env del VPS:
+  <br><br>
+  1. Crear cuenta en twilio.com<br>
+  2. Console → Account Info → copiar TWILIO_ACCOUNT_SID y TWILIO_AUTH_TOKEN<br>
+  3. Comprar número de teléfono en Twilio (sección Phone Numbers)<br>
+  4. Activar Sandbox de WhatsApp: Messaging → Try it out → WhatsApp<br>
+  5. SSH al VPS → editar /var/www/todasmiscosas/backend/.env → agregar las 4 variables<br>
+  6. pm2 restart tmc-backend<br>
+  7. Probar login y verificar que llega el código por SMS y WhatsApp
+</div>
+
+<div class="alert alert-orange">
+  <b>🟡 Backlog — Historial de cambios de perfil (Backlog D)</b>
+  Falta implementar un log de auditoría que registre cuándo el usuario cambió su nombre, teléfono o dirección.
+  Útil para soporte y para detectar actividad sospechosa. No es bloqueante.
+</div>
+
+<div class="alert alert-green">
+  <b>✅ Todo lo demás está funcionando en producción</b>
+  Reservas · Pagos · Chat · Reviews · OTP por email · Panel de oferente y demandante ·
+  Baja automática por inactividad · Reactivación de publicaciones · Cambio de teléfono con OTP ·
+  Deploy automático · Emails de notificación
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════════════════ -->
+<div class="footer">
+  TodasMisCosas.com — Documentación técnica interna · Versión 1.3 · Mayo 2026<br>
+  Alejandro Laporte · Guillermo Domínguez<br>
+  <em>Este documento es confidencial. No distribuir.</em>
+</div>
+
+</div>
+</body>
+</html>
