@@ -84,7 +84,7 @@ export function CardEspacio({ espacio, onClick }: CardEspacioProps) {
         <div className="espacio-card__address">📍 {espacio.barrio} · {espacio.m2} m²</div>
 
         <div className="espacio-card__meta">
-          <RatingDisplay value={espacio.rating} count={espacio.reviews_count} size="sm" />
+          <RatingDisplay value={espacio.rating ?? 0} count={espacio.reviews_count} size="sm" />
           {espacio.reservas_mes > 0 && (
             <span style={{ fontSize: '11px', color: 'var(--text3)' }}>
               · {espacio.reservas_mes} reservas este mes

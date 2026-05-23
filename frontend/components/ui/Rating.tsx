@@ -9,7 +9,7 @@ interface RatingDisplayProps {
 }
 
 export function RatingDisplay({ value, count, size = 'md' }: RatingDisplayProps) {
-  const stars = Math.round(value);
+  const stars = Math.min(5, Math.max(0, Math.round(value || 0)));
   const fs = size === 'sm' ? '11px' : '13px';
 
   return (
@@ -18,7 +18,7 @@ export function RatingDisplay({ value, count, size = 'md' }: RatingDisplayProps)
         {'★'.repeat(stars)}{'☆'.repeat(5 - stars)}
       </span>
       <span className="rating__value" style={{ fontSize: size === 'sm' ? '.78rem' : '.85rem' }}>
-        {value.toFixed(1)}
+        {(value || 0).toFixed(1)}
       </span>
       {count !== undefined && (
         <span className="rating__count">({count})</span>
