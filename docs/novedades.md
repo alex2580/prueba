@@ -5,6 +5,28 @@ Se actualiza con cada nueva mejora incorporada al producto.
 
 ---
 
+## Stack Técnico Actual
+
+| Capa | Tecnología |
+|------|-----------|
+| Frontend | Next.js 14, React, TypeScript |
+| Backend | Node.js, Express |
+| Base de datos | MySQL |
+| Autenticación | Supabase Auth |
+| Hosting | VPS Hostinger |
+| Deploy | GitHub Actions → SSH → deploy.sh |
+| Proceso | PM2 (`tmc-backend`) |
+| Mapas | Google Maps JS API |
+| Pagos | MercadoPago (Checkout Pro + QR) |
+| Emails | Resend (SMTP) via Nodemailer |
+
+**URL producción:** https://todasmiscosas.com
+**Repositorio:** github.com/alex2580/prueba (privado)
+
+> Nota: existe un archivo `CLAUDE.md` viejo en la carpeta raíz que describe una versión anterior del proyecto (single HTML file + localStorage + vanilla JS). Ese archivo está desactualizado y puede ignorarse. El stack real es el descripto en esta tabla.
+
+---
+
 ## 22 de Mayo 2026
 
 ### Notificaciones por Email — Nivel 1
