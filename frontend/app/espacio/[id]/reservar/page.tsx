@@ -220,6 +220,7 @@ export default function ReservarPage() {
   // QR state
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [qrReservaId, setQrReservaId] = useState('');
+  const [qrInitPoint, setQrInitPoint] = useState('');
   const [qrLoading, setQrLoading] = useState(false);
   const [qrPolling, setQrPolling] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -315,6 +316,7 @@ export default function ReservarPage() {
 
       setQrDataUrl(dataUrl);
       setQrReservaId(reserva.id);
+      setQrInitPoint(pref.init_point);
       setQrPolling(true);
 
       // Poll every 4 seconds for payment confirmation
@@ -709,7 +711,7 @@ export default function ReservarPage() {
                           <button
                             className="btn-secondary"
                             style={{ marginTop: '1rem', fontSize: '.75rem' }}
-                            onClick={() => window.open(qrDataUrl ? `https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=${qrReservaId}` : '#', '_blank')}
+                            onClick={() => qrInitPoint && window.open(qrInitPoint, '_blank')}
                           >
                             Abrí el link en otro dispositivo
                           </button>
