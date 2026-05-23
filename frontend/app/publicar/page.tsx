@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
+import { OTPStep } from '@/components/auth/OTPStep';
 import { SiteLogo } from '@/components/ui/SiteLogo';
 import { CalendarioDisponibilidad, type Disponibilidad } from '@/components/publicar/CalendarioDisponibilidad';
 import { MONEDAS } from '@/types';
@@ -142,7 +143,8 @@ function PasoSeguridad({
 
 export default function PublicarPage() {
   const router = useRouter();
-  const { user, token, login, register, loading: authLoading, error: authError } = useAuth();
+  const { user, token, login, register, loading: authLoading, error: authError,
+          otpPending, otpEmailHint, otpCanales, verifyOTP, reenviarOTP } = useAuth();
 
   const [paso, setPaso] = useState(0);
 
@@ -170,6 +172,17 @@ export default function PublicarPage() {
   const [error, setError]                   = useState<string | null>(null);
   const [authModal, setAuthModal]           = useState(false);
   const [authTab, setAuthTab]               = useState<'login' | 'register'>('register');
+  const [publicarPendiente, setPublicarPendiente] = useState(false);
+  const [espacioPublicadoId, setEspacioPublicadoId] = useState<string | null>(null);
+
+  // Cuando el usuario completa el OTP y queda logueado, publicar automáticamente
+  useEffect(() => {
+    if (user && token && publicarPendiente) {
+      setPublicarPendiente(false);
+      publicar(token);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, token, publicarPendiente]);
 
   const direccionRef  = useRef<HTMLInputElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -316,7 +329,7 @@ export default function PublicarPage() {
         await espaciosAPI.subirFotos(espacio.id, ordenadas, tkn);
       }
 
-      router.push('/panel');
+      setEspacioPublicadoId(espacio.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al publicar');
     } finally {
@@ -328,10 +341,7 @@ export default function PublicarPage() {
     const ok = await login(email, password);
     if (ok) {
       setAuthModal(false);
-      setTimeout(() => {
-        const tkn = localStorage.getItem('tmc_token');
-        if (tkn) publicar(tkn);
-      }, 300);
+      setPublicarPendiente(true); // publicar() se llamará automáticamente cuando el OTP se verifique
     }
     return ok;
   }
@@ -340,10 +350,7 @@ export default function PublicarPage() {
     const ok = await register(nombre, email, password, tipo, tel);
     if (ok) {
       setAuthModal(false);
-      setTimeout(() => {
-        const tkn = localStorage.getItem('tmc_token');
-        if (tkn) publicar(tkn);
-      }, 300);
+      setPublicarPendiente(true);
     }
     return ok;
   }
@@ -356,6 +363,73 @@ export default function PublicarPage() {
     borderRadius: 'var(--r2)',
     padding: '1rem',
   };
+
+  // ── Pantalla de éxito ─────────────────────────────────────────
+  if (espacioPublicadoId) {
+    return (
+      <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
+        <header className="site-header">
+          <SiteLogo onClick={() => router.push('/')} />
+          <div />
+          <button className="nav-btn" onClick={() => router.push('/panel')}>Mi Panel</button>
+        </header>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 1rem' }}>
+          <div style={{
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+            borderRadius: 'var(--r4)',
+            overflow: 'hidden',
+            width: 'min(480px, 100%)',
+            boxShadow: 'var(--s5)',
+          }}>
+            <div style={{ height: 5, background: 'linear-gradient(90deg, var(--mint), var(--blue) 50%, var(--orange))' }} />
+            <div style={{ padding: '2.5rem 2rem', textAlign: 'center', display: 'grid', gap: '1rem' }}>
+              <div style={{ fontSize: '3.5rem' }}>🎉</div>
+              <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.5rem', margin: 0 }}>
+                ¡Publicaste tu espacio!
+              </h1>
+              <p style={{ color: 'var(--text2)', fontSize: '.9rem', lineHeight: 1.6, margin: 0 }}>
+                Tu publicación ya está visible en el mapa y disponible para que otros usuarios la reserven.
+              </p>
+              <div style={{ display: 'grid', gap: '.75rem', marginTop: '.5rem' }}>
+                <Button
+                  onClick={() => router.push(`/espacio/${espacioPublicadoId}`)}
+                  style={{ width: '100%' }}
+                >
+                  👀 Ver mi publicación
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    // Resetear todo el formulario
+                    setEspacioPublicadoId(null);
+                    setPaso(0);
+                    setForm({ categoria: '', nombre: '', descripcion: '', direccion: '', barrio: '', m2: '', precio_dia: '', precio_mes: '', lat: '', lng: '', tipo: 'exclusivo', moneda: 'ARS' });
+                    setFotos([]);
+                    setPreviews([]);
+                    setFotoPrincipal(0);
+                    setDisponibilidad({});
+                    setSeguridad({});
+                    setError(null);
+                  }}
+                  style={{ width: '100%' }}
+                >
+                  ➕ Publicar otro espacio
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => router.push('/panel')}
+                  style={{ background: 'none', border: 'none', color: 'var(--text3)', fontSize: '.82rem', cursor: 'pointer', padding: '.5rem' }}
+                >
+                  Ir a Mi Panel →
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
@@ -598,6 +672,7 @@ export default function PublicarPage() {
           {paso === 3 && (
             <div style={{ display: 'grid', gap: '1rem' }}>
               {user ? (
+                /* Ya logueado: mostrar resumen y botón publicar */
                 <div style={{ ...cardStyle, textAlign: 'center', padding: '2rem' }}>
                   <div style={{ fontSize: '2.5rem', marginBottom: '.5rem' }}>✅</div>
                   <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '1rem', marginBottom: '.3rem' }}>
@@ -609,8 +684,25 @@ export default function PublicarPage() {
                   <Button onClick={() => publicar(token!)} loading={loading} style={{ width: '100%' }}>
                     🏠 Publicar espacio
                   </Button>
+                  {error && <div className="alert alert--error" style={{ marginTop: '.75rem' }}>{error}</div>}
+                </div>
+              ) : otpPending ? (
+                /* OTP pendiente: mostrar verificación de código */
+                <div style={cardStyle}>
+                  <OTPStep
+                    emailHint={otpEmailHint}
+                    canales={otpCanales}
+                    onVerify={verifyOTP}
+                    onReenviar={reenviarOTP}
+                    loading={authLoading}
+                    error={authError}
+                  />
+                  <p style={{ fontSize: '.75rem', color: 'var(--text3)', textAlign: 'center', marginTop: '1rem' }}>
+                    Una vez verificado, tu espacio se publicará automáticamente.
+                  </p>
                 </div>
               ) : (
+                /* No logueado y sin OTP pendiente: mostrar registro/login */
                 <div style={cardStyle}>
                   <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.95rem', marginBottom: '.3rem' }}>
                     Creá tu cuenta para publicar
@@ -680,15 +772,31 @@ export default function PublicarPage() {
       <Modal
         open={authModal}
         onClose={() => setAuthModal(false)}
-        title="👋 Iniciar sesión"
-        subtitle="Iniciá sesión para publicar tu espacio"
+        title={otpPending ? '🔐 Verificá tu identidad' : '👋 Iniciar sesión'}
+        subtitle={otpPending ? 'Ingresá el código que enviamos a tu email' : 'Iniciá sesión para publicar tu espacio'}
       >
-        <LoginForm
-          onLogin={handleLogin}
-          onSwitch={() => { setAuthModal(false); setAuthTab('register'); setPaso(3); }}
-          error={authError}
-          loading={authLoading}
-        />
+        {otpPending ? (
+          <>
+            <OTPStep
+              emailHint={otpEmailHint}
+              canales={otpCanales}
+              onVerify={verifyOTP}
+              onReenviar={reenviarOTP}
+              loading={authLoading}
+              error={authError}
+            />
+            <p style={{ fontSize: '.75rem', color: 'var(--text3)', textAlign: 'center', marginTop: '1rem' }}>
+              Una vez verificado, tu espacio se publicará automáticamente.
+            </p>
+          </>
+        ) : (
+          <LoginForm
+            onLogin={handleLogin}
+            onSwitch={() => { setAuthModal(false); setAuthTab('register'); setPaso(3); }}
+            error={authError}
+            loading={authLoading}
+          />
+        )}
       </Modal>
     </div>
   );
