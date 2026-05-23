@@ -418,6 +418,341 @@ function TabConsultas({ token }: { token: string }) {
   );
 }
 
+// ── Tab: Usuarios ──────────────────────────────────────────────
+
+interface UsuarioAdmin {
+  id: string;
+  nombre: string;
+  email: string;
+  tel: string;
+  tipo: 'oferente' | 'demandante' | 'admin';
+  verificado: number;
+  activo: number;
+  bloqueado_motivo: string | null;
+  bloqueado_en: string | null;
+  created_at: string;
+  espacios_count: number;
+  reservas_count: number;
+}
+
+function TabUsuarios({ token }: { token: string }) {
+  const [usuarios, setUsuarios] = useState<UsuarioAdmin[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [busqueda, setBusqueda] = useState('');
+  const [filtroTipo, setFiltroTipo] = useState('');
+  const [filtroEstado, setFiltroEstado] = useState('');
+  const [bloqueoModal, setBloqueoModal] = useState<UsuarioAdmin | null>(null);
+  const [motivo, setMotivo] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [confirmDesbloqueo, setConfirmDesbloqueo] = useState<UsuarioAdmin | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (busqueda)     params.set('q', busqueda);
+      if (filtroTipo)   params.set('tipo', filtroTipo);
+      if (filtroEstado) params.set('estado', filtroEstado);
+      const res = await fetch(`/api/admin/usuarios?${params}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error('Error al cargar usuarios');
+      setUsuarios(await res.json());
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Error');
+    } finally {
+      setLoading(false);
+    }
+  }, [token, busqueda, filtroTipo, filtroEstado]);
+
+  useEffect(() => { load(); }, [load]);
+
+  async function bloquear() {
+    if (!bloqueoModal) return;
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/admin/usuarios/${bloqueoModal.id}/bloquear`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ motivo }),
+      });
+      if (!res.ok) {
+        const d = await res.json();
+        throw new Error(d.error || 'Error');
+      }
+      setBloqueoModal(null);
+      setMotivo('');
+      load();
+    } catch (e: unknown) {
+      alert(e instanceof Error ? e.message : 'Error');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function desbloquear(u: UsuarioAdmin) {
+    setSaving(true);
+    try {
+      await fetch(`/api/admin/usuarios/${u.id}/desbloquear`, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setConfirmDesbloqueo(null);
+      load();
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const tipoColor: Record<string, string> = {
+    oferente:   'var(--mint)',
+    demandante: 'var(--blue)',
+    admin:      'var(--orange)',
+  };
+
+  const MOTIVOS_RAPIDOS = [
+    'Actividad fraudulenta detectada',
+    'Usufructo de la plataforma sin contraprestación',
+    'Datos falsos o identidad no verificable',
+    'Conducta abusiva con otros usuarios',
+    'Incumplimiento reiterado de las normas de uso',
+    'Reservas fantasma o cancelaciones maliciosas',
+  ];
+
+  if (loading) return <p style={{ color: 'var(--text3)' }}>Cargando usuarios…</p>;
+  if (error) return <p style={{ color: 'var(--red)' }}>{error}</p>;
+
+  return (
+    <>
+      {/* Filtros */}
+      <div style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap', marginBottom: '1.25rem', alignItems: 'center' }}>
+        <input
+          placeholder="🔍 Buscar por nombre o email…"
+          value={busqueda}
+          onChange={e => setBusqueda(e.target.value)}
+          style={{ flex: '1 1 220px', minWidth: 180, padding: '.5rem .85rem', borderRadius: 'var(--r2)', border: '1.5px solid var(--border)', background: 'var(--surface2)', color: 'var(--text)', fontSize: '.85rem' }}
+        />
+        <select
+          value={filtroTipo}
+          onChange={e => setFiltroTipo(e.target.value)}
+          style={{ padding: '.5rem .85rem', borderRadius: 'var(--r2)', border: '1.5px solid var(--border)', background: 'var(--surface2)', color: 'var(--text)', fontSize: '.82rem' }}
+        >
+          <option value="">Todos los tipos</option>
+          <option value="oferente">Oferentes</option>
+          <option value="demandante">Demandantes</option>
+          <option value="admin">Admins</option>
+        </select>
+        <select
+          value={filtroEstado}
+          onChange={e => setFiltroEstado(e.target.value)}
+          style={{ padding: '.5rem .85rem', borderRadius: 'var(--r2)', border: '1.5px solid var(--border)', background: 'var(--surface2)', color: 'var(--text)', fontSize: '.82rem' }}
+        >
+          <option value="">Todos los estados</option>
+          <option value="activo">Activos</option>
+          <option value="bloqueado">Bloqueados</option>
+        </select>
+        <span style={{ fontSize: '.78rem', color: 'var(--text3)', whiteSpace: 'nowrap' }}>
+          {usuarios.length} resultado{usuarios.length !== 1 ? 's' : ''}
+        </span>
+      </div>
+
+      {/* Lista */}
+      {!usuarios.length ? (
+        <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text3)' }}>
+          <div style={{ fontSize: '2.5rem', marginBottom: '.5rem' }}>👤</div>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>Sin resultados</div>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gap: '.65rem' }}>
+          {usuarios.map(u => (
+            <div key={u.id} style={{
+              background: u.activo ? 'var(--surface)' : 'rgba(239,68,68,.04)',
+              border: `1px solid ${u.activo ? 'var(--border)' : 'rgba(239,68,68,.3)'}`,
+              borderRadius: 'var(--r2)',
+              padding: '1rem 1.1rem',
+              display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap',
+            }}>
+              {/* Avatar inicial */}
+              <div style={{
+                width: 40, height: 40, borderRadius: '50%', flexShrink: 0,
+                background: u.activo ? tipoColor[u.tipo] + '22' : 'rgba(239,68,68,.15)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '1rem', fontWeight: 800, color: u.activo ? tipoColor[u.tipo] : 'var(--red)',
+                fontFamily: 'Sora, sans-serif',
+              }}>
+                {u.nombre.charAt(0).toUpperCase()}
+              </div>
+
+              {/* Info */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', flexWrap: 'wrap', marginBottom: '.15rem' }}>
+                  <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.92rem' }}>{u.nombre}</span>
+                  <span style={{
+                    fontSize: '.65rem', fontWeight: 700, padding: '1px 7px', borderRadius: '99px',
+                    background: tipoColor[u.tipo] + '22', color: tipoColor[u.tipo],
+                  }}>{u.tipo}</span>
+                  {!u.activo && (
+                    <span style={{
+                      fontSize: '.65rem', fontWeight: 700, padding: '1px 7px', borderRadius: '99px',
+                      background: 'rgba(239,68,68,.15)', color: 'var(--red)',
+                    }}>⛔ BLOQUEADO</span>
+                  )}
+                </div>
+                <div style={{ fontSize: '.78rem', color: 'var(--text3)' }}>{u.email}</div>
+                {u.bloqueado_motivo && (
+                  <div style={{ fontSize: '.74rem', color: 'var(--red)', marginTop: '.2rem', fontStyle: 'italic' }}>
+                    Motivo: {u.bloqueado_motivo}
+                  </div>
+                )}
+                <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginTop: '.2rem', display: 'flex', gap: '.75rem', flexWrap: 'wrap' }}>
+                  {u.tipo === 'oferente' && <span>🏠 {u.espacios_count} espacio{u.espacios_count !== 1 ? 's' : ''}</span>}
+                  <span>📅 {u.reservas_count} reserva{u.reservas_count !== 1 ? 's' : ''}</span>
+                  <span>📆 Alta: {formatFechaCorta(u.created_at)}</span>
+                </div>
+              </div>
+
+              {/* Acciones */}
+              {u.tipo !== 'admin' && (
+                <div style={{ flexShrink: 0 }}>
+                  {u.activo ? (
+                    <button
+                      onClick={() => { setBloqueoModal(u); setMotivo(''); }}
+                      style={{
+                        padding: '.42rem 1rem', borderRadius: 'var(--r2)',
+                        border: '1px solid rgba(239,68,68,.4)',
+                        background: 'rgba(239,68,68,.08)',
+                        color: 'var(--red)', fontSize: '.8rem', fontWeight: 700,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      ⛔ Bloquear
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setConfirmDesbloqueo(u)}
+                      style={{
+                        padding: '.42rem 1rem', borderRadius: 'var(--r2)',
+                        border: '1px solid rgba(16,185,129,.4)',
+                        background: 'rgba(16,185,129,.08)',
+                        color: 'var(--mint)', fontSize: '.8rem', fontWeight: 700,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      ✅ Desbloquear
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Modal bloqueo */}
+      <Modal
+        open={!!bloqueoModal}
+        onClose={() => setBloqueoModal(null)}
+        title="⛔ Bloquear usuario"
+        maxWidth="500px"
+      >
+        {bloqueoModal && (
+          <div style={{ display: 'grid', gap: '1rem' }}>
+            <div style={{ background: 'rgba(239,68,68,.07)', border: '1px solid rgba(239,68,68,.25)', borderRadius: 'var(--r2)', padding: '.85rem 1rem' }}>
+              <div style={{ fontWeight: 700 }}>{bloqueoModal.nombre}</div>
+              <div style={{ fontSize: '.8rem', color: 'var(--text3)' }}>{bloqueoModal.email} · {bloqueoModal.tipo}</div>
+            </div>
+
+            <div>
+              <div style={{ fontSize: '.82rem', color: 'var(--text2)', marginBottom: '.5rem', fontWeight: 600 }}>Motivos frecuentes (click para seleccionar):</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.35rem', marginBottom: '.75rem' }}>
+                {MOTIVOS_RAPIDOS.map(m => (
+                  <button
+                    key={m}
+                    onClick={() => setMotivo(m)}
+                    style={{
+                      padding: '.28rem .7rem', borderRadius: '99px', cursor: 'pointer',
+                      border: `1px solid ${motivo === m ? 'rgba(239,68,68,.6)' : 'var(--border)'}`,
+                      background: motivo === m ? 'rgba(239,68,68,.12)' : 'var(--surface2)',
+                      color: motivo === m ? 'var(--red)' : 'var(--text2)',
+                      fontSize: '.72rem', fontWeight: motivo === m ? 700 : 400,
+                    }}
+                  >
+                    {m}
+                  </button>
+                ))}
+              </div>
+              <label style={{ display: 'block', fontSize: '.82rem', color: 'var(--text2)', marginBottom: '.4rem', fontWeight: 600 }}>
+                O escribí un motivo personalizado:
+              </label>
+              <textarea
+                rows={3}
+                value={motivo}
+                onChange={e => setMotivo(e.target.value)}
+                placeholder="Describí el motivo del bloqueo…"
+                style={{ width: '100%', padding: '.65rem .9rem', borderRadius: 'var(--r2)', border: '1.5px solid var(--border)', background: 'var(--surface2)', color: 'var(--text)', fontSize: '.85rem', resize: 'vertical' }}
+              />
+            </div>
+
+            <div style={{ fontSize: '.78rem', color: 'var(--text3)', background: 'var(--surface2)', borderRadius: 'var(--r1)', padding: '.7rem .9rem' }}>
+              ⚠️ El usuario recibirá un email informando que su cuenta fue suspendida{motivo ? ' con el motivo indicado' : ''}.
+              Todas sus sesiones activas quedarán bloqueadas en el próximo request.
+            </div>
+
+            <div style={{ display: 'flex', gap: '.6rem', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setBloqueoModal(null)}
+                style={{ padding: '.5rem 1.1rem', borderRadius: 'var(--r2)', border: '1px solid var(--border)', background: 'transparent', color: 'var(--text2)', cursor: 'pointer', fontSize: '.85rem' }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={bloquear}
+                disabled={saving}
+                style={{ padding: '.5rem 1.3rem', borderRadius: 'var(--r2)', border: 'none', background: 'var(--red)', color: '#fff', fontWeight: 700, cursor: 'pointer', fontSize: '.85rem', opacity: saving ? .6 : 1 }}
+              >
+                {saving ? 'Bloqueando…' : '⛔ Confirmar bloqueo'}
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* Modal confirmación desbloqueo */}
+      <Modal
+        open={!!confirmDesbloqueo}
+        onClose={() => setConfirmDesbloqueo(null)}
+        title="✅ Reactivar cuenta"
+        maxWidth="440px"
+      >
+        {confirmDesbloqueo && (
+          <div style={{ display: 'grid', gap: '1rem' }}>
+            <p style={{ color: 'var(--text2)', lineHeight: 1.6 }}>
+              ¿Reactivar la cuenta de <strong>{confirmDesbloqueo.nombre}</strong>?
+              El usuario recibirá un email de confirmación y podrá ingresar nuevamente.
+            </p>
+            <div style={{ display: 'flex', gap: '.6rem', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setConfirmDesbloqueo(null)}
+                style={{ padding: '.5rem 1.1rem', borderRadius: 'var(--r2)', border: '1px solid var(--border)', background: 'transparent', color: 'var(--text2)', cursor: 'pointer', fontSize: '.85rem' }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => desbloquear(confirmDesbloqueo)}
+                disabled={saving}
+                style={{ padding: '.5rem 1.3rem', borderRadius: 'var(--r2)', border: 'none', background: 'var(--mint)', color: '#0f172a', fontWeight: 700, cursor: 'pointer', fontSize: '.85rem', opacity: saving ? .6 : 1 }}
+              >
+                {saving ? 'Reactivando…' : '✅ Confirmar reactivación'}
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
+    </>
+  );
+}
+
 // ── Tab: Campañas ──────────────────────────────────────────────
 
 function TabCampanas({ token }: { token: string }) {
@@ -769,6 +1104,7 @@ export default function AdminPage() {
     { key: 'notificaciones', label: '🔔 Notificaciones', badge: notifUnread || undefined },
     { key: 'consultas',      label: '📬 Consultas' },
     { key: 'campanas',       label: '📣 Campañas' },
+    { key: 'usuarios',       label: '👤 Usuarios' },
   ];
 
   return (
@@ -805,6 +1141,7 @@ export default function AdminPage() {
           {tab === 'notificaciones' && token && <TabNotificaciones token={token} />}
           {tab === 'consultas'      && token && <TabConsultas token={token} />}
           {tab === 'campanas'       && token && <TabCampanas token={token} />}
+          {tab === 'usuarios'       && token && <TabUsuarios token={token} />}
         </div>
       </div>
     </div>

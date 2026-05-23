@@ -1,5 +1,5 @@
 const { query, queryOne } = require('../db/connection');
-const { sendContacto, sendServiciosAdicionales } = require('../services/emailService');
+const { sendContacto, sendServiciosAdicionales, sendCuentaBloqueada, sendCuentaDesbloqueada } = require('../services/emailService');
 
 // ── Bootstrap tables ───────────────────────────────────────────
 async function initTables() {
@@ -223,6 +223,106 @@ async function notificarServicios(req, res, next) {
   }
 }
 
+// ── Gestión de usuarios ────────────────────────────────────────
+
+// GET /api/admin/usuarios
+async function getUsuarios(req, res, next) {
+  try {
+    const { q, tipo, estado } = req.query;
+
+    let sql = `
+      SELECT u.id, u.nombre, u.email, u.tel, u.tipo, u.verificado, u.activo,
+             u.bloqueado_motivo, u.bloqueado_en, u.bloqueado_por,
+             u.created_at,
+             COUNT(DISTINCT e.id) AS espacios_count,
+             COUNT(DISTINCT r.id) AS reservas_count
+      FROM usuarios u
+      LEFT JOIN espacios e ON e.oferente_id = u.id AND e.activo = TRUE
+      LEFT JOIN reservas r ON r.usuario_id = u.id AND r.estado != 'cancelada'
+      WHERE 1=1
+    `;
+    const params = [];
+
+    if (q) {
+      sql += ' AND (u.nombre LIKE ? OR u.email LIKE ?)';
+      params.push(`%${q}%`, `%${q}%`);
+    }
+    if (tipo && ['oferente','demandante','admin'].includes(tipo)) {
+      sql += ' AND u.tipo = ?';
+      params.push(tipo);
+    }
+    if (estado === 'activo')    { sql += ' AND u.activo = 1'; }
+    if (estado === 'bloqueado') { sql += ' AND u.activo = 0'; }
+
+    sql += ' GROUP BY u.id ORDER BY u.created_at DESC';
+
+    const usuarios = await query(sql, params);
+    res.json(usuarios);
+  } catch (err) {
+    next(err);
+  }
+}
+
+// PATCH /api/admin/usuarios/:id/bloquear
+async function bloquearUsuario(req, res, next) {
+  try {
+    const { id } = req.params;
+    const { motivo } = req.body;
+
+    const usuario = await queryOne('SELECT id, nombre, email, tipo, activo FROM usuarios WHERE id = ?', [id]);
+    if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+    // No se puede bloquear a otro admin
+    if (usuario.tipo === 'admin') {
+      return res.status(403).json({ error: 'No se puede bloquear a un administrador' });
+    }
+    // No bloquearse a uno mismo
+    if (usuario.id === req.user.id) {
+      return res.status(403).json({ error: 'No podés bloquearte a vos mismo' });
+    }
+
+    await query(
+      `UPDATE usuarios
+       SET activo = 0, bloqueado_motivo = ?, bloqueado_en = NOW(), bloqueado_por = ?
+       WHERE id = ?`,
+      [motivo || null, req.user.id, id]
+    );
+
+    // Email al usuario bloqueado
+    sendCuentaBloqueada(usuario.email, usuario.nombre, { motivo: motivo || '' })
+      .catch(e => console.warn('Email bloqueo:', e.message));
+
+    res.json({ ok: true, mensaje: `Usuario ${usuario.nombre} bloqueado` });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// PATCH /api/admin/usuarios/:id/desbloquear
+async function desbloquearUsuario(req, res, next) {
+  try {
+    const { id } = req.params;
+
+    const usuario = await queryOne('SELECT id, nombre, email, activo FROM usuarios WHERE id = ?', [id]);
+    if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+    await query(
+      `UPDATE usuarios
+       SET activo = 1, bloqueado_motivo = NULL, bloqueado_en = NULL, bloqueado_por = NULL
+       WHERE id = ?`,
+      [id]
+    );
+
+    // Email al usuario desbloqueado
+    sendCuentaDesbloqueada(usuario.email, usuario.nombre)
+      .catch(e => console.warn('Email desbloqueo:', e.message));
+
+    res.json({ ok: true, mensaje: `Usuario ${usuario.nombre} reactivado` });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getNotificaciones,
   marcarLeido,
@@ -234,4 +334,7 @@ module.exports = {
   crearCampana,
   eliminarCampana,
   notificarServicios,
+  getUsuarios,
+  bloquearUsuario,
+  desbloquearUsuario,
 };

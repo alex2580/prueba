@@ -29,14 +29,14 @@ async function requireAuth(req, res, next) {
 
     // Buscar usuario en nuestra DB por supabase_id o email
     let usuario = await queryOne(
-      'SELECT id, nombre, email, tel, tipo, verificado, activo FROM usuarios WHERE supabase_id = ?',
+      'SELECT id, nombre, email, tel, tipo, verificado, activo, bloqueado_motivo FROM usuarios WHERE supabase_id = ?',
       [data.user.id]
     );
 
     // Si no existe por supabase_id, buscar por email y linkear
     if (!usuario) {
       usuario = await queryOne(
-        'SELECT id, nombre, email, tel, tipo, verificado, activo FROM usuarios WHERE email = ?',
+        'SELECT id, nombre, email, tel, tipo, verificado, activo, bloqueado_motivo FROM usuarios WHERE email = ?',
         [data.user.email]
       );
       if (usuario) {
@@ -66,7 +66,13 @@ async function requireAuth(req, res, next) {
     }
 
     if (!usuario.activo) {
-      return res.status(403).json({ error: 'Cuenta suspendida' });
+      const motivo = usuario.bloqueado_motivo
+        ? ` Motivo: ${usuario.bloqueado_motivo}.`
+        : '';
+      return res.status(403).json({
+        error: `Tu cuenta fue suspendida por un administrador.${motivo} Contactanos en contacto@todasmiscosas.com`,
+        code: 'CUENTA_BLOQUEADA',
+      });
     }
 
     req.user = { ...usuario, supabase_id: data.user.id };

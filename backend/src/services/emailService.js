@@ -372,6 +372,41 @@ async function sendReservaFinalizada(toEmail, nombreDemandante, { espacioNombre,
   });
 }
 
+// ── Cuenta bloqueada por admin ───────────────────────────────────
+async function sendCuentaBloqueada(toEmail, nombre, { motivo }) {
+  const html = baseTemplate('Cuenta suspendida', `
+    <h2>⛔ Tu cuenta ha sido suspendida</h2>
+    <p>Hola <span class="highlight">${nombre}</span>, tu cuenta en TodasMisCosas fue suspendida por un administrador.</p>
+    ${motivo ? `
+    <div class="info-row">
+      <div><div class="info-label">Motivo</div><div class="info-val">${motivo}</div></div>
+    </div>` : ''}
+    <p>Si creés que esto es un error o querés apelar la decisión, contactanos respondiendo este email.</p>
+    <a class="btn" href="mailto:contacto@todasmiscosas.com">Contactar soporte →</a>
+    <p style="font-size:12px;color:#64748b;margin-top:16px">TodasMisCosas se reserva el derecho de suspender cuentas que no respeten las normas de uso de la plataforma.</p>
+  `);
+  await transporter.sendMail({
+    from: FROM, to: toEmail,
+    subject: '⛔ Tu cuenta en TodasMisCosas fue suspendida',
+    html,
+  });
+}
+
+// ── Cuenta desbloqueada por admin ────────────────────────────────
+async function sendCuentaDesbloqueada(toEmail, nombre) {
+  const html = baseTemplate('Cuenta reactivada', `
+    <h2>✅ Tu cuenta fue reactivada</h2>
+    <p>Hola <span class="highlight">${nombre}</span>, nos complace informarte que tu cuenta en TodasMisCosas fue reactivada.</p>
+    <p>Ya podés ingresar normalmente y seguir usando la plataforma.</p>
+    <a class="btn" href="${process.env.FRONTEND_URL}">Ingresar a TodasMisCosas →</a>
+  `);
+  await transporter.sendMail({
+    from: FROM, to: toEmail,
+    subject: '✅ Tu cuenta en TodasMisCosas fue reactivada',
+    html,
+  });
+}
+
 module.exports = {
   sendReservaConfirmada,
   sendPagoConfirmado,
@@ -388,4 +423,6 @@ module.exports = {
   sendRecordatorio1Dia,
   sendRecordatorio0Dias,
   sendExtensionConfirmada,
+  sendCuentaBloqueada,
+  sendCuentaDesbloqueada,
 };

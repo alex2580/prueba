@@ -27,4 +27,9 @@ router.get('/campanas',                 ctrl.getCampanas);
 router.post('/campanas',                ctrl.crearCampana);
 router.delete('/campanas/:id',          ctrl.eliminarCampana);
 
+// Usuarios
+router.get('/usuarios',                         ctrl.getUsuarios);
+router.patch('/usuarios/:id/bloquear',          ctrl.bloquearUsuario);
+router.patch('/usuarios/:id/desbloquear',       ctrl.desbloquearUsuario);
+
 module.exports = router;

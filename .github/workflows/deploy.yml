@@ -16,4 +16,4 @@ jobs:
           password: ${{ secrets.VPS_PASS }}
           script: |
             cd /var/www/todasmiscosas && git reset --hard HEAD && /var/www/todasmiscosas/deploy.sh
-            cd /var/www/todasmiscosas/backend && node src/db/add-disponibilidad.js && node src/db/add-categoria-seguridad.js && node src/db/add-moneda-perfil.js && node src/db/add-recordatorios-extensiones.js
+            cd /var/www/todasmiscosas/backend && node src/db/add-disponibilidad.js && node src/db/add-categoria-seguridad.js && node src/db/add-moneda-perfil.js && node src/db/add-recordatorios-extensiones.js && node src/db/add-bloqueo-usuarios.js
