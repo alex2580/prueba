@@ -5,6 +5,53 @@ Se actualiza con cada nueva mejora incorporada al producto.
 
 ---
 
+## 🔴🔴🔴 PENDIENTE — ACCIONES REQUERIDAS 🔴🔴🔴
+
+> ### ⚠️ ESTAS TAREAS ESTÁN INCOMPLETAS Y BLOQUEAN FUNCIONALIDADES EN PRODUCCIÓN
+>
+> ---
+>
+> #### 🔐 2FA / OTP — Variables Twilio sin configurar en VPS
+>
+> El sistema de autenticación en dos pasos está implementado pero el envío de SMS y WhatsApp **no funciona en producción** hasta agregar estas 4 variables al archivo `.env` del backend en el VPS:
+>
+> ```
+> TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+> TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+> TWILIO_PHONE=+15551234567
+> TWILIO_WHATSAPP_FROM=whatsapp:+14155238886
+> ```
+>
+> **Pasos para activar:**
+> 1. Crear cuenta en https://twilio.com (tiene crédito gratis para testing)
+> 2. Ir a Console → Account Info → copiar `Account SID` y `Auth Token`
+> 3. Comprar un número de teléfono SMS en Twilio (sección Phone Numbers)
+> 4. Activar el Sandbox de WhatsApp en Twilio → Messaging → Try it out → WhatsApp
+> 5. SSH al VPS → editar `/var/www/todasmiscosas/backend/.env` → agregar las 4 variables
+> 6. Reiniciar el proceso: `pm2 restart tmc-backend`
+> 7. Probar login desde la app y verificar que llega el código por SMS y WhatsApp
+>
+> **Mientras tanto:** el OTP por email funciona normalmente desde el primer deploy.
+>
+> **Reminder agendado:** Google Calendar — Sábado 23/05/2026 15:00 hs Argentina (Ale + Guille + contacto)
+>
+> ---
+>
+> #### 🛠️ PRÓXIMAS FUNCIONALIDADES A IMPLEMENTAR (backlog)
+>
+> Las siguientes mejoras fueron identificadas pero aún no están desarrolladas:
+>
+> | # | Funcionalidad | Descripción |
+> |---|--------------|-------------|
+> | A | **Edición de perfil — teléfono y nombre** | Permitir al usuario actualizar su número de celular (clave para el 2FA) y nombre desde el panel. Incluye validación de formato de teléfono y re-sincronización con Supabase Auth. |
+> | B | **Edición de perfil — dirección física** | Actualizar la dirección del perfil con autocompletado de Google Maps. Ya existe el campo en DB; falta UI de edición más robusta y confirmación. |
+> | C | **Baja automática de publicaciones inactivas** | Desactivar espacios que lleven más de 90 días sin recibir ninguna reserva (configurable). Cron job diario que cambia `activo = false` y notifica al oferente por email con opción de reactivar. |
+> | D | **Historial de cambios de perfil** | Log de auditoría que registra cuándo el usuario cambió su nombre, teléfono o dirección. Útil para soporte y seguridad. |
+> | E | **Verificación de nuevo teléfono por OTP** | Al cambiar el número de celular, enviar un OTP al nuevo número para confirmar que es válido antes de guardarlo. |
+> | F | **Reactivación de publicaciones** | Botón en el panel del oferente para reactivar un espacio dado de baja por inactividad, con confirmación de disponibilidad actualizada. |
+
+---
+
 ## Stack Técnico Actual
 
 | Capa | Tecnología |
