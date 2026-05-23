@@ -7,6 +7,7 @@ require('dotenv').config();
 
 const errorHandler = require('./middleware/errorHandler');
 const { iniciarCronRecordatorios } = require('./jobs/recordatorios');
+const { iniciarCronInactividad } = require('./jobs/inactividad');
 
 // Routes
 const espaciosRouter  = require('./routes/espacios');
@@ -72,5 +73,6 @@ app.use(errorHandler);
 
 // ── Cron jobs ─────────────────────────────────────────────────
 iniciarCronRecordatorios();
+iniciarCronInactividad();
 
 module.exports = app;

@@ -61,6 +61,7 @@ export interface Espacio {
   img_principal?: string;
   reviews_data?: Review[];
   activo?: boolean;
+  inactiva_auto?: boolean;
   created_at?: string;
   // Panel stats
   total_reservas?: number;

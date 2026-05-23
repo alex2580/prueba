@@ -9,6 +9,12 @@ router.get('/me',           requireAuth, ctrl.perfil);
 router.put('/me',           requireAuth, [
   body('nombre').trim().notEmpty().isLength({ max: 120 }),
 ], ctrl.actualizar);
+router.post('/me/solicitar-cambio-tel', requireAuth, [
+  body('tel_nuevo').trim().notEmpty(),
+], ctrl.solicitarCambioTel);
+router.post('/me/verificar-cambio-tel', requireAuth, [
+  body('codigo').trim().notEmpty().isLength({ min: 6, max: 6 }),
+], ctrl.verificarCambioTel);
 router.post('/sync',        [
   body('supabase_id').notEmpty(),
   body('nombre').trim().notEmpty(),

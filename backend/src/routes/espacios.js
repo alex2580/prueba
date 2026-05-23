@@ -24,9 +24,10 @@ router.get('/mis-espacios', requireAuth, requireOferente, ctrl.misEspacios);
 router.get('/:id',       optionalAuth, ctrl.obtener);
 
 // Protected routes
-router.post('/',         requireAuth, requireOferente, validarEspacio, ctrl.crear);
-router.put('/:id',       requireAuth, requireOferente, validarEspacio, ctrl.actualizar);
-router.delete('/:id',    requireAuth, ctrl.eliminar);
+router.post('/',              requireAuth, requireOferente, validarEspacio, ctrl.crear);
+router.put('/:id',            requireAuth, requireOferente, validarEspacio, ctrl.actualizar);
+router.post('/:id/reactivar', requireAuth, ctrl.reactivar);
+router.delete('/:id',         requireAuth, ctrl.eliminar);
 
 // Fotos
 router.post(

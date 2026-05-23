@@ -171,6 +171,16 @@ export const usuariosAPI = {
   actualizar: (data: { nombre: string; tel?: string; direccion?: string; lat?: number; lng?: number }, token: string) =>
     fetchAPI<Usuario>('/api/usuarios/me', { method: 'PUT', body: JSON.stringify(data) }, token),
 
+  solicitarCambioTel: (tel_nuevo: string, token: string) =>
+    fetchAPI<{ ok: boolean; tel_hint: string }>('/api/usuarios/me/solicitar-cambio-tel', {
+      method: 'POST', body: JSON.stringify({ tel_nuevo }),
+    }, token),
+
+  verificarCambioTel: (codigo: string, token: string) =>
+    fetchAPI<{ ok: boolean; usuario: Usuario }>('/api/usuarios/me/verificar-cambio-tel', {
+      method: 'POST', body: JSON.stringify({ codigo }),
+    }, token),
+
   sync: (data: { supabase_id: string; nombre: string; email: string; tipo?: string; tel?: string }) =>
     fetchAPI<Usuario>('/api/usuarios/sync', { method: 'POST', body: JSON.stringify(data) }),
 

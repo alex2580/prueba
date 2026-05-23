@@ -59,6 +59,10 @@ export default function PanelPage() {
   const [perfilLoading, setPerfilLoading] = useState(false);
   const [perfilError, setPerfilError] = useState('');
   const [perfilOk, setPerfilOk] = useState(false);
+  const [perfilStep, setPerfilStep] = useState<'form' | 'otp_tel'>('form');
+  const [perfilOtpDigits, setPerfilOtpDigits] = useState(['', '', '', '', '', '']);
+  const [perfilOtpTelHint, setPerfilOtpTelHint] = useState('');
+  const perfilOtpRefs = useRef<(HTMLInputElement | null)[]>([]);
   const perfilDireccionRef = useRef<HTMLInputElement>(null);
   const [editDisponibilidad, setEditDisponibilidad] = useState<Disponibilidad>({});
   const [editSeguridad, setEditSeguridad] = useState<Record<string, boolean>>({});
@@ -152,6 +156,8 @@ export default function PanelPage() {
     });
     setPerfilError('');
     setPerfilOk(false);
+    setPerfilStep('form');
+    setPerfilOtpDigits(['', '', '', '', '', '']);
     setPerfilOpen(true);
   }
 
@@ -183,7 +189,30 @@ export default function PanelPage() {
     if (!perfilForm.nombre.trim()) { setPerfilError('El nombre es obligatorio'); return; }
     setPerfilLoading(true);
     setPerfilError('');
+
+    const telCambiado = perfilForm.tel.trim() !== (user?.tel || '').trim() && perfilForm.tel.trim() !== '';
+
     try {
+      // Si cambió el teléfono, solicitar OTP antes de guardar
+      if (telCambiado) {
+        const res = await usuariosAPI.solicitarCambioTel(perfilForm.tel.trim(), token);
+        setPerfilOtpTelHint(res.tel_hint);
+        setPerfilStep('otp_tel');
+        setPerfilOtpDigits(['', '', '', '', '', '']);
+        setTimeout(() => perfilOtpRefs.current[0]?.focus(), 100);
+
+        // Guardar nombre y dirección de todas formas (sin teléfono)
+        await usuariosAPI.actualizar({
+          nombre: perfilForm.nombre,
+          tel: user?.tel || '',
+          direccion: perfilForm.direccion || undefined,
+          lat: perfilForm.lat ? Number(perfilForm.lat) : undefined,
+          lng: perfilForm.lng ? Number(perfilForm.lng) : undefined,
+        }, token);
+        return;
+      }
+
+      // Sin cambio de teléfono: guardar todo directamente
       await usuariosAPI.actualizar({
         nombre: perfilForm.nombre,
         tel: perfilForm.tel,
@@ -197,6 +226,63 @@ export default function PanelPage() {
       setPerfilError(err instanceof Error ? err.message : 'Error al guardar');
     } finally {
       setPerfilLoading(false);
+    }
+  }
+
+  function handlePerfilOtpChange(idx: number, value: string) {
+    const v = value.replace(/\D/g, '').slice(-1);
+    const next = [...perfilOtpDigits];
+    next[idx] = v;
+    setPerfilOtpDigits(next);
+    if (v && idx < 5) perfilOtpRefs.current[idx + 1]?.focus();
+    if (v && next.every(d => d !== '')) handleVerificarCambioTel(next.join(''));
+  }
+
+  function handlePerfilOtpKeyDown(idx: number, e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Backspace' && !perfilOtpDigits[idx] && idx > 0) {
+      perfilOtpRefs.current[idx - 1]?.focus();
+    }
+  }
+
+  function handlePerfilOtpPaste(e: React.ClipboardEvent<HTMLInputElement>) {
+    e.preventDefault();
+    const text = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    if (!text) return;
+    const next = [...perfilOtpDigits];
+    text.split('').forEach((c, i) => { if (i < 6) next[i] = c; });
+    setPerfilOtpDigits(next);
+    const lastFilled = Math.min(text.length, 5);
+    perfilOtpRefs.current[lastFilled]?.focus();
+    if (text.length === 6) handleVerificarCambioTel(text);
+  }
+
+  async function handleVerificarCambioTel(codigo: string) {
+    if (!token) return;
+    setPerfilLoading(true);
+    setPerfilError('');
+    try {
+      await usuariosAPI.verificarCambioTel(codigo, token);
+      setPerfilOk(true);
+      setTimeout(() => setPerfilOpen(false), 1500);
+    } catch (err) {
+      setPerfilError(err instanceof Error ? err.message : 'Código incorrecto');
+      setPerfilOtpDigits(['', '', '', '', '', '']);
+      setTimeout(() => perfilOtpRefs.current[0]?.focus(), 50);
+    } finally {
+      setPerfilLoading(false);
+    }
+  }
+
+  async function handleReactivarEspacio(id: string) {
+    if (!token) return;
+    try {
+      await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/espacios/${id}/reactivar`,
+        { method: 'POST', headers: { Authorization: `Bearer ${token}` } }
+      );
+      setRefreshKey(k => k + 1);
+    } catch (err) {
+      console.error(err);
     }
   }
 
@@ -476,24 +562,42 @@ export default function PanelPage() {
                             </div>
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem', flexShrink: 0, alignItems: 'flex-end' }}>
-                            <span className={`pill ${esp.disponible ? 'pill--green' : 'pill--gray'}`}>
-                              {esp.disponible ? '✅ Activo' : '⏸️ Inactivo'}
-                            </span>
+                            {esp.inactiva_auto ? (
+                              <span style={{ fontSize: '.72rem', background: 'rgba(239,68,68,.15)', color: '#f87171', border: '1px solid rgba(239,68,68,.3)', borderRadius: 'var(--r1)', padding: '.2rem .6rem', fontWeight: 700 }}>
+                                ⏸️ Pausada por inactividad
+                              </span>
+                            ) : (
+                              <span className={`pill ${esp.disponible ? 'pill--green' : 'pill--gray'}`}>
+                                {esp.disponible ? '✅ Activo' : '⏸️ Inactivo'}
+                              </span>
+                            )}
                             <div style={{ display: 'flex', gap: '.4rem' }}>
-                              <button
-                                className="btn-ghost"
-                                style={{ fontSize: '.73rem', color: 'var(--orange)' }}
-                                onClick={() => abrirEditar(esp)}
-                              >
-                                ✏️ Editar
-                              </button>
-                              <button
-                                className="btn-ghost"
-                                style={{ fontSize: '.73rem' }}
-                                onClick={() => handleToggleDisponible(esp.id, !esp.disponible)}
-                              >
-                                {esp.disponible ? 'Pausar' : 'Activar'}
-                              </button>
+                              {esp.inactiva_auto ? (
+                                <button
+                                  className="btn-ghost"
+                                  style={{ fontSize: '.73rem', color: 'var(--mint)', fontWeight: 700 }}
+                                  onClick={() => handleReactivarEspacio(esp.id)}
+                                >
+                                  ▶ Reactivar
+                                </button>
+                              ) : (
+                                <>
+                                  <button
+                                    className="btn-ghost"
+                                    style={{ fontSize: '.73rem', color: 'var(--orange)' }}
+                                    onClick={() => abrirEditar(esp)}
+                                  >
+                                    ✏️ Editar
+                                  </button>
+                                  <button
+                                    className="btn-ghost"
+                                    style={{ fontSize: '.73rem' }}
+                                    onClick={() => handleToggleDisponible(esp.id, !esp.disponible)}
+                                  >
+                                    {esp.disponible ? 'Pausar' : 'Activar'}
+                                  </button>
+                                </>
+                              )}
                               <button
                                 className="btn-ghost"
                                 style={{ fontSize: '.73rem', color: 'var(--red)' }}
@@ -554,8 +658,8 @@ export default function PanelPage() {
       <Modal
         open={perfilOpen}
         onClose={() => setPerfilOpen(false)}
-        title="✏️ Editar perfil"
-        subtitle="Actualizá tus datos personales y tu dirección"
+        title={perfilStep === 'otp_tel' ? '📱 Verificá tu nuevo teléfono' : '✏️ Editar perfil'}
+        subtitle={perfilStep === 'otp_tel' ? 'Ingresá el código que enviamos a tu nuevo número' : 'Actualizá tus datos personales y tu dirección'}
         maxWidth="500px"
       >
         <div style={{ display: 'grid', gap: '1rem' }}>
@@ -564,6 +668,55 @@ export default function PanelPage() {
               <div style={{ fontSize: '2.5rem', marginBottom: '.5rem' }}>✅</div>
               <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>Perfil actualizado</div>
             </div>
+          ) : perfilStep === 'otp_tel' ? (
+            <>
+              <p style={{ color: 'var(--text2)', fontSize: '.88rem', textAlign: 'center', margin: 0 }}>
+                Enviamos un código de 6 dígitos por SMS y WhatsApp a{' '}
+                <strong style={{ color: 'var(--text)' }}>{perfilOtpTelHint}</strong>
+              </p>
+              <div style={{ display: 'flex', gap: '.5rem', justifyContent: 'center' }}>
+                {perfilOtpDigits.map((d, i) => (
+                  <input
+                    key={i}
+                    ref={el => { perfilOtpRefs.current[i] = el; }}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={d}
+                    onChange={e => handlePerfilOtpChange(i, e.target.value)}
+                    onKeyDown={e => handlePerfilOtpKeyDown(i, e)}
+                    onPaste={i === 0 ? handlePerfilOtpPaste : undefined}
+                    disabled={perfilLoading}
+                    style={{
+                      width: 46, height: 56, textAlign: 'center',
+                      fontSize: '1.5rem', fontWeight: 800, fontFamily: 'monospace',
+                      borderRadius: 'var(--r2)',
+                      border: `2px solid ${d ? 'var(--orange)' : 'var(--border)'}`,
+                      background: d ? 'rgba(232,98,42,.08)' : 'var(--surface2)',
+                      color: 'var(--text)', outline: 'none',
+                      cursor: perfilLoading ? 'not-allowed' : 'text',
+                      opacity: perfilLoading ? .6 : 1,
+                    }}
+                  />
+                ))}
+              </div>
+              {perfilError && <div className="alert alert--error">{perfilError}</div>}
+              <Button
+                onClick={() => handleVerificarCambioTel(perfilOtpDigits.join(''))}
+                loading={perfilLoading}
+                disabled={perfilOtpDigits.some(d => !d) || perfilLoading}
+                style={{ width: '100%' }}
+              >
+                Verificar y guardar teléfono
+              </Button>
+              <button
+                type="button"
+                onClick={() => setPerfilStep('form')}
+                style={{ background: 'none', border: 'none', color: 'var(--text3)', fontSize: '.82rem', cursor: 'pointer' }}
+              >
+                ← Volver al formulario
+              </button>
+            </>
           ) : (
             <>
               <div className="form-row">
@@ -574,7 +727,14 @@ export default function PanelPage() {
                     placeholder="Tu nombre completo" />
                 </div>
                 <div>
-                  <label className="form-label">Teléfono</label>
+                  <label className="form-label">
+                    Teléfono
+                    {perfilForm.tel.trim() !== (user?.tel || '').trim() && perfilForm.tel.trim() && (
+                      <span style={{ fontSize: '.7rem', color: 'var(--orange)', marginLeft: '.4rem' }}>
+                        🔐 requiere verificación
+                      </span>
+                    )}
+                  </label>
                   <input value={perfilForm.tel}
                     onChange={e => setPerfilForm(f => ({ ...f, tel: e.target.value }))}
                     placeholder="+54 9 11 ..." />

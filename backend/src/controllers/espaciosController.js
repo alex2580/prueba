@@ -186,7 +186,7 @@ async function actualizar(req, res, next) {
     // Update newer columns if they exist
     try {
       await query(
-        `UPDATE espacios SET moneda = ?, categoria = ?, disponibilidad = ? WHERE id = ?`,
+        `UPDATE espacios SET moneda = ?, categoria = ?, disponibilidad = ?, ultima_actividad = NOW(), inactiva_auto = 0 WHERE id = ?`,
         [moneda || 'ARS', categoria || null, disponibilidad ? JSON.stringify(disponibilidad) : null, req.params.id]
       );
     } catch (_) { /* columns may not exist yet */ }
@@ -261,7 +261,7 @@ async function misEspacios(req, res, next) {
               SUM(CASE WHEN r.estado IN ('confirmada','pagada') THEN r.precio_total ELSE 0 END) AS ingresos_total
        FROM espacios e
        LEFT JOIN reservas r ON e.id = r.espacio_id
-       WHERE e.oferente_id = ? AND e.activo = TRUE
+       WHERE e.oferente_id = ? AND (e.activo = TRUE OR e.inactiva_auto = 1)
        GROUP BY e.id
        ORDER BY e.created_at DESC`,
       [req.user.id]
@@ -272,4 +272,30 @@ async function misEspacios(req, res, next) {
   }
 }
 
-module.exports = { listar, obtener, crear, actualizar, eliminar, subirFotos, misEspacios };
+// POST /api/espacios/:id/reactivar
+async function reactivar(req, res, next) {
+  try {
+    const espacio = await queryOne(
+      'SELECT id, oferente_id, nombre, activo, inactiva_auto FROM espacios WHERE id = ?',
+      [req.params.id]
+    );
+    if (!espacio) return res.status(404).json({ error: 'Espacio no encontrado' });
+    if (espacio.oferente_id !== req.user.id && req.user.tipo !== 'admin') {
+      return res.status(403).json({ error: 'Sin permisos' });
+    }
+    if (!espacio.inactiva_auto) {
+      return res.status(400).json({ error: 'Esta publicación no puede reactivarse desde aquí' });
+    }
+
+    await query(
+      `UPDATE espacios SET activo = TRUE, inactiva_auto = 0, ultima_actividad = NOW(), disponible = TRUE WHERE id = ?`,
+      [req.params.id]
+    );
+
+    res.json({ ok: true, message: 'Publicación reactivada exitosamente' });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { listar, obtener, crear, actualizar, eliminar, subirFotos, misEspacios, reactivar };

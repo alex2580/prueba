@@ -453,6 +453,43 @@ async function sendCuentaDesbloqueada(toEmail, nombre) {
   });
 }
 
+// ── Cambio de teléfono confirmado ────────────────────────────────
+async function sendCambioTelConfirmado(toEmail, nombre, { telNuevo }) {
+  const html = baseTemplate('Teléfono actualizado', `
+    <h2>📱 Tu teléfono fue actualizado</h2>
+    <p>Hola <span class="highlight">${nombre}</span>, te confirmamos que el número de teléfono asociado a tu cuenta fue actualizado exitosamente.</p>
+    <div class="info-row">
+      <div><div class="info-label">Nuevo número</div><div class="info-val">${telNuevo}</div></div>
+    </div>
+    <p>Este número se usará para recibir tu código de verificación en futuros ingresos.</p>
+    <p style="font-size:12px;color:#64748b;margin-top:16px">¿No realizaste este cambio? Contactanos de inmediato a <a href="mailto:contacto@todasmiscosas.com" style="color:#e8622a">contacto@todasmiscosas.com</a></p>
+  `);
+  await transporter.sendMail({
+    from: FROM, to: toEmail,
+    subject: '📱 Tu teléfono en TodasMisCosas fue actualizado',
+    html,
+  });
+}
+
+// ── Publicación desactivada por inactividad ──────────────────────
+async function sendPublicacionDesactivada(toEmail, nombre, { espacioNombre, diasInactivo }) {
+  const html = baseTemplate('Publicación desactivada por inactividad', `
+    <h2>⏸️ Publicación pausada automáticamente</h2>
+    <p>Hola <span class="highlight">${nombre}</span>, tu publicación estuvo inactiva durante más de ${diasInactivo} días y fue pausada automáticamente para mantener la calidad del marketplace.</p>
+    <div class="info-row">
+      <div><div class="info-label">Publicación</div><div class="info-val">${espacioNombre}</div></div>
+    </div>
+    <p>Podés reactivarla en cualquier momento desde tu panel de control.</p>
+    <a class="btn" href="${process.env.FRONTEND_URL}/panel">Reactivar publicación →</a>
+    <p style="font-size:12px;color:#64748b;margin-top:16px">Si ya no querés ofrecer este espacio, podés eliminarlo directamente desde el panel.</p>
+  `);
+  await transporter.sendMail({
+    from: FROM, to: toEmail,
+    subject: `⏸️ Tu publicación "${espacioNombre}" fue pausada por inactividad`,
+    html,
+  });
+}
+
 module.exports = {
   sendReservaConfirmada,
   sendPagoConfirmado,
@@ -473,4 +510,6 @@ module.exports = {
   sendCuentaDesbloqueada,
   sendOTP,
   sendLoginNotificacion,
+  sendCambioTelConfirmado,
+  sendPublicacionDesactivada,
 };
