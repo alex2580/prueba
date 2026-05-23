@@ -240,4 +240,75 @@ Flujograma del circuito actualizado con recordatorios y extensión: `docs/flujo-
 
 ---
 
+---
+
+### Sistema de Bloqueo de Usuarios
+
+Los administradores pueden suspender cuentas de oferentes y demandantes que abusen de la plataforma, con registro de auditoría completo y notificación automática al afectado.
+
+#### Acceso
+
+Panel de administración (`/admin`) → tab **👤 Usuarios**
+
+#### Funcionalidades
+
+**Listado y búsqueda:**
+- Buscador por nombre o email
+- Filtro por tipo: Oferente / Demandante / Admin
+- Filtro por estado: Activos / Bloqueados
+- Cada tarjeta muestra: nombre, email, tipo, conteo de espacios publicados, conteo de reservas, fecha de alta, y si está bloqueado: el motivo
+
+**Bloquear un usuario:**
+1. Click en **⛔ Bloquear**
+2. Seleccionar un motivo rápido (6 predefinidos) o escribir uno libre
+3. El sistema desactiva la cuenta, registra quién bloqueó, cuándo y por qué
+4. El usuario recibe un email automático con el motivo
+5. En el próximo intento de uso de la API, recibe el mensaje: *"Tu cuenta fue suspendida. Motivo: [X]. Contactanos en contacto@todasmiscosas.com"*
+
+**Motivos rápidos predefinidos:**
+- Actividad fraudulenta detectada
+- Usufructo de la plataforma sin contraprestación
+- Datos falsos o identidad no verificable
+- Conducta abusiva con otros usuarios
+- Incumplimiento reiterado de las normas de uso
+- Reservas fantasma o cancelaciones maliciosas
+
+**Desbloquear:**
+- Click en **✅ Desbloquear** → modal de confirmación → el usuario recibe email de reactivación y puede volver a operar normalmente
+
+**Protecciones del sistema:**
+- Los administradores no pueden ser bloqueados
+- Un admin no puede bloquearse a sí mismo
+- El bloqueo es inmediato: todas las sesiones activas del usuario quedan rechazadas en el próximo request
+
+#### Emails automáticos
+
+| # | Asunto | Para | Contenido |
+|---|--------|------|-----------|
+| 10 | ⛔ Tu cuenta fue suspendida | Usuario bloqueado | Motivo del bloqueo, link a contacto@todasmiscosas.com |
+| 11 | ✅ Tu cuenta fue reactivada | Usuario desbloqueado | Confirmación de reactivación, botón para ingresar |
+
+#### Cambios en base de datos (se aplican automáticamente en cada deploy)
+
+```sql
+-- En tabla usuarios:
+bloqueado_motivo VARCHAR(TEXT)    -- razón del bloqueo
+bloqueado_en     DATETIME         -- timestamp del bloqueo
+bloqueado_por    VARCHAR(36)      -- ID del admin que bloqueó
+```
+
+El campo `activo` existente (ya verificado en el middleware de auth) se usa como interruptor. Las columnas nuevas son el registro de auditoría.
+
+#### Archivos modificados
+
+- `backend/src/db/add-bloqueo-usuarios.js` (nuevo — migración idempotente)
+- `backend/src/services/emailService.js` (funciones: `sendCuentaBloqueada`, `sendCuentaDesbloqueada`)
+- `backend/src/controllers/adminController.js` (funciones: `getUsuarios`, `bloquearUsuario`, `desbloquearUsuario`)
+- `backend/src/routes/admin.js` (rutas: `GET /usuarios`, `PATCH /usuarios/:id/bloquear`, `PATCH /usuarios/:id/desbloquear`)
+- `backend/src/middleware/auth.js` (mensaje de error mejorado al detectar cuenta bloqueada, incluye motivo)
+- `frontend/app/admin/page.tsx` (nuevo tab "👤 Usuarios" con buscador, filtros, modal de bloqueo con motivos rápidos, modal de confirmación de desbloqueo)
+- `.github/workflows/deploy.yml` (agrega migración al pipeline)
+
+---
+
 *Para agregar nuevas novedades: editar este archivo y agregar una sección con la fecha correspondiente.*
