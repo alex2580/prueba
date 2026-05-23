@@ -18,7 +18,7 @@ export function RatingDisplay({ value, count, size = 'md' }: RatingDisplayProps)
         {'★'.repeat(stars)}{'☆'.repeat(5 - stars)}
       </span>
       <span className="rating__value" style={{ fontSize: size === 'sm' ? '.78rem' : '.85rem' }}>
-        {(value || 0).toFixed(1)}
+        {Number(value || 0).toFixed(1)}
       </span>
       {count !== undefined && (
         <span className="rating__count">({count})</span>
