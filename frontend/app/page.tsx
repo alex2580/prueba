@@ -186,7 +186,10 @@ export default function HomePage() {
               {/* Panel flotante de filtros */}
               {filtrosOpen && (
                 <div style={{
-                  position: 'absolute', top: 'calc(100% + .5rem)', right: 0,
+                  position: 'absolute', top: '100%', right: 0,
+                  paddingTop: '.5rem', // visual gap sin romper el área de hover
+                }}>
+                <div style={{
                   background: 'rgba(255,255,255,0.98)',
                   border: '1.5px solid #ddd', borderRadius: 16,
                   padding: '1.2rem', width: 280,
@@ -212,6 +215,7 @@ export default function HomePage() {
                     onQuitarCercaMio={() => setUserLocation(null)}
                     geoError={geoError}
                   />
+                </div>
                 </div>
               )}
             </div>
