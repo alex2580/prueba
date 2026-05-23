@@ -234,6 +234,10 @@ Archivos modificados:
 - `frontend/app/panel/page.tsx` (modal de extensión con selector de fecha + redirect a MP)
 - `.github/workflows/deploy.yml` (agrega migración al pipeline)
 
+Preview visual de todos los emails (incluyendo 8a–8d y #9): `docs/email-previews.html` (abrir en navegador)
+
+Flujograma del circuito actualizado con recordatorios y extensión: `docs/flujo-reservas.html` (abrir en navegador)
+
 ---
 
 *Para agregar nuevas novedades: editar este archivo y agregar una sección con la fecha correspondiente.*
