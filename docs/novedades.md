@@ -21,6 +21,22 @@ Se implementaron emails automáticos en cada cambio de estado de una reserva.
 
 Archivos modificados: `backend/src/services/emailService.js`, `backend/src/controllers/reservasController.js`, `backend/src/controllers/pagosController.js`
 
+#### Detalle de cada email
+
+Todos los emails comparten el mismo diseño: fondo azul marino oscuro, logo naranja de TMC, filas de datos con etiqueta gris y valor blanco, botón naranja con link a la plataforma, y footer con "TodasMisCosas.com — Buenos Aires".
+
+| # | Asunto | Para | Datos incluidos |
+|---|--------|------|-----------------|
+| 1 | ✅ Reserva confirmada | Demandante | Espacio, fechas, total, link al checkout |
+| 2 | 🔔 Nueva reserva | Oferente | Nombre y teléfono del demandante, espacio, fechas, monto estimado |
+| 3 | ✅ Reserva aprobada | Demandante | Espacio, fechas, total a pagar, link al pago |
+| 4 | 💳 Pago confirmado | Demandante | Espacio, monto, número de pago MercadoPago |
+| 5 | 💰 Pago recibido | Oferente | Nombre del inquilino, espacio, monto acreditado |
+| 6 | ❌ Reserva cancelada | Ambos | Espacio, fechas, quién canceló (demandante u oferente) |
+| 7 | 🏁 Estadía finalizada | Demandante | Espacio, invitación a dejar reseña con link al panel |
+
+Preview visual disponible en: `docs/email-previews.html` (abrir en navegador)
+
 ---
 
 ### Timeline Visual de Reservas — Nivel 2
