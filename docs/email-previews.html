@@ -50,6 +50,11 @@
   <div class="tab" onclick="show(4)">5 · Pago recibido (Oferente)</div>
   <div class="tab" onclick="show(5)">6 · Cancelación (Ambos)</div>
   <div class="tab" onclick="show(6)">7 · Estadía finalizada (Demandante)</div>
+  <div class="tab" onclick="show(7)">8a · Vence en 5 días (Cron)</div>
+  <div class="tab" onclick="show(8)">8b · Vence en 2 días (Cron)</div>
+  <div class="tab" onclick="show(9)">8c · Vence mañana (Cron)</div>
+  <div class="tab" onclick="show(10)">8d · Vence hoy (Cron)</div>
+  <div class="tab" onclick="show(11)">9 · Extensión confirmada (Demandante)</div>
 </div>
 
 
@@ -192,6 +197,107 @@
   </div>
 </div>
 
+
+<!-- EMAIL 8a: Vence en 5 días → Demandante (Cron) -->
+<div class="email-wrap">
+  <div class="tmc-wrap">
+    <div class="tmc-card">
+      <div class="tmc-logo">📦 TodasMisCosas<span>.com</span></div>
+      <h2>⏰ Tu reserva vence en 5 días</h2>
+      <p>Hola <span class="highlight">Guillermo Domínguez</span>, quedan <strong style="color:#e2e8f0">5 días</strong> para que expire tu reserva.</p>
+      <div class="info-row"><div><div class="info-label">Espacio</div><div class="info-val">Cochera techada Palermo</div></div></div>
+      <div class="info-row"><div><div class="info-label">Vencimiento</div><div class="info-val">2026-06-30</div></div></div>
+      <p>¿Querés seguir usando el espacio? Extendé tu reserva antes de que venza pagando por anticipado.</p>
+      <a class="btn" href="#">📅 Extender mi reserva →</a>
+      <p style="font-size:12px;color:#64748b;margin-top:12px">Si no extendés, tu reserva finalizará automáticamente al vencer el plazo.</p>
+    </div>
+    <div class="tmc-footer">
+      Este email fue enviado desde TodasMisCosas.com — Buenos Aires<br>
+      Si no realizaste esta acción, ignorá este mensaje.
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL 8b: Vence en 2 días → Demandante (Cron) -->
+<div class="email-wrap">
+  <div class="tmc-wrap">
+    <div class="tmc-card">
+      <div class="tmc-logo">📦 TodasMisCosas<span>.com</span></div>
+      <h2>⚡ Tu reserva vence en 2 días</h2>
+      <p>Hola <span class="highlight">Guillermo Domínguez</span>, quedan solo <strong style="color:#e2e8f0">2 días</strong> para que expire tu reserva.</p>
+      <div class="info-row"><div><div class="info-label">Espacio</div><div class="info-val">Cochera techada Palermo</div></div></div>
+      <div class="info-row"><div><div class="info-label">Vencimiento</div><div class="info-val">2026-06-30</div></div></div>
+      <p>¿Querés seguir usando el espacio? Extendé tu reserva antes de que venza pagando por anticipado.</p>
+      <a class="btn" href="#">📅 Extender mi reserva →</a>
+      <p style="font-size:12px;color:#64748b;margin-top:12px">Si no extendés, tu reserva finalizará automáticamente al vencer el plazo.</p>
+    </div>
+    <div class="tmc-footer">
+      Este email fue enviado desde TodasMisCosas.com — Buenos Aires<br>
+      Si no realizaste esta acción, ignorá este mensaje.
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL 8c: Vence mañana → Demandante (Cron) -->
+<div class="email-wrap">
+  <div class="tmc-wrap">
+    <div class="tmc-card">
+      <div class="tmc-logo">📦 TodasMisCosas<span>.com</span></div>
+      <h2>🚨 Tu reserva vence mañana</h2>
+      <p>Hola <span class="highlight">Guillermo Domínguez</span>, <strong style="color:#e2e8f0">¡mañana vence</strong> tu reserva!</p>
+      <div class="info-row"><div><div class="info-label">Espacio</div><div class="info-val">Cochera techada Palermo</div></div></div>
+      <div class="info-row"><div><div class="info-label">Vencimiento</div><div class="info-val">2026-06-30</div></div></div>
+      <p>¿Querés seguir usando el espacio? Extendé tu reserva antes de que venza pagando por anticipado.</p>
+      <a class="btn" href="#">📅 Extender mi reserva →</a>
+      <p style="font-size:12px;color:#64748b;margin-top:12px">Si no extendés, tu reserva finalizará automáticamente al vencer el plazo.</p>
+    </div>
+    <div class="tmc-footer">
+      Este email fue enviado desde TodasMisCosas.com — Buenos Aires<br>
+      Si no realizaste esta acción, ignorá este mensaje.
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL 8d: Vence hoy → Demandante (Cron) -->
+<div class="email-wrap">
+  <div class="tmc-wrap">
+    <div class="tmc-card">
+      <div class="tmc-logo">📦 TodasMisCosas<span>.com</span></div>
+      <h2>🔔 Hoy finaliza tu reserva</h2>
+      <p>Hola <span class="highlight">Guillermo Domínguez</span>, <strong style="color:#e2e8f0">¡hoy es el último día</strong> de tu reserva.</p>
+      <div class="info-row"><div><div class="info-label">Espacio</div><div class="info-val">Cochera techada Palermo</div></div></div>
+      <div class="info-row"><div><div class="info-label">Vencimiento</div><div class="info-val">2026-06-30</div></div></div>
+      <p>¿Querés seguir usando el espacio? Extendé tu reserva antes de que venza pagando por anticipado.</p>
+      <a class="btn" href="#">📅 Extender mi reserva →</a>
+      <p style="font-size:12px;color:#64748b;margin-top:12px">Si no extendés, tu reserva finalizará automáticamente al vencer el plazo.</p>
+    </div>
+    <div class="tmc-footer">
+      Este email fue enviado desde TodasMisCosas.com — Buenos Aires<br>
+      Si no realizaste esta acción, ignorá este mensaje.
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL 9: Extensión confirmada → Demandante -->
+<div class="email-wrap">
+  <div class="tmc-wrap">
+    <div class="tmc-card">
+      <div class="tmc-logo">📦 TodasMisCosas<span>.com</span></div>
+      <h2>✅ Extensión de reserva confirmada</h2>
+      <p>Hola <span class="highlight">Guillermo Domínguez</span>, tu extensión fue procesada exitosamente.</p>
+      <div class="info-row"><div><div class="info-label">Espacio</div><div class="info-val">Cochera techada Palermo</div></div></div>
+      <div class="info-row"><div><div class="info-label">Vencimiento anterior</div><div class="info-val">2026-06-30</div></div></div>
+      <div class="info-row"><div><div class="info-label">Nuevo vencimiento</div><div class="info-val">2026-07-31</div></div></div>
+      <div class="info-row"><div><div class="info-label">Monto pagado</div><div class="info-val">$18.500</div></div></div>
+      <p>¡Seguís usando tu espacio sin interrupciones!</p>
+      <a class="btn" href="#">Ver mis reservas →</a>
+    </div>
+    <div class="tmc-footer">
+      Este email fue enviado desde TodasMisCosas.com — Buenos Aires<br>
+      Si no realizaste esta acción, ignorá este mensaje.
+    </div>
+  </div>
+</div>
 
 <script>
   function show(index) {
