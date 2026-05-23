@@ -309,6 +309,62 @@ El campo `activo` existente (ya verificado en el middleware de auth) se usa como
 - `frontend/app/admin/page.tsx` (nuevo tab "👤 Usuarios" con buscador, filtros, modal de bloqueo con motivos rápidos, modal de confirmación de desbloqueo)
 - `.github/workflows/deploy.yml` (agrega migración al pipeline)
 
+#### Cómo verificar el sistema de punta a punta
+
+**Paso 1 — Entrar al panel de admin**
+
+Ingresar con cuenta admin en `https://todasmiscosas.com/admin` → tab **👤 Usuarios**.
+
+**Paso 2 — Buscar al usuario**
+
+Usar el buscador por nombre o email. La tarjeta muestra: tipo, reservas, espacios y fecha de alta.
+
+**Paso 3 — Bloquear**
+
+Click en **⛔ Bloquear** → elegir motivo rápido o escribir uno libre → **⛔ Confirmar bloqueo**.
+
+Lo que ocurre en ese instante:
+- `activo = 0` en la DB
+- Se registran `bloqueado_motivo`, `bloqueado_en`, `bloqueado_por`
+- El usuario recibe el email ⛔ automáticamente
+
+**Paso 4 — Email que recibe el usuario bloqueado**
+
+> **Asunto:** ⛔ Tu cuenta en TodasMisCosas fue suspendida
+> Motivo: [el motivo seleccionado] — con link a contacto@todasmiscosas.com
+
+**Paso 5 — Comportamiento del usuario bloqueado**
+
+Cualquier acción autenticada (panel, reserva, etc.) devuelve HTTP 403:
+
+```json
+{
+  "error": "Tu cuenta fue suspendida por un administrador. Motivo: Usufructo de la plataforma sin contraprestación. Contactanos en contacto@todasmiscosas.com",
+  "code": "CUENTA_BLOQUEADA"
+}
+```
+
+**Paso 6 — Verificación vía curl (opcional)**
+
+```bash
+# Antes del bloqueo → responde normal
+# Después del bloqueo → responde 403
+curl https://todasmiscosas.com/api/reservas \
+  -H "Authorization: Bearer TOKEN_DEL_USUARIO"
+```
+
+El token se obtiene desde DevTools → Application → Local Storage del navegador del usuario.
+
+**Paso 7 — Desbloquear**
+
+La tarjeta del usuario bloqueado muestra badge rojo **⛔ BLOQUEADO** y el motivo.
+Click en **✅ Desbloquear** → confirmar → el usuario recibe email de reactivación y puede operar normalmente.
+
+| Estado en el panel | Borde | Badge | Botón |
+|--------------------|-------|-------|-------|
+| Activo | Normal | — | ⛔ Bloquear |
+| Bloqueado | Rojo | ⛔ BLOQUEADO + motivo | ✅ Desbloquear |
+
 ---
 
 *Para agregar nuevas novedades: editar este archivo y agregar una sección con la fecha correspondiente.*
