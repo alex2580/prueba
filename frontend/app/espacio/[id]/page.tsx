@@ -6,11 +6,9 @@ import { useEspacio } from '@/hooks/useEspacios';
 import { useAuth } from '@/hooks/useAuth';
 import { DetalleEspacio } from '@/components/espacios/DetalleEspacio';
 import { Modal } from '@/components/ui/Modal';
-import { FormReserva } from '@/components/reservas/FormReserva';
 import { ChatModal } from '@/components/chat/ChatModal';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
-import { reservasAPI } from '@/lib/api';
 import { SiteLogo } from '@/components/ui/SiteLogo';
 
 export default function EspacioPage() {
@@ -19,41 +17,17 @@ export default function EspacioPage() {
   const { espacio, loading, error } = useEspacio(id);
   const { user, token, login, register, loading: authLoading, error: authError } = useAuth();
 
-  const [reservarModal, setReservarModal] = useState(false);
-  const [chatModal, setChatModal]         = useState(false);
-  const [authModal, setAuthModal]         = useState(false);
-  const [authTab, setAuthTab]             = useState<'login' | 'register'>('login');
-  const [reservaError, setReservaError]   = useState<string | null>(null);
-  const [reservaLoading, setReservaLoading] = useState(false);
-  const [intentoReservar, setIntentoReservar] = useState(false);
+  const [chatModal, setChatModal] = useState(false);
+  const [authModal, setAuthModal] = useState(false);
+  const [authTab, setAuthTab]     = useState<'login' | 'register'>('login');
 
   function handleReservar() {
-    if (!user) {
-      setIntentoReservar(true);
-      setAuthModal(true);
-      return;
-    }
-    setReservarModal(true);
+    router.push(`/espacio/${id}/reservar`);
   }
 
   function handleChat() {
     if (!user) { setAuthModal(true); return; }
     setChatModal(true);
-  }
-
-  async function submitReserva(desde: string, hasta: string, notas: string) {
-    if (!token || !espacio) return;
-    setReservaLoading(true);
-    setReservaError(null);
-    try {
-      const reserva = await reservasAPI.crear({ espacio_id: espacio.id, fecha_desde: desde, fecha_hasta: hasta, notas }, token);
-      setReservarModal(false);
-      router.push(`/reserva/${reserva.id}/checkout`);
-    } catch (err) {
-      setReservaError(err instanceof Error ? err.message : 'Error al crear la reserva');
-    } finally {
-      setReservaLoading(false);
-    }
   }
 
   if (loading) {
@@ -97,16 +71,6 @@ export default function EspacioPage() {
         />
       </div>
 
-      {/* Reserva Modal */}
-      <Modal open={reservarModal} onClose={() => setReservarModal(false)} title="📅 Reservar espacio" subtitle={espacio.nombre}>
-        <FormReserva
-          espacio={espacio}
-          onSubmit={submitReserva}
-          loading={reservaLoading}
-          error={reservaError}
-        />
-      </Modal>
-
       {/* Chat Modal */}
       {user && token && (
         <ChatModal
@@ -129,10 +93,7 @@ export default function EspacioPage() {
           <LoginForm
             onLogin={async (email, password) => {
               const ok = await login(email, password);
-              if (ok) {
-                setAuthModal(false);
-                if (intentoReservar) { setIntentoReservar(false); setReservarModal(true); }
-              }
+              if (ok) setAuthModal(false);
               return ok;
             }}
             onSwitch={() => setAuthTab('register')}
@@ -143,10 +104,7 @@ export default function EspacioPage() {
           <RegisterForm
             onRegister={async (nombre, email, password, tipo, tel) => {
               const ok = await register(nombre, email, password, tipo, tel);
-              if (ok) {
-                setAuthModal(false);
-                if (intentoReservar) { setIntentoReservar(false); setReservarModal(true); }
-              }
+              if (ok) setAuthModal(false);
               return ok;
             }}
             onSwitch={() => setAuthTab('login')}
