@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import type { Espacio } from '@/types';
 import { getMonedaSimbolo } from '@/types';
+import { getFotoFallback } from '@/lib/fotosFallback';
 
 interface MapaEspaciosProps {
   espacios: Espacio[];
@@ -131,14 +132,20 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
 
       marker.addListener('click', () => onMarkerClick?.(espacio));
 
-      // Show address on hover
+      // Show preview on hover
       marker.addListener('mouseover', () => {
         if (!infoWindow.current) return;
+        const hoverImg = espacio.imgs?.[0] || espacio.img_principal || getFotoFallback(espacio.id);
         infoWindow.current.setContent(`
-          <div style="font-family:sans-serif;font-size:12px;line-height:1.5;max-width:200px;padding:2px 4px;">
-            <strong style="font-size:13px;">${espacio.nombre}</strong><br>
-            <span style="color:#555;">📍 ${espacio.direccion}</span><br>
-            <span style="color:#888;">${espacio.barrio} · ${espacio.m2} m²</span>
+          <div style="font-family:sans-serif;font-size:12px;line-height:1.5;width:220px;overflow:hidden;border-radius:8px;">
+            <img src="${hoverImg}" alt="${espacio.nombre}"
+              style="width:100%;height:130px;object-fit:cover;display:block;border-radius:6px 6px 0 0;"
+              onerror="this.src='${getFotoFallback(espacio.id)}'"
+            />
+            <div style="padding:8px 10px;">
+              <strong style="font-size:13px;display:block;margin-bottom:2px;">${espacio.nombre}</strong>
+              <span style="color:#666;">📍 ${espacio.barrio} · ${espacio.m2} m²</span>
+            </div>
           </div>
         `);
         infoWindow.current.open(map, marker);
