@@ -4,11 +4,15 @@ const router = express.Router();
 
 const ctrl = require('../controllers/usuariosController');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
+const { uploadMiddleware } = require('../middleware/upload');
 
 router.get('/me',           requireAuth, ctrl.perfil);
 router.put('/me',           requireAuth, [
   body('nombre').trim().notEmpty().isLength({ max: 120 }),
+  body('dni').optional({ nullable: true }).isLength({ max: 20 }),
+  body('email').optional({ nullable: true }).isEmail(),
 ], ctrl.actualizar);
+router.post('/me/avatar',   requireAuth, uploadMiddleware.single('avatar'), ctrl.subirAvatar);
 router.post('/me/solicitar-cambio-tel', requireAuth, [
   body('tel_nuevo').trim().notEmpty(),
 ], ctrl.solicitarCambioTel);

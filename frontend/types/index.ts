@@ -10,6 +10,7 @@ export interface Usuario {
   nombre: string;
   email: string;
   tel?: string;
+  dni?: string;
   tipo: UsuarioTipo;
   avatar_url?: string;
   verificado: boolean;

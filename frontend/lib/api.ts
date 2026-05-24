@@ -168,8 +168,20 @@ export const usuariosAPI = {
   me: (token: string) =>
     fetchAPI<Usuario>('/api/usuarios/me', {}, token),
 
-  actualizar: (data: { nombre: string; tel?: string; direccion?: string; lat?: number; lng?: number }, token: string) =>
+  actualizar: (data: { nombre: string; tel?: string; dni?: string; email?: string; direccion?: string; lat?: number; lng?: number }, token: string) =>
     fetchAPI<Usuario>('/api/usuarios/me', { method: 'PUT', body: JSON.stringify(data) }, token),
+
+  subirAvatar: async (file: File, token: string): Promise<{ url: string }> => {
+    const form = new FormData();
+    form.append('avatar', file);
+    const res = await fetch(`${API_URL}/api/usuarios/me/avatar`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: form,
+    });
+    if (!res.ok) { const b = await res.json().catch(() => ({})); throw new Error(b.error || 'Error al subir foto'); }
+    return res.json();
+  },
 
   solicitarCambioTel: (tel_nuevo: string, token: string) =>
     fetchAPI<{ ok: boolean; tel_hint: string }>('/api/usuarios/me/solicitar-cambio-tel', {

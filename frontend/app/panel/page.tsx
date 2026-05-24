@@ -55,7 +55,9 @@ export default function PanelPage() {
 
   // Profile edit
   const [perfilOpen, setPerfilOpen] = useState(false);
-  const [perfilForm, setPerfilForm] = useState({ nombre: '', tel: '', direccion: '', lat: '', lng: '' });
+  const [perfilForm, setPerfilForm] = useState({ nombre: '', tel: '', dni: '', email: '', direccion: '', lat: '', lng: '' });
+  const [perfilAvatarFile, setPerfilAvatarFile] = useState<File | null>(null);
+  const [perfilAvatarPreview, setPerfilAvatarPreview] = useState<string>('');
   const [perfilLoading, setPerfilLoading] = useState(false);
   const [perfilError, setPerfilError] = useState('');
   const [perfilOk, setPerfilOk] = useState(false);
@@ -149,9 +151,13 @@ export default function PanelPage() {
   }
 
   function abrirPerfil() {
+    setPerfilAvatarFile(null);
+    setPerfilAvatarPreview(user?.avatar_url || '');
     setPerfilForm({
       nombre: user?.nombre || '',
       tel: user?.tel || '',
+      dni: user?.dni || '',
+      email: user?.email || '',
       direccion: user?.direccion || '',
       lat: user?.lat ? String(user.lat) : '',
       lng: user?.lng ? String(user.lng) : '',
@@ -195,6 +201,11 @@ export default function PanelPage() {
     const telCambiado = perfilForm.tel.trim() !== (user?.tel || '').trim() && perfilForm.tel.trim() !== '';
 
     try {
+      // Subir avatar si se seleccionó uno nuevo
+      if (perfilAvatarFile) {
+        await usuariosAPI.subirAvatar(perfilAvatarFile, token);
+      }
+
       // Si cambió el teléfono, solicitar OTP antes de guardar
       if (telCambiado) {
         const res = await usuariosAPI.solicitarCambioTel(perfilForm.tel.trim(), token);
@@ -203,10 +214,12 @@ export default function PanelPage() {
         setPerfilOtpDigits(['', '', '', '', '', '']);
         setTimeout(() => perfilOtpRefs.current[0]?.focus(), 100);
 
-        // Guardar nombre y dirección de todas formas (sin teléfono)
+        // Guardar resto de campos (sin teléfono)
         await usuariosAPI.actualizar({
           nombre: perfilForm.nombre,
           tel: user?.tel || '',
+          dni: perfilForm.dni || undefined,
+          email: perfilForm.email || undefined,
           direccion: perfilForm.direccion || undefined,
           lat: perfilForm.lat ? Number(perfilForm.lat) : undefined,
           lng: perfilForm.lng ? Number(perfilForm.lng) : undefined,
@@ -218,6 +231,8 @@ export default function PanelPage() {
       await usuariosAPI.actualizar({
         nombre: perfilForm.nombre,
         tel: perfilForm.tel,
+        dni: perfilForm.dni || undefined,
+        email: perfilForm.email || undefined,
         direccion: perfilForm.direccion || undefined,
         lat: perfilForm.lat ? Number(perfilForm.lat) : undefined,
         lng: perfilForm.lng ? Number(perfilForm.lng) : undefined,
@@ -721,12 +736,60 @@ export default function PanelPage() {
             </>
           ) : (
             <>
+              {/* Avatar */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{
+                  width: 72, height: 72, borderRadius: '50%', overflow: 'hidden', flexShrink: 0,
+                  background: 'var(--surface2)', border: '2px solid var(--border)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem',
+                }}>
+                  {perfilAvatarPreview
+                    ? <img src={perfilAvatarPreview} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    : '👤'
+                  }
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label className="form-label">Foto de perfil (opcional)</label>
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={e => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      setPerfilAvatarFile(file);
+                      setPerfilAvatarPreview(URL.createObjectURL(file));
+                    }}
+                    style={{ fontSize: '.8rem' }}
+                  />
+                </div>
+              </div>
+
+              {/* Nombre + DNI */}
               <div className="form-row">
                 <div>
                   <label className="form-label">Nombre *</label>
                   <input value={perfilForm.nombre}
                     onChange={e => setPerfilForm(f => ({ ...f, nombre: e.target.value }))}
                     placeholder="Tu nombre completo" />
+                </div>
+                <div>
+                  <label className="form-label">DNI</label>
+                  <input value={perfilForm.dni}
+                    onChange={e => setPerfilForm(f => ({ ...f, dni: e.target.value }))}
+                    placeholder="12345678" maxLength={20} />
+                </div>
+              </div>
+
+              {/* Email + Teléfono */}
+              <div className="form-row">
+                <div>
+                  <label className="form-label">Email</label>
+                  <input
+                    type="email"
+                    value={perfilForm.email}
+                    onChange={e => setPerfilForm(f => ({ ...f, email: e.target.value }))}
+                    placeholder="tu@email.com"
+                  />
                 </div>
                 <div>
                   <label className="form-label">
@@ -743,6 +806,7 @@ export default function PanelPage() {
                 </div>
               </div>
 
+              {/* Dirección */}
               <div>
                 <label className="form-label">Dirección personal</label>
                 <input
@@ -762,6 +826,17 @@ export default function PanelPage() {
                   </div>
                 )}
               </div>
+
+              {/* Mini mapa cuando hay ubicación */}
+              {perfilForm.lat && perfilForm.lng && MAPS_KEY && (
+                <div style={{ borderRadius: 'var(--r2)', overflow: 'hidden', border: '1px solid var(--border)' }}>
+                  <img
+                    src={`https://maps.googleapis.com/maps/api/staticmap?center=${perfilForm.lat},${perfilForm.lng}&zoom=15&size=460x140&markers=color:orange|${perfilForm.lat},${perfilForm.lng}&key=${MAPS_KEY}`}
+                    alt="Mapa de ubicación"
+                    style={{ width: '100%', height: 140, objectFit: 'cover', display: 'block' }}
+                  />
+                </div>
+              )}
 
               {perfilError && <div className="alert alert--error">{perfilError}</div>}
 

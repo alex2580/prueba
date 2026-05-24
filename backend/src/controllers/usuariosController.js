@@ -4,6 +4,8 @@ const supabaseService = require('../services/supabaseService');
 const { sendCambioTelConfirmado } = require('../services/emailService');
 const { sendSMS, sendWhatsApp } = require('../services/twilioService');
 
+const path = require('path');
+const BASE_URL = process.env.API_BASE_URL || `http://localhost:${process.env.PORT || 4000}`;
 const OTP_EXPIRY_MIN = 10;
 
 function generarCodigo() {
@@ -21,7 +23,7 @@ async function perfil(req, res, next) {
     let usuario;
     try {
       usuario = await queryOne(
-        'SELECT id, nombre, email, tel, tipo, verificado, avatar_url, created_at, direccion, lat, lng FROM usuarios WHERE id = ?',
+        'SELECT id, nombre, email, tel, dni, tipo, verificado, avatar_url, created_at, direccion, lat, lng FROM usuarios WHERE id = ?',
         [req.user.id]
       );
     } catch (_) {
@@ -46,12 +48,12 @@ async function actualizar(req, res, next) {
       return res.status(422).json({ error: 'Datos inválidos', details: errors.array() });
     }
 
-    const { nombre, tel, direccion, lat, lng } = req.body;
+    const { nombre, tel, dni, email, direccion, lat, lng } = req.body;
     await query(
       'UPDATE usuarios SET nombre = ?, tel = ? WHERE id = ?',
       [nombre, tel || '', req.user.id]
     );
-    // Update profile address if columns exist
+    // Update optional fields
     try {
       if (direccion !== undefined) {
         await query(
@@ -59,12 +61,18 @@ async function actualizar(req, res, next) {
           [direccion || null, lat || null, lng || null, req.user.id]
         );
       }
+      if (dni !== undefined) {
+        await query('UPDATE usuarios SET dni = ? WHERE id = ?', [dni || null, req.user.id]);
+      }
+      if (email && email !== req.user.email) {
+        await query('UPDATE usuarios SET email = ? WHERE id = ?', [email, req.user.id]);
+      }
     } catch (_) { /* columns may not exist yet */ }
 
     let updated;
     try {
       updated = await queryOne(
-        'SELECT id, nombre, email, tel, tipo, verificado, avatar_url, direccion, lat, lng FROM usuarios WHERE id = ?',
+        'SELECT id, nombre, email, tel, dni, tipo, verificado, avatar_url, direccion, lat, lng FROM usuarios WHERE id = ?',
         [req.user.id]
       );
     } catch (_) {
@@ -274,4 +282,16 @@ async function verificarCambioTel(req, res, next) {
   }
 }
 
-module.exports = { perfil, actualizar, sync, verPerfil, listar, cambiarTipo, solicitarCambioTel, verificarCambioTel };
+// POST /api/usuarios/me/avatar
+async function subirAvatar(req, res, next) {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No se envió ninguna imagen' });
+    const url = `${BASE_URL}/uploads/avatars/${req.file.filename}`;
+    await query('UPDATE usuarios SET avatar_url = ? WHERE id = ?', [url, req.user.id]);
+    res.json({ url });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { perfil, actualizar, sync, verPerfil, listar, cambiarTipo, solicitarCambioTel, verificarCambioTel, subirAvatar };
