@@ -171,25 +171,42 @@ export default function PanelPage() {
 
   // Google Maps autocomplete for profile address
   useEffect(() => {
-    if (!perfilOpen || !MAPS_KEY || !perfilDireccionRef.current) return;
-    const loader = new Loader({ apiKey: MAPS_KEY, version: 'weekly' });
-    loader.load().then(async (google) => {
+    if (!perfilOpen || !MAPS_KEY) return;
+
+    // Elevar z-index del dropdown de Google Maps sobre el modal
+    const style = document.createElement('style');
+    style.id = 'pac-fix';
+    style.textContent = '.pac-container { z-index: 99999 !important; }';
+    document.head.appendChild(style);
+
+    // Esperar a que el modal termine de renderizar antes de buscar el ref
+    const timer = setTimeout(() => {
       if (!perfilDireccionRef.current) return;
-      const { Autocomplete } = await google.maps.importLibrary('places') as any;
-      const ac = new Autocomplete(perfilDireccionRef.current, {
-        fields: ['formatted_address', 'geometry'],
+      const loader = new Loader({ apiKey: MAPS_KEY, version: 'weekly' });
+      loader.load().then(async (google) => {
+        if (!perfilDireccionRef.current) return;
+        const { Autocomplete } = await google.maps.importLibrary('places') as any;
+        const ac = new Autocomplete(perfilDireccionRef.current, {
+          fields: ['formatted_address', 'geometry'],
+          componentRestrictions: { country: [] },
+        });
+        ac.addListener('place_changed', () => {
+          const place = ac.getPlace();
+          if (!place.geometry?.location) return;
+          setPerfilForm(f => ({
+            ...f,
+            direccion: place.formatted_address || f.direccion,
+            lat: String(place.geometry.location.lat()),
+            lng: String(place.geometry.location.lng()),
+          }));
+        });
       });
-      ac.addListener('place_changed', () => {
-        const place = ac.getPlace();
-        if (!place.geometry?.location) return;
-        setPerfilForm(f => ({
-          ...f,
-          direccion: place.formatted_address || f.direccion,
-          lat: String(place.geometry.location.lat()),
-          lng: String(place.geometry.location.lng()),
-        }));
-      });
-    });
+    }, 200);
+
+    return () => {
+      clearTimeout(timer);
+      document.getElementById('pac-fix')?.remove();
+    };
   }, [perfilOpen]);
 
   async function handleGuardarPerfil() {
