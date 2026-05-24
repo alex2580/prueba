@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { getFotosFallback } from '@/lib/fotosFallback';
+import { getFotosFallback, getFotoFallback } from '@/lib/fotosFallback';
 
 interface GaleriaFotosProps {
   imgs: string[];
@@ -34,6 +34,7 @@ export function GaleriaFotos({ imgs, nombre, espacioId }: GaleriaFotosProps) {
             src={displayImgs[current]}
             alt={`${nombre} — foto ${current + 1}`}
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            onError={(e) => { if (espacioId) e.currentTarget.src = getFotoFallback(espacioId); }}
           />
           <div style={{
             position: 'absolute', inset: 0,
@@ -79,7 +80,8 @@ export function GaleriaFotos({ imgs, nombre, espacioId }: GaleriaFotosProps) {
                   transition: 'border-color .15s',
                 }}
               >
-                <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                  onError={(e) => { if (espacioId) e.currentTarget.src = getFotoFallback(espacioId); }} />
               </div>
             ))}
           </div>
@@ -101,6 +103,7 @@ export function GaleriaFotos({ imgs, nombre, espacioId }: GaleriaFotosProps) {
             alt={nombre}
             style={{ maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain', borderRadius: 'var(--r2)' }}
             onClick={e => e.stopPropagation()}
+            onError={(e) => { if (espacioId) e.currentTarget.src = getFotoFallback(espacioId); }}
           />
           <button
             onClick={() => setLightbox(false)}

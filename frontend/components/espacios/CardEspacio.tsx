@@ -30,7 +30,12 @@ export function CardEspacio({ espacio, onClick }: CardEspacioProps) {
       onKeyDown={e => e.key === 'Enter' && handleClick()}>
 
       <div className="espacio-card__img">
-        <img src={imgSrc} alt={espacio.nombre} loading="lazy" />
+        <img
+          src={imgSrc}
+          alt={espacio.nombre}
+          loading="lazy"
+          onError={(e) => { e.currentTarget.src = getFotoFallback(espacio.id); }}
+        />
         <div className="espacio-card__overlay" />
 
         {/* Badge */}
