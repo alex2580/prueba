@@ -845,12 +845,13 @@ export default function PanelPage() {
               </div>
 
               {/* Mini mapa cuando hay ubicación */}
-              {perfilForm.lat && perfilForm.lng && MAPS_KEY && (
+              {perfilForm.lat && perfilForm.lng && (
                 <div style={{ borderRadius: 'var(--r2)', overflow: 'hidden', border: '1px solid var(--border)' }}>
-                  <img
-                    src={`https://maps.googleapis.com/maps/api/staticmap?center=${perfilForm.lat},${perfilForm.lng}&zoom=15&size=460x140&markers=color:orange|${perfilForm.lat},${perfilForm.lng}&key=${MAPS_KEY}`}
-                    alt="Mapa de ubicación"
-                    style={{ width: '100%', height: 140, objectFit: 'cover', display: 'block' }}
+                  <iframe
+                    src={`https://maps.google.com/maps?q=${perfilForm.lat},${perfilForm.lng}&z=15&output=embed`}
+                    style={{ width: '100%', height: 150, border: 'none', display: 'block' }}
+                    loading="lazy"
+                    title="Ubicación"
                   />
                 </div>
               )}
