@@ -2,6 +2,7 @@
 
 import type { Espacio } from '@/types';
 import { formatARS } from '@/lib/utils';
+import { getFotoFallback } from '@/lib/fotosFallback';
 
 interface MarkerEspacioProps {
   espacio: Espacio;
@@ -19,7 +20,7 @@ export function MarkerEspacioCard({ espacio, onClose, onVerDetalle, onReservar }
   onVerDetalle: () => void;
   onReservar: () => void;
 }) {
-  const imgSrc = espacio.imgs?.[0] || '';
+  const imgSrc = espacio.imgs?.[0] || espacio.img_principal || getFotoFallback(espacio.id);
 
   return (
     <div style={{
@@ -38,11 +39,12 @@ export function MarkerEspacioCard({ espacio, onClose, onVerDetalle, onReservar }
 
       {/* Image */}
       <div style={{ position: 'relative', height: 180 }}>
-        {imgSrc ? (
-          <img src={imgSrc} alt={espacio.nombre} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-        ) : (
-          <div style={{ width: '100%', height: '100%', background: 'var(--surface2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem' }}>📦</div>
-        )}
+        <img
+          src={imgSrc}
+          alt={espacio.nombre}
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          onError={(e) => { e.currentTarget.src = getFotoFallback(espacio.id); }}
+        />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(10,14,26,0) 40%, rgba(10,14,26,.6) 100%)' }} />
 
         {/* Close btn */}
