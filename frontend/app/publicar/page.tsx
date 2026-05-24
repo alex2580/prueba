@@ -576,8 +576,16 @@ export default function PublicarPage() {
               }} />
 
 
-              {/* Superficie + Moneda */}
+              {/* Moneda + Superficie */}
               <div className="form-row">
+                <div>
+                  <label className="form-label">Moneda de publicación</label>
+                  <select value={form.moneda} onChange={e => set('moneda', e.target.value)} style={{ marginTop: '.4rem' }}>
+                    {MONEDAS.map(m => (
+                      <option key={m.value} value={m.value}>{m.flag} {m.label} ({m.simbolo})</option>
+                    ))}
+                  </select>
+                </div>
                 <div>
                   <label className="form-label">Superficie (m²) <span style={{ color: 'var(--text3)', fontWeight: 400 }}>— opcional</span></label>
                   <input
@@ -587,14 +595,6 @@ export default function PublicarPage() {
                     placeholder="Ej: 12"
                     min="0"
                   />
-                </div>
-                <div>
-                  <label className="form-label">Moneda de publicación</label>
-                  <select value={form.moneda} onChange={e => set('moneda', e.target.value)} style={{ marginTop: '.4rem' }}>
-                    {MONEDAS.map(m => (
-                      <option key={m.value} value={m.value}>{m.flag} {m.label} ({m.simbolo})</option>
-                    ))}
-                  </select>
                 </div>
               </div>
 

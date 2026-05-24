@@ -17,16 +17,20 @@ import QRCode from 'qrcode';
 
 // ─── Mini Calendar ──────────────────────────────────────────────
 
+type ModoCalendario = 'dia' | 'mes' | 'ambos';
+
 function MiniCalendar({
   diasDisponibles,
   fechaDesde,
   fechaHasta,
   onSelect,
+  modo = 'ambos',
 }: {
   diasDisponibles?: string[];
   fechaDesde: string;
   fechaHasta: string;
   onSelect: (desde: string, hasta: string) => void;
+  modo?: ModoCalendario;
 }) {
   const [month, setMonth] = useState(() => new Date());
   const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -38,8 +42,9 @@ function MiniCalendar({
   for (let i = 0; i < firstDay; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(new Date(year, mi, d));
 
+  function pad(n: number) { return String(n).padStart(2, '0'); }
   function toISO(d: Date) {
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
   }
   function isAvail(d: Date) {
     if (!diasDisponibles?.length) return true;
@@ -55,22 +60,76 @@ function MiniCalendar({
     return iso === fechaDesde || iso === fechaHasta;
   }
 
+  // Cuántos días hay entre desde y hasta (inclusive)
+  const diasSelec = fechaDesde && fechaHasta
+    ? Math.round((new Date(fechaHasta).getTime() - new Date(fechaDesde).getTime()) / 86400000) + 1
+    : 0;
+  const esMensual = diasSelec >= 28;
+
   function handleClick(d: Date) {
     if (d < today || !isAvail(d)) return;
     const iso = toISO(d);
-    if (!fechaDesde || (fechaDesde && fechaHasta)) {
-      onSelect(iso, '');
-    } else if (iso < fechaDesde) {
-      onSelect(iso, fechaDesde);
+
+    if (modo === 'dia') {
+      // Selección de día único
+      onSelect(iso, iso);
+    } else if (modo === 'mes') {
+      // Selección de mes completo
+      const primerDia = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-01`;
+      const ultimoDia = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate())}`;
+      onSelect(primerDia, ultimoDia);
     } else {
-      onSelect(fechaDesde, iso);
+      // Rango libre
+      if (!fechaDesde || (fechaDesde && fechaHasta)) {
+        onSelect(iso, '');
+      } else if (iso < fechaDesde) {
+        onSelect(iso, fechaDesde);
+      } else {
+        onSelect(fechaDesde, iso);
+      }
     }
   }
 
   const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
+  // Colores según modo
+  const colorEdge  = esMensual ? '#3b82f6' : 'var(--orange)';
+  const colorRange = esMensual ? 'rgba(59,130,246,.12)' : 'rgba(232,98,42,.12)';
+  const borderRange = esMensual ? '1px solid rgba(59,130,246,.2)' : '1px solid rgba(232,98,42,.18)';
+
   return (
     <div>
+      {/* Indicador de modo */}
+      {modo !== 'dia' && (
+        <div style={{ display: 'flex', gap: '.5rem', marginBottom: '.75rem' }}>
+          {modo === 'mes' && (
+            <div style={{ fontSize: '.72rem', color: '#3b82f6', background: 'rgba(59,130,246,.1)', border: '1px solid rgba(59,130,246,.25)', borderRadius: 6, padding: '.25rem .65rem', fontWeight: 600 }}>
+              🗓 Seleccioná un mes completo
+            </div>
+          )}
+          {modo === 'ambos' && fechaDesde && fechaHasta && (
+            <div style={{
+              fontSize: '.72rem', fontWeight: 600, borderRadius: 6, padding: '.25rem .65rem',
+              color: esMensual ? '#3b82f6' : 'var(--orange)',
+              background: esMensual ? 'rgba(59,130,246,.1)' : 'rgba(232,98,42,.08)',
+              border: `1px solid ${esMensual ? 'rgba(59,130,246,.25)' : 'rgba(232,98,42,.25)'}`,
+            }}>
+              {esMensual ? `🗓 Tarifa mensual (${diasSelec} días)` : `📅 Tarifa diaria (${diasSelec} día${diasSelec !== 1 ? 's' : ''})`}
+            </div>
+          )}
+          {modo === 'ambos' && fechaDesde && !fechaHasta && (
+            <div style={{ fontSize: '.72rem', color: 'var(--text3)', fontStyle: 'italic' }}>
+              Seleccioná la fecha de fin
+            </div>
+          )}
+          {modo === 'ambos' && !fechaDesde && (
+            <div style={{ fontSize: '.72rem', color: 'var(--text3)', fontStyle: 'italic' }}>
+              Seleccioná la fecha de inicio
+            </div>
+          )}
+        </div>
+      )}
+
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.75rem' }}>
         <button
           onClick={() => setMonth(m => new Date(m.getFullYear(), m.getMonth() - 1, 1))}
@@ -101,9 +160,9 @@ function MiniCalendar({
               style={{
                 textAlign: 'center', fontSize: '.78rem', padding: '.32rem .1rem',
                 borderRadius: 6, cursor: (!past && avail) ? 'pointer' : 'default',
-                background: edge ? 'var(--orange)' : range ? 'rgba(232,98,42,.12)' : avail && !past ? 'rgba(16,185,129,.07)' : 'transparent',
+                background: edge ? colorEdge : range ? colorRange : avail && !past ? 'rgba(16,185,129,.07)' : 'transparent',
                 color: edge ? '#fff' : past ? '#ccc' : avail ? 'var(--text)' : '#ccc',
-                border: edge ? '1.5px solid var(--orange)' : range ? '1px solid rgba(232,98,42,.18)' : avail && !past ? '1px solid rgba(16,185,129,.2)' : '1px solid transparent',
+                border: edge ? `1.5px solid ${colorEdge}` : range ? borderRange : avail && !past ? '1px solid rgba(16,185,129,.2)' : '1px solid transparent',
                 fontWeight: edge ? 700 : 400,
                 opacity: past ? 0.4 : 1,
               }}
@@ -239,6 +298,11 @@ export default function ReservarPage() {
 
   const disponibilidad = (espacio as any)?.disponibilidad as { dias?: string[]; meses?: string[] } | undefined;
 
+  // Modo del calendario según precios configurados
+  const tieneDia = Number(espacio?.precio_dia) > 0;
+  const tieneMes = Number(espacio?.precio_mes) > 0;
+  const modoCalendario: ModoCalendario = tieneDia && tieneMes ? 'ambos' : tieneMes ? 'mes' : 'dia';
+
   const precioEstimado = fechaDesde && fechaHasta && espacio
     ? calcularPrecio(fechaDesde, fechaHasta, Number(espacio.precio_dia), Number(espacio.precio_mes))
     : 0;
@@ -255,7 +319,7 @@ export default function ReservarPage() {
 
   function goToStep2() {
     if (!fechaDesde || !fechaHasta) { setStep1Error('Seleccioná las fechas de inicio y fin.'); return; }
-    if (fechaHasta <= fechaDesde) { setStep1Error('La fecha de fin debe ser posterior a la de inicio.'); return; }
+    if (modoCalendario !== 'dia' && fechaHasta < fechaDesde) { setStep1Error('La fecha de fin debe ser posterior a la de inicio.'); return; }
     if (!espacio?.precio_dia && !espacio?.precio_mes) { setStep1Error('Este espacio no tiene precio configurado.'); return; }
     setStep1Error('');
     setStep(2);
@@ -434,25 +498,44 @@ export default function ReservarPage() {
                       fechaDesde={fechaDesde}
                       fechaHasta={fechaHasta}
                       onSelect={(d, h) => { setFechaDesde(d); setFechaHasta(h); setStep1Error(''); }}
+                      modo={modoCalendario}
                     />
 
-                    {/* Date inputs */}
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.75rem', marginTop: '1rem' }}>
-                      <label className="form-label">
-                        Desde
-                        <input type="date" value={fechaDesde}
-                          onChange={e => { setFechaDesde(e.target.value); setStep1Error(''); }}
-                          min={new Date().toISOString().split('T')[0]}
-                          style={{ marginTop: '.3rem' }} />
-                      </label>
-                      <label className="form-label">
-                        Hasta
-                        <input type="date" value={fechaHasta}
-                          onChange={e => { setFechaHasta(e.target.value); setStep1Error(''); }}
-                          min={fechaDesde || new Date().toISOString().split('T')[0]}
-                          style={{ marginTop: '.3rem' }} />
-                      </label>
-                    </div>
+                    {/* Date inputs — según modo */}
+                    {modoCalendario === 'dia' && (
+                      <div style={{ marginTop: '1rem' }}>
+                        <label className="form-label">
+                          Fecha seleccionada
+                          <input type="date" value={fechaDesde}
+                            onChange={e => { setFechaDesde(e.target.value); setFechaHasta(e.target.value); setStep1Error(''); }}
+                            min={new Date().toISOString().split('T')[0]}
+                            style={{ marginTop: '.3rem' }} />
+                        </label>
+                      </div>
+                    )}
+                    {modoCalendario === 'mes' && fechaDesde && (
+                      <div style={{ marginTop: '1rem', padding: '.65rem 1rem', background: 'rgba(59,130,246,.07)', border: '1px solid rgba(59,130,246,.2)', borderRadius: 8, fontSize: '.82rem', color: '#3b82f6', fontWeight: 600 }}>
+                        🗓 Mes seleccionado: {fechaDesde} → {fechaHasta}
+                      </div>
+                    )}
+                    {modoCalendario === 'ambos' && (
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.75rem', marginTop: '1rem' }}>
+                        <label className="form-label">
+                          Desde
+                          <input type="date" value={fechaDesde}
+                            onChange={e => { setFechaDesde(e.target.value); setStep1Error(''); }}
+                            min={new Date().toISOString().split('T')[0]}
+                            style={{ marginTop: '.3rem' }} />
+                        </label>
+                        <label className="form-label">
+                          Hasta
+                          <input type="date" value={fechaHasta}
+                            onChange={e => { setFechaHasta(e.target.value); setStep1Error(''); }}
+                            min={fechaDesde || new Date().toISOString().split('T')[0]}
+                            style={{ marginTop: '.3rem' }} />
+                        </label>
+                      </div>
+                    )}
 
                     {/* Price preview */}
                     {fechaDesde && fechaHasta && precioEstimado > 0 && (
