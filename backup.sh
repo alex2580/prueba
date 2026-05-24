@@ -40,17 +40,48 @@ DB_USER_VAL="${DB_USER:-root}"
 DB_PASS_VAL="${DB_PASS:-}"
 DB_NAME_VAL="${DB_NAME:-todasmiscosas_db}"
 
-mysqldump \
-  -h "$DB_HOST_VAL" \
-  -P "$DB_PORT_VAL" \
-  -u "$DB_USER_VAL" \
-  -p"$DB_PASS_VAL" \
-  --single-transaction \
-  --routines \
-  --triggers \
-  --add-drop-table \
-  "$DB_NAME_VAL" \
-  > "$BACKUP_DIR/$BACKUP_NAME/database.sql"
+# Buscar mysqldump en ubicaciones comunes
+MYSQLDUMP_BIN=""
+for candidate in \
+  "$(which mysqldump 2>/dev/null)" \
+  /usr/bin/mysqldump \
+  /usr/local/bin/mysqldump \
+  /usr/mysql/bin/mysqldump \
+  /usr/local/mysql/bin/mysqldump \
+  /opt/mysql/bin/mysqldump \
+  /usr/lib/mysql/bin/mysqldump
+do
+  if [ -x "$candidate" ]; then
+    MYSQLDUMP_BIN="$candidate"
+    break
+  fi
+done
+
+if [ -z "$MYSQLDUMP_BIN" ]; then
+  echo "   ⚠️  mysqldump no encontrado. Intentando con mysql client directo..."
+  # Fallback: exportar via SELECT INTO OUTFILE o node
+  node -e "
+    require('dotenv').config({ path: '$BACKEND_ENV' });
+    const { execSync } = require('child_process');
+    console.log('DB_NAME:', process.env.DB_NAME);
+  " 2>/dev/null || true
+  echo "   ❌ No se pudo hacer dump de MySQL. Instalá mysql-client:"
+  echo "      apt-get install -y mysql-client"
+  echo "   Continuando con el resto del backup..."
+else
+  echo "   Usando: $MYSQLDUMP_BIN"
+  "$MYSQLDUMP_BIN" \
+    -h "$DB_HOST_VAL" \
+    -P "$DB_PORT_VAL" \
+    -u "$DB_USER_VAL" \
+    -p"$DB_PASS_VAL" \
+    --single-transaction \
+    --routines \
+    --triggers \
+    --add-drop-table \
+    "$DB_NAME_VAL" \
+    > "$BACKUP_DIR/$BACKUP_NAME/database.sql"
+fi
 
 ROWS=$(grep -c "INSERT INTO" "$BACKUP_DIR/$BACKUP_NAME/database.sql" 2>/dev/null || echo "0")
 echo "   ✅ Base de datos guardada ($ROWS inserts)"
