@@ -25,12 +25,16 @@ function MiniCalendar({
   fechaHasta,
   onSelect,
   modo = 'ambos',
+  diasMulti = [],
+  onSelectMulti,
 }: {
   diasDisponibles?: string[];
   fechaDesde: string;
   fechaHasta: string;
   onSelect: (desde: string, hasta: string) => void;
   modo?: ModoCalendario;
+  diasMulti?: string[];
+  onSelectMulti?: (dias: string[]) => void;
 }) {
   const [month, setMonth] = useState(() => new Date());
   const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -60,7 +64,6 @@ function MiniCalendar({
     return iso === fechaDesde || iso === fechaHasta;
   }
 
-  // Cuántos días hay entre desde y hasta (inclusive)
   const diasSelec = fechaDesde && fechaHasta
     ? Math.round((new Date(fechaHasta).getTime() - new Date(fechaDesde).getTime()) / 86400000) + 1
     : 0;
@@ -71,15 +74,16 @@ function MiniCalendar({
     const iso = toISO(d);
 
     if (modo === 'dia') {
-      // Selección de día único
-      onSelect(iso, iso);
+      // Toggle: agregar o quitar el día del array
+      const nuevo = diasMulti.includes(iso)
+        ? diasMulti.filter(x => x !== iso)
+        : [...diasMulti, iso].sort();
+      onSelectMulti?.(nuevo);
     } else if (modo === 'mes') {
-      // Selección de mes completo
       const primerDia = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-01`;
       const ultimoDia = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate())}`;
       onSelect(primerDia, ultimoDia);
     } else {
-      // Rango libre
       if (!fechaDesde || (fechaDesde && fechaHasta)) {
         onSelect(iso, '');
       } else if (iso < fechaDesde) {
@@ -92,7 +96,6 @@ function MiniCalendar({
 
   const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
-  // Colores según modo
   const colorEdge  = esMensual ? '#3b82f6' : 'var(--orange)';
   const colorRange = esMensual ? 'rgba(59,130,246,.12)' : 'rgba(232,98,42,.12)';
   const borderRange = esMensual ? '1px solid rgba(59,130,246,.2)' : '1px solid rgba(232,98,42,.18)';
@@ -100,35 +103,34 @@ function MiniCalendar({
   return (
     <div>
       {/* Indicador de modo */}
-      {modo !== 'dia' && (
-        <div style={{ display: 'flex', gap: '.5rem', marginBottom: '.75rem' }}>
-          {modo === 'mes' && (
-            <div style={{ fontSize: '.72rem', color: '#3b82f6', background: 'rgba(59,130,246,.1)', border: '1px solid rgba(59,130,246,.25)', borderRadius: 6, padding: '.25rem .65rem', fontWeight: 600 }}>
-              🗓 Seleccioná un mes completo
-            </div>
-          )}
-          {modo === 'ambos' && fechaDesde && fechaHasta && (
-            <div style={{
-              fontSize: '.72rem', fontWeight: 600, borderRadius: 6, padding: '.25rem .65rem',
-              color: esMensual ? '#3b82f6' : 'var(--orange)',
-              background: esMensual ? 'rgba(59,130,246,.1)' : 'rgba(232,98,42,.08)',
-              border: `1px solid ${esMensual ? 'rgba(59,130,246,.25)' : 'rgba(232,98,42,.25)'}`,
-            }}>
-              {esMensual ? `🗓 Tarifa mensual (${diasSelec} días)` : `📅 Tarifa diaria (${diasSelec} día${diasSelec !== 1 ? 's' : ''})`}
-            </div>
-          )}
-          {modo === 'ambos' && fechaDesde && !fechaHasta && (
-            <div style={{ fontSize: '.72rem', color: 'var(--text3)', fontStyle: 'italic' }}>
-              Seleccioná la fecha de fin
-            </div>
-          )}
-          {modo === 'ambos' && !fechaDesde && (
-            <div style={{ fontSize: '.72rem', color: 'var(--text3)', fontStyle: 'italic' }}>
-              Seleccioná la fecha de inicio
-            </div>
-          )}
-        </div>
-      )}
+      <div style={{ display: 'flex', gap: '.5rem', marginBottom: '.75rem', flexWrap: 'wrap' }}>
+        {modo === 'dia' && (
+          <div style={{ fontSize: '.72rem', color: 'var(--orange)', background: 'rgba(232,98,42,.08)', border: '1px solid rgba(232,98,42,.25)', borderRadius: 6, padding: '.25rem .65rem', fontWeight: 600 }}>
+            📅 Tocá los días que querés reservar — podés elegir varios salteados
+          </div>
+        )}
+        {modo === 'mes' && (
+          <div style={{ fontSize: '.72rem', color: '#3b82f6', background: 'rgba(59,130,246,.1)', border: '1px solid rgba(59,130,246,.25)', borderRadius: 6, padding: '.25rem .65rem', fontWeight: 600 }}>
+            🗓 Seleccioná un mes completo
+          </div>
+        )}
+        {modo === 'ambos' && fechaDesde && fechaHasta && (
+          <div style={{
+            fontSize: '.72rem', fontWeight: 600, borderRadius: 6, padding: '.25rem .65rem',
+            color: esMensual ? '#3b82f6' : 'var(--orange)',
+            background: esMensual ? 'rgba(59,130,246,.1)' : 'rgba(232,98,42,.08)',
+            border: `1px solid ${esMensual ? 'rgba(59,130,246,.25)' : 'rgba(232,98,42,.25)'}`,
+          }}>
+            {esMensual ? `🗓 Tarifa mensual (${diasSelec} días)` : `📅 Tarifa diaria (${diasSelec} día${diasSelec !== 1 ? 's' : ''})`}
+          </div>
+        )}
+        {modo === 'ambos' && fechaDesde && !fechaHasta && (
+          <div style={{ fontSize: '.72rem', color: 'var(--text3)', fontStyle: 'italic' }}>Seleccioná la fecha de fin</div>
+        )}
+        {modo === 'ambos' && !fechaDesde && (
+          <div style={{ fontSize: '.72rem', color: 'var(--text3)', fontStyle: 'italic' }}>Seleccioná la fecha de inicio</div>
+        )}
+      </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.75rem' }}>
         <button
@@ -151,6 +153,29 @@ function MiniCalendar({
           if (!d) return <div key={i} />;
           const avail = isAvail(d);
           const past = d < today;
+          const iso = toISO(d);
+
+          if (modo === 'dia') {
+            const selected = diasMulti.includes(iso);
+            return (
+              <div
+                key={i}
+                onClick={() => handleClick(d)}
+                style={{
+                  textAlign: 'center', fontSize: '.78rem', padding: '.32rem .1rem',
+                  borderRadius: 6, cursor: (!past && avail) ? 'pointer' : 'default',
+                  background: selected ? 'var(--orange)' : avail && !past ? 'rgba(16,185,129,.07)' : 'transparent',
+                  color: selected ? '#fff' : past ? '#ccc' : avail ? 'var(--text)' : '#ccc',
+                  border: selected ? '1.5px solid var(--orange)' : avail && !past ? '1px solid rgba(16,185,129,.2)' : '1px solid transparent',
+                  fontWeight: selected ? 700 : 400,
+                  opacity: past ? 0.4 : 1,
+                }}
+              >
+                {d.getDate()}
+              </div>
+            );
+          }
+
           const edge = isEdge(d);
           const range = inRange(d);
           return (
@@ -266,6 +291,7 @@ export default function ReservarPage() {
   // Step 1 state
   const [fechaDesde, setFechaDesde] = useState('');
   const [fechaHasta, setFechaHasta] = useState('');
+  const [diasMulti, setDiasMulti] = useState<string[]>([]); // para modo 'dia' — días salteados
   const [step1Error, setStep1Error] = useState('');
 
   // Step 2 state
@@ -303,12 +329,18 @@ export default function ReservarPage() {
   const tieneMes = Number(espacio?.precio_mes) > 0;
   const modoCalendario: ModoCalendario = tieneDia && tieneMes ? 'ambos' : tieneMes ? 'mes' : 'dia';
 
-  const precioEstimado = fechaDesde && fechaHasta && espacio
-    ? calcularPrecio(fechaDesde, fechaHasta, Number(espacio.precio_dia), Number(espacio.precio_mes))
+  const precioEstimado = espacio
+    ? modoCalendario === 'dia'
+      ? diasMulti.length * Number(espacio.precio_dia)
+      : fechaDesde && fechaHasta
+        ? calcularPrecio(fechaDesde, fechaHasta, Number(espacio.precio_dia), Number(espacio.precio_mes))
+        : 0
     : 0;
 
-  const diasSeleccionados = fechaDesde && fechaHasta ? diasEntre(fechaDesde, fechaHasta) : 0;
-  const esMensual = diasSeleccionados >= 28;
+  const diasSeleccionados = modoCalendario === 'dia'
+    ? diasMulti.length
+    : fechaDesde && fechaHasta ? diasEntre(fechaDesde, fechaHasta) : 0;
+  const esMensual = modoCalendario !== 'dia' && diasSeleccionados >= 28;
 
   const serviciosTotal = servicios.reduce((acc, s) => acc + SERVICIOS_ADICIONALES[s].precio, 0);
   const totalFinal = precioEstimado + serviciosTotal;
@@ -318,8 +350,12 @@ export default function ReservarPage() {
   }
 
   function goToStep2() {
-    if (!fechaDesde || !fechaHasta) { setStep1Error('Seleccioná las fechas de inicio y fin.'); return; }
-    if (modoCalendario !== 'dia' && fechaHasta < fechaDesde) { setStep1Error('La fecha de fin debe ser posterior a la de inicio.'); return; }
+    if (modoCalendario === 'dia') {
+      if (diasMulti.length === 0) { setStep1Error('Seleccioná al menos un día en el calendario.'); return; }
+    } else {
+      if (!fechaDesde || !fechaHasta) { setStep1Error('Seleccioná las fechas de inicio y fin.'); return; }
+      if (fechaHasta < fechaDesde) { setStep1Error('La fecha de fin debe ser posterior a la de inicio.'); return; }
+    }
     if (!espacio?.precio_dia && !espacio?.precio_mes) { setStep1Error('Este espacio no tiene precio configurado.'); return; }
     setStep1Error('');
     setStep(2);
@@ -329,8 +365,10 @@ export default function ReservarPage() {
     if (!user || !token || !espacio) return;
     setPayLoading(true);
     setPayError('');
+    const fdDesde = modoCalendario === 'dia' ? diasMulti[0] : fechaDesde;
+    const fdHasta = modoCalendario === 'dia' ? diasMulti[diasMulti.length - 1] : fechaHasta;
     try {
-      const reserva = await reservasAPI.crear({ espacio_id: espacioId, fecha_desde: fechaDesde, fecha_hasta: fechaHasta }, token);
+      const reserva = await reservasAPI.crear({ espacio_id: espacioId, fecha_desde: fdDesde, fecha_hasta: fdHasta }, token);
 
       if (servicios.length) {
         await adminAPI.notificarServicios({
@@ -339,8 +377,8 @@ export default function ReservarPage() {
           telDemandante: user.tel,
           espacioNombre: espacio.nombre,
           servicios,
-          fechaDesde,
-          fechaHasta,
+          fechaDesde: fdDesde,
+          fechaHasta: fdHasta,
         }).catch(() => {}); // fire-and-forget, don't block payment
       }
 
@@ -356,8 +394,10 @@ export default function ReservarPage() {
     if (!user || !token || !espacio) return;
     setQrLoading(true);
     setPayError('');
+    const fdDesde = modoCalendario === 'dia' ? diasMulti[0] : fechaDesde;
+    const fdHasta = modoCalendario === 'dia' ? diasMulti[diasMulti.length - 1] : fechaHasta;
     try {
-      const reserva = await reservasAPI.crear({ espacio_id: espacioId, fecha_desde: fechaDesde, fecha_hasta: fechaHasta }, token);
+      const reserva = await reservasAPI.crear({ espacio_id: espacioId, fecha_desde: fdDesde, fecha_hasta: fdHasta }, token);
 
       if (servicios.length) {
         await adminAPI.notificarServicios({
@@ -366,8 +406,8 @@ export default function ReservarPage() {
           telDemandante: user.tel,
           espacioNombre: espacio.nombre,
           servicios,
-          fechaDesde,
-          fechaHasta,
+          fechaDesde: fdDesde,
+          fechaHasta: fdHasta,
         }).catch(() => {});
       }
 
@@ -499,18 +539,32 @@ export default function ReservarPage() {
                       fechaHasta={fechaHasta}
                       onSelect={(d, h) => { setFechaDesde(d); setFechaHasta(h); setStep1Error(''); }}
                       modo={modoCalendario}
+                      diasMulti={diasMulti}
+                      onSelectMulti={dias => { setDiasMulti(dias); setStep1Error(''); }}
                     />
 
-                    {/* Date inputs — según modo */}
-                    {modoCalendario === 'dia' && (
+                    {/* Días seleccionados — modo 'dia' */}
+                    {modoCalendario === 'dia' && diasMulti.length > 0 && (
                       <div style={{ marginTop: '1rem' }}>
-                        <label className="form-label">
-                          Fecha seleccionada
-                          <input type="date" value={fechaDesde}
-                            onChange={e => { setFechaDesde(e.target.value); setFechaHasta(e.target.value); setStep1Error(''); }}
-                            min={new Date().toISOString().split('T')[0]}
-                            style={{ marginTop: '.3rem' }} />
-                        </label>
+                        <div style={{ fontSize: '.75rem', color: 'var(--text3)', fontWeight: 600, marginBottom: '.4rem' }}>
+                          Días seleccionados ({diasMulti.length}):
+                        </div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.35rem' }}>
+                          {diasMulti.map(d => (
+                            <span
+                              key={d}
+                              onClick={() => setDiasMulti(prev => prev.filter(x => x !== d))}
+                              style={{
+                                fontSize: '.72rem', fontWeight: 600, cursor: 'pointer',
+                                background: 'rgba(232,98,42,.12)', border: '1px solid rgba(232,98,42,.3)',
+                                borderRadius: 6, padding: '.2rem .55rem', color: 'var(--orange)',
+                              }}
+                              title="Click para quitar"
+                            >
+                              {d} ✕
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     )}
                     {modoCalendario === 'mes' && fechaDesde && (
