@@ -1,25 +1,28 @@
 'use client';
 
 import { useState } from 'react';
+import { getFotosFallback } from '@/lib/fotosFallback';
 
 interface GaleriaFotosProps {
   imgs: string[];
   nombre: string;
+  espacioId?: string;
 }
 
-export function GaleriaFotos({ imgs, nombre }: GaleriaFotosProps) {
+export function GaleriaFotos({ imgs, nombre, espacioId }: GaleriaFotosProps) {
+  const displayImgs = imgs.length > 0 ? imgs : (espacioId ? getFotosFallback(espacioId, 4) : []);
   const [current, setCurrent] = useState(0);
   const [lightbox, setLightbox] = useState(false);
 
-  if (!imgs.length) return (
+  if (!displayImgs.length) return (
     <div style={{ height: 360, background: 'var(--surface2)', display: 'flex', alignItems: 'center',
       justifyContent: 'center', fontSize: '4rem', borderRadius: 'var(--r3)' }}>
       📦
     </div>
   );
 
-  function prev() { setCurrent(i => (i - 1 + imgs.length) % imgs.length); }
-  function next() { setCurrent(i => (i + 1) % imgs.length); }
+  function prev() { setCurrent(i => (i - 1 + displayImgs.length) % displayImgs.length); }
+  function next() { setCurrent(i => (i + 1) % displayImgs.length); }
 
   return (
     <>
@@ -28,7 +31,7 @@ export function GaleriaFotos({ imgs, nombre }: GaleriaFotosProps) {
         <div style={{ position: 'relative', height: 360, cursor: 'zoom-in' }}
           onClick={() => setLightbox(true)}>
           <img
-            src={imgs[current]}
+            src={displayImgs[current]}
             alt={`${nombre} — foto ${current + 1}`}
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
           />
@@ -46,12 +49,12 @@ export function GaleriaFotos({ imgs, nombre }: GaleriaFotosProps) {
             padding: '4px 12px',
             fontSize: '12px', fontWeight: 600, color: 'var(--text)',
           }}>
-            {current + 1} / {imgs.length}
+            {current + 1} / {displayImgs.length}
           </div>
         </div>
 
         {/* Arrows */}
-        {imgs.length > 1 && (
+        {displayImgs.length > 1 && (
           <>
             <button onClick={prev} style={arrowStyle('left')}>‹</button>
             <button onClick={next} style={arrowStyle('right')}>›</button>
@@ -59,13 +62,13 @@ export function GaleriaFotos({ imgs, nombre }: GaleriaFotosProps) {
         )}
 
         {/* Thumbnails */}
-        {imgs.length > 1 && (
+        {displayImgs.length > 1 && (
           <div style={{
             display: 'flex', gap: '.4rem', padding: '.6rem .8rem',
             background: 'var(--surface2)',
             overflowX: 'auto',
           }}>
-            {imgs.map((img, i) => (
+            {displayImgs.map((img, i) => (
               <div
                 key={i}
                 onClick={() => setCurrent(i)}
@@ -94,7 +97,7 @@ export function GaleriaFotos({ imgs, nombre }: GaleriaFotosProps) {
           onClick={() => setLightbox(false)}
         >
           <img
-            src={imgs[current]}
+            src={displayImgs[current]}
             alt={nombre}
             style={{ maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain', borderRadius: 'var(--r2)' }}
             onClick={e => e.stopPropagation()}
@@ -104,7 +107,7 @@ export function GaleriaFotos({ imgs, nombre }: GaleriaFotosProps) {
             style={{ position: 'absolute', top: 16, right: 16, background: 'rgba(255,255,255,.15)',
               border: 'none', color: '#fff', width: 36, height: 36, borderRadius: '99px', fontSize: 18 }}
           >✕</button>
-          {imgs.length > 1 && (
+          {displayImgs.length > 1 && (
             <>
               <button onClick={e => { e.stopPropagation(); prev(); }} style={{ ...arrowStyle('left'), position: 'fixed', left: 16 }}>‹</button>
               <button onClick={e => { e.stopPropagation(); next(); }} style={{ ...arrowStyle('right'), position: 'fixed', right: 16 }}>›</button>

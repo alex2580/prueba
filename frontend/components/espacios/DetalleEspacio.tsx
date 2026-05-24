@@ -32,7 +32,7 @@ export function DetalleEspacio({ espacio, onReservar, onChat }: DetalleEspacioPr
       </button>
 
       {/* Gallery */}
-      <GaleriaFotos imgs={espacio.imgs} nombre={espacio.nombre} />
+      <GaleriaFotos imgs={espacio.imgs} nombre={espacio.nombre} espacioId={espacio.id} />
 
       <div style={{ marginTop: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 320px', gap: '1.5rem' }}>
         {/* Left: info */}

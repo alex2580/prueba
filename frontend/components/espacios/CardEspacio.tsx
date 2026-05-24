@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import type { Espacio } from '@/types';
 import { RatingDisplay } from '@/components/ui/Rating';
 import { formatARS } from '@/lib/utils';
+import { getFotoFallback } from '@/lib/fotosFallback';
 
 interface CardEspacioProps {
   espacio: Espacio;
@@ -22,21 +23,14 @@ export function CardEspacio({ espacio, onClick }: CardEspacioProps) {
     }
   }
 
-  const imgSrc = espacio.imgs?.[0] || espacio.img_principal || '';
+  const imgSrc = espacio.imgs?.[0] || espacio.img_principal || getFotoFallback(espacio.id);
 
   return (
     <article className="espacio-card" onClick={handleClick} role="button" tabIndex={0}
       onKeyDown={e => e.key === 'Enter' && handleClick()}>
 
       <div className="espacio-card__img">
-        {imgSrc ? (
-          <img src={imgSrc} alt={espacio.nombre} loading="lazy" />
-        ) : (
-          <div style={{ width: '100%', height: '100%', background: 'var(--surface2)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem' }}>
-            📦
-          </div>
-        )}
+        <img src={imgSrc} alt={espacio.nombre} loading="lazy" />
         <div className="espacio-card__overlay" />
 
         {/* Badge */}
