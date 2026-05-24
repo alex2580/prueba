@@ -771,3 +771,129 @@ Solo funciona si `inactiva_auto = 1`. Si alguien intenta reactivar un espacio qu
 ---
 
 *Para agregar nuevas novedades: editar este archivo y agregar una sección con la fecha correspondiente.*
+
+---
+
+## 24 de Mayo 2026 — Sesión madrugada
+
+### Fotos de depósito como fallback en todas las vistas
+
+Todos los espacios que no tienen fotos propias (o tienen URLs rotas de `localhost:4000`) ahora muestran automáticamente imágenes reales de depósitos y almacenes. La selección es **determinística por ID**: cada espacio siempre muestra las mismas fotos, no cambian al recargar.
+
+**Archivo nuevo:** `frontend/lib/fotosFallback.ts`
+
+```ts
+getFotoFallback(espacioId)    // una foto para cards y popup del mapa
+getFotosFallback(espacioId, 4) // 4 fotos para galerías y carousel
+```
+
+Usa `picsum.photos` con seeds fijos (`deposito1`…`almacen5`) para garantizar disponibilidad.
+
+**Mecanismo adicional — `onError`:** cuando una imagen sí tiene URL guardada en la DB pero está rota (típico de las que se subieron con `localhost:4000`), el atributo `onError` del `<img>` activa el fallback automáticamente sin romper la UI.
+
+**Componentes actualizados:**
+
+| Componente | Dónde se ve |
+|---|---|
+| `CardEspacio.tsx` | Grid de publicaciones en la pantalla principal |
+| `GaleriaFotos.tsx` | Galería completa en el detalle del espacio |
+| `DetalleEspacio.tsx` | Pasa `espacioId` a la galería |
+| `MarkerEspacio.tsx` | Card popup al hacer click en un pin del mapa |
+| `MapaEspacios.tsx` | Tooltip con foto al hacer hover sobre un pin |
+| `reservar/page.tsx` (FotoCarousel) | Carousel en el flujo de reserva (paso 1) |
+
+**Commits:** `7b94888`, `354a5ea`, `56b3694`, `8cb678d`, `8ea0242`, `fc794e4`
+
+---
+
+### Recuperación de contraseña — "¿Olvidaste tu contraseña?"
+
+Los usuarios pueden restablecer su contraseña sin intervención del equipo, directamente desde el login.
+
+#### Flujo
+
+```
+Login → click "¿Olvidaste tu contraseña?"
+      → ingresa su email
+      → recibe email con link seguro (enviado por Supabase)
+      → click en el link → llega a todasmiscosas.com/reset-password
+      → ingresa nueva contraseña + confirmar
+      → contraseña actualizada → redirige al inicio automáticamente
+```
+
+#### Cambios en `LoginForm.tsx`
+
+- Link "¿Olvidaste tu contraseña?" al lado del label del campo contraseña
+- Al hacer click cambia a un mini formulario inline (sin salir del modal) con solo el campo email
+- Muestra confirmación 📬 cuando el email fue enviado con éxito
+- Botón "← Volver al login" para cancelar
+
+#### Página nueva: `/reset-password`
+
+- Detecta automáticamente el token de recuperación del hash de la URL (evento `PASSWORD_RECOVERY` de Supabase)
+- Muestra spinner mientras verifica el link
+- Formulario: nueva contraseña + confirmar (con ojo para ver/ocultar)
+- Validaciones: mínimo 6 caracteres, contraseñas deben coincidir
+- Si el link expiró: muestra error claro
+- Si fue exitoso: muestra ✅ y redirige al inicio en 3 segundos
+
+#### Configuración necesaria en Supabase (ya hecho)
+
+En Authentication → URL Configuration → Redirect URLs se agregó:
+```
+https://todasmiscosas.com/reset-password
+```
+
+#### Archivos modificados
+
+- `frontend/components/auth/LoginForm.tsx` (link + mini formulario inline)
+- `frontend/lib/supabase.ts` (funciones: `resetPasswordForEmail`, `updatePassword`)
+- `frontend/app/reset-password/page.tsx` (nueva página)
+
+**Commit:** `ceb79fb`
+
+---
+
+### Perfil de usuario — Foto, DNI, email editable y mapa de dirección
+
+El modal de edición de perfil del panel fue expandido con nuevos campos y una visualización de ubicación en mapa.
+
+#### Nuevos campos
+
+| Campo | Detalle |
+|---|---|
+| Foto de perfil | Preview circular 72px + selector de archivo (JPG/PNG/WebP, máx 5MB) — se sube al backend en `/uploads/avatars/` y se guarda en `avatar_url` |
+| DNI | Campo de texto libre, máx 20 caracteres |
+| Email | Editable, actualiza la tabla `usuarios` en MySQL |
+| Dirección | Ya existía con autocomplete Google Maps |
+| Mini mapa | Aparece debajo de la dirección una vez que se selecciona una ubicación exacta del autocompletado — usa Google Maps Static API (imagen estática 460×140) |
+
+#### Endpoint nuevo en backend
+
+```
+POST /api/usuarios/me/avatar
+```
+- Recibe `multipart/form-data` con campo `avatar`
+- Guarda en `uploads/avatars/{uuid}.ext`
+- Actualiza `avatar_url` en MySQL
+- Devuelve `{ url: "https://todasmiscosas.com/uploads/avatars/..." }`
+
+#### Cambio en base de datos
+
+```sql
+ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS dni VARCHAR(20) DEFAULT NULL;
+```
+
+La migración corre automáticamente en cada deploy via `node src/db/add-dni.js`.
+
+#### Archivos modificados
+
+- `backend/src/db/add-dni.js` (nuevo — migración idempotente)
+- `backend/src/controllers/usuariosController.js` (función `subirAvatar`, GET/PUT incluyen `dni`)
+- `backend/src/routes/usuarios.js` (ruta `POST /me/avatar`, validaciones `dni` y `email`)
+- `frontend/types/index.ts` (campo `dni?: string` en interface `Usuario`)
+- `frontend/lib/api.ts` (método `subirAvatar`, actualizar firma de `actualizar`)
+- `frontend/app/panel/page.tsx` (estado `perfilAvatarFile/Preview`, formulario expandido con foto + DNI + email + mapa)
+- `.github/workflows/deploy.yml` (agrega `add-dni.js` al pipeline)
+
+**Commit:** `352a0fd`
