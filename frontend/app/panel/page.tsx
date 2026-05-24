@@ -68,6 +68,7 @@ export default function PanelPage() {
   const [editSeguridad, setEditSeguridad] = useState<Record<string, boolean>>({});
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
+  const [editTab, setEditTab] = useState<'datos' | 'calendario' | 'seguridad'>('datos');
 
   // Extension modal
   const [extModal, setExtModal] = useState(false);
@@ -144,6 +145,7 @@ export default function PanelPage() {
     setEditDisponibilidad((esp as any).disponibilidad || {});
     setEditSeguridad((esp as any).seguridad || {});
     setEditError(null);
+    setEditTab('datos');
   }
 
   function abrirPerfil() {
@@ -922,90 +924,129 @@ export default function PanelPage() {
         onClose={() => setEditando(null)}
         title="✏️ Editar espacio"
         subtitle={editando?.nombre}
-        maxWidth="560px"
+        maxWidth="580px"
       >
         <div style={{ display: 'grid', gap: '1rem' }}>
-          {/* Categoría */}
-          <div>
-            <label className="form-label">Tipo de espacio</label>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '.4rem', marginTop: '.4rem' }}>
-              {CATEGORIAS.map(c => (
-                <button key={c.value} type="button"
-                  onClick={() => setEditForm(f => ({ ...f, categoria: c.value }))}
-                  style={{
-                    padding: '.5rem', borderRadius: 'var(--r2)', cursor: 'pointer',
-                    border: `2px solid ${editForm.categoria === c.value ? 'var(--orange)' : 'var(--border)'}`,
-                    background: editForm.categoria === c.value ? 'rgba(232,98,42,.1)' : 'var(--surface2)',
-                    color: editForm.categoria === c.value ? 'var(--orange)' : 'var(--text2)',
-                    fontFamily: 'Sora, sans-serif', fontWeight: 600, fontSize: '.75rem', textAlign: 'center',
-                  }}>
-                  {c.label}
-                </button>
-              ))}
+
+          {/* Pestañas */}
+          <div style={{ display: 'flex', borderBottom: '2px solid var(--border)', gap: 0 }}>
+            {([
+              { key: 'datos',      label: '📋 Datos generales' },
+              { key: 'calendario', label: '📅 Calendario' },
+              { key: 'seguridad',  label: '🛡️ Seguridad' },
+            ] as const).map(t => (
+              <button
+                key={t.key}
+                type="button"
+                onClick={() => setEditTab(t.key)}
+                style={{
+                  flex: 1,
+                  padding: '.6rem .4rem',
+                  background: 'none',
+                  border: 'none',
+                  borderBottom: `2.5px solid ${editTab === t.key ? 'var(--orange)' : 'transparent'}`,
+                  marginBottom: -2,
+                  fontFamily: 'Sora, sans-serif',
+                  fontWeight: editTab === t.key ? 700 : 500,
+                  fontSize: '.78rem',
+                  color: editTab === t.key ? 'var(--orange)' : 'var(--text3)',
+                  cursor: 'pointer',
+                  transition: 'all .15s',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+
+          {/* ── Tab 1: Datos generales ── */}
+          {editTab === 'datos' && (
+            <div style={{ display: 'grid', gap: '1rem' }}>
+              {/* Categoría */}
+              <div>
+                <label className="form-label">Tipo de espacio</label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '.4rem', marginTop: '.4rem' }}>
+                  {CATEGORIAS.map(c => (
+                    <button key={c.value} type="button"
+                      onClick={() => setEditForm(f => ({ ...f, categoria: c.value }))}
+                      style={{
+                        padding: '.5rem', borderRadius: 'var(--r2)', cursor: 'pointer',
+                        border: `2px solid ${editForm.categoria === c.value ? 'var(--orange)' : 'var(--border)'}`,
+                        background: editForm.categoria === c.value ? 'rgba(232,98,42,.1)' : 'var(--surface2)',
+                        color: editForm.categoria === c.value ? 'var(--orange)' : 'var(--text2)',
+                        fontFamily: 'Sora, sans-serif', fontWeight: 600, fontSize: '.75rem', textAlign: 'center',
+                      }}>
+                      {c.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="form-label">Nombre *</label>
+                <input value={editForm.nombre} onChange={e => setEditForm(f => ({ ...f, nombre: e.target.value }))}
+                  placeholder="Nombre del espacio" />
+              </div>
+
+              <div>
+                <label className="form-label">Descripción</label>
+                <textarea rows={3} value={editForm.descripcion}
+                  onChange={e => setEditForm(f => ({ ...f, descripcion: e.target.value }))}
+                  placeholder="Describí tu espacio…" />
+              </div>
+
+              <div>
+                <label className="form-label">Dirección</label>
+                <input value={editForm.direccion} onChange={e => setEditForm(f => ({ ...f, direccion: e.target.value }))}
+                  placeholder="Calle y número" />
+              </div>
+
+              <div className="form-row">
+                <div>
+                  <label className="form-label">Moneda</label>
+                  <select value={editForm.moneda} onChange={e => setEditForm(f => ({ ...f, moneda: e.target.value }))}>
+                    {MONEDAS.map(m => (
+                      <option key={m.value} value={m.value}>{m.flag} {m.label} ({m.simbolo})</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div>
+                  <label className="form-label">Precio por día</label>
+                  <input type="number" value={editForm.precio_dia} min="0"
+                    onChange={e => setEditForm(f => ({ ...f, precio_dia: e.target.value }))}
+                    placeholder="850" />
+                </div>
+                <div>
+                  <label className="form-label">Precio por mes</label>
+                  <input type="number" value={editForm.precio_mes} min="0"
+                    onChange={e => setEditForm(f => ({ ...f, precio_mes: e.target.value }))}
+                    placeholder="18000" />
+                </div>
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Nombre */}
-          <div>
-            <label className="form-label">Nombre *</label>
-            <input value={editForm.nombre} onChange={e => setEditForm(f => ({ ...f, nombre: e.target.value }))}
-              placeholder="Nombre del espacio" />
-          </div>
+          {/* ── Tab 2: Calendario ── */}
+          {editTab === 'calendario' && (
+            <CalendarioDisponibilidad
+              precioDia={Number(editForm.precio_dia) || 0}
+              precioMes={Number(editForm.precio_mes) || 0}
+              value={editDisponibilidad}
+              onChange={setEditDisponibilidad}
+            />
+          )}
 
-          {/* Descripción */}
-          <div>
-            <label className="form-label">Descripción</label>
-            <textarea rows={3} value={editForm.descripcion}
-              onChange={e => setEditForm(f => ({ ...f, descripcion: e.target.value }))}
-              placeholder="Describí tu espacio…" />
-          </div>
-
-          {/* Dirección */}
-          <div>
-            <label className="form-label">Dirección</label>
-            <input value={editForm.direccion} onChange={e => setEditForm(f => ({ ...f, direccion: e.target.value }))}
-              placeholder="Calle y número" />
-          </div>
-
-          {/* Moneda */}
-          <div>
-            <label className="form-label">Moneda</label>
-            <select value={editForm.moneda} onChange={e => setEditForm(f => ({ ...f, moneda: e.target.value }))}>
-              {MONEDAS.map(m => (
-                <option key={m.value} value={m.value}>{m.flag} {m.label} ({m.simbolo})</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Precios */}
-          <div className="form-row">
-            <div>
-              <label className="form-label">Precio por día</label>
-              <input type="number" value={editForm.precio_dia} min="0"
-                onChange={e => setEditForm(f => ({ ...f, precio_dia: e.target.value }))}
-                placeholder="850" />
-            </div>
-            <div>
-              <label className="form-label">Precio por mes</label>
-              <input type="number" value={editForm.precio_mes} min="0"
-                onChange={e => setEditForm(f => ({ ...f, precio_mes: e.target.value }))}
-                placeholder="18000" />
-            </div>
-          </div>
-
-          {/* Calendario disponibilidad */}
-          <CalendarioDisponibilidad
-            precioDia={Number(editForm.precio_dia) || 0}
-            precioMes={Number(editForm.precio_mes) || 0}
-            value={editDisponibilidad}
-            onChange={setEditDisponibilidad}
-          />
-
-          {/* Seguridad */}
-          <SeguridadChecklist
-            seguridad={editSeguridad}
-            onChange={key => setEditSeguridad(s => ({ ...s, [key]: !s[key] }))}
-          />
+          {/* ── Tab 3: Seguridad ── */}
+          {editTab === 'seguridad' && (
+            <SeguridadChecklist
+              seguridad={editSeguridad}
+              onChange={key => setEditSeguridad(s => ({ ...s, [key]: !s[key] }))}
+            />
+          )}
 
           {editError && <div className="alert alert--error">{editError}</div>}
 
