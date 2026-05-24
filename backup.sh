@@ -79,6 +79,7 @@ else
     --routines \
     --triggers \
     --add-drop-table \
+    --column-statistics=0 \
     "$DB_NAME_VAL" \
     > "$BACKUP_DIR/$BACKUP_NAME/database.sql"
 fi
