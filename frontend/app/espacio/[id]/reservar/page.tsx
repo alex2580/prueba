@@ -13,6 +13,7 @@ import type { Espacio } from '@/types';
 import { SERVICIOS_ADICIONALES } from '@/types';
 import type { ServicioTipo } from '@/types';
 import { formatARS, calcularPrecio, diasEntre } from '@/lib/utils';
+import { getFotoFallback, getFotosFallback } from '@/lib/fotosFallback';
 import QRCode from 'qrcode';
 
 // ─── Mini Calendar ──────────────────────────────────────────────
@@ -209,27 +210,33 @@ function MiniCalendar({
 
 // ─── Photo Carousel ─────────────────────────────────────────────
 
-function FotoCarousel({ imgs, nombre }: { imgs: string[]; nombre: string }) {
+function FotoCarousel({ imgs, nombre, espacioId }: { imgs: string[]; nombre: string; espacioId?: string }) {
   const [idx, setIdx] = useState(0);
-  if (!imgs.length) return (
+  const displayImgs = imgs.length > 0 ? imgs : (espacioId ? getFotosFallback(espacioId, 4) : []);
+  if (!displayImgs.length) return (
     <div style={{ height: 240, background: 'var(--surface2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', borderRadius: 'var(--r3)' }}>📦</div>
   );
   return (
     <div style={{ position: 'relative', height: 240, borderRadius: 'var(--r3)', overflow: 'hidden' }}>
-      <img src={imgs[idx]} alt={nombre} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+      <img
+        src={displayImgs[idx]}
+        alt={nombre}
+        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        onError={(e) => { if (espacioId) e.currentTarget.src = getFotoFallback(espacioId); }}
+      />
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 50%, rgba(0,0,0,.4) 100%)' }} />
-      {imgs.length > 1 && (
+      {displayImgs.length > 1 && (
         <>
-          <button onClick={() => setIdx(i => (i - 1 + imgs.length) % imgs.length)} style={{
+          <button onClick={() => setIdx(i => (i - 1 + displayImgs.length) % displayImgs.length)} style={{
             position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)',
             background: 'rgba(0,0,0,.55)', border: 'none', color: '#fff', borderRadius: '50%', width: 32, height: 32, cursor: 'pointer', fontSize: '1rem',
           }}>‹</button>
-          <button onClick={() => setIdx(i => (i + 1) % imgs.length)} style={{
+          <button onClick={() => setIdx(i => (i + 1) % displayImgs.length)} style={{
             position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)',
             background: 'rgba(0,0,0,.55)', border: 'none', color: '#fff', borderRadius: '50%', width: 32, height: 32, cursor: 'pointer', fontSize: '1rem',
           }}>›</button>
           <div style={{ position: 'absolute', bottom: 8, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 4 }}>
-            {imgs.map((_, i) => (
+            {displayImgs.map((_, i) => (
               <div key={i} onClick={() => setIdx(i)} style={{ width: 6, height: 6, borderRadius: '50%', background: i === idx ? '#fff' : 'rgba(255,255,255,.5)', cursor: 'pointer' }} />
             ))}
           </div>
@@ -492,7 +499,7 @@ export default function ReservarPage() {
               {/* ──── STEP 1: Detalle + Calendario ──── */}
               {step === 1 && (
                 <div style={{ display: 'grid', gap: '1.4rem' }}>
-                  <FotoCarousel imgs={espacio.imgs || []} nombre={espacio.nombre} />
+                  <FotoCarousel imgs={espacio.imgs || []} nombre={espacio.nombre} espacioId={espacio.id} />
 
                   {/* Info del espacio */}
                   <div>
