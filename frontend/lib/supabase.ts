@@ -45,6 +45,20 @@ export async function signIn(email: string, password: string) {
 }
 
 /**
+ * Envía email de recuperación de contraseña.
+ */
+export async function resetPasswordForEmail(email: string, redirectTo: string) {
+  return supabase.auth.resetPasswordForEmail(email, { redirectTo });
+}
+
+/**
+ * Actualiza la contraseña del usuario autenticado (usado en la página de reset).
+ */
+export async function updatePassword(newPassword: string) {
+  return supabase.auth.updateUser({ password: newPassword });
+}
+
+/**
  * Observa cambios de sesión. Devuelve la función de unsubscribe.
  */
 export function onAuthStateChange(callback: (session: { access_token?: string; user?: { id: string; email?: string } } | null) => void) {

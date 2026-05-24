@@ -2,6 +2,9 @@
 
 import { useState, FormEvent } from 'react';
 import { Button } from '@/components/ui/Button';
+import { resetPasswordForEmail } from '@/lib/supabase';
+
+const REDIRECT_URL = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://todasmiscosas.com'}/reset-password`;
 
 function EyeIcon({ visible }: { visible: boolean }) {
   return visible ? (
@@ -26,11 +29,75 @@ export function LoginForm({ onLogin, onSwitch, loading, error }: LoginFormProps)
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
+  const [forgotMode, setForgotMode] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotDone, setForgotDone] = useState(false);
+  const [forgotError, setForgotError] = useState<string | null>(null);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (!email || !password) return;
     await onLogin(email, password);
+  }
+
+  async function handleForgot(e: FormEvent) {
+    e.preventDefault();
+    if (!forgotEmail) return;
+    setForgotLoading(true);
+    setForgotError(null);
+    const { error } = await resetPasswordForEmail(forgotEmail, REDIRECT_URL);
+    setForgotLoading(false);
+    if (error) {
+      setForgotError('No se pudo enviar el email. Verificá la dirección.');
+    } else {
+      setForgotDone(true);
+    }
+  }
+
+  if (forgotMode) {
+    return (
+      <div style={{ display: 'grid', gap: '.85rem' }}>
+        <div style={{ textAlign: 'center', fontSize: '.9rem', color: 'var(--text2)' }}>
+          Ingresá tu email y te mandamos un link para restablecer tu contraseña.
+        </div>
+
+        {forgotDone ? (
+          <div style={{ textAlign: 'center', padding: '1rem', background: 'rgba(16,185,129,.1)', borderRadius: 'var(--r2)', border: '1px solid rgba(16,185,129,.3)' }}>
+            <div style={{ fontSize: '1.5rem', marginBottom: '.4rem' }}>📬</div>
+            <div style={{ color: '#10b981', fontWeight: 600, marginBottom: '.3rem' }}>Email enviado</div>
+            <div style={{ fontSize: '.82rem', color: 'var(--text2)' }}>
+              Revisá tu bandeja de entrada en <strong>{forgotEmail}</strong> y seguí el link.
+            </div>
+          </div>
+        ) : (
+          <form onSubmit={handleForgot} style={{ display: 'grid', gap: '.85rem' }}>
+            <div>
+              <label className="form-label">Email</label>
+              <input
+                type="email"
+                value={forgotEmail}
+                onChange={e => setForgotEmail(e.target.value)}
+                placeholder="tu@email.com"
+                required
+                autoFocus
+              />
+            </div>
+            {forgotError && <div className="alert alert--error">{forgotError}</div>}
+            <Button type="submit" loading={forgotLoading} style={{ width: '100%' }}>
+              Enviar link de recuperación
+            </Button>
+          </form>
+        )}
+
+        <div style={{ textAlign: 'center', fontSize: '.82rem', marginTop: '.2rem' }}>
+          <button type="button" onClick={() => { setForgotMode(false); setForgotDone(false); setForgotError(null); }}
+            style={{ background: 'none', border: 'none', color: 'var(--orange)', fontWeight: 700, cursor: 'pointer', fontSize: '.82rem' }}>
+            ← Volver al login
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -48,7 +115,13 @@ export function LoginForm({ onLogin, onSwitch, loading, error }: LoginFormProps)
       </div>
 
       <div>
-        <label className="form-label">Contraseña</label>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.3rem' }}>
+          <label className="form-label" style={{ margin: 0 }}>Contraseña</label>
+          <button type="button" onClick={() => { setForgotEmail(email); setForgotMode(true); }}
+            style={{ background: 'none', border: 'none', color: 'var(--text3)', fontSize: '.75rem', cursor: 'pointer' }}>
+            ¿Olvidaste tu contraseña?
+          </button>
+        </div>
         <div style={{ position: 'relative' }}>
           <input
             type={showPass ? 'text' : 'password'}
