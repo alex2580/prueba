@@ -86,14 +86,25 @@ export interface EspacioFormData {
 }
 
 export const MONEDAS = [
-  { value: 'ARS', label: 'Pesos argentinos', simbolo: '$',    flag: '🇦🇷' },
-  { value: 'USD', label: 'Dólares (USD)',     simbolo: 'US$', flag: '🇺🇸' },
-  { value: 'EUR', label: 'Euros',             simbolo: '€',   flag: '🇪🇺' },
-  { value: 'BRL', label: 'Reales brasileños', simbolo: 'R$',  flag: '🇧🇷' },
-  { value: 'MXN', label: 'Pesos mexicanos',   simbolo: 'MX$', flag: '🇲🇽' },
-  { value: 'UYU', label: 'Pesos uruguayos',   simbolo: '$U',  flag: '🇺🇾' },
-  { value: 'CLP', label: 'Pesos chilenos',    simbolo: 'CL$', flag: '🇨🇱' },
-  { value: 'COP', label: 'Pesos colombianos', simbolo: 'COL$',flag: '🇨🇴' },
+  { value: 'ARS', label: 'Pesos argentinos',        simbolo: '$',    flag: '🇦🇷' },
+  { value: 'USD', label: 'Dólares (USD)',            simbolo: 'US$', flag: '🇺🇸' },
+  { value: 'EUR', label: 'Euros',                   simbolo: '€',   flag: '🇪🇺' },
+  { value: 'BRL', label: 'Reales brasileños',       simbolo: 'R$',  flag: '🇧🇷' },
+  { value: 'MXN', label: 'Pesos mexicanos',         simbolo: 'MX$', flag: '🇲🇽' },
+  { value: 'UYU', label: 'Pesos uruguayos',         simbolo: '$U',  flag: '🇺🇾' },
+  { value: 'CLP', label: 'Pesos chilenos',          simbolo: 'CL$', flag: '🇨🇱' },
+  { value: 'COP', label: 'Pesos colombianos',       simbolo: 'COL$',flag: '🇨🇴' },
+  { value: 'PEN', label: 'Soles peruanos',          simbolo: 'S/',  flag: '🇵🇪' },
+  { value: 'BOB', label: 'Bolivianos',              simbolo: 'Bs',  flag: '🇧🇴' },
+  { value: 'PYG', label: 'Guaraníes paraguayos',    simbolo: '₲',   flag: '🇵🇾' },
+  { value: 'VES', label: 'Bolívares venezolanos',   simbolo: 'Bs.S',flag: '🇻🇪' },
+  { value: 'DOP', label: 'Pesos dominicanos',       simbolo: 'RD$', flag: '🇩🇴' },
+  { value: 'CRC', label: 'Colones costarricenses',  simbolo: '₡',   flag: '🇨🇷' },
+  { value: 'GTQ', label: 'Quetzales guatemaltecos', simbolo: 'Q',   flag: '🇬🇹' },
+  { value: 'HNL', label: 'Lempiras hondureños',     simbolo: 'L',   flag: '🇭🇳' },
+  { value: 'NIO', label: 'Córdobas nicaragüenses',  simbolo: 'C$',  flag: '🇳🇮' },
+  { value: 'PAB', label: 'Balboas panameños',        simbolo: 'B/.',  flag: '🇵🇦' },
+  { value: 'CUP', label: 'Pesos cubanos',           simbolo: '$MN', flag: '🇨🇺' },
 ] as const;
 
 export function getMonedaSimbolo(moneda?: string): string {

@@ -486,6 +486,35 @@ export default function PublicarPage() {
           {/* ── PASO 1: DATOS ─────────────────────────────── */}
           {paso === 0 && (
             <div style={{ display: 'grid', gap: '1.2rem' }}>
+              {/* Tipo de alquiler */}
+              <div>
+                <label className="form-label">Tipo de alquiler *</label>
+                <div style={{ display: 'flex', gap: '.5rem', marginTop: '.4rem' }}>
+                  {[
+                    { value: 'exclusivo', label: '🔐 Exclusivo', desc: 'Uso exclusivo del espacio' },
+                    { value: 'compartido', label: '🤲 Compartido', desc: 'Espacio compartido con otros' },
+                  ].map(t => (
+                    <button
+                      key={t.value}
+                      type="button"
+                      onClick={() => set('tipo', t.value)}
+                      style={{
+                        flex: 1, padding: '.65rem .5rem',
+                        borderRadius: 'var(--r2)',
+                        border: `2px solid ${form.tipo === t.value ? (t.value === 'exclusivo' ? '#3b82f6' : 'var(--orange)') : 'var(--border)'}`,
+                        background: form.tipo === t.value ? (t.value === 'exclusivo' ? 'rgba(59,130,246,.1)' : 'rgba(232,98,42,.1)') : 'var(--surface2)',
+                        color: form.tipo === t.value ? (t.value === 'exclusivo' ? '#3b82f6' : 'var(--orange)') : 'var(--text2)',
+                        fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.78rem',
+                        cursor: 'pointer', transition: 'all .15s', textAlign: 'center',
+                      }}
+                    >
+                      <div>{t.label}</div>
+                      <div style={{ fontSize: '.65rem', fontWeight: 400, marginTop: '.15rem', opacity: .8 }}>{t.desc}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Categoría */}
               <div>
                 <label className="form-label">Tipo de espacio *</label>
@@ -547,55 +576,26 @@ export default function PublicarPage() {
               }} />
 
 
-              {/* Superficie */}
-              <div>
-                <label className="form-label">Superficie (m²) <span style={{ color: 'var(--text3)', fontWeight: 400 }}>— opcional</span></label>
-                <input
-                  type="number"
-                  value={form.m2}
-                  onChange={e => set('m2', e.target.value)}
-                  placeholder="Ej: 12"
-                  min="0"
-                />
-              </div>
-
-              {/* Tipo de alquiler */}
-              <div>
-                <label className="form-label">Tipo de alquiler *</label>
-                <div style={{ display: 'flex', gap: '.5rem', marginTop: '.4rem' }}>
-                  {[
-                    { value: 'exclusivo', label: '🔐 Exclusivo', desc: 'Uso exclusivo del espacio' },
-                    { value: 'compartido', label: '🤲 Compartido', desc: 'Espacio compartido con otros' },
-                  ].map(t => (
-                    <button
-                      key={t.value}
-                      type="button"
-                      onClick={() => set('tipo', t.value)}
-                      style={{
-                        flex: 1, padding: '.65rem .5rem',
-                        borderRadius: 'var(--r2)',
-                        border: `2px solid ${form.tipo === t.value ? (t.value === 'exclusivo' ? '#3b82f6' : 'var(--orange)') : 'var(--border)'}`,
-                        background: form.tipo === t.value ? (t.value === 'exclusivo' ? 'rgba(59,130,246,.1)' : 'rgba(232,98,42,.1)') : 'var(--surface2)',
-                        color: form.tipo === t.value ? (t.value === 'exclusivo' ? '#3b82f6' : 'var(--orange)') : 'var(--text2)',
-                        fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.78rem',
-                        cursor: 'pointer', transition: 'all .15s', textAlign: 'center',
-                      }}
-                    >
-                      <div>{t.label}</div>
-                      <div style={{ fontSize: '.65rem', fontWeight: 400, marginTop: '.15rem', opacity: .8 }}>{t.desc}</div>
-                    </button>
-                  ))}
+              {/* Superficie + Moneda */}
+              <div className="form-row">
+                <div>
+                  <label className="form-label">Superficie (m²) <span style={{ color: 'var(--text3)', fontWeight: 400 }}>— opcional</span></label>
+                  <input
+                    type="number"
+                    value={form.m2}
+                    onChange={e => set('m2', e.target.value)}
+                    placeholder="Ej: 12"
+                    min="0"
+                  />
                 </div>
-              </div>
-
-              {/* Moneda */}
-              <div>
-                <label className="form-label">Moneda de publicación</label>
-                <select value={form.moneda} onChange={e => set('moneda', e.target.value)} style={{ marginTop: '.4rem' }}>
-                  {MONEDAS.map(m => (
-                    <option key={m.value} value={m.value}>{m.flag} {m.label} ({m.simbolo})</option>
-                  ))}
-                </select>
+                <div>
+                  <label className="form-label">Moneda de publicación</label>
+                  <select value={form.moneda} onChange={e => set('moneda', e.target.value)} style={{ marginTop: '.4rem' }}>
+                    {MONEDAS.map(m => (
+                      <option key={m.value} value={m.value}>{m.flag} {m.label} ({m.simbolo})</option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               {/* Precios */}
