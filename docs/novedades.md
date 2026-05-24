@@ -79,6 +79,107 @@ Se actualiza con cada nueva mejora incorporada al producto.
 
 ---
 
+## 23 de Mayo 2026 — Sesión nocturna (22:00 hs aprox.)
+
+### Fixes de producción y mejoras de UX en formularios
+
+---
+
+#### Fix: Crash al ver espacios compartidos sin rating
+
+Los espacios compartidos nuevos (sin reseñas) crasheaban la app con un `RangeError` porque `rating` llega como `null` o `string` desde MySQL, y el componente hacía `'★'.repeat(NaN)`.
+
+- **`CardEspacio.tsx`:** usa `espacio.rating ?? 0` al pasar a `RatingDisplay`
+- **`RatingDisplay` (`Rating.tsx`):** clampea stars entre 0–5 con `Math.min(5, Math.max(0, Math.round(value || 0)))` y usa `Number(value || 0).toFixed(1)`
+- **`MarkerEspacio.tsx`:** guarda `Number(espacio.rating) > 0` como guard y usa `Number(espacio.rating).toFixed(1)` y `Math.round(Number(espacio.rating))`
+
+**Commits:** `d6bfd0c`, `03890d8`
+
+---
+
+#### Fix: Login "Error de conexión al solicitar código" en producción
+
+El frontend en producción llamaba a `localhost:4000` desde el browser del usuario (`ERR_CONNECTION_REFUSED`). Causa: `NEXT_PUBLIC_API_URL` en `.env` tenía `http://localhost:4000` y Next.js lo hornea en el bundle al momento de compilar.
+
+**Solución permanente:** Guille creó `/var/www/todasmiscosas/frontend/.env.local` con `NEXT_PUBLIC_API_URL=https://todasmiscosas.com` en el VPS y ejecutó `npm run build && pm2 restart all`.
+
+**Solución en código:** Se creó `frontend/.env.production` en el repositorio con los valores correctos de producción, para que futuros deploys no necesiten intervención manual.
+
+```
+NEXT_PUBLIC_API_URL=https://todasmiscosas.com
+NEXT_PUBLIC_WS_URL=https://todasmiscosas.com
+```
+
+Nginx ya rutea `/api` → `localhost:4000` y `/socket.io` → `localhost:4000` correctamente.
+
+**Commit:** `cd7b2ef`
+
+---
+
+#### Mejoras al formulario de Publicar Espacio (`/publicar`)
+
+1. **"Tipo de alquiler" sube a primera posición** — antes estaba debajo de Superficie. Ahora es el primer campo que ve el oferente al abrir el formulario.
+
+2. **"Moneda de publicación" comparte fila con "Superficie (m²)"** — usando `form-row`. Moneda aparece a la izquierda, Superficie a la derecha.
+
+3. **11 monedas latinoamericanas agregadas** a `MONEDAS` en `types/index.ts`:
+
+| Código | Moneda | País |
+|--------|--------|------|
+| PEN | Sol peruano | 🇵🇪 Perú |
+| BOB | Boliviano | 🇧🇴 Bolivia |
+| PYG | Guaraní paraguayo | 🇵🇾 Paraguay |
+| VES | Bolívar venezolano | 🇻🇪 Venezuela |
+| DOP | Peso dominicano | 🇩🇴 Rep. Dominicana |
+| CRC | Colón costarricense | 🇨🇷 Costa Rica |
+| GTQ | Quetzal guatemalteco | 🇬🇹 Guatemala |
+| HNL | Lempira hondureño | 🇭🇳 Honduras |
+| NIO | Córdoba nicaragüense | 🇳🇮 Nicaragua |
+| PAB | Balboa panameño | 🇵🇦 Panamá |
+| CUP | Peso cubano | 🇨🇺 Cuba |
+
+Total: 19 monedas disponibles (8 originales + 11 nuevas).
+
+**Archivos:** `frontend/app/publicar/page.tsx`, `frontend/types/index.ts`
+**Commit:** `53e38bd`
+
+---
+
+#### Calendario inteligente en Reservar Espacio (`/espacio/:id/reservar`)
+
+El calendario detecta automáticamente el modo según los precios configurados por el oferente:
+
+| Condición | Modo | Comportamiento |
+|-----------|------|----------------|
+| Solo `precio_dia > 0` | `dia` | Selección de días individuales, múltiples y salteados |
+| Solo `precio_mes > 0` | `mes` | Un click selecciona el mes completo (1° al último día) |
+| Ambos precios > 0 | `ambos` | Rango libre con indicador que muestra si aplica tarifa diaria o mensual |
+
+**Modo día (días salteados):**
+- Cada click en el calendario hace toggle del día (agrega o quita)
+- Se pueden seleccionar días no consecutivos (ej: lunes, miércoles, viernes)
+- Los días seleccionados se muestran como chips debajo del calendario con ✕ para quitarlos
+- Precio = `cantidad de días seleccionados × precio_dia`
+- La reserva se crea con `fecha_desde = primer día seleccionado`, `fecha_hasta = último día seleccionado`
+
+**Modo mes:**
+- Click en cualquier día de un mes → selecciona todo ese mes (del 1° al último día)
+- Indicador azul: "🗓 Seleccioná un mes completo"
+- Precio = `ceil(días / 30) × precio_mes`
+
+**Modo ambos:**
+- Rango libre como antes
+- Etiqueta dinámica: naranja para tarifa diaria (`< 28 días`), azul para tarifa mensual (`≥ 28 días`)
+
+**Colores diferenciados:**
+- Naranja (`var(--orange)`) → tarifa diaria
+- Azul (`#3b82f6`) → tarifa mensual
+
+**Archivos:** `frontend/app/espacio/[id]/reservar/page.tsx`
+**Commits:** `a018f91`, `e6a9b85`
+
+---
+
 ## 23 de Mayo 2026 — Revisión flujo de reserva
 
 ### Correcciones flujo de reserva (`/espacio/:id/reservar`)
