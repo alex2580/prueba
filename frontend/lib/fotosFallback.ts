@@ -1,21 +1,18 @@
 /**
- * Fotos de depósito/almacén de Unsplash para usar como fallback
+ * Fotos de depósito/almacén para usar como fallback
  * cuando un espacio no tiene fotos propias.
  * La selección es determinística según el ID del espacio.
+ * Usa picsum.photos con seeds fijos → siempre devuelve la misma imagen.
  */
 
-const FOTOS_DEPOSITO = [
-  'https://images.unsplash.com/photo-1586528922-1e05e0b5c13b?w=800&q=80&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1553413077-190dd305871c?w=800&q=80&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&q=80&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1530518975071-ccac21b5eff0?w=800&q=80&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&q=80&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=800&q=80&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1615672968435-0c7f87e85082?w=800&q=80&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1562699264-9c5e8b7c0b38?w=800&q=80&fit=crop&auto=format',
+const SEEDS = [
+  'deposito1', 'deposito2', 'deposito3', 'deposito4', 'deposito5',
+  'almacen1',  'almacen2',  'almacen3',  'almacen4',  'almacen5',
 ];
+
+const FOTOS_DEPOSITO = SEEDS.map(
+  seed => `https://picsum.photos/seed/${seed}/800/500`
+);
 
 function hashId(id: string): number {
   let h = 0;
