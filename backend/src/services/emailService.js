@@ -52,7 +52,7 @@ function baseTemplate(titulo, contenido) {
 </html>`;
 }
 
-async function sendReservaConfirmada(toEmail, nombre, { espacioNombre, fechaDesde, fechaHasta, precioTotal, reservaId }) {
+async function sendReservaConfirmada(toEmail, nombre, { espacioNombre, fechaDesde, fechaHasta, precioTotal, reservaId, pin }) {
   const html = baseTemplate('Reserva confirmada', `
     <h2>✅ Reserva confirmada</h2>
     <p>Hola <span class="highlight">${nombre}</span>, tu reserva fue registrada correctamente.</p>
@@ -65,6 +65,12 @@ async function sendReservaConfirmada(toEmail, nombre, { espacioNombre, fechaDesd
     <div class="info-row">
       <div><div class="info-label">Total</div><div class="info-val">$${Number(precioTotal).toLocaleString('es-AR')}</div></div>
     </div>
+    ${pin ? `
+    <div style="margin:24px 0;padding:20px;background:#0f172a;border-radius:12px;text-align:center;">
+      <p style="margin:0 0 8px;color:#94a3b8;font-size:13px;text-transform:uppercase;letter-spacing:.08em;">🔐 PIN de acceso al espacio</p>
+      <span style="font-family:monospace;font-size:2.6rem;font-weight:900;color:#e8622a;letter-spacing:.4em;">${pin}</span>
+      <p style="margin:10px 0 0;color:#64748b;font-size:12px;">Guardá este código — lo vas a necesitar al ingresar al espacio.</p>
+    </div>` : ''}
     <p>Ahora podés completar el pago desde la plataforma.</p>
     <a class="btn" href="${process.env.FRONTEND_URL}/reserva/${reservaId}/checkout">Ir al checkout →</a>
   `);
@@ -176,7 +182,7 @@ async function sendServiciosAdicionales(toEmail, { nombreDemandante, emailDemand
 }
 
 // ── Oferente: nueva solicitud de reserva recibida ───────────────
-async function sendNuevaReserva(toEmail, nombreOferente, { demandanteNombre, demandanteTel, espacioNombre, fechaDesde, fechaHasta, precioTotal, reservaId }) {
+async function sendNuevaReserva(toEmail, nombreOferente, { demandanteNombre, demandanteTel, espacioNombre, fechaDesde, fechaHasta, precioTotal, reservaId, pin }) {
   const html = baseTemplate('Nueva solicitud de reserva', `
     <h2>🔔 Nueva solicitud de reserva</h2>
     <p>Hola <span class="highlight">${nombreOferente}</span>, recibiste una solicitud para tu espacio.</p>
@@ -193,6 +199,12 @@ async function sendNuevaReserva(toEmail, nombreOferente, { demandanteNombre, dem
     <div class="info-row">
       <div><div class="info-label">Monto estimado</div><div class="info-val">$${Number(precioTotal).toLocaleString('es-AR')}</div></div>
     </div>
+    ${pin ? `
+    <div style="margin:24px 0;padding:20px;background:#0f172a;border-radius:12px;text-align:center;">
+      <p style="margin:0 0 8px;color:#94a3b8;font-size:13px;text-transform:uppercase;letter-spacing:.08em;">🔐 PIN de acceso al espacio</p>
+      <span style="font-family:monospace;font-size:2.6rem;font-weight:900;color:#e8622a;letter-spacing:.4em;">${pin}</span>
+      <p style="margin:10px 0 0;color:#64748b;font-size:12px;">El demandante tiene el mismo código — verificalo al momento de la entrega.</p>
+    </div>` : ''}
     <p>Ingresá a tu panel para confirmar o rechazar la solicitud.</p>
     <a class="btn" href="${process.env.FRONTEND_URL}/panel">Ver solicitud en mi panel →</a>
   `);

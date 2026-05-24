@@ -124,11 +124,13 @@ async function crear(req, res, next) {
       ? Math.ceil(dias / 30) * espacio.precio_mes
       : dias * espacio.precio_dia;
 
+    const pin = String(Math.floor(1000 + Math.random() * 9000));
+
     const reserva = await transaction(async (conn) => {
       await conn.execute(
-        `INSERT INTO reservas (espacio_id, usuario_id, fecha_desde, fecha_hasta, precio_total, notas)
-         VALUES (?, ?, ?, ?, ?, ?)`,
-        [espacio_id, req.user.id, fecha_desde, fecha_hasta, precio_total, notas || '']
+        `INSERT INTO reservas (espacio_id, usuario_id, fecha_desde, fecha_hasta, precio_total, notas, pin_acceso)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [espacio_id, req.user.id, fecha_desde, fecha_hasta, precio_total, notas || '', pin]
       );
       const [rows] = await conn.execute(
         'SELECT * FROM reservas WHERE usuario_id = ? ORDER BY created_at DESC LIMIT 1',
@@ -144,6 +146,7 @@ async function crear(req, res, next) {
       fechaHasta: fecha_hasta,
       precioTotal: precio_total,
       reservaId: reserva.id,
+      pin,
     }).catch(e => console.warn('Email demandante:', e.message));
 
     // Email al oferente: nueva solicitud recibida
@@ -157,6 +160,7 @@ async function crear(req, res, next) {
         fechaHasta: fecha_hasta,
         precioTotal: precio_total,
         reservaId: reserva.id,
+        pin,
       }).catch(e => console.warn('Email oferente:', e.message));
     }
 
