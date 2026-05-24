@@ -23,7 +23,7 @@ async function perfil(req, res, next) {
     let usuario;
     try {
       usuario = await queryOne(
-        'SELECT id, nombre, email, tel, dni, tipo, verificado, avatar_url, created_at, direccion, lat, lng FROM usuarios WHERE id = ?',
+        'SELECT id, nombre, email, tel, dni, pais, tipo, verificado, avatar_url, created_at, direccion, lat, lng FROM usuarios WHERE id = ?',
         [req.user.id]
       );
     } catch (_) {
@@ -48,7 +48,7 @@ async function actualizar(req, res, next) {
       return res.status(422).json({ error: 'Datos inválidos', details: errors.array() });
     }
 
-    const { nombre, tel, dni, email, direccion, lat, lng } = req.body;
+    const { nombre, tel, dni, pais, email, direccion, lat, lng } = req.body;
     await query(
       'UPDATE usuarios SET nombre = ?, tel = ? WHERE id = ?',
       [nombre, tel || '', req.user.id]
@@ -64,6 +64,9 @@ async function actualizar(req, res, next) {
       if (dni !== undefined) {
         await query('UPDATE usuarios SET dni = ? WHERE id = ?', [dni || null, req.user.id]);
       }
+      if (pais !== undefined) {
+        await query('UPDATE usuarios SET pais = ? WHERE id = ?', [pais || null, req.user.id]);
+      }
       if (email && email !== req.user.email) {
         await query('UPDATE usuarios SET email = ? WHERE id = ?', [email, req.user.id]);
       }
@@ -72,7 +75,7 @@ async function actualizar(req, res, next) {
     let updated;
     try {
       updated = await queryOne(
-        'SELECT id, nombre, email, tel, dni, tipo, verificado, avatar_url, direccion, lat, lng FROM usuarios WHERE id = ?',
+        'SELECT id, nombre, email, tel, dni, pais, tipo, verificado, avatar_url, direccion, lat, lng FROM usuarios WHERE id = ?',
         [req.user.id]
       );
     } catch (_) {

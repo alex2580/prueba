@@ -55,7 +55,7 @@ export default function PanelPage() {
 
   // Profile edit
   const [perfilOpen, setPerfilOpen] = useState(false);
-  const [perfilForm, setPerfilForm] = useState({ nombre: '', tel: '', dni: '', email: '', direccion: '', lat: '', lng: '' });
+  const [perfilForm, setPerfilForm] = useState({ nombre: '', tel: '', dni: '', email: '', direccion: '', lat: '', lng: '', pais: '' });
   const [perfilAvatarFile, setPerfilAvatarFile] = useState<File | null>(null);
   const [perfilAvatarPreview, setPerfilAvatarPreview] = useState<string>('');
   const [perfilLoading, setPerfilLoading] = useState(false);
@@ -161,6 +161,7 @@ export default function PanelPage() {
       direccion: user?.direccion || '',
       lat: user?.lat ? String(user.lat) : '',
       lng: user?.lng ? String(user.lng) : '',
+      pais: (user as any)?.pais || '',
     });
     setPerfilError('');
     setPerfilOk(false);
@@ -187,17 +188,21 @@ export default function PanelPage() {
         if (!perfilDireccionRef.current) return;
         const { Autocomplete } = await google.maps.importLibrary('places') as any;
         const ac = new Autocomplete(perfilDireccionRef.current, {
-          fields: ['formatted_address', 'geometry'],
-          componentRestrictions: { country: [] },
+          fields: ['formatted_address', 'geometry', 'address_components'],
         });
         ac.addListener('place_changed', () => {
           const place = ac.getPlace();
           if (!place.geometry?.location) return;
+          const countryComp = place.address_components?.find(
+            (c: any) => c.types.includes('country')
+          );
+          const pais = countryComp?.long_name || '';
           setPerfilForm(f => ({
             ...f,
             direccion: place.formatted_address || f.direccion,
             lat: String(place.geometry.location.lat()),
             lng: String(place.geometry.location.lng()),
+            pais,
           }));
         });
       });
@@ -238,6 +243,7 @@ export default function PanelPage() {
           dni: perfilForm.dni || undefined,
           email: perfilForm.email || undefined,
           direccion: perfilForm.direccion || undefined,
+          pais: perfilForm.pais || undefined,
           lat: perfilForm.lat ? Number(perfilForm.lat) : undefined,
           lng: perfilForm.lng ? Number(perfilForm.lng) : undefined,
         }, token);
@@ -251,6 +257,7 @@ export default function PanelPage() {
         dni: perfilForm.dni || undefined,
         email: perfilForm.email || undefined,
         direccion: perfilForm.direccion || undefined,
+        pais: perfilForm.pais || undefined,
         lat: perfilForm.lat ? Number(perfilForm.lat) : undefined,
         lng: perfilForm.lng ? Number(perfilForm.lng) : undefined,
       }, token);
@@ -823,13 +830,13 @@ export default function PanelPage() {
                 </div>
               </div>
 
-              {/* Dirección */}
+              {/* Dirección + País */}
               <div>
                 <label className="form-label">Dirección personal</label>
                 <input
                   ref={perfilDireccionRef}
                   value={perfilForm.direccion}
-                  onChange={e => setPerfilForm(f => ({ ...f, direccion: e.target.value, lat: '', lng: '' }))}
+                  onChange={e => setPerfilForm(f => ({ ...f, direccion: e.target.value, lat: '', lng: '', pais: '' }))}
                   placeholder="Escribí tu dirección para autocompletar…"
                 />
                 {perfilForm.lat && (
@@ -842,6 +849,16 @@ export default function PanelPage() {
                     💡 Seleccioná una opción del autocompletado para guardar la ubicación exacta
                   </div>
                 )}
+              </div>
+
+              {/* País — se completa automáticamente con la dirección */}
+              <div>
+                <label className="form-label">País</label>
+                <input
+                  value={perfilForm.pais}
+                  onChange={e => setPerfilForm(f => ({ ...f, pais: e.target.value }))}
+                  placeholder="Se completa al seleccionar dirección…"
+                />
               </div>
 
               {/* Mini mapa cuando hay ubicación */}

@@ -168,7 +168,7 @@ export const usuariosAPI = {
   me: (token: string) =>
     fetchAPI<Usuario>('/api/usuarios/me', {}, token),
 
-  actualizar: (data: { nombre: string; tel?: string; dni?: string; email?: string; direccion?: string; lat?: number; lng?: number }, token: string) =>
+  actualizar: (data: { nombre: string; tel?: string; dni?: string; email?: string; direccion?: string; pais?: string; lat?: number; lng?: number }, token: string) =>
     fetchAPI<Usuario>('/api/usuarios/me', { method: 'PUT', body: JSON.stringify(data) }, token),
 
   subirAvatar: async (file: File, token: string): Promise<{ url: string }> => {

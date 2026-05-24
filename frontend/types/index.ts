@@ -18,6 +18,7 @@ export interface Usuario {
   created_at?: string;
   // Profile address
   direccion?: string;
+  pais?: string;
   lat?: number;
   lng?: number;
 }
