@@ -11,6 +11,7 @@ import { FiltrosEspacios } from '@/components/espacios/FiltrosEspacios';
 import { Modal } from '@/components/ui/Modal';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
+import { OTPStep } from '@/components/auth/OTPStep';
 import { SiteLogo } from '@/components/ui/SiteLogo';
 import { Button } from '@/components/ui/Button';
 
@@ -22,7 +23,8 @@ type Vista = 'mapa' | 'lista';
 
 export default function HomePage() {
   const router = useRouter();
-  const { user, token, loading: authLoading, login, register, logout, error: authError, isAdmin } = useAuth();
+  const { user, token, loading: authLoading, login, register, logout, error: authError, isAdmin,
+    otpPending, otpEmailHint, otpCanales, verifyOTP, reenviarOTP } = useAuth();
   const { espacios, loading, error: espaciosError, filtros, aplicarFiltros, limpiarFiltros } = useEspacios();
 
   const [vista, setVista] = useState<Vista>('mapa');
@@ -370,15 +372,28 @@ export default function HomePage() {
       {/* Auth Modal */}
       <Modal
         open={authModal}
-        onClose={() => setAuthModal(false)}
-        title={authTab === 'login' ? '👋 Iniciar sesión' : '🚀 Crear cuenta'}
-        subtitle={authTab === 'login' ? 'Ingresá a tu cuenta de TodasMisCosas' : 'Únite a la comunidad de almacenamiento urbano'}
+        onClose={() => { if (!otpPending) setAuthModal(false); }}
+        title={otpPending ? '🔐 Verificación' : authTab === 'login' ? '👋 Iniciar sesión' : '🚀 Crear cuenta'}
+        subtitle={otpPending ? undefined : authTab === 'login' ? 'Ingresá a tu cuenta de TodasMisCosas' : 'Únite a la comunidad de almacenamiento urbano'}
       >
-        {authTab === 'login' ? (
+        {otpPending ? (
+          <OTPStep
+            emailHint={otpEmailHint}
+            canales={otpCanales}
+            onVerify={async (codigo) => {
+              const ok = await verifyOTP(codigo);
+              if (ok) { setAuthModal(false); router.push('/panel'); }
+              return ok;
+            }}
+            onReenviar={reenviarOTP}
+            loading={authLoading}
+            error={authError}
+          />
+        ) : authTab === 'login' ? (
           <LoginForm
             onLogin={async (email, password) => {
               const ok = await login(email, password);
-              if (ok) { setAuthModal(false); router.push('/panel'); }
+              // Don't close — OTPStep takes over when otpPending becomes true
               return ok;
             }}
             onSwitch={() => setAuthTab('register')}
@@ -389,7 +404,7 @@ export default function HomePage() {
           <RegisterForm
             onRegister={async (nombre, email, password, tipo, tel) => {
               const ok = await register(nombre, email, password, tipo, tel);
-              if (ok) setAuthModal(false);
+              if (ok && !otpPending) setAuthModal(false);
               return ok;
             }}
             onSwitch={() => setAuthTab('login')}

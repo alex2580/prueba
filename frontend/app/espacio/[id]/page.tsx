@@ -9,13 +9,15 @@ import { Modal } from '@/components/ui/Modal';
 import { ChatModal } from '@/components/chat/ChatModal';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
+import { OTPStep } from '@/components/auth/OTPStep';
 import { SiteLogo } from '@/components/ui/SiteLogo';
 
 export default function EspacioPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const { espacio, loading, error } = useEspacio(id);
-  const { user, token, login, register, loading: authLoading, error: authError } = useAuth();
+  const { user, token, login, register, loading: authLoading, error: authError,
+    otpPending, otpEmailHint, otpCanales, verifyOTP, reenviarOTP } = useAuth();
 
   const [chatModal, setChatModal] = useState(false);
   const [authModal, setAuthModal] = useState(false);
@@ -86,14 +88,26 @@ export default function EspacioPage() {
       {/* Auth Modal */}
       <Modal
         open={authModal}
-        onClose={() => setAuthModal(false)}
-        title={authTab === 'login' ? '👋 Iniciar sesión' : '🚀 Crear cuenta'}
+        onClose={() => { if (!otpPending) setAuthModal(false); }}
+        title={otpPending ? '🔐 Verificación' : authTab === 'login' ? '👋 Iniciar sesión' : '🚀 Crear cuenta'}
       >
-        {authTab === 'login' ? (
+        {otpPending ? (
+          <OTPStep
+            emailHint={otpEmailHint}
+            canales={otpCanales}
+            onVerify={async (codigo) => {
+              const ok = await verifyOTP(codigo);
+              if (ok) setAuthModal(false);
+              return ok;
+            }}
+            onReenviar={reenviarOTP}
+            loading={authLoading}
+            error={authError}
+          />
+        ) : authTab === 'login' ? (
           <LoginForm
             onLogin={async (email, password) => {
               const ok = await login(email, password);
-              if (ok) setAuthModal(false);
               return ok;
             }}
             onSwitch={() => setAuthTab('register')}
@@ -104,7 +118,7 @@ export default function EspacioPage() {
           <RegisterForm
             onRegister={async (nombre, email, password, tipo, tel) => {
               const ok = await register(nombre, email, password, tipo, tel);
-              if (ok) setAuthModal(false);
+              if (ok && !otpPending) setAuthModal(false);
               return ok;
             }}
             onSwitch={() => setAuthTab('login')}
