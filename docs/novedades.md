@@ -774,6 +774,148 @@ Solo funciona si `inactiva_auto = 1`. Si alguien intenta reactivar un espacio qu
 
 ---
 
+## 25 de Mayo 2026
+
+### PIN de acceso en reservas
+
+Cada reserva genera automáticamente un código de 4 dígitos aleatorio (rango 1000–9999) que se almacena en la columna `pin_acceso` de la tabla `reservas` y se envía por email a ambas partes al momento de confirmar la reserva.
+
+- **Demandante:** "Guardá este código — lo vas a necesitar al ingresar al espacio"
+- **Oferente:** "El demandante tiene el mismo código — verificalo al momento de la entrega"
+- El código es **informativo**: no se pide ingresarlo en ningún formulario de la app
+- No requiere acción del usuario ni validación digital
+
+**Migración:** `backend/src/db/add-pin-acceso.js` — agrega columna `pin_acceso CHAR(4) NULL` a la tabla `reservas`
+
+**Archivos modificados:**
+- `backend/src/db/add-pin-acceso.js` (nuevo — migración idempotente)
+- `backend/src/controllers/reservasController.js` (genera PIN en `crear()`, lo pasa a ambos emails)
+- `backend/src/services/emailService.js` (funciones `sendReservaConfirmada` y `sendNuevaReserva` aceptan parámetro `pin`)
+
+**Commit:** `f38b3e7`
+
+---
+
+### Flujo de reserva unificado
+
+El botón "Reservar espacio" en la página de detalle del espacio (`/espacio/:id`) ahora navega a `/espacio/:id/reservar`, igual que el botón "Reservar" del popup del mapa. Antes abría un modal propio con un formulario diferente.
+
+Se eliminaron los estados `reservarModal`, `reservaError`, `reservaLoading`, `intentoReservar` y la función `submitReserva` de `espacio/[id]/page.tsx`. El componente quedó más liviano y el usuario siempre pasa por el mismo flujo de 3 pasos.
+
+**Archivos modificados:**
+- `frontend/app/espacio/[id]/page.tsx`
+
+**Commit:** `0ab126c`
+
+---
+
+### Documento de flujo de alta de usuarios
+
+Se creó el documento `docs/flujo-alta-usuarios.doc` en formato HTML con:
+- Diagrama de flujo del proceso de registro
+- Tabla de 8 pasos con responsables
+- Tabla de roles (oferente / demandante / admin)
+- Mecanismos de seguridad implementados
+- Variables de entorno requeridas
+
+Nota: para el piloto **no se requiere aprobación manual** ni para oferentes ni para demandantes — el alta es automática.
+
+---
+
+### Autenticación 2FA — correcciones de producción
+
+Se detectaron y corrigieron cuatro bugs en el flujo OTP que impedían el correcto funcionamiento en producción.
+
+#### Fix 1 — Modal cerraba antes de mostrar el OTP
+
+**Problema:** Al hacer login, el modal de autenticación se cerraba inmediatamente y el usuario entraba a la app sin ingresar el código. La función `login()` devuelve `true` cuando el OTP fue *solicitado* (no verificado), y el modal interpretaba ese `true` como login completo.
+
+**Fix:** El modal ahora escucha `otpPending` del hook `useAuth`. Cuando es `true`, muestra `OTPStep` en lugar de `LoginForm`. El modal no puede cerrarse mientras `otpPending` sea verdadero. Solo se cierra al verificar el código correctamente.
+
+**Archivos:** `frontend/app/page.tsx`, `frontend/app/espacio/[id]/page.tsx`
+**Commit:** `40a549f`
+
+---
+
+#### Fix 2 — Código OTP aparecía como vencido al instante (timezone)
+
+**Problema:** Al ingresar el código recién recibido por email, el backend respondía "El código expiró o ya fue utilizado". Causa: el pool de MySQL tiene `timezone: '-03:00'`, lo que hace que `mysql2` serialice la fecha de expiración en UTC-3, pero el servidor MySQL corre en UTC. Resultado: `expires_at` se guardaba 3 horas en el pasado respecto de `NOW()`.
+
+**Fix:** El `expires_at` ahora se calcula directamente en MySQL con `DATE_ADD(NOW(), INTERVAL ? MINUTE)`, eliminando el desfase de zona horaria.
+
+```sql
+-- Antes (problemático):
+INSERT INTO auth_otp (usuario_id, codigo, expires_at) VALUES (?, ?, ?)
+-- Node.js pasaba un Date en UTC-3 → MySQL lo comparaba con NOW() en UTC
+
+-- Ahora (correcto):
+INSERT INTO auth_otp (usuario_id, codigo, expires_at)
+VALUES (?, ?, DATE_ADD(NOW(), INTERVAL ? MINUTE))
+```
+
+**Archivos:** `backend/src/controllers/authController.js`
+**Commit:** `ddc4c4c`
+
+---
+
+#### Fix 3 — SMS y WhatsApp aparecían aunque Twilio no estaba configurado
+
+**Problema:** La pantalla de verificación mostraba "y por 📱 SMS, 💬 WhatsApp" aunque Twilio no tiene número real configurado. La condición solo verificaba que `TWILIO_ACCOUNT_SID !== 'TWILIO_PENDIENTE'`, pero el VPS tiene un SID real de una cuenta de Twilio sin número activo (`TWILIO_PHONE=+15551234567`).
+
+**Fix:** Se agregó la verificación de que `TWILIO_PHONE` tampoco sea el placeholder:
+
+```js
+const twilioActivo = !!(
+  process.env.TWILIO_ACCOUNT_SID &&
+  process.env.TWILIO_ACCOUNT_SID !== 'TWILIO_PENDIENTE' &&
+  process.env.TWILIO_PHONE &&
+  process.env.TWILIO_PHONE !== '+15551234567'
+);
+```
+
+Ahora el mensaje solo dice "Enviamos un código a tu email" — sin mencionar SMS ni WhatsApp hasta que Twilio esté correctamente configurado.
+
+**Archivos:** `backend/src/controllers/authController.js`, `frontend/components/auth/OTPStep.tsx`
+**Commit:** `6388cc2`
+
+---
+
+#### Fix 4 — Temporizador de reenvío confundía al usuario con el tiempo de validez del código
+
+**Problema:** El contador de 60 segundos para "reenviar el código" era confundido por el usuario como el tiempo de validez del código OTP. El usuario veía el contador en ~30 segundos y pensaba que el código vencía en 30 segundos.
+
+**Fix:**
+- El timer de reenvío sube de 60 a **600 segundos (10 minutos)**, alineándose con el vencimiento real del código en el backend
+- El display cambia de `"30s"` a formato `"MM:SS"` (ej: `09:45`)
+- El texto cambia de "Podés reenviar el código en Xs" a "Podés solicitar un nuevo código en MM:SS"
+
+**Archivos:** `frontend/components/auth/OTPStep.tsx`
+**Commit:** `6388cc2`
+
+---
+
+### Deploy automático con GitHub Actions
+
+Se creó el script `deploy.sh` que faltaba en el repositorio — el workflow de GitHub Actions lo referenciaba pero nunca existió. También se corrigió el workflow que hacía `git reset --hard HEAD` (no descargaba cambios nuevos) en lugar de `git fetch + reset --hard origin/master`.
+
+**A partir de ahora:** cada `git push origin master` dispara el deploy automático al VPS sin intervención manual.
+
+#### `deploy.sh` — pasos ejecutados en el VPS
+
+```
+1. Backend  → npm install --omit=dev
+2. Frontend → npm install + npm run build (compilación Next.js)
+3. PM2      → pm2 reload all --update-env + pm2 save
+```
+
+**Archivos:**
+- `deploy.sh` (nuevo)
+- `.github/workflows/deploy.yml` (corregido)
+
+**Commit:** `6688ff5`
+
+---
+
 ## 24 de Mayo 2026 — Sesión madrugada
 
 ### Fotos de depósito como fallback en todas las vistas
