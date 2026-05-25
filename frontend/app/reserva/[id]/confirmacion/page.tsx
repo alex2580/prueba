@@ -23,23 +23,38 @@ export default function ConfirmacionPage() {
     if (!token) { router.push('/'); return; }
 
     const { status } = parseMPReturnParams(searchParams);
-    const estadoParam = status || searchParams.get('estado') || 'pending';
+    const fallback = status === 'success' ? 'pagada' : status === 'failure' ? 'cancelada' : 'pendiente';
 
-    pagosAPI.estado(id, token)
-      .then(data => {
+    let attempts = 0;
+    const MAX_ATTEMPTS = 15;
+
+    const check = async () => {
+      try {
+        const data = await pagosAPI.estado(id, token);
         setEstado(data.estado);
         setMonto(data.precio_total);
-      })
-      .catch(() => {
-        setEstado(estadoParam === 'success' ? 'pagada' : estadoParam === 'failure' ? 'cancelada' : 'pendiente');
-      })
-      .finally(() => setLoading(false));
+        setLoading(false);
+        if (data.estado === 'pagada' || data.estado === 'cancelada') return;
+      } catch {
+        setEstado(fallback);
+        setLoading(false);
+        return;
+      }
+
+      attempts++;
+      if (attempts < MAX_ATTEMPTS) {
+        setTimeout(check, 3000);
+      }
+    };
+
+    check();
   }, [id, token, authLoading, router, searchParams]);
 
   if (loading || authLoading) {
     return (
-      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)', color: 'var(--text3)' }}>
-        Verificando pago…
+      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem', background: 'var(--bg)', color: 'var(--text3)' }}>
+        <div style={{ fontSize: '2rem' }}>⏳</div>
+        <div>Verificando pago…</div>
       </div>
     );
   }
