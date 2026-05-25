@@ -50,6 +50,20 @@ export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar, onExt
         ))}
       </div>
 
+      {reserva.pin_acceso && ['confirmada', 'pagada', 'activa', 'finalizada'].includes(reserva.estado) && (
+        <div style={{
+          background: 'var(--surface2)', border: '1px solid var(--border)',
+          borderRadius: 'var(--r2)', padding: '.75rem 1rem',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          marginBottom: '.9rem',
+        }}>
+          <div style={{ fontSize: '.78rem', color: 'var(--text3)' }}>🔑 PIN de acceso</div>
+          <div style={{ fontFamily: 'monospace', fontSize: '1.3rem', fontWeight: 800, letterSpacing: '.2em', color: 'var(--orange)' }}>
+            {reserva.pin_acceso}
+          </div>
+        </div>
+      )}
+
       {(reserva.estado === 'pendiente' || reserva.estado === 'confirmada') && (
         <div style={{ display: 'flex', gap: '.6rem' }}>
           {reserva.estado === 'confirmada' && onPagar && (

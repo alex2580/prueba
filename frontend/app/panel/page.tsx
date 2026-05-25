@@ -670,6 +670,11 @@ export default function PanelPage() {
                                     <div style={{ fontSize: '.75rem', color: 'var(--text3)' }}>
                                       {formatFechaCorta(r.fecha_desde)} → {formatFechaCorta(r.fecha_hasta)}
                                     </div>
+                                    {r.pin_acceso && ['confirmada', 'pagada', 'activa', 'finalizada'].includes(r.estado) && (
+                                      <div style={{ marginTop: '.25rem', fontSize: '.73rem', color: 'var(--text3)' }}>
+                                        🔑 PIN: <span style={{ fontFamily: 'monospace', fontWeight: 700, color: 'var(--orange)', letterSpacing: '.1em' }}>{r.pin_acceso}</span>
+                                      </div>
+                                    )}
                                   </div>
                                   <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '.2rem' }}>
                                     <div>

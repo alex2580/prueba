@@ -127,6 +127,7 @@ export interface Reserva {
   mp_payment_id?: string;
   mp_status?: string;
   notas?: string;
+  pin_acceso?: string;
   created_at: string;
   updated_at?: string;
   // Joined
