@@ -14,7 +14,7 @@ interface OTPStepProps {
 
 export function OTPStep({ emailHint, canales, onVerify, onReenviar, loading, error }: OTPStepProps) {
   const [digits, setDigits] = useState(['', '', '', '', '', '']);
-  const [reenvioTimer, setReenvioTimer] = useState(60);
+  const [reenvioTimer, setReenvioTimer] = useState(600);
   const [reenvioLoading, setReenvioLoading] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -68,7 +68,7 @@ export function OTPStep({ emailHint, canales, onVerify, onReenviar, loading, err
     setReenvioLoading(true);
     await onReenviar();
     setReenvioLoading(false);
-    setReenvioTimer(60);
+    setReenvioTimer(600);
     setDigits(['', '', '', '', '', '']);
     inputRefs.current[0]?.focus();
   }
@@ -149,7 +149,7 @@ export function OTPStep({ emailHint, canales, onVerify, onReenviar, loading, err
 
       <div style={{ textAlign: 'center', fontSize: '.82rem', color: 'var(--text3)' }}>
         {reenvioTimer > 0 ? (
-          <>Podés reenviar el código en <strong style={{ color: 'var(--text2)' }}>{reenvioTimer}s</strong></>
+          <>Podés solicitar un nuevo código en <strong style={{ color: 'var(--text2)' }}>{String(Math.floor(reenvioTimer / 60)).padStart(2, '0')}:{String(reenvioTimer % 60).padStart(2, '0')}</strong></>
         ) : (
           <button
             type="button"

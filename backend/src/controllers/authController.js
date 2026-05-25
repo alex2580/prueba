@@ -63,7 +63,12 @@ async function solicitarOTP(req, res, next) {
       });
     });
 
-    const twilioActivo = !!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_ACCOUNT_SID !== 'TWILIO_PENDIENTE');
+    const twilioActivo = !!(
+      process.env.TWILIO_ACCOUNT_SID &&
+      process.env.TWILIO_ACCOUNT_SID !== 'TWILIO_PENDIENTE' &&
+      process.env.TWILIO_PHONE &&
+      process.env.TWILIO_PHONE !== '+15551234567'
+    );
     res.json({
       ok: true,
       canales: {
