@@ -100,13 +100,13 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
         : '#e8622a';
 
       const sim = getMonedaSimbolo(espacio.moneda);
-      const precio = Number(espacio.precio_mes);
-      let iconLabel: string;
-      if (!espacio.moneda || espacio.moneda === 'ARS') {
-        iconLabel = precio >= 1000 ? `${sim}${Math.round(precio / 1000)}k` : `${sim}${Math.round(precio)}`;
-      } else {
-        iconLabel = precio >= 1000 ? `${sim}${Math.round(precio / 1000)}k` : `${sim}${Math.round(precio)}`;
-      }
+      const pMes = Number(espacio.precio_mes);
+      const pDia = Number(espacio.precio_dia);
+      const precio = pMes > 0 ? pMes : pDia;
+      const sufijo = pMes > 0 ? '' : '/d';
+      const iconLabel = precio >= 1000
+        ? `${sim}${Math.round(precio / 1000)}k${sufijo}`
+        : `${sim}${Math.round(precio)}${sufijo}`;
 
       const pinSvg = (color: string, w = 68, h = 56, textSize = 11) => `
         <svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">
