@@ -19,7 +19,7 @@ router.post('/contacto', [
   }
   try {
     await emailService.sendContacto(
-      process.env.SMTP_USER || 'hola@todasmiscosas.com',
+      process.env.ADMIN_EMAILS || process.env.SMTP_USER || 'contacto@todasmiscosas.com',
       req.body
     );
     res.json({ message: 'Consulta enviada' });

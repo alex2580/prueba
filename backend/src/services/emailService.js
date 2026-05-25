@@ -503,20 +503,21 @@ async function sendPublicacionDesactivada(toEmail, nombre, { espacioNombre, dias
 }
 
 async function sendMejorarPuntuacion({ nombre, email, tel, espacioNombre, puntajeActual }) {
+  const adminTo = process.env.ADMIN_EMAILS || 'contacto@todasmiscosas.com';
   const html = baseTemplate('Solicitud para mejorar puntuación de seguridad', `
     <h2>🛡️ Solicitud: Mejorar puntuación de seguridad</h2>
     <p>Un oferente quiere mejorar la puntuación de seguridad de su publicación. Contactarlo a la brevedad.</p>
-    <div class="info-row"><span class="label">Nombre</span><span class="value">${nombre}</span></div>
-    <div class="info-row"><span class="label">Email</span><span class="value"><a href="mailto:${email}" style="color:var(--orange)">${email}</a></span></div>
-    <div class="info-row"><span class="label">Teléfono</span><span class="value">${tel || 'No informado'}</span></div>
-    <div class="info-row"><span class="label">Espacio</span><span class="value">${espacioNombre || 'No especificado'}</span></div>
-    <div class="info-row"><span class="label">Puntuación actual</span><span class="value">${puntajeActual} / 5 estrellas</span></div>
+    <div class="info-row"><div><div class="info-label">Nombre</div><div class="info-val">${nombre}</div></div></div>
+    <div class="info-row"><div><div class="info-label">Email</div><div class="info-val"><a href="mailto:${email}" style="color:#e8622a">${email}</a></div></div></div>
+    <div class="info-row"><div><div class="info-label">Teléfono</div><div class="info-val">${tel || 'No informado'}</div></div></div>
+    <div class="info-row"><div><div class="info-label">Espacio</div><div class="info-val">${espacioNombre || 'No especificado'}</div></div></div>
+    <div class="info-row"><div><div class="info-label">Puntuación actual</div><div class="info-val">${puntajeActual} / 5 estrellas</div></div></div>
     <a class="btn" href="mailto:${email}?subject=Mejorá la seguridad de tu espacio en TodasMisCosas">Responder al oferente →</a>
   `);
 
   await transporter.sendMail({
     from: FROM,
-    to: 'contacto@todasmiscosas.com',
+    to: adminTo,
     replyTo: email,
     subject: `🛡️ Mejorar puntuación — ${nombre} (${espacioNombre || 'sin espacio'})`,
     html,
