@@ -10,6 +10,16 @@ function buildFotoUrl(filename) {
   return `${BASE_URL}/uploads/espacios/${filename}`;
 }
 
+function parseJsonFields(espacio) {
+  if (espacio.disponibilidad && typeof espacio.disponibilidad === 'string') {
+    try { espacio.disponibilidad = JSON.parse(espacio.disponibilidad); } catch (_) { espacio.disponibilidad = null; }
+  }
+  if (espacio.seguridad && typeof espacio.seguridad === 'string') {
+    try { espacio.seguridad = JSON.parse(espacio.seguridad); } catch (_) { espacio.seguridad = null; }
+  }
+  return espacio;
+}
+
 async function getEspacioWithFotos(id) {
   const espacio = await queryOne(
     `SELECT e.*, u.nombre AS oferente_nombre, u.email AS oferente_email, u.tel AS oferente_tel
@@ -25,7 +35,7 @@ async function getEspacioWithFotos(id) {
     [id]
   );
   espacio.imgs = fotos.map(f => f.url);
-  return espacio;
+  return parseJsonFields(espacio);
 }
 
 // GET /api/espacios
@@ -266,7 +276,7 @@ async function misEspacios(req, res, next) {
        ORDER BY e.created_at DESC`,
       [req.user.id]
     );
-    res.json(espacios);
+    res.json(espacios.map(parseJsonFields));
   } catch (err) {
     next(err);
   }
