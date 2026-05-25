@@ -164,7 +164,8 @@ async function crear(req, res, next) {
     if (oferente) {
       emailService.sendNuevaReserva(oferente.email, oferente.nombre, {
         demandanteNombre: req.user.nombre,
-        demandanteTel: req.user.tel || '',
+        demandanteEmail: req.user.email || '',
+        demandanteTel:   req.user.tel || '',
         espacioNombre: espacio.nombre,
         fechaDesde: fecha_desde,
         fechaHasta: fecha_hasta,

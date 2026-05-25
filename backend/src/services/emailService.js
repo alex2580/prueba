@@ -182,7 +182,7 @@ async function sendServiciosAdicionales(toEmail, { nombreDemandante, emailDemand
 }
 
 // ── Oferente: nueva solicitud de reserva recibida ───────────────
-async function sendNuevaReserva(toEmail, nombreOferente, { demandanteNombre, demandanteTel, espacioNombre, fechaDesde, fechaHasta, precioTotal, reservaId, pin }) {
+async function sendNuevaReserva(toEmail, nombreOferente, { demandanteNombre, demandanteEmail, demandanteTel, espacioNombre, fechaDesde, fechaHasta, precioTotal, reservaId, pin }) {
   const html = baseTemplate('Nueva solicitud de reserva', `
     <h2>🔔 Nueva solicitud de reserva</h2>
     <p>Hola <span class="highlight">${nombreOferente}</span>, recibiste una solicitud para tu espacio.</p>
@@ -192,7 +192,8 @@ async function sendNuevaReserva(toEmail, nombreOferente, { demandanteNombre, dem
     <div class="info-row">
       <div><div class="info-label">Solicitante</div><div class="info-val">${demandanteNombre}</div></div>
     </div>
-    ${demandanteTel ? `<div class="info-row"><div><div class="info-label">Teléfono</div><div class="info-val">${demandanteTel}</div></div></div>` : ''}
+    ${demandanteEmail ? `<div class="info-row"><div><div class="info-label">Email</div><div class="info-val"><a href="mailto:${demandanteEmail}" style="color:#82c4ff;">${demandanteEmail}</a></div></div></div>` : ''}
+    ${demandanteTel ? `<div class="info-row"><div><div class="info-label">Teléfono</div><div class="info-val"><a href="tel:${demandanteTel}" style="color:#82c4ff;">${demandanteTel}</a></div></div></div>` : ''}
     <div class="info-row">
       <div><div class="info-label">Fechas</div><div class="info-val">${fechaDesde} → ${fechaHasta}</div></div>
     </div>
