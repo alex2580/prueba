@@ -1039,3 +1039,84 @@ La migración corre automáticamente en cada deploy via `node src/db/add-dni.js`
 - `.github/workflows/deploy.yml` (agrega `add-dni.js` al pipeline)
 
 **Commit:** `352a0fd`
+
+---
+
+## 25 de Mayo 2026 — Sesión (continuación)
+
+### PIN de acceso visible en ambos paneles
+
+El PIN de 4 dígitos que se genera al crear una reserva ahora se muestra visualmente en la app para que ambas partes puedan consultarlo en cualquier momento.
+
+**Demandante (Mis reservas):** en la tarjeta `EstadoReserva`, aparece una fila resaltada "🔑 PIN de acceso" con el número en naranja y fuente monoespaciada, visible cuando la reserva está en estado `confirmada`, `pagada` o `finalizada`.
+
+**Oferente (Mis espacios → Reservas recibidas):** en cada fila de reserva recibida, debajo de las fechas, aparece "🔑 PIN: XXXX" en el mismo formato.
+
+Ambos lados muestran el mismo número, que es el que se generó al crear la reserva y se envió por email.
+
+**Archivos modificados:**
+- `frontend/types/index.ts` (campo `pin_acceso?: string` en interface `Reserva`)
+- `frontend/components/reservas/EstadoReserva.tsx` (bloque PIN entre datos y botones)
+- `frontend/app/panel/page.tsx` (PIN inline en reservas recibidas del oferente)
+
+**Commit:** `78163af`
+
+---
+
+### Página de confirmación de pago — polling automático
+
+La página `/reserva/[id]/confirmacion` verificaba el estado del pago **una sola vez** al cargar. Como el webhook de MercadoPago llega de forma asíncrona (puede tardar varios segundos después de que el usuario regresa a la app), la página mostraba "⏳ Pago pendiente" aunque el pago ya hubiese sido aprobado.
+
+**Fix:** se reemplazó la verificación única por un loop de polling que consulta `GET /api/pagos/estado/:reservaId` cada 3 segundos, hasta un máximo de 15 intentos (45 segundos total). En cuanto el estado cambia a `pagada` o `cancelada`, el loop se detiene y la página actualiza la UI automáticamente sin que el usuario tenga que refrescar.
+
+**Archivos modificados:**
+- `frontend/app/reserva/[id]/confirmacion/page.tsx`
+
+**Commit:** `63bd240`
+
+---
+
+### Timeline de reservas — se elimina el paso "Activa"
+
+La barra de progreso en las tarjetas de reserva (tanto en el panel del demandante como del oferente) pasó de 4 pasos a 3:
+
+| Antes | Ahora |
+|-------|-------|
+| 📋 Solicitada → ✅ Confirmada → 💳 Pago realizado → 🏠 Activa | 📋 Solicitada → ✅ Confirmada → 💳 Pago realizado |
+
+El paso "Activa" fue removido porque genera confusión: los usuarios no distinguen entre "pagada" y "activa", y el estado `activa` no tiene un evento concreto que lo dispare en el flujo actual.
+
+Los estados `pagada` y `finalizada` quedan mapeados al paso 3 (completo).
+
+**Archivos modificados:**
+- `frontend/components/reservas/TimelineReserva.tsx`
+
+**Commit:** `b0de6ae`
+
+---
+
+### Mapa — marcadores y tooltips muestran precio, no m²
+
+**Problema:** Los marcadores del mapa y los tooltips de hover mostraban la superficie en m² de cada espacio. Los espacios que solo tenían `precio_dia` cargado (con `precio_mes = 0`) mostraban `$0` en el pin y en el tooltip.
+
+**Cambios:**
+
+1. **Pin del marcador (etiqueta sobre el mapa):**
+   - Usa `precio_mes` si es > 0
+   - Cae a `precio_dia` si `precio_mes` es 0, agregando sufijo `/d` (ej: `$5k/d`)
+   - Nunca más muestra `$0`
+
+2. **Tooltip de hover (InfoWindow al pasar el mouse):**
+   - Reemplaza "📍 Barrio · X m²" por "📍 Barrio" + precio/mes y/o precio/día en naranja
+   - Si ambos precios están cargados, se muestran separados por `·`
+
+3. **Tarjeta de click (MarkerEspacioCard):**
+   - Elimina el "· X m²" del subtítulo
+   - Muestra `precio_mes /mes` y/o `precio_dia /día` condicionalmente según qué precios tenga cargados el espacio (valor > 0)
+   - Si ambos están cargados: precio mensual grande + precio diario más pequeño al lado
+
+**Archivos modificados:**
+- `frontend/components/mapa/MapaEspacios.tsx`
+- `frontend/components/mapa/MarkerEspacio.tsx`
+
+**Commits:** `b0de6ae`, `b3b0c1b`
