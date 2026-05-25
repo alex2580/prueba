@@ -1,7 +1,7 @@
 const { query, queryOne } = require('../db/connection');
 const { validationResult } = require('express-validator');
 const supabaseService = require('../services/supabaseService');
-const { sendCambioTelConfirmado } = require('../services/emailService');
+const { sendCambioTelConfirmado, sendBienvenida } = require('../services/emailService');
 const { sendSMS, sendWhatsApp } = require('../services/twilioService');
 
 const path = require('path');
@@ -134,6 +134,11 @@ async function sync(req, res, next) {
       'SELECT id, nombre, email, tel, tipo, verificado FROM usuarios WHERE supabase_id = ?',
       [supabase_id]
     );
+
+    // Bienvenida + aceptación de términos al nuevo usuario
+    sendBienvenida(email, nombre, tipoFinal)
+      .catch(e => console.warn('[sync] Email bienvenida:', e.message));
+
     res.status(201).json(nuevo);
   } catch (err) {
     next(err);

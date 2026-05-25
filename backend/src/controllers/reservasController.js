@@ -175,6 +175,21 @@ async function crear(req, res, next) {
       }).catch(e => console.warn('Email oferente:', e.message));
     }
 
+    // Confirmación legal para ambas partes
+    const legalData = {
+      espacioNombre: espacio.nombre,
+      fechaDesde: fecha_desde,
+      fechaHasta: fecha_hasta,
+      precioTotal: precio_total,
+      reservaId: reserva.id,
+    };
+    emailService.sendAceptacionOperacion(req.user.email, req.user.nombre, { rol: 'demandante', ...legalData })
+      .catch(e => console.warn('Email legal demandante:', e.message));
+    if (oferente) {
+      emailService.sendAceptacionOperacion(oferente.email, oferente.nombre, { rol: 'oferente', ...legalData })
+        .catch(e => console.warn('Email legal oferente:', e.message));
+    }
+
     res.status(201).json(reserva);
   } catch (err) {
     next(err);

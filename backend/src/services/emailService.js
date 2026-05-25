@@ -108,21 +108,113 @@ async function sendPagoConfirmado(toEmail, nombre, { espacioNombre, monto, reser
 }
 
 async function sendBienvenida(toEmail, nombre, tipo) {
-  const html = baseTemplate('Bienvenido/a', `
+  const accionPrincipal = tipo === 'oferente'
+    ? '<p>Desde tu panel podés publicar tus espacios y empezar a recibir reservas.</p>'
+    : '<p>Desde tu panel podés buscar espacios y realizar reservas en toda la ciudad.</p>';
+
+  const html = baseTemplate('Bienvenido/a a TodasMisCosas', `
     <h2>👋 Bienvenido/a a TodasMisCosas</h2>
     <p>Hola <span class="highlight">${nombre}</span>, tu cuenta fue creada exitosamente.</p>
     <p>Sos parte de la comunidad de almacenamiento urbano más grande de Buenos Aires.</p>
-    ${tipo === 'oferente'
-      ? '<p>Desde tu panel podés publicar tus espacios y empezar a recibir reservas.</p>'
-      : '<p>Desde tu panel podés buscar espacios y realizar reservas en toda la ciudad.</p>'
-    }
+    ${accionPrincipal}
     <a class="btn" href="${process.env.FRONTEND_URL}">Explorar espacios →</a>
+
+    <div style="margin-top:28px;border-top:1px solid #334155;padding-top:20px;">
+      <div style="color:#f1f5f9;font-weight:700;font-size:13px;margin-bottom:10px;">⚖️ Aceptación de Términos de Uso</div>
+      <p style="font-size:12px;color:#94a3b8;line-height:1.75;margin:0 0 12px;">
+        Al crear tu cuenta en <strong style="color:#e2e8f0">TodasMisCosas.com</strong> aceptaste los
+        <strong style="color:#e2e8f0">Términos de Uso y Disclaimers</strong> de la plataforma. A continuación,
+        un resumen de los puntos principales:
+      </p>
+      <div style="background:#0f172a;border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+        <ul style="font-size:12px;color:#94a3b8;line-height:2;padding-left:18px;margin:0;">
+          <li>TodasMisCosas opera como <strong style="color:#e2e8f0">plataforma de conexión</strong> entre Demandante y Oferente. No es parte del contrato de almacenamiento ni responsable por daños a los bienes.</li>
+          <li>Queda <strong style="color:#e2e8f0">prohibido</strong> almacenar o transportar bienes peligrosos, ilegales, armas, explosivos, sustancias controladas o de procedencia no comprobable.</li>
+          <li>Cada usuario es <strong style="color:#e2e8f0">responsable de sus bienes y del espacio</strong> que ofrece o utiliza.</li>
+          <li>TodasMisCosas cobra una <strong style="color:#e2e8f0">comisión del 15%</strong> sobre el valor de cada reserva efectivamente cobrada al Oferente.</li>
+          <li>Las transacciones se realizan a través de <strong style="color:#e2e8f0">MercadoPago</strong>. El pago queda retenido hasta la confirmación de acceso al espacio.</li>
+        </ul>
+      </div>
+      <a href="${process.env.FRONTEND_URL}/legal" style="font-size:12px;color:#82c4ff;text-decoration:underline;">
+        📄 Ver los Términos y Condiciones completos →
+      </a>
+    </div>
   `);
 
   await transporter.sendMail({
     from: FROM,
     to: toEmail,
-    subject: '👋 Bienvenido/a a TodasMisCosas.com',
+    subject: '👋 Bienvenido/a a TodasMisCosas.com — Confirmación de Términos',
+    html,
+  });
+}
+
+// ── Ambas partes: confirmación legal al crear una reserva ────────
+async function sendAceptacionOperacion(toEmail, nombre, { rol, espacioNombre, fechaDesde, fechaHasta, precioTotal, reservaId }) {
+  const esOferente = rol === 'oferente';
+  const rolLabel   = esOferente ? 'Oferente' : 'Demandante';
+
+  const obligaciones = esOferente
+    ? [
+        'Garantizar que el espacio se encuentre en las condiciones acordadas y disponible desde la fecha pactada.',
+        'No denegar el acceso una vez confirmada y pagada la reserva, salvo causa de fuerza mayor debidamente documentada.',
+        'Informar inmediatamente ante cualquier incidente que afecte los bienes almacenados.',
+        'Recordá que TodasMisCosas retiene el 15% de comisión sobre el monto cobrado.',
+      ]
+    : [
+        'Declarar veraz y completamente el tipo de bienes que serán almacenados.',
+        'No ingresar al espacio bienes prohibidos, peligrosos, ilegales o de procedencia no comprobable.',
+        'Respetar los horarios y condiciones de acceso acordados con el Oferente.',
+        'Asumir responsabilidad civil por daños que tus bienes pudieran causar al espacio o a terceros.',
+      ];
+
+  const listaObligaciones = obligaciones
+    .map(o => `<li style="padding:4px 0">${o}</li>`)
+    .join('');
+
+  const html = baseTemplate('Confirmación legal de operación', `
+    <h2>📋 Confirmación de operación y Términos</h2>
+    <p>Hola <span class="highlight">${nombre}</span>, te confirmamos que como <strong>${rolLabel}</strong> en la siguiente operación aceptás los Términos de Uso de TodasMisCosas.com.</p>
+
+    <div class="info-row">
+      <div><div class="info-label">Espacio</div><div class="info-val">${espacioNombre}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Fechas</div><div class="info-val">${fechaDesde} → ${fechaHasta}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Monto</div><div class="info-val">$${Number(precioTotal).toLocaleString('es-AR')}</div></div>
+    </div>
+
+    <div style="margin:20px 0;">
+      <div style="color:#f1f5f9;font-weight:700;font-size:13px;margin-bottom:10px;">
+        ✅ Tus obligaciones como ${rolLabel}
+      </div>
+      <div style="background:#0f172a;border-radius:10px;padding:14px 16px;">
+        <ul style="font-size:12px;color:#94a3b8;line-height:2;padding-left:18px;margin:0;">
+          ${listaObligaciones}
+        </ul>
+      </div>
+    </div>
+
+    <div style="background:#0f172a;border:1px solid #334155;border-radius:10px;padding:14px 16px;margin:16px 0;">
+      <p style="font-size:12px;color:#94a3b8;line-height:1.75;margin:0 0 8px;">
+        <strong style="color:#e2e8f0">TodasMisCosas.com</strong> actúa como plataforma de conexión.
+        No es parte del contrato, no custodia bienes ni garantiza su integridad.
+        Recomendamos contratar seguro de contenido al momento de la reserva.
+      </p>
+      <a href="${process.env.FRONTEND_URL}/legal" style="font-size:12px;color:#82c4ff;text-decoration:underline;">
+        📄 Ver Términos y Condiciones completos →
+      </a>
+    </div>
+
+    <a class="btn" href="${process.env.FRONTEND_URL}/panel">Ir a mi panel →</a>
+  `);
+
+  await transporter.sendMail({
+    from: FROM,
+    to: toEmail,
+    subject: `📋 Confirmación legal — ${espacioNombre} (${fechaDesde} → ${fechaHasta})`,
     html,
   });
 }
@@ -551,6 +643,7 @@ module.exports = {
   sendReservaConfirmada,
   sendPagoConfirmado,
   sendBienvenida,
+  sendAceptacionOperacion,
   sendContacto,
   sendServiciosAdicionales,
   sendNuevaReserva,
