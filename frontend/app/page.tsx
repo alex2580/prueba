@@ -227,6 +227,7 @@ export default function HomePage() {
               onMarkerClick={handleMarkerClick}
               selectedId={selectedEspacio?.id}
               center={userLocation ?? undefined}
+              filtrosActivos={!!(filtros.tipo || filtros.precio_max || filtros.periodo || filtros.barrio || filtros.q)}
             />
             {selectedEspacio && (
               <MarkerEspacioCard

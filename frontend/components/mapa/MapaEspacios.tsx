@@ -11,6 +11,7 @@ interface MapaEspaciosProps {
   onMarkerClick?: (espacio: Espacio) => void;
   selectedId?: string | null;
   center?: { lat: number; lng: number };
+  filtrosActivos?: boolean;
 }
 
 const MAP_ID = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || '';
@@ -29,12 +30,13 @@ const DARK_STYLES: google.maps.MapTypeStyle[] = [
 
 const LIGHT_STYLES: google.maps.MapTypeStyle[] = [];
 
-export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: MapaEspaciosProps) {
-  const mapRef        = useRef<HTMLDivElement>(null);
-  const mapObj        = useRef<google.maps.Map | null>(null);
-  const markers       = useRef<Map<string, google.maps.Marker>>(new Map());
-  const markerIcons   = useRef<Map<string, google.maps.Icon>>(new Map());
-  const markerLabels  = useRef<Map<string, string>>(new Map());
+export function MapaEspacios({ espacios, onMarkerClick, selectedId, center, filtrosActivos }: MapaEspaciosProps) {
+  const mapRef           = useRef<HTMLDivElement>(null);
+  const mapObj           = useRef<google.maps.Map | null>(null);
+  const markers          = useRef<Map<string, google.maps.Marker>>(new Map());
+  const markerIcons      = useRef<Map<string, google.maps.Icon>>(new Map());   // con precio
+  const markerIconsEmpty = useRef<Map<string, google.maps.Icon>>(new Map());   // sin precio
+  const markerLabels     = useRef<Map<string, string>>(new Map());
   const heatmap       = useRef<any>(null);
   const infoWindow    = useRef<google.maps.InfoWindow | null>(null);
   const userMarker    = useRef<google.maps.Marker | null>(null);
@@ -81,7 +83,7 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
     mapObj.current.setOptions({ styles: mapTheme === 'dark' ? DARK_STYLES : LIGHT_STYLES });
   }, [mapTheme]);
 
-  // Add/update markers and heatmap when espacios change
+  // Add/update markers when espacios change
   useEffect(() => {
     if (!loaded || !mapObj.current) return;
 
@@ -108,26 +110,43 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
         ? `${sim}${Math.round(precio / 1000)}k${sufijo}`
         : `${sim}${Math.round(precio)}${sufijo}`;
 
-      const pinSvg = (color: string, w = 68, h = 56, textSize = 11) => `
-        <svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">
-          <rect x="1" y="1" width="${w-2}" height="${Math.round(h*0.65)}" rx="${Math.round(h*0.325)}" fill="${color}"/>
-          <polygon points="${Math.round(w*0.32)},${Math.round(h*0.62)} ${Math.round(w*0.68)},${Math.round(h*0.62)} ${Math.round(w/2)},${h-2}" fill="${color}"/>
-          <circle cx="${Math.round(w/2)}" cy="${h-2}" r="2.5" fill="rgba(255,255,255,0.85)"/>
-          <text x="${Math.round(w/2)}" y="${Math.round(h*0.42)}" text-anchor="middle" font-family="Sora,sans-serif" font-size="${textSize}" font-weight="bold" fill="white">${iconLabel}</text>
+      // Pin con precio (cuando hay filtros activos)
+      const pinSvgFull = (color: string) => `
+        <svg xmlns="http://www.w3.org/2000/svg" width="68" height="56">
+          <rect x="1" y="1" width="66" height="36" rx="18" fill="${color}"/>
+          <polygon points="22,34 46,34 34,54" fill="${color}"/>
+          <circle cx="34" cy="53" r="2.5" fill="rgba(255,255,255,0.85)"/>
+          <text x="34" y="23" text-anchor="middle" font-family="Sora,sans-serif" font-size="11" font-weight="bold" fill="white">${iconLabel}</text>
         </svg>
       `;
 
-      const defaultIcon: google.maps.Icon = {
-        url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(pinSvg(iconColor))}`,
+      // Pin simple sin precio (estado inicial sin filtros)
+      const pinSvgEmpty = (color: string) => `
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="34">
+          <rect x="1" y="1" width="26" height="20" rx="10" fill="${color}"/>
+          <polygon points="8,18 20,18 14,32" fill="${color}"/>
+          <circle cx="14" cy="31" r="2" fill="rgba(255,255,255,0.85)"/>
+          <circle cx="14" cy="11" r="4" fill="rgba(255,255,255,0.4)"/>
+        </svg>
+      `;
+
+      const iconFull: google.maps.Icon = {
+        url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(pinSvgFull(iconColor))}`,
         scaledSize: new google.maps.Size(68, 56),
         anchor: new google.maps.Point(34, 54),
+      };
+
+      const iconEmpty: google.maps.Icon = {
+        url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(pinSvgEmpty(iconColor))}`,
+        scaledSize: new google.maps.Size(28, 34),
+        anchor: new google.maps.Point(14, 32),
       };
 
       const marker = new google.maps.Marker({
         map,
         position: { lat: parseFloat(String(espacio.lat)), lng: parseFloat(String(espacio.lng)) },
         title: espacio.nombre,
-        icon: defaultIcon,
+        icon: filtrosActivos ? iconFull : iconEmpty,
       });
 
       marker.addListener('click', () => onMarkerClick?.(espacio));
@@ -161,7 +180,8 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
       });
 
       markers.current.set(espacio.id, marker);
-      markerIcons.current.set(espacio.id, defaultIcon);
+      markerIcons.current.set(espacio.id, iconFull);
+      markerIconsEmpty.current.set(espacio.id, iconEmpty);
       markerLabels.current.set(espacio.id, iconLabel);
       existingIds.delete(espacio.id);
     });
@@ -169,10 +189,28 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
     // Remove stale markers
     existingIds.forEach(id => {
       const m = markers.current.get(id);
-      if (m) { m.setMap(null); markers.current.delete(id); markerIcons.current.delete(id); markerLabels.current.delete(id); }
+      if (m) {
+        m.setMap(null);
+        markers.current.delete(id);
+        markerIcons.current.delete(id);
+        markerIconsEmpty.current.delete(id);
+        markerLabels.current.delete(id);
+      }
     });
 
   }, [loaded, espacios, onMarkerClick]);
+
+  // Swap icon style when filtrosActivos changes
+  useEffect(() => {
+    if (!loaded) return;
+    markers.current.forEach((marker, id) => {
+      if (id === selectedId) return; // selected marker keeps its highlight
+      const icon = filtrosActivos
+        ? markerIcons.current.get(id)
+        : markerIconsEmpty.current.get(id);
+      if (icon) marker.setIcon(icon);
+    });
+  }, [loaded, filtrosActivos, selectedId]);
 
   // Highlight selected marker
   useEffect(() => {
@@ -195,8 +233,9 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
         });
         marker.setZIndex(10);
       } else {
-        // Restore original icon
-        const originalIcon = markerIcons.current.get(id);
+        const originalIcon = filtrosActivos
+          ? markerIcons.current.get(id)
+          : markerIconsEmpty.current.get(id);
         if (originalIcon) {
           marker.setIcon(originalIcon);
           marker.setZIndex(undefined as unknown as number);
