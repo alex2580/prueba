@@ -92,22 +92,6 @@ export function DetalleEspacio({ espacio, onReservar, onChat }: DetalleEspacioPr
                 {espacio.descripcion || 'Sin descripción disponible.'}
               </p>
 
-              {/* Oferente */}
-              <div style={{
-                background: 'var(--surface2)', border: '1px solid var(--border)',
-                borderRadius: 'var(--r2)', padding: '1rem',
-              }}>
-                <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.75rem', color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: '.6rem' }}>
-                  Ofrecido por
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem' }}>
-                  <Avatar nombre={espacio.oferente_nombre || '?'} size={44} />
-                  <div>
-                    <div style={{ fontWeight: 700, color: 'var(--text)' }}>{espacio.oferente_nombre}</div>
-                    <div style={{ fontSize: '.8rem', color: 'var(--text3)' }}>{espacio.oferente_tel}</div>
-                  </div>
-                </div>
-              </div>
             </div>
           )}
 

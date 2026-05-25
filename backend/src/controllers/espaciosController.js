@@ -298,4 +298,28 @@ async function reactivar(req, res, next) {
   }
 }
 
-module.exports = { listar, obtener, crear, actualizar, eliminar, subirFotos, misEspacios, reactivar };
+async function fechasOcupadas(req, res, next) {
+  try {
+    const reservas = await query(
+      `SELECT fecha_desde, fecha_hasta FROM reservas
+       WHERE espacio_id = ? AND estado IN ('confirmada','pagada','activa')`,
+      [req.params.id]
+    );
+    const ocupadas = new Set();
+    reservas.forEach(({ fecha_desde, fecha_hasta }) => {
+      const desde = new Date(fecha_desde);
+      const hasta = new Date(fecha_hasta);
+      for (let d = new Date(desde); d <= hasta; d.setDate(d.getDate() + 1)) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        ocupadas.add(`${y}-${m}-${day}`);
+      }
+    });
+    res.json({ fechas: [...ocupadas] });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { listar, obtener, crear, actualizar, eliminar, subirFotos, misEspacios, reactivar, fechasOcupadas };

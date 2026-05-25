@@ -225,8 +225,8 @@ export const BARRIOS = [
 export type Barrio = typeof BARRIOS[number];
 
 export const SERVICIOS_ADICIONALES: Record<ServicioTipo, { label: string; emoji: string; precio: number }> = {
-  seguro:     { label: 'Seguro de contenido',    emoji: '🛡️', precio: 2500 },
-  embalaje:   { label: 'Kit de embalaje',        emoji: '📦', precio: 1800 },
-  transporte: { label: 'Servicio de transporte', emoji: '🚚', precio: 8500 },
-  limpieza:   { label: 'Limpieza del espacio',   emoji: '🧹', precio: 1200 },
+  seguro:     { label: 'Seguro de contenido',    emoji: '🛡️', precio: 0 },
+  embalaje:   { label: 'Kit de embalaje',        emoji: '📦', precio: 0 },
+  transporte: { label: 'Servicio de transporte', emoji: '🚚', precio: 0 },
+  limpieza:   { label: 'Limpieza del espacio',   emoji: '🧹', precio: 0 },
 };

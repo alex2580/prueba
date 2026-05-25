@@ -19,9 +19,10 @@ const validarEspacio = [
 ];
 
 // Public routes
-router.get('/',          optionalAuth, ctrl.listar);
-router.get('/mis-espacios', requireAuth, requireOferente, ctrl.misEspacios);
-router.get('/:id',       optionalAuth, ctrl.obtener);
+router.get('/',                    optionalAuth, ctrl.listar);
+router.get('/mis-espacios',        requireAuth, requireOferente, ctrl.misEspacios);
+router.get('/:id/fechas-ocupadas', ctrl.fechasOcupadas);
+router.get('/:id',                 optionalAuth, ctrl.obtener);
 
 // Protected routes
 router.post('/',              requireAuth, requireOferente, validarEspacio, ctrl.crear);

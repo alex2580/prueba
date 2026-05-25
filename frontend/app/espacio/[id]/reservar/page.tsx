@@ -22,6 +22,7 @@ type ModoCalendario = 'dia' | 'mes' | 'ambos';
 
 function MiniCalendar({
   diasDisponibles,
+  diasOcupados = [],
   fechaDesde,
   fechaHasta,
   onSelect,
@@ -30,6 +31,7 @@ function MiniCalendar({
   onSelectMulti,
 }: {
   diasDisponibles?: string[];
+  diasOcupados?: string[];
   fechaDesde: string;
   fechaHasta: string;
   onSelect: (desde: string, hasta: string) => void;
@@ -52,8 +54,10 @@ function MiniCalendar({
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
   }
   function isAvail(d: Date) {
+    const iso = toISO(d);
+    if (diasOcupados.includes(iso)) return false;
     if (!diasDisponibles?.length) return true;
-    return diasDisponibles.includes(toISO(d));
+    return diasDisponibles.includes(iso);
   }
   function inRange(d: Date) {
     if (!fechaDesde || !fechaHasta) return false;
@@ -300,6 +304,7 @@ export default function ReservarPage() {
   const [fechaHasta, setFechaHasta] = useState('');
   const [diasMulti, setDiasMulti] = useState<string[]>([]); // para modo 'dia' — días salteados
   const [step1Error, setStep1Error] = useState('');
+  const [fechasOcupadas, setFechasOcupadas] = useState<string[]>([]);
 
   // Step 2 state
   const [servicios, setServicios] = useState<ServicioTipo[]>([]);
@@ -327,6 +332,10 @@ export default function ReservarPage() {
       .then(setEspacio)
       .catch(() => {})
       .finally(() => setLoadingEspacio(false));
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/espacios/${espacioId}/fechas-ocupadas`)
+      .then(r => r.json())
+      .then(data => setFechasOcupadas(data.fechas || []))
+      .catch(() => {});
   }, [espacioId]);
 
   const disponibilidad = (espacio as any)?.disponibilidad as { dias?: string[]; meses?: string[] } | undefined;
@@ -542,6 +551,7 @@ export default function ReservarPage() {
                     </div>
                     <MiniCalendar
                       diasDisponibles={disponibilidad?.dias}
+                      diasOcupados={fechasOcupadas}
                       fechaDesde={fechaDesde}
                       fechaHasta={fechaHasta}
                       onSelect={(d, h) => { setFechaDesde(d); setFechaHasta(h); setStep1Error(''); }}
@@ -550,35 +560,6 @@ export default function ReservarPage() {
                       onSelectMulti={dias => { setDiasMulti(dias); setStep1Error(''); }}
                     />
 
-                    {/* Días seleccionados — modo 'dia' */}
-                    {modoCalendario === 'dia' && diasMulti.length > 0 && (
-                      <div style={{ marginTop: '1rem' }}>
-                        <div style={{ fontSize: '.75rem', color: 'var(--text3)', fontWeight: 600, marginBottom: '.4rem' }}>
-                          Días seleccionados ({diasMulti.length}):
-                        </div>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.35rem' }}>
-                          {diasMulti.map(d => (
-                            <span
-                              key={d}
-                              onClick={() => setDiasMulti(prev => prev.filter(x => x !== d))}
-                              style={{
-                                fontSize: '.72rem', fontWeight: 600, cursor: 'pointer',
-                                background: 'rgba(232,98,42,.12)', border: '1px solid rgba(232,98,42,.3)',
-                                borderRadius: 6, padding: '.2rem .55rem', color: 'var(--orange)',
-                              }}
-                              title="Click para quitar"
-                            >
-                              {d} ✕
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {modoCalendario === 'mes' && fechaDesde && (
-                      <div style={{ marginTop: '1rem', padding: '.65rem 1rem', background: 'rgba(59,130,246,.07)', border: '1px solid rgba(59,130,246,.2)', borderRadius: 8, fontSize: '.82rem', color: '#3b82f6', fontWeight: 600 }}>
-                        🗓 Mes seleccionado: {fechaDesde} → {fechaHasta}
-                      </div>
-                    )}
                     {modoCalendario === 'ambos' && (
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.75rem', marginTop: '1rem' }}>
                         <label className="form-label">
@@ -659,10 +640,12 @@ export default function ReservarPage() {
                           <div style={{ flex: 1 }}>
                             <div style={{ fontSize: '.9rem', fontWeight: 700, marginBottom: '.1rem' }}>{cfg.label}</div>
                             <div style={{ fontSize: '.75rem', color: 'var(--text3)' }}>
-                              {formatARS(cfg.precio)}
-                              {tipo === 'transporte' && ' · Incluye retiro, traslado y descarga'}
-                              {tipo === 'seguro' && ' /mes · Cobertura contra robo, incendio y daños'}
-                              {tipo === 'embalaje' && ' · Kit con cajas, cinta y papel burbuja'}
+                              {tipo === 'transporte' && 'Incluye retiro, traslado y descarga'}
+                              {tipo === 'seguro' && 'Cobertura contra robo, incendio y daños'}
+                              {tipo === 'embalaje' && 'Kit con cajas, cinta y papel burbuja'}
+                              {tipo === 'limpieza' && 'Limpieza general del espacio'}
+                              {' · '}
+                              <span style={{ color: 'var(--orange)', fontWeight: 600 }}>A coordinar con asesor</span>
                             </div>
                           </div>
                           <div style={{
@@ -694,7 +677,7 @@ export default function ReservarPage() {
                   {servicios.map(s => (
                     <div key={s} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '.82rem' }}>
                       <span style={{ color: 'var(--text2)' }}>{SERVICIOS_ADICIONALES[s].emoji} {SERVICIOS_ADICIONALES[s].label}</span>
-                      <span style={{ fontWeight: 700 }}>{formatARS(SERVICIOS_ADICIONALES[s].precio)}</span>
+                      <span style={{ fontWeight: 600, color: 'var(--orange)' }}>A coordinar</span>
                     </div>
                   ))}
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1rem' }}>
