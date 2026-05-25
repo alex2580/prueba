@@ -199,3 +199,10 @@ export const usuariosAPI = {
   verPerfil: (id: string) =>
     fetchAPI<Usuario>(`/api/usuarios/${id}`),
 };
+
+export const emailAPI = {
+  mejorarPuntuacion: (data: { espacioNombre?: string; puntajeActual: number }, token: string) =>
+    fetchAPI<{ message: string }>('/api/email/mejorar-puntuacion', {
+      method: 'POST', body: JSON.stringify(data),
+    }, token),
+};

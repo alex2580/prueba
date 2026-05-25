@@ -39,4 +39,21 @@ router.post('/bienvenida', requireAuth, requireAdmin, async (req, res, next) => 
   }
 });
 
+// POST /api/email/mejorar-puntuacion  (auth required)
+router.post('/mejorar-puntuacion', requireAuth, async (req, res, next) => {
+  try {
+    const { espacioNombre, puntajeActual } = req.body;
+    await emailService.sendMejorarPuntuacion({
+      nombre:        req.user.nombre,
+      email:         req.user.email,
+      tel:           req.user.tel || '',
+      espacioNombre: espacioNombre || '',
+      puntajeActual: puntajeActual ?? 0,
+    });
+    res.json({ message: 'Solicitud enviada' });
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;

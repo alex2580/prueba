@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader } from '@googlemaps/js-api-loader';
 import { useAuth } from '@/hooks/useAuth';
-import { espaciosAPI } from '@/lib/api';
+import { espaciosAPI, emailAPI } from '@/lib/api';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { LoginForm } from '@/components/auth/LoginForm';
@@ -43,14 +43,33 @@ function PasoSeguridad({
   seguridad,
   onToggle,
   cardStyle,
+  token,
+  espacioNombre,
 }: {
   seguridad: Record<string, boolean>;
   onToggle: (key: string) => void;
   cardStyle: React.CSSProperties;
+  token?: string | null;
+  espacioNombre?: string;
 }) {
   const total    = SEGURIDAD_OPCIONES.length;
   const selected = SEGURIDAD_OPCIONES.filter(o => seguridad[o.key]).length;
   const stars    = Math.round((selected / total) * 5);
+  const [enviado, setEnviado]   = useState(false);
+  const [enviando, setEnviando] = useState(false);
+
+  async function handleMejorar() {
+    if (!token) return;
+    setEnviando(true);
+    try {
+      await emailAPI.mejorarPuntuacion({ espacioNombre, puntajeActual: stars }, token);
+      setEnviado(true);
+    } catch (_) {
+      setEnviado(true);
+    } finally {
+      setEnviando(false);
+    }
+  }
 
   return (
     <div style={{ display: 'grid', gap: '1.2rem' }}>
@@ -68,21 +87,44 @@ function PasoSeguridad({
               Pasá el cursor sobre cada ítem para ver detalles
             </p>
           </div>
-          <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: '1rem' }}>
-            <div style={{ fontSize: '1.15rem', color: 'var(--orange)', letterSpacing: 1, lineHeight: 1 }}>
-              {[1, 2, 3, 4, 5].map(n => (
-                <span
-                  key={n}
+          <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '.4rem' }}>
+            <div>
+              <div style={{ fontSize: '1.15rem', color: 'var(--orange)', letterSpacing: 1, lineHeight: 1 }}>
+                {[1, 2, 3, 4, 5].map(n => (
+                  <span key={n} style={{ opacity: n <= stars ? 1 : 0.2, transition: 'opacity .2s' }}>★</span>
+                ))}
+              </div>
+              <div style={{ fontSize: '.7rem', color: 'var(--text3)', marginTop: '.25rem' }}>
+                {selected}/{total} ítems
+              </div>
+            </div>
+            {token && (
+              enviado ? (
+                <div style={{ fontSize: '.72rem', color: 'var(--mint)', fontWeight: 600 }}>
+                  ✅ ¡Solicitud enviada!
+                </div>
+              ) : (
+                <button
+                  onClick={handleMejorar}
+                  disabled={enviando}
                   style={{
-                    opacity: n <= stars ? 1 : 0.2,
-                    transition: 'opacity .2s',
+                    background: 'linear-gradient(135deg, rgba(232,98,42,.15), rgba(245,158,11,.15))',
+                    border: '1px solid rgba(232,98,42,.4)',
+                    borderRadius: '999px',
+                    padding: '.3rem .75rem',
+                    fontSize: '.7rem',
+                    fontWeight: 700,
+                    color: 'var(--orange)',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    transition: 'opacity .15s',
+                    opacity: enviando ? 0.6 : 1,
                   }}
-                >★</span>
-              ))}
-            </div>
-            <div style={{ fontSize: '.7rem', color: 'var(--text3)', marginTop: '.25rem' }}>
-              {selected}/{total} ítems
-            </div>
+                >
+                  🚀 ¿Querés mejorar tu puntuación?
+                </button>
+              )
+            )}
           </div>
         </div>
 
@@ -677,6 +719,8 @@ export default function PublicarPage() {
               seguridad={seguridad}
               onToggle={toggleSeguridad}
               cardStyle={cardStyle}
+              token={token}
+              espacioNombre={form.nombre}
             />
           )}
 

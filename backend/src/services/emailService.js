@@ -502,6 +502,27 @@ async function sendPublicacionDesactivada(toEmail, nombre, { espacioNombre, dias
   });
 }
 
+async function sendMejorarPuntuacion({ nombre, email, tel, espacioNombre, puntajeActual }) {
+  const html = baseTemplate('Solicitud para mejorar puntuación de seguridad', `
+    <h2>🛡️ Solicitud: Mejorar puntuación de seguridad</h2>
+    <p>Un oferente quiere mejorar la puntuación de seguridad de su publicación. Contactarlo a la brevedad.</p>
+    <div class="info-row"><span class="label">Nombre</span><span class="value">${nombre}</span></div>
+    <div class="info-row"><span class="label">Email</span><span class="value"><a href="mailto:${email}" style="color:var(--orange)">${email}</a></span></div>
+    <div class="info-row"><span class="label">Teléfono</span><span class="value">${tel || 'No informado'}</span></div>
+    <div class="info-row"><span class="label">Espacio</span><span class="value">${espacioNombre || 'No especificado'}</span></div>
+    <div class="info-row"><span class="label">Puntuación actual</span><span class="value">${puntajeActual} / 5 estrellas</span></div>
+    <a class="btn" href="mailto:${email}?subject=Mejorá la seguridad de tu espacio en TodasMisCosas">Responder al oferente →</a>
+  `);
+
+  await transporter.sendMail({
+    from: FROM,
+    to: 'contacto@todasmiscosas.com',
+    replyTo: email,
+    subject: `🛡️ Mejorar puntuación — ${nombre} (${espacioNombre || 'sin espacio'})`,
+    html,
+  });
+}
+
 module.exports = {
   sendReservaConfirmada,
   sendPagoConfirmado,
@@ -524,4 +545,5 @@ module.exports = {
   sendLoginNotificacion,
   sendCambioTelConfirmado,
   sendPublicacionDesactivada,
+  sendMejorarPuntuacion,
 };
