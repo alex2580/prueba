@@ -9,6 +9,7 @@ import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { formatARS, formatFecha } from '@/lib/utils';
+import { SEGURIDAD_OPCIONES } from '@/components/publicar/SeguridadChecklist';
 
 interface DetalleEspacioProps {
   espacio: Espacio;
@@ -92,6 +93,47 @@ export function DetalleEspacio({ espacio, onReservar, onChat }: DetalleEspacioPr
                 {espacio.descripcion || 'Sin descripción disponible.'}
               </p>
 
+              {/* Seguridad */}
+              {espacio.seguridad && (() => {
+                const activos = SEGURIDAD_OPCIONES.filter(o => espacio.seguridad![o.key]);
+                if (activos.length === 0) return null;
+                const stars = Math.round((activos.length / SEGURIDAD_OPCIONES.length) * 5);
+                return (
+                  <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1.2rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '.9rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                        <span style={{ fontSize: '1rem' }}>🛡️</span>
+                        <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.92rem' }}>
+                          Seguridad del espacio
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem' }}>
+                        <span style={{ color: 'var(--orange)', fontSize: '.95rem', letterSpacing: 1 }}>
+                          {[1,2,3,4,5].map(n => (
+                            <span key={n} style={{ opacity: n <= stars ? 1 : 0.2 }}>★</span>
+                          ))}
+                        </span>
+                        <span style={{ fontSize: '.75rem', color: 'var(--text3)' }}>
+                          {activos.length}/{SEGURIDAD_OPCIONES.length}
+                        </span>
+                      </div>
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.4rem' }}>
+                      {activos.map(opt => (
+                        <div key={opt.key} style={{
+                          display: 'flex', alignItems: 'center', gap: '.55rem',
+                          background: 'var(--surface2)', borderRadius: 'var(--r1)',
+                          padding: '.45rem .7rem',
+                          border: '1px solid rgba(232,98,42,.2)',
+                        }}>
+                          <span style={{ fontSize: '.95rem', flexShrink: 0 }}>{opt.emoji}</span>
+                          <span style={{ fontSize: '.78rem', color: 'var(--text)', fontWeight: 500, lineHeight: 1.3 }}>{opt.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           )}
 
