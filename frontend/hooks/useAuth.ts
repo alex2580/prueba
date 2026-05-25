@@ -16,13 +16,14 @@ interface AuthState {
   error: string | null;
   otpPending: boolean;
   otpToken: string | null;
+  otpRefreshToken: string | null;
   otpEmailHint: string;
   otpCanales: OtpCanales;
 }
 
 const INITIAL: AuthState = {
   user: null, token: null, loading: true, error: null,
-  otpPending: false, otpToken: null, otpEmailHint: '', otpCanales: { email: true, sms: false, whatsapp: false },
+  otpPending: false, otpToken: null, otpRefreshToken: null, otpEmailHint: '', otpCanales: { email: true, sms: false, whatsapp: false },
 };
 
 export function useAuth() {
@@ -85,11 +86,16 @@ export function useAuth() {
     }
 
     const token = data.session?.access_token;
+    const refreshToken = data.session?.refresh_token;
     if (!token) {
       otpFlowRef.current = false;
       setState(s => ({ ...s, loading: false, error: 'No se pudo obtener sesión' }));
       return false;
     }
+
+    // Borrar sesión del browser para evitar que una recarga salte el OTP.
+    // El access_token sigue siendo válido hasta su expiración (JWT).
+    await supabase.auth.signOut({ scope: 'local' });
 
     // Solicitar OTP al backend
     try {
@@ -100,9 +106,7 @@ export function useAuth() {
       const body = await res.json();
 
       if (!res.ok) {
-        // Si la cuenta está bloqueada, el requireAuth ya devuelve 403
         otpFlowRef.current = false;
-        await sbSignOut();
         setState(s => ({ ...s, loading: false, error: body.error || 'Error al solicitar código' }));
         return false;
       }
@@ -111,6 +115,7 @@ export function useAuth() {
         ...s, loading: false,
         otpPending: true,
         otpToken: token,
+        otpRefreshToken: refreshToken || null,
         otpEmailHint: body.email_hint || '',
         otpCanales: body.canales || { email: true, sms: false, whatsapp: false },
       }));
@@ -124,7 +129,7 @@ export function useAuth() {
 
   // ── verifyOTP: valida el código de 6 dígitos ──────────────────
   const verifyOTP = useCallback(async (codigo: string) => {
-    const token = state.otpToken;
+    const token        = state.otpToken;
     if (!token) return false;
 
     setState(s => ({ ...s, loading: true, error: null }));
@@ -142,15 +147,19 @@ export function useAuth() {
         return false;
       }
 
-      // OTP correcto → cargar usuario completo
+      // OTP correcto → restaurar sesión en el browser y cargar usuario
       otpFlowRef.current = false;
+      const refreshToken = state.otpRefreshToken;
+      if (refreshToken) {
+        await supabase.auth.setSession({ access_token: token, refresh_token: refreshToken });
+      }
       await loadUser(token);
       return true;
     } catch {
       setState(s => ({ ...s, loading: false, error: 'Error de conexión' }));
       return false;
     }
-  }, [state.otpToken, loadUser]);
+  }, [state.otpToken, state.otpRefreshToken, loadUser]);
 
   // ── reenviarOTP: genera un nuevo código ───────────────────────
   const reenviarOTP = useCallback(async () => {
