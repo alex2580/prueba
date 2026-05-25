@@ -1119,4 +1119,198 @@ Los estados `pagada` y `finalizada` quedan mapeados al paso 3 (completo).
 - `frontend/components/mapa/MapaEspacios.tsx`
 - `frontend/components/mapa/MarkerEspacio.tsx`
 
+---
+
+## 25 de Mayo 2026 — Sesión tarde/noche
+
+### Corrección destino de emails de admin (ADMIN_EMAILS)
+
+**Problema:** Los emails internos (formulario de contacto, "¿Querés mejorar tu puntuación?") llegaban a la casilla `contacto@todasmiscosas.com` en Hostinger, que nadie revisaba. No había reenvío configurado a los emails personales del equipo.
+
+**Solución:**
+- Se agregó la variable de entorno `ADMIN_EMAILS` en el backend
+- `sendMejorarPuntuacion` y `sendContacto` ahora usan `process.env.ADMIN_EMAILS` como destino
+- Valor en producción: `alejandro.laporte@gmail.com,guilleadominguez@gmail.com`
+- También se corrigió el HTML interno del email `sendMejorarPuntuacion` (usaba clases CSS que no existían en el template base)
+
+**Paso requerido en VPS (ejecutado manualmente):**
+```bash
+echo 'ADMIN_EMAILS=alejandro.laporte@gmail.com,guilleadominguez@gmail.com' >> /var/www/todasmiscosas/backend/.env
+pm2 reload all --update-env
+```
+
+**Archivos modificados:**
+- `backend/src/services/emailService.js`
+- `backend/src/routes/email.js`
+- `backend/.env` (solo local — no se sube a git)
+
+**Commit:** `c48718e`
+
+---
+
+### Panel Admin — nueva pestaña "🛡️ Puntuación" (solicitudes de mejora)
+
+**Problema:** El botón "¿Querés mejorar tu puntuación?" del formulario de publicación enviaba el email pero no dejaba registro visible en el sistema. Los admins no podían ver ni gestionar las solicitudes recibidas.
+
+**Solución:** Se creó una tabla en la DB y una nueva pestaña en el panel admin:
+
+**Base de datos — nueva tabla:**
+```sql
+CREATE TABLE admin_solicitudes_puntuacion (
+  id              VARCHAR(36)   PRIMARY KEY,
+  oferente_id     VARCHAR(36),
+  nombre          VARCHAR(255)  NOT NULL,
+  email           VARCHAR(255)  NOT NULL,
+  tel             VARCHAR(50),
+  espacio_nombre  VARCHAR(255),
+  puntaje_actual  TINYINT       NOT NULL DEFAULT 0,
+  estado          ENUM('pendiente','contactado','resuelto') NOT NULL DEFAULT 'pendiente',
+  created_at      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
+)
+```
+
+**Flujo:** cuando el oferente hace click → se guarda en DB **y** se envía el email a ADMIN_EMAILS.
+
+**Panel admin — pestaña "🛡️ Puntuación":**
+- Badge rojo con cantidad de solicitudes pendientes
+- Filtros: todas / pendiente / contactado / resuelto
+- Cada solicitud muestra: nombre, email, teléfono, espacio, estrellas actuales, fecha
+- Acciones: ✉️ Responder (abre Gmail), 📞 Marcar contactado, ✅ Marcar resuelto
+
+**Endpoints nuevos:**
+- `GET /api/admin/solicitudes-puntuacion` (admin)
+- `PATCH /api/admin/solicitudes-puntuacion/:id/estado` (admin)
+
+**Archivos modificados:**
+- `backend/src/controllers/adminController.js`
+- `backend/src/routes/admin.js`
+- `backend/src/routes/email.js`
+- `frontend/app/admin/page.tsx`
+
+**Commit:** `711c80b`
+
+---
+
+### Filtro de mapa — opción Por día / Por mes
+
+**Funcionalidad:** Se agregaron dos nuevos botones de toggle en el panel de filtros del mapa, al lado del slider de precio: **📅 Por día** y **📆 Por mes**.
+
+**Comportamiento:**
+- **Por día:** filtra solo espacios con `precio_dia > 0`; el slider de precio va de $0 a $10.000; el label dice "Precio máx/día"
+- **Por mes:** filtra solo espacios con `precio_mes > 0`; el slider va de $0 a $100.000; el label dice "Precio máx/mes"
+- Ambos toggles se pueden desactivar haciendo click nuevamente
+- Al cambiar de periodo el slider se resetea (precio_max = undefined)
+- El badge del botón "Filtros" cuenta el periodo como filtro activo
+- El backend aplica el filtro de precio al campo correcto (`precio_dia` o `precio_mes`) según el periodo seleccionado
+
+**Campo nuevo en `FiltrosEspacios`:** `periodo?: 'dia' | 'mes' | ''`
+
+**Archivos modificados:**
+- `frontend/types/index.ts` — campo `periodo` en `FiltrosEspacios`
+- `frontend/lib/api.ts` — pasa `periodo` en query string
+- `frontend/components/espacios/FiltrosEspacios.tsx` — botones + slider adaptativo
+- `frontend/app/page.tsx` — badge actualizado
+- `backend/src/controllers/espaciosController.js` — lógica de filtrado por periodo
+
+**Commit:** `e30fc25`
+
+---
+
+### Mapa — marcadores sin precio en estado inicial
+
+**Funcionalidad:** Los marcadores del mapa ahora adaptan su apariencia según si hay filtros activos o no:
+
+| Estado | Apariencia del marcador |
+|--------|------------------------|
+| Sin filtros | Pin pequeño (28×34px) con solo el color, sin texto — naranja=compartido, azul=exclusivo, gris=no disponible |
+| Con filtros activos | Pin grande (68×56px) con el precio dentro (lógica existente: precio_mes si >0, sino precio_dia con "/d") |
+
+**Lógica de activación:** se considera "filtros activos" cuando hay al menos uno de: `tipo`, `precio_max`, `periodo`, `barrio`, `q` (búsqueda).
+
+**Prop nueva en `MapaEspacios`:** `filtrosActivos?: boolean`
+
+Al cambiar `filtrosActivos`, un `useEffect` itera todos los marcadores existentes y swappea entre el ícono grande (con precio) y el ícono pequeño (sin precio), sin tener que recrearlos.
+
+**Archivos modificados:**
+- `frontend/components/mapa/MapaEspacios.tsx`
+- `frontend/app/page.tsx`
+
+**Commit:** `1cf9f06`
+
+---
+
+### Email al oferente — desglose de pago con comisión 15% y aviso 48h
+
+**Funcionalidad:** Cuando el demandante completa el pago, el email que recibe el oferente ahora incluye:
+
+- Valor bruto de la reserva
+- Comisión de TodasMisCosas (15%) — en rojo
+- **Monto neto a recibir** — en verde
+- Aviso destacado: "Recibirás $X dentro de las próximas 48 horas hábiles"
+- El asunto del email incluye el monto neto: `💰 Pago recibido — $X en camino · Nombre del espacio`
+
+**Constante backend:** `const COMISION_PLATAFORMA = 0.15` en `emailService.js`
+
+Además se actualizó `legal.html`: la comisión cobrada pasó de **10% → 15%**.
+
+**Archivos modificados:**
+- `backend/src/services/emailService.js` — `sendPagoRecibidoOferente`
+- `frontend/public/legal.html`
+
+**Commit:** `e52f588`
+
+---
+
+### Panel Oferente — montos netos y nuevo indicador "Ingresos del mes"
+
+**Cambios en `PanelOferente.tsx`:**
+
+1. **Indicadores (tarjetas de stats):**
+   - `💰 Ingresos totales` → ahora muestra el 85% del bruto total (neto tras comisión TMC), con nota "neto -15% TMC"
+   - `📆 Ingresos del mes` → **nuevo indicador** con el neto del mes en curso, con la misma nota
+
+2. **Lista de reservas:**
+   - Reservas en estado `pagada` / `finalizada`: muestra el **monto neto en verde** + bruto entre paréntesis en gris
+   - Reservas en otros estados: muestra el valor estimado en naranja (sin descuento, porque aún no se pagó)
+
+**Constante compartida:** `COMISION_TMC = 0.15` y helper `netoOferente(bruto)` en `frontend/lib/utils.ts` — única fuente de verdad para ambos frontend y email.
+
+**Archivos modificados:**
+- `frontend/lib/utils.ts` — constante `COMISION_TMC` y función `netoOferente()`
+- `frontend/components/panel/PanelOferente.tsx`
+
+---
+
+### Panel Admin — nueva pestaña "💼 Operaciones"
+
+**Funcionalidad:** Nueva pestaña en `/admin` con visión financiera completa de la plataforma.
+
+**9 tarjetas KPI:**
+| Indicador | Descripción |
+|-----------|-------------|
+| 📋 Total reservas | Todas las reservas del sistema |
+| ✅ Completadas | Pagadas + finalizadas |
+| ⏳ En curso / pendientes | Pendientes + confirmadas |
+| ❌ Canceladas | Reservas canceladas |
+| 💵 GMV del mes | Gross Merchandise Value del mes en curso |
+| 💰 GMV total | GMV histórico total |
+| 🏛️ Comisión TMC mes | 15% del GMV del mes |
+| 🏛️ Comisión TMC total | 15% del GMV total |
+| 🤝 Neto a oferentes | GMV total menos comisiones |
+
+**Lista de operaciones:**
+- Filtros: todas / pagadas / pendientes / canceladas + búsqueda por nombre
+- Cada fila muestra: espacio, barrio, estado, fecha, demandante (email), oferente (email), fechas de la reserva, ID de pago MP
+- Para reservas completadas: desglose financiero — bruto · comisión TMC (naranja) · neto oferente (verde)
+
+**Endpoint nuevo:**
+- `GET /api/admin/operaciones` → devuelve `{ resumen, reservas[] }` con todos los campos financieros calculados
+
+**Archivos modificados:**
+- `backend/src/controllers/adminController.js` — `getOperaciones()`
+- `backend/src/routes/admin.js` — ruta nueva
+- `frontend/app/admin/page.tsx` — `TabOperaciones` + tab en TabBar
+
+**Commit:** `fcbaab7`
+
 **Commits:** `b0de6ae`, `b3b0c1b`
