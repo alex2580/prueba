@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC — Propuesta de Rediseño UX/UI · Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── Reset ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#F2F3F5;color:#1A1A2E;-webkit-font-smoothing:antialiased;}
+img{max-width:100%;display:block;}
+a{text-decoration:none;color:inherit;}
+
+/* ── Annotation layer ── */
+.section-label{
+  display:flex;align-items:center;gap:12px;
+  background:#1A1A2E;color:#fff;
+  font-family:'Sora',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  padding:10px 20px;
+  position:sticky;top:0;z-index:100;
+}
+.section-label .badge{background:#E8622A;color:#fff;border-radius:99px;padding:2px 10px;font-size:.68rem;}
+.section-label .badge-new{background:#10B981;}
+.section-label .badge-change{background:#3B82F6;}
+.annotation{
+  background:#FFFBEB;border-left:4px solid #F59E0B;
+  padding:12px 18px;margin:0 0 0 0;
+  font-size:.78rem;color:#78350F;line-height:1.65;
+}
+.annotation strong{color:#92400E;}
+.annotation ul{padding-left:16px;margin-top:4px;}
+.annotation li{margin-bottom:2px;}
+
+/* ── Palette doc ── */
+.palette-page{background:#fff;padding:48px;max-width:900px;margin:0 auto;}
+.swatch-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:24px;}
+.swatch{border-radius:16px;overflow:hidden;flex:1;min-width:120px;box-shadow:0 2px 8px rgba(0,0,0,.12);}
+.swatch-color{height:72px;}
+.swatch-info{padding:10px 12px;background:#fff;border:1px solid #E5E7EB;border-top:none;border-radius:0 0 16px 16px;}
+.swatch-info .name{font-size:.72rem;font-weight:700;color:#6B7280;letter-spacing:.05em;text-transform:uppercase;}
+.swatch-info .hex{font-size:.82rem;font-weight:600;color:#1A1A2E;font-family:monospace;}
+.swatch-info .use{font-size:.7rem;color:#9CA3AF;margin-top:2px;}
+
+/* ════════════════════════════════════════════════
+   PANTALLA 1 — NAVBAR REDISEÑADO
+════════════════════════════════════════════════ */
+.nav-new{
+  background:#fff;
+  border-bottom:1px solid #E5E7EB;
+  padding:0 40px;
+  height:68px;
+  display:flex;align-items:center;gap:32px;
+  box-shadow:0 1px 3px rgba(0,0,0,.06);
+}
+.nav-logo{
+  font-family:'Sora',sans-serif;font-weight:900;font-size:1.25rem;
+  color:#E8622A;letter-spacing:-.5px;white-space:nowrap;
+}
+.nav-logo span{color:#1A1A2E;}
+.nav-links{display:flex;gap:4px;flex:1;}
+.nav-link{padding:6px 14px;border-radius:99px;font-size:.85rem;font-weight:500;color:#6B7280;transition:all .15s;}
+.nav-link:hover,.nav-link.active{background:#FFF5F0;color:#E8622A;font-weight:600;}
+.nav-actions{display:flex;gap:10px;align-items:center;margin-left:auto;}
+.btn-ghost{border:1.5px solid #E5E7EB;background:#fff;color:#1A1A2E;padding:8px 20px;border-radius:99px;font-size:.84rem;font-weight:600;cursor:pointer;transition:all .15s;}
+.btn-ghost:hover{border-color:#E8622A;color:#E8622A;}
+.btn-primary{background:#E8622A;color:#fff;border:none;padding:9px 22px;border-radius:99px;font-size:.84rem;font-weight:700;cursor:pointer;transition:all .15s;box-shadow:0 2px 8px rgba(232,98,42,.3);}
+.btn-primary:hover{background:#D4521A;transform:translateY(-1px);box-shadow:0 4px 14px rgba(232,98,42,.4);}
+.btn-cta-big{background:#E8622A;color:#fff;border:none;padding:14px 32px;border-radius:99px;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(232,98,42,.35);}
+.btn-cta-big:hover{background:#D4521A;transform:translateY(-2px);box-shadow:0 6px 24px rgba(232,98,42,.45);}
+.btn-secondary-big{background:#fff;color:#E8622A;border:2.5px solid #E8622A;padding:12px 30px;border-radius:99px;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-secondary-big:hover{background:#FFF5F0;}
+
+/* ════════════════════════════════════════════════
+   PANTALLA 2 — HERO
+════════════════════════════════════════════════ */
+.hero{
+  background: linear-gradient(135deg, #1A1A2E 0%, #2D1810 60%, #E8622A 100%);
+  padding:80px 40px 100px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:url('https://picsum.photos/seed/warehouse1/1400/600') center/cover;
+  opacity:.18;
+}
+.hero-inner{position:relative;z-index:1;max-width:760px;margin:0 auto;}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.12);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.2);border-radius:99px;
+  color:#fff;font-size:.78rem;font-weight:600;padding:6px 16px;
+  margin-bottom:24px;letter-spacing:.03em;
+}
+.hero-eyebrow span{background:#10B981;width:8px;height:8px;border-radius:50%;display:inline-block;}
+.hero h1{
+  font-family:'Sora',sans-serif;font-weight:900;
+  font-size:clamp(2.4rem,5vw,3.8rem);
+  color:#fff;line-height:1.1;margin-bottom:20px;letter-spacing:-.02em;
+}
+.hero h1 em{color:#F97316;font-style:normal;}
+.hero p{color:rgba(255,255,255,.75);font-size:1.1rem;line-height:1.6;margin-bottom:40px;max-width:520px;margin-left:auto;margin-right:auto;}
+.hero-search{
+  background:#fff;border-radius:24px;padding:8px 8px 8px 20px;
+  display:flex;align-items:center;gap:8px;
+  box-shadow:0 8px 40px rgba(0,0,0,.25);max-width:680px;margin:0 auto 32px;
+}
+.hero-search-icon{color:#9CA3AF;font-size:1.2rem;flex-shrink:0;}
+.hero-search input{
+  flex:1;border:none;background:transparent;font-size:.95rem;color:#1A1A2E;
+  padding:8px 4px;outline:none;
+}
+.hero-search input::placeholder{color:#9CA3AF;}
+.hero-search-divider{width:1px;height:32px;background:#E5E7EB;flex-shrink:0;}
+.hero-search-loc{
+  display:flex;align-items:center;gap:6px;
+  color:#6B7280;font-size:.88rem;padding:0 12px;cursor:pointer;
+  white-space:nowrap;
+}
+.hero-search-loc:hover{color:#E8622A;}
+.hero-search .btn-search{
+  background:#E8622A;color:#fff;border:none;border-radius:16px;
+  padding:12px 24px;font-size:.9rem;font-weight:700;cursor:pointer;
+  white-space:nowrap;transition:background .15s;flex-shrink:0;
+}
+.hero-search .btn-search:hover{background:#D4521A;}
+.hero-tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.hero-tag{
+  background:rgba(255,255,255,.12);backdrop-filter:blur(4px);
+  border:1px solid rgba(255,255,255,.2);border-radius:99px;
+  color:#fff;font-size:.78rem;font-weight:500;padding:5px 14px;
+  cursor:pointer;transition:all .15s;
+}
+.hero-tag:hover{background:rgba(255,255,255,.22);}
+.hero-stats{
+  display:flex;gap:40px;justify-content:center;flex-wrap:wrap;
+  margin-top:48px;padding-top:36px;border-top:1px solid rgba(255,255,255,.12);
+}
+.hero-stat .num{font-family:'Sora',sans-serif;font-size:2rem;font-weight:900;color:#fff;}
+.hero-stat .label{font-size:.78rem;color:rgba(255,255,255,.6);margin-top:2px;}
+
+/* ════════════════════════════════════════════════
+   PANTALLA 3 — FILTROS HORIZONTALES (tipo Airbnb)
+════════════════════════════════════════════════ */
+.filters-bar{
+  background:#fff;border-bottom:1px solid #E5E7EB;
+  padding:16px 40px;display:flex;align-items:center;gap:12px;
+  position:sticky;top:68px;z-index:90;overflow-x:auto;
+}
+.filter-pill{
+  display:flex;align-items:center;gap:6px;
+  border:1.5px solid #E5E7EB;border-radius:99px;
+  padding:8px 16px;font-size:.82rem;font-weight:500;color:#4B5563;
+  cursor:pointer;white-space:nowrap;background:#fff;transition:all .15s;flex-shrink:0;
+}
+.filter-pill:hover{border-color:#E8622A;color:#E8622A;}
+.filter-pill.active{background:#FFF5F0;border-color:#E8622A;color:#E8622A;font-weight:600;}
+.filter-pill .icon{font-size:1rem;}
+.filter-pill .count{
+  background:#E8622A;color:#fff;border-radius:99px;
+  font-size:.62rem;font-weight:800;padding:1px 6px;margin-left:2px;
+}
+.filters-bar-right{margin-left:auto;display:flex;gap:8px;flex-shrink:0;}
+.sort-select{
+  border:1.5px solid #E5E7EB;border-radius:99px;
+  padding:7px 32px 7px 14px;font-size:.82rem;font-weight:500;color:#4B5563;
+  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7280' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") no-repeat calc(100% - 12px) 50%;
+  appearance:none;cursor:pointer;
+}
+.map-toggle{
+  border:1.5px solid #E5E7EB;border-radius:99px;
+  padding:7px 16px;font-size:.82rem;font-weight:500;color:#4B5563;
+  background:#fff;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;
+}
+.map-toggle:hover{border-color:#E8622A;color:#E8622A;}
+
+/* ════════════════════════════════════════════════
+   PANTALLA 4 — GRID DE CARDS (tipo Argenprop)
+════════════════════════════════════════════════ */
+.results-area{max-width:1280px;margin:0 auto;padding:32px 40px;}
+.results-header{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;
+}
+.results-count{font-size:.88rem;color:#6B7280;}
+.results-count strong{color:#1A1A2E;font-weight:700;}
+.cards-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:24px;
+}
+.space-card{
+  background:#fff;border-radius:20px;overflow:hidden;
+  box-shadow:0 2px 8px rgba(0,0,0,.07);
+  transition:transform .2s, box-shadow .2s;cursor:pointer;
+  border:1px solid #F0F0F0;
+}
+.space-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.12);}
+.card-img{
+  position:relative;height:196px;overflow:hidden;background:#E5E7EB;
+}
+.card-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s;}
+.space-card:hover .card-img img{transform:scale(1.04);}
+.card-badge{
+  position:absolute;top:12px;left:12px;
+  background:#fff;border-radius:99px;padding:4px 10px;
+  font-size:.68rem;font-weight:700;color:#1A1A2E;
+  box-shadow:0 2px 6px rgba(0,0,0,.12);display:flex;align-items:center;gap:4px;
+}
+.card-badge.shared{color:#E8622A;}
+.card-fav{
+  position:absolute;top:12px;right:12px;
+  background:rgba(255,255,255,.9);border-radius:50%;width:32px;height:32px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.9rem;box-shadow:0 2px 6px rgba(0,0,0,.12);cursor:pointer;transition:all .15s;
+}
+.card-fav:hover{background:#fff;transform:scale(1.1);}
+.card-verified{
+  position:absolute;bottom:12px;left:12px;
+  background:rgba(16,185,129,.9);border-radius:99px;
+  color:#fff;font-size:.65rem;font-weight:700;padding:3px 9px;
+  display:flex;align-items:center;gap:4px;
+}
+.card-body{padding:16px 18px 18px;}
+.card-location{
+  display:flex;align-items:center;gap:4px;
+  color:#9CA3AF;font-size:.75rem;margin-bottom:6px;
+}
+.card-title{
+  font-family:'Sora',sans-serif;font-weight:700;font-size:.98rem;color:#1A1A2E;
+  margin-bottom:8px;line-height:1.3;
+}
+.card-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.card-tag{
+  background:#F3F4F6;color:#6B7280;
+  border-radius:6px;padding:3px 8px;font-size:.68rem;font-weight:500;
+}
+.card-tag.orange{background:#FFF5F0;color:#E8622A;}
+.card-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:12px;border-top:1px solid #F3F4F6;
+}
+.card-price{}
+.card-price .amount{
+  font-family:'Sora',sans-serif;font-weight:800;font-size:1.15rem;color:#E8622A;
+}
+.card-price .period{font-size:.72rem;color:#9CA3AF;font-weight:400;}
+.card-price .alt{font-size:.72rem;color:#9CA3AF;margin-top:1px;}
+.card-rating{
+  display:flex;align-items:center;gap:4px;
+  font-size:.78rem;color:#1A1A2E;font-weight:600;
+}
+.card-rating .stars{color:#F59E0B;}
+.card-rating .n{color:#9CA3AF;font-weight:400;}
+
+/* ════════════════════════════════════════════════
+   PANTALLA 5 — DETALLE ESPACIO
+════════════════════════════════════════════════ */
+.detail-page{background:#fff;max-width:1100px;margin:0 auto;padding:32px 40px;}
+.detail-breadcrumb{
+  display:flex;align-items:center;gap:8px;color:#9CA3AF;font-size:.8rem;margin-bottom:20px;
+}
+.detail-breadcrumb a{color:#9CA3AF;}
+.detail-breadcrumb a:hover{color:#E8622A;}
+.detail-breadcrumb span{color:#4B5563;}
+.detail-title{
+  font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(1.5rem,3vw,2.2rem);
+  color:#1A1A2E;margin-bottom:8px;line-height:1.2;
+}
+.detail-meta{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:24px;
+}
+.detail-meta-item{display:flex;align-items:center;gap:5px;font-size:.85rem;color:#6B7280;}
+.detail-meta-item .icon{font-size:1rem;}
+.detail-meta .tag-pill{
+  background:#EFF6FF;color:#3B82F6;border-radius:99px;
+  font-size:.72rem;font-weight:700;padding:3px 10px;
+}
+.detail-meta .tag-pill.green{background:#ECFDF5;color:#10B981;}
+.detail-meta .tag-pill.orange{background:#FFF5F0;color:#E8622A;}
+.detail-gallery{
+  display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:1fr 1fr;
+  gap:8px;height:380px;border-radius:20px;overflow:hidden;margin-bottom:32px;
+}
+.gallery-main{grid-row:span 2;background:#D1D5DB;overflow:hidden;}
+.gallery-main img,.gallery-side img{width:100%;height:100%;object-fit:cover;transition:transform .4s;}
+.gallery-main:hover img,.gallery-side:hover img{transform:scale(1.04);}
+.gallery-side{background:#E5E7EB;overflow:hidden;cursor:pointer;position:relative;}
+.gallery-side:last-child::after{
+  content:'Ver todas las fotos';
+  position:absolute;inset:0;background:rgba(0,0,0,.45);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:.82rem;font-weight:700;
+}
+.detail-body{display:grid;grid-template-columns:1fr 360px;gap:40px;}
+.detail-main{}
+.detail-section{margin-bottom:32px;padding-bottom:32px;border-bottom:1px solid #F3F4F6;}
+.detail-section:last-child{border-bottom:none;}
+.detail-section h3{
+  font-family:'Sora',sans-serif;font-weight:700;font-size:1.1rem;
+  color:#1A1A2E;margin-bottom:14px;
+}
+.detail-desc{color:#4B5563;font-size:.9rem;line-height:1.8;}
+.amenities{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.amenity{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-radius:12px;background:#F9FAFB;
+  font-size:.84rem;color:#374151;
+}
+.amenity .icon{font-size:1.1rem;flex-shrink:0;}
+.amenity.highlight{background:#FFF5F0;color:#E8622A;}
+/* Sticky booking card */
+.booking-card{
+  background:#fff;border:1.5px solid #E5E7EB;border-radius:24px;
+  padding:28px;position:sticky;top:88px;
+  box-shadow:0 8px 32px rgba(0,0,0,.1);
+}
+.booking-price{margin-bottom:20px;}
+.booking-price .main{
+  font-family:'Sora',sans-serif;font-weight:900;font-size:2rem;color:#E8622A;
+}
+.booking-price .period{font-size:.88rem;color:#9CA3AF;font-weight:400;}
+.booking-price .alt{font-size:.82rem;color:#6B7280;margin-top:4px;}
+.booking-rating{
+  display:flex;align-items:center;gap:8px;margin-bottom:20px;
+  padding-bottom:20px;border-bottom:1px solid #F3F4F6;
+}
+.booking-rating .stars{color:#F59E0B;font-size:1rem;}
+.booking-rating .num{font-size:.88rem;font-weight:700;color:#1A1A2E;}
+.booking-rating .cnt{font-size:.82rem;color:#9CA3AF;}
+.booking-dates{
+  background:#F9FAFB;border:1.5px solid #E5E7EB;border-radius:16px;overflow:hidden;margin-bottom:16px;
+}
+.booking-date-row{
+  display:flex;border-bottom:1px solid #E5E7EB;
+}
+.booking-date-row:last-child{border-bottom:none;}
+.booking-date-cell{
+  flex:1;padding:12px 16px;cursor:pointer;
+}
+.booking-date-cell:first-child{border-right:1px solid #E5E7EB;}
+.booking-date-cell:hover{background:#FFF5F0;}
+.booking-date-cell .label{font-size:.65rem;font-weight:700;color:#6B7280;letter-spacing:.07em;text-transform:uppercase;}
+.booking-date-cell .value{font-size:.9rem;font-weight:600;color:#1A1A2E;margin-top:3px;}
+.booking-fees{font-size:.82rem;color:#6B7280;margin-bottom:20px;}
+.booking-fee-row{display:flex;justify-content:space-between;padding:5px 0;}
+.booking-fee-row.total{
+  font-size:.95rem;font-weight:700;color:#1A1A2E;
+  margin-top:8px;padding-top:12px;border-top:1px solid #E5E7EB;
+}
+.booking-trust{
+  display:flex;align-items:center;gap:8px;
+  font-size:.75rem;color:#6B7280;text-align:center;margin-top:12px;justify-content:center;
+}
+/* Oferente profile mini */
+.owner-card{
+  display:flex;align-items:center;gap:14px;
+  padding:16px;background:#F9FAFB;border-radius:16px;margin-bottom:16px;
+}
+.owner-avatar{
+  width:52px;height:52px;border-radius:50%;background:#E5E7EB;overflow:hidden;flex-shrink:0;
+  border:2.5px solid #E8622A;
+}
+.owner-avatar img{width:100%;height:100%;object-fit:cover;}
+.owner-info .name{font-size:.92rem;font-weight:700;color:#1A1A2E;}
+.owner-info .since{font-size:.75rem;color:#9CA3AF;}
+.owner-info .verified{
+  display:inline-flex;align-items:center;gap:4px;
+  background:#ECFDF5;color:#10B981;border-radius:99px;
+  font-size:.65rem;font-weight:700;padding:2px 8px;margin-top:4px;
+}
+
+/* ════════════════════════════════════════════════
+   PANTALLA 6 — COMO FUNCIONA rediseñado
+════════════════════════════════════════════════ */
+.how-section{
+  background:#fff;padding:80px 40px;
+}
+.how-inner{max-width:1100px;margin:0 auto;}
+.how-label{
+  text-align:center;
+  display:inline-block;
+  background:#FFF5F0;color:#E8622A;border-radius:99px;
+  font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  padding:6px 18px;margin:0 auto 16px;
+}
+.how-title{
+  font-family:'Sora',sans-serif;font-weight:900;font-size:clamp(1.8rem,4vw,2.8rem);
+  color:#1A1A2E;text-align:center;margin-bottom:12px;letter-spacing:-.02em;
+}
+.how-sub{
+  color:#6B7280;text-align:center;font-size:1rem;line-height:1.7;
+  max-width:500px;margin:0 auto 56px;
+}
+.steps-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:0;position:relative;}
+.steps-grid::before{
+  content:'';position:absolute;top:36px;left:10%;right:10%;
+  height:2px;background:linear-gradient(90deg,#E8622A,#F97316,#E8622A);
+  opacity:.3;
+}
+.step{text-align:center;padding:0 16px;position:relative;}
+.step-num{
+  width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,#E8622A,#F97316);
+  color:#fff;font-family:'Sora',sans-serif;font-weight:900;font-size:1.5rem;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 20px;
+  box-shadow:0 4px 16px rgba(232,98,42,.3);
+  position:relative;z-index:1;
+}
+.step-num .step-icon{font-size:1.6rem;}
+.step h4{font-family:'Sora',sans-serif;font-weight:700;font-size:.95rem;color:#1A1A2E;margin-bottom:8px;}
+.step p{color:#6B7280;font-size:.82rem;line-height:1.65;}
+.step-pin-badge{
+  background:#FFF5F0;border:2px solid #E8622A;border-radius:12px;
+  padding:8px 14px;margin:10px auto 0;display:inline-block;
+  font-size:.72rem;font-weight:700;color:#E8622A;
+}
+
+/* ════════════════════════════════════════════════
+   PANTALLA 7 — CTA / OFERENTE
+════════════════════════════════════════════════ */
+.cta-split{
+  display:grid;grid-template-columns:1fr 1fr;min-height:420px;
+}
+.cta-left{
+  background:linear-gradient(135deg,#1A1A2E 0%,#2D1F0E 100%);
+  padding:64px 56px;display:flex;flex-direction:column;justify-content:center;
+}
+.cta-right{
+  background:linear-gradient(135deg,#E8622A 0%,#F97316 100%);
+  padding:64px 56px;display:flex;flex-direction:column;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.cta-right::before{
+  content:'';position:absolute;
+  right:-60px;top:-60px;
+  width:280px;height:280px;border-radius:50%;
+  background:rgba(255,255,255,.07);
+}
+.cta-right::after{
+  content:'';position:absolute;
+  left:-40px;bottom:-60px;
+  width:200px;height:200px;border-radius:50%;
+  background:rgba(255,255,255,.05);
+}
+.cta-eyebrow{
+  font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  margin-bottom:14px;color:rgba(255,255,255,.5);
+}
+.cta-left h2,.cta-right h2{
+  font-family:'Sora',sans-serif;font-weight:900;
+  font-size:clamp(1.6rem,3vw,2.2rem);color:#fff;
+  margin-bottom:14px;line-height:1.2;letter-spacing:-.02em;
+}
+.cta-left p,.cta-right p{
+  color:rgba(255,255,255,.7);font-size:.9rem;line-height:1.7;margin-bottom:28px;
+}
+.cta-stats{display:flex;gap:24px;margin-bottom:32px;}
+.cta-stat .val{font-family:'Sora',sans-serif;font-size:1.5rem;font-weight:900;color:#fff;}
+.cta-stat .lbl{font-size:.72rem;color:rgba(255,255,255,.55);}
+.btn-white{
+  background:#fff;color:#E8622A;border:none;
+  padding:14px 30px;border-radius:99px;font-size:.92rem;font-weight:800;
+  cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px;
+  box-shadow:0 4px 16px rgba(0,0,0,.15);
+}
+.btn-white:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2);}
+.btn-outline-white{
+  background:transparent;color:#fff;
+  border:2px solid rgba(255,255,255,.4);
+  padding:13px 28px;border-radius:99px;font-size:.92rem;font-weight:700;
+  cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px;
+}
+.btn-outline-white:hover{border-color:#fff;background:rgba(255,255,255,.08);}
+
+/* ════════════════════════════════════════════════
+   PANTALLA 8 — FOOTER
+════════════════════════════════════════════════ */
+.footer-new{
+  background:#1A1A2E;color:rgba(255,255,255,.65);
+  padding:56px 40px 32px;
+}
+.footer-grid{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;
+  max-width:1100px;margin:0 auto 40px;
+}
+.footer-logo{
+  font-family:'Sora',sans-serif;font-weight:900;font-size:1.4rem;color:#E8622A;margin-bottom:14px;
+}
+.footer-logo span{color:#fff;}
+.footer-desc{font-size:.82rem;line-height:1.75;color:rgba(255,255,255,.5);max-width:260px;}
+.footer-col h5{
+  font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,255,.4);margin-bottom:14px;
+}
+.footer-col ul{list-style:none;}
+.footer-col li{margin-bottom:8px;}
+.footer-col a{font-size:.84rem;color:rgba(255,255,255,.6);transition:color .15s;}
+.footer-col a:hover{color:#E8622A;}
+.footer-bottom{
+  max-width:1100px;margin:0 auto;
+  padding-top:24px;border-top:1px solid rgba(255,255,255,.08);
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:.75rem;color:rgba(255,255,255,.35);
+}
+.footer-badges{display:flex;gap:12px;}
+.footer-badge{
+  background:rgba(255,255,255,.07);border-radius:8px;
+  padding:5px 10px;font-size:.68rem;color:rgba(255,255,255,.45);
+  display:flex;align-items:center;gap:5px;
+}
+
+/* ════════════════════════════════════════════════
+   DOCUMENTO ESTRUCTURA
+════════════════════════════════════════════════ */
+.doc-page{background:#F2F3F5;padding:40px;}
+.doc-intro{
+  max-width:900px;margin:0 auto 48px;background:#fff;
+  border-radius:20px;padding:36px 40px;
+  border-left:5px solid #E8622A;
+}
+.doc-intro h1{
+  font-family:'Sora',sans-serif;font-weight:900;font-size:1.8rem;color:#1A1A2E;margin-bottom:8px;
+}
+.doc-intro .version{
+  display:inline-block;background:#FFF5F0;color:#E8622A;
+  border-radius:99px;font-size:.72rem;font-weight:700;padding:3px 12px;margin-bottom:16px;
+}
+.doc-intro p{color:#6B7280;font-size:.9rem;line-height:1.7;margin-bottom:12px;}
+.doc-intro p strong{color:#1A1A2E;}
+
+.screen-wrapper{
+  max-width:1200px;margin:0 auto 56px;
+  background:#fff;border-radius:24px;overflow:hidden;
+  box-shadow:0 4px 24px rgba(0,0,0,.08);
+  border:1px solid #E5E7EB;
+}
+.screen-header{
+  background:#1A1A2E;padding:12px 20px;
+  display:flex;align-items:center;gap:8px;
+}
+.chrome-dot{width:12px;height:12px;border-radius:50%;}
+.chrome-dot.red{background:#FF5F57;}
+.chrome-dot.yellow{background:#FFBD2E;}
+.chrome-dot.green{background:#28CA41;}
+.chrome-url{
+  flex:1;background:rgba(255,255,255,.08);border-radius:6px;
+  padding:5px 12px;font-size:.75rem;color:rgba(255,255,255,.5);
+  font-family:monospace;margin:0 12px;
+}
+.screen-label-tag{
+  font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:rgba(255,255,255,.4);
+}
+
+.comparison-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:24px;
+  max-width:1200px;margin:0 auto 48px;
+}
+.comp-card{
+  background:#fff;border-radius:20px;overflow:hidden;
+  box-shadow:0 2px 12px rgba(0,0,0,.07);border:1px solid #E5E7EB;
+}
+.comp-header{
+  padding:14px 20px;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;
+}
+.comp-header.old{background:#1A1A2E;color:rgba(255,255,255,.6);}
+.comp-header.new{background:#E8622A;color:#fff;}
+.comp-body{padding:0;}
+
+/* palette preview */
+.palette-section{max-width:900px;margin:0 auto 48px;background:#fff;border-radius:20px;padding:36px;box-shadow:0 2px 12px rgba(0,0,0,.07);}
+.palette-title{font-family:'Sora',sans-serif;font-weight:800;font-size:1.1rem;color:#1A1A2E;margin-bottom:4px;}
+.palette-sub{font-size:.82rem;color:#9CA3AF;margin-bottom:24px;}
+.palrow{display:flex;gap:8px;flex-wrap:wrap;}
+.pal{text-align:center;flex:1;min-width:80px;}
+.pal-color{height:56px;border-radius:12px;margin-bottom:6px;border:1px solid rgba(0,0,0,.06);}
+.pal-name{font-size:.65rem;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;}
+.pal-hex{font-size:.72rem;color:#9CA3AF;font-family:monospace;}
+
+.typo-section{max-width:900px;margin:0 auto 48px;background:#fff;border-radius:20px;padding:36px;box-shadow:0 2px 12px rgba(0,0,0,.07);}
+.typo-row{padding:16px 0;border-bottom:1px solid #F3F4F6;display:flex;align-items:baseline;gap:24px;}
+.typo-row:last-child{border-bottom:none;}
+.typo-meta{width:140px;flex-shrink:0;}
+.typo-meta .role{font-size:.68rem;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.08em;}
+.typo-meta .spec{font-size:.72rem;color:#D1D5DB;margin-top:2px;font-family:monospace;}
+
+.changes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:900px;margin:0 auto 48px;}
+.change-card{
+  background:#fff;border-radius:16px;padding:20px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);border:1px solid #E5E7EB;
+}
+.change-icon{font-size:1.8rem;margin-bottom:10px;}
+.change-card h4{font-family:'Sora',sans-serif;font-weight:700;font-size:.88rem;color:#1A1A2E;margin-bottom:6px;}
+.change-card p{font-size:.78rem;color:#6B7280;line-height:1.65;}
+.change-card .from-to{
+  display:flex;align-items:center;gap:6px;margin-top:8px;
+  font-size:.72rem;font-family:monospace;
+}
+.from-to .from{color:#EF4444;background:#FEF2F2;padding:2px 6px;border-radius:4px;}
+.from-to .arrow{color:#9CA3AF;}
+.from-to .to{color:#10B981;background:#ECFDF5;padding:2px 6px;border-radius:4px;}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     DOCUMENTO DE PRESENTACIÓN
+═══════════════════════════════════════════════════ -->
+<div class="doc-page">
+
+<!-- Intro -->
+<div class="doc-intro">
+  <div class="version">Propuesta de rediseño · Mayo 2026</div>
+  <h1>📐 TMC — Propuesta de Rediseño UX/UI</h1>
+  <p>
+    Este documento es un <strong>preview interactivo</strong> de cómo quedaría el sitio con un rediseño
+    inspirado en las mejores prácticas de <strong>Airbnb, Argenprop y MercadoLibre</strong>.
+    <br><br>
+    <strong>No se tocó ningún archivo del código original.</strong> Este archivo es autocontenido
+    y puede enviarse o imprimirse tal cual. Para verlo correctamente, abrilo en un navegador.
+  </p>
+  <p style="margin-bottom:0;padding:10px 14px;background:#FFF5F0;border-radius:10px;font-size:.82rem;color:#92400E;">
+    ⚠️ Las imágenes son placeholders de <strong>picsum.photos</strong> (pueden no cargar sin internet).
+    En producción se usarían las fotos reales de los espacios.
+  </p>
+</div>
+
+<!-- ─── Resumen de cambios ─── -->
+<div style="max-width:900px;margin:0 auto 48px;">
+  <div class="palette-title" style="margin-bottom:4px;font-family:'Sora',sans-serif;font-weight:800;font-size:1.3rem;color:#1A1A2E;">💡 Filosofía del rediseño</div>
+  <div style="font-size:.88rem;color:#6B7280;margin-bottom:24px;">Qué cambia y por qué — basado en patrones de Airbnb, Argenprop y MercadoLibre</div>
+  <div class="changes-grid">
+    <div class="change-card">
+      <div class="change-icon">🌞</div>
+      <h4>Modo claro como default</h4>
+      <p>Airbnb y Argenprop usan fondos blancos/claros. Generan más confianza para una primera visita. El modo oscuro se puede ofrecer como opción.</p>
+      <div class="from-to"><span class="from">#0a0e1a</span><span class="arrow">→</span><span class="to">#FFFFFF</span></div>
+    </div>
+    <div class="change-card">
+      <div class="change-icon">🔍</div>
+      <h4>Buscador en el hero</h4>
+      <p>El buscador pasa al centro de la pantalla con campo de texto + filtro de barrio, como Airbnb y Argenprop. Reduce fricción al primer contacto.</p>
+      <div class="from-to"><span class="from">Solo mapa</span><span class="arrow">→</span><span class="to">Hero + search</span></div>
+    </div>
+    <div class="change-card">
+      <div class="change-icon">🃏</div>
+      <h4>Cards más limpias</h4>
+      <p>Foto más grande (196px), precio en naranja destacado, rating con estrellas visible, badge "Verificado" y favorito, como MercadoLibre/Airbnb.</p>
+      <div class="from-to"><span class="from">Compact dark</span><span class="arrow">→</span><span class="to">White card</span></div>
+    </div>
+    <div class="change-card">
+      <div class="change-icon">🏷️</div>
+      <h4>Filtros en barra horizontal</h4>
+      <p>Los filtros como pills clicables sobre el grid (Airbnb style) en vez de panel lateral. Más intuitivo y visible para el usuario nuevo.</p>
+      <div class="from-to"><span class="from">Panel lateral</span><span class="arrow">→</span><span class="to">Pills top</span></div>
+    </div>
+    <div class="change-card">
+      <div class="change-icon">📋</div>
+      <h4>Booking card sticky</h4>
+      <p>En el detalle del espacio, el formulario de reserva queda fijo a la derecha mientras se scrollea (idéntico a Airbnb). Aumenta la conversión.</p>
+      <div class="from-to"><span class="from">Modal flotante</span><span class="arrow">→</span><span class="to">Sticky card</span></div>
+    </div>
+    <div class="change-card">
+      <div class="change-icon">🤝</div>
+      <h4>Split CTA para ambos roles</h4>
+      <p>Sección dividida: mitad oscura para demandantes, mitad naranja para oferentes. Cada uno ve su propuesta de valor inmediatamente (Argenprop style).</p>
+      <div class="from-to"><span class="from">1 CTA genérico</span><span class="arrow">→</span><span class="to">2 CTAs por rol</span></div>
+    </div>
+    <div class="change-card">
+      <div class="change-icon">🔤</div>
+      <h4>Tipografía con más jerarquía</h4>
+      <p>H1 de 3.8rem con peso 900, subtítulos claros, body text más legible. Airbnb usa escala tipográfica muy pronunciada para guiar el ojo.</p>
+      <div class="from-to"><span class="from">clamp(1.6,4vw)</span><span class="arrow">→</span><span class="to">clamp(2.4,5vw)</span></div>
+    </div>
+    <div class="change-card">
+      <div class="change-icon">⭐</div>
+      <h4>Trust signals prominentes</h4>
+      <p>Badges "Verificado", rating con estrellas y contador de reseñas visibles en cada card. En MercadoLibre y Airbnb son el principal driver de conversión.</p>
+      <div class="from-to"><span class="from">Ocultos</span><span class="arrow">→</span><span class="to">Visibles siempre</span></div>
+    </div>
+    <div class="change-card">
+      <div class="change-icon">📱</div>
+      <h4>Nav con CTAs claros</h4>
+      <p>El header incluye "Ingresar" y "Registrarse" siempre visibles (no solo ícono de usuario). Reduce la tasa de rebote en usuarios nuevos.</p>
+      <div class="from-to"><span class="from">Ícono oculto</span><span class="arrow">→</span><span class="to">Botones visibles</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Paleta de colores ─── -->
+<div class="palette-section">
+  <div class="palette-title">🎨 Paleta de colores propuesta</div>
+  <div class="palette-sub">Se mantienen los colores de marca. Cambia el background y los surfaces de oscuro a claro.</div>
+  <div class="palrow">
+    <div class="pal">
+      <div class="pal-color" style="background:#E8622A;"></div>
+      <div class="pal-name">Naranja</div>
+      <div class="pal-hex">#E8622A</div>
+    </div>
+    <div class="pal">
+      <div class="pal-color" style="background:#F97316;"></div>
+      <div class="pal-name">Coral</div>
+      <div class="pal-hex">#F97316</div>
+    </div>
+    <div class="pal">
+      <div class="pal-color" style="background:#1A1A2E;"></div>
+      <div class="pal-name">Navy</div>
+      <div class="pal-hex">#1A1A2E</div>
+    </div>
+    <div class="pal">
+      <div class="pal-color" style="background:#FFFFFF;border:1px solid #E5E7EB;"></div>
+      <div class="pal-name">Blanco</div>
+      <div class="pal-hex">#FFFFFF</div>
+    </div>
+    <div class="pal">
+      <div class="pal-color" style="background:#F7F8FA;border:1px solid #E5E7EB;"></div>
+      <div class="pal-name">Fondo</div>
+      <div class="pal-hex">#F7F8FA</div>
+    </div>
+    <div class="pal">
+      <div class="pal-color" style="background:#E5E7EB;"></div>
+      <div class="pal-name">Borde</div>
+      <div class="pal-hex">#E5E7EB</div>
+    </div>
+    <div class="pal">
+      <div class="pal-color" style="background:#6B7280;"></div>
+      <div class="pal-name">Texto 2</div>
+      <div class="pal-hex">#6B7280</div>
+    </div>
+    <div class="pal">
+      <div class="pal-color" style="background:#10B981;"></div>
+      <div class="pal-name">Verde</div>
+      <div class="pal-hex">#10B981</div>
+    </div>
+    <div class="pal">
+      <div class="pal-color" style="background:#3B82F6;"></div>
+      <div class="pal-name">Azul</div>
+      <div class="pal-hex">#3B82F6</div>
+    </div>
+    <div class="pal">
+      <div class="pal-color" style="background:#F59E0B;"></div>
+      <div class="pal-name">Amber</div>
+      <div class="pal-hex">#F59E0B</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Tipografía ─── -->
+<div class="typo-section">
+  <div class="palette-title">🔤 Escala tipográfica</div>
+  <div class="palette-sub">Mismas fuentes (Sora + Inter), jerarquía más pronunciada</div>
+  <div class="typo-row">
+    <div class="typo-meta"><div class="role">Hero H1</div><div class="spec">Sora 900 · 3.8rem</div></div>
+    <div style="font-family:'Sora',sans-serif;font-weight:900;font-size:clamp(2rem,5vw,3.8rem);color:#1A1A2E;letter-spacing:-.02em;line-height:1.1;">Guardá lo que querés. <em style="color:#E8622A;font-style:normal;">Donde querés.</em></div>
+  </div>
+  <div class="typo-row">
+    <div class="typo-meta"><div class="role">Section H2</div><div class="spec">Sora 800 · 2.4rem</div></div>
+    <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(1.4rem,3vw,2.4rem);color:#1A1A2E;letter-spacing:-.02em;">Encontrá tu espacio ideal</div>
+  </div>
+  <div class="typo-row">
+    <div class="typo-meta"><div class="role">Card H3</div><div class="spec">Sora 700 · 1rem</div></div>
+    <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:1rem;color:#1A1A2E;">Cochera cubierta — Palermo Hollywood</div>
+  </div>
+  <div class="typo-row">
+    <div class="typo-meta"><div class="role">Body</div><div class="spec">Inter 400 · 0.9rem</div></div>
+    <div style="font-size:.9rem;color:#6B7280;line-height:1.7;max-width:500px;">Espacio amplio en planta baja con acceso independiente. Ideal para guardar muebles, cajas o equipamiento de trabajo. Disponibilidad inmediata.</div>
+  </div>
+  <div class="typo-row">
+    <div class="typo-meta"><div class="role">Price</div><div class="spec">Sora 800 · 2rem</div></div>
+    <div style="display:flex;align-items:baseline;gap:6px;">
+      <span style="font-family:'Sora',sans-serif;font-weight:800;font-size:2rem;color:#E8622A;">$18.000</span>
+      <span style="font-size:.88rem;color:#9CA3AF;">/mes</span>
+      <span style="font-size:.8rem;color:#9CA3AF;margin-left:4px;">ó $850/día</span>
+    </div>
+  </div>
+  <div class="typo-row">
+    <div class="typo-meta"><div class="role">Button</div><div class="spec">Inter 700 · 0.9rem</div></div>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <button class="btn-cta-big">Reservar ahora</button>
+      <button class="btn-secondary-big">Ver en el mapa</button>
+      <button class="btn-ghost">Contactar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PANTALLA 1 — NAVBAR
+═══════════════════════════════════════════════════ -->
+<div class="screen-wrapper">
+  <div class="screen-header">
+    <div class="chrome-dot red"></div>
+    <div class="chrome-dot yellow"></div>
+    <div class="chrome-dot green"></div>
+    <div class="chrome-url">todasmiscosas.com</div>
+    <div class="screen-label-tag">NAVBAR REDISEÑADO</div>
+  </div>
+  <div class="annotation">
+    <strong>Cambios vs. actual:</strong>
+    <ul>
+      <li>Fondo blanco con borde sutil (Airbnb style) en vez de header transparente sobre el mapa oscuro</li>
+      <li>Links de navegación visibles con hover en naranja, pill activo resaltado</li>
+      <li>Botones "Ingresar" y "Registrarse" siempre visibles — reduce abandono de usuarios nuevos</li>
+      <li>Sticky con z-index: las páginas scrollean por debajo del header</li>
+    </ul>
+  </div>
+  <nav class="nav-new">
+    <div class="nav-logo">TodasMis<span>Cosas</span></div>
+    <div class="nav-links">
+      <a class="nav-link active" href="#">🏠 Inicio</a>
+      <a class="nav-link" href="#">🔍 Buscar espacios</a>
+      <a class="nav-link" href="#">💡 Cómo funciona</a>
+      <a class="nav-link" href="#">🏷️ Servicios</a>
+    </div>
+    <div class="nav-actions">
+      <a class="nav-link" href="#">➕ Publicar mi espacio</a>
+      <button class="btn-ghost">Ingresar</button>
+      <button class="btn-primary">Registrarse</button>
+    </div>
+  </nav>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PANTALLA 2 — HERO
+═══════════════════════════════════════════════════ -->
+<div class="screen-wrapper">
+  <div class="screen-header">
+    <div class="chrome-dot red"></div><div class="chrome-dot yellow"></div><div class="chrome-dot green"></div>
+    <div class="chrome-url">todasmiscosas.com</div>
+    <div class="screen-label-tag">HERO + BUSCADOR</div>
+  </div>
+  <div class="annotation">
+    <strong>Cambios vs. actual:</strong>
+    <ul>
+      <li>Hero con imagen de fondo (depósitos reales) + overlay — da contexto visual inmediato al visitante</li>
+      <li>Buscador central con campo de texto + ubicación, como Airbnb. El mapa queda debajo, no es el primer elemento</li>
+      <li>Tags de búsqueda rápida: "Palermo", "Cerca de mí", etc. — reduce el paso de escritura</li>
+      <li>Stats sociales ("+850 espacios", "+2.400 reservas") para validar el marketplace — MercadoLibre style</li>
+    </ul>
+  </div>
+  <nav class="nav-new" style="border-bottom:none;">
+    <div class="nav-logo">TodasMis<span>Cosas</span></div>
+    <div class="nav-links">
+      <a class="nav-link active" href="#">🏠 Inicio</a>
+      <a class="nav-link" href="#">🔍 Buscar espacios</a>
+      <a class="nav-link" href="#">💡 Cómo funciona</a>
+    </div>
+    <div class="nav-actions">
+      <button class="btn-ghost">Ingresar</button>
+      <button class="btn-primary">Registrarse</button>
+    </div>
+  </nav>
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow"><span></span> +850 espacios activos en Buenos Aires</div>
+      <h1>Guardá lo que querés.<br><em>Donde querés.</em></h1>
+      <p>Conectamos personas con espacio disponible con quienes necesitan guardar sus cosas. Sin contratos largos, sin burocracia.</p>
+      <div class="hero-search">
+        <span class="hero-search-icon">🔍</span>
+        <input type="text" placeholder="Cochera, depósito, galpón...">
+        <div class="hero-search-divider"></div>
+        <div class="hero-search-loc">📍 Palermo</div>
+        <button class="btn-search">Buscar</button>
+      </div>
+      <div class="hero-tags">
+        <div class="hero-tag">📍 Cerca de mí</div>
+        <div class="hero-tag">🔒 Bauleras</div>
+        <div class="hero-tag">🏭 Galpones</div>
+        <div class="hero-tag">🚗 Cocheras</div>
+        <div class="hero-tag">📦 Depósitos</div>
+        <div class="hero-tag">💰 Por mes</div>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="num">850+</div><div class="label">Espacios activos</div></div>
+        <div class="hero-stat"><div class="num">2.400+</div><div class="label">Reservas completadas</div></div>
+        <div class="hero-stat"><div class="num">4.8 ⭐</div><div class="label">Rating promedio</div></div>
+        <div class="hero-stat"><div class="num">48hs</div><div class="label">Para acreditar al oferente</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PANTALLA 3 — FILTROS + GRID RESULTS
+═══════════════════════════════════════════════════ -->
+<div class="screen-wrapper">
+  <div class="screen-header">
+    <div class="chrome-dot red"></div><div class="chrome-dot yellow"></div><div class="chrome-dot green"></div>
+    <div class="chrome-url">todasmiscosas.com</div>
+    <div class="screen-label-tag">FILTROS + RESULTADOS</div>
+  </div>
+  <div class="annotation">
+    <strong>Cambios vs. actual:</strong>
+    <ul>
+      <li>Filtros como pills horizontales (Airbnb) en vez de panel desplegable — más visible y accesible</li>
+      <li>Contador de resultados ("34 espacios en Palermo") como Argenprop</li>
+      <li>Ordenamiento y toggle mapa/grid a la derecha</li>
+      <li>Cards con foto grande, precio destacado en naranja, rating con estrellas, badge "Verificado" y favorito</li>
+    </ul>
+  </div>
+  <nav class="nav-new" style="border-bottom:none;">
+    <div class="nav-logo">TodasMis<span>Cosas</span></div>
+    <div class="nav-links">
+      <a class="nav-link" href="#">🏠 Inicio</a>
+      <a class="nav-link active" href="#">🔍 Buscar espacios</a>
+    </div>
+    <div class="nav-actions">
+      <button class="btn-ghost">Ingresar</button>
+      <button class="btn-primary">Registrarse</button>
+    </div>
+  </nav>
+  <div class="filters-bar">
+    <div class="filter-pill active"><span class="icon">🗂️</span> Todos</div>
+    <div class="filter-pill"><span class="icon">🔒</span> Exclusivo</div>
+    <div class="filter-pill"><span class="icon">🤝</span> Compartido</div>
+    <div class="filter-pill"><span class="icon">📅</span> Por día</div>
+    <div class="filter-pill"><span class="icon">📆</span> Por mes</div>
+    <div class="filter-pill"><span class="icon">📍</span> Palermo <span class="count">34</span></div>
+    <div class="filter-pill"><span class="icon">💰</span> Precio: hasta $20.000</div>
+    <div class="filter-pill"><span class="icon">🛡️</span> Seguridad ★★★+</div>
+    <div class="filters-bar-right">
+      <select class="sort-select">
+        <option>Relevancia</option>
+        <option>Precio ↑</option>
+        <option>Precio ↓</option>
+        <option>Mejor rating</option>
+      </select>
+      <button class="map-toggle">🗺️ Mapa</button>
+    </div>
+  </div>
+  <div style="background:#F7F8FA;padding:32px 40px;">
+    <div class="results-header">
+      <div class="results-count"><strong>34 espacios</strong> en Palermo y alrededores</div>
+    </div>
+    <div class="cards-grid">
+
+      <!-- Card 1 -->
+      <div class="space-card">
+        <div class="card-img">
+          <img src="https://picsum.photos/seed/warehouse10/400/200" alt="">
+          <div class="card-badge"><span>🔒</span> Exclusivo</div>
+          <div class="card-fav">🤍</div>
+          <div class="card-verified">✓ Verificado</div>
+        </div>
+        <div class="card-body">
+          <div class="card-location">📍 Palermo Hollywood · 0.4 km</div>
+          <div class="card-title">Cochera cubierta con acceso independiente</div>
+          <div class="card-tags">
+            <span class="card-tag">🚗 Cochera</span>
+            <span class="card-tag">24hs</span>
+            <span class="card-tag orange">Disponible ya</span>
+          </div>
+          <div class="card-footer">
+            <div class="card-price">
+              <div><span class="amount">$18.000</span> <span class="period">/mes</span></div>
+              <div class="alt">ó $850/día</div>
+            </div>
+            <div class="card-rating">
+              <span class="stars">★★★★★</span>
+              <span>4.9</span>
+              <span class="n">(23)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="space-card">
+        <div class="card-img">
+          <img src="https://picsum.photos/seed/storage20/400/200" alt="">
+          <div class="card-badge shared"><span>🤝</span> Compartido</div>
+          <div class="card-fav">🤍</div>
+        </div>
+        <div class="card-body">
+          <div class="card-location">📍 Villa Crespo · 1.2 km</div>
+          <div class="card-title">Depósito para mudanza o stock de e-commerce</div>
+          <div class="card-tags">
+            <span class="card-tag">📦 Depósito</span>
+            <span class="card-tag">Camión ok</span>
+            <span class="card-tag">B2B</span>
+          </div>
+          <div class="card-footer">
+            <div class="card-price">
+              <div><span class="amount">$42.000</span> <span class="period">/mes</span></div>
+              <div class="alt">ó $1.800/día</div>
+            </div>
+            <div class="card-rating">
+              <span class="stars">★★★★☆</span>
+              <span>4.7</span>
+              <span class="n">(8)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="space-card">
+        <div class="card-img">
+          <img src="https://picsum.photos/seed/deposito5/400/200" alt="">
+          <div class="card-badge"><span>🔒</span> Exclusivo</div>
+          <div class="card-fav">❤️</div>
+          <div class="card-verified">✓ Verificado</div>
+        </div>
+        <div class="card-body">
+          <div class="card-location">📍 Belgrano · 2.1 km</div>
+          <div class="card-title">Baulera privada con cerradura propia — piso 1</div>
+          <div class="card-tags">
+            <span class="card-tag">🔒 Baulera</span>
+            <span class="card-tag">8 m²</span>
+            <span class="card-tag orange">Nuevo</span>
+          </div>
+          <div class="card-footer">
+            <div class="card-price">
+              <div><span class="amount">$12.000</span> <span class="period">/mes</span></div>
+              <div class="alt">ó $480/día</div>
+            </div>
+            <div class="card-rating">
+              <span class="stars">★★★★★</span>
+              <span>5.0</span>
+              <span class="n">(3)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PANTALLA 4 — DETALLE DEL ESPACIO
+═══════════════════════════════════════════════════ -->
+<div class="screen-wrapper">
+  <div class="screen-header">
+    <div class="chrome-dot red"></div><div class="chrome-dot yellow"></div><div class="chrome-dot green"></div>
+    <div class="chrome-url">todasmiscosas.com/espacio/cochera-palermo-hollywood</div>
+    <div class="screen-label-tag">DETALLE DE ESPACIO</div>
+  </div>
+  <div class="annotation">
+    <strong>Cambios vs. actual:</strong>
+    <ul>
+      <li>Galería de fotos en grid (tipo Airbnb): foto principal grande + 4 thumbnails, con botón "Ver todas"</li>
+      <li>Layout 2 columnas: descripción + amenities a la izquierda, booking card sticky a la derecha</li>
+      <li>Booking card con fechas, desglose de precio y botón CTA grande — aumenta la conversión directa</li>
+      <li>Perfil del oferente integrado con badge "Verificado" y años en la plataforma</li>
+    </ul>
+  </div>
+  <nav class="nav-new" style="border-bottom:none;">
+    <div class="nav-logo">TodasMis<span>Cosas</span></div>
+    <div style="flex:1;"></div>
+    <div class="nav-actions">
+      <button class="btn-ghost">❤️ Guardar</button>
+      <button class="btn-ghost">↗️ Compartir</button>
+      <button class="btn-primary">Mi perfil</button>
+    </div>
+  </nav>
+  <div class="detail-page">
+    <div class="detail-breadcrumb">
+      <a href="#">Inicio</a> ›
+      <a href="#">Palermo</a> ›
+      <a href="#">Cocheras</a> ›
+      <span>Cochera cubierta — Palermo Hollywood</span>
+    </div>
+    <div class="detail-title">Cochera cubierta con acceso independiente · Palermo Hollywood</div>
+    <div class="detail-meta">
+      <div class="detail-meta-item"><span class="icon">⭐</span> 4.9 · <strong>23 reseñas</strong></div>
+      <div class="detail-meta-item"><span class="icon">📍</span> Palermo Hollywood, CABA</div>
+      <span class="tag-pill green">✓ Verificado</span>
+      <span class="tag-pill orange">🔒 Exclusivo</span>
+      <span class="tag-pill">📅 Desde hoy</span>
+    </div>
+
+    <!-- Galería -->
+    <div class="detail-gallery">
+      <div class="gallery-main">
+        <img src="https://picsum.photos/seed/garage1/800/500" alt="Foto principal">
+      </div>
+      <div class="gallery-side">
+        <img src="https://picsum.photos/seed/garage2/400/250" alt="">
+      </div>
+      <div class="gallery-side">
+        <img src="https://picsum.photos/seed/garage3/400/250" alt="">
+      </div>
+      <div class="gallery-side">
+        <img src="https://picsum.photos/seed/garage4/400/250" alt="">
+      </div>
+      <div class="gallery-side" style="cursor:pointer;">
+        <img src="https://picsum.photos/seed/garage5/400/250" alt="" style="filter:brightness(.5);">
+      </div>
+    </div>
+
+    <div class="detail-body">
+      <div class="detail-main">
+
+        <!-- Oferente -->
+        <div class="detail-section">
+          <div class="owner-card">
+            <div class="owner-avatar">
+              <img src="https://picsum.photos/seed/person1/100/100" alt="">
+            </div>
+            <div class="owner-info">
+              <div class="name">Marcelo G.</div>
+              <div class="since">Oferente desde 2024 · 12 espacios publicados</div>
+              <div class="verified">✓ Identidad verificada</div>
+            </div>
+            <button class="btn-ghost" style="margin-left:auto;font-size:.82rem;padding:7px 16px;">Contactar</button>
+          </div>
+        </div>
+
+        <!-- Descripción -->
+        <div class="detail-section">
+          <h3>Sobre este espacio</h3>
+          <div class="detail-desc">
+            Cochera techada en planta baja de edificio residencial seguro. Acceso directo por portón independiente, sin pasar por hall de entrada. Ideal para vehículo, moto, bicicleta o guardar muebles y objetos de valor.<br><br>
+            El espacio mide aprox. 18 m² y tiene altura de 2.5m. Buena iluminación con luz LED incorporada. El portón tiene llave propia y candado adicional incluido.
+          </div>
+        </div>
+
+        <!-- Características -->
+        <div class="detail-section">
+          <h3>Características del espacio</h3>
+          <div class="amenities">
+            <div class="amenity highlight"><span class="icon">🔒</span> Acceso exclusivo</div>
+            <div class="amenity highlight"><span class="icon">📷</span> Cámaras de seguridad</div>
+            <div class="amenity"><span class="icon">💡</span> Iluminación LED</div>
+            <div class="amenity"><span class="icon">🕐</span> Acceso 24hs</div>
+            <div class="amenity"><span class="icon">🚗</span> Apto vehículo</div>
+            <div class="amenity"><span class="icon">📦</span> Apto muebles</div>
+            <div class="amenity"><span class="icon">🧹</span> Piso seco y limpio</div>
+            <div class="amenity"><span class="icon">⚡</span> Tomacorriente</div>
+          </div>
+        </div>
+
+        <!-- Puntuación seguridad -->
+        <div class="detail-section">
+          <h3>Puntuación de seguridad</h3>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+            <span style="font-size:1.8rem;color:#F59E0B;">★★★★☆</span>
+            <span style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.4rem;color:#1A1A2E;">4.2</span>
+            <span style="font-size:.82rem;color:#9CA3AF;">/ 5 puntos</span>
+          </div>
+          <div style="background:#F9FAFB;border-radius:12px;padding:14px 16px;font-size:.82rem;color:#6B7280;">
+            Este espacio cumple con 8 de los 10 criterios de seguridad evaluados por TodasMisCosas.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Booking card -->
+      <div>
+        <div class="booking-card">
+          <div class="booking-price">
+            <div>
+              <span class="main">$18.000</span>
+              <span class="period"> /mes</span>
+            </div>
+            <div class="alt">ó $850 por día</div>
+          </div>
+          <div class="booking-rating">
+            <span class="stars">★★★★★</span>
+            <span class="num">4.9</span>
+            <span class="cnt">· 23 reseñas</span>
+          </div>
+          <div class="booking-dates">
+            <div class="booking-date-row">
+              <div class="booking-date-cell">
+                <div class="label">Desde</div>
+                <div class="value">01/06/2026</div>
+              </div>
+              <div class="booking-date-cell">
+                <div class="label">Hasta</div>
+                <div class="value">30/06/2026</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-fees">
+            <div class="booking-fee-row"><span>$18.000 × 1 mes</span><span>$18.000</span></div>
+            <div class="booking-fee-row"><span>Servicio de plataforma</span><span>Incluido</span></div>
+            <div class="booking-fee-row total"><span>Total</span><span>$18.000</span></div>
+          </div>
+          <button class="btn-cta-big" style="width:100%;text-align:center;justify-content:center;">Reservar ahora</button>
+          <div class="booking-trust">🔒 Pago seguro con MercadoPago · Sin cargos hasta confirmar</div>
+          <div style="margin-top:14px;padding-top:14px;border-top:1px solid #F3F4F6;">
+            <button class="btn-ghost" style="width:100%;justify-content:center;text-align:center;font-size:.82rem;padding:9px;">💬 Consultar al oferente</button>
+          </div>
+        </div>
+        <!-- Trust badge -->
+        <div style="margin-top:14px;background:#F9FAFB;border-radius:14px;padding:14px 16px;font-size:.78rem;color:#6B7280;line-height:1.65;">
+          <div style="font-weight:700;color:#1A1A2E;margin-bottom:4px;">🛡️ Respaldado por TodasMisCosas</div>
+          El pago queda retenido hasta que confirmás el acceso. Si hay algún problema, te ayudamos.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PANTALLA 5 — CÓMO FUNCIONA
+═══════════════════════════════════════════════════ -->
+<div class="screen-wrapper">
+  <div class="screen-header">
+    <div class="chrome-dot red"></div><div class="chrome-dot yellow"></div><div class="chrome-dot green"></div>
+    <div class="chrome-url">todasmiscosas.com/como-funciona</div>
+    <div class="screen-label-tag">CÓMO FUNCIONA</div>
+  </div>
+  <div class="annotation">
+    <strong>Cambios vs. actual:</strong>
+    <ul>
+      <li>Steps con número grande y ícono centrado, línea conectora entre pasos (MercadoLibre style)</li>
+      <li>Los 5 pasos (incluyendo el nuevo PIN) en una sola fila para pantallas grandes</li>
+      <li>Eyebrow label, título mayor y subtítulo más claro</li>
+      <li>Badge visual para el PIN de 4 dígitos — hace tangible la feature de seguridad</li>
+    </ul>
+  </div>
+  <div class="how-section">
+    <div class="how-inner">
+      <div style="text-align:center;">
+        <div class="how-label">Simple · Rápido · Seguro</div>
+      </div>
+      <div class="how-title">¿Cómo funciona<br><span style="color:#E8622A;">TodasMisCosas?</span></div>
+      <div class="how-sub">En 5 pasos tenés tu espacio de almacenamiento sin contratos, sin burocracia y con respaldo.</div>
+      <div class="steps-grid">
+        <div class="step">
+          <div class="step-num"><span class="step-icon">🔍</span></div>
+          <h4>Buscás</h4>
+          <p>Explorá el mapa, filtrá por barrio, tipo y precio. Más de 850 opciones.</p>
+        </div>
+        <div class="step">
+          <div class="step-num"><span class="step-icon">📦</span></div>
+          <h4>Elegís</h4>
+          <p>Seleccioná el espacio ideal. Alquilá por día o por mes.</p>
+        </div>
+        <div class="step">
+          <div class="step-num"><span class="step-icon">💳</span></div>
+          <h4>Pagás</h4>
+          <p>MercadoPago retiene el dinero hasta que confirmás el acceso. 100% seguro.</p>
+        </div>
+        <div class="step">
+          <div class="step-num"><span class="step-icon">🔑</span></div>
+          <h4>Usás</h4>
+          <p>Coordinás el acceso con el oferente y empezás a usar tu espacio.</p>
+        </div>
+        <div class="step">
+          <div class="step-num"><span class="step-icon">🔐</span></div>
+          <h4>Verificás</h4>
+          <p>Usás el PIN de 4 dígitos compartido para confirmar la operación con el oferente.</p>
+          <div class="step-pin-badge">🔐 PIN: ████</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PANTALLA 6 — CTA SPLIT (oferente / demandante)
+═══════════════════════════════════════════════════ -->
+<div class="screen-wrapper">
+  <div class="screen-header">
+    <div class="chrome-dot red"></div><div class="chrome-dot yellow"></div><div class="chrome-dot green"></div>
+    <div class="chrome-url">todasmiscosas.com</div>
+    <div class="screen-label-tag">CTA SPLIT POR ROL</div>
+  </div>
+  <div class="annotation">
+    <strong>Cambios vs. actual:</strong>
+    <ul>
+      <li>Sección dividida en 2 mitades: izquierda para demandante (oscuro, sobre el mapa), derecha para oferente (naranja)</li>
+      <li>Cada mitad tiene su propio CTA, stats y propuesta de valor — Argenprop/Airbnb hacen esto para captar ambos tipos de usuario</li>
+      <li>El contraste de colores hace que cada CTA sea visualmente distinto e inmediatamente identificable</li>
+    </ul>
+  </div>
+  <div class="cta-split">
+    <div class="cta-left">
+      <div class="cta-eyebrow">Para quienes necesitan espacio</div>
+      <h2>Guardá lo que necesitás, cuando lo necesitás</h2>
+      <p>Encontrá espacios de almacenamiento cerca tuyo. Sin contratos largos, sin depósitos previos. Pagar por día o por mes.</p>
+      <div class="cta-stats">
+        <div class="cta-stat"><div class="val">850+</div><div class="lbl">Espacios activos</div></div>
+        <div class="cta-stat"><div class="val">48hs</div><div class="lbl">Para empezar</div></div>
+        <div class="cta-stat"><div class="val">4.8★</div><div class="lbl">Satisfacción</div></div>
+      </div>
+      <button class="btn-white">🔍 Buscar un espacio →</button>
+    </div>
+    <div class="cta-right">
+      <div class="cta-eyebrow" style="color:rgba(255,255,255,.7);">Para quienes tienen espacio disponible</div>
+      <h2>Convertí tu espacio en ingresos mensuales</h2>
+      <p>Publicá tu cochera, depósito o galpón y empezá a recibir reservas. Sin intermediarios, sin complicaciones.</p>
+      <div class="cta-stats">
+        <div class="cta-stat"><div class="val">85%</div><div class="lbl">Queda en tu bolsillo</div></div>
+        <div class="cta-stat"><div class="val">48hs</div><div class="lbl">Para acreditar</div></div>
+        <div class="cta-stat"><div class="val">0 pesos</div><div class="lbl">Para publicar</div></div>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <button class="btn-white">➕ Publicar mi espacio →</button>
+        <button class="btn-outline-white">💡 Cuánto puedo ganar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PANTALLA 7 — FOOTER
+═══════════════════════════════════════════════════ -->
+<div class="screen-wrapper">
+  <div class="screen-header">
+    <div class="chrome-dot red"></div><div class="chrome-dot yellow"></div><div class="chrome-dot green"></div>
+    <div class="chrome-url">todasmiscosas.com</div>
+    <div class="screen-label-tag">FOOTER REDISEÑADO</div>
+  </div>
+  <div class="annotation">
+    <strong>Cambios vs. actual:</strong>
+    <ul>
+      <li>Footer en grid de 4 columnas con links organizados por categoría — más profesional y completo</li>
+      <li>Badges de seguridad (MercadoPago, verificación) en la parte inferior para reforzar confianza</li>
+      <li>Logo con color de marca en el footer, no solo texto</li>
+    </ul>
+  </div>
+  <footer class="footer-new">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">TodasMis<span>Cosas</span></div>
+        <div class="footer-desc">Marketplace de almacenamiento urbano en Buenos Aires. Conectamos a quienes necesitan espacio con quienes lo tienen disponible.</div>
+      </div>
+      <div class="footer-col">
+        <h5>Plataforma</h5>
+        <ul>
+          <li><a href="#">Buscar espacios</a></li>
+          <li><a href="#">Publicar un espacio</a></li>
+          <li><a href="#">Cómo funciona</a></li>
+          <li><a href="#">Precios y comisiones</a></li>
+          <li><a href="#">Servicios adicionales</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Empresa</h5>
+        <ul>
+          <li><a href="#">Sobre nosotros</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Prensa</a></li>
+          <li><a href="#">Inversores</a></li>
+          <li><a href="#">Contacto</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Legal</h5>
+        <ul>
+          <li><a href="#">Términos de uso</a></li>
+          <li><a href="#">Política de privacidad</a></li>
+          <li><a href="#">Cookies</a></li>
+          <li><a href="#">Defensa del consumidor</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 TodasMisCosas.com — Buenos Aires, Argentina</div>
+      <div class="footer-badges">
+        <div class="footer-badge">💳 MercadoPago</div>
+        <div class="footer-badge">🔒 SSL Seguro</div>
+        <div class="footer-badge">✓ Verificación de identidad</div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- Cierre -->
+<div style="max-width:900px;margin:0 auto;padding:40px 0 20px;text-align:center;">
+  <div style="background:#1A1A2E;border-radius:20px;padding:36px;color:rgba(255,255,255,.6);">
+    <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.2rem;color:#fff;margin-bottom:8px;">
+      📐 Este es el fin del preview
+    </div>
+    <div style="font-size:.85rem;line-height:1.75;max-width:600px;margin:0 auto;">
+      Para implementar este rediseño, el próximo paso sería crear un nuevo branch con los cambios en <code style="background:rgba(255,255,255,.1);padding:2px 6px;border-radius:4px;">globals.css</code>,
+      los componentes <code style="background:rgba(255,255,255,.1);padding:2px 6px;border-radius:4px;">page.tsx</code> y las páginas públicas.
+      Podemos hacer la migración de manera incremental, pantalla por pantalla, sin romper funcionalidad existente.
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
