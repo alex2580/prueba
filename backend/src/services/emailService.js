@@ -240,25 +240,47 @@ async function sendReservaAprobada(toEmail, nombreDemandante, { espacioNombre, f
 }
 
 // ── Oferente: se acreditó el pago de su espacio ──────────────────
+const COMISION_PLATAFORMA = 0.15; // 15%
+
 async function sendPagoRecibidoOferente(toEmail, nombreOferente, { demandanteNombre, espacioNombre, monto, reservaId }) {
+  const montoTotal    = Number(monto);
+  const comision      = Math.round(montoTotal * COMISION_PLATAFORMA);
+  const montoNeto     = montoTotal - comision;
+
   const html = baseTemplate('Pago recibido por tu espacio', `
-    <h2>💰 Pago recibido</h2>
-    <p>Hola <span class="highlight">${nombreOferente}</span>, se acreditó el pago de tu espacio.</p>
+    <h2>💰 ¡Pago acreditado!</h2>
+    <p>Hola <span class="highlight">${nombreOferente}</span>, el demandante completó el pago de tu espacio.</p>
     <div class="info-row">
       <div><div class="info-label">Espacio</div><div class="info-val">${espacioNombre}</div></div>
     </div>
     <div class="info-row">
       <div><div class="info-label">Inquilino</div><div class="info-val">${demandanteNombre}</div></div>
     </div>
-    <div class="info-row">
-      <div><div class="info-label">Monto acreditado</div><div class="info-val">$${Number(monto).toLocaleString('es-AR')}</div></div>
+    <div style="margin:20px 0;background:#0f172a;border-radius:12px;padding:16px 20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="color:#94a3b8;font-size:13px;">Valor total de la reserva</span>
+        <span style="color:#e2e8f0;font-weight:600;">$${montoTotal.toLocaleString('es-AR')}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #1e293b;">
+        <span style="color:#94a3b8;font-size:13px;">Comisión TodasMisCosas (15%)</span>
+        <span style="color:#ef4444;font-weight:600;">- $${comision.toLocaleString('es-AR')}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="color:#f1f5f9;font-size:15px;font-weight:700;">Monto a recibir</span>
+        <span style="color:#10b981;font-size:18px;font-weight:800;">$${montoNeto.toLocaleString('es-AR')}</span>
+      </div>
     </div>
-    <p>La reserva está activa. Coordiná el acceso con tu inquilino.</p>
+    <div style="background:#1a2e1a;border:1px solid #166534;border-radius:10px;padding:12px 16px;margin-bottom:20px;">
+      <p style="color:#86efac;font-size:13px;margin:0;">
+        ⏱️ <strong>Recibirás $${montoNeto.toLocaleString('es-AR')} dentro de las próximas 48 horas hábiles</strong> en la cuenta bancaria registrada en tu perfil.
+      </p>
+    </div>
+    <p>Coordiná el acceso al espacio con tu inquilino cuando estés listo.</p>
     <a class="btn" href="${process.env.FRONTEND_URL}/panel">Ver en mi panel →</a>
   `);
   await transporter.sendMail({
     from: FROM, to: toEmail,
-    subject: `💰 Pago recibido — ${espacioNombre}`,
+    subject: `💰 Pago recibido — $${montoNeto.toLocaleString('es-AR')} en camino · ${espacioNombre}`,
     html,
   });
 }
