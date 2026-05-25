@@ -119,7 +119,8 @@ export default function ServiciosPage() {
       <div className="page-scroll" style={{ flex: 1 }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: '2.5rem 1.5rem' }}>
 
-          {/* Tipos de espacio */}
+          {/* Tipos de espacio — hidden */}
+          <div style={{ display: 'none' }}>
           <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.1rem', marginBottom: '1.25rem', color: 'var(--text)' }}>
             🏠 Tipos de almacenamiento
           </h2>
@@ -190,6 +191,7 @@ export default function ServiciosPage() {
               </div>
             ))}
           </div>
+          </div>{/* end hidden tipos */}
 
           {/* Servicios Adicionales */}
           <div style={{
@@ -232,8 +234,7 @@ export default function ServiciosPage() {
                       <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.95rem', color: 'var(--text)' }}>
                         {s.nombre}
                       </div>
-                      <div style={{ fontSize: '.72rem', color: s.color, fontWeight: 700 }}>{s.precio}</div>
-                    </div>
+                          </div>
                   </div>
                   <div style={{ fontSize: '.8rem', color: 'var(--text2)', lineHeight: 1.7 }}>{s.desc}</div>
                   <div style={{
