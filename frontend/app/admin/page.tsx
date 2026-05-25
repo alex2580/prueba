@@ -753,6 +753,182 @@ function TabUsuarios({ token }: { token: string }) {
   );
 }
 
+// ── Tab: Solicitudes de mejora de puntuación ──────────────────
+
+interface SolicitudPuntuacion {
+  id: string;
+  oferente_id: string | null;
+  nombre: string;
+  email: string;
+  tel: string | null;
+  espacio_nombre: string | null;
+  puntaje_actual: number;
+  estado: 'pendiente' | 'contactado' | 'resuelto';
+  created_at: string;
+}
+
+function estadoPuntuacionColor(estado: string) {
+  const map: Record<string, string> = {
+    pendiente:  'var(--amber)',
+    contactado: 'var(--blue)',
+    resuelto:   'var(--mint)',
+  };
+  return map[estado] ?? 'var(--text3)';
+}
+
+function TabSolicitudesPuntuacion({ token }: { token: string }) {
+  const [items, setItems] = useState<SolicitudPuntuacion[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [filtro, setFiltro] = useState<'todas' | 'pendiente' | 'contactado' | 'resuelto'>('todas');
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/solicitudes-puntuacion', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error('Error al cargar solicitudes');
+      setItems(await res.json());
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Error desconocido');
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => { load(); }, [load]);
+
+  async function cambiarEstado(id: string, estado: SolicitudPuntuacion['estado']) {
+    await fetch(`/api/admin/solicitudes-puntuacion/${id}/estado`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ estado }),
+    });
+    setItems(prev => prev.map(s => s.id === id ? { ...s, estado } : s));
+  }
+
+  const filtered = items.filter(s => filtro === 'todas' || s.estado === filtro);
+  const pendientes = items.filter(s => s.estado === 'pendiente').length;
+
+  if (loading) return <p style={{ color: 'var(--text3)' }}>Cargando…</p>;
+  if (error) return <p className="alert alert--error">{error}</p>;
+
+  return (
+    <>
+      {/* Filter pills */}
+      <div style={{ display: 'flex', gap: '.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+        {(['todas', 'pendiente', 'contactado', 'resuelto'] as const).map(f => (
+          <button
+            key={f}
+            onClick={() => setFiltro(f)}
+            style={{
+              padding: '.3rem .85rem', borderRadius: '99px',
+              border: `1px solid ${filtro === f ? 'var(--orange)' : 'var(--border)'}`,
+              background: filtro === f ? 'rgba(232,98,42,.12)' : 'transparent',
+              color: filtro === f ? 'var(--orange)' : 'var(--text2)',
+              fontSize: '.78rem', fontWeight: 600, cursor: 'pointer', textTransform: 'capitalize',
+            }}
+          >
+            {f}{f === 'pendiente' && pendientes > 0 ? ` (${pendientes})` : ''}
+          </button>
+        ))}
+      </div>
+
+      {!filtered.length ? (
+        <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text3)' }}>
+          <div style={{ fontSize: '2.5rem', marginBottom: '.5rem' }}>🛡️</div>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>Sin solicitudes</div>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gap: '.85rem' }}>
+          {filtered.map(s => (
+            <div key={s.id} style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--r2)',
+              padding: '1.1rem',
+            }}>
+              {/* Header */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '.7rem', gap: '.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', flexWrap: 'wrap' }}>
+                  <span style={{
+                    fontSize: '.7rem', fontWeight: 700, padding: '2px 8px', borderRadius: '99px',
+                    background: `${estadoPuntuacionColor(s.estado)}22`,
+                    color: estadoPuntuacionColor(s.estado),
+                    textTransform: 'capitalize',
+                  }}>
+                    {s.estado}
+                  </span>
+                  <span style={{ fontSize: '.8rem', color: 'var(--text3)' }}>
+                    {'⭐'.repeat(s.puntaje_actual)}{'☆'.repeat(5 - s.puntaje_actual)} {s.puntaje_actual}/5
+                  </span>
+                </div>
+                <span style={{ fontSize: '.74rem', color: 'var(--text3)', flexShrink: 0 }}>
+                  {formatFechaCorta(s.created_at)}
+                </span>
+              </div>
+
+              {/* Info */}
+              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, marginBottom: '.15rem' }}>
+                {s.nombre}
+              </div>
+              <div style={{ fontSize: '.8rem', color: 'var(--text2)', marginBottom: '.25rem' }}>
+                <a href={`mailto:${s.email}`} style={{ color: 'var(--blue)' }}>{s.email}</a>
+                {s.tel && <span> · 📞 {s.tel}</span>}
+              </div>
+              {s.espacio_nombre && (
+                <div style={{ fontSize: '.82rem', color: 'var(--text3)', marginBottom: '.7rem' }}>
+                  🏠 {s.espacio_nombre}
+                </div>
+              )}
+
+              {/* Actions */}
+              <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
+                <a
+                  href={`mailto:${s.email}?subject=Mejorá la seguridad de tu espacio en TodasMisCosas`}
+                  style={{
+                    padding: '.38rem .9rem', borderRadius: 'var(--r2)',
+                    border: '1px solid var(--border)', background: 'transparent',
+                    color: 'var(--blue)', fontSize: '.78rem', fontWeight: 600,
+                    textDecoration: 'none', display: 'inline-block',
+                  }}
+                >
+                  ✉️ Responder
+                </a>
+                {s.estado !== 'contactado' && (
+                  <button
+                    onClick={() => cambiarEstado(s.id, 'contactado')}
+                    style={{
+                      padding: '.38rem .9rem', borderRadius: 'var(--r2)',
+                      border: '1px solid var(--border)', background: 'transparent',
+                      color: 'var(--blue)', fontSize: '.78rem', fontWeight: 600, cursor: 'pointer',
+                    }}
+                  >
+                    📞 Marcar contactado
+                  </button>
+                )}
+                {s.estado !== 'resuelto' && (
+                  <button
+                    onClick={() => cambiarEstado(s.id, 'resuelto')}
+                    style={{
+                      padding: '.38rem .9rem', borderRadius: 'var(--r2)',
+                      border: '1px solid rgba(16,185,129,.4)', background: 'rgba(16,185,129,.08)',
+                      color: 'var(--mint)', fontSize: '.78rem', fontWeight: 600, cursor: 'pointer',
+                    }}
+                  >
+                    ✅ Marcar resuelto
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
 // ── Tab: Campañas ──────────────────────────────────────────────
 
 function TabCampanas({ token }: { token: string }) {
@@ -1071,21 +1247,26 @@ export default function AdminPage() {
   const { user, token, loading: authLoading, isAdmin } = useAuth();
   const [tab, setTab] = useState('notificaciones');
   const [notifUnread, setNotifUnread] = useState(0);
+  const [solicitudesPendientes, setSolicitudesPendientes] = useState(0);
 
   // Redirect non-admins
   useEffect(() => {
     if (!authLoading && !isAdmin) router.replace('/');
   }, [authLoading, isAdmin, router]);
 
-  // Load unread count for badge
+  // Load unread counts for badges
   useEffect(() => {
     if (!token || !isAdmin) return;
-    fetch('/api/admin/notificaciones', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    fetch('/api/admin/notificaciones', { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.json())
       .then((data: Notificacion[]) => {
         setNotifUnread(Array.isArray(data) ? data.filter(n => !n.leido).length : 0);
+      })
+      .catch(() => {});
+    fetch('/api/admin/solicitudes-puntuacion', { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then((data: SolicitudPuntuacion[]) => {
+        setSolicitudesPendientes(Array.isArray(data) ? data.filter(s => s.estado === 'pendiente').length : 0);
       })
       .catch(() => {});
   }, [token, isAdmin]);
@@ -1101,10 +1282,11 @@ export default function AdminPage() {
   if (!isAdmin) return null;
 
   const tabs = [
-    { key: 'notificaciones', label: '🔔 Notificaciones', badge: notifUnread || undefined },
-    { key: 'consultas',      label: '📬 Consultas' },
-    { key: 'campanas',       label: '📣 Campañas' },
-    { key: 'usuarios',       label: '👤 Usuarios' },
+    { key: 'notificaciones',       label: '🔔 Notificaciones', badge: notifUnread || undefined },
+    { key: 'consultas',            label: '📬 Consultas' },
+    { key: 'solicitudes-puntaje',  label: '🛡️ Puntuación', badge: solicitudesPendientes || undefined },
+    { key: 'campanas',             label: '📣 Campañas' },
+    { key: 'usuarios',             label: '👤 Usuarios' },
   ];
 
   return (
@@ -1138,10 +1320,11 @@ export default function AdminPage() {
 
           <TabBar tabs={tabs} active={tab} onSelect={setTab} />
 
-          {tab === 'notificaciones' && token && <TabNotificaciones token={token} />}
-          {tab === 'consultas'      && token && <TabConsultas token={token} />}
-          {tab === 'campanas'       && token && <TabCampanas token={token} />}
-          {tab === 'usuarios'       && token && <TabUsuarios token={token} />}
+          {tab === 'notificaciones'      && token && <TabNotificaciones token={token} />}
+          {tab === 'consultas'           && token && <TabConsultas token={token} />}
+          {tab === 'solicitudes-puntaje' && token && <TabSolicitudesPuntuacion token={token} />}
+          {tab === 'campanas'            && token && <TabCampanas token={token} />}
+          {tab === 'usuarios'            && token && <TabUsuarios token={token} />}
         </div>
       </div>
     </div>

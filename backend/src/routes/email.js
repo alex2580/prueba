@@ -3,6 +3,7 @@ const { body } = require('express-validator');
 const router = express.Router();
 
 const emailService = require('../services/emailService');
+const adminCtrl = require('../controllers/adminController');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { validationResult } = require('express-validator');
 
@@ -43,6 +44,18 @@ router.post('/bienvenida', requireAuth, requireAdmin, async (req, res, next) => 
 router.post('/mejorar-puntuacion', requireAuth, async (req, res, next) => {
   try {
     const { espacioNombre, puntajeActual } = req.body;
+
+    // Guardar en DB para el panel admin
+    await adminCtrl.insertSolicitudPuntuacion({
+      userId: req.user.id,
+      nombre: req.user.nombre,
+      email:  req.user.email,
+      tel:    req.user.tel,
+      espacioNombre,
+      puntajeActual,
+    });
+
+    // Enviar email
     await emailService.sendMejorarPuntuacion({
       nombre:        req.user.nombre,
       email:         req.user.email,

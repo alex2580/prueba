@@ -32,4 +32,8 @@ router.get('/usuarios',                         ctrl.getUsuarios);
 router.patch('/usuarios/:id/bloquear',          ctrl.bloquearUsuario);
 router.patch('/usuarios/:id/desbloquear',       ctrl.desbloquearUsuario);
 
+// Solicitudes de mejora de puntuación
+router.get('/solicitudes-puntuacion',                      ctrl.getSolicitudesPuntuacion);
+router.patch('/solicitudes-puntuacion/:id/estado',         ctrl.actualizarEstadoSolicitud);
+
 module.exports = router;

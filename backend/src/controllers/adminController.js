@@ -31,6 +31,20 @@ async function initTables() {
   `);
 
   await query(`
+    CREATE TABLE IF NOT EXISTS admin_solicitudes_puntuacion (
+      id              VARCHAR(36)   PRIMARY KEY,
+      oferente_id     VARCHAR(36),
+      nombre          VARCHAR(255)  NOT NULL,
+      email           VARCHAR(255)  NOT NULL,
+      tel             VARCHAR(50),
+      espacio_nombre  VARCHAR(255),
+      puntaje_actual  TINYINT       NOT NULL DEFAULT 0,
+      estado          ENUM('pendiente','contactado','resuelto') NOT NULL DEFAULT 'pendiente',
+      created_at      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  await query(`
     CREATE TABLE IF NOT EXISTS admin_campanas (
       id           VARCHAR(36)  PRIMARY KEY,
       titulo       VARCHAR(255) NOT NULL,
@@ -323,6 +337,68 @@ async function desbloquearUsuario(req, res, next) {
   }
 }
 
+// ── Solicitudes de mejora de puntuación ───────────────────────
+
+async function insertSolicitudPuntuacion({ userId, nombre, email, tel, espacioNombre, puntajeActual }) {
+  const id = crypto.randomUUID();
+  await query(
+    `INSERT INTO admin_solicitudes_puntuacion
+       (id, oferente_id, nombre, email, tel, espacio_nombre, puntaje_actual)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [id, userId, nombre, email, tel || null, espacioNombre || null, puntajeActual ?? 0]
+  );
+  return id;
+}
+
+// POST /api/admin/solicitudes-puntuacion  (auth required)
+async function crearSolicitudPuntuacion(req, res, next) {
+  try {
+    const { espacioNombre, puntajeActual } = req.body;
+    const id = await insertSolicitudPuntuacion({
+      userId: req.user.id,
+      nombre: req.user.nombre,
+      email:  req.user.email,
+      tel:    req.user.tel,
+      espacioNombre,
+      puntajeActual,
+    });
+    res.status(201).json({ id });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// GET /api/admin/solicitudes-puntuacion
+async function getSolicitudesPuntuacion(req, res, next) {
+  try {
+    const rows = await query(
+      'SELECT * FROM admin_solicitudes_puntuacion ORDER BY created_at DESC'
+    );
+    res.json(rows);
+  } catch (err) {
+    next(err);
+  }
+}
+
+// PATCH /api/admin/solicitudes-puntuacion/:id/estado
+async function actualizarEstadoSolicitud(req, res, next) {
+  try {
+    const { id } = req.params;
+    const { estado } = req.body;
+    if (!['pendiente', 'contactado', 'resuelto'].includes(estado)) {
+      return res.status(400).json({ error: 'Estado inválido' });
+    }
+    const result = await query(
+      'UPDATE admin_solicitudes_puntuacion SET estado = ? WHERE id = ?',
+      [estado, id]
+    );
+    if (!result.affectedRows) return res.status(404).json({ error: 'Solicitud no encontrada' });
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getNotificaciones,
   marcarLeido,
@@ -337,4 +413,8 @@ module.exports = {
   getUsuarios,
   bloquearUsuario,
   desbloquearUsuario,
+  crearSolicitudPuntuacion,
+  getSolicitudesPuntuacion,
+  actualizarEstadoSolicitud,
+  insertSolicitudPuntuacion,
 };
