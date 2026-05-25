@@ -50,18 +50,40 @@ export function useAuth() {
   }, []);
 
   useEffect(() => {
-    // Carga inicial de sesión (ej: recarga de página)
+    const OTP_FLAG = 'tmc_otp_pending';
+
     supabase.auth.getSession().then(({ data }) => {
       if (data.session?.access_token && !otpFlowRef.current) {
-        // Sesión ya verificada anteriormente (browser persistió la sesión)
-        loadUser(data.session.access_token);
+        if (localStorage.getItem(OTP_FLAG) === '1') {
+          // Sesión existe pero OTP no fue completado — re-solicitar código
+          const token = data.session.access_token;
+          const refreshToken = data.session.refresh_token;
+          otpFlowRef.current = true;
+          fetch(`${API}/api/auth/solicitar-otp`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}` },
+          }).then(r => r.json()).then(body => {
+            setState(s => ({
+              ...s, loading: false,
+              otpPending: true, otpToken: token, otpRefreshToken: refreshToken || null,
+              otpEmailHint: body.email_hint || '',
+              otpCanales: body.canales || { email: true, sms: false, whatsapp: false },
+            }));
+          }).catch(() => {
+            // Si falla re-solicitar, dejar que el usuario ingrese normalmente
+            localStorage.removeItem(OTP_FLAG);
+            otpFlowRef.current = false;
+            loadUser(token);
+          });
+        } else {
+          loadUser(data.session.access_token);
+        }
       } else {
         setState(s => ({ ...s, loading: false }));
       }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      // Durante el flujo OTP, ignoramos el auto-load del listener
       if (otpFlowRef.current) return;
       if (session?.access_token) {
         loadUser(session.access_token);
@@ -93,9 +115,8 @@ export function useAuth() {
       return false;
     }
 
-    // Borrar sesión del browser para evitar que una recarga salte el OTP.
-    // El access_token sigue siendo válido hasta su expiración (JWT).
-    await supabase.auth.signOut({ scope: 'local' });
+    // Marcar OTP pendiente en localStorage para prevenir bypass por recarga
+    localStorage.setItem('tmc_otp_pending', '1');
 
     // Solicitar OTP al backend
     try {
@@ -106,7 +127,9 @@ export function useAuth() {
       const body = await res.json();
 
       if (!res.ok) {
+        localStorage.removeItem('tmc_otp_pending');
         otpFlowRef.current = false;
+        await sbSignOut();
         setState(s => ({ ...s, loading: false, error: body.error || 'Error al solicitar código' }));
         return false;
       }
@@ -121,6 +144,7 @@ export function useAuth() {
       }));
       return true;
     } catch {
+      localStorage.removeItem('tmc_otp_pending');
       otpFlowRef.current = false;
       setState(s => ({ ...s, loading: false, error: 'Error de conexión al solicitar código' }));
       return false;
@@ -147,12 +171,9 @@ export function useAuth() {
         return false;
       }
 
-      // OTP correcto → restaurar sesión en el browser y cargar usuario
+      // OTP correcto → limpiar flag y cargar usuario
+      localStorage.removeItem('tmc_otp_pending');
       otpFlowRef.current = false;
-      const refreshToken = state.otpRefreshToken;
-      if (refreshToken) {
-        await supabase.auth.setSession({ access_token: token, refresh_token: refreshToken });
-      }
       await loadUser(token);
       return true;
     } catch {
@@ -230,6 +251,7 @@ export function useAuth() {
   }, []);
 
   const logout = useCallback(async () => {
+    localStorage.removeItem('tmc_otp_pending');
     otpFlowRef.current = false;
     await sbSignOut();
     setState({ ...INITIAL, loading: false });
