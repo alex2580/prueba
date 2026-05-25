@@ -8,6 +8,7 @@ const mercadopagoService = require('../services/mercadopagoService');
 async function listar(req, res, next) {
   try {
     const isAdmin = req.user.tipo === 'admin';
+    // Para demandantes ocultamos 'pendiente': son reservas creadas pero sin pago confirmado
     const sql = `
       SELECT r.*,
              e.nombre AS espacio_nombre, e.barrio AS espacio_barrio, e.lat, e.lng,
@@ -16,7 +17,7 @@ async function listar(req, res, next) {
       FROM reservas r
       JOIN espacios e ON r.espacio_id = e.id
       JOIN usuarios u ON r.usuario_id = u.id
-      WHERE ${isAdmin ? '1=1' : 'r.usuario_id = ?'}
+      WHERE ${isAdmin ? '1=1' : "r.usuario_id = ? AND r.estado != 'pendiente'"}
       ORDER BY r.created_at DESC
     `;
     const params = isAdmin ? [] : [req.user.id];
@@ -37,7 +38,7 @@ async function recibidas(req, res, next) {
        FROM reservas r
        JOIN espacios e ON r.espacio_id = e.id
        JOIN usuarios u ON r.usuario_id = u.id
-       WHERE e.oferente_id = ?
+       WHERE e.oferente_id = ? AND r.estado != 'pendiente'
        ORDER BY r.created_at DESC`,
       [req.user.id]
     );
