@@ -810,9 +810,83 @@ rsync -avz ./uploads/ /var/www/todasmiscosas/backend/uploads/
 # 4. Instalar dependencias y reiniciar
 cd /var/www/todasmiscosas && bash deploy.sh</code></pre>
 
+<!-- 17. CHANGELOG -->
+<h2 id="changelog">17. Changelog — Sesión 25 de Mayo 2026</h2>
+<p>Cambios incorporados en la sesión del 25/05/2026 (madrugada + tarde):</p>
+
+<table>
+  <tr><th>Commit</th><th>Cambio</th><th>Archivos</th></tr>
+  <tr>
+    <td><code>78163af</code></td>
+    <td><strong>PIN de acceso visible en ambos paneles.</strong> El PIN de 4 dígitos generado al crear la reserva ahora se muestra en la tarjeta EstadoReserva (demandante) y en la fila de reservas recibidas (oferente), una vez que la reserva está confirmada/pagada.</td>
+    <td>types/index.ts · components/reservas/EstadoReserva.tsx · app/panel/page.tsx</td>
+  </tr>
+  <tr>
+    <td><code>63bd240</code></td>
+    <td><strong>Polling en página de confirmación de pago.</strong> Reemplaza la verificación única por un loop de 15 intentos × 3s (45s total). La página pasa automáticamente de "⏳ Pendiente" a "🎉 Confirmada" cuando el webhook de MP procesa el pago.</td>
+    <td>app/reserva/[id]/confirmacion/page.tsx</td>
+  </tr>
+  <tr>
+    <td><code>b0de6ae</code></td>
+    <td><strong>Timeline: se elimina el paso "Activa".</strong> La barra de progreso pasa de 4 a 3 pasos: Solicitada → Confirmada → Pago realizado. Los estados <code>pagada</code> y <code>finalizada</code> quedan en el paso 3.</td>
+    <td>components/reservas/TimelineReserva.tsx</td>
+  </tr>
+  <tr>
+    <td><code>b0de6ae</code></td>
+    <td><strong>Mapa: marcadores y tooltips muestran precio en lugar de m².</strong> Pins usan precio_mes (fallback precio_dia con sufijo "/d"). Tooltip de hover muestra precio/mes y precio/día. Tarjeta de click elimina m² y muestra ambos precios condicionalmente.</td>
+    <td>components/mapa/MapaEspacios.tsx · components/mapa/MarkerEspacio.tsx</td>
+  </tr>
+  <tr>
+    <td><code>b3b0c1b</code></td>
+    <td><strong>Fix: pins del mapa mostraban $0.</strong> Espacios con solo precio_dia configurado mostraban $0 porque el pin siempre leía precio_mes. Corregido para usar precio_dia como fallback.</td>
+    <td>components/mapa/MapaEspacios.tsx</td>
+  </tr>
+  <tr>
+    <td><code>d0beb19</code></td>
+    <td><strong>Checklist de seguridad visible en detalle del espacio.</strong> En el tab "Descripción" se agrega la sección "🛡️ Seguridad del espacio" con las estrellas calculadas (ítems activos / 8 × 5) y un grid de 2 columnas con cada ítem habilitado por el oferente (emoji + etiqueta). Solo se renderiza si hay al menos un ítem marcado.</td>
+    <td>components/espacios/DetalleEspacio.tsx</td>
+  </tr>
+  <tr>
+    <td><code>722efbe</code></td>
+    <td><strong>Backup del código fuente.</strong> Archivo <code>TMC_backup_2026-05-25_0323.tar.gz</code> (1.5 MB) generado en <code>/home/dellnotee/</code>, excluye node_modules y .next.</td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td><code>9c017a7</code></td>
+    <td><strong>Documento de arquitectura completo.</strong> Creado <code>docs/TMC-arquitectura-completa.doc</code> con 16 secciones cubriendo stack, DB, endpoints, componentes, flujos, variables y backup.</td>
+    <td>docs/TMC-arquitectura-completa.doc</td>
+  </tr>
+</table>
+
+<h3>Componente SeguridadChecklist — estructura de datos</h3>
+<p>El campo <code>seguridad</code> en la tabla <code>espacios</code> se almacena como JSON string y se parsea en backend. Estructura:</p>
+<pre><code>{
+  "techo_impermeable": true,
+  "cerradura":         true,
+  "camaras":           false,
+  "iluminacion":       true,
+  "acceso_controlado": false,
+  "seco_ventilado":    true,
+  "acceso_24h":        false,
+  "extintor":          true
+}</code></pre>
+<p>Las 8 claves posibles corresponden a los ítems del checklist. La cantidad de <code>true</code> determina las estrellas: <code>stars = round(activos / 8 × 5)</code>.</p>
+
+<h3>Cálculo de estrellas de seguridad</h3>
+<table>
+  <tr><th>Ítems marcados</th><th>Estrellas mostradas</th></tr>
+  <tr><td>0</td><td>⚫⚫⚫⚫⚫ (sección oculta)</td></tr>
+  <tr><td>1–2</td><td>★☆☆☆☆</td></tr>
+  <tr><td>3</td><td>★★☆☆☆</td></tr>
+  <tr><td>4–5</td><td>★★★☆☆ / ★★★★☆</td></tr>
+  <tr><td>6–7</td><td>★★★★☆ / ★★★★★</td></tr>
+  <tr><td>8</td><td>★★★★★</td></tr>
+</table>
+
 <hr>
 <div style="text-align:center;padding:1.5rem 0;color:var(--text3);font-size:.8rem;">
-  📦 TodasMisCosas.com — Documentación Técnica Completa · Mayo 2026 · Confidencial
+  📦 TodasMisCosas.com — Documentación Técnica Completa · Mayo 2026 · Confidencial<br>
+  <span style="font-size:.72rem;">Última actualización: 25/05/2026 — sesión tarde</span>
 </div>
 
 </div>
