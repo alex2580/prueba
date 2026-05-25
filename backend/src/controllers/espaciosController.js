@@ -41,7 +41,7 @@ async function getEspacioWithFotos(id) {
 // GET /api/espacios
 async function listar(req, res, next) {
   try {
-    const { barrio, tipo, precio_max, precio_min, disponible, q } = req.query;
+    const { barrio, tipo, precio_max, precio_min, disponible, q, periodo } = req.query;
 
     let sql = `
       SELECT e.id, e.nombre, e.direccion, e.barrio, e.m2, e.tipo,
@@ -56,10 +56,22 @@ async function listar(req, res, next) {
     `;
     const params = [];
 
-    if (barrio)      { sql += ' AND e.barrio = ?';               params.push(barrio); }
-    if (tipo)        { sql += ' AND e.tipo = ?';                 params.push(tipo); }
-    if (precio_max)  { sql += ' AND e.precio_mes <= ?';          params.push(Number(precio_max)); }
-    if (precio_min)  { sql += ' AND e.precio_mes >= ?';          params.push(Number(precio_min)); }
+    if (barrio)     { sql += ' AND e.barrio = ?';  params.push(barrio); }
+    if (tipo)       { sql += ' AND e.tipo = ?';    params.push(tipo); }
+
+    if (periodo === 'dia') {
+      sql += ' AND e.precio_dia > 0';
+      if (precio_max) { sql += ' AND e.precio_dia <= ?'; params.push(Number(precio_max)); }
+      if (precio_min) { sql += ' AND e.precio_dia >= ?'; params.push(Number(precio_min)); }
+    } else if (periodo === 'mes') {
+      sql += ' AND e.precio_mes > 0';
+      if (precio_max) { sql += ' AND e.precio_mes <= ?'; params.push(Number(precio_max)); }
+      if (precio_min) { sql += ' AND e.precio_mes >= ?'; params.push(Number(precio_min)); }
+    } else {
+      if (precio_max) { sql += ' AND e.precio_mes <= ?'; params.push(Number(precio_max)); }
+      if (precio_min) { sql += ' AND e.precio_mes >= ?'; params.push(Number(precio_min)); }
+    }
+
     if (disponible !== undefined) { sql += ' AND e.disponible = ?'; params.push(disponible === 'true' ? 1 : 0); }
     if (q) {
       sql += ' AND (e.nombre LIKE ? OR e.descripcion LIKE ? OR e.barrio LIKE ? OR e.direccion LIKE ?)';

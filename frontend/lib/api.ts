@@ -39,6 +39,7 @@ export const espaciosAPI = {
     if (filtros?.precio_min) params.set('precio_min', String(filtros.precio_min));
     if (filtros?.disponible !== undefined) params.set('disponible', String(filtros.disponible));
     if (filtros?.q)          params.set('q', filtros.q);
+    if (filtros?.periodo)    params.set('periodo', filtros.periodo);
     const qs = params.toString() ? `?${params}` : '';
     return fetchAPI<Espacio[]>(`/api/espacios${qs}`, {}, token);
   },

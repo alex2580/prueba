@@ -158,29 +158,29 @@ export default function HomePage() {
                 onClick={() => setFiltrosOpen(o => !o)}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '.45rem',
-                  background: (filtros.tipo || filtros.precio_max)
+                  background: (filtros.tipo || filtros.precio_max || filtros.periodo)
                     ? 'rgba(232,98,42,.18)'
                     : 'rgba(186,230,253,.55)',
-                  border: `1.5px solid ${(filtros.tipo || filtros.precio_max) ? 'rgba(232,98,42,.45)' : 'rgba(125,211,252,.7)'}`,
+                  border: `1.5px solid ${(filtros.tipo || filtros.precio_max || filtros.periodo) ? 'rgba(232,98,42,.45)' : 'rgba(125,211,252,.7)'}`,
                   borderRadius: '999px', padding: '.45rem 1.1rem',
                   fontSize: '.82rem', fontWeight: 700, fontFamily: 'Sora, sans-serif',
                   cursor: 'pointer',
                   boxShadow: '0 2px 14px rgba(0,0,0,.13)',
-                  color: (filtros.tipo || filtros.precio_max) ? 'var(--orange)' : '#0369a1',
+                  color: (filtros.tipo || filtros.precio_max || filtros.periodo) ? 'var(--orange)' : '#0369a1',
                   backdropFilter: 'blur(10px)',
                   transition: 'all .15s',
                 }}
               >
                 <span>⚙️</span>
                 Filtros
-                {(filtros.tipo || filtros.precio_max) && (
+                {(filtros.tipo || filtros.precio_max || filtros.periodo) && (
                   <span style={{
                     background: 'var(--orange)', color: '#fff',
                     borderRadius: '50%', width: 18, height: 18,
                     fontSize: '.65rem', fontWeight: 800,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
-                    {[filtros.tipo, filtros.precio_max].filter(Boolean).length}
+                    {[filtros.tipo, filtros.precio_max, filtros.periodo].filter(Boolean).length}
                   </span>
                 )}
               </button>

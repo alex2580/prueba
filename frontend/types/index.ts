@@ -208,6 +208,7 @@ export interface FiltrosEspacios {
   precio_min?: number;
   disponible?: boolean;
   q?: string;
+  periodo?: 'dia' | 'mes' | '';
 }
 
 export interface ApiResponse<T = unknown> {
