@@ -199,7 +199,7 @@
   <div class="cover-sub">Documentación Técnica Completa</div>
   <div style="font-size:10pt;color:#888;margin-bottom:28px;">Marketplace de almacenamiento urbano — Buenos Aires</div>
   <div class="cover-meta">
-    <b>Versión:</b> 1.3 — Mayo 2026<br>
+    <b>Versión:</b> 1.4 — Mayo 2026<br>
     <b>URL producción:</b> https://todasmiscosas.com<br>
     <b>Repositorio:</b> github.com/alex2580/prueba (privado)<br>
     <b>Autores:</b> Alejandro Laporte · Guillermo Domínguez<br>
@@ -822,7 +822,7 @@ POST /api/reservas/:id/extender { nueva_fecha_hasta }
     <td>Se crea una reserva</td>
     <td>Oferente</td>
     <td>🔔 Nueva solicitud de reserva</td>
-    <td>Nombre y teléfono del demandante, espacio, fechas, monto estimado</td>
+    <td>Nombre, <strong>email (mailto:)</strong> y <strong>teléfono (tel:)</strong> del demandante, espacio, fechas, monto estimado, PIN de acceso</td>
   </tr>
   <tr>
     <td>3</td>
@@ -922,6 +922,27 @@ POST /api/reservas/:id/extender { nueva_fecha_hasta }
     <td>📱 Tu teléfono fue actualizado</td>
     <td>Nuevo número de teléfono</td>
   </tr>
+  <tr>
+    <td>17</td>
+    <td>Alta de cuenta nueva (registro)</td>
+    <td>Nuevo usuario</td>
+    <td>👋 Bienvenido/a a TodasMisCosas.com — Confirmación de Términos</td>
+    <td>Mensaje de bienvenida según rol + bloque legal con 5 puntos clave de T&amp;C + link a /legal</td>
+  </tr>
+  <tr>
+    <td>18a</td>
+    <td>Se crea una reserva</td>
+    <td>Demandante</td>
+    <td>📋 Confirmación legal — {espacio} ({fechas})</td>
+    <td>Datos de la reserva + 4 obligaciones del demandante + disclaimer de intermediación + link a /legal</td>
+  </tr>
+  <tr>
+    <td>18b</td>
+    <td>Se crea una reserva</td>
+    <td>Oferente</td>
+    <td>📋 Confirmación legal — {espacio} ({fechas})</td>
+    <td>Datos de la reserva + 4 obligaciones del oferente + recordatorio comisión 15% + link a /legal</td>
+  </tr>
 </table>
 
 <h2>Cron jobs de recordatorios</h2>
@@ -944,6 +965,33 @@ Busca espacios activos donde COALESCE(ultima_actividad, created_at) &lt; hace 90
 El oferente puede reactivar desde su panel → POST /api/espacios/:id/reactivar
   → activo = TRUE, inactiva_auto = 0, ultima_actividad = NOW()
 </div>
+
+<h2>Emails de aceptación de Términos de Uso (emails #17 y #18)</h2>
+<p>Dos flujos de email relacionados con la aceptación formal de los Términos de Uso y Disclaimers:</p>
+
+<h3>Email #17 — Bienvenida con T&amp;C (al registrarse)</h3>
+<p>La función <code>sendBienvenida</code> fue actualizada para incluir un bloque "⚖️ Aceptación de Términos de Uso" con 5 puntos clave (rol de intermediación, prohibiciones, responsabilidades, comisión 15%, MercadoPago) y link a <code>/legal</code>.</p>
+<p>A partir de la v1.4, <code>sendBienvenida</code> se llama automáticamente desde <code>usuariosController.sync()</code> cuando se crea un usuario nuevo (antes solo se podía disparar manualmente).</p>
+
+<h3>Emails #18a y #18b — Confirmación legal de operación (al crear reserva)</h3>
+<p>Nueva función <code>sendAceptacionOperacion(toEmail, nombre, { rol, espacioNombre, fechaDesde, fechaHasta, precioTotal, reservaId })</code>. Se envía a <strong>ambas partes</strong> (demandante y oferente) en el momento exacto de crear una reserva.</p>
+
+<div class="flow">
+POST /api/reservas (crear)
+  → se crea la reserva en DB
+  → sendReservaConfirmada → demandante (email #1 existente)
+  → sendNuevaReserva → oferente (email #2 existente)
+  → sendAceptacionOperacion (rol: 'demandante') → demandante (email #18a NUEVO)
+  → sendAceptacionOperacion (rol: 'oferente') → oferente (email #18b NUEVO)
+</div>
+
+<p>El contenido del email es personalizado por rol:</p>
+<table>
+  <tr><th>Rol</th><th>Obligaciones incluidas</th></tr>
+  <tr><td>Demandante</td><td>1. Declarar verazmente bienes · 2. No ingresar bienes prohibidos · 3. Respetar horarios de acceso · 4. Responsabilidad civil por daños</td></tr>
+  <tr><td>Oferente</td><td>1. Espacio en condiciones acordadas y disponible · 2. No denegar acceso post-pago · 3. Informar incidentes · 4. Recordatorio comisión 15% TMC</td></tr>
+</table>
+<p>Ambos emails incluyen el disclaimer de intermediación y link a <code>/legal</code>.</p>
 
 <!-- ══════════════════════════════════════════════════════════════
      11. API ENDPOINTS
@@ -1156,14 +1204,31 @@ curl http://localhost:4000/health</pre>
   <b>✅ Todo lo demás está funcionando en producción</b>
   Reservas · Pagos · Chat · Reviews · OTP por email · Panel de oferente y demandante ·
   Baja automática por inactividad · Reactivación de publicaciones · Cambio de teléfono con OTP ·
-  Deploy automático · Emails de notificación
+  Deploy automático · Emails de notificación · Emails de aceptación de T&amp;C · Panel admin con operaciones y solicitudes de puntuación ·
+  Filtro por período (día/mes) · Marcadores sin precio en estado inicial · Ingresos netos en panel oferente ·
+  Comisión actualizada al 15% en legales
 </div>
+
+<h2>Cambios recientes (v1.4 — 25 mayo 2026)</h2>
+<table>
+  <tr><th>Área</th><th>Cambio</th><th>Commit</th></tr>
+  <tr><td>Email</td><td><code>sendNuevaReserva</code> incluye email y teléfono del demandante con links mailto:/tel:</td><td><code>4c85ff2</code></td></tr>
+  <tr><td>Filtros mapa</td><td>Toggle Por día / Por mes; marcadores sin precio en estado sin filtros; slider adaptativo</td><td><code>e30fc25</code>, <code>1cf9f06</code></td></tr>
+  <tr><td>Email oferente</td><td>Desglose de pago con comisión 15% y aviso de acreditación en 48h hábiles</td><td><code>e52f588</code></td></tr>
+  <tr><td>Panel oferente</td><td>Montos netos (-15% TMC) en indicadores y lista de reservas; nuevo card "Ingresos del mes"</td><td><code>b0de6ae</code></td></tr>
+  <tr><td>Panel admin</td><td>Tab "💼 Operaciones" con 9 KPI y lista financiera; tab "🛡️ Puntuación" con solicitudes</td><td><code>711c80b</code>, <code>fcbaab7</code></td></tr>
+  <tr><td>Admin emails</td><td>Variable <code>ADMIN_EMAILS</code> como destino para emails internos (contacto + puntuación)</td><td><code>c48718e</code></td></tr>
+  <tr><td>Legales</td><td>Comisión actualizada 10% → 15% en legal.html; sección Seguros oculta</td><td><code>a5b2844</code></td></tr>
+  <tr><td>Servicios</td><td>Sección "Tipos de almacenamiento" oculta; precios de referencia eliminados de servicios adicionales</td><td><code>a5b2844</code></td></tr>
+  <tr><td>Cómo funciona</td><td>5to paso "🔐 Acceso verificado con PIN"; título actualizado a "Los 5 pasos"</td><td><code>a5b2844</code></td></tr>
+  <tr><td>Emails T&amp;C</td><td><code>sendBienvenida</code> con bloque legal; nueva <code>sendAceptacionOperacion</code>; ambas disparadas automáticamente</td><td><code>5945f77</code></td></tr>
+</table>
 
 <!-- ══════════════════════════════════════════════════════════════
      FOOTER
 ══════════════════════════════════════════════════════════════ -->
 <div class="footer">
-  TodasMisCosas.com — Documentación técnica interna · Versión 1.3 · Mayo 2026<br>
+  TodasMisCosas.com — Documentación técnica interna · Versión 1.4 · Mayo 2026<br>
   Alejandro Laporte · Guillermo Domínguez<br>
   <em>Este documento es confidencial. No distribuir.</em>
 </div>

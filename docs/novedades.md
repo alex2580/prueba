@@ -1314,3 +1314,108 @@ Además se actualizó `legal.html`: la comisión cobrada pasó de **10% → 15%*
 **Commit:** `fcbaab7`
 
 **Commits:** `b0de6ae`, `b3b0c1b`
+
+---
+
+### Email al oferente — datos de contacto del demandante
+
+Cuando se crea una reserva, el email que recibe el oferente ("🔔 Nueva solicitud de reserva") ahora incluye explícitamente el **email** y el **teléfono** del demandante, con links directos `mailto:` y `tel:` para facilitar el contacto inmediato.
+
+**Motivo:** El oferente necesita poder contactar al demandante para coordinar el acceso sin tener que entrar al panel.
+
+**Archivos modificados:**
+- `backend/src/services/emailService.js` — `sendNuevaReserva` acepta `demandanteEmail` y `demandanteTel`, los muestra con links
+- `backend/src/controllers/reservasController.js` — pasa `demandanteEmail: req.user.email` al llamar a `sendNuevaReserva`
+
+**Commit:** `4c85ff2`
+
+---
+
+## 25 de Mayo 2026 — Sesión noche (continuación)
+
+### Cambios en páginas públicas
+
+#### legal.html — sección "Seguros Disponibles" oculta
+
+La sección completa `<div id="sec3">` (Seguros Disponibles) y su pill de navegación ("🛡 Seguros") se ocultaron con `display:none`. El contenido sigue en el HTML pero no es visible para el usuario.
+
+**Motivo:** Los seguros aún no están operativos como servicio real; mostrarlos genera expectativas que no pueden cumplirse.
+
+**Archivo modificado:** `frontend/public/legal.html`
+
+---
+
+#### servicios/page.tsx — ocultación de tipos y precios de referencia
+
+1. **Sección "🏠 Tipos de almacenamiento"** — envuelta en `<div style="display:none">`. Los 5 tipos de espacio (Personal, Empresarial, Logística, Bauleras, Compartido) dejan de mostrarse.
+
+2. **Precios de servicios adicionales** — se eliminó la línea `{s.precio}` de las cards de Transporte, Seguros y Embalaje. Los precios de referencia ("Desde $8.500", "Desde $2.500/mes", etc.) ya no aparecen en las tarjetas.
+
+**Motivo:** Los precios reales son acordados por espacio; mostrar precios de referencia confunde al usuario y genera comparaciones incorrectas.
+
+**Archivo modificado:** `frontend/app/servicios/page.tsx`
+
+---
+
+#### como-funciona/page.tsx — 5to paso sobre PIN compartido
+
+Se agregó un quinto paso al flujo "Cómo funciona":
+
+| # | Ícono | Título | Descripción |
+|---|-------|--------|-------------|
+| 5 | 🔐 | Acceso verificado con PIN | Tanto el demandante como el oferente reciben el mismo PIN de 4 dígitos para confirmar el inicio y fin de la operación. |
+
+El título de la sección se actualizó de "Los 4 pasos" a **"Los 5 pasos"**.
+
+**Archivo modificado:** `frontend/app/como-funciona/page.tsx`
+
+**Commit:** `a5b2844`
+
+---
+
+### Emails de aceptación de Términos de Uso
+
+Se implementaron dos nuevos flujos de email relacionados con la aceptación formal de los Términos de Uso y Disclaimers de la plataforma.
+
+#### 1. Registro — bienvenida + aceptación de términos
+
+El email de bienvenida (`sendBienvenida`) fue actualizado para incluir una sección dedicada de aceptación de T&C. Además, ahora se envía **automáticamente** al crear un usuario nuevo desde `POST /api/usuarios/sync` (antes solo se podía disparar manualmente desde una ruta de email).
+
+**Contenido del nuevo bloque legal en el email de bienvenida:**
+- Encabezado: "⚖️ Aceptación de Términos de Uso"
+- 5 puntos resumidos:
+  1. TMC actúa como plataforma de conexión, no es parte del contrato
+  2. Prohibición de bienes peligrosos, ilegales o de procedencia no comprobable
+  3. Cada usuario es responsable de sus bienes y del espacio que ofrece/usa
+  4. Comisión del 15% sobre reservas efectivamente cobradas al Oferente
+  5. Pagos a través de MercadoPago con retención hasta confirmación de acceso
+- Link "📄 Ver los Términos y Condiciones completos →" a `/legal`
+
+#### 2. Transacción — confirmación legal para ambas partes
+
+Nueva función `sendAceptacionOperacion` que se envía a **demandante y oferente** en el momento de crear una reserva.
+
+El email es personalizado por rol:
+
+**Demandante recibe — obligaciones:**
+1. Declarar veraz y completamente el tipo de bienes a almacenar
+2. No ingresar bienes prohibidos, peligrosos o ilegales
+3. Respetar horarios y condiciones de acceso acordados con el Oferente
+4. Asumir responsabilidad civil por daños que sus bienes pudieran causar
+
+**Oferente recibe — obligaciones:**
+1. Garantizar que el espacio esté en condiciones acordadas y disponible desde la fecha pactada
+2. No denegar acceso una vez confirmada y pagada la reserva
+3. Informar inmediatamente ante incidentes que afecten los bienes almacenados
+4. Recordatorio de la comisión TMC del 15%
+
+Ambos reciben el disclaimer de que TMC actúa como intermediario y link a términos completos.
+
+**Asunto:** `📋 Confirmación legal — {nombre del espacio} ({fechaDesde} → {fechaHasta})`
+
+**Archivos modificados:**
+- `backend/src/services/emailService.js` — `sendBienvenida` actualizado + nueva función `sendAceptacionOperacion` exportada
+- `backend/src/controllers/usuariosController.js` — `sync()` llama `sendBienvenida` al crear usuario nuevo
+- `backend/src/controllers/reservasController.js` — `crear()` llama `sendAceptacionOperacion` para demandante y oferente
+
+**Commit:** `5945f77`
