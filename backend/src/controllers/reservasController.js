@@ -4,6 +4,13 @@ const { v4: uuidv4 } = require('uuid');
 const emailService = require('../services/emailService');
 const mercadopagoService = require('../services/mercadopagoService');
 
+function parseSeguridad(r) {
+  if (r.espacio_seguridad && typeof r.espacio_seguridad === 'string') {
+    try { r.espacio_seguridad = JSON.parse(r.espacio_seguridad); } catch (_) { r.espacio_seguridad = null; }
+  }
+  return r;
+}
+
 // GET /api/reservas  (admin: all; user: own)
 async function listar(req, res, next) {
   try {
@@ -12,7 +19,7 @@ async function listar(req, res, next) {
     const sql = `
       SELECT r.*,
              e.nombre AS espacio_nombre, e.barrio AS espacio_barrio, e.lat, e.lng,
-             e.oferente_id,
+             e.oferente_id, e.seguridad AS espacio_seguridad,
              u.nombre AS usuario_nombre, u.email AS usuario_email
       FROM reservas r
       JOIN espacios e ON r.espacio_id = e.id
@@ -22,7 +29,7 @@ async function listar(req, res, next) {
     `;
     const params = isAdmin ? [] : [req.user.id];
     const reservas = await query(sql, params);
-    res.json(reservas);
+    res.json(reservas.map(parseSeguridad));
   } catch (err) {
     next(err);
   }
@@ -34,6 +41,7 @@ async function recibidas(req, res, next) {
     const reservas = await query(
       `SELECT r.*,
               e.nombre AS espacio_nombre, e.barrio AS espacio_barrio,
+              e.seguridad AS espacio_seguridad,
               u.nombre AS usuario_nombre, u.email AS usuario_email, u.tel AS usuario_tel
        FROM reservas r
        JOIN espacios e ON r.espacio_id = e.id
@@ -42,7 +50,7 @@ async function recibidas(req, res, next) {
        ORDER BY r.created_at DESC`,
       [req.user.id]
     );
-    res.json(reservas);
+    res.json(reservas.map(parseSeguridad));
   } catch (err) {
     next(err);
   }
@@ -54,6 +62,7 @@ async function obtener(req, res, next) {
     const reserva = await queryOne(
       `SELECT r.*,
               e.nombre AS espacio_nombre, e.barrio, e.lat, e.lng, e.oferente_id,
+              e.seguridad AS espacio_seguridad,
               u.nombre AS usuario_nombre, u.email AS usuario_email, u.tel AS usuario_tel
        FROM reservas r
        JOIN espacios e ON r.espacio_id = e.id
@@ -79,7 +88,7 @@ async function obtener(req, res, next) {
     );
     reserva.servicios = servicios;
 
-    res.json(reserva);
+    res.json(parseSeguridad(reserva));
   } catch (err) {
     next(err);
   }
