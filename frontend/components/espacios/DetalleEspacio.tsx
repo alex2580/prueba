@@ -127,13 +127,18 @@ export function DetalleEspacio({ espacio, onReservar, onChat }: DetalleEspacioPr
         <div style={{ position: 'sticky', top: 80, height: 'fit-content' }}>
           <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r3)', padding: '1.4rem', boxShadow: 'var(--s3)' }}>
             <div style={{ marginBottom: '1rem' }}>
-              <div style={{ fontSize: '1.6rem', fontFamily: 'Sora, sans-serif', fontWeight: 800, color: 'var(--orange)' }}>
-                {formatARS(espacio.precio_mes)}
-                <span style={{ fontSize: '.9rem', color: 'var(--text3)', fontWeight: 400 }}>/mes</span>
-              </div>
-              <div style={{ fontSize: '.82rem', color: 'var(--text3)', marginTop: '.2rem' }}>
-                {formatARS(espacio.precio_dia)}/día
-              </div>
+              {Number(espacio.precio_mes) > 0 && (
+                <div style={{ fontSize: '1.6rem', fontFamily: 'Sora, sans-serif', fontWeight: 800, color: 'var(--orange)' }}>
+                  {formatARS(espacio.precio_mes)}
+                  <span style={{ fontSize: '.9rem', color: 'var(--text3)', fontWeight: 400 }}>/mes</span>
+                </div>
+              )}
+              {Number(espacio.precio_dia) > 0 && (
+                <div style={{ fontSize: Number(espacio.precio_mes) > 0 ? '.82rem' : '1.6rem', fontFamily: 'Sora, sans-serif', fontWeight: Number(espacio.precio_mes) > 0 ? 400 : 800, color: Number(espacio.precio_mes) > 0 ? 'var(--text3)' : 'var(--orange)', marginTop: Number(espacio.precio_mes) > 0 ? '.2rem' : 0 }}>
+                  {formatARS(espacio.precio_dia)}
+                  <span style={{ fontSize: '.9rem', color: 'var(--text3)', fontWeight: 400 }}>/día</span>
+                </div>
+              )}
             </div>
 
             <div style={{ display: 'grid', gap: '.7rem' }}>
