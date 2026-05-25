@@ -64,12 +64,13 @@ async function solicitarOTP(req, res, next) {
       });
     });
 
+    const twilioActivo = !!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_ACCOUNT_SID !== 'TWILIO_PENDIENTE');
     res.json({
       ok: true,
       canales: {
         email: true,
-        sms:       !!usuario.tel,
-        whatsapp:  !!usuario.tel,
+        sms:       twilioActivo && !!usuario.tel,
+        whatsapp:  twilioActivo && !!usuario.tel,
       },
       email_hint: usuario.email.replace(/(.{2}).*(@.*)/, '$1***$2'),
     });

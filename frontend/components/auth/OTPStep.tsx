@@ -87,10 +87,10 @@ export function OTPStep({ emailHint, canales, onVerify, onReenviar, loading, err
           Verificación de identidad
         </h2>
         <p style={{ color: 'var(--text2)', fontSize: '.85rem', lineHeight: 1.6 }}>
-          Enviamos un código de 6 dígitos a{' '}
+          Enviamos un código de 6 dígitos a tu email{' '}
           <strong style={{ color: 'var(--text)' }}>{emailHint}</strong>
-          {canalesActivos && (
-            <> y por <strong style={{ color: 'var(--text)' }}>{canalesActivos}</strong></>
+          {(canales.sms || canales.whatsapp) && canalesActivos && (
+            <> y por <strong style={{ color: 'var(--text)' }}>{[canales.sms && '📱 SMS', canales.whatsapp && '💬 WhatsApp'].filter(Boolean).join(', ')}</strong></>
           )}.
         </p>
       </div>
