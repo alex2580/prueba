@@ -68,6 +68,8 @@ export interface Espacio {
   // Panel stats
   total_reservas?: number;
   ingresos_total?: number;
+  // Seguridad (checklist del oferente)
+  seguridad?: Record<string, boolean>;
 }
 
 export interface EspacioFormData {
