@@ -9,10 +9,9 @@ interface Paso {
 }
 
 const PASOS: Paso[] = [
-  { emoji: '📋', label: 'Solicitada',   desc: 'Reserva enviada al oferente'       },
-  { emoji: '✅', label: 'Confirmada',   desc: 'El oferente aprobó tu solicitud'   },
-  { emoji: '💳', label: 'Pago realizado', desc: 'Pago acreditado correctamente'  },
-  { emoji: '🏠', label: 'Activa',       desc: 'Espacio en uso'                    },
+  { emoji: '📋', label: 'Solicitada',     desc: 'Reserva enviada al oferente'      },
+  { emoji: '✅', label: 'Confirmada',     desc: 'El oferente aprobó tu solicitud'  },
+  { emoji: '💳', label: 'Pago realizado', desc: 'Pago acreditado correctamente'   },
 ];
 
 // Maps reservation state to how many steps are "done"
@@ -20,8 +19,8 @@ function estadoAPasos(estado: ReservaEstado): number {
   switch (estado) {
     case 'pendiente':   return 1;
     case 'confirmada':  return 2;
-    case 'pagada':      return 3;
-    case 'finalizada':  return 4;
+    case 'pagada':
+    case 'finalizada':  return 3;
     default:            return 0; // cancelada
   }
 }

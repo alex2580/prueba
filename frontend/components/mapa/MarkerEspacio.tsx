@@ -72,7 +72,7 @@ export function MarkerEspacioCard({ espacio, onClose, onVerDetalle, onReservar }
           {espacio.nombre}
         </div>
         <div style={{ fontSize: '.8rem', color: 'var(--text3)', marginBottom: espacio.rating > 0 ? '.4rem' : '.7rem' }}>
-          📍 {espacio.barrio} · {espacio.m2} m²
+          📍 {espacio.barrio}
         </div>
         {Number(espacio.rating) > 0 && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '.3rem', marginBottom: '.7rem' }}>
@@ -88,11 +88,26 @@ export function MarkerEspacioCard({ espacio, onClose, onVerDetalle, onReservar }
         )}
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '.5rem' }}>
-          <div>
-            <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.1rem', color: 'var(--orange)' }}>
-              {formatARS(espacio.precio_mes)}
-            </span>
-            <span style={{ fontSize: '.75rem', color: 'var(--text3)' }}>/mes</span>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '.5rem', flexWrap: 'wrap' }}>
+            {Number(espacio.precio_mes) > 0 && (
+              <span>
+                <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.1rem', color: 'var(--orange)' }}>
+                  {formatARS(espacio.precio_mes)}
+                </span>
+                <span style={{ fontSize: '.75rem', color: 'var(--text3)' }}>/mes</span>
+              </span>
+            )}
+            {Number(espacio.precio_mes) > 0 && Number(espacio.precio_dia) > 0 && (
+              <span style={{ fontSize: '.75rem', color: 'var(--text3)' }}>·</span>
+            )}
+            {Number(espacio.precio_dia) > 0 && (
+              <span>
+                <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: Number(espacio.precio_mes) > 0 ? '.88rem' : '1.1rem', color: 'var(--orange)' }}>
+                  {formatARS(espacio.precio_dia)}
+                </span>
+                <span style={{ fontSize: '.75rem', color: 'var(--text3)' }}>/día</span>
+              </span>
+            )}
           </div>
           <div style={{ display: 'flex', gap: '.5rem' }}>
             <button className="btn-secondary" onClick={onVerDetalle} style={{ padding: '.4rem .9rem', fontSize: '.8rem', borderRadius: 'var(--r2)' }}>

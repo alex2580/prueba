@@ -144,7 +144,12 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center }: Ma
             />
             <div style="padding:8px 10px;">
               <strong style="font-size:13px;display:block;margin-bottom:2px;">${espacio.nombre}</strong>
-              <span style="color:#666;">📍 ${espacio.barrio} · ${espacio.m2} m²</span>
+              <span style="color:#666;">📍 ${espacio.barrio}</span>
+              <div style="margin-top:3px;">
+                ${Number(espacio.precio_mes) > 0 ? `<span style="font-weight:700;color:#e8622a;">${sim}${Number(espacio.precio_mes).toLocaleString('es-AR')}<span style="font-weight:400;color:#999;">/mes</span></span>` : ''}
+                ${Number(espacio.precio_mes) > 0 && Number(espacio.precio_dia) > 0 ? '<span style="color:#ccc;margin:0 4px;">·</span>' : ''}
+                ${Number(espacio.precio_dia) > 0 ? `<span style="font-weight:700;color:#e8622a;">${sim}${Number(espacio.precio_dia).toLocaleString('es-AR')}<span style="font-weight:400;color:#999;">/día</span></span>` : ''}
+              </div>
             </div>
           </div>
         `);
