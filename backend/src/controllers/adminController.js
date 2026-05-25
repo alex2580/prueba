@@ -399,6 +399,71 @@ async function actualizarEstadoSolicitud(req, res, next) {
   }
 }
 
+// ── Operaciones / Finanzas ─────────────────────────────────────
+
+const COMISION = 0.15;
+
+// GET /api/admin/operaciones
+async function getOperaciones(req, res, next) {
+  try {
+    const reservas = await query(`
+      SELECT r.id, r.estado, r.precio_total, r.fecha_desde, r.fecha_hasta, r.created_at,
+             r.mp_payment_id,
+             e.nombre   AS espacio_nombre,
+             e.barrio   AS espacio_barrio,
+             ud.nombre  AS demandante_nombre,
+             ud.email   AS demandante_email,
+             uo.nombre  AS oferente_nombre,
+             uo.email   AS oferente_email
+      FROM reservas r
+      JOIN espacios  e  ON r.espacio_id  = e.id
+      JOIN usuarios  ud ON r.usuario_id  = ud.id
+      JOIN usuarios  uo ON e.oferente_id = uo.id
+      ORDER BY r.created_at DESC
+      LIMIT 500
+    `);
+
+    const estados = { pagada: 0, finalizada: 0, pendiente: 0, confirmada: 0, cancelada: 0 };
+    let gmv = 0, gmvMes = 0;
+    const ahora = new Date();
+    const mesActual = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, '0')}`;
+
+    for (const r of reservas) {
+      estados[r.estado] = (estados[r.estado] || 0) + 1;
+      if (r.estado === 'pagada' || r.estado === 'finalizada') {
+        gmv += Number(r.precio_total);
+        const mes = String(r.created_at).slice(0, 7);
+        if (mes === mesActual) gmvMes += Number(r.precio_total);
+      }
+    }
+
+    const comisionTotal = Math.round(gmv * COMISION);
+    const comisionMes   = Math.round(gmvMes * COMISION);
+
+    res.json({
+      resumen: {
+        total:       reservas.length,
+        pagadas:     (estados.pagada || 0) + (estados.finalizada || 0),
+        pendientes:  (estados.pendiente || 0) + (estados.confirmada || 0),
+        canceladas:  estados.cancelada || 0,
+        gmv,
+        gmv_mes:     gmvMes,
+        comision_total: comisionTotal,
+        comision_mes:   comisionMes,
+        neto_oferentes: gmv - comisionTotal,
+      },
+      reservas: reservas.map(r => ({
+        ...r,
+        precio_total:  Number(r.precio_total),
+        comision_tmc:  Math.round(Number(r.precio_total) * COMISION),
+        neto_oferente: Math.round(Number(r.precio_total) * (1 - COMISION)),
+      })),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getNotificaciones,
   marcarLeido,
@@ -417,4 +482,5 @@ module.exports = {
   getSolicitudesPuntuacion,
   actualizarEstadoSolicitud,
   insertSolicitudPuntuacion,
+  getOperaciones,
 };

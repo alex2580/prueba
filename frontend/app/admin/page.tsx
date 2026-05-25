@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { SiteLogo } from '@/components/ui/SiteLogo';
-import { formatFechaCorta } from '@/lib/utils';
+import { formatFechaCorta, formatARS, COMISION_TMC } from '@/lib/utils';
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -1240,6 +1240,206 @@ function TabCampanas({ token }: { token: string }) {
   );
 }
 
+// ── Tab: Operaciones / Finanzas ────────────────────────────────
+
+interface ReservaOp {
+  id: string;
+  estado: string;
+  precio_total: number;
+  comision_tmc: number;
+  neto_oferente: number;
+  fecha_desde: string;
+  fecha_hasta: string;
+  created_at: string;
+  espacio_nombre: string;
+  espacio_barrio: string;
+  demandante_nombre: string;
+  demandante_email: string;
+  oferente_nombre: string;
+  oferente_email: string;
+  mp_payment_id?: string;
+}
+
+interface ResumenOp {
+  total: number;
+  pagadas: number;
+  pendientes: number;
+  canceladas: number;
+  gmv: number;
+  gmv_mes: number;
+  comision_total: number;
+  comision_mes: number;
+  neto_oferentes: number;
+}
+
+function estadoOpColor(estado: string) {
+  const m: Record<string, string> = {
+    pagada: 'var(--mint)', finalizada: 'var(--mint)',
+    confirmada: 'var(--blue)', pendiente: 'var(--amber)',
+    cancelada: 'var(--red)',
+  };
+  return m[estado] ?? 'var(--text3)';
+}
+
+function TabOperaciones({ token }: { token: string }) {
+  const [resumen, setResumen] = useState<ResumenOp | null>(null);
+  const [reservas, setReservas] = useState<ReservaOp[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [filtroEstado, setFiltroEstado] = useState('todas');
+  const [busqueda, setBusqueda] = useState('');
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/operaciones', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error('Error al cargar operaciones');
+      const data = await res.json();
+      setResumen(data.resumen);
+      setReservas(data.reservas);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Error');
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => { load(); }, [load]);
+
+  const filtered = reservas.filter(r => {
+    const matchEstado = filtroEstado === 'todas'
+      || (filtroEstado === 'pagadas' && ['pagada', 'finalizada'].includes(r.estado))
+      || (filtroEstado === 'pendientes' && ['pendiente', 'confirmada'].includes(r.estado))
+      || (filtroEstado === 'canceladas' && r.estado === 'cancelada');
+    const q = busqueda.toLowerCase();
+    const matchQ = !q || r.espacio_nombre.toLowerCase().includes(q)
+      || r.demandante_nombre.toLowerCase().includes(q)
+      || r.oferente_nombre.toLowerCase().includes(q);
+    return matchEstado && matchQ;
+  });
+
+  if (loading) return <p style={{ color: 'var(--text3)' }}>Cargando operaciones…</p>;
+  if (error) return <p className="alert alert--error">{error}</p>;
+
+  const statCards = resumen ? [
+    { emoji: '📋', label: 'Total reservas',     value: resumen.total,                          color: 'var(--text)' },
+    { emoji: '✅', label: 'Completadas',         value: resumen.pagadas,                        color: 'var(--mint)' },
+    { emoji: '⏳', label: 'En curso / pendientes', value: resumen.pendientes,                   color: 'var(--amber)' },
+    { emoji: '❌', label: 'Canceladas',          value: resumen.canceladas,                     color: 'var(--red)' },
+    { emoji: '💵', label: 'GMV del mes',         value: formatARS(resumen.gmv_mes),             color: 'var(--blue)' },
+    { emoji: '💰', label: 'GMV total',           value: formatARS(resumen.gmv),                 color: 'var(--blue)' },
+    { emoji: '🏛️', label: `Comisión TMC mes (${COMISION_TMC * 100}%)`, value: formatARS(resumen.comision_mes), color: 'var(--orange)' },
+    { emoji: '🏛️', label: `Comisión TMC total (${COMISION_TMC * 100}%)`, value: formatARS(resumen.comision_total), color: 'var(--orange)' },
+    { emoji: '🤝', label: 'Neto a oferentes',   value: formatARS(resumen.neto_oferentes),       color: 'var(--mint)' },
+  ] : [];
+
+  return (
+    <>
+      {/* Summary cards */}
+      {resumen && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))', gap: '.75rem', marginBottom: '1.5rem' }}>
+          {statCards.map(s => (
+            <div key={s.label} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '1rem' }}>
+              <div style={{ fontSize: '1.3rem', marginBottom: '.25rem' }}>{s.emoji}</div>
+              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.1rem', color: s.color }}>{s.value}</div>
+              <div style={{ fontSize: '.7rem', color: 'var(--text3)', marginTop: '.15rem' }}>{s.label}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Filters */}
+      <div style={{ display: 'flex', gap: '.65rem', flexWrap: 'wrap', marginBottom: '1rem', alignItems: 'center' }}>
+        <input
+          placeholder="🔍 Espacio, demandante u oferente…"
+          value={busqueda}
+          onChange={e => setBusqueda(e.target.value)}
+          style={{ flex: '1 1 220px', padding: '.45rem .85rem', borderRadius: 'var(--r2)', border: '1.5px solid var(--border)', background: 'var(--surface2)', color: 'var(--text)', fontSize: '.83rem' }}
+        />
+        {(['todas', 'pagadas', 'pendientes', 'canceladas'] as const).map(f => (
+          <button
+            key={f}
+            onClick={() => setFiltroEstado(f)}
+            style={{
+              padding: '.3rem .8rem', borderRadius: '99px', cursor: 'pointer',
+              border: `1px solid ${filtroEstado === f ? 'var(--orange)' : 'var(--border)'}`,
+              background: filtroEstado === f ? 'rgba(232,98,42,.12)' : 'transparent',
+              color: filtroEstado === f ? 'var(--orange)' : 'var(--text2)',
+              fontSize: '.76rem', fontWeight: 600, textTransform: 'capitalize',
+            }}
+          >
+            {f}
+          </button>
+        ))}
+        <span style={{ fontSize: '.75rem', color: 'var(--text3)' }}>{filtered.length} resultado{filtered.length !== 1 ? 's' : ''}</span>
+      </div>
+
+      {/* Table */}
+      {!filtered.length ? (
+        <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text3)' }}>
+          <div style={{ fontSize: '2rem', marginBottom: '.5rem' }}>📋</div>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>Sin resultados</div>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gap: '.65rem' }}>
+          {filtered.map(r => (
+            <div key={r.id} style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--r2)',
+              padding: '1rem 1.1rem',
+            }}>
+              {/* Top row: espacio + estado + fecha */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '.5rem', marginBottom: '.5rem' }}>
+                <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.92rem' }}>
+                  {r.espacio_nombre}
+                  <span style={{ fontWeight: 400, color: 'var(--text3)', fontSize: '.78rem', marginLeft: '.4rem' }}>📍 {r.espacio_barrio}</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', flexShrink: 0 }}>
+                  <span style={{
+                    fontSize: '.68rem', fontWeight: 700, padding: '2px 8px', borderRadius: '99px',
+                    background: `${estadoOpColor(r.estado)}22`, color: estadoOpColor(r.estado),
+                    textTransform: 'capitalize',
+                  }}>{r.estado}</span>
+                  <span style={{ fontSize: '.72rem', color: 'var(--text3)' }}>{formatFechaCorta(r.created_at)}</span>
+                </div>
+              </div>
+
+              {/* People */}
+              <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', fontSize: '.78rem', color: 'var(--text2)', marginBottom: '.55rem' }}>
+                <span>👤 <strong>Demandante:</strong> {r.demandante_nombre} · <a href={`mailto:${r.demandante_email}`} style={{ color: 'var(--blue)' }}>{r.demandante_email}</a></span>
+                <span>🏠 <strong>Oferente:</strong> {r.oferente_nombre} · <a href={`mailto:${r.oferente_email}`} style={{ color: 'var(--blue)' }}>{r.oferente_email}</a></span>
+              </div>
+
+              {/* Dates */}
+              <div style={{ fontSize: '.76rem', color: 'var(--text3)', marginBottom: '.55rem' }}>
+                📅 {formatFechaCorta(r.fecha_desde)} → {formatFechaCorta(r.fecha_hasta)}
+                {r.mp_payment_id && <span style={{ marginLeft: '.75rem' }}>💳 MP: {r.mp_payment_id}</span>}
+              </div>
+
+              {/* Financials */}
+              {['pagada', 'finalizada'].includes(r.estado) && (
+                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', background: 'var(--surface2)', borderRadius: 'var(--r1)', padding: '.55rem .85rem', fontSize: '.8rem' }}>
+                  <span>💵 <strong>Bruto:</strong> {formatARS(r.precio_total)}</span>
+                  <span style={{ color: 'var(--orange)' }}>🏛️ <strong>TMC ({COMISION_TMC * 100}%):</strong> {formatARS(r.comision_tmc)}</span>
+                  <span style={{ color: 'var(--mint)' }}>🤝 <strong>Neto oferente:</strong> {formatARS(r.neto_oferente)}</span>
+                </div>
+              )}
+              {!['pagada', 'finalizada'].includes(r.estado) && r.precio_total > 0 && (
+                <div style={{ fontSize: '.8rem', color: 'var(--text3)' }}>
+                  💵 Valor estimado: {formatARS(r.precio_total)}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
 // ── Main page ──────────────────────────────────────────────────
 
 export default function AdminPage() {
@@ -1283,6 +1483,7 @@ export default function AdminPage() {
 
   const tabs = [
     { key: 'notificaciones',       label: '🔔 Notificaciones', badge: notifUnread || undefined },
+    { key: 'operaciones',          label: '💼 Operaciones' },
     { key: 'consultas',            label: '📬 Consultas' },
     { key: 'solicitudes-puntaje',  label: '🛡️ Puntuación', badge: solicitudesPendientes || undefined },
     { key: 'campanas',             label: '📣 Campañas' },
@@ -1321,6 +1522,7 @@ export default function AdminPage() {
           <TabBar tabs={tabs} active={tab} onSelect={setTab} />
 
           {tab === 'notificaciones'      && token && <TabNotificaciones token={token} />}
+          {tab === 'operaciones'         && token && <TabOperaciones token={token} />}
           {tab === 'consultas'           && token && <TabConsultas token={token} />}
           {tab === 'solicitudes-puntaje' && token && <TabSolicitudesPuntuacion token={token} />}
           {tab === 'campanas'            && token && <TabCampanas token={token} />}

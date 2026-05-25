@@ -4,7 +4,7 @@ import { useState } from 'react';
 import type { Espacio, Reserva } from '@/types';
 import { Button } from '@/components/ui/Button';
 import { EstadoBadge } from '@/components/ui/Badge';
-import { formatARS, formatFechaCorta } from '@/lib/utils';
+import { formatARS, formatFechaCorta, netoOferente, COMISION_TMC } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
 interface PanelOferenteProps {
@@ -19,9 +19,13 @@ export function PanelOferente({ espacios, reservas, loading, onEliminarEspacio, 
   const router = useRouter();
   const [tab, setTab] = useState<'espacios' | 'reservas'>('espacios');
 
-  const ingresosTotal = reservas
-    .filter(r => ['pagada', 'finalizada'].includes(r.estado))
-    .reduce((acc, r) => acc + r.precio_total, 0);
+  const reservasPagas = reservas.filter(r => ['pagada', 'finalizada'].includes(r.estado));
+  const ingresosTotal = reservasPagas.reduce((acc, r) => acc + netoOferente(r.precio_total), 0);
+
+  const ahora = new Date();
+  const ingresosMes = reservasPagas
+    .filter(r => { const d = new Date(r.created_at); return d.getMonth() === ahora.getMonth() && d.getFullYear() === ahora.getFullYear(); })
+    .reduce((acc, r) => acc + netoOferente(r.precio_total), 0);
 
   const pendientesCount = reservas.filter(r => r.estado === 'pendiente').length;
 
@@ -33,7 +37,8 @@ export function PanelOferente({ espacios, reservas, loading, onEliminarEspacio, 
           { emoji: '🏠', label: 'Mis espacios', value: espacios.length },
           { emoji: '📅', label: 'Reservas recibidas', value: reservas.length },
           { emoji: '⏳', label: 'Pendientes', value: pendientesCount, color: 'var(--amber)' },
-          { emoji: '💰', label: 'Ingresos totales', value: formatARS(ingresosTotal), color: 'var(--mint)' },
+          { emoji: '📆', label: 'Ingresos del mes', value: formatARS(ingresosMes), color: 'var(--blue)', sub: `neto -${COMISION_TMC * 100}% TMC` },
+          { emoji: '💰', label: 'Ingresos totales', value: formatARS(ingresosTotal), color: 'var(--mint)', sub: `neto -${COMISION_TMC * 100}% TMC` },
         ].map(stat => (
           <div key={stat.label} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '1rem' }}>
             <div style={{ fontSize: '1.5rem', marginBottom: '.3rem' }}>{stat.emoji}</div>
@@ -41,6 +46,9 @@ export function PanelOferente({ espacios, reservas, loading, onEliminarEspacio, 
               {stat.value}
             </div>
             <div style={{ fontSize: '.75rem', color: 'var(--text3)' }}>{stat.label}</div>
+            {'sub' in stat && stat.sub && (
+              <div style={{ fontSize: '.65rem', color: 'var(--text3)', marginTop: '.15rem', opacity: .7 }}>{stat.sub}</div>
+            )}
           </div>
         ))}
       </div>
@@ -134,8 +142,17 @@ export function PanelOferente({ espacios, reservas, loading, onEliminarEspacio, 
                     <div style={{ fontSize: '.78rem', color: 'var(--text3)' }}>
                       👤 {r.usuario_nombre} · {formatFechaCorta(r.fecha_desde)} → {formatFechaCorta(r.fecha_hasta)}
                     </div>
-                    <div style={{ fontSize: '.85rem', color: 'var(--orange)', fontWeight: 700, marginTop: '.2rem' }}>
-                      {formatARS(r.precio_total)}
+                    <div style={{ fontSize: '.85rem', fontWeight: 700, marginTop: '.2rem' }}>
+                      {['pagada', 'finalizada'].includes(r.estado) ? (
+                        <>
+                          <span style={{ color: 'var(--mint)' }}>{formatARS(netoOferente(r.precio_total))}</span>
+                          <span style={{ color: 'var(--text3)', fontWeight: 400, fontSize: '.72rem', marginLeft: '.35rem' }}>
+                            (bruto {formatARS(r.precio_total)})
+                          </span>
+                        </>
+                      ) : (
+                        <span style={{ color: 'var(--orange)' }}>{formatARS(r.precio_total)}</span>
+                      )}
                     </div>
                   </div>
                   <EstadoBadge estado={r.estado} />

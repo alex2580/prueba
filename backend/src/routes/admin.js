@@ -36,4 +36,7 @@ router.patch('/usuarios/:id/desbloquear',       ctrl.desbloquearUsuario);
 router.get('/solicitudes-puntuacion',                      ctrl.getSolicitudesPuntuacion);
 router.patch('/solicitudes-puntuacion/:id/estado',         ctrl.actualizarEstadoSolicitud);
 
+// Operaciones / Finanzas
+router.get('/operaciones',                                 ctrl.getOperaciones);
+
 module.exports = router;

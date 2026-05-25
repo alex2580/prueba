@@ -65,6 +65,12 @@ export function initials(nombre: string): string {
     .join('');
 }
 
+export const COMISION_TMC = 0.15; // 15% — actualizar también en emailService.js si cambia
+
+export function netoOferente(bruto: number): number {
+  return Math.round(bruto * (1 - COMISION_TMC));
+}
+
 export function cn(...classes: (string | boolean | undefined | null)[]): string {
   return classes.filter(Boolean).join(' ');
 }
