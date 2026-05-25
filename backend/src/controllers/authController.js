@@ -41,11 +41,10 @@ async function solicitarOTP(req, res, next) {
     );
 
     const codigo = generarCodigo();
-    const expiresAt = new Date(Date.now() + OTP_EXPIRY_MIN * 60 * 1000);
 
     await query(
-      `INSERT INTO auth_otp (usuario_id, codigo, expires_at) VALUES (?, ?, ?)`,
-      [usuario.id, codigo, expiresAt]
+      `INSERT INTO auth_otp (usuario_id, codigo, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL ? MINUTE))`,
+      [usuario.id, codigo, OTP_EXPIRY_MIN]
     );
 
     const mensajeCorto = `TodasMisCosas: Tu código de verificación es ${codigo}. Válido ${OTP_EXPIRY_MIN} minutos. No lo compartas.`;
