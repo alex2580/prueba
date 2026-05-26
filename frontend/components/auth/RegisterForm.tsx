@@ -64,7 +64,7 @@ export function RegisterForm({ onRegister, onSwitch, loading, error, tipoForzado
                 gap: '.3rem',
               }}
             >
-              <span style={{ fontSize: '1.3rem' }}>{t === 'demandante' ? '📦' : '🏠'}</span>
+              <span style={{ fontSize: '1.3rem' }}>{t === 'demandante' ? '📦' : '🔑'}</span>
               {t === 'demandante' ? 'Quiero almacenar' : 'Ofrezco espacio'}
             </button>
           ))}

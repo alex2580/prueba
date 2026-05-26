@@ -49,7 +49,7 @@ function tipoIcon(tipo: string) {
     reserva: '📅',
     pago: '💳',
     usuario: '👤',
-    espacio: '🏠',
+    espacio: '📦',
     sistema: '⚙️',
   };
   return map[tipo] ?? '🔔';
@@ -606,7 +606,7 @@ function TabUsuarios({ token }: { token: string }) {
                   </div>
                 )}
                 <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginTop: '.2rem', display: 'flex', gap: '.75rem', flexWrap: 'wrap' }}>
-                  {u.tipo === 'oferente' && <span>🏠 {u.espacios_count} espacio{u.espacios_count !== 1 ? 's' : ''}</span>}
+                  {u.tipo === 'oferente' && <span>📦 {u.espacios_count} espacio{u.espacios_count !== 1 ? 's' : ''}</span>}
                   <span>📅 {u.reservas_count} reserva{u.reservas_count !== 1 ? 's' : ''}</span>
                   <span>📆 Alta: {formatFechaCorta(u.created_at)}</span>
                 </div>
@@ -879,7 +879,7 @@ function TabSolicitudesPuntuacion({ token }: { token: string }) {
               </div>
               {s.espacio_nombre && (
                 <div style={{ fontSize: '.82rem', color: 'var(--text3)', marginBottom: '.7rem' }}>
-                  🏠 {s.espacio_nombre}
+                  📦 {s.espacio_nombre}
                 </div>
               )}
 
@@ -1410,7 +1410,7 @@ function TabOperaciones({ token }: { token: string }) {
               {/* People */}
               <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', fontSize: '.78rem', color: 'var(--text2)', marginBottom: '.55rem' }}>
                 <span>👤 <strong>Demandante:</strong> {r.demandante_nombre} · <a href={`mailto:${r.demandante_email}`} style={{ color: 'var(--blue)' }}>{r.demandante_email}</a></span>
-                <span>🏠 <strong>Oferente:</strong> {r.oferente_nombre} · <a href={`mailto:${r.oferente_email}`} style={{ color: 'var(--blue)' }}>{r.oferente_email}</a></span>
+                <span>🔑 <strong>Oferente:</strong> {r.oferente_nombre} · <a href={`mailto:${r.oferente_email}`} style={{ color: 'var(--blue)' }}>{r.oferente_email}</a></span>
               </div>
 
               {/* Dates */}

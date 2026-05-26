@@ -544,7 +544,7 @@ export default function PanelPage() {
             <section>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem' }}>
                 <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.1rem' }}>
-                  🏠 Mis espacios publicados
+                  Mis espacios publicados
                 </h2>
                 <Button variant="primary" size="sm" onClick={() => router.push('/publicar')}>
                   ➕ Publicar espacio
@@ -555,7 +555,7 @@ export default function PanelPage() {
                 <p style={{ color: 'var(--text3)' }}>Cargando…</p>
               ) : misEspacios.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--text3)', background: 'var(--surface)', borderRadius: 'var(--r2)', border: '1px solid var(--border)' }}>
-                  <div style={{ fontSize: '2.5rem', marginBottom: '.75rem' }}>🏠</div>
+                  <div style={{ fontSize: '2.5rem', marginBottom: '.75rem' }}>📦</div>
                   <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, marginBottom: '.4rem' }}>No tenés espacios publicados</div>
                   <p style={{ fontSize: '.88rem' }}>Publicá tu primer espacio y empezá a recibir reservas.</p>
                 </div>

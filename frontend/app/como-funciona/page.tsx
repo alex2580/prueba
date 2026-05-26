@@ -32,7 +32,7 @@ const PASOS = [
 ];
 
 const PARA_QUIEN = [
-  { icon: '🏠', titulo: 'Particulares', desc: 'Muebles, mudanzas, objetos de temporada.' },
+  { icon: '👤', titulo: 'Particulares', desc: 'Muebles, mudanzas, objetos de temporada.' },
   { icon: '📦', titulo: 'E-commerce', desc: 'Stock cerca de tus clientes.' },
   { icon: '🏭', titulo: 'Empresas', desc: 'Archivo, materiales, flota.' },
   { icon: '🚚', titulo: 'Logística', desc: 'Galpones con acceso para camiones.' },

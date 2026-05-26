@@ -111,7 +111,7 @@ export default function ServiciosPage() {
           {/* Tipos de espacio — hidden */}
           <div style={{ display: 'none' }}>
           <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.1rem', marginBottom: '1.25rem', color: 'var(--text)' }}>
-            🏠 Tipos de almacenamiento
+            Tipos de almacenamiento
           </h2>
           <div style={{
             display: 'grid',

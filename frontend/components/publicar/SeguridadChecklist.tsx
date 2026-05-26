@@ -1,7 +1,7 @@
 'use client';
 
 export const SEGURIDAD_OPCIONES = [
-  { key: 'techo_impermeable', label: 'Techo y paredes impermeables',   emoji: '🏠', detalle: 'Protege contra lluvia, humedad y filtraciones.' },
+  { key: 'techo_impermeable', label: 'Techo y paredes impermeables',   emoji: '🛡️', detalle: 'Protege contra lluvia, humedad y filtraciones.' },
   { key: 'cerradura',         label: 'Acceso con llave o candado propio', emoji: '🔑', detalle: 'El inquilino tiene llave exclusiva del espacio.' },
   { key: 'camaras',           label: 'Cámara de seguridad en el área', emoji: '📷', detalle: 'Vigilancia visual del acceso al espacio.' },
   { key: 'iluminacion',       label: 'Iluminación adecuada',           emoji: '💡', detalle: 'Hay buena iluminación natural o artificial.' },

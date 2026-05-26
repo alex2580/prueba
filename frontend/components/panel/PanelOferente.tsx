@@ -34,7 +34,7 @@ export function PanelOferente({ espacios, reservas, loading, onEliminarEspacio, 
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
         {[
-          { emoji: '🏠', label: 'Mis espacios', value: espacios.length },
+          { emoji: '📦', label: 'Mis espacios', value: espacios.length },
           { emoji: '📅', label: 'Reservas recibidas', value: reservas.length },
           { emoji: '⏳', label: 'Pendientes', value: pendientesCount, color: 'var(--amber)' },
           { emoji: '📆', label: 'Ingresos del mes', value: formatARS(ingresosMes), color: 'var(--blue)', sub: `neto -${COMISION_TMC * 100}% TMC` },
@@ -70,7 +70,7 @@ export function PanelOferente({ espacios, reservas, loading, onEliminarEspacio, 
               fontSize: '.9rem',
             }}
           >
-            {t === 'espacios' ? `🏠 Mis espacios (${espacios.length})` : `📅 Reservas (${reservas.length})`}
+            {t === 'espacios' ? `Mis espacios (${espacios.length})` : `📅 Reservas (${reservas.length})`}
           </button>
         ))}
       </div>
@@ -87,7 +87,7 @@ export function PanelOferente({ espacios, reservas, loading, onEliminarEspacio, 
             <p style={{ color: 'var(--text3)' }}>Cargando…</p>
           ) : espacios.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--text3)' }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '.75rem' }}>🏠</div>
+              <div style={{ fontSize: '2.5rem', marginBottom: '.75rem' }}>📦</div>
               <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, marginBottom: '.4rem' }}>No tenés espacios publicados</div>
               <p style={{ fontSize: '.88rem' }}>Publicá tu primer espacio y empezá a recibir reservas.</p>
             </div>

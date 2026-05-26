@@ -26,7 +26,7 @@ const CATEGORIAS = [
 ];
 
 const SEGURIDAD_OPCIONES = [
-  { key: 'techo_impermeable',  label: 'Techo y paredes impermeables',  emoji: '🏠', detalle: 'Protege contra lluvia, humedad y filtraciones.' },
+  { key: 'techo_impermeable',  label: 'Techo y paredes impermeables',  emoji: '🛡️', detalle: 'Protege contra lluvia, humedad y filtraciones.' },
   { key: 'cerradura',          label: 'Acceso con llave o candado propio', emoji: '🔑', detalle: 'El inquilino tiene llave exclusiva del espacio.' },
   { key: 'camaras',            label: 'Cámara de seguridad en el área', emoji: '📷', detalle: 'Vigilancia visual del acceso al espacio.' },
   { key: 'iluminacion',        label: 'Iluminación adecuada',           emoji: '💡', detalle: 'Hay buena iluminación natural o artificial.' },
@@ -503,7 +503,7 @@ export default function PublicarPage() {
           {/* Título */}
           <div style={{ marginBottom: '1.5rem' }}>
             <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.6rem', marginBottom: '.3rem' }}>
-              🏠 Publicar espacio
+              Publicar espacio
             </h1>
             <p style={{ color: 'var(--text2)', fontSize: '.88rem' }}>
               Podés crear tu cuenta al final si todavía no tenés una.
@@ -751,7 +751,7 @@ export default function PublicarPage() {
                     Tu espacio está configurado. Hacé click en Publicar para que aparezca en el mapa.
                   </p>
                   <Button onClick={() => publicar(token!)} loading={loading} style={{ width: '100%' }}>
-                    🏠 Publicar espacio
+                    Publicar espacio
                   </Button>
                   {error && <div className="alert alert--error" style={{ marginTop: '.75rem' }}>{error}</div>}
                 </div>

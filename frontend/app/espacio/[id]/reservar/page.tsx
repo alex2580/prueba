@@ -254,7 +254,7 @@ function FotoCarousel({ imgs, nombre, espacioId }: { imgs: string[]; nombre: str
 
 function StepBar({ step }: { step: number }) {
   const STEPS = [
-    { label: 'Detalle', icon: '🏠' },
+    { label: 'Detalle', icon: '📋' },
     { label: 'Servicios', icon: '⚡' },
     { label: 'Cuenta & Pago', icon: '💳' },
   ];
@@ -482,7 +482,7 @@ export default function ReservarPage() {
         <SiteLogo onClick={() => router.push('/')} />
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.9rem', color: 'var(--orange)' }}>
-            🏠 Reservar espacio
+            Reservar espacio
           </span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
