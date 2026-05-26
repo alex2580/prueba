@@ -112,7 +112,7 @@ export function CardEspacio({ espacio, onClick }: CardEspacioProps) {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '.4rem', borderTop: '1px solid var(--border)', paddingTop: '.6rem', marginTop: '.1rem' }}>
-          <span className="espacio-card__price">{formatARS(espacio.precio_mes)}</span>
+          <span className="espacio-card__price" style={{ color: espacio.tipo === 'exclusivo' ? 'var(--text)' : 'var(--orange)' }}>{formatARS(espacio.precio_mes)}</span>
           <span className="espacio-card__price-label">/mes</span>
           <span style={{ fontSize: '11px', color: 'var(--text3)', marginLeft: 'auto' }}>
             {formatARS(espacio.precio_dia)}/día

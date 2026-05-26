@@ -197,8 +197,8 @@ export default function PublicarPage() {
     direccion: '',
     barrio: '',
     m2: '',
-    precio_dia: '',
-    precio_mes: '',
+    precio_dia: '0',
+    precio_mes: '0',
     lat: '',
     lng: '',
     tipo: 'exclusivo',
@@ -442,7 +442,7 @@ export default function PublicarPage() {
                     // Resetear todo el formulario
                     setEspacioPublicadoId(null);
                     setPaso(0);
-                    setForm({ categoria: '', nombre: '', descripcion: '', direccion: '', barrio: '', m2: '', precio_dia: '', precio_mes: '', lat: '', lng: '', tipo: 'exclusivo', moneda: 'ARS' });
+                    setForm({ categoria: '', nombre: '', descripcion: '', direccion: '', barrio: '', m2: '', precio_dia: '0', precio_mes: '0', lat: '', lng: '', tipo: 'exclusivo', moneda: 'ARS' });
                     setFotos([]);
                     setPreviews([]);
                     setFotoPrincipal(0);
@@ -474,7 +474,7 @@ export default function PublicarPage() {
       <SiteHeader />
 
       <div className="page-scroll">
-        <div style={{ maxWidth: 620, margin: '0 auto', padding: '2rem 1rem' }}>
+        <div className={form.tipo === 'exclusivo' ? 'form--exclusivo' : ''} style={{ maxWidth: 620, margin: '0 auto', padding: '2rem 1rem' }}>
 
           {/* Título */}
           <div style={{ marginBottom: '1.5rem' }}>

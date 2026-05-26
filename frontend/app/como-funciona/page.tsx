@@ -67,6 +67,37 @@ export default function ComoFuncionaPage() {
       <div className="page-scroll" style={{ flex: 1 }}>
         <div style={{ maxWidth: 900, margin: '0 auto', padding: '2.5rem 1.5rem' }}>
 
+          {/* Tipos de espacio */}
+          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.15rem', marginBottom: '1.25rem', color: 'var(--text)' }}>
+            Tipos de espacio
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
+            <div style={{ background: 'var(--surface)', border: '1px solid rgba(30,41,59,.18)', borderRadius: 'var(--r3)', padding: '1.4rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', marginBottom: '.75rem' }}>
+                <span style={{ fontSize: '1.6rem' }}>🔒</span>
+                <div>
+                  <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '1rem', color: 'var(--text)' }}>Exclusivo</div>
+                  <span className="pill pill--dark">Mayor privacidad</span>
+                </div>
+              </div>
+              <div style={{ fontSize: '.82rem', color: 'var(--text2)', lineHeight: 1.65 }}>
+                Solo vos usás el espacio. Acceso privado, tu candado.
+              </div>
+            </div>
+            <div style={{ background: 'var(--surface)', border: '1px solid rgba(232,98,42,.28)', borderRadius: 'var(--r3)', padding: '1.4rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', marginBottom: '.75rem' }}>
+                <span style={{ fontSize: '1.6rem' }}>🤝</span>
+                <div>
+                  <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '1rem', color: 'var(--orange)' }}>Compartido</div>
+                  <span className="pill pill--orange">Mejor precio</span>
+                </div>
+              </div>
+              <div style={{ fontSize: '.82rem', color: 'var(--text2)', lineHeight: 1.65 }}>
+                Compartís con otros. Costo dividido, ideal largo plazo.
+              </div>
+            </div>
+          </div>
+
           {/* Pasos */}
           <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.15rem', marginBottom: '1.25rem', color: 'var(--text)' }}>
             Los 5 pasos
@@ -130,37 +161,6 @@ export default function ComoFuncionaPage() {
                 </div>
               </div>
             ))}
-          </div>
-
-          {/* Tipos de espacio */}
-          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.15rem', marginBottom: '1.25rem', color: 'var(--text)' }}>
-            Tipos de espacio
-          </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
-            <div style={{ background: 'var(--surface)', border: '1px solid rgba(130,196,255,.28)', borderRadius: 'var(--r3)', padding: '1.4rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', marginBottom: '.75rem' }}>
-                <span style={{ fontSize: '1.6rem' }}>🔒</span>
-                <div>
-                  <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '1rem', color: 'var(--blue)' }}>Exclusivo</div>
-                  <span className="pill pill--blue">Mayor privacidad</span>
-                </div>
-              </div>
-              <div style={{ fontSize: '.82rem', color: 'var(--text2)', lineHeight: 1.65 }}>
-                Solo vos usás el espacio. Acceso privado, tu candado.
-              </div>
-            </div>
-            <div style={{ background: 'var(--surface)', border: '1px solid rgba(232,98,42,.28)', borderRadius: 'var(--r3)', padding: '1.4rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', marginBottom: '.75rem' }}>
-                <span style={{ fontSize: '1.6rem' }}>🤝</span>
-                <div>
-                  <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '1rem', color: 'var(--orange)' }}>Compartido</div>
-                  <span className="pill pill--orange">Mejor precio</span>
-                </div>
-              </div>
-              <div style={{ fontSize: '.82rem', color: 'var(--text2)', lineHeight: 1.65 }}>
-                Compartís con otros. Costo dividido, ideal largo plazo.
-              </div>
-            </div>
           </div>
 
           {/* CTA */}
