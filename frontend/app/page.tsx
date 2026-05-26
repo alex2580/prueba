@@ -276,8 +276,9 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Horizontal filter pills — Row 1 */}
+              {/* Single filter bar — all options in one scrollable row */}
               <div className="filter-pills-bar">
+
                 {/* País */}
                 <select
                   value={filtros.pais || ''}
@@ -296,6 +297,7 @@ export default function HomePage() {
                   <option value="Paraguay">🇵🇾 Paraguay</option>
                 </select>
 
+                {/* Tipo */}
                 <button
                   className={`filter-pill ${filtros.tipo === 'exclusivo' ? 'active' : ''}`}
                   onClick={() => aplicarFiltros({ tipo: (filtros.tipo === 'exclusivo' ? '' : 'exclusivo') as EspacioTipo })}
@@ -308,6 +310,8 @@ export default function HomePage() {
                 >
                   🤝 Compartido
                 </button>
+
+                {/* Período */}
                 <button
                   className={`filter-pill ${filtros.periodo === 'dia' ? 'active' : ''}`}
                   onClick={() => aplicarFiltros({ periodo: filtros.periodo === 'dia' ? '' : 'dia', precio_max: undefined })}
@@ -321,7 +325,63 @@ export default function HomePage() {
                   📆 Por mes
                 </button>
 
-                {/* Limpiar todos */}
+                {/* Precio — pill con slider inline */}
+                <div style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '.5rem',
+                  padding: '.3rem .65rem .3rem .9rem',
+                  borderRadius: 999, flexShrink: 0,
+                  border: `1.5px solid ${precioValHome < PRECIO_MAX_HOME ? 'var(--text)' : 'var(--border2)'}`,
+                  background: precioValHome < PRECIO_MAX_HOME ? 'var(--text)' : 'var(--surface)',
+                }}>
+                  <span style={{
+                    fontSize: '.82rem', fontWeight: 700, whiteSpace: 'nowrap',
+                    color: precioValHome < PRECIO_MAX_HOME ? '#fff' : 'var(--text)',
+                    fontFamily: 'Sora, sans-serif',
+                  }}>
+                    💰 {precioValHome < PRECIO_MAX_HOME ? `$${precioValHome.toLocaleString('es-AR')}` : 'Precio'}
+                  </span>
+                  <input
+                    type="range"
+                    min={0} max={PRECIO_MAX_HOME} step={PRECIO_STEP}
+                    value={precioValHome > PRECIO_MAX_HOME ? PRECIO_MAX_HOME : precioValHome}
+                    onChange={e => {
+                      const val = Number(e.target.value);
+                      aplicarFiltros({ precio_max: val < PRECIO_MAX_HOME ? val : undefined });
+                    }}
+                    style={{ width: 80, cursor: 'pointer', accentColor: precioValHome < PRECIO_MAX_HOME ? '#fff' : 'var(--orange)' }}
+                  />
+                </div>
+
+                {/* Nivel de Seguridad — pill con estrellas inline */}
+                <div style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '.15rem',
+                  padding: '.3rem .9rem',
+                  borderRadius: 999, flexShrink: 0,
+                  border: `1.5px solid ${filtros.rating_min ? 'var(--text)' : 'var(--border2)'}`,
+                  background: filtros.rating_min ? 'var(--text)' : 'var(--surface)',
+                }}>
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <span
+                      key={star}
+                      onClick={() => aplicarFiltros({ rating_min: filtros.rating_min === star ? undefined : star })}
+                      title={`${star} estrella${star !== 1 ? 's' : ''} mínimo`}
+                      style={{
+                        fontSize: '1rem', cursor: 'pointer', lineHeight: 1,
+                        color: star <= (filtros.rating_min || 0) ? 'var(--amber)' : filtros.rating_min ? 'rgba(255,255,255,.25)' : 'var(--border)',
+                        transition: 'color .12s',
+                      }}
+                    >★</span>
+                  ))}
+                  <span style={{
+                    fontSize: '.78rem', fontWeight: 700, whiteSpace: 'nowrap',
+                    color: filtros.rating_min ? '#fff' : 'var(--text)',
+                    fontFamily: 'Sora, sans-serif', marginLeft: '.3rem',
+                  }}>
+                    {filtros.rating_min ? `${filtros.rating_min}+ ★` : 'Seguridad'}
+                  </span>
+                </div>
+
+                {/* Limpiar */}
                 {hayFiltrosActivos && (
                   <button
                     className="filter-pill"
@@ -331,67 +391,6 @@ export default function HomePage() {
                     ✕ Limpiar
                   </button>
                 )}
-              </div>
-
-              {/* Filter Row 2: Price slider + Nivel de Seguridad */}
-              <div style={{
-                display: 'flex', gap: '1.5rem', alignItems: 'center',
-                padding: '.55rem 1.25rem .6rem',
-                borderTop: '1px solid var(--border)',
-                background: 'var(--surface)',
-                flexWrap: 'wrap',
-              }}>
-                {/* Price slider */}
-                <div style={{ flex: 1, minWidth: 200 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.3rem' }}>
-                    <span style={{ fontSize: '.68rem', fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '.08em' }}>
-                      Precio máx{filtros.periodo === 'dia' ? '/día' : '/mes'}
-                    </span>
-                    <span style={{
-                      fontSize: '.78rem', fontWeight: 800,
-                      color: precioValHome < PRECIO_MAX_HOME ? 'var(--orange)' : 'var(--text3)',
-                    }}>
-                      {precioValHome < PRECIO_MAX_HOME ? `$${precioValHome.toLocaleString('es-AR')}` : 'Sin límite'}
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min={0} max={PRECIO_MAX_HOME} step={PRECIO_STEP}
-                    value={precioValHome > PRECIO_MAX_HOME ? PRECIO_MAX_HOME : precioValHome}
-                    onChange={e => {
-                      const val = Number(e.target.value);
-                      aplicarFiltros({ precio_max: val < PRECIO_MAX_HOME ? val : undefined });
-                    }}
-                    style={{ width: '100%', accentColor: 'var(--orange)', cursor: 'pointer', height: 4 }}
-                  />
-                </div>
-
-                {/* Nivel de Seguridad */}
-                <div style={{ flexShrink: 0 }}>
-                  <div style={{ fontSize: '.68rem', fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: '.3rem' }}>
-                    Nivel de Seguridad
-                  </div>
-                  <div style={{ display: 'flex', gap: 2 }}>
-                    {[1, 2, 3, 4, 5].map(star => (
-                      <span
-                        key={star}
-                        onClick={() => aplicarFiltros({ rating_min: filtros.rating_min === star ? undefined : star })}
-                        title={`${star} estrella${star !== 1 ? 's' : ''} mínimo`}
-                        style={{
-                          fontSize: '1.2rem', cursor: 'pointer',
-                          color: star <= (filtros.rating_min || 0) ? 'var(--amber)' : 'var(--border)',
-                          transition: 'color .12s',
-                          lineHeight: 1,
-                        }}
-                      >★</span>
-                    ))}
-                    {filtros.rating_min ? (
-                      <span style={{ fontSize: '.7rem', color: 'var(--text3)', marginLeft: '.3rem', alignSelf: 'center' }}>
-                        ({filtros.rating_min}+)
-                      </span>
-                    ) : null}
-                  </div>
-                </div>
               </div>
             </div>
 
