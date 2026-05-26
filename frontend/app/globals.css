@@ -411,6 +411,10 @@ textarea { resize: vertical; line-height: 1.6; }
   color: #fff;
   border-color: var(--text);
 }
+select.filter-pill {
+  display: inline-block;
+  appearance: auto;
+}
 
 /* ── Search bar ───────────────────────────────────────────── */
 .search-bar-wrap {
