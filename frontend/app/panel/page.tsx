@@ -579,8 +579,9 @@ export default function PanelPage() {
                             <div style={{ fontSize: '.78rem', color: 'var(--text3)', marginTop: '.15rem' }}>
                               📍 {esp.barrio} · {esp.m2} m²
                             </div>
-                            <div style={{ fontSize: '.82rem', color: 'var(--orange)', fontWeight: 700, marginTop: '.2rem' }}>
-                              {formatARS(esp.precio_mes)}/mes
+                            <div style={{ fontSize: '.82rem', fontWeight: 700, marginTop: '.2rem', display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
+                              {esp.precio_dia > 0 && <span style={{ color: 'var(--orange)' }}>{formatARS(esp.precio_dia)}/día</span>}
+                              {esp.precio_mes > 0 && <span style={{ color: 'var(--orange)' }}>{formatARS(esp.precio_mes)}/mes</span>}
                             </div>
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem', flexShrink: 0, alignItems: 'flex-end' }}>

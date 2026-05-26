@@ -867,9 +867,14 @@ export default function ReservarPage() {
                     </div>
                   )}
 
-                  <button className="btn-secondary" onClick={() => setStep(2)} style={{ marginTop: user ? 0 : '.5rem' }}>
-                    ← Volver a servicios
-                  </button>
+                  <div style={{ display: 'flex', gap: '.6rem' }}>
+                    <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setStep(2)}>
+                      ← Volver
+                    </button>
+                    <button className="btn-secondary" style={{ flex: 1 }} onClick={() => router.push(`/espacio/${espacioId}`)}>
+                      Cancelar
+                    </button>
+                  </div>
                 </div>
               )}
 
