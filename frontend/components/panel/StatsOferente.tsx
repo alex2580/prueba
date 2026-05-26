@@ -1,7 +1,7 @@
 'use client';
 
 import type { Espacio, Reserva } from '@/types';
-import { formatARS } from '@/lib/utils';
+import { formatARS, netoOferente } from '@/lib/utils';
 import { RatingDisplay } from '@/components/ui/Rating';
 
 interface StatsOferenteProps {
@@ -10,13 +10,14 @@ interface StatsOferenteProps {
 }
 
 export function StatsOferente({ espacios, reservas }: StatsOferenteProps) {
+  const ahora = new Date();
   const ingresosMes = reservas
-    .filter(r => r.estado === 'pagada' && new Date(r.created_at).getMonth() === new Date().getMonth())
-    .reduce((acc, r) => acc + r.precio_total, 0);
+    .filter(r => ['pagada', 'finalizada'].includes(r.estado) && new Date(r.created_at).getMonth() === ahora.getMonth() && new Date(r.created_at).getFullYear() === ahora.getFullYear())
+    .reduce((acc, r) => acc + netoOferente(r.precio_total), 0);
 
   const ingresosTotal = reservas
     .filter(r => ['pagada', 'finalizada'].includes(r.estado))
-    .reduce((acc, r) => acc + r.precio_total, 0);
+    .reduce((acc, r) => acc + netoOferente(r.precio_total), 0);
 
   const avgRating = espacios.length
     ? espacios.reduce((acc, e) => acc + e.rating, 0) / espacios.length
@@ -26,8 +27,8 @@ export function StatsOferente({ espacios, reservas }: StatsOferenteProps) {
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
-      <StatCard emoji="💰" label="Ingresos del mes" value={formatARS(ingresosMes)} color="var(--mint)" />
-      <StatCard emoji="🏦" label="Ingresos totales" value={formatARS(ingresosTotal)} color="var(--orange)" />
+      <StatCard emoji="💰" label="Ingresos del mes (neto)" value={formatARS(ingresosMes)} color="var(--mint)" />
+      <StatCard emoji="🏦" label="Ingresos totales (neto)" value={formatARS(ingresosTotal)} color="var(--orange)" />
       <StatCard emoji="📦" label="Espacios activos" value={String(espacios.filter(e => e.disponible).length)} />
       <StatCard emoji="📅" label="Reservas recibidas" value={String(reservas.length)} />
       <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '1rem' }}>

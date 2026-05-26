@@ -17,7 +17,7 @@ import { EstadoBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { Avatar } from '@/components/ui/Avatar';
-import { formatARS, formatFechaCorta } from '@/lib/utils';
+import { formatARS, formatFechaCorta, netoOferente } from '@/lib/utils';
 import { SiteHeader } from '@/components/ui/SiteHeader';
 import { CalendarioDisponibilidad, type Disponibilidad } from '@/components/publicar/CalendarioDisponibilidad';
 
@@ -660,9 +660,9 @@ export default function PanelPage() {
                                   </div>
                                   <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '.2rem' }}>
                                     <div>
-                                      <div style={{ fontSize: '.68rem', color: 'var(--text3)' }}>Obtuviste</div>
+                                      <div style={{ fontSize: '.68rem', color: 'var(--text3)' }}>Obtuviste (neto)</div>
                                       <div style={{ fontSize: '.88rem', fontWeight: 700, color: 'var(--mint)' }}>
-                                        {formatARS(r.precio_total)}
+                                        {formatARS(netoOferente(r.precio_total))}
                                       </div>
                                     </div>
                                     <EstadoBadge estado={r.estado} />
