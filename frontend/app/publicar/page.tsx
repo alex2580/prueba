@@ -18,6 +18,7 @@ const MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || '';
 
 const CATEGORIAS = [
   { value: 'cochera',    label: '🚗 Cochera' },
+  { value: 'galpon',     label: '🏭 Galpón' },
   { value: 'habitacion', label: '🛏️ Habitación' },
   { value: 'sotano',     label: '🏚️ Sótano' },
   { value: 'terraza',    label: '🌿 Terraza' },
