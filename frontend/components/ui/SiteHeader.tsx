@@ -20,12 +20,6 @@ export function SiteHeader({ onLoginClick, onRegisterClick }: SiteHeaderProps) {
 
       <nav className="nav">
         <button
-          className={`nav-btn ${pathname === '/' ? 'active' : ''}`}
-          onClick={() => router.push('/')}
-        >
-          🏠 Inicio
-        </button>
-        <button
           className="nav-btn"
           onClick={() => router.push('/')}
         >

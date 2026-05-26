@@ -358,6 +358,19 @@ textarea { resize: vertical; line-height: 1.6; }
   outline: none;
 }
 
+.form--compartido input,
+.form--compartido select,
+.form--compartido textarea {
+  border-color: var(--orange) !important;
+}
+.form--compartido input:focus,
+.form--compartido select:focus,
+.form--compartido textarea:focus {
+  border-color: var(--orange) !important;
+  box-shadow: 0 0 0 3px rgba(232,98,42,.12) !important;
+  outline: none;
+}
+
 /* ── Filter pills (horizontal, Airbnb-style) ──────────────── */
 .filter-pills-bar {
   display: flex;

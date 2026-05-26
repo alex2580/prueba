@@ -477,7 +477,7 @@ export default function PublicarPage() {
       <SiteHeader />
 
       <div className="page-scroll">
-        <div className={form.tipo === 'exclusivo' ? 'form--exclusivo' : ''} style={{ maxWidth: 620, margin: '0 auto', padding: '2rem 1rem' }}>
+        <div className={form.tipo === 'exclusivo' ? 'form--exclusivo' : 'form--compartido'} style={{ maxWidth: 620, margin: '0 auto', padding: '2rem 1rem' }}>
 
           {/* Título */}
           <div style={{ marginBottom: '1.5rem' }}>
