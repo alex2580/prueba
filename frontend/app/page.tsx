@@ -115,13 +115,19 @@ export default function HomePage() {
 
         {/* Nav central */}
         <nav className="nav">
-          <button className="nav-btn" onClick={() => router.push('/como-funciona')}>Cómo funciona</button>
-          <button className="nav-btn" onClick={() => router.push('/servicios')}>Servicios</button>
-          <button className="nav-btn" style={{ color: '#7c3aed' }} onClick={() => router.push('/legal.html')}>Legal</button>
+          <button className="nav-btn active" onClick={() => { setVista('lista'); }}>
+            🏠 Inicio
+          </button>
+          <button className="nav-btn" onClick={() => setVista('lista')}>
+            🔍 Buscar espacios
+          </button>
+          <button className="nav-btn" onClick={() => router.push('/como-funciona')}>
+            💡 Cómo funciona
+          </button>
         </nav>
 
         {/* Acciones derecha */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '.45rem', justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', justifyContent: 'flex-end' }}>
           {user ? (
             <>
               {isAdmin && (
@@ -132,6 +138,9 @@ export default function HomePage() {
               )}
               <button className="nav-btn" onClick={() => router.push('/panel')}>Mi cuenta</button>
               <button className="nav-btn" onClick={logout}>Salir</button>
+              <button className="btn-register" onClick={() => router.push('/publicar')}>
+                Publicar espacio
+              </button>
             </>
           ) : (
             <>
@@ -143,9 +152,6 @@ export default function HomePage() {
               </button>
             </>
           )}
-          <button className="btn-publish" onClick={() => router.push('/publicar')}>
-            🏠 Publicar
-          </button>
         </div>
       </header>
 

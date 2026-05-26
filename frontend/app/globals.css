@@ -196,34 +196,36 @@ textarea { resize: vertical; line-height: 1.6; }
   align-items: center;
   justify-content: center;
   background: none;
-  border: 1.5px solid var(--border2);
-  border-radius: var(--r2);
-  padding: .44rem 1rem;
+  border: 1.5px solid var(--text);
+  border-radius: var(--r1);
+  padding: .42rem 1.1rem;
   font-family: 'DM Sans', sans-serif;
-  font-size: .82rem;
+  font-size: .84rem;
   font-weight: 600;
   color: var(--text);
   transition: all var(--t1);
   white-space: nowrap;
 }
-.btn-login:hover { border-color: var(--orange); color: var(--orange); }
+.btn-login:hover {
+  background: var(--surface2);
+}
 
 .btn-register {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--text);
+  background: var(--orange);
   border: none;
-  border-radius: var(--r2);
-  padding: .44rem 1rem;
+  border-radius: var(--r1);
+  padding: .42rem 1.1rem;
   font-family: 'DM Sans', sans-serif;
-  font-size: .82rem;
+  font-size: .84rem;
   font-weight: 700;
   color: #fff;
-  transition: opacity var(--t1), transform var(--t1);
+  transition: filter var(--t1), transform var(--t1);
   white-space: nowrap;
 }
-.btn-register:hover { opacity: .85; transform: translateY(-1px); }
+.btn-register:hover { filter: brightness(1.06); transform: translateY(-1px); }
 
 /* ── Cards ────────────────────────────────────────────────── */
 .card {
@@ -554,16 +556,7 @@ textarea { resize: vertical; line-height: 1.6; }
   gap: .75rem;
 }
 
-.site-header::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--orange), var(--amber), var(--blue), var(--mint));
-  opacity: .7;
-}
+/* rainbow gradient removed — clean white header */
 
 .logo {
   display: flex;
@@ -590,16 +583,23 @@ textarea { resize: vertical; line-height: 1.6; }
   border: none;
   color: var(--text2);
   font-family: 'DM Sans', sans-serif;
-  font-size: .83rem;
+  font-size: .84rem;
   font-weight: 500;
-  padding: .44rem .9rem;
-  border-radius: var(--r1);
+  padding: .38rem .85rem;
+  border-radius: 999px;
   transition: all var(--t1);
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
 }
 
 .nav-btn:hover { background: var(--surface2); color: var(--text); }
-.nav-btn.active { background: rgba(232,98,42,.08); color: var(--orange); font-weight: 700; }
+.nav-btn.active {
+  background: rgba(232,98,42,.09);
+  color: var(--orange);
+  font-weight: 600;
+}
 
 .btn-publish {
   background: linear-gradient(135deg, var(--orange), var(--amber));
