@@ -21,6 +21,7 @@ export interface Usuario {
   pais?: string;
   lat?: number;
   lng?: number;
+  cbu_alias?: string;
 }
 
 export interface PerfilPublico {

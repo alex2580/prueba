@@ -11,6 +11,7 @@ router.put('/me',           requireAuth, [
   body('nombre').trim().notEmpty().isLength({ max: 120 }),
   body('dni').optional({ nullable: true }).isLength({ max: 20 }),
   body('email').optional({ nullable: true }).isEmail(),
+  body('cbu_alias').optional({ nullable: true }).isLength({ max: 100 }),
 ], ctrl.actualizar);
 router.post('/me/avatar',   requireAuth, uploadMiddleware.single('avatar'), ctrl.subirAvatar);
 router.post('/me/solicitar-cambio-tel', requireAuth, [

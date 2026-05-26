@@ -453,6 +453,30 @@ export default function PublicarPage() {
               <p style={{ color: 'var(--text2)', fontSize: '.9rem', lineHeight: 1.6, margin: 0 }}>
                 Tu publicación ya está visible en el mapa y disponible para que otros usuarios la reserven.
               </p>
+              {user && !user.cbu_alias && (
+                <div style={{
+                  background: 'rgba(245,158,11,.1)',
+                  border: '1px solid rgba(245,158,11,.4)',
+                  borderRadius: 'var(--r2)',
+                  padding: '.85rem 1rem',
+                  textAlign: 'left',
+                  fontSize: '.83rem',
+                  color: 'var(--text2)',
+                }}>
+                  <strong style={{ color: 'var(--amber)' }}>⚠️ Falta tu CBU/Alias bancario</strong>
+                  <div style={{ marginTop: '.25rem' }}>
+                    Para que TMC pueda transferirte los pagos de tus reservas, agregá tu CBU o alias en{' '}
+                    <button
+                      type="button"
+                      onClick={() => router.push('/panel')}
+                      style={{ background: 'none', border: 'none', color: 'var(--orange)', fontWeight: 700, cursor: 'pointer', padding: 0, fontSize: 'inherit' }}
+                    >
+                      Mi Panel → Editar perfil
+                    </button>.
+                  </div>
+                </div>
+              )}
+
               <div style={{ display: 'grid', gap: '.75rem', marginTop: '.5rem' }}>
                 <Button
                   onClick={() => router.push(`/espacio/${espacioPublicadoId}`)}

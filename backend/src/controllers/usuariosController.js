@@ -23,15 +23,21 @@ async function perfil(req, res, next) {
     let usuario;
     try {
       usuario = await queryOne(
-        'SELECT id, nombre, email, tel, dni, pais, tipo, verificado, avatar_url, created_at, direccion, lat, lng FROM usuarios WHERE id = ?',
+        'SELECT id, nombre, email, tel, dni, pais, tipo, verificado, avatar_url, created_at, direccion, lat, lng, cbu_alias FROM usuarios WHERE id = ?',
         [req.user.id]
       );
     } catch (_) {
-      // Fallback: columnas nuevas aún no existen en la DB
-      usuario = await queryOne(
-        'SELECT id, nombre, email, tel, tipo, verificado, avatar_url, created_at FROM usuarios WHERE id = ?',
-        [req.user.id]
-      );
+      try {
+        usuario = await queryOne(
+          'SELECT id, nombre, email, tel, dni, pais, tipo, verificado, avatar_url, created_at, direccion, lat, lng FROM usuarios WHERE id = ?',
+          [req.user.id]
+        );
+      } catch (_2) {
+        usuario = await queryOne(
+          'SELECT id, nombre, email, tel, tipo, verificado, avatar_url, created_at FROM usuarios WHERE id = ?',
+          [req.user.id]
+        );
+      }
     }
     if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
     res.json(usuario);
@@ -48,7 +54,7 @@ async function actualizar(req, res, next) {
       return res.status(422).json({ error: 'Datos inválidos', details: errors.array() });
     }
 
-    const { nombre, tel, dni, pais, email, direccion, lat, lng } = req.body;
+    const { nombre, tel, dni, pais, email, direccion, lat, lng, cbu_alias } = req.body;
     await query(
       'UPDATE usuarios SET nombre = ?, tel = ? WHERE id = ?',
       [nombre, tel || '', req.user.id]
@@ -70,19 +76,29 @@ async function actualizar(req, res, next) {
       if (email && email !== req.user.email) {
         await query('UPDATE usuarios SET email = ? WHERE id = ?', [email, req.user.id]);
       }
+      if (cbu_alias !== undefined) {
+        await query('UPDATE usuarios SET cbu_alias = ? WHERE id = ?', [cbu_alias || null, req.user.id]);
+      }
     } catch (_) { /* columns may not exist yet */ }
 
     let updated;
     try {
       updated = await queryOne(
-        'SELECT id, nombre, email, tel, dni, pais, tipo, verificado, avatar_url, direccion, lat, lng FROM usuarios WHERE id = ?',
+        'SELECT id, nombre, email, tel, dni, pais, tipo, verificado, avatar_url, direccion, lat, lng, cbu_alias FROM usuarios WHERE id = ?',
         [req.user.id]
       );
     } catch (_) {
-      updated = await queryOne(
-        'SELECT id, nombre, email, tel, tipo, verificado, avatar_url FROM usuarios WHERE id = ?',
-        [req.user.id]
-      );
+      try {
+        updated = await queryOne(
+          'SELECT id, nombre, email, tel, dni, pais, tipo, verificado, avatar_url, direccion, lat, lng FROM usuarios WHERE id = ?',
+          [req.user.id]
+        );
+      } catch (_2) {
+        updated = await queryOne(
+          'SELECT id, nombre, email, tel, tipo, verificado, avatar_url FROM usuarios WHERE id = ?',
+          [req.user.id]
+        );
+      }
     }
     res.json(updated);
   } catch (err) {

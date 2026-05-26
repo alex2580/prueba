@@ -55,7 +55,7 @@ export default function PanelPage() {
 
   // Profile edit
   const [perfilOpen, setPerfilOpen] = useState(false);
-  const [perfilForm, setPerfilForm] = useState({ nombre: '', tel: '', dni: '', email: '', direccion: '', lat: '', lng: '', pais: '' });
+  const [perfilForm, setPerfilForm] = useState({ nombre: '', tel: '', dni: '', email: '', direccion: '', lat: '', lng: '', pais: '', cbu_alias: '' });
   const [perfilAvatarFile, setPerfilAvatarFile] = useState<File | null>(null);
   const [perfilAvatarPreview, setPerfilAvatarPreview] = useState<string>('');
   const [perfilLoading, setPerfilLoading] = useState(false);
@@ -162,6 +162,7 @@ export default function PanelPage() {
       lat: user?.lat ? String(user.lat) : '',
       lng: user?.lng ? String(user.lng) : '',
       pais: (user as any)?.pais || '',
+      cbu_alias: user?.cbu_alias || '',
     });
     setPerfilError('');
     setPerfilOk(false);
@@ -246,6 +247,7 @@ export default function PanelPage() {
           pais: perfilForm.pais || undefined,
           lat: perfilForm.lat ? Number(perfilForm.lat) : undefined,
           lng: perfilForm.lng ? Number(perfilForm.lng) : undefined,
+          cbu_alias: perfilForm.cbu_alias || undefined,
         }, token);
         return;
       }
@@ -260,6 +262,7 @@ export default function PanelPage() {
         pais: perfilForm.pais || undefined,
         lat: perfilForm.lat ? Number(perfilForm.lat) : undefined,
         lng: perfilForm.lng ? Number(perfilForm.lng) : undefined,
+        cbu_alias: perfilForm.cbu_alias || undefined,
       }, token);
       setPerfilOk(true);
       setTimeout(() => setPerfilOpen(false), 1500);
@@ -847,6 +850,29 @@ export default function PanelPage() {
                   placeholder="Se completa al seleccionar dirección…"
                 />
               </div>
+
+              {/* CBU/Alias — solo para oferentes */}
+              {isOferente && (
+                <div>
+                  <label className="form-label">
+                    CBU / Alias bancario
+                    {isOferente && !perfilForm.cbu_alias && (
+                      <span style={{ fontSize: '.7rem', color: 'var(--amber)', marginLeft: '.4rem' }}>
+                        ⚠️ Requerido para recibir pagos
+                      </span>
+                    )}
+                  </label>
+                  <input
+                    value={perfilForm.cbu_alias}
+                    onChange={e => setPerfilForm(f => ({ ...f, cbu_alias: e.target.value }))}
+                    placeholder="Ej: 0000003100012345678901 o mi.alias.banco"
+                    maxLength={100}
+                  />
+                  <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginTop: '.3rem' }}>
+                    TMC necesita este dato para transferirte los pagos de tus reservas.
+                  </div>
+                </div>
+              )}
 
               {/* Mini mapa cuando hay ubicación */}
               {perfilForm.lat && perfilForm.lng && (
