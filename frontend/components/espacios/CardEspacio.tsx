@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Espacio } from '@/types';
 import { RatingDisplay } from '@/components/ui/Rating';
@@ -14,6 +14,7 @@ interface CardEspacioProps {
 
 export function CardEspacio({ espacio, onClick }: CardEspacioProps) {
   const router = useRouter();
+  const [favorito, setFavorito] = useState(false);
 
   function handleClick() {
     if (onClick) {
@@ -38,11 +39,32 @@ export function CardEspacio({ espacio, onClick }: CardEspacioProps) {
         />
         <div className="espacio-card__overlay" />
 
+        {/* Favorito */}
+        <button
+          onClick={e => { e.stopPropagation(); setFavorito(f => !f); }}
+          style={{
+            position: 'absolute', top: 10, right: 10,
+            background: 'rgba(255,255,255,.92)',
+            border: 'none', borderRadius: '50%',
+            width: 32, height: 32,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', fontSize: '.95rem',
+            backdropFilter: 'blur(4px)',
+            boxShadow: '0 2px 8px rgba(0,0,0,.12)',
+            transition: 'transform .15s',
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.12)'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
+          title={favorito ? 'Quitar de favoritos' : 'Guardar en favoritos'}
+        >
+          {favorito ? '❤️' : '🤍'}
+        </button>
+
         {/* Badge */}
         {espacio.badge && (
           <div style={{
             position: 'absolute', top: 10, left: 10,
-            background: 'rgba(10,14,26,.85)',
+            background: 'rgba(255,255,255,.92)',
             border: '1px solid var(--border)',
             borderRadius: '99px',
             padding: '3px 10px',
@@ -57,9 +79,7 @@ export function CardEspacio({ espacio, onClick }: CardEspacioProps) {
         )}
 
         {/* Tipo */}
-        <div style={{
-          position: 'absolute', bottom: 10, right: 10,
-        }}>
+        <div style={{ position: 'absolute', bottom: 10, left: 10 }}>
           <span className={`pill ${espacio.tipo === 'exclusivo' ? 'pill--blue' : 'pill--orange'}`}>
             {espacio.tipo === 'exclusivo' ? '🔒 Exclusivo' : '🤝 Compartido'}
           </span>
@@ -69,7 +89,7 @@ export function CardEspacio({ espacio, onClick }: CardEspacioProps) {
         {!espacio.disponible && (
           <div style={{
             position: 'absolute', inset: 0,
-            background: 'rgba(10,14,26,.65)',
+            background: 'rgba(255,255,255,.75)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: '13px', fontWeight: 700, color: 'var(--text2)', fontFamily: 'Sora, sans-serif',
           }}>
@@ -91,7 +111,7 @@ export function CardEspacio({ espacio, onClick }: CardEspacioProps) {
           )}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: '.4rem' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '.4rem', borderTop: '1px solid var(--border)', paddingTop: '.6rem', marginTop: '.1rem' }}>
           <span className="espacio-card__price">{formatARS(espacio.precio_mes)}</span>
           <span className="espacio-card__price-label">/mes</span>
           <span style={{ fontSize: '11px', color: 'var(--text3)', marginLeft: 'auto' }}>

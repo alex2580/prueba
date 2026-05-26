@@ -45,21 +45,23 @@ export function MarkerEspacioCard({ espacio, onClose, onVerDetalle, onReservar }
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           onError={(e) => { e.currentTarget.src = getFotoFallback(espacio.id); }}
         />
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(10,14,26,0) 40%, rgba(10,14,26,.6) 100%)' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,.5) 100%)' }} />
 
         {/* Close btn */}
         <button onClick={onClose} style={{
           position: 'absolute', top: 10, right: 10,
-          background: 'rgba(10,14,26,.75)', border: 'none', color: '#fff',
+          background: 'rgba(255,255,255,.9)', border: 'none', color: '#333',
           width: 30, height: 30, borderRadius: '99px', fontSize: 13,
+          boxShadow: '0 2px 6px rgba(0,0,0,.15)',
         }}>✕</button>
 
         {espacio.badge && (
           <div style={{
             position: 'absolute', bottom: 10, left: 10,
-            background: 'rgba(10,14,26,.85)', border: '1px solid var(--border)',
+            background: 'rgba(255,255,255,.92)', border: '1px solid var(--border)',
             borderRadius: '99px', padding: '3px 10px', fontSize: '11px',
             fontFamily: 'Sora, sans-serif', fontWeight: 700, color: 'var(--text)',
+            backdropFilter: 'blur(4px)',
           }}>
             {espacio.badge}
           </div>

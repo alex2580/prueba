@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import type { Espacio } from '@/types';
+import type { Espacio, EspacioTipo } from '@/types';
 import { useEspacios } from '@/hooks/useEspacios';
 import { useAuth } from '@/hooks/useAuth';
 import { GridEspacios } from '@/components/espacios/GridEspacios';
@@ -15,7 +15,6 @@ import { OTPStep } from '@/components/auth/OTPStep';
 import { SiteLogo } from '@/components/ui/SiteLogo';
 import { Button } from '@/components/ui/Button';
 
-// Dynamic import to avoid SSR issues with Google Maps
 const MapaEspacios = dynamic(() => import('@/components/mapa/MapaEspacios').then(m => ({ default: m.MapaEspacios })), { ssr: false });
 const MarkerEspacioCard = dynamic(() => import('@/components/mapa/MarkerEspacio').then(m => ({ default: m.MarkerEspacioCard })), { ssr: false });
 
@@ -27,7 +26,7 @@ export default function HomePage() {
     otpPending, otpEmailHint, otpCanales, verifyOTP, reenviarOTP } = useAuth();
   const { espacios, loading, error: espaciosError, filtros, aplicarFiltros, limpiarFiltros } = useEspacios();
 
-  const [vista, setVista] = useState<Vista>('mapa');
+  const [vista, setVista] = useState<Vista>('lista');
   const [selectedEspacio, setSelectedEspacio] = useState<Espacio | null>(null);
   const [authModal, setAuthModal] = useState(false);
   const [authTab, setAuthTab] = useState<'login' | 'register'>('login');
@@ -37,7 +36,6 @@ export default function HomePage() {
   const [geoLoading, setGeoLoading] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
 
-  // Auto-locate from saved profile address on login
   useEffect(() => {
     if (user?.lat && user?.lng && !userLocation) {
       setUserLocation({ lat: Number(user.lat), lng: Number(user.lng) });
@@ -59,7 +57,6 @@ export default function HomePage() {
     );
   }
 
-  // Contacto modal state
   const [contactoOpen, setContactoOpen] = useState(false);
   const [contactoForm, setContactoForm] = useState({
     nombre: '', email: '', asunto: '', tipo: 'consulta', mensaje: '',
@@ -106,51 +103,86 @@ export default function HomePage() {
     }, 350);
   }, [filtros, aplicarFiltros]);
 
+  const filtrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.periodo || filtros.barrio || filtros.q);
+  const hayFiltrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.periodo || userLocation || filtros.q);
+
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
-      {/* Header */}
+
+      {/* ── Header ─────────────────────────────────────────── */}
       <header className="site-header">
-        {/* Col 1: Logo */}
         <SiteLogo onClick={() => router.push('/')} />
 
-        {/* Col 2: Vista toggle centrado */}
-        <div />
+        {/* Nav central */}
+        <nav className="nav">
+          <button className="nav-btn" onClick={() => router.push('/como-funciona')}>Cómo funciona</button>
+          <button className="nav-btn" onClick={() => router.push('/servicios')}>Servicios</button>
+          <button className="nav-btn" style={{ color: '#7c3aed' }} onClick={() => router.push('/legal.html')}>Legal</button>
+        </nav>
 
-        {/* Col 3: Acciones */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem', justifyContent: 'flex-end' }}>
-          <button className="nav-btn" onClick={() => router.push('/como-funciona')}>🧭 Cómo funciona</button>
-          <button className="nav-btn" onClick={() => router.push('/servicios')}>📦 Servicios</button>
-          <button className="nav-btn" style={{ color: '#a78bfa' }} onClick={() => router.push('/legal.html')}>⚖️ Legal</button>
+        {/* Acciones derecha */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '.45rem', justifyContent: 'flex-end' }}>
           {user ? (
             <>
               {isAdmin && (
-                <button className="nav-btn" style={{ color: 'var(--orange)', fontWeight: 700 }} onClick={() => router.push('/admin')}>
-                  ⚙️ Admin
+                <button className="nav-btn" style={{ color: 'var(--orange)', fontWeight: 700 }}
+                  onClick={() => router.push('/admin')}>
+                  Admin
                 </button>
               )}
-              <button className="nav-btn" onClick={() => router.push('/panel')}>🙍 Mi cuenta</button>
+              <button className="nav-btn" onClick={() => router.push('/panel')}>Mi cuenta</button>
               <button className="nav-btn" onClick={logout}>Salir</button>
             </>
           ) : (
-            <button className="nav-btn" onClick={() => { setAuthTab('login'); setAuthModal(true); }}>
-              🙍 Mi cuenta
-            </button>
+            <>
+              <button className="btn-login" onClick={() => { setAuthTab('login'); setAuthModal(true); }}>
+                Ingresar
+              </button>
+              <button className="btn-register" onClick={() => { setAuthTab('register'); setAuthModal(true); }}>
+                Registrarse
+              </button>
+            </>
           )}
-          {/* Publicar — siempre visible, pide login si no está autenticado */}
           <button className="btn-publish" onClick={() => router.push('/publicar')}>
             🏠 Publicar
           </button>
         </div>
       </header>
 
-      {/* Content */}
+      {/* ── Content ────────────────────────────────────────── */}
       <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
-        {/* Mapa */}
+
+        {/* ── Mapa ─────────────────────────────────────────── */}
         {vista === 'mapa' && (
           <div style={{ height: '100%', position: 'relative' }}>
-            {/* Botón flotante de filtros + panel — hover abre, salir cierra */}
+
+            {/* Ver lista — flotante arriba izquierda */}
+            <button
+              onClick={() => setVista('lista')}
+              style={{
+                position: 'absolute', top: '1.1rem', left: '1rem', zIndex: 110,
+                background: 'rgba(255,255,255,.97)',
+                border: '1.5px solid var(--border2)',
+                borderRadius: '999px',
+                padding: '.48rem 1.1rem',
+                fontSize: '.82rem', fontWeight: 700,
+                fontFamily: 'Sora, sans-serif',
+                cursor: 'pointer',
+                boxShadow: '0 2px 14px rgba(0,0,0,.1)',
+                backdropFilter: 'blur(10px)',
+                display: 'flex', alignItems: 'center', gap: '.4rem',
+                color: 'var(--text)',
+                transition: 'all .15s',
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--text)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border2)'; }}
+            >
+              ≡ Ver lista
+            </button>
+
+            {/* Filtros — flotante arriba derecha */}
             <div
-              style={{ position: 'absolute', top: '1.25rem', right: '8rem', zIndex: 110 }}
+              style={{ position: 'absolute', top: '1.1rem', right: '4.5rem', zIndex: 110 }}
               onMouseEnter={() => setFiltrosOpen(true)}
               onMouseLeave={() => setFiltrosOpen(false)}
             >
@@ -158,22 +190,20 @@ export default function HomePage() {
                 onClick={() => setFiltrosOpen(o => !o)}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '.45rem',
-                  background: (filtros.tipo || filtros.precio_max || filtros.periodo)
-                    ? 'rgba(232,98,42,.18)'
-                    : 'rgba(186,230,253,.55)',
-                  border: `1.5px solid ${(filtros.tipo || filtros.precio_max || filtros.periodo) ? 'rgba(232,98,42,.45)' : 'rgba(125,211,252,.7)'}`,
-                  borderRadius: '999px', padding: '.45rem 1.1rem',
+                  background: filtrosActivos ? 'rgba(232,98,42,.1)' : 'rgba(255,255,255,.97)',
+                  border: `1.5px solid ${filtrosActivos ? 'rgba(232,98,42,.35)' : 'var(--border2)'}`,
+                  borderRadius: '999px', padding: '.48rem 1.1rem',
                   fontSize: '.82rem', fontWeight: 700, fontFamily: 'Sora, sans-serif',
                   cursor: 'pointer',
-                  boxShadow: '0 2px 14px rgba(0,0,0,.13)',
-                  color: (filtros.tipo || filtros.precio_max || filtros.periodo) ? 'var(--orange)' : '#0369a1',
+                  boxShadow: '0 2px 14px rgba(0,0,0,.1)',
+                  color: filtrosActivos ? 'var(--orange)' : 'var(--text)',
                   backdropFilter: 'blur(10px)',
                   transition: 'all .15s',
                 }}
               >
                 <span>⚙️</span>
                 Filtros
-                {(filtros.tipo || filtros.precio_max || filtros.periodo) && (
+                {filtrosActivos && (
                   <span style={{
                     background: 'var(--orange)', color: '#fff',
                     borderRadius: '50%', width: 18, height: 18,
@@ -185,39 +215,34 @@ export default function HomePage() {
                 )}
               </button>
 
-              {/* Panel flotante de filtros */}
               {filtrosOpen && (
-                <div style={{
-                  position: 'absolute', top: '100%', right: 0,
-                  paddingTop: '.5rem', // visual gap sin romper el área de hover
-                }}>
-                <div style={{
-                  background: 'rgba(255,255,255,0.98)',
-                  border: '1.5px solid #ddd', borderRadius: 16,
-                  padding: '1.2rem', width: 280,
-                  boxShadow: '0 8px 32px rgba(0,0,0,.18)',
-                  backdropFilter: 'blur(12px)',
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                    <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.9rem', color: '#111' }}>
-                      Filtros
-                    </span>
-                    <button onClick={() => setFiltrosOpen(false)} style={{
-                      background: 'none', border: 'none', cursor: 'pointer',
-                      color: '#888', fontSize: '1.1rem', lineHeight: 1,
-                    }}>✕</button>
+                <div style={{ position: 'absolute', top: '100%', right: 0, paddingTop: '.5rem' }}>
+                  <div style={{
+                    background: 'var(--surface)',
+                    border: '1.5px solid var(--border)', borderRadius: 16,
+                    padding: '1.2rem', width: 280,
+                    boxShadow: 'var(--s3)',
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                      <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.9rem', color: 'var(--text)' }}>
+                        Filtros
+                      </span>
+                      <button onClick={() => setFiltrosOpen(false)} style={{
+                        background: 'none', border: 'none', cursor: 'pointer',
+                        color: 'var(--text3)', fontSize: '1.1rem', lineHeight: 1,
+                      }}>✕</button>
+                    </div>
+                    <FiltrosEspacios
+                      filtros={filtros}
+                      onChange={aplicarFiltros}
+                      onReset={limpiarFiltros}
+                      onCercaMio={handleCercaMio}
+                      cercaMioActive={!!userLocation}
+                      cercaMioLoading={geoLoading}
+                      onQuitarCercaMio={() => setUserLocation(null)}
+                      geoError={geoError}
+                    />
                   </div>
-                  <FiltrosEspacios
-                    filtros={filtros}
-                    onChange={aplicarFiltros}
-                    onReset={limpiarFiltros}
-                    onCercaMio={handleCercaMio}
-                    cercaMioActive={!!userLocation}
-                    cercaMioLoading={geoLoading}
-                    onQuitarCercaMio={() => setUserLocation(null)}
-                    geoError={geoError}
-                  />
-                </div>
                 </div>
               )}
             </div>
@@ -227,7 +252,7 @@ export default function HomePage() {
               onMarkerClick={handleMarkerClick}
               selectedId={selectedEspacio?.id}
               center={userLocation ?? undefined}
-              filtrosActivos={!!(filtros.tipo || filtros.precio_max || filtros.periodo || filtros.barrio || filtros.q)}
+              filtrosActivos={filtrosActivos}
             />
             {selectedEspacio && (
               <MarkerEspacioCard
@@ -240,26 +265,184 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Lista */}
+        {/* ── Lista ────────────────────────────────────────── */}
         {vista === 'lista' && (
-          <div className="page-scroll" style={{ padding: '1.5rem', boxSizing: 'border-box' }}>
-            <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-              <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '1rem', color: 'var(--text2)' }}>
-                  {loading ? 'Cargando…' : espaciosError ? 'Error al cargar espacios' : `${espacios.length} espacio${espacios.length !== 1 ? 's' : ''} encontrado${espacios.length !== 1 ? 's' : ''}`}
-                </h2>
+          <div className="page-scroll">
+
+            {/* Sticky search + filters header */}
+            <div className="list-search-header">
+              {/* Search bar row */}
+              <div className="list-search-row">
+                <div className="search-bar-wrap">
+                  <span style={{ color: 'var(--text3)', fontSize: '1rem', flexShrink: 0 }}>🔍</span>
+                  <input
+                    type="text"
+                    className="search-bar-input"
+                    placeholder="Buscar por barrio, dirección o tipo…"
+                    value={busqueda}
+                    onChange={e => handleBusqueda(e.target.value)}
+                  />
+                  {busqueda && (
+                    <button
+                      onClick={() => handleBusqueda('')}
+                      style={{
+                        background: 'var(--surface3)', border: 'none', borderRadius: '50%',
+                        width: 22, height: 22, fontSize: '.7rem', cursor: 'pointer',
+                        color: 'var(--text2)', flexShrink: 0,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}
+                    >✕</button>
+                  )}
+                </div>
               </div>
+
+              {/* Horizontal filter pills */}
+              <div className="filter-pills-bar">
+                <button
+                  className={`filter-pill ${filtros.tipo === 'exclusivo' ? 'active' : ''}`}
+                  onClick={() => aplicarFiltros({ ...filtros, tipo: (filtros.tipo === 'exclusivo' ? '' : 'exclusivo') as EspacioTipo })}
+                >
+                  🔒 Exclusivo
+                </button>
+                <button
+                  className={`filter-pill ${filtros.tipo === 'compartido' ? 'active' : ''}`}
+                  onClick={() => aplicarFiltros({ ...filtros, tipo: (filtros.tipo === 'compartido' ? '' : 'compartido') as EspacioTipo })}
+                >
+                  🤝 Compartido
+                </button>
+                <button
+                  className={`filter-pill ${filtros.periodo === 'dia' ? 'active' : ''}`}
+                  onClick={() => aplicarFiltros({ ...filtros, periodo: filtros.periodo === 'dia' ? '' : 'dia', precio_max: undefined })}
+                >
+                  📅 Por día
+                </button>
+                <button
+                  className={`filter-pill ${filtros.periodo === 'mes' ? 'active' : ''}`}
+                  onClick={() => aplicarFiltros({ ...filtros, periodo: filtros.periodo === 'mes' ? '' : 'mes', precio_max: undefined })}
+                >
+                  📆 Por mes
+                </button>
+                {userLocation ? (
+                  <button className="filter-pill active" onClick={() => setUserLocation(null)}>
+                    📍 Cerca mío ✕
+                  </button>
+                ) : (
+                  <button
+                    className="filter-pill"
+                    onClick={handleCercaMio}
+                    disabled={geoLoading}
+                  >
+                    {geoLoading ? '⏳ Buscando…' : '📍 Cerca mío'}
+                  </button>
+                )}
+                {filtros.precio_max && (
+                  <button
+                    className="filter-pill active"
+                    onClick={() => aplicarFiltros({ ...filtros, precio_max: undefined })}
+                  >
+                    Hasta ${filtros.precio_max.toLocaleString('es-AR')} ✕
+                  </button>
+                )}
+
+                {/* Más filtros — dropdown */}
+                <div
+                  style={{ position: 'relative', flexShrink: 0 }}
+                  onMouseEnter={() => setFiltrosOpen(true)}
+                  onMouseLeave={() => setFiltrosOpen(false)}
+                >
+                  <button
+                    className={`filter-pill ${filtros.precio_max ? 'active' : ''}`}
+                    onClick={() => setFiltrosOpen(o => !o)}
+                  >
+                    ⚙️ Más filtros
+                  </button>
+                  {filtrosOpen && (
+                    <div style={{ position: 'absolute', top: '100%', left: 0, paddingTop: '.5rem', zIndex: 200 }}>
+                      <div style={{
+                        background: 'var(--surface)',
+                        border: '1.5px solid var(--border)', borderRadius: 16,
+                        padding: '1.2rem', width: 280,
+                        boxShadow: 'var(--s3)',
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                          <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.9rem' }}>Filtros</span>
+                          <button onClick={() => setFiltrosOpen(false)} style={{
+                            background: 'none', border: 'none', cursor: 'pointer',
+                            color: 'var(--text3)', fontSize: '1.1rem', lineHeight: 1,
+                          }}>✕</button>
+                        </div>
+                        <FiltrosEspacios
+                          filtros={filtros}
+                          onChange={f => { aplicarFiltros(f); }}
+                          onReset={limpiarFiltros}
+                          onCercaMio={handleCercaMio}
+                          cercaMioActive={!!userLocation}
+                          cercaMioLoading={geoLoading}
+                          onQuitarCercaMio={() => setUserLocation(null)}
+                          geoError={geoError}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Limpiar todos */}
+                {hayFiltrosActivos && (
+                  <button
+                    className="filter-pill"
+                    style={{ color: 'var(--orange)', borderColor: 'rgba(232,98,42,.3)' }}
+                    onClick={() => { limpiarFiltros(); setUserLocation(null); setBusqueda(''); }}
+                  >
+                    ✕ Limpiar
+                  </button>
+                )}
+
+                {geoError && (
+                  <span style={{ fontSize: '.75rem', color: 'var(--orange)', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                    {geoError}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Results grid */}
+            <div style={{ maxWidth: 1200, margin: '0 auto', padding: '1.25rem 1.5rem 7rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <span style={{ fontFamily: 'Sora, sans-serif', fontSize: '.82rem', fontWeight: 600, color: 'var(--text2)' }}>
+                  {loading ? 'Cargando…' : espaciosError ? 'Error al cargar' : (
+                    `${espacios.length} espacio${espacios.length !== 1 ? 's' : ''} encontrado${espacios.length !== 1 ? 's' : ''}`
+                  )}
+                </span>
+              </div>
+
               {espaciosError && !loading && (
                 <div className="alert alert--error" style={{ marginBottom: '1rem' }}>
                   {espaciosError} — Verificá tu conexión o recargá la página.
                 </div>
               )}
+
               <GridEspacios
                 espacios={espacios}
                 loading={loading}
                 onCardClick={espacio => router.push(`/espacio/${espacio.id}`)}
               />
             </div>
+
+            {/* Floating "Ver en Mapa" button */}
+            <button className="btn-ver-mapa" onClick={() => setVista('mapa')}>
+              🗺️ Ver en mapa
+              {!loading && espacios.length > 0 && (
+                <span style={{
+                  background: 'rgba(255,255,255,.2)',
+                  borderRadius: 999,
+                  padding: '2px 8px',
+                  fontSize: '.78rem',
+                  fontWeight: 600,
+                }}>
+                  {espacios.length}
+                </span>
+              )}
+            </button>
           </div>
         )}
       </div>
@@ -272,7 +455,7 @@ export default function HomePage() {
           background: 'var(--surface)', border: '1.5px solid var(--border2)',
           borderRadius: 'var(--r4)', padding: '.6rem 1.1rem',
           color: 'var(--text2)', fontSize: '.82rem', fontWeight: 600,
-          boxShadow: 'var(--s3)', zIndex: 200, cursor: 'pointer',
+          boxShadow: 'var(--s2)', zIndex: 200, cursor: 'pointer',
           display: 'flex', alignItems: 'center', gap: '.4rem',
           transition: 'border-color .15s, color .15s',
         }}
@@ -394,7 +577,6 @@ export default function HomePage() {
           <LoginForm
             onLogin={async (email, password) => {
               const ok = await login(email, password);
-              // Don't close — OTPStep takes over when otpPending becomes true
               return ok;
             }}
             onSwitch={() => setAuthTab('register')}
