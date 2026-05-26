@@ -1,0 +1,259 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="UTF-8">
+<meta name:ProgId content="Word.Document">
+<meta name:Generator content="Microsoft Word">
+<!--[if gte mso 9]>
+<xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml>
+<![endif]-->
+<style>
+  body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; color: #1e293b; margin: 2.5cm; }
+  h1 { font-size: 20pt; color: #e8622a; border-bottom: 2px solid #e8622a; padding-bottom: 6pt; margin-bottom: 16pt; }
+  h2 { font-size: 13pt; color: #1e3a5f; margin-top: 20pt; margin-bottom: 6pt; }
+  h3 { font-size: 11pt; color: #e8622a; margin-top: 14pt; margin-bottom: 4pt; }
+  p  { margin: 4pt 0; line-height: 1.5; }
+  pre {
+    font-family: Courier New, monospace;
+    font-size: 9pt;
+    background: #f8fafc;
+    border: 1pt solid #cbd5e1;
+    border-left: 4pt solid #e8622a;
+    padding: 10pt 14pt;
+    line-height: 1.6;
+    white-space: pre;
+  }
+  table { border-collapse: collapse; width: 100%; margin: 10pt 0; }
+  th { background: #e8622a; color: #fff; font-weight: bold; padding: 6pt 10pt; text-align: left; font-size: 10pt; }
+  td { border: 1pt solid #cbd5e1; padding: 5pt 10pt; font-size: 10pt; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  .badge { display: inline-block; padding: 2pt 7pt; border-radius: 4pt; font-size: 9pt; font-weight: bold; }
+  .badge-ok  { background: #dcfce7; color: #166534; }
+  .badge-warn{ background: #fef9c3; color: #854d0e; }
+  .note { background: #fff7ed; border-left: 4pt solid #fb923c; padding: 8pt 12pt; margin: 10pt 0; font-size: 10pt; }
+  .footer { margin-top: 40pt; font-size: 9pt; color: #94a3b8; border-top: 1pt solid #e2e8f0; padding-top: 8pt; }
+</style>
+</head>
+<body>
+
+<h1>Flujo de Alta de Usuarios — TodasMisCosas.com</h1>
+
+<p><b>Documento:</b> flujo-alta-usuarios.doc &nbsp;|&nbsp; <b>Fecha:</b> Mayo 2026 &nbsp;|&nbsp; <b>Versión:</b> 1.0</p>
+
+<h2>1. Diagrama General</h2>
+
+<pre>
+┌─────────────────────────────────────────────────────────────┐
+│                   FORMULARIO DE REGISTRO                    │
+│   Nombre · Email · Teléfono (opcional) · Contraseña        │
+│   Tipo: [ 📦 Quiero almacenar ]  o  [ 🏠 Ofrezco espacio ] │
+└─────────────────────────┬───────────────────────────────────┘
+                          │  "Crear cuenta"
+                          ▼
+              ┌───────────────────────┐
+              │   signUp en Supabase  │
+              │   (email + password)  │
+              └──────────┬────────────┘
+                         │
+              ┌──────────▼────────────┐
+              │  Supabase devuelve    │
+              │  sesión con token?    │
+              └──────────┬────────────┘
+               SÍ        │       NO
+    ┌───────────────────┘        └──────────────────────┐
+    ▼                                                   ▼
+Sincroniza usuario en MySQL                  Supabase pide confirmar
+  /api/usuarios/sync                         email → flujo detenido
+  (nombre, email, tipo, tel, supabase_id)    (caso edge, no activo)
+    │
+    ▼
+POST /api/auth/solicitar-otp
+    │
+    ├── 📧 Email con código de 6 dígitos  (siempre)
+    ├── 📱 SMS con código                 (si tiene teléfono)
+    └── 💬 WhatsApp con código            (si tiene teléfono)
+    │
+    ▼
+┌─────────────────────────────────┐
+│   Pantalla OTP                  │
+│   Ingresar código de 6 dígitos  │
+│   Válido: 10 minutos            │
+│   Intentos máximos: 3           │
+└───────────────┬─────────────────┘
+                │  código correcto
+                ▼
+POST /api/auth/verificar-otp
+    │
+    ├── Registra sesión en auth_sesiones (IP + dispositivo)
+    └── Notificación de acceso exitoso (email + SMS + WhatsApp)
+                │
+                ▼
+        ┌───────────────┐
+        │   Usuario     │
+        │  autenticado  │
+        └───────┬───────┘
+                │
+    ┌───────────┴────────────┐
+    ▼                        ▼
+demandante               oferente
+Busca y reserva          Publica y gestiona
+espacios                 espacios
+</pre>
+
+<h2>2. Pasos Detallados</h2>
+
+<table>
+  <tr>
+    <th>#</th>
+    <th>Paso</th>
+    <th>Responsable</th>
+    <th>Detalle</th>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>Completa el formulario</td>
+    <td>Usuario</td>
+    <td>Nombre, email, contraseña (mín. 6 car.), teléfono opcional. Elige tipo: demandante u oferente.</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>Alta en Supabase</td>
+    <td>Frontend → Supabase</td>
+    <td>signUp con email + password. Supabase genera JWT y supabase_id.</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>Sincronización en MySQL</td>
+    <td>Backend — /api/usuarios/sync</td>
+    <td>Se crea el registro en la tabla <b>usuarios</b> con supabase_id, nombre, email, tipo y tel.</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>Solicitud de OTP</td>
+    <td>Backend — /api/auth/solicitar-otp</td>
+    <td>Genera código de 6 dígitos. Lo envía por email (siempre), SMS y WhatsApp (si hay teléfono). Válido 10 minutos.</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td>Verificación OTP</td>
+    <td>Usuario → Backend</td>
+    <td>El usuario ingresa el código. Máximo 3 intentos. Si falla los 3, debe solicitar uno nuevo.</td>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td>Sesión registrada</td>
+    <td>Backend — auth_sesiones</td>
+    <td>Se guarda IP, dispositivo y fecha en la tabla auth_sesiones.</td>
+  </tr>
+  <tr>
+    <td>7</td>
+    <td>Notificación de acceso</td>
+    <td>Backend</td>
+    <td>Se envía confirmación de acceso exitoso al usuario por email, SMS y WhatsApp.</td>
+  </tr>
+  <tr>
+    <td>8</td>
+    <td>Usuario autenticado</td>
+    <td>Frontend</td>
+    <td>El usuario queda logueado y accede a la app según su tipo (demandante u oferente).</td>
+  </tr>
+</table>
+
+<h2>3. Roles de Usuario</h2>
+
+<table>
+  <tr>
+    <th>Rol</th>
+    <th>Cómo se asigna</th>
+    <th>Permisos principales</th>
+  </tr>
+  <tr>
+    <td>demandante</td>
+    <td>Selección en formulario (opción por defecto)</td>
+    <td>Buscar espacios, reservar, pagar, chatear con oferentes</td>
+  </tr>
+  <tr>
+    <td>oferente</td>
+    <td>Selección en formulario</td>
+    <td>Publicar espacios, gestionar reservas, recibir pagos</td>
+  </tr>
+  <tr>
+    <td>admin</td>
+    <td>Email listado en variable de entorno ADMIN_EMAILS</td>
+    <td>Acceso total: panel admin, gestión de usuarios y espacios</td>
+  </tr>
+</table>
+
+<h2>4. Seguridad</h2>
+
+<div class="note">
+  <b>Doble factor obligatorio:</b> El OTP es requerido en cada registro <i>y</i> en cada login. No es opcional.
+</div>
+
+<table>
+  <tr>
+    <th>Mecanismo</th>
+    <th>Descripción</th>
+  </tr>
+  <tr>
+    <td>Supabase Auth</td>
+    <td>Maneja autenticación, genera JWT firmado con clave secreta</td>
+  </tr>
+  <tr>
+    <td>OTP 6 dígitos</td>
+    <td>Código de un solo uso, expira en 10 minutos, máximo 3 intentos</td>
+  </tr>
+  <tr>
+    <td>Multicanal</td>
+    <td>Email siempre + SMS y WhatsApp si el usuario tiene teléfono</td>
+  </tr>
+  <tr>
+    <td>Registro de sesiones</td>
+    <td>Cada acceso exitoso queda registrado con IP, dispositivo y fecha</td>
+  </tr>
+  <tr>
+    <td>Bloqueo de cuenta</td>
+    <td>Admin puede bloquear usuarios desde el panel; el sistema informa el motivo al intentar ingresar</td>
+  </tr>
+  <tr>
+    <td>Auto-sync MySQL</td>
+    <td>requireAuth sincroniza automáticamente si el usuario existe en Supabase pero no en MySQL</td>
+  </tr>
+</table>
+
+<h2>5. Variables de Entorno Relevantes</h2>
+
+<table>
+  <tr>
+    <th>Variable</th>
+    <th>Uso</th>
+  </tr>
+  <tr>
+    <td>SUPABASE_URL</td>
+    <td>URL del proyecto Supabase</td>
+  </tr>
+  <tr>
+    <td>SUPABASE_SERVICE_KEY</td>
+    <td>Clave de servicio para verificar JWTs desde el backend</td>
+  </tr>
+  <tr>
+    <td>ADMIN_EMAILS</td>
+    <td>Lista separada por comas de emails que se promueven a admin automáticamente</td>
+  </tr>
+  <tr>
+    <td>SMTP_USER / SMTP_PASS</td>
+    <td>Credenciales para envío de emails (Nodemailer + Hostinger)</td>
+  </tr>
+  <tr>
+    <td>TWILIO_*</td>
+    <td>Credenciales para envío de SMS y WhatsApp</td>
+  </tr>
+</table>
+
+<div class="footer">
+  TodasMisCosas.com — Documentación técnica interna &nbsp;|&nbsp; Generado Mayo 2026
+</div>
+
+</body>
+</html>

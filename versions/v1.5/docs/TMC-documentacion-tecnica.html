@@ -199,7 +199,7 @@
   <div class="cover-sub">Documentación Técnica Completa</div>
   <div style="font-size:10pt;color:#888;margin-bottom:28px;">Marketplace de almacenamiento urbano — Buenos Aires</div>
   <div class="cover-meta">
-    <b>Versión:</b> 1.5 — Mayo 2026<br>
+    <b>Versión:</b> 1.4 — Mayo 2026<br>
     <b>URL producción:</b> https://todasmiscosas.com<br>
     <b>Repositorio:</b> github.com/alex2580/prueba (privado)<br>
     <b>Autores:</b> Alejandro Laporte · Guillermo Domínguez<br>
@@ -278,7 +278,7 @@
   <tr><td>Hosting</td><td>VPS Hostinger</td><td>—</td><td>Servidor de producción</td></tr>
   <tr><td>CI/CD</td><td>GitHub Actions</td><td>—</td><td>Deploy automático al hacer push a master</td></tr>
   <tr><td>Proceso</td><td>PM2</td><td>—</td><td>Keep-alive del backend Node.js</td></tr>
-  <tr><td>Upload de fotos</td><td>Multer</td><td>1.4.5</td><td>Subida de imágenes (límite 20MB/archivo); compresión canvas en cliente antes de enviar</td></tr>
+  <tr><td>Upload de fotos</td><td>Multer + Sharp</td><td>1.4.5 / 0.33.4</td><td>Subida y optimización de imágenes</td></tr>
   <tr><td>Cron jobs</td><td>node-cron</td><td>4.2.1</td><td>Recordatorios de vencimiento e inactividad</td></tr>
   <tr><td>Fechas</td><td>date-fns</td><td>3.6.0</td><td>Cálculo y formateo de fechas</td></tr>
   <tr><td>QR</td><td>qrcode</td><td>1.5.4</td><td>Generación de QR para pago MP</td></tr>
@@ -415,7 +415,7 @@ Browser
 ├── middleware/
 │   ├── auth.js             ← Verifica JWT Supabase, adjunta req.user
 │   ├── errorHandler.js     ← Handler global de errores Express
-│   └── upload.js           ← Multer: subida de fotos (max 10 archivos, 20MB c/u)
+│   └── upload.js           ← Multer: subida de fotos (max 10 archivos, 5MB c/u)
 │
 ├── routes/
 │   ├── auth.js             ← POST /solicitar-otp, POST /verificar-otp
@@ -450,8 +450,8 @@ Browser
 <h2>Frontend — <code>frontend/</code></h2>
 <pre>frontend/
 ├── app/                          ← Next.js App Router (cada carpeta = ruta URL)
-│   ├── layout.tsx                ← Layout raíz: metadata, fuentes, viewport meta
-│   ├── globals.css               ← Variables CSS, breakpoints responsive, bottom-sheet
+│   ├── layout.tsx                ← Layout raíz: metadata, fuentes, estilos globales
+│   ├── globals.css               ← Variables CSS, clases utilitarias, componentes base
 │   ├── page.tsx                  ← / — Home: mapa + lista + filtros
 │   ├── admin/page.tsx            ← /admin — Dashboard administrador
 │   ├── espacio/[id]/
@@ -460,13 +460,10 @@ Browser
 │   ├── reserva/[id]/
 │   │   ├── page.tsx              ← /reserva/:id — Detalle de reserva
 │   │   ├── checkout/page.tsx     ← /reserva/:id/checkout — Checkout alternativo
-│   │   └── confirmacion/page.tsx ← /reserva/:id/confirmacion — Resultado del pago (polling)
+│   │   └── confirmacion/page.tsx ← /reserva/:id/confirmacion — Resultado del pago
 │   ├── panel/page.tsx            ← /panel — Panel de usuario (oferente o demandante)
-│   ├── publicar/page.tsx         ← /publicar — Formulario 4 pasos + compresión de fotos
-│   ├── reset-password/page.tsx   ← /reset-password — Restablecimiento de contraseña
-│   ├── legales/page.tsx          ← /legales — Términos y condiciones (10 secciones)
-│   ├── servicios/page.tsx        ← /servicios — Servicios adicionales disponibles
-│   └── como-funciona/page.tsx    ← /como-funciona — Los 5 pasos de la plataforma
+│   ├── publicar/page.tsx         ← /publicar — Formulario de 4 pasos para publicar espacio
+│   └── como-funciona/page.tsx   ← /como-funciona — Página explicativa
 │
 ├── components/
 │   ├── auth/
@@ -475,30 +472,11 @@ Browser
 │   │   └── OTPStep.tsx           ← 6 inputs OTP + reenvío + countdown
 │   ├── ui/
 │   │   ├── Button.tsx            ← Botón con variantes (primary, secondary, ghost)
-│   │   ├── Modal.tsx             ← Modal genérico con soporte bottom-sheet en mobile
-│   │   ├── Badge.tsx             ← Badge de estado de reserva
-│   │   ├── SiteLogo.tsx          ← Logo naranja "TodasMisCosas"
-│   │   ├── SiteHeader.tsx        ← Header responsive: nav desktop + hamburger mobile
-│   │   ├── Rating.tsx            ← Componente de estrellas (RatingDisplay)
-│   │   └── Avatar.tsx            ← Avatar circular de usuario
-│   ├── panel/
-│   │   ├── PanelOferente.tsx     ← Panel de gestión de espacios y reservas recibidas
-│   │   ├── PanelDemandante.tsx   ← Panel de reservas realizadas
-│   │   └── StatsOferente.tsx     ← Tarjetas KPI: ingresos netos (-15%), reservas, rating
-│   ├── reservas/
-│   │   ├── EstadoReserva.tsx     ← Tarjeta de reserva con timeline, PIN, acciones
-│   │   └── TimelineReserva.tsx   ← Barra de progreso de 3 pasos de la reserva
-│   ├── publicar/
-│   │   ├── CalendarioDisponibilidad.tsx ← Selector de disponibilidad por días/meses
-│   │   └── SeguridadChecklist.tsx       ← Checklist de 8 ítems de seguridad del espacio
-│   ├── espacios/
-│   │   ├── CardEspacio.tsx       ← Tarjeta de espacio en el grid de resultados
-│   │   ├── DetalleEspacio.tsx    ← Vista detallada de un espacio individual
-│   │   ├── FiltrosEspacios.tsx   ← Panel de filtros (tipo, precio, período, seguridad)
-│   │   └── GaleriaFotos.tsx      ← Galería de fotos con fallback automático
+│   │   ├── Modal.tsx             ← Modal genérico
+│   │   ├── Badge.tsx             ← Badge de estado
+│   │   └── SiteLogo.tsx          ← Logo naranja "TodasMisCosas"
 │   └── mapa/
-│       ├── MapaEspacios.tsx      ← Google Maps: marcadores adaptativos, tooltips, hover
-│       └── MarkerEspacio.tsx     ← Tarjeta popup al hacer click en un marcador
+│       └── MapaEspacios.tsx      ← Google Maps con marcadores de espacios
 │
 ├── hooks/
 │   ├── useAuth.ts                ← Estado global de autenticación + OTP + logout
@@ -1059,11 +1037,10 @@ POST /api/reservas (crear)
 <table>
   <tr><th>Método</th><th>Ruta</th><th>Auth</th><th>Descripción</th></tr>
   <tr><td>GET</td><td>/usuarios/me</td><td>✅</td><td>Perfil del usuario logueado</td></tr>
-  <tr><td>PUT</td><td>/usuarios/me</td><td>✅</td><td>Actualizar nombre, dirección, email, DNI (sin OTP)</td></tr>
-  <tr><td>POST</td><td>/usuarios/me/avatar</td><td>✅</td><td>Subir foto de perfil (multipart/form-data, campo: avatar)</td></tr>
+  <tr><td>PUT</td><td>/usuarios/me</td><td>✅</td><td>Actualizar nombre, dirección (sin OTP)</td></tr>
   <tr><td>POST</td><td>/usuarios/me/solicitar-cambio-tel</td><td>✅</td><td>Solicitar OTP para cambiar teléfono</td></tr>
   <tr><td>POST</td><td>/usuarios/me/verificar-cambio-tel</td><td>✅</td><td>Verificar OTP y guardar nuevo teléfono</td></tr>
-  <tr><td>POST</td><td>/usuarios/sync</td><td>—</td><td>Sincronizar usuario de Supabase a MySQL (post-registro, dispara sendBienvenida)</td></tr>
+  <tr><td>POST</td><td>/usuarios/sync</td><td>—</td><td>Sincronizar usuario de Supabase a MySQL (post-registro)</td></tr>
 </table>
 
 <h2>Pagos</h2>
@@ -1074,31 +1051,16 @@ POST /api/reservas (crear)
   <tr><td>GET</td><td>/pagos/estado/:reservaId</td><td>✅</td><td>Consultar estado de pago de una reserva</td></tr>
 </table>
 
-<h2>Reviews</h2>
+<h2>Otros</h2>
 <table>
   <tr><th>Método</th><th>Ruta</th><th>Auth</th><th>Descripción</th></tr>
-  <tr><td>GET</td><td>/reviews</td><td>—</td><td>Reviews de un espacio (query: espacio_id)</td></tr>
-  <tr><td>POST</td><td>/reviews</td><td>✅</td><td>Crear review (solo reservas pagadas o finalizadas)</td></tr>
-</table>
-
-<h2>Chat</h2>
-<table>
-  <tr><th>Método</th><th>Ruta</th><th>Auth</th><th>Descripción</th></tr>
+  <tr><td>GET</td><td>/reviews</td><td>—</td><td>Reviews de un espacio</td></tr>
+  <tr><td>POST</td><td>/reviews</td><td>✅</td><td>Crear review</td></tr>
   <tr><td>GET</td><td>/chat/conversaciones</td><td>✅</td><td>Mis conversaciones</td></tr>
   <tr><td>POST</td><td>/chat/conversaciones</td><td>✅</td><td>Iniciar conversación</td></tr>
   <tr><td>GET</td><td>/chat/conversaciones/:id/mensajes</td><td>✅</td><td>Mensajes de una conversación</td></tr>
   <tr><td>POST</td><td>/chat/conversaciones/:id/mensajes</td><td>✅</td><td>Enviar mensaje</td></tr>
-</table>
-
-<h2>Admin</h2>
-<table>
-  <tr><th>Método</th><th>Ruta</th><th>Auth</th><th>Descripción</th></tr>
-  <tr><td>GET</td><td>/admin/usuarios</td><td>✅ Admin</td><td>Listado de usuarios con filtros y conteos</td></tr>
-  <tr><td>PATCH</td><td>/admin/usuarios/:id/bloquear</td><td>✅ Admin</td><td>Bloquear cuenta de usuario (con motivo)</td></tr>
-  <tr><td>PATCH</td><td>/admin/usuarios/:id/desbloquear</td><td>✅ Admin</td><td>Desbloquear cuenta de usuario</td></tr>
-  <tr><td>GET</td><td>/admin/operaciones</td><td>✅ Admin</td><td>Resumen financiero + lista de reservas con desglose GMV/comisión/neto</td></tr>
-  <tr><td>GET</td><td>/admin/solicitudes-puntuacion</td><td>✅ Admin</td><td>Solicitudes de mejora de puntuación pendientes</td></tr>
-  <tr><td>PATCH</td><td>/admin/solicitudes-puntuacion/:id/estado</td><td>✅ Admin</td><td>Actualizar estado de solicitud (contactado / resuelto)</td></tr>
+  <tr><td>GET</td><td>/admin/*</td><td>✅ Admin</td><td>Dashboard, usuarios, estadísticas</td></tr>
   <tr><td>GET</td><td>/health</td><td>—</td><td>Health check del backend</td></tr>
 </table>
 
@@ -1244,22 +1206,10 @@ curl http://localhost:4000/health</pre>
   Baja automática por inactividad · Reactivación de publicaciones · Cambio de teléfono con OTP ·
   Deploy automático · Emails de notificación · Emails de aceptación de T&amp;C · Panel admin con operaciones y solicitudes de puntuación ·
   Filtro por período (día/mes) · Marcadores sin precio en estado inicial · Ingresos netos en panel oferente ·
-  Comisión 15% aplicada correctamente en todos los indicadores · Diseño responsive mobile/tablet ·
-  Compresión de fotos en cliente · Botón Cancelar en flujo de reserva · Precios día/mes en panel
+  Comisión actualizada al 15% en legales
 </div>
 
-<h2>Cambios recientes (v1.5 — 26 mayo 2026)</h2>
-<table>
-  <tr><th>Área</th><th>Cambio</th><th>Commit</th></tr>
-  <tr><td>Responsive</td><td>SiteHeader reescrito con hamburger menu; viewport meta; breakpoints tablet ≤1024px / mobile ≤640px; bottom-sheet modals</td><td><code>8a9d8de</code></td></tr>
-  <tr><td>Upload fotos</td><td>Compresión canvas cliente (máx 1600px, JPEG 82%) antes del upload; límite multer 5MB → 20MB; fix error 413</td><td><code>57909e5</code></td></tr>
-  <tr><td>UI</td><td>Emoji 🏠 eliminado de toda la interfaz (11 archivos); reemplazado por 📦 / 🔑 / 👤 / 🛡️ / 📋 según contexto</td><td><code>76c65cb</code></td></tr>
-  <tr><td>Flujo de reserva</td><td>Paso 3 (pago): botón "Cancelar" que vuelve a la página del espacio (además de "← Volver")</td><td><code>0ba0048</code></td></tr>
-  <tr><td>Panel usuario</td><td>Espacios en panel muestran precio/día y precio/mes simultáneamente (solo los > 0)</td><td><code>0ba0048</code></td></tr>
-  <tr><td>Comisión</td><td><code>StatsOferente</code> corregido para aplicar <code>netoOferente()</code> (-15%); columna "Obtuviste" en panel también corregida</td><td><code>38d3958</code></td></tr>
-</table>
-
-<h2>Historial de versiones anteriores</h2>
+<h2>Cambios recientes (v1.4 — 25 mayo 2026)</h2>
 <table>
   <tr><th>Área</th><th>Cambio</th><th>Commit</th></tr>
   <tr><td>Email</td><td><code>sendNuevaReserva</code> incluye email y teléfono del demandante con links mailto:/tel:</td><td><code>4c85ff2</code></td></tr>
@@ -1269,6 +1219,8 @@ curl http://localhost:4000/health</pre>
   <tr><td>Panel admin</td><td>Tab "💼 Operaciones" con 9 KPI y lista financiera; tab "🛡️ Puntuación" con solicitudes</td><td><code>711c80b</code>, <code>fcbaab7</code></td></tr>
   <tr><td>Admin emails</td><td>Variable <code>ADMIN_EMAILS</code> como destino para emails internos (contacto + puntuación)</td><td><code>c48718e</code></td></tr>
   <tr><td>Legales</td><td>Comisión actualizada 10% → 15% en legal.html; sección Seguros oculta</td><td><code>a5b2844</code></td></tr>
+  <tr><td>Servicios</td><td>Sección "Tipos de almacenamiento" oculta; precios de referencia eliminados de servicios adicionales</td><td><code>a5b2844</code></td></tr>
+  <tr><td>Cómo funciona</td><td>5to paso "🔐 Acceso verificado con PIN"; título actualizado a "Los 5 pasos"</td><td><code>a5b2844</code></td></tr>
   <tr><td>Emails T&amp;C</td><td><code>sendBienvenida</code> con bloque legal; nueva <code>sendAceptacionOperacion</code>; ambas disparadas automáticamente</td><td><code>5945f77</code></td></tr>
 </table>
 
@@ -1276,7 +1228,7 @@ curl http://localhost:4000/health</pre>
      FOOTER
 ══════════════════════════════════════════════════════════════ -->
 <div class="footer">
-  TodasMisCosas.com — Documentación técnica interna · Versión 1.5 · Mayo 2026<br>
+  TodasMisCosas.com — Documentación técnica interna · Versión 1.4 · Mayo 2026<br>
   Alejandro Laporte · Guillermo Domínguez<br>
   <em>Este documento es confidencial. No distribuir.</em>
 </div>

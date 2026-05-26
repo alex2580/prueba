@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TMC — Preview de Emails</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #0a0e1a; color: #e2e8f0; padding: 2rem; }
+    h1 { text-align: center; color: #e8622a; font-size: 1.4rem; margin-bottom: .4rem; }
+    .subtitle { text-align: center; color: #64748b; font-size: .85rem; margin-bottom: 2.5rem; }
+    .tabs { display: flex; gap: .5rem; flex-wrap: wrap; justify-content: center; margin-bottom: 2rem; }
+    .tab { background: #1e293b; border: 1.5px solid #334155; border-radius: 8px; padding: .45rem 1rem;
+           font-size: .78rem; cursor: pointer; color: #94a3b8; transition: all .15s; }
+    .tab:hover { border-color: #e8622a; color: #e8622a; }
+    .tab.active { background: rgba(232,98,42,.15); border-color: #e8622a; color: #e8622a; font-weight: 700; }
+    .email-wrap { display: none; }
+    .email-wrap.active { display: block; }
+
+    /* ── Email base styles (same as emailService.js) ── */
+    .tmc-wrap { max-width: 540px; margin: 0 auto; padding: 0 16px; }
+    .tmc-card { background: #1e293b; border-radius: 18px; padding: 32px; border: 1px solid #334155; }
+    .tmc-logo { font-size: 28px; font-weight: 800; color: #e8622a; margin-bottom: 8px; }
+    .tmc-logo span { color: #82c4ff; }
+    .tmc-card h2 { color: #f1f5f9; margin: 0 0 16px; font-size: 20px; }
+    .tmc-card p { color: #94a3b8; line-height: 1.7; margin: 8px 0; }
+    .highlight { color: #e8622a; font-weight: 700; }
+    .btn { display: inline-block; background: linear-gradient(135deg, #e8622a, #d4521a);
+           color: #fff; padding: 12px 28px; border-radius: 12px; text-decoration: none;
+           font-weight: 700; margin: 20px 0; }
+    .info-row { background: #0f172a; border-radius: 10px; padding: 12px 16px; margin: 8px 0;
+                display: flex; justify-content: space-between; align-items: flex-start; }
+    .info-label { color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+    .info-val { color: #e2e8f0; font-weight: 600; text-align: right; }
+    .tmc-footer { text-align: center; color: #475569; font-size: 12px; margin-top: 24px; }
+    .warn { background: #1a1200; border: 1px solid #d97706; border-radius: 8px;
+            padding: 10px 14px; color: #fcd34d; font-size: 13px; margin: 12px 0; }
+  </style>
+</head>
+<body>
+
+<h1>📦 TodasMisCosas — Preview de Emails</h1>
+<p class="subtitle">Seleccioná un email para previsualizarlo. Estos son los emails reales que reciben los usuarios.</p>
+
+<div class="tabs">
+  <div class="tab active" onclick="show(0)">1 · Reserva recibida (Demandante)</div>
+  <div class="tab" onclick="show(1)">2 · Nueva solicitud (Oferente)</div>
+  <div class="tab" onclick="show(2)">3 · Reserva aprobada (Demandante)</div>
+  <div class="tab" onclick="show(3)">4 · Pago confirmado (Demandante)</div>
+  <div class="tab" onclick="show(4)">5 · Pago recibido (Oferente)</div>
+  <div class="tab" onclick="show(5)">6 · Cancelación (Ambos)</div>
+  <div class="tab" onclick="show(6)">7 · Estadía finalizada (Demandante)</div>
+  <div class="tab" onclick="show(7)">8a · Vence en 5 días (Cron)</div>
+  <div class="tab" onclick="show(8)">8b · Vence en 2 días (Cron)</div>
+  <div class="tab" onclick="show(9)">8c · Vence mañana (Cron)</div>
+  <div class="tab" onclick="show(10)">8d · Vence hoy (Cron)</div>
+  <div class="tab" onclick="show(11)">9 · Extensión confirmada (Demandante)</div>
+</div>
+
+
+<!-- EMAIL 1: Reserva recibida → Demandante -->
+<div class="email-wrap active">
+  <div class="tmc-wrap">
+    <div class="tmc-card">
+      <div class="tmc-logo">📦 TodasMisCosas<span>.com</span></div>
+      <h2>✅ Reserva confirmada</h2>
+      <p>Hola <span class="highlight">Guillermo Domínguez</span>, tu reserva fue registrada correctamente.</p>
+      <div class="info-row"><div><div class="info-label">Espacio</div><div class="info-val">Cochera techada Palermo</div></div></div>
+      <div class="info-row"><div><div class="info-label">Fechas</div><div class="info-val">2026-06-01 → 2026-06-30</div></div></div>
+      <div class="info-row"><div><div class="info-label">Total</div><div class="info-val">$18.500</div></div></div>
+      <p>Ahora podés completar el pago desde la plataforma.</p>
+      <a class="btn" href="#">Ir al checkout →</a>
+    </div>
+    <div class="tmc-footer">
+      Este email fue enviado desde TodasMisCosas.com — Buenos Aires<br>
+      Si no realizaste esta acción, ignorá este mensaje.
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL 2: Nueva solicitud → Oferente -->
+<div class="email-wrap">
+  <div class="tmc-wrap">
+    <div class="tmc-card">
+      <div class="tmc-logo">📦 TodasMisCosas<span>.com</span></div>
+      <h2>🔔 Nueva solicitud de reserva</h2>
+      <p>Hola <span class="highlight">Alejandro Laporte</span>, recibiste una solicitud para tu espacio.</p>
+      <div class="info-row"><div><div class="info-label">Espacio</div><div class="info-val">Cochera techada Palermo</div></div></div>
+      <div class="info-row"><div><div class="info-label">Solicitante</div><div class="info-val">Guillermo Domínguez</div></div></div>
+      <div class="info-row"><div><div class="info-label">Teléfono</div><div class="info-val">+54 9 11 5555-1234</div></div></div>
+      <div class="info-row"><div><div class="info-label">Fechas</div><div class="info-val">2026-06-01 → 2026-06-30</div></div></div>
+      <div class="info-row"><div><div class="info-label">Monto estimado</div><div class="info-val">$18.500</div></div></div>
+      <p>Ingresá a tu panel para confirmar o rechazar la solicitud.</p>
+      <a class="btn" href="#">Ver solicitud en mi panel →</a>
+    </div>
+    <div class="tmc-footer">
+      Este email fue enviado desde TodasMisCosas.com — Buenos Aires<br>
+      Si no realizaste esta acción, ignorá este mensaje.
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL 3: Reserva aprobada → Demandante -->
+<div class="email-wrap">
+  <div class="tmc-wrap">
+    <div class="tmc-card">
+      <div class="tmc-logo">📦 TodasMisCosas<span>.com</span></div>
+      <h2>✅ ¡Tu reserva fue aprobada!</h2>
+      <p>Hola <span class="highlight">Guillermo Domínguez</span>, el oferente confirmó tu solicitud.</p>
+      <div class="info-row"><div><div class="info-label">Espacio</div><div class="info-val">Cochera techada Palermo</div></div></div>
+      <div class="info-row"><div><div class="info-label">Fechas</div><div class="info-val">2026-06-01 → 2026-06-30</div></div></div>
+      <div class="info-row"><div><div class="info-label">Total a pagar</div><div class="info-val">$18.500</div></div></div>
+      <p>Ya podés completar el pago para asegurar tu espacio.</p>
+      <a class="btn" href="#">Ir al pago →</a>
+    </div>
+    <div class="tmc-footer">
+      Este email fue enviado desde TodasMisCosas.com — Buenos Aires<br>
+      Si no realizaste esta acción, ignorá este mensaje.
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL 4: Pago confirmado → Demandante -->
+<div class="email-wrap">
+  <div class="tmc-wrap">
+    <div class="tmc-card">
+      <div class="tmc-logo">📦 TodasMisCosas<span>.com</span></div>
+      <h2>💳 Pago aprobado</h2>
+      <p>Hola <span class="highlight">Guillermo Domínguez</span>, tu pago fue acreditado exitosamente.</p>
+      <div class="info-row"><div><div class="info-label">Espacio</div><div class="info-val">Cochera techada Palermo</div></div></div>
+      <div class="info-row"><div><div class="info-label">Monto</div><div class="info-val">$18.500</div></div></div>
+      <div class="info-row"><div><div class="info-label">N° de pago</div><div class="info-val">MP-1234567890</div></div></div>
+      <a class="btn" href="#">Ver mis reservas →</a>
+    </div>
+    <div class="tmc-footer">
+      Este email fue enviado desde TodasMisCosas.com — Buenos Aires<br>
+      Si no realizaste esta acción, ignorá este mensaje.
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL 5: Pago recibido → Oferente -->
+<div class="email-wrap">
+  <div class="tmc-wrap">
+    <div class="tmc-card">
+      <div class="tmc-logo">📦 TodasMisCosas<span>.com</span></div>
+      <h2>💰 Pago recibido</h2>
+      <p>Hola <span class="highlight">Alejandro Laporte</span>, se acreditó el pago de tu espacio.</p>
+      <div class="info-row"><div><div class="info-label">Espacio</div><div class="info-val">Cochera techada Palermo</div></div></div>
+      <div class="info-row"><div><div class="info-label">Inquilino</div><div class="info-val">Guillermo Domínguez</div></div></div>
+      <div class="info-row"><div><div class="info-label">Monto acreditado</div><div class="info-val">$18.500</div></div></div>
+      <p>La reserva está activa. Coordiná el acceso con tu inquilino.</p>
+      <a class="btn" href="#">Ver en mi panel →</a>
+    </div>
+    <div class="tmc-footer">
+      Este email fue enviado desde TodasMisCosas.com — Buenos Aires<br>
+      Si no realizaste esta acción, ignorá este mensaje.
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL 6: Cancelación → Ambos -->
+<div class="email-wrap">
+  <div class="tmc-wrap">
+    <div class="tmc-card">
+      <div class="tmc-logo">📦 TodasMisCosas<span>.com</span></div>
+      <h2>❌ Reserva cancelada</h2>
+      <p>Hola <span class="highlight">Alejandro Laporte</span>, la siguiente reserva fue cancelada.</p>
+      <div class="info-row"><div><div class="info-label">Espacio</div><div class="info-val">Cochera techada Palermo</div></div></div>
+      <div class="info-row"><div><div class="info-label">Fechas</div><div class="info-val">2026-06-01 → 2026-06-30</div></div></div>
+      <div class="info-row"><div><div class="info-label">Cancelada por</div><div class="info-val">el demandante</div></div></div>
+      <p>Si tenés alguna consulta, contactanos por la plataforma.</p>
+      <a class="btn" href="#">Ir a mi panel →</a>
+    </div>
+    <div class="tmc-footer">
+      Este email fue enviado desde TodasMisCosas.com — Buenos Aires<br>
+      Si no realizaste esta acción, ignorá este mensaje.
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL 7: Estadía finalizada → Demandante -->
+<div class="email-wrap">
+  <div class="tmc-wrap">
+    <div class="tmc-card">
+      <div class="tmc-logo">📦 TodasMisCosas<span>.com</span></div>
+      <h2>🏁 Tu estadía finalizó</h2>
+      <p>Hola <span class="highlight">Guillermo Domínguez</span>, tu reserva en <strong style="color:#e2e8f0">Cochera techada Palermo</strong> fue marcada como finalizada.</p>
+      <p>¿Qué tal fue tu experiencia? Tu opinión ayuda a otros usuarios a elegir el mejor espacio.</p>
+      <a class="btn" href="#">Dejar una reseña →</a>
+      <p style="font-size:12px;color:#64748b;margin-top:16px">¡Gracias por usar TodasMisCosas!</p>
+    </div>
+    <div class="tmc-footer">
+      Este email fue enviado desde TodasMisCosas.com — Buenos Aires<br>
+      Si no realizaste esta acción, ignorá este mensaje.
+    </div>
+  </div>
+</div>
+
+
+<!-- EMAIL 8a: Vence en 5 días → Demandante (Cron) -->
+<div class="email-wrap">
+  <div class="tmc-wrap">
+    <div class="tmc-card">
+      <div class="tmc-logo">📦 TodasMisCosas<span>.com</span></div>
+      <h2>⏰ Tu reserva vence en 5 días</h2>
+      <p>Hola <span class="highlight">Guillermo Domínguez</span>, quedan <strong style="color:#e2e8f0">5 días</strong> para que expire tu reserva.</p>
+      <div class="info-row"><div><div class="info-label">Espacio</div><div class="info-val">Cochera techada Palermo</div></div></div>
+      <div class="info-row"><div><div class="info-label">Vencimiento</div><div class="info-val">2026-06-30</div></div></div>
+      <p>¿Querés seguir usando el espacio? Extendé tu reserva antes de que venza pagando por anticipado.</p>
+      <a class="btn" href="#">📅 Extender mi reserva →</a>
+      <p style="font-size:12px;color:#64748b;margin-top:12px">Si no extendés, tu reserva finalizará automáticamente al vencer el plazo.</p>
+    </div>
+    <div class="tmc-footer">
+      Este email fue enviado desde TodasMisCosas.com — Buenos Aires<br>
+      Si no realizaste esta acción, ignorá este mensaje.
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL 8b: Vence en 2 días → Demandante (Cron) -->
+<div class="email-wrap">
+  <div class="tmc-wrap">
+    <div class="tmc-card">
+      <div class="tmc-logo">📦 TodasMisCosas<span>.com</span></div>
+      <h2>⚡ Tu reserva vence en 2 días</h2>
+      <p>Hola <span class="highlight">Guillermo Domínguez</span>, quedan solo <strong style="color:#e2e8f0">2 días</strong> para que expire tu reserva.</p>
+      <div class="info-row"><div><div class="info-label">Espacio</div><div class="info-val">Cochera techada Palermo</div></div></div>
+      <div class="info-row"><div><div class="info-label">Vencimiento</div><div class="info-val">2026-06-30</div></div></div>
+      <p>¿Querés seguir usando el espacio? Extendé tu reserva antes de que venza pagando por anticipado.</p>
+      <a class="btn" href="#">📅 Extender mi reserva →</a>
+      <p style="font-size:12px;color:#64748b;margin-top:12px">Si no extendés, tu reserva finalizará automáticamente al vencer el plazo.</p>
+    </div>
+    <div class="tmc-footer">
+      Este email fue enviado desde TodasMisCosas.com — Buenos Aires<br>
+      Si no realizaste esta acción, ignorá este mensaje.
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL 8c: Vence mañana → Demandante (Cron) -->
+<div class="email-wrap">
+  <div class="tmc-wrap">
+    <div class="tmc-card">
+      <div class="tmc-logo">📦 TodasMisCosas<span>.com</span></div>
+      <h2>🚨 Tu reserva vence mañana</h2>
+      <p>Hola <span class="highlight">Guillermo Domínguez</span>, <strong style="color:#e2e8f0">¡mañana vence</strong> tu reserva!</p>
+      <div class="info-row"><div><div class="info-label">Espacio</div><div class="info-val">Cochera techada Palermo</div></div></div>
+      <div class="info-row"><div><div class="info-label">Vencimiento</div><div class="info-val">2026-06-30</div></div></div>
+      <p>¿Querés seguir usando el espacio? Extendé tu reserva antes de que venza pagando por anticipado.</p>
+      <a class="btn" href="#">📅 Extender mi reserva →</a>
+      <p style="font-size:12px;color:#64748b;margin-top:12px">Si no extendés, tu reserva finalizará automáticamente al vencer el plazo.</p>
+    </div>
+    <div class="tmc-footer">
+      Este email fue enviado desde TodasMisCosas.com — Buenos Aires<br>
+      Si no realizaste esta acción, ignorá este mensaje.
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL 8d: Vence hoy → Demandante (Cron) -->
+<div class="email-wrap">
+  <div class="tmc-wrap">
+    <div class="tmc-card">
+      <div class="tmc-logo">📦 TodasMisCosas<span>.com</span></div>
+      <h2>🔔 Hoy finaliza tu reserva</h2>
+      <p>Hola <span class="highlight">Guillermo Domínguez</span>, <strong style="color:#e2e8f0">¡hoy es el último día</strong> de tu reserva.</p>
+      <div class="info-row"><div><div class="info-label">Espacio</div><div class="info-val">Cochera techada Palermo</div></div></div>
+      <div class="info-row"><div><div class="info-label">Vencimiento</div><div class="info-val">2026-06-30</div></div></div>
+      <p>¿Querés seguir usando el espacio? Extendé tu reserva antes de que venza pagando por anticipado.</p>
+      <a class="btn" href="#">📅 Extender mi reserva →</a>
+      <p style="font-size:12px;color:#64748b;margin-top:12px">Si no extendés, tu reserva finalizará automáticamente al vencer el plazo.</p>
+    </div>
+    <div class="tmc-footer">
+      Este email fue enviado desde TodasMisCosas.com — Buenos Aires<br>
+      Si no realizaste esta acción, ignorá este mensaje.
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL 9: Extensión confirmada → Demandante -->
+<div class="email-wrap">
+  <div class="tmc-wrap">
+    <div class="tmc-card">
+      <div class="tmc-logo">📦 TodasMisCosas<span>.com</span></div>
+      <h2>✅ Extensión de reserva confirmada</h2>
+      <p>Hola <span class="highlight">Guillermo Domínguez</span>, tu extensión fue procesada exitosamente.</p>
+      <div class="info-row"><div><div class="info-label">Espacio</div><div class="info-val">Cochera techada Palermo</div></div></div>
+      <div class="info-row"><div><div class="info-label">Vencimiento anterior</div><div class="info-val">2026-06-30</div></div></div>
+      <div class="info-row"><div><div class="info-label">Nuevo vencimiento</div><div class="info-val">2026-07-31</div></div></div>
+      <div class="info-row"><div><div class="info-label">Monto pagado</div><div class="info-val">$18.500</div></div></div>
+      <p>¡Seguís usando tu espacio sin interrupciones!</p>
+      <a class="btn" href="#">Ver mis reservas →</a>
+    </div>
+    <div class="tmc-footer">
+      Este email fue enviado desde TodasMisCosas.com — Buenos Aires<br>
+      Si no realizaste esta acción, ignorá este mensaje.
+    </div>
+  </div>
+</div>
+
+<script>
+  function show(index) {
+    document.querySelectorAll('.email-wrap').forEach((el, i) => {
+      el.classList.toggle('active', i === index);
+    });
+    document.querySelectorAll('.tab').forEach((el, i) => {
+      el.classList.toggle('active', i === index);
+    });
+  }
+</script>
+</body>
+</html>

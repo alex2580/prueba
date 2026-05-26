@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TodasMisCosas — Documentación Técnica Completa</title>
+<style>
+  :root {
+    --bg: #0a0e1a; --surface: #111827; --surface2: #1a2235; --border: #1e2d45;
+    --orange: #e8622a; --mint: #10b981; --blue: #3b82f6; --amber: #f59e0b;
+    --red: #ef4444; --text: #e2e8f0; --text2: #94a3b8; --text3: #64748b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; font-size: 14px; }
+  .page { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem; }
+
+  h1 { font-size: 2.2rem; font-weight: 900; color: var(--orange); margin-bottom: .4rem; }
+  h2 { font-size: 1.35rem; font-weight: 800; color: var(--orange); margin: 2.5rem 0 1rem; padding-bottom: .4rem; border-bottom: 2px solid var(--orange); }
+  h3 { font-size: 1.05rem; font-weight: 700; color: var(--mint); margin: 1.6rem 0 .6rem; }
+  h4 { font-size: .9rem; font-weight: 700; color: var(--amber); margin: 1.2rem 0 .4rem; }
+  p  { color: var(--text2); margin-bottom: .75rem; }
+
+  .cover { text-align: center; padding: 3rem 0 2.5rem; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
+  .cover .subtitle { font-size: 1rem; color: var(--text3); margin-top: .4rem; }
+  .cover .meta { display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; flex-wrap: wrap; }
+  .cover .meta span { background: var(--surface2); border: 1px solid var(--border); border-radius: 999px; padding: .3rem .9rem; font-size: .78rem; color: var(--text2); }
+
+  table { width: 100%; border-collapse: collapse; margin: .75rem 0 1.2rem; font-size: .83rem; }
+  th { background: var(--surface2); color: var(--orange); font-weight: 700; text-align: left; padding: .55rem .8rem; border: 1px solid var(--border); }
+  td { padding: .45rem .8rem; border: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+  tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+
+  code { font-family: 'Courier New', monospace; font-size: .82em; background: var(--surface2); color: var(--mint); padding: .1em .35em; border-radius: 3px; }
+  pre  { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.2rem; overflow-x: auto; margin: .75rem 0 1.2rem; }
+  pre code { background: none; padding: 0; font-size: .82rem; color: #93c5fd; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: .75rem 0; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin: .75rem 0; }
+  .box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.2rem; }
+  .box h4 { margin-top: 0; }
+  .box ul { padding-left: 1.2rem; color: var(--text2); }
+  .box ul li { margin-bottom: .25rem; font-size: .83rem; }
+
+  .tag { display: inline-block; border-radius: 999px; padding: .15rem .6rem; font-size: .7rem; font-weight: 700; margin-right: .3rem; }
+  .tag-green  { background: rgba(16,185,129,.15); color: var(--mint); }
+  .tag-orange { background: rgba(232,98,42,.15);  color: var(--orange); }
+  .tag-blue   { background: rgba(59,130,246,.15); color: var(--blue); }
+  .tag-red    { background: rgba(239,68,68,.15);  color: var(--red); }
+
+  .flow { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; margin: .6rem 0; }
+  .flow-step { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: .3rem .7rem; font-size: .78rem; color: var(--text2); }
+  .flow-arrow { color: var(--orange); font-weight: 700; }
+
+  .alert { background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.3); border-radius: 6px; padding: .7rem 1rem; margin: .6rem 0; color: var(--amber); font-size: .83rem; }
+
+  .method { display: inline-block; font-weight: 800; font-size: .72rem; padding: .15rem .5rem; border-radius: 3px; margin-right: .4rem; font-family: monospace; }
+  .GET    { background: rgba(16,185,129,.2);  color: var(--mint); }
+  .POST   { background: rgba(59,130,246,.2);  color: var(--blue); }
+  .PUT    { background: rgba(245,158,11,.2);  color: var(--amber); }
+  .PATCH  { background: rgba(168,85,247,.2);  color: #c084fc; }
+  .DELETE { background: rgba(239,68,68,.2);   color: var(--red); }
+
+  .endpoint { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: .5rem .9rem; margin: .3rem 0; font-family: monospace; font-size: .82rem; color: var(--text); }
+  .endpoint .desc { font-family: sans-serif; font-size: .78rem; color: var(--text3); margin-top: .1rem; }
+
+  .toc { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; margin-bottom: 2.5rem; }
+  .toc h3 { margin-top: 0; color: var(--orange); }
+  .toc ol { padding-left: 1.4rem; }
+  .toc li { margin: .3rem 0; }
+  .toc a { color: var(--blue); text-decoration: none; font-size: .88rem; }
+  .toc a:hover { color: var(--orange); }
+
+  .arch-diagram { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 0; align-items: center; margin: 1rem 0; }
+  .arch-box { background: var(--surface2); border: 2px solid var(--border); border-radius: 10px; padding: 1rem; text-align: center; }
+  .arch-box.primary { border-color: var(--orange); }
+  .arch-box .icon { font-size: 2rem; display: block; margin-bottom: .4rem; }
+  .arch-box .label { font-weight: 800; font-size: .88rem; color: var(--text); }
+  .arch-box .sub { font-size: .72rem; color: var(--text3); margin-top: .2rem; }
+  .arch-arrow { text-align: center; color: var(--orange); font-size: 1.5rem; padding: 0 .5rem; }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+  @media (max-width: 700px) { .grid2, .grid3, .arch-diagram { grid-template-columns: 1fr; } .arch-arrow { transform: rotate(90deg); } }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- COVER -->
+<div class="cover">
+  <div style="font-size:3rem;margin-bottom:.5rem;">📦</div>
+  <h1>TodasMisCosas.com</h1>
+  <div class="subtitle">Documentación Técnica Completa — Arquitectura, Interfaces, Programas y Base de Datos</div>
+  <div class="meta">
+    <span>📅 Versión: Mayo 2026</span>
+    <span>🌐 Producción: todasmiscosas.com</span>
+    <span>🔒 Repositorio: github.com/alex2580/prueba</span>
+    <span>👥 Equipo: Alejandro Laporte · Guillermo Domínguez</span>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <h3>📋 Índice de Contenidos</h3>
+  <ol>
+    <li><a href="#resumen">Resumen Ejecutivo</a></li>
+    <li><a href="#stack">Stack Tecnológico</a></li>
+    <li><a href="#arquitectura">Arquitectura General</a></li>
+    <li><a href="#infraestructura">Infraestructura y Deploy</a></li>
+    <li><a href="#bd">Base de Datos — Esquema Completo</a></li>
+    <li><a href="#backend">Backend — Estructura y Endpoints</a></li>
+    <li><a href="#frontend">Frontend — Páginas y Componentes</a></li>
+    <li><a href="#auth">Autenticación y Seguridad</a></li>
+    <li><a href="#pagos">Sistema de Pagos (MercadoPago)</a></li>
+    <li><a href="#emails">Sistema de Emails y Notificaciones</a></li>
+    <li><a href="#chat">Chat en Tiempo Real (Socket.IO)</a></li>
+    <li><a href="#jobs">Cron Jobs Automáticos</a></li>
+    <li><a href="#flujos">Flujos Principales</a></li>
+    <li><a href="#variables">Variables de Entorno</a></li>
+    <li><a href="#apis-externas">APIs y Servicios Externos</a></li>
+    <li><a href="#backup">Backup y Recuperación</a></li>
+  </ol>
+</div>
+
+<!-- 1. RESUMEN -->
+<h2 id="resumen">1. Resumen Ejecutivo</h2>
+<p><strong>TodasMisCosas.com</strong> es un marketplace de almacenamiento urbano en Buenos Aires que conecta <em>oferentes</em> (dueños de cocheras, depósitos, galpones, bauleras) con <em>demandantes</em> (personas o empresas que necesitan espacio de almacenamiento).</p>
+
+<div class="grid3">
+  <div class="box">
+    <h4>🎯 Propósito</h4>
+    <ul>
+      <li>Marketplace B2B/B2C de almacenamiento</li>
+      <li>Cobertura: CABA + GBA</li>
+      <li>Reservas por día o por mes</li>
+      <li>Pagos online vía MercadoPago</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h4>👤 Tipos de usuario</h4>
+    <ul>
+      <li><strong>Oferente:</strong> publica espacios</li>
+      <li><strong>Demandante:</strong> reserva espacios</li>
+      <li><strong>Admin:</strong> gestión y moderación</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h4>🔑 Funcionalidades core</h4>
+    <ul>
+      <li>Mapa interactivo con precios</li>
+      <li>Reserva + pago integrado</li>
+      <li>2FA / OTP por email</li>
+      <li>Chat en tiempo real</li>
+      <li>Reseñas y calificaciones</li>
+    </ul>
+  </div>
+</div>
+
+<!-- 2. STACK -->
+<h2 id="stack">2. Stack Tecnológico</h2>
+<table>
+  <tr><th>Capa</th><th>Tecnología</th><th>Versión</th><th>Rol</th></tr>
+  <tr><td>Frontend</td><td>Next.js + React + TypeScript</td><td>14.2.5 / React 18</td><td>Interfaz web, SSR/CSR, App Router</td></tr>
+  <tr><td>Backend</td><td>Node.js + Express</td><td>Express 4.19</td><td>API REST + Socket.IO WebSocket</td></tr>
+  <tr><td>Base de datos</td><td>MySQL</td><td>InnoDB, utf8mb4</td><td>Datos persistentes en VPS Hostinger</td></tr>
+  <tr><td>Autenticación</td><td>Supabase Auth</td><td>SDK 2.44</td><td>Gestión de sesiones y JWT</td></tr>
+  <tr><td>Pagos</td><td>MercadoPago Checkout Pro</td><td>SDK 2.0.15</td><td>Preferencias, webhooks, QR</td></tr>
+  <tr><td>Email</td><td>Nodemailer + Resend SMTP</td><td>6.9.14</td><td>Transaccionales (reservas, OTP, alertas)</td></tr>
+  <tr><td>SMS / WhatsApp</td><td>Twilio</td><td>SDK 6.0.2</td><td>OTP y notificaciones 2FA</td></tr>
+  <tr><td>Mapas</td><td>Google Maps JS API</td><td>weekly</td><td>Mapa interactivo + markers + geocoding</td></tr>
+  <tr><td>WebSockets</td><td>Socket.IO</td><td>4.7.5</td><td>Chat en tiempo real, typing indicators</td></tr>
+  <tr><td>Subida de archivos</td><td>Multer + Sharp</td><td>1.4.5 / 0.33</td><td>Fotos de espacios y avatares</td></tr>
+  <tr><td>Proceso</td><td>PM2</td><td>—</td><td>Gestor de procesos Node en VPS</td></tr>
+  <tr><td>Servidor web</td><td>Nginx</td><td>—</td><td>Reverse proxy, SSL, rutas estáticas</td></tr>
+  <tr><td>Hosting</td><td>VPS Hostinger</td><td>—</td><td>Servidor de producción en Argentina</td></tr>
+  <tr><td>CI/CD</td><td>GitHub Actions</td><td>—</td><td>Deploy automático en cada push a master</td></tr>
+</table>
+
+<!-- 3. ARQUITECTURA -->
+<h2 id="arquitectura">3. Arquitectura General</h2>
+
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin:.75rem 0;">
+  <div class="arch-diagram">
+    <div class="arch-box">
+      <span class="icon">🌐</span>
+      <div class="label">Browser / Móvil</div>
+      <div class="sub">React + Next.js<br>todasmiscosas.com</div>
+    </div>
+    <div class="arch-arrow">⟷</div>
+    <div class="arch-box primary">
+      <span class="icon">⚡</span>
+      <div class="label">Nginx</div>
+      <div class="sub">SSL + Reverse Proxy<br>VPS Hostinger</div>
+    </div>
+    <div class="arch-arrow">⟷</div>
+    <div class="arch-box">
+      <span class="icon">🖥️</span>
+      <div class="label">Node.js + Express</div>
+      <div class="sub">API REST + Socket.IO<br>PM2 • Puerto 4000</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-top:1rem;">
+    <div class="arch-box" style="text-align:center;padding:.75rem;">
+      <span style="font-size:1.5rem;">🗄️</span>
+      <div class="label" style="font-size:.8rem;">MySQL</div>
+      <div class="sub">u713501758_<br>todasmiscosas</div>
+    </div>
+    <div class="arch-box" style="text-align:center;padding:.75rem;">
+      <span style="font-size:1.5rem;">🔐</span>
+      <div class="label" style="font-size:.8rem;">Supabase Auth</div>
+      <div class="sub">JWT Sessions<br>OAuth ready</div>
+    </div>
+    <div class="arch-box" style="text-align:center;padding:.75rem;">
+      <span style="font-size:1.5rem;">💳</span>
+      <div class="label" style="font-size:.8rem;">MercadoPago</div>
+      <div class="sub">Checkout Pro<br>Webhooks</div>
+    </div>
+    <div class="arch-box" style="text-align:center;padding:.75rem;">
+      <span style="font-size:1.5rem;">📧</span>
+      <div class="label" style="font-size:.8rem;">Resend + Twilio</div>
+      <div class="sub">Email + SMS<br>WhatsApp</div>
+    </div>
+  </div>
+</div>
+
+<h3>Separación de responsabilidades</h3>
+<table>
+  <tr><th>Capa</th><th>Responsabilidad</th><th>Puerto/URL</th></tr>
+  <tr><td>Nginx</td><td>SSL termination, proxy <code>/api</code> → Node, proxy <code>/socket.io</code> → Node, sirve Next.js static export</td><td>443 (HTTPS) / 80</td></tr>
+  <tr><td>Next.js (frontend)</td><td>Renderizado SSR/CSR, rutas de página, componentes React, hooks de estado</td><td>3000 (dev) / static en prod</td></tr>
+  <tr><td>Express (backend)</td><td>API REST, validaciones, lógica de negocio, acceso a DB, servicios externos</td><td>4000</td></tr>
+  <tr><td>MySQL</td><td>Persistencia de todos los datos de negocio</td><td>3306 local</td></tr>
+  <tr><td>Supabase</td><td>Solo autenticación (signup, login, JWT). No almacena datos de negocio.</td><td>cloud.supabase.com</td></tr>
+</table>
+
+<!-- 4. INFRAESTRUCTURA -->
+<h2 id="infraestructura">4. Infraestructura y Deploy</h2>
+
+<h3>Pipeline CI/CD</h3>
+<div class="flow">
+  <div class="flow-step">git push origin master</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">GitHub Actions trigger</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">SSH al VPS</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">git fetch + reset --hard origin/master</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">bash deploy.sh</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">pm2 reload all</div>
+</div>
+
+<h3>deploy.sh — pasos del script</h3>
+<pre><code>1. cd backend  → npm install --omit=dev
+2. cd frontend → npm install + npm run build  (compilación Next.js)
+3. pm2 reload all --update-env + pm2 save</code></pre>
+
+<h3>Configuración Nginx (resumen)</h3>
+<pre><code>server {
+  listen 443 ssl;
+  server_name todasmiscosas.com;
+
+  location /api      { proxy_pass http://localhost:4000; }
+  location /socket.io { proxy_pass http://localhost:4000; ws upgrade; }
+  location /uploads  { proxy_pass http://localhost:4000; }
+  location /         { # Next.js static export o proxy al puerto 3000
+  }
+}</code></pre>
+
+<h3>Estructura de directorios en VPS</h3>
+<pre><code>/var/www/todasmiscosas/
+├── backend/
+│   ├── src/
+│   ├── uploads/        ← fotos de espacios y avatares (persistente, fuera de git)
+│   └── .env            ← variables de producción (no en git)
+├── frontend/
+│   ├── .next/          ← build de Next.js
+│   └── .env.local      ← NEXT_PUBLIC vars (no en git, generadas en build)
+├── deploy.sh
+└── .github/workflows/deploy.yml</code></pre>
+
+<!-- 5. BASE DE DATOS -->
+<h2 id="bd">5. Base de Datos — Esquema Completo</h2>
+<p>Motor: <strong>MySQL InnoDB</strong> · Charset: <strong>utf8mb4</strong> · Timezone pool: <code>-03:00</code> · DB: <code>u713501758_todasmiscosas</code></p>
+
+<h3>Diagrama de tablas</h3>
+<table>
+  <tr><th>Tabla</th><th>Filas clave</th><th>Relaciones</th></tr>
+  <tr><td><code>usuarios</code></td><td>id, supabase_id, nombre, email, tel, tipo, avatar_url, activo, bloqueado_motivo, bloqueado_en, bloqueado_por, dni, direccion, lat, lng, ultima_actividad_perfil</td><td>FK de todas las tablas</td></tr>
+  <tr><td><code>espacios</code></td><td>id, nombre, direccion, barrio, m2, tipo, precio_dia, precio_mes, moneda, categoria, descripcion, disponibilidad (JSON), seguridad (JSON), oferente_id, lat, lng, disponible, rating, reviews_count, reservas_mes, badge, activo, inactiva_auto, ultima_actividad</td><td>→ usuarios (oferente_id)</td></tr>
+  <tr><td><code>espacio_fotos</code></td><td>id, espacio_id, url, orden</td><td>→ espacios</td></tr>
+  <tr><td><code>reservas</code></td><td>id, espacio_id, usuario_id, fecha_desde, fecha_hasta, precio_total, estado, mp_preference_id, mp_payment_id, mp_status, notas, pin_acceso, recordatorio_5d/2d/1d/0d</td><td>→ espacios, → usuarios</td></tr>
+  <tr><td><code>reserva_extensiones</code></td><td>id, reserva_id, nueva_fecha_hasta, precio, mp_preference_id, mp_payment_id, mp_status, estado</td><td>→ reservas</td></tr>
+  <tr><td><code>servicios_adicionales</code></td><td>id, reserva_id, tipo, precio, estado</td><td>→ reservas</td></tr>
+  <tr><td><code>reviews</code></td><td>id, espacio_id, autor_id, rating (1-5), texto, util_count</td><td>→ espacios, → usuarios</td></tr>
+  <tr><td><code>conversaciones</code></td><td>id, espacio_id, demandante_id, oferente_id, ultimo_msg, ultimo_msg_at</td><td>→ espacios, → usuarios (x2)</td></tr>
+  <tr><td><code>mensajes</code></td><td>id, conversacion_id, autor_id, texto, leido</td><td>→ conversaciones, → usuarios</td></tr>
+  <tr><td><code>auth_otp</code></td><td>id, usuario_id, codigo, tipo (login|cambio_tel), tel_nuevo, expires_at, usado, intentos</td><td>→ usuarios</td></tr>
+  <tr><td><code>auth_sesiones</code></td><td>id, usuario_id, ip, user_agent</td><td>→ usuarios</td></tr>
+</table>
+
+<h3>Estados de reserva</h3>
+<div class="flow">
+  <div class="flow-step"><code>pendiente</code> — creada sin pago</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step"><code>confirmada</code> — oferente aprobó</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step"><code>pagada</code> — webhook MP</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step"><code>finalizada</code> — uso completado</div>
+</div>
+<div class="flow">
+  <div class="flow-step">cualquier estado</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step"><code>cancelada</code></div>
+</div>
+
+<h3>Columnas agregadas por migraciones (no están en schema.sql base)</h3>
+<table>
+  <tr><th>Tabla</th><th>Columna</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td>usuarios</td><td>bloqueado_motivo</td><td>TEXT</td><td>Motivo de suspensión por admin</td></tr>
+  <tr><td>usuarios</td><td>bloqueado_en</td><td>DATETIME</td><td>Timestamp del bloqueo</td></tr>
+  <tr><td>usuarios</td><td>bloqueado_por</td><td>VARCHAR(36)</td><td>ID del admin que bloqueó</td></tr>
+  <tr><td>usuarios</td><td>dni</td><td>VARCHAR(20)</td><td>Documento de identidad (opcional)</td></tr>
+  <tr><td>usuarios</td><td>direccion, lat, lng</td><td>TEXT / DECIMAL</td><td>Dirección con coordenadas del perfil</td></tr>
+  <tr><td>espacios</td><td>moneda</td><td>VARCHAR(5)</td><td>Código ISO de moneda (ARS, USD, etc.)</td></tr>
+  <tr><td>espacios</td><td>categoria</td><td>VARCHAR(50)</td><td>Categoría del espacio</td></tr>
+  <tr><td>espacios</td><td>disponibilidad</td><td>TEXT (JSON)</td><td>Días habilitados + horarios</td></tr>
+  <tr><td>espacios</td><td>seguridad</td><td>TEXT (JSON)</td><td>Checklist de seguridad</td></tr>
+  <tr><td>espacios</td><td>ultima_actividad</td><td>DATETIME</td><td>Última edición (para cron inactividad)</td></tr>
+  <tr><td>espacios</td><td>inactiva_auto</td><td>TINYINT(1)</td><td>1 = pausada por cron (90 días)</td></tr>
+  <tr><td>reservas</td><td>pin_acceso</td><td>CHAR(4)</td><td>PIN de 4 dígitos para coordinación de acceso</td></tr>
+  <tr><td>reservas</td><td>recordatorio_5d/2d/1d/0d</td><td>TINYINT(1)</td><td>Flags de emails de recordatorio enviados</td></tr>
+</table>
+
+<!-- 6. BACKEND -->
+<h2 id="backend">6. Backend — Estructura y Endpoints</h2>
+
+<h3>Estructura de archivos</h3>
+<pre><code>backend/src/
+├── app.js                    ← Express app (middleware, rutas, crons)
+├── server.js                 ← HTTP + Socket.IO server, puerto 4000
+├── controllers/
+│   ├── adminController.js    ← gestión de usuarios para admin
+│   ├── authController.js     ← OTP login/verificación
+│   ├── chatController.js     ← conversaciones y mensajes
+│   ├── espaciosController.js ← CRUD espacios, fotos, fechas ocupadas
+│   ├── pagosController.js    ← preferencias MP, webhook, estado
+│   ├── reservasController.js ← CRUD reservas, extensiones
+│   ├── reviewsController.js  ← reviews de espacios
+│   └── usuariosController.js ← perfil, avatar, cambio de tel
+├── db/
+│   ├── connection.js         ← pool MySQL2 + helpers query/queryOne/transaction
+│   ├── schema.sql            ← DDL base (tablas + seeds)
+│   ├── migrate.js            ← corre todas las migraciones en orden
+│   └── add-*.js              ← migraciones idempotentes (ALTER TABLE IF NOT EXISTS)
+├── jobs/
+│   ├── inactividad.js        ← cron 08:00 AR: pausa espacios sin actividad 90d
+│   └── recordatorios.js      ← cron 09:00 AR: emails aviso vencimiento reserva
+├── middleware/
+│   ├── auth.js               ← requireAuth, requireOferente, requireAdmin, optionalAuth
+│   ├── errorHandler.js       ← catch-all de errores Express
+│   └── upload.js             ← multer: fotos espacios (/uploads/espacios/) y avatares (/uploads/avatars/)
+├── routes/
+│   ├── admin.js, auth.js, chat.js, email.js
+│   ├── espacios.js, pagos.js, reservas.js
+│   ├── reviews.js, usuarios.js
+└── services/
+    ├── emailService.js       ← 16+ funciones de email transaccional
+    ├── mercadopagoService.js ← crearPreferencia, crearPreferenciaExtension
+    ├── supabaseService.js    ← cliente Supabase Admin
+    └── twilioService.js      ← sendSMS, sendWhatsApp (normalización E.164 AR)</code></pre>
+
+<h3>API REST — Todos los Endpoints</h3>
+
+<h4>Autenticación <code>/api/auth</code></h4>
+<div class="endpoint"><span class="method POST">POST</span>/api/auth/solicitar-otp<div class="desc">Genera y envía código OTP de 6 dígitos por email (y SMS/WA si Twilio activo) • Body: { email, password }</div></div>
+<div class="endpoint"><span class="method POST">POST</span>/api/auth/verificar-otp<div class="desc">Verifica código, registra sesión, devuelve usuario • Body: { usuario_id, codigo }</div></div>
+
+<h4>Usuarios <code>/api/usuarios</code></h4>
+<div class="endpoint"><span class="method GET">GET</span>/api/usuarios/me<div class="desc">Perfil del usuario autenticado</div></div>
+<div class="endpoint"><span class="method PUT">PUT</span>/api/usuarios/me<div class="desc">Actualizar nombre, dirección, DNI, email</div></div>
+<div class="endpoint"><span class="method POST">POST</span>/api/usuarios/me/avatar<div class="desc">Subir foto de perfil (multipart/form-data, campo: avatar)</div></div>
+<div class="endpoint"><span class="method POST">POST</span>/api/usuarios/me/solicitar-cambio-tel<div class="desc">Genera OTP para verificar nuevo teléfono • Body: { tel_nuevo }</div></div>
+<div class="endpoint"><span class="method POST">POST</span>/api/usuarios/me/verificar-cambio-tel<div class="desc">Verifica OTP y actualiza teléfono • Body: { codigo }</div></div>
+<div class="endpoint"><span class="method POST">POST</span>/api/usuarios/sync<div class="desc">Sincroniza usuario de Supabase con MySQL (post-registro)</div></div>
+<div class="endpoint"><span class="method GET">GET</span>/api/usuarios<div class="desc">Listado de todos los usuarios — solo admin</div></div>
+<div class="endpoint"><span class="method GET">GET</span>/api/usuarios/:id<div class="desc">Perfil público de un usuario</div></div>
+<div class="endpoint"><span class="method PATCH">PATCH</span>/api/usuarios/:id/tipo<div class="desc">Cambiar tipo de usuario — solo admin</div></div>
+
+<h4>Espacios <code>/api/espacios</code></h4>
+<div class="endpoint"><span class="method GET">GET</span>/api/espacios<div class="desc">Listado con filtros opcionales: barrio, tipo, precio_max, precio_min, disponible, q (búsqueda texto)</div></div>
+<div class="endpoint"><span class="method GET">GET</span>/api/espacios/mis-espacios<div class="desc">Espacios del oferente autenticado (incluye inactivos automáticos)</div></div>
+<div class="endpoint"><span class="method GET">GET</span>/api/espacios/:id<div class="desc">Detalle completo con fotos y reviews</div></div>
+<div class="endpoint"><span class="method GET">GET</span>/api/espacios/:id/fechas-ocupadas<div class="desc">Fechas bloqueadas (reservas confirmadas/pagadas) — público, sin auth</div></div>
+<div class="endpoint"><span class="method POST">POST</span>/api/espacios<div class="desc">Crear espacio — solo oferentes</div></div>
+<div class="endpoint"><span class="method PUT">PUT</span>/api/espacios/:id<div class="desc">Actualizar espacio — solo el oferente propietario o admin</div></div>
+<div class="endpoint"><span class="method POST">POST</span>/api/espacios/:id/reactivar<div class="desc">Reactivar espacio pausado por inactividad automática</div></div>
+<div class="endpoint"><span class="method DELETE">DELETE</span>/api/espacios/:id<div class="desc">Baja lógica (activo = FALSE)</div></div>
+<div class="endpoint"><span class="method POST">POST</span>/api/espacios/:id/fotos<div class="desc">Subir hasta 10 fotos (multipart, campo: fotos)</div></div>
+
+<h4>Reservas <code>/api/reservas</code></h4>
+<div class="endpoint"><span class="method GET">GET</span>/api/reservas<div class="desc">Mis reservas (demandante) o todas (admin) — excluye estado=pendiente</div></div>
+<div class="endpoint"><span class="method GET">GET</span>/api/reservas/recibidas<div class="desc">Reservas recibidas en espacios del oferente — excluye estado=pendiente</div></div>
+<div class="endpoint"><span class="method GET">GET</span>/api/reservas/:id<div class="desc">Detalle + servicios adicionales — solo partes involucradas</div></div>
+<div class="endpoint"><span class="method POST">POST</span>/api/reservas<div class="desc">Crear reserva — valida disponibilidad, calcula precio, genera PIN</div></div>
+<div class="endpoint"><span class="method POST">POST</span>/api/reservas/:id/extender<div class="desc">Crear preferencia MP para extender reserva pagada • Body: { nueva_fecha_hasta }</div></div>
+<div class="endpoint"><span class="method PATCH">PATCH</span>/api/reservas/:id/estado<div class="desc">Cambiar estado (pendiente|confirmada|pagada|cancelada|finalizada)</div></div>
+<div class="endpoint"><span class="method DELETE">DELETE</span>/api/reservas/:id<div class="desc">Cancelar reserva — notifica por email a ambas partes</div></div>
+
+<h4>Pagos <code>/api/pagos</code></h4>
+<div class="endpoint"><span class="method POST">POST</span>/api/pagos/preferencia<div class="desc">Crea preferencia MercadoPago para una reserva • Body: { reserva_id }</div></div>
+<div class="endpoint"><span class="method POST">POST</span>/api/pagos/webhook<div class="desc">Webhook de MercadoPago — sin auth, procesa payment.updated</div></div>
+<div class="endpoint"><span class="method GET">GET</span>/api/pagos/estado/:reservaId<div class="desc">Estado de pago de una reserva (para polling desde frontend)</div></div>
+
+<h4>Reviews <code>/api/reviews</code></h4>
+<div class="endpoint"><span class="method GET">GET</span>/api/reviews/espacio/:id<div class="desc">Reviews de un espacio</div></div>
+<div class="endpoint"><span class="method POST">POST</span>/api/reviews<div class="desc">Crear review — solo si tiene reserva pagada/finalizada en ese espacio</div></div>
+<div class="endpoint"><span class="method POST">POST</span>/api/reviews/:id/util<div class="desc">Marcar review como útil (+1 util_count)</div></div>
+
+<h4>Chat <code>/api/chat</code></h4>
+<div class="endpoint"><span class="method GET">GET</span>/api/chat/conversaciones<div class="desc">Conversaciones del usuario autenticado</div></div>
+<div class="endpoint"><span class="method POST">POST</span>/api/chat/conversaciones<div class="desc">Crear o recuperar conversación sobre un espacio</div></div>
+<div class="endpoint"><span class="method GET">GET</span>/api/chat/conversaciones/:id/mensajes<div class="desc">Historial de mensajes de una conversación</div></div>
+<div class="endpoint"><span class="method POST">POST</span>/api/chat/conversaciones/:id/mensajes<div class="desc">Enviar mensaje (también emite por Socket.IO)</div></div>
+
+<h4>Admin <code>/api/admin</code></h4>
+<div class="endpoint"><span class="method GET">GET</span>/api/admin/usuarios<div class="desc">Listado con stats (espacios, reservas) — solo admin</div></div>
+<div class="endpoint"><span class="method PATCH">PATCH</span>/api/admin/usuarios/:id/bloquear<div class="desc">Suspender cuenta con motivo • Body: { motivo }</div></div>
+<div class="endpoint"><span class="method PATCH">PATCH</span>/api/admin/usuarios/:id/desbloquear<div class="desc">Reactivar cuenta suspendida</div></div>
+
+<!-- 7. FRONTEND -->
+<h2 id="frontend">7. Frontend — Páginas y Componentes</h2>
+
+<h3>Páginas (App Router — /app)</h3>
+<table>
+  <tr><th>Ruta</th><th>Archivo</th><th>Descripción</th></tr>
+  <tr><td>/</td><td>app/page.tsx</td><td>Home: mapa interactivo + grid de espacios + filtros + modal auth con OTP</td></tr>
+  <tr><td>/espacio/[id]</td><td>app/espacio/[id]/page.tsx</td><td>Detalle del espacio con galería, reviews, precios, botón reservar</td></tr>
+  <tr><td>/espacio/[id]/reservar</td><td>app/espacio/[id]/reservar/page.tsx</td><td>Flujo de reserva 3 pasos: espacio, fechas, cuenta+pago</td></tr>
+  <tr><td>/reserva/[id]</td><td>app/reserva/[id]/page.tsx</td><td>Detalle de una reserva específica</td></tr>
+  <tr><td>/reserva/[id]/checkout</td><td>app/reserva/[id]/checkout/page.tsx</td><td>Pantalla de pago: botón MP Checkout Pro o QR</td></tr>
+  <tr><td>/reserva/[id]/confirmacion</td><td>app/reserva/[id]/confirmacion/page.tsx</td><td>Resultado del pago con polling automático cada 3s hasta 45s</td></tr>
+  <tr><td>/panel</td><td>app/panel/page.tsx</td><td>Panel unificado: mis reservas, mis espacios, perfil, edición, chat</td></tr>
+  <tr><td>/publicar</td><td>app/publicar/page.tsx</td><td>Formulario de 4 pasos para publicar un espacio</td></tr>
+  <tr><td>/admin</td><td>app/admin/page.tsx</td><td>Panel de administración: espacios, reservas, usuarios, bloqueo</td></tr>
+  <tr><td>/auth/login</td><td>app/auth/login/page.tsx</td><td>Página de login</td></tr>
+  <tr><td>/auth/register</td><td>app/auth/register/page.tsx</td><td>Registro de nuevo usuario</td></tr>
+  <tr><td>/reset-password</td><td>app/reset-password/page.tsx</td><td>Restablecimiento de contraseña (vía link Supabase)</td></tr>
+  <tr><td>/como-funciona</td><td>app/como-funciona/page.tsx</td><td>Página explicativa del servicio</td></tr>
+  <tr><td>/servicios</td><td>app/servicios/page.tsx</td><td>Página de servicios adicionales</td></tr>
+</table>
+
+<h3>Componentes</h3>
+<div class="grid2">
+  <div>
+    <h4>auth/</h4>
+    <table>
+      <tr><th>Componente</th><th>Función</th></tr>
+      <tr><td>LoginForm.tsx</td><td>Form email+password, link "¿Olvidaste tu contraseña?"</td></tr>
+      <tr><td>RegisterForm.tsx</td><td>Registro con tipo oferente/demandante</td></tr>
+      <tr><td>OTPStep.tsx</td><td>6 inputs individuales, paste, auto-avance, timer 10min, reenvío</td></tr>
+    </table>
+
+    <h4>espacios/</h4>
+    <table>
+      <tr><th>Componente</th><th>Función</th></tr>
+      <tr><td>CardEspacio.tsx</td><td>Tarjeta en grid con foto, precio, rating, tipo</td></tr>
+      <tr><td>DetalleEspacio.tsx</td><td>Vista completa: galería, tabs info/reviews, panel de booking</td></tr>
+      <tr><td>FiltrosEspacios.tsx</td><td>Panel hover con filtros: barrio, tipo, precio, disponible</td></tr>
+      <tr><td>GaleriaFotos.tsx</td><td>Galería con miniaturas y foto principal, fallback automático</td></tr>
+      <tr><td>GridEspacios.tsx</td><td>Grid responsive de tarjetas</td></tr>
+    </table>
+
+    <h4>mapa/</h4>
+    <table>
+      <tr><th>Componente</th><th>Función</th></tr>
+      <tr><td>MapaEspacios.tsx</td><td>Google Maps con markers SVG de precio, heatmap, toggle dark/light, tooltip hover</td></tr>
+      <tr><td>MarkerEspacio.tsx</td><td>Tarjeta popup al hacer click en un pin: foto, precio/día+mes, botones</td></tr>
+    </table>
+  </div>
+  <div>
+    <h4>reservas/</h4>
+    <table>
+      <tr><th>Componente</th><th>Función</th></tr>
+      <tr><td>EstadoReserva.tsx</td><td>Tarjeta de reserva: datos, timeline, PIN, botones acción</td></tr>
+      <tr><td>TimelineReserva.tsx</td><td>Barra de progreso 3 pasos: Solicitada→Confirmada→Pagada</td></tr>
+      <tr><td>FormReserva.tsx</td><td>Formulario básico de reserva</td></tr>
+      <tr><td>CheckoutReserva.tsx</td><td>Resumen antes de pago</td></tr>
+    </table>
+
+    <h4>ui/ (componentes genéricos)</h4>
+    <table>
+      <tr><th>Componente</th><th>Función</th></tr>
+      <tr><td>Avatar.tsx</td><td>Avatar circular con iniciales o foto</td></tr>
+      <tr><td>Badge.tsx</td><td>EstadoBadge (reservas), Badge genérico</td></tr>
+      <tr><td>Button.tsx</td><td>Variants: primary/secondary/ghost, sizes, loading spinner</td></tr>
+      <tr><td>Modal.tsx</td><td>Modal accesible con overlay y blur</td></tr>
+      <tr><td>Rating.tsx</td><td>RatingDisplay con estrellas, clamp 0-5</td></tr>
+      <tr><td>SiteLogo.tsx</td><td>Logo + nombre de la marca</td></tr>
+    </table>
+
+    <h4>publicar/</h4>
+    <table>
+      <tr><th>Componente</th><th>Función</th></tr>
+      <tr><td>CalendarioDisponibilidad.tsx</td><td>Selector visual de días disponibles + horarios</td></tr>
+      <tr><td>SeguridadChecklist.tsx</td><td>8 ítems de seguridad con estrellas</td></tr>
+    </table>
+
+    <h4>chat/</h4>
+    <table>
+      <tr><th>Componente</th><th>Función</th></tr>
+      <tr><td>ChatModal.tsx</td><td>Modal de chat con lista de conversaciones</td></tr>
+      <tr><td>ConversacionList.tsx</td><td>Lista de chats con preview del último mensaje</td></tr>
+      <tr><td>MensajesConversacion.tsx</td><td>Ventana de mensajes con typing indicator</td></tr>
+    </table>
+  </div>
+</div>
+
+<h3>Hooks personalizados (/hooks)</h3>
+<table>
+  <tr><th>Hook</th><th>Estado que gestiona</th></tr>
+  <tr><td>useAuth.ts</td><td>user, token, loading, otpPending, otpEmailHint, otpCanales; métodos: login, logout, register, verifyOTP, reenviarOTP. Gestiona race condition Supabase con otpFlowRef.</td></tr>
+  <tr><td>useEspacios.ts</td><td>Lista de espacios, filtros activos, loading, búsqueda</td></tr>
+  <tr><td>useReservas.ts</td><td>misReservas, reservasRecibidas, loading, funciones cancelar/cambiarEstado</td></tr>
+  <tr><td>useChat.ts</td><td>mensajes, enviando, typingNombre; emite/recibe eventos Socket.IO</td></tr>
+</table>
+
+<h3>Librerías utilitarias (/lib)</h3>
+<table>
+  <tr><th>Archivo</th><th>Exports principales</th></tr>
+  <tr><td>api.ts</td><td>espaciosAPI, reservasAPI, usuariosAPI, pagosAPI, reviewsAPI, chatAPI, adminAPI — wrappers de fetch a /api/*</td></tr>
+  <tr><td>supabase.ts</td><td>createClient, signIn, signUp, signOut, resetPasswordForEmail, updatePassword</td></tr>
+  <tr><td>mercadopago.ts</td><td>parseMPReturnParams (extrae status/payment_id de URL de retorno)</td></tr>
+  <tr><td>utils.ts</td><td>formatARS, formatFecha, formatFechaCorta, diasEntre</td></tr>
+  <tr><td>fotosFallback.ts</td><td>getFotoFallback(id), getFotosFallback(id, n) — imágenes deterministicas por ID de espacio</td></tr>
+</table>
+
+<!-- 8. AUTH -->
+<h2 id="auth">8. Autenticación y Seguridad</h2>
+
+<h3>Flujo de login completo (2FA)</h3>
+<div class="flow">
+  <div class="flow-step">Usuario: email + password</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Supabase: signIn() → JWT</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Backend: genera OTP 6 dígitos</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Envía por email (+ SMS/WA si Twilio)</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Usuario ingresa código en OTPStep</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Backend verifica → registra sesión</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">loadUser() → acceso completo</div>
+</div>
+
+<h3>Middleware de auth (backend)</h3>
+<table>
+  <tr><th>Middleware</th><th>Comportamiento</th></tr>
+  <tr><td>requireAuth</td><td>Verifica JWT de Supabase en header Authorization, carga usuario de MySQL, verifica que esté activo y no bloqueado</td></tr>
+  <tr><td>requireOferente</td><td>requireAuth + tipo === 'oferente' o 'admin'</td></tr>
+  <tr><td>requireAdmin</td><td>requireAuth + tipo === 'admin'</td></tr>
+  <tr><td>optionalAuth</td><td>Intenta cargar usuario pero no falla si no hay token</td></tr>
+</table>
+
+<h3>Tabla auth_otp</h3>
+<ul style="padding-left:1.4rem;color:var(--text2);margin-bottom:1rem;">
+  <li>Expiración: <strong>10 minutos</strong> — calculada con <code>DATE_ADD(NOW(), INTERVAL 10 MINUTE)</code> (no con Date JS, para evitar bug de timezone)</li>
+  <li>Máximo <strong>3 intentos</strong> por código; si se supera, el OTP se invalida</li>
+  <li>Tipo <code>cambio_tel</code>: guarda el nuevo número en <code>tel_nuevo</code> hasta verificar</li>
+</ul>
+
+<!-- 9. PAGOS -->
+<h2 id="pagos">9. Sistema de Pagos (MercadoPago)</h2>
+
+<h3>Flujo de pago de una reserva</h3>
+<div class="flow">
+  <div class="flow-step">POST /api/pagos/preferencia</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Crea preferencia en MP API</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Frontend redirige a init_point</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Usuario paga en MercadoPago</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">MP llama webhook /api/pagos/webhook</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Backend: reserva → estado='pagada'</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Frontend polling confirma pago</div>
+</div>
+
+<h3>Configuración de la preferencia</h3>
+<pre><code>{
+  items: [{ title: "Reserva - NombreEspacio", quantity: 1, unit_price: precioTotal }],
+  external_reference: reservaId,
+  back_urls: {
+    success: "https://todasmiscosas.com/reserva/{id}/confirmacion?status=success",
+    failure: "https://todasmiscosas.com/reserva/{id}/confirmacion?status=failure",
+    pending: "https://todasmiscosas.com/reserva/{id}/confirmacion?status=pending",
+  },
+  auto_return: "approved",
+  notification_url: "https://todasmiscosas.com/api/pagos/webhook",
+  metadata: { tipo: "reserva", reserva_id: id }
+}</code></pre>
+
+<h3>Webhook</h3>
+<ul style="padding-left:1.4rem;color:var(--text2);">
+  <li>Evento: <code>payment</code> con <code>data.id</code></li>
+  <li>Llama a MP API para obtener el pago completo</li>
+  <li>Si <code>status=approved</code>: actualiza reserva o extensión a <code>pagada</code>, envía emails</li>
+  <li>Diferenciación: <code>metadata.tipo === "extension"</code> → procesa extensión, actualiza <code>fecha_hasta</code>, resetea recordatorios</li>
+  <li><strong>Importante:</strong> no usa <code>express.raw()</code> en la ruta — usa el <code>express.json()</code> global para evitar body vacío</li>
+</ul>
+
+<h3>Polling de confirmación (frontend)</h3>
+<p>La página <code>/reserva/[id]/confirmacion</code> consulta <code>GET /api/pagos/estado/:id</code> cada 3 segundos, máximo 15 veces (45 segundos). En cuanto el estado es <code>pagada</code> o <code>cancelada</code>, el loop se detiene y la UI actualiza.</p>
+
+<!-- 10. EMAILS -->
+<h2 id="emails">10. Sistema de Emails y Notificaciones</h2>
+<p>Proveedor: <strong>Resend</strong> (SMTP) configurado en Nodemailer. Todas las funciones están en <code>backend/src/services/emailService.js</code>.</p>
+
+<table>
+  <tr><th>#</th><th>Función</th><th>Asunto</th><th>Para</th></tr>
+  <tr><td>1</td><td>sendReservaConfirmada</td><td>✅ Reserva confirmada — [Espacio]</td><td>Demandante (al crear reserva)</td></tr>
+  <tr><td>2</td><td>sendNuevaReserva</td><td>🔔 Nueva reserva para tu espacio</td><td>Oferente</td></tr>
+  <tr><td>3</td><td>sendReservaAprobada</td><td>✅ Tu reserva fue aprobada</td><td>Demandante</td></tr>
+  <tr><td>4</td><td>sendPagoConfirmado</td><td>💳 Pago confirmado</td><td>Demandante</td></tr>
+  <tr><td>5</td><td>sendPagoRecibido</td><td>💰 Pago recibido por tu espacio</td><td>Oferente</td></tr>
+  <tr><td>6</td><td>sendReservaCancelada</td><td>❌ Reserva cancelada</td><td>Ambos</td></tr>
+  <tr><td>7</td><td>sendReservaFinalizada</td><td>🏁 Estadía finalizada</td><td>Demandante</td></tr>
+  <tr><td>8a</td><td>sendRecordatorio5Dias</td><td>⏰ Tu reserva vence en 5 días</td><td>Demandante</td></tr>
+  <tr><td>8b</td><td>sendRecordatorio2Dias</td><td>⚡ Tu reserva vence en 2 días</td><td>Demandante</td></tr>
+  <tr><td>8c</td><td>sendRecordatorio1Dia</td><td>🚨 Tu reserva vence mañana</td><td>Demandante</td></tr>
+  <tr><td>8d</td><td>sendRecordatorio0Dias</td><td>🔔 Hoy finaliza tu reserva</td><td>Demandante</td></tr>
+  <tr><td>9</td><td>sendExtensionConfirmada</td><td>✅ Extensión de reserva confirmada</td><td>Demandante</td></tr>
+  <tr><td>10</td><td>sendCuentaBloqueada</td><td>⛔ Tu cuenta fue suspendida</td><td>Usuario bloqueado</td></tr>
+  <tr><td>11</td><td>sendCuentaDesbloqueada</td><td>✅ Tu cuenta fue reactivada</td><td>Usuario desbloqueado</td></tr>
+  <tr><td>12</td><td>sendOTP</td><td>🔐 Tu código de verificación</td><td>Usuario en login</td></tr>
+  <tr><td>13</td><td>sendLoginNotificacion</td><td>🔔 Nuevo acceso a tu cuenta</td><td>Usuario (post-login)</td></tr>
+  <tr><td>14</td><td>sendCambioTelConfirmado</td><td>📱 Teléfono actualizado</td><td>Usuario</td></tr>
+  <tr><td>15</td><td>sendPublicacionDesactivada</td><td>⏸️ Tu publicación fue pausada</td><td>Oferente</td></tr>
+</table>
+
+<!-- 11. CHAT -->
+<h2 id="chat">11. Chat en Tiempo Real (Socket.IO)</h2>
+
+<h3>Eventos Socket.IO</h3>
+<table>
+  <tr><th>Evento</th><th>Dirección</th><th>Payload</th></tr>
+  <tr><td>join</td><td>client → server</td><td>{ conversacionId, token }</td></tr>
+  <tr><td>new_message</td><td>server → client</td><td>{ id, texto, autor_id, created_at }</td></tr>
+  <tr><td>typing</td><td>client → server</td><td>{ conversacionId, nombre }</td></tr>
+  <tr><td>user_typing</td><td>server → client</td><td>{ nombre }</td></tr>
+  <tr><td>stop_typing</td><td>client → server</td><td>{ conversacionId }</td></tr>
+  <tr><td>user_stop_typing</td><td>server → client</td><td>—</td></tr>
+</table>
+
+<p>La sala de Socket.IO se identifica por <code>conversacionId</code>. Cada usuario se une a la sala con su token JWT para verificar autenticidad. Los mensajes enviados vía REST (<code>POST /api/chat/mensajes</code>) también se emiten al socket.</p>
+
+<!-- 12. JOBS -->
+<h2 id="jobs">12. Cron Jobs Automáticos</h2>
+<table>
+  <tr><th>Job</th><th>Horario</th><th>Acción</th></tr>
+  <tr><td>inactividad.js</td><td>08:00 hs AR (todos los días)</td><td>Busca espacios sin actividad >90 días → activo=FALSE, inactiva_auto=1 → email al oferente</td></tr>
+  <tr><td>recordatorios.js</td><td>09:00 hs AR (todos los días)</td><td>Busca reservas pagadas que vencen en 5/2/1/0 días → envía email recordatorio (una vez por flag)</td></tr>
+</table>
+<p>Ambos usan <code>node-cron</code> con timezone <code>America/Argentina/Buenos_Aires</code>. Se inicializan en <code>app.js</code> al levantar el proceso.</p>
+
+<!-- 13. FLUJOS -->
+<h2 id="flujos">13. Flujos Principales</h2>
+
+<h3>Alta de usuario</h3>
+<div class="flow">
+  <div class="flow-step">Register: nombre, email, password, tipo</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Supabase: signUp()</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">POST /api/usuarios/sync</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">OTP por email</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Panel</div>
+</div>
+
+<h3>Publicación de espacio (oferente)</h3>
+<div class="flow">
+  <div class="flow-step">Paso 1: tipo, moneda, m²</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Paso 2: ubicación + mapa</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Paso 3: precios + disponibilidad</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Paso 4: fotos + seguridad</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">POST /api/espacios</div>
+</div>
+
+<h3>Flujo completo de reserva</h3>
+<div class="flow">
+  <div class="flow-step">Buscar en mapa o grid</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Ver detalle espacio</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Seleccionar fechas</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Login + OTP</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">POST /api/reservas → estado=pendiente + PIN</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">POST /api/pagos/preferencia</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">MercadoPago Checkout</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Webhook → estado=pagada</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Confirmación + polling</div>
+</div>
+
+<h3>Lógica de precios en reserva</h3>
+<table>
+  <tr><th>Condición</th><th>Tarifa aplicada</th></tr>
+  <tr><td>días ≥ 28</td><td><code>ceil(días / 30) × precio_mes</code></td></tr>
+  <tr><td>días &lt; 28</td><td><code>días × precio_dia</code></td></tr>
+</table>
+
+<!-- 14. VARIABLES -->
+<h2 id="variables">14. Variables de Entorno</h2>
+
+<h3>Backend (.env)</h3>
+<table>
+  <tr><th>Variable</th><th>Ejemplo / Descripción</th></tr>
+  <tr><td>PORT</td><td>4000</td></tr>
+  <tr><td>NODE_ENV</td><td>production</td></tr>
+  <tr><td>DB_HOST</td><td>localhost</td></tr>
+  <tr><td>DB_USER</td><td>u713501758_tmc</td></tr>
+  <tr><td>DB_PASSWORD</td><td>••••••</td></tr>
+  <tr><td>DB_NAME</td><td>u713501758_todasmiscosas</td></tr>
+  <tr><td>SUPABASE_URL</td><td>https://xxx.supabase.co</td></tr>
+  <tr><td>SUPABASE_SERVICE_ROLE_KEY</td><td>eyJ…</td></tr>
+  <tr><td>MP_ACCESS_TOKEN</td><td>APP_USR-… (token de producción)</td></tr>
+  <tr><td>FRONTEND_URL</td><td>https://todasmiscosas.com</td></tr>
+  <tr><td>API_BASE_URL</td><td>https://todasmiscosas.com</td></tr>
+  <tr><td>UPLOAD_DIR</td><td>/var/www/todasmiscosas/backend/uploads</td></tr>
+  <tr><td>EMAIL_HOST</td><td>smtp.resend.com</td></tr>
+  <tr><td>EMAIL_PORT</td><td>465</td></tr>
+  <tr><td>EMAIL_USER</td><td>resend</td></tr>
+  <tr><td>EMAIL_PASS</td><td>re_…</td></tr>
+  <tr><td>EMAIL_FROM</td><td>"TodasMisCosas" &lt;no-reply@todasmiscosas.com&gt;</td></tr>
+  <tr><td>TWILIO_ACCOUNT_SID</td><td>ACxxx — dejar vacío si no activo</td></tr>
+  <tr><td>TWILIO_AUTH_TOKEN</td><td>••• — dejar vacío si no activo</td></tr>
+  <tr><td>TWILIO_PHONE</td><td>+15551234567 (placeholder si no activo)</td></tr>
+  <tr><td>TWILIO_WHATSAPP_FROM</td><td>whatsapp:+14155238886</td></tr>
+</table>
+
+<h3>Frontend (.env.production)</h3>
+<table>
+  <tr><th>Variable</th><th>Valor</th></tr>
+  <tr><td>NEXT_PUBLIC_API_URL</td><td>https://todasmiscosas.com</td></tr>
+  <tr><td>NEXT_PUBLIC_WS_URL</td><td>https://todasmiscosas.com</td></tr>
+  <tr><td>NEXT_PUBLIC_SUPABASE_URL</td><td>https://xxx.supabase.co</td></tr>
+  <tr><td>NEXT_PUBLIC_SUPABASE_ANON_KEY</td><td>eyJ…</td></tr>
+  <tr><td>NEXT_PUBLIC_GOOGLE_MAPS_KEY</td><td>AIza…</td></tr>
+</table>
+
+<!-- 15. APIs EXTERNAS -->
+<h2 id="apis-externas">15. APIs y Servicios Externos</h2>
+<table>
+  <tr><th>Servicio</th><th>Uso</th><th>Panel de administración</th></tr>
+  <tr><td>Supabase</td><td>Auth: signup, login, JWT, reset password</td><td>app.supabase.com</td></tr>
+  <tr><td>MercadoPago</td><td>Checkout Pro, webhooks de pago, preferencias</td><td>mercadopago.com.ar/developers</td></tr>
+  <tr><td>Resend</td><td>SMTP transaccional para todos los emails</td><td>resend.com/overview</td></tr>
+  <tr><td>Twilio</td><td>SMS y WhatsApp para OTP (opcional)</td><td>console.twilio.com</td></tr>
+  <tr><td>Google Maps JS API</td><td>Mapa interactivo, markers, autocomplete de direcciones</td><td>console.cloud.google.com</td></tr>
+  <tr><td>picsum.photos</td><td>Imágenes fallback para espacios sin fotos (deterministico por ID)</td><td>—</td></tr>
+</table>
+
+<!-- 16. BACKUP -->
+<h2 id="backup">16. Backup y Recuperación</h2>
+
+<h3>Backup del código fuente</h3>
+<p>El repositorio Git está en <strong>github.com/alex2580/prueba</strong> (privado). Cada push a master dispara el deploy automático.</p>
+<p>Backup local comprimido (excluye node_modules y .next):</p>
+<pre><code>tar --exclude='./backend/node_modules' \
+    --exclude='./frontend/node_modules' \
+    --exclude='./frontend/.next' \
+    --exclude='./.git' \
+    -czf TMC_backup_FECHA.tar.gz .</code></pre>
+
+<div class="alert">
+  ⚠️ El directorio <code>/uploads/</code> (fotos de espacios y avatares) NO está en git. Hacer backup de <code>/var/www/todasmiscosas/backend/uploads/</code> por separado via SCP o rsync.
+</div>
+
+<h3>Backup de base de datos</h3>
+<pre><code>mysqldump -u u713501758_tmc -p u713501758_todasmiscosas > backup_bd_$(date +%Y%m%d).sql</code></pre>
+
+<h3>Restauración</h3>
+<pre><code># 1. Restaurar código
+tar -xzf TMC_backup_FECHA.tar.gz -C /var/www/todasmiscosas/
+
+# 2. Restaurar base de datos
+mysql -u u713501758_tmc -p u713501758_todasmiscosas < backup_bd_FECHA.sql
+
+# 3. Restaurar uploads (si los tenés)
+rsync -avz ./uploads/ /var/www/todasmiscosas/backend/uploads/
+
+# 4. Instalar dependencias y reiniciar
+cd /var/www/todasmiscosas && bash deploy.sh</code></pre>
+
+<!-- 17. CHANGELOG -->
+<h2 id="changelog">17. Changelog — Sesión 25 de Mayo 2026</h2>
+<p>Cambios incorporados en la sesión del 25/05/2026 (madrugada + tarde):</p>
+
+<table>
+  <tr><th>Commit</th><th>Cambio</th><th>Archivos</th></tr>
+  <tr>
+    <td><code>78163af</code></td>
+    <td><strong>PIN de acceso visible en ambos paneles.</strong> El PIN de 4 dígitos generado al crear la reserva ahora se muestra en la tarjeta EstadoReserva (demandante) y en la fila de reservas recibidas (oferente), una vez que la reserva está confirmada/pagada.</td>
+    <td>types/index.ts · components/reservas/EstadoReserva.tsx · app/panel/page.tsx</td>
+  </tr>
+  <tr>
+    <td><code>63bd240</code></td>
+    <td><strong>Polling en página de confirmación de pago.</strong> Reemplaza la verificación única por un loop de 15 intentos × 3s (45s total). La página pasa automáticamente de "⏳ Pendiente" a "🎉 Confirmada" cuando el webhook de MP procesa el pago.</td>
+    <td>app/reserva/[id]/confirmacion/page.tsx</td>
+  </tr>
+  <tr>
+    <td><code>b0de6ae</code></td>
+    <td><strong>Timeline: se elimina el paso "Activa".</strong> La barra de progreso pasa de 4 a 3 pasos: Solicitada → Confirmada → Pago realizado. Los estados <code>pagada</code> y <code>finalizada</code> quedan en el paso 3.</td>
+    <td>components/reservas/TimelineReserva.tsx</td>
+  </tr>
+  <tr>
+    <td><code>b0de6ae</code></td>
+    <td><strong>Mapa: marcadores y tooltips muestran precio en lugar de m².</strong> Pins usan precio_mes (fallback precio_dia con sufijo "/d"). Tooltip de hover muestra precio/mes y precio/día. Tarjeta de click elimina m² y muestra ambos precios condicionalmente.</td>
+    <td>components/mapa/MapaEspacios.tsx · components/mapa/MarkerEspacio.tsx</td>
+  </tr>
+  <tr>
+    <td><code>b3b0c1b</code></td>
+    <td><strong>Fix: pins del mapa mostraban $0.</strong> Espacios con solo precio_dia configurado mostraban $0 porque el pin siempre leía precio_mes. Corregido para usar precio_dia como fallback.</td>
+    <td>components/mapa/MapaEspacios.tsx</td>
+  </tr>
+  <tr>
+    <td><code>d0beb19</code></td>
+    <td><strong>Checklist de seguridad visible en detalle del espacio.</strong> En el tab "Descripción" se agrega la sección "🛡️ Seguridad del espacio" con las estrellas calculadas (ítems activos / 8 × 5) y un grid de 2 columnas con cada ítem habilitado por el oferente (emoji + etiqueta). Solo se renderiza si hay al menos un ítem marcado.</td>
+    <td>components/espacios/DetalleEspacio.tsx</td>
+  </tr>
+  <tr>
+    <td><code>722efbe</code></td>
+    <td><strong>Backup del código fuente.</strong> Archivo <code>TMC_backup_2026-05-25_0323.tar.gz</code> (1.5 MB) generado en <code>/home/dellnotee/</code>, excluye node_modules y .next.</td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td><code>9c017a7</code></td>
+    <td><strong>Documento de arquitectura completo.</strong> Creado <code>docs/TMC-arquitectura-completa.doc</code> con 16 secciones cubriendo stack, DB, endpoints, componentes, flujos, variables y backup.</td>
+    <td>docs/TMC-arquitectura-completa.doc</td>
+  </tr>
+</table>
+
+<h3>Componente SeguridadChecklist — estructura de datos</h3>
+<p>El campo <code>seguridad</code> en la tabla <code>espacios</code> se almacena como JSON string y se parsea en backend. Estructura:</p>
+<pre><code>{
+  "techo_impermeable": true,
+  "cerradura":         true,
+  "camaras":           false,
+  "iluminacion":       true,
+  "acceso_controlado": false,
+  "seco_ventilado":    true,
+  "acceso_24h":        false,
+  "extintor":          true
+}</code></pre>
+<p>Las 8 claves posibles corresponden a los ítems del checklist. La cantidad de <code>true</code> determina las estrellas: <code>stars = round(activos / 8 × 5)</code>.</p>
+
+<h3>Cálculo de estrellas de seguridad</h3>
+<table>
+  <tr><th>Ítems marcados</th><th>Estrellas mostradas</th></tr>
+  <tr><td>0</td><td>⚫⚫⚫⚫⚫ (sección oculta)</td></tr>
+  <tr><td>1–2</td><td>★☆☆☆☆</td></tr>
+  <tr><td>3</td><td>★★☆☆☆</td></tr>
+  <tr><td>4–5</td><td>★★★☆☆ / ★★★★☆</td></tr>
+  <tr><td>6–7</td><td>★★★★☆ / ★★★★★</td></tr>
+  <tr><td>8</td><td>★★★★★</td></tr>
+</table>
+
+<hr>
+<div style="text-align:center;padding:1.5rem 0;color:var(--text3);font-size:.8rem;">
+  📦 TodasMisCosas.com — Documentación Técnica Completa · Mayo 2026 · Confidencial<br>
+  <span style="font-size:.72rem;">Última actualización: 25/05/2026 — sesión tarde</span>
+</div>
+
+</div>
+</body>
+</html>

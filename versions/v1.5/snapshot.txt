@@ -1,0 +1,37 @@
+=== TodasMisCosas — Backup v1.5 ===
+Fecha: 2026-05-26 00:19
+
+--- Últimos commits ---
+38d3958 fix: apply 15% TMC commission deduction consistently across oferente panel
+0ba0048 fix: add Cancel button in payment step; show both prices in panel
+76c65cb fix: remove house emoji from all UI elements
+57909e5 fix: compress images client-side before upload, raise multer limit to 20MB
+8a9d8de feat: responsive design for mobile and tablet
+6441d9a style: icono publicar espacio, tipografia nav y pills en negro bold
+222c9e5 feat: botón Publicar espacio siempre visible en el header
+aa16a75 feat: bordes naranja en form compartido, ocultar Inicio del header
+b8f740f fix: OTP close, marker colors, form accent, legales completos
+b4d6e4b feat: tipos de espacio primero, precios en 0, borders por tipo
+b349fbb feat: global SiteHeader, fixed search, updated filter pills
+1fd07c0 feat: header tipográfico según diseño propuesto
+7bef6be fix: ocultar selector de rol según contexto de registro
+c657266 feat: rediseño look&feel light mode + botón Ver en Mapa
+41f68bd docs: agregar preview de rediseño UX/UI inspirado en Airbnb/Argenprop/MercadoLibre
+
+--- Archivos modificados ---
+ backend/src/middleware/upload.js                   |   2 +-
+ frontend/app/admin/page.tsx                        |   8 +-
+ frontend/app/como-funciona/page.tsx                |   2 +-
+ frontend/app/espacio/[id]/reservar/page.tsx        |  15 +-
+ frontend/app/globals.css                           | 125 +++++++++++++++-
+ frontend/app/layout.tsx                            |   1 +
+ frontend/app/panel/page.tsx                        |  15 +-
+ frontend/app/publicar/page.tsx                     |  31 +++-
+ frontend/app/servicios/page.tsx                    |   2 +-
+ frontend/components/auth/RegisterForm.tsx          |   2 +-
+ frontend/components/panel/PanelOferente.tsx        |  11 +-
+ frontend/components/panel/StatsOferente.tsx        |  15 +-
+ .../components/publicar/SeguridadChecklist.tsx     |   2 +-
+ frontend/components/ui/SiteHeader.tsx              | 165 ++++++++++++++-------
+ frontend/tsconfig.tsbuildinfo                      |   2 +-
+ 15 files changed, 300 insertions(+), 98 deletions(-)
