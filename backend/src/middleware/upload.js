@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
 
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, '../../uploads');
-const MAX_SIZE   = parseInt(process.env.MAX_FILE_SIZE) || 5 * 1024 * 1024; // 5MB
+const MAX_SIZE   = parseInt(process.env.MAX_FILE_SIZE) || 20 * 1024 * 1024; // 20MB
 
 // Ensure upload directories exist
 ['espacios', 'avatars'].forEach(dir => {

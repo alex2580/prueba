@@ -299,11 +299,32 @@ export default function PublicarPage() {
     });
   }, [paso]);
 
-  function handleFotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+  async function comprimirImagen(file: File, maxW = 1600, quality = 0.82): Promise<File> {
+    return new Promise(resolve => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const scale = Math.min(1, maxW / Math.max(img.width, img.height));
+        const canvas = document.createElement('canvas');
+        canvas.width  = Math.round(img.width  * scale);
+        canvas.height = Math.round(img.height * scale);
+        canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(blob => {
+          resolve(blob ? new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }) : file);
+        }, 'image/jpeg', quality);
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+      img.src = url;
+    });
+  }
+
+  async function handleFotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || []).slice(0, 5);
-    setFotos(files);
     setPreviews(files.map(f => URL.createObjectURL(f)));
     setFotoPrincipal(0);
+    const comprimidas = await Promise.all(files.map(f => comprimirImagen(f)));
+    setFotos(comprimidas);
   }
 
   function toggleSeguridad(key: string) {
