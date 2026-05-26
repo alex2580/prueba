@@ -211,6 +211,8 @@ export interface FiltrosEspacios {
   q?: string;
   periodo?: 'dia' | 'mes' | '';
   con_seguridad?: boolean;
+  pais?: string;
+  rating_min?: number;
 }
 
 export interface ApiResponse<T = unknown> {

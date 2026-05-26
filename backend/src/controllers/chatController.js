@@ -3,6 +3,36 @@ const { validationResult } = require('express-validator');
 
 // ── HTTP controllers ────────────────────────────────────────────
 
+// GET /api/chat/admin/conversaciones  (admin only)
+async function listarConversacionesAdmin(req, res, next) {
+  try {
+    const { espacio_id, demandante_id, oferente_id } = req.query;
+    let sql = `
+      SELECT c.*,
+             e.nombre AS espacio_nombre, e.barrio,
+             (SELECT url FROM espacio_fotos WHERE espacio_id = e.id ORDER BY orden LIMIT 1) AS espacio_img,
+             ud.nombre AS demandante_nombre, ud.email AS demandante_email,
+             uo.nombre AS oferente_nombre, uo.email AS oferente_email,
+             (SELECT COUNT(*) FROM mensajes m WHERE m.conversacion_id = c.id) AS total_mensajes
+      FROM conversaciones c
+      JOIN espacios e   ON c.espacio_id    = e.id
+      JOIN usuarios ud  ON c.demandante_id = ud.id
+      JOIN usuarios uo  ON c.oferente_id   = uo.id
+      WHERE 1=1
+    `;
+    const params = [];
+    if (espacio_id)   { sql += ' AND c.espacio_id = ?';    params.push(espacio_id); }
+    if (demandante_id){ sql += ' AND c.demandante_id = ?'; params.push(demandante_id); }
+    if (oferente_id)  { sql += ' AND c.oferente_id = ?';   params.push(oferente_id); }
+    sql += ' ORDER BY c.ultimo_msg_at DESC, c.created_at DESC LIMIT 200';
+
+    const convs = await query(sql, params);
+    res.json(convs);
+  } catch (err) {
+    next(err);
+  }
+}
+
 // GET /api/chat/conversaciones
 async function listarConversaciones(req, res, next) {
   try {
@@ -200,6 +230,7 @@ function setupSocketHandlers(io) {
 }
 
 module.exports = {
+  listarConversacionesAdmin,
   listarConversaciones,
   obtenerMensajes,
   iniciarConversacion,

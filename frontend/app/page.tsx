@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/Button';
 
 const MapaEspacios = dynamic(() => import('@/components/mapa/MapaEspacios').then(m => ({ default: m.MapaEspacios })), { ssr: false });
 const MarkerEspacioCard = dynamic(() => import('@/components/mapa/MarkerEspacio').then(m => ({ default: m.MarkerEspacioCard })), { ssr: false });
+const ChatModal = dynamic(() => import('@/components/chat/ChatModal').then(m => ({ default: m.ChatModal })), { ssr: false });
 
 type Vista = 'mapa' | 'lista';
 
@@ -35,6 +36,7 @@ export default function HomePage() {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [geoLoading, setGeoLoading] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
+  const [chatEspacio, setChatEspacio] = useState<Espacio | null>(null);
 
   useEffect(() => {
     if (user?.lat && user?.lng && !userLocation) {
@@ -93,6 +95,11 @@ export default function HomePage() {
     router.push(`/espacio/${espacio.id}/reservar`);
   }
 
+  function handleChatFromMap(espacio: Espacio) {
+    if (!user) { setAuthTab('login'); setAuthModal(true); return; }
+    setChatEspacio(espacio);
+  }
+
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleBusqueda = useCallback((q: string) => {
@@ -103,8 +110,14 @@ export default function HomePage() {
     }, 350);
   }, [aplicarFiltros]);
 
-  const filtrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.periodo || filtros.barrio || filtros.q || filtros.con_seguridad);
-  const hayFiltrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.periodo || userLocation || filtros.q || filtros.con_seguridad);
+  const PRECIO_MAX_MES = 100000;
+  const PRECIO_MAX_DIA = 10000;
+  const PRECIO_STEP = 500;
+  const PRECIO_MAX_HOME = filtros.periodo === 'dia' ? PRECIO_MAX_DIA : PRECIO_MAX_MES;
+  const precioValHome = filtros.precio_max ?? PRECIO_MAX_HOME;
+
+  const filtrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.periodo || filtros.barrio || filtros.q || filtros.pais || filtros.rating_min);
+  const hayFiltrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.periodo || userLocation || filtros.q || filtros.pais || filtros.rating_min);
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
@@ -226,6 +239,7 @@ export default function HomePage() {
                 onClose={() => setSelectedEspacio(null)}
                 onVerDetalle={() => router.push(`/espacio/${selectedEspacio.id}`)}
                 onReservar={() => handleReservar(selectedEspacio)}
+                onChat={() => handleChatFromMap(selectedEspacio)}
               />
             )}
           </div>
@@ -262,8 +276,26 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Horizontal filter pills */}
+              {/* Horizontal filter pills — Row 1 */}
               <div className="filter-pills-bar">
+                {/* País */}
+                <select
+                  value={filtros.pais || ''}
+                  onChange={e => aplicarFiltros({ pais: e.target.value || undefined })}
+                  className={`filter-pill ${filtros.pais ? 'active' : ''}`}
+                  style={{ cursor: 'pointer', fontFamily: 'inherit' }}
+                >
+                  <option value="">🌍 País</option>
+                  <option value="Argentina">🇦🇷 Argentina</option>
+                  <option value="Uruguay">🇺🇾 Uruguay</option>
+                  <option value="Chile">🇨🇱 Chile</option>
+                  <option value="Colombia">🇨🇴 Colombia</option>
+                  <option value="México">🇲🇽 México</option>
+                  <option value="Brasil">🇧🇷 Brasil</option>
+                  <option value="Perú">🇵🇪 Perú</option>
+                  <option value="Paraguay">🇵🇾 Paraguay</option>
+                </select>
+
                 <button
                   className={`filter-pill ${filtros.tipo === 'exclusivo' ? 'active' : ''}`}
                   onClick={() => aplicarFiltros({ tipo: (filtros.tipo === 'exclusivo' ? '' : 'exclusivo') as EspacioTipo })}
@@ -288,18 +320,6 @@ export default function HomePage() {
                 >
                   📆 Por mes
                 </button>
-                <button
-                  className={`filter-pill ${filtros.precio_max === 20000 ? 'active' : ''}`}
-                  onClick={() => aplicarFiltros({ precio_max: filtros.precio_max === 20000 ? undefined : 20000 })}
-                >
-                  💰 Hasta $20.000
-                </button>
-                <button
-                  className={`filter-pill ${filtros.con_seguridad ? 'active' : ''}`}
-                  onClick={() => aplicarFiltros({ con_seguridad: filtros.con_seguridad ? undefined : true })}
-                >
-                  🔐 Con seguridad
-                </button>
 
                 {/* Limpiar todos */}
                 {hayFiltrosActivos && (
@@ -311,6 +331,67 @@ export default function HomePage() {
                     ✕ Limpiar
                   </button>
                 )}
+              </div>
+
+              {/* Filter Row 2: Price slider + Nivel de Seguridad */}
+              <div style={{
+                display: 'flex', gap: '1.5rem', alignItems: 'center',
+                padding: '.55rem 1.25rem .6rem',
+                borderTop: '1px solid var(--border)',
+                background: 'var(--surface)',
+                flexWrap: 'wrap',
+              }}>
+                {/* Price slider */}
+                <div style={{ flex: 1, minWidth: 200 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.3rem' }}>
+                    <span style={{ fontSize: '.68rem', fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '.08em' }}>
+                      Precio máx{filtros.periodo === 'dia' ? '/día' : '/mes'}
+                    </span>
+                    <span style={{
+                      fontSize: '.78rem', fontWeight: 800,
+                      color: precioValHome < PRECIO_MAX_HOME ? 'var(--orange)' : 'var(--text3)',
+                    }}>
+                      {precioValHome < PRECIO_MAX_HOME ? `$${precioValHome.toLocaleString('es-AR')}` : 'Sin límite'}
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={0} max={PRECIO_MAX_HOME} step={PRECIO_STEP}
+                    value={precioValHome > PRECIO_MAX_HOME ? PRECIO_MAX_HOME : precioValHome}
+                    onChange={e => {
+                      const val = Number(e.target.value);
+                      aplicarFiltros({ precio_max: val < PRECIO_MAX_HOME ? val : undefined });
+                    }}
+                    style={{ width: '100%', accentColor: 'var(--orange)', cursor: 'pointer', height: 4 }}
+                  />
+                </div>
+
+                {/* Nivel de Seguridad */}
+                <div style={{ flexShrink: 0 }}>
+                  <div style={{ fontSize: '.68rem', fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: '.3rem' }}>
+                    Nivel de Seguridad
+                  </div>
+                  <div style={{ display: 'flex', gap: 2 }}>
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <span
+                        key={star}
+                        onClick={() => aplicarFiltros({ rating_min: filtros.rating_min === star ? undefined : star })}
+                        title={`${star} estrella${star !== 1 ? 's' : ''} mínimo`}
+                        style={{
+                          fontSize: '1.2rem', cursor: 'pointer',
+                          color: star <= (filtros.rating_min || 0) ? 'var(--amber)' : 'var(--border)',
+                          transition: 'color .12s',
+                          lineHeight: 1,
+                        }}
+                      >★</span>
+                    ))}
+                    {filtros.rating_min ? (
+                      <span style={{ fontSize: '.7rem', color: 'var(--text3)', marginLeft: '.3rem', alignSelf: 'center' }}>
+                        ({filtros.rating_min}+)
+                      </span>
+                    ) : null}
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -506,6 +587,18 @@ export default function HomePage() {
           />
         )}
       </Modal>
+
+      {/* Chat Modal — desde el mapa */}
+      {user && token && chatEspacio && (
+        <ChatModal
+          open={!!chatEspacio}
+          onClose={() => setChatEspacio(null)}
+          espacioId={chatEspacio.id}
+          espacioNombre={chatEspacio.nombre}
+          token={token}
+          userId={user.id}
+        />
+      )}
     </div>
   );
 }

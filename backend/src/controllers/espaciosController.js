@@ -41,7 +41,7 @@ async function getEspacioWithFotos(id) {
 // GET /api/espacios
 async function listar(req, res, next) {
   try {
-    const { barrio, tipo, precio_max, precio_min, disponible, q, periodo, con_seguridad } = req.query;
+    const { barrio, tipo, precio_max, precio_min, disponible, q, periodo, con_seguridad, pais, rating_min } = req.query;
 
     let sql = `
       SELECT e.id, e.nombre, e.direccion, e.barrio, e.m2, e.tipo,
@@ -76,6 +76,8 @@ async function listar(req, res, next) {
     if (con_seguridad === 'true') {
       sql += " AND e.seguridad IS NOT NULL AND e.seguridad NOT IN ('null', '{}', '')";
     }
+    if (pais) { sql += ' AND e.pais = ?'; params.push(pais); }
+    if (rating_min) { sql += ' AND e.rating >= ?'; params.push(Number(rating_min)); }
     if (q) {
       sql += ' AND (e.nombre LIKE ? OR e.descripcion LIKE ? OR e.barrio LIKE ? OR e.direccion LIKE ?)';
       const like = `%${q}%`;
@@ -165,12 +167,14 @@ async function crear(req, res, next) {
 
     // Optional UPDATE for newer columns (only if they exist in DB)
     try {
+      const oferente = await queryOne('SELECT pais FROM usuarios WHERE id = ?', [req.user.id]);
       await query(
-        `UPDATE espacios SET categoria = ?, disponibilidad = ?, seguridad = ?, moneda = ? WHERE id = ?`,
+        `UPDATE espacios SET categoria = ?, disponibilidad = ?, seguridad = ?, moneda = ?, pais = ? WHERE id = ?`,
         [categoria || null,
          disponibilidad ? JSON.stringify(disponibilidad) : null,
          seguridad ? JSON.stringify(seguridad) : null,
          moneda || 'ARS',
+         oferente?.pais || 'Argentina',
          nuevo.id]
       );
     } catch (_) {

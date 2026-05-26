@@ -41,6 +41,8 @@ export const espaciosAPI = {
     if (filtros?.q)             params.set('q', filtros.q);
     if (filtros?.periodo)       params.set('periodo', filtros.periodo);
     if (filtros?.con_seguridad) params.set('con_seguridad', 'true');
+    if (filtros?.pais)         params.set('pais', filtros.pais);
+    if (filtros?.rating_min)   params.set('rating_min', String(filtros.rating_min));
     const qs = params.toString() ? `?${params}` : '';
     return fetchAPI<Espacio[]>(`/api/espacios${qs}`, {}, token);
   },
@@ -131,6 +133,15 @@ export const pagosAPI = {
 // ── Chat ────────────────────────────────────────────────────
 
 export const chatAPI = {
+  listarConversacionesAdmin: (token: string, filtros?: { espacio_id?: string; demandante_id?: string; oferente_id?: string }) => {
+    const params = new URLSearchParams();
+    if (filtros?.espacio_id)    params.set('espacio_id', filtros.espacio_id);
+    if (filtros?.demandante_id) params.set('demandante_id', filtros.demandante_id);
+    if (filtros?.oferente_id)   params.set('oferente_id', filtros.oferente_id);
+    const qs = params.toString() ? `?${params}` : '';
+    return fetchAPI<(Conversacion & { demandante_email?: string; oferente_email?: string; total_mensajes?: number })[]>(`/api/chat/admin/conversaciones${qs}`, {}, token);
+  },
+
   listarConversaciones: (token: string) =>
     fetchAPI<Conversacion[]>('/api/chat/conversaciones', {}, token),
 

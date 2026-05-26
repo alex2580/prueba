@@ -21,13 +21,8 @@ const PASOS = [
   },
   {
     icon: '🔑',
-    titulo: 'Usás tu espacio',
-    desc: 'Coordinás el acceso con el oferente. TodasMisCosas.com te respalda durante toda la operación.',
-  },
-  {
-    icon: '🔐',
-    titulo: 'Acceso verificado con PIN',
-    desc: 'Tanto el demandante como el oferente reciben el mismo PIN de 4 dígitos para confirmar el inicio y fin de la operación.',
+    titulo: 'Coordinás el acceso',
+    desc: 'Coordinás el acceso con el oferente. Vos y el que publicó el espacio recibirán el mismo PIN de 4 dígitos por correo para que puedan identificarse.',
   },
 ];
 
@@ -100,7 +95,7 @@ export default function ComoFuncionaPage() {
 
           {/* Pasos */}
           <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.15rem', marginBottom: '1.25rem', color: 'var(--text)' }}>
-            Los 5 pasos
+            Los 4 pasos
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
             {PASOS.map((paso, i) => (

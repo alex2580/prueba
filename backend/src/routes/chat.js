@@ -3,8 +3,9 @@ const { body } = require('express-validator');
 const router = express.Router();
 
 const ctrl = require('../controllers/chatController');
-const { requireAuth } = require('../middleware/auth');
+const { requireAuth, requireAdmin } = require('../middleware/auth');
 
+router.get('/admin/conversaciones',               requireAuth, requireAdmin, ctrl.listarConversacionesAdmin);
 router.get('/conversaciones',                     requireAuth, ctrl.listarConversaciones);
 router.post('/conversaciones',                    requireAuth, [
   body('espacio_id').notEmpty(),
