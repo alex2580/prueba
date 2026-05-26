@@ -786,6 +786,7 @@ export default function PublicarPage() {
                       onSwitch={() => setAuthTab('login')}
                       error={authError}
                       loading={authLoading}
+                      tipoForzado="oferente"
                     />
                   ) : (
                     <LoginForm

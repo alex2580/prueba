@@ -20,14 +20,15 @@ interface RegisterFormProps {
   onSwitch: () => void;
   loading?: boolean;
   error?: string | null;
+  tipoForzado?: 'oferente' | 'demandante';
 }
 
-export function RegisterForm({ onRegister, onSwitch, loading, error }: RegisterFormProps) {
+export function RegisterForm({ onRegister, onSwitch, loading, error, tipoForzado }: RegisterFormProps) {
   const [nombre,   setNombre]   = useState('');
   const [email,    setEmail]    = useState('');
   const [tel,      setTel]      = useState('');
   const [password, setPassword] = useState('');
-  const [tipo,     setTipo]     = useState<'demandante' | 'oferente'>('demandante');
+  const [tipo,     setTipo]     = useState<'demandante' | 'oferente'>(tipoForzado ?? 'demandante');
   const [showPass, setShowPass] = useState(false);
 
   async function handleSubmit(e: FormEvent) {
@@ -38,35 +39,37 @@ export function RegisterForm({ onRegister, onSwitch, loading, error }: RegisterF
 
   return (
     <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '.85rem' }}>
-      {/* Tipo switch */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.6rem' }}>
-        {(['demandante', 'oferente'] as const).map(t => (
-          <button
-            key={t}
-            type="button"
-            onClick={() => setTipo(t)}
-            style={{
-              padding: '.75rem .5rem',
-              borderRadius: 'var(--r2)',
-              border: tipo === t ? '2px solid var(--orange)' : '2px solid var(--border)',
-              fontFamily: 'Sora, sans-serif',
-              fontSize: '.82rem',
-              fontWeight: 700,
-              color: tipo === t ? '#fff' : 'var(--text2)',
-              background: tipo === t ? 'var(--orange)' : 'var(--surface2)',
-              cursor: 'pointer',
-              transition: 'all .18s',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '.3rem',
-            }}
-          >
-            <span style={{ fontSize: '1.3rem' }}>{t === 'demandante' ? '📦' : '🏠'}</span>
-            {t === 'demandante' ? 'Quiero almacenar' : 'Ofrezco espacio'}
-          </button>
-        ))}
-      </div>
+      {/* Tipo switch — solo cuando el contexto no lo determina automáticamente */}
+      {!tipoForzado && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.6rem' }}>
+          {(['demandante', 'oferente'] as const).map(t => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setTipo(t)}
+              style={{
+                padding: '.75rem .5rem',
+                borderRadius: 'var(--r2)',
+                border: tipo === t ? '2px solid var(--orange)' : '2px solid var(--border)',
+                fontFamily: 'Sora, sans-serif',
+                fontSize: '.82rem',
+                fontWeight: 700,
+                color: tipo === t ? '#fff' : 'var(--text2)',
+                background: tipo === t ? 'var(--orange)' : 'var(--surface2)',
+                cursor: 'pointer',
+                transition: 'all .18s',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '.3rem',
+              }}
+            >
+              <span style={{ fontSize: '1.3rem' }}>{t === 'demandante' ? '📦' : '🏠'}</span>
+              {t === 'demandante' ? 'Quiero almacenar' : 'Ofrezco espacio'}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div>
         <label className="form-label">Nombre completo</label>
