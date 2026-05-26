@@ -1,14 +1,7 @@
 const { query, queryOne, transaction } = require('../db/connection');
 const { validationResult } = require('express-validator');
-const path = require('path');
+const { uploadFile } = require('../services/supabaseService');
 require('dotenv').config();
-
-const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, '../../uploads');
-const BASE_URL   = process.env.API_BASE_URL || `http://localhost:${process.env.PORT || 4000}`;
-
-function buildFotoUrl(filename) {
-  return `${BASE_URL}/uploads/espacios/${filename}`;
-}
 
 function parseJsonFields(espacio) {
   if (espacio.disponibilidad && typeof espacio.disponibilidad === 'string') {
@@ -266,7 +259,7 @@ async function subirFotos(req, res, next) {
 
     const urls = [];
     for (const file of files) {
-      const url = `${BASE_URL}/uploads/espacios/${file.filename}`;
+      const url = await uploadFile(file.buffer, 'espacios', file.originalname);
       await query(
         'INSERT INTO espacio_fotos (espacio_id, url, orden) VALUES (?, ?, ?)',
         [espacio.id, url, orden++]

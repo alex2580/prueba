@@ -4,8 +4,6 @@ const supabaseService = require('../services/supabaseService');
 const { sendCambioTelConfirmado, sendBienvenida } = require('../services/emailService');
 const { sendSMS, sendWhatsApp } = require('../services/twilioService');
 
-const path = require('path');
-const BASE_URL = process.env.API_BASE_URL || `http://localhost:${process.env.PORT || 4000}`;
 const OTP_EXPIRY_MIN = 10;
 
 function generarCodigo() {
@@ -310,7 +308,7 @@ async function verificarCambioTel(req, res, next) {
 async function subirAvatar(req, res, next) {
   try {
     if (!req.file) return res.status(400).json({ error: 'No se envió ninguna imagen' });
-    const url = `${BASE_URL}/uploads/avatars/${req.file.filename}`;
+    const url = await supabaseService.uploadFile(req.file.buffer, 'avatars', req.file.originalname);
     await query('UPDATE usuarios SET avatar_url = ? WHERE id = ?', [url, req.user.id]);
     res.json({ url });
   } catch (err) {
