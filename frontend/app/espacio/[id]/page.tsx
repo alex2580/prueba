@@ -80,7 +80,7 @@ export default function EspacioPage() {
       {/* Auth Modal */}
       <Modal
         open={authModal}
-        onClose={() => { if (!otpPending) setAuthModal(false); }}
+        onClose={() => setAuthModal(false)}
         title={otpPending ? '🔐 Verificación' : authTab === 'login' ? '👋 Iniciar sesión' : '🚀 Crear cuenta'}
       >
         {otpPending ? (

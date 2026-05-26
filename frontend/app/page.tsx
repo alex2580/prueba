@@ -465,7 +465,7 @@ export default function HomePage() {
       {/* Auth Modal */}
       <Modal
         open={authModal}
-        onClose={() => { if (!otpPending) setAuthModal(false); }}
+        onClose={() => setAuthModal(false)}
         title={otpPending ? '🔐 Verificación' : authTab === 'login' ? '👋 Iniciar sesión' : '🚀 Crear cuenta'}
         subtitle={otpPending ? undefined : authTab === 'login' ? 'Ingresá a tu cuenta de TodasMisCosas' : 'Únite a la comunidad de almacenamiento urbano'}
       >

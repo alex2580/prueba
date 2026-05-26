@@ -406,6 +406,9 @@ export default function PublicarPage() {
     padding: '1rem',
   };
 
+  const accentColor = form.tipo === 'exclusivo' ? '#1E293B' : 'var(--orange)';
+  const accentBg    = form.tipo === 'exclusivo' ? 'rgba(30,41,59,.08)' : 'rgba(232,98,42,.1)';
+
   // ── Pantalla de éxito ─────────────────────────────────────────
   if (espacioPublicadoId) {
     return (
@@ -532,9 +535,9 @@ export default function PublicarPage() {
                       style={{
                         flex: 1, padding: '.65rem .5rem',
                         borderRadius: 'var(--r2)',
-                        border: `2px solid ${form.tipo === t.value ? (t.value === 'exclusivo' ? '#3b82f6' : 'var(--orange)') : 'var(--border)'}`,
-                        background: form.tipo === t.value ? (t.value === 'exclusivo' ? 'rgba(59,130,246,.1)' : 'rgba(232,98,42,.1)') : 'var(--surface2)',
-                        color: form.tipo === t.value ? (t.value === 'exclusivo' ? '#3b82f6' : 'var(--orange)') : 'var(--text2)',
+                        border: `2px solid ${form.tipo === t.value ? (t.value === 'exclusivo' ? '#1E293B' : 'var(--orange)') : 'var(--border)'}`,
+                        background: form.tipo === t.value ? (t.value === 'exclusivo' ? 'rgba(30,41,59,.08)' : 'rgba(232,98,42,.1)') : 'var(--surface2)',
+                        color: form.tipo === t.value ? (t.value === 'exclusivo' ? '#1E293B' : 'var(--orange)') : 'var(--text2)',
                         fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.78rem',
                         cursor: 'pointer', transition: 'all .15s', textAlign: 'center',
                       }}
@@ -558,9 +561,9 @@ export default function PublicarPage() {
                       style={{
                         padding: '.65rem .5rem',
                         borderRadius: 'var(--r2)',
-                        border: `2px solid ${form.categoria === c.value ? 'var(--orange)' : 'var(--border)'}`,
-                        background: form.categoria === c.value ? 'rgba(232,98,42,.1)' : 'var(--surface2)',
-                        color: form.categoria === c.value ? 'var(--orange)' : 'var(--text2)',
+                        border: `2px solid ${form.categoria === c.value ? accentColor : 'var(--border)'}`,
+                        background: form.categoria === c.value ? accentBg : 'var(--surface2)',
+                        color: form.categoria === c.value ? accentColor : 'var(--text2)',
                         fontFamily: 'Sora, sans-serif', fontWeight: 600, fontSize: '.78rem',
                         cursor: 'pointer', transition: 'all .15s', textAlign: 'center',
                       }}

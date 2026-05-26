@@ -98,7 +98,7 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center, filt
       }
 
       const iconColor = !espacio.disponible ? '#94a3b8'
-        : espacio.tipo === 'exclusivo' ? '#3b82f6'
+        : espacio.tipo === 'exclusivo' ? '#1E293B'
         : '#e8622a';
 
       const sim = getMonedaSimbolo(espacio.moneda);
@@ -165,9 +165,9 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center, filt
               <strong style="font-size:13px;display:block;margin-bottom:2px;">${espacio.nombre}</strong>
               <span style="color:#666;">📍 ${espacio.barrio}</span>
               <div style="margin-top:3px;">
-                ${Number(espacio.precio_mes) > 0 ? `<span style="font-weight:700;color:#e8622a;">${sim}${Number(espacio.precio_mes).toLocaleString('es-AR')}<span style="font-weight:400;color:#999;">/mes</span></span>` : ''}
+                ${Number(espacio.precio_mes) > 0 ? `<span style="font-weight:700;color:${espacio.tipo === 'exclusivo' ? '#1E293B' : '#e8622a'};">${sim}${Number(espacio.precio_mes).toLocaleString('es-AR')}<span style="font-weight:400;color:#999;">/mes</span></span>` : ''}
                 ${Number(espacio.precio_mes) > 0 && Number(espacio.precio_dia) > 0 ? '<span style="color:#ccc;margin:0 4px;">·</span>' : ''}
-                ${Number(espacio.precio_dia) > 0 ? `<span style="font-weight:700;color:#e8622a;">${sim}${Number(espacio.precio_dia).toLocaleString('es-AR')}<span style="font-weight:400;color:#999;">/día</span></span>` : ''}
+                ${Number(espacio.precio_dia) > 0 ? `<span style="font-weight:700;color:${espacio.tipo === 'exclusivo' ? '#1E293B' : '#e8622a'};">${sim}${Number(espacio.precio_dia).toLocaleString('es-AR')}<span style="font-weight:400;color:#999;">/día</span></span>` : ''}
               </div>
             </div>
           </div>
