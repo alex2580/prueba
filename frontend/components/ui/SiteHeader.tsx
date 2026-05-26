@@ -41,7 +41,7 @@ export function SiteHeader({ onLoginClick, onRegisterClick }: SiteHeaderProps) {
           className={`btn-register ${pathname === '/publicar' ? 'active' : ''}`}
           onClick={() => router.push('/publicar')}
         >
-          ➕ Publicar espacio
+          🏠 Publicar espacio
         </button>
       </nav>
 

@@ -393,9 +393,9 @@ textarea { resize: vertical; line-height: 1.6; }
   border: 1.5px solid var(--border2);
   background: var(--surface);
   color: var(--text);
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Sora', sans-serif;
   font-size: .82rem;
-  font-weight: 500;
+  font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
   transition: all var(--t1);
@@ -609,10 +609,10 @@ textarea { resize: vertical; line-height: 1.6; }
 .nav-btn {
   background: none;
   border: none;
-  color: var(--text2);
-  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  font-family: 'Sora', sans-serif;
   font-size: .84rem;
-  font-weight: 500;
+  font-weight: 700;
   padding: .38rem .85rem;
   border-radius: 999px;
   transition: all var(--t1);
