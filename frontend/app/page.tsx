@@ -12,7 +12,7 @@ import { Modal } from '@/components/ui/Modal';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { OTPStep } from '@/components/auth/OTPStep';
-import { SiteLogo } from '@/components/ui/SiteLogo';
+import { SiteHeader } from '@/components/ui/SiteHeader';
 import { Button } from '@/components/ui/Button';
 
 const MapaEspacios = dynamic(() => import('@/components/mapa/MapaEspacios').then(m => ({ default: m.MapaEspacios })), { ssr: false });
@@ -99,61 +99,21 @@ export default function HomePage() {
     setBusqueda(q);
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      aplicarFiltros({ ...filtros, q: q || undefined });
+      aplicarFiltros({ q: q || undefined });
     }, 350);
-  }, [filtros, aplicarFiltros]);
+  }, [aplicarFiltros]);
 
-  const filtrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.periodo || filtros.barrio || filtros.q);
-  const hayFiltrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.periodo || userLocation || filtros.q);
+  const filtrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.periodo || filtros.barrio || filtros.q || filtros.con_seguridad);
+  const hayFiltrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.periodo || userLocation || filtros.q || filtros.con_seguridad);
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
 
       {/* ── Header ─────────────────────────────────────────── */}
-      <header className="site-header">
-        <SiteLogo onClick={() => router.push('/')} />
-
-        {/* Nav central */}
-        <nav className="nav">
-          <button className="nav-btn active" onClick={() => { setVista('lista'); }}>
-            🏠 Inicio
-          </button>
-          <button className="nav-btn" onClick={() => setVista('lista')}>
-            🔍 Buscar espacios
-          </button>
-          <button className="nav-btn" onClick={() => router.push('/como-funciona')}>
-            💡 Cómo funciona
-          </button>
-        </nav>
-
-        {/* Acciones derecha */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', justifyContent: 'flex-end' }}>
-          {user ? (
-            <>
-              {isAdmin && (
-                <button className="nav-btn" style={{ color: 'var(--orange)', fontWeight: 700 }}
-                  onClick={() => router.push('/admin')}>
-                  Admin
-                </button>
-              )}
-              <button className="nav-btn" onClick={() => router.push('/panel')}>Mi cuenta</button>
-              <button className="nav-btn" onClick={logout}>Salir</button>
-              <button className="btn-register" onClick={() => router.push('/publicar')}>
-                Publicar espacio
-              </button>
-            </>
-          ) : (
-            <>
-              <button className="btn-login" onClick={() => { setAuthTab('login'); setAuthModal(true); }}>
-                Ingresar
-              </button>
-              <button className="btn-register" onClick={() => { setAuthTab('register'); setAuthModal(true); }}>
-                Registrarse
-              </button>
-            </>
-          )}
-        </div>
-      </header>
+      <SiteHeader
+        onLoginClick={() => { setAuthTab('login'); setAuthModal(true); }}
+        onRegisterClick={() => { setAuthTab('register'); setAuthModal(true); }}
+      />
 
       {/* ── Content ────────────────────────────────────────── */}
       <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
@@ -306,91 +266,40 @@ export default function HomePage() {
               <div className="filter-pills-bar">
                 <button
                   className={`filter-pill ${filtros.tipo === 'exclusivo' ? 'active' : ''}`}
-                  onClick={() => aplicarFiltros({ ...filtros, tipo: (filtros.tipo === 'exclusivo' ? '' : 'exclusivo') as EspacioTipo })}
+                  onClick={() => aplicarFiltros({ tipo: (filtros.tipo === 'exclusivo' ? '' : 'exclusivo') as EspacioTipo })}
                 >
                   🔒 Exclusivo
                 </button>
                 <button
                   className={`filter-pill ${filtros.tipo === 'compartido' ? 'active' : ''}`}
-                  onClick={() => aplicarFiltros({ ...filtros, tipo: (filtros.tipo === 'compartido' ? '' : 'compartido') as EspacioTipo })}
+                  onClick={() => aplicarFiltros({ tipo: (filtros.tipo === 'compartido' ? '' : 'compartido') as EspacioTipo })}
                 >
                   🤝 Compartido
                 </button>
                 <button
                   className={`filter-pill ${filtros.periodo === 'dia' ? 'active' : ''}`}
-                  onClick={() => aplicarFiltros({ ...filtros, periodo: filtros.periodo === 'dia' ? '' : 'dia', precio_max: undefined })}
+                  onClick={() => aplicarFiltros({ periodo: filtros.periodo === 'dia' ? '' : 'dia', precio_max: undefined })}
                 >
                   📅 Por día
                 </button>
                 <button
                   className={`filter-pill ${filtros.periodo === 'mes' ? 'active' : ''}`}
-                  onClick={() => aplicarFiltros({ ...filtros, periodo: filtros.periodo === 'mes' ? '' : 'mes', precio_max: undefined })}
+                  onClick={() => aplicarFiltros({ periodo: filtros.periodo === 'mes' ? '' : 'mes', precio_max: undefined })}
                 >
                   📆 Por mes
                 </button>
-                {userLocation ? (
-                  <button className="filter-pill active" onClick={() => setUserLocation(null)}>
-                    📍 Cerca mío ✕
-                  </button>
-                ) : (
-                  <button
-                    className="filter-pill"
-                    onClick={handleCercaMio}
-                    disabled={geoLoading}
-                  >
-                    {geoLoading ? '⏳ Buscando…' : '📍 Cerca mío'}
-                  </button>
-                )}
-                {filtros.precio_max && (
-                  <button
-                    className="filter-pill active"
-                    onClick={() => aplicarFiltros({ ...filtros, precio_max: undefined })}
-                  >
-                    Hasta ${filtros.precio_max.toLocaleString('es-AR')} ✕
-                  </button>
-                )}
-
-                {/* Más filtros — dropdown */}
-                <div
-                  style={{ position: 'relative', flexShrink: 0 }}
-                  onMouseEnter={() => setFiltrosOpen(true)}
-                  onMouseLeave={() => setFiltrosOpen(false)}
+                <button
+                  className={`filter-pill ${filtros.precio_max === 20000 ? 'active' : ''}`}
+                  onClick={() => aplicarFiltros({ precio_max: filtros.precio_max === 20000 ? undefined : 20000 })}
                 >
-                  <button
-                    className={`filter-pill ${filtros.precio_max ? 'active' : ''}`}
-                    onClick={() => setFiltrosOpen(o => !o)}
-                  >
-                    ⚙️ Más filtros
-                  </button>
-                  {filtrosOpen && (
-                    <div style={{ position: 'absolute', top: '100%', left: 0, paddingTop: '.5rem', zIndex: 200 }}>
-                      <div style={{
-                        background: 'var(--surface)',
-                        border: '1.5px solid var(--border)', borderRadius: 16,
-                        padding: '1.2rem', width: 280,
-                        boxShadow: 'var(--s3)',
-                      }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                          <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.9rem' }}>Filtros</span>
-                          <button onClick={() => setFiltrosOpen(false)} style={{
-                            background: 'none', border: 'none', cursor: 'pointer',
-                            color: 'var(--text3)', fontSize: '1.1rem', lineHeight: 1,
-                          }}>✕</button>
-                        </div>
-                        <FiltrosEspacios
-                          filtros={filtros}
-                          onChange={f => { aplicarFiltros(f); }}
-                          onReset={limpiarFiltros}
-                          onCercaMio={handleCercaMio}
-                          cercaMioActive={!!userLocation}
-                          cercaMioLoading={geoLoading}
-                          onQuitarCercaMio={() => setUserLocation(null)}
-                          geoError={geoError}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
+                  💰 Hasta $20.000
+                </button>
+                <button
+                  className={`filter-pill ${filtros.con_seguridad ? 'active' : ''}`}
+                  onClick={() => aplicarFiltros({ con_seguridad: filtros.con_seguridad ? undefined : true })}
+                >
+                  🔐 Con seguridad
+                </button>
 
                 {/* Limpiar todos */}
                 {hayFiltrosActivos && (
@@ -401,12 +310,6 @@ export default function HomePage() {
                   >
                     ✕ Limpiar
                   </button>
-                )}
-
-                {geoError && (
-                  <span style={{ fontSize: '.75rem', color: 'var(--orange)', whiteSpace: 'nowrap', flexShrink: 0 }}>
-                    {geoError}
-                  </span>
                 )}
               </div>
             </div>

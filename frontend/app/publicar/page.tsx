@@ -10,7 +10,7 @@ import { Modal } from '@/components/ui/Modal';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { OTPStep } from '@/components/auth/OTPStep';
-import { SiteLogo } from '@/components/ui/SiteLogo';
+import { SiteHeader } from '@/components/ui/SiteHeader';
 import { CalendarioDisponibilidad, type Disponibilidad } from '@/components/publicar/CalendarioDisponibilidad';
 import { MONEDAS } from '@/types';
 
@@ -410,11 +410,7 @@ export default function PublicarPage() {
   if (espacioPublicadoId) {
     return (
       <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
-        <header className="site-header">
-          <SiteLogo onClick={() => router.push('/')} />
-          <div />
-          <button className="nav-btn" onClick={() => router.push('/panel')}>Mi Panel</button>
-        </header>
+        <SiteHeader />
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 1rem' }}>
           <div style={{
             background: 'var(--surface)',
@@ -475,14 +471,7 @@ export default function PublicarPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
-      <header className="site-header">
-        <SiteLogo onClick={() => router.push('/')} />
-        <div />
-        <div style={{ display: 'flex', gap: '.5rem', alignItems: 'center' }}>
-          <button className="nav-btn" onClick={() => router.push('/')}>← Volver al inicio</button>
-          {user && <button className="nav-btn" onClick={() => router.push('/panel')}>Mi Panel</button>}
-        </div>
-      </header>
+      <SiteHeader />
 
       <div className="page-scroll">
         <div style={{ maxWidth: 620, margin: '0 auto', padding: '2rem 1rem' }}>

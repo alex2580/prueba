@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { SiteLogo } from '@/components/ui/SiteLogo';
+import { SiteHeader } from '@/components/ui/SiteHeader';
 
 const ESPACIOS = [
   {
@@ -86,18 +86,7 @@ export default function ServiciosPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
-      {/* Header */}
-      <header className="site-header">
-        <SiteLogo onClick={() => router.push('/')} />
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.95rem', color: 'var(--orange)' }}>
-            🏷️ Nuestros Servicios
-          </span>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <button className="nav-btn" onClick={() => router.push('/')}>← Volver al mapa</button>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* Hero */}
       <div style={{

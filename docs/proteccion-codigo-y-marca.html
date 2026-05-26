@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TodasMisCosas — Protección del Código y la Marca</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Sora', Arial, sans-serif;
+      font-size: 13pt;
+      color: #1a1a2e;
+      background: #fff;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 50px 60px;
+      line-height: 1.7;
+    }
+
+    /* ── ENCABEZADO ── */
+    .header {
+      border-bottom: 3px solid #e8622a;
+      padding-bottom: 18px;
+      margin-bottom: 28px;
+    }
+    .header .logo {
+      font-size: 22pt;
+      font-weight: 800;
+      color: #e8622a;
+      letter-spacing: -0.5px;
+    }
+    .header .subtitulo {
+      font-size: 10pt;
+      color: #666;
+      margin-top: 4px;
+    }
+    .header .doc-title {
+      font-size: 16pt;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-top: 14px;
+    }
+    .header .doc-fecha {
+      font-size: 9.5pt;
+      color: #999;
+      margin-top: 3px;
+    }
+
+    /* ── SECCIONES ── */
+    h2 {
+      font-size: 13pt;
+      font-weight: 800;
+      color: #e8622a;
+      margin: 30px 0 10px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #f0d5c8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    h3 {
+      font-size: 11.5pt;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin: 18px 0 6px;
+    }
+
+    p {
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    /* ── TABLA ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 20px;
+      font-size: 11pt;
+    }
+    th {
+      background: #1a1a2e;
+      color: #fff;
+      padding: 9px 12px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 10pt;
+    }
+    td {
+      padding: 9px 12px;
+      border-bottom: 1px solid #e8e8e8;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #fafafa; }
+    .check-si   { color: #16a34a; font-weight: 700; }
+    .check-no   { color: #e8622a; font-weight: 700; }
+    .check-warn { color: #d97706; font-weight: 700; }
+
+    /* ── CAJAS DESTACADAS ── */
+    .box {
+      border-left: 4px solid #e8622a;
+      background: #fff8f5;
+      padding: 12px 16px;
+      border-radius: 0 6px 6px 0;
+      margin: 14px 0;
+      font-size: 11.5pt;
+    }
+    .box.verde {
+      border-color: #16a34a;
+      background: #f0fdf4;
+    }
+    .box.azul {
+      border-color: #3b82f6;
+      background: #eff6ff;
+    }
+    .box.gris {
+      border-color: #888;
+      background: #f8f8f8;
+    }
+
+    /* ── LISTA DE PASOS ── */
+    .pasos {
+      list-style: none;
+      margin: 12px 0;
+      padding: 0;
+    }
+    .pasos li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 11.5pt;
+    }
+    .paso-num {
+      background: #e8622a;
+      color: #fff;
+      font-weight: 800;
+      font-size: 10pt;
+      min-width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── ALERTA ── */
+    .alerta {
+      background: #fef9c3;
+      border: 1.5px solid #f59e0b;
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-size: 11pt;
+      margin: 16px 0;
+    }
+    .alerta strong { color: #b45309; }
+
+    /* ── FOOTER ── */
+    .footer {
+      margin-top: 50px;
+      padding-top: 14px;
+      border-top: 1px solid #ddd;
+      font-size: 9pt;
+      color: #aaa;
+      text-align: center;
+    }
+
+    /* ── PRINT ── */
+    @media print {
+      body { padding: 20px 30px; }
+      h2 { page-break-after: avoid; }
+      table { page-break-inside: avoid; }
+      .box, .alerta { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ENCABEZADO -->
+  <div class="header">
+    <div class="logo">TodasMisCosas.com</div>
+    <div class="subtitulo">Plataforma de almacenamiento urbano entre particulares — Buenos Aires, Argentina</div>
+    <div class="doc-title">Protección del Código y la Marca</div>
+    <div class="doc-fecha">Documento interno · Mayo 2026</div>
+  </div>
+
+  <!-- INTRODUCCIÓN -->
+  <p>
+    Este documento resume las medidas técnicas y legales recomendadas para proteger
+    el software, la marca y la idea de negocio de <strong>TodasMisCosas.com</strong>
+    antes y después del lanzamiento al público general.
+  </p>
+
+  <!-- ────────────────────────────────────────── -->
+  <h2>1. Protección del Código en el Servidor</h2>
+
+  <p>
+    La arquitectura de TMC ya ofrece una protección natural muy significativa.
+    La tabla siguiente resume qué partes del sistema están expuestas y cuáles no:
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Capa del sistema</th>
+        <th>¿Está expuesta al público?</th>
+        <th>Motivo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Backend (API Node.js)</strong></td>
+        <td class="check-si">NO — Protegido ✅</td>
+        <td>Corre exclusivamente en el VPS de Hostinger. Ningún usuario externo puede descargarlo ni verlo.</td>
+      </tr>
+      <tr>
+        <td><strong>Base de datos (MySQL)</strong></td>
+        <td class="check-si">NO — Protegida ✅</td>
+        <td>No tiene acceso público. Solo accesible desde el propio servidor.</td>
+      </tr>
+      <tr>
+        <td><strong>Repositorio en GitHub</strong></td>
+        <td class="check-si">NO — Protegido ✅</td>
+        <td>Repositorio privado. Solo los colaboradores autorizados pueden verlo.</td>
+      </tr>
+      <tr>
+        <td><strong>Frontend (JavaScript compilado)</strong></td>
+        <td class="check-warn">PARCIAL ⚠️</td>
+        <td>El navegador descarga el JS compilado. Sin embargo, está <em>minificado y ofuscado</em> — prácticamente ilegible. No se accede al código fuente original.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="box verde">
+    <strong>Conclusión técnica:</strong> La mayor parte del código está protegido por diseño.
+    El frontend compilado es visible pero incomprensible en la práctica.
+    No existe acción técnica urgente adicional requerida.
+  </div>
+
+  <h3>Buenas prácticas ya implementadas o a verificar</h3>
+
+  <ul class="pasos">
+    <li><span class="paso-num">✓</span> Repositorio de GitHub configurado como <strong>privado</strong>.</li>
+    <li><span class="paso-num">✓</span> Archivo <code>.env</code> (claves secretas) nunca subido al repositorio.</li>
+    <li><span class="paso-num">✓</span> Acceso SSH al VPS protegido con clave privada.</li>
+    <li><span class="paso-num">!</span> Verificar que solo Ale y Guille tengan acceso al repo y al servidor.</li>
+    <li><span class="paso-num">!</span> No compartir las credenciales de Hostinger, MySQL ni MercadoPago.</li>
+  </ul>
+
+
+  <!-- ────────────────────────────────────────── -->
+  <h2>2. Protección de la Marca y el Nombre</h2>
+
+  <p>
+    El nombre <strong>"TodasMisCosas"</strong>, el dominio y la identidad visual son los
+    activos más valiosos y los más fáciles de copiar si no se protegen legalmente.
+  </p>
+
+  <h3>A) Registro de Marca en el INPI</h3>
+
+  <div class="box azul">
+    El <strong>INPI</strong> (Instituto Nacional de la Propiedad Industrial) es el organismo
+    oficial de Argentina para registrar marcas comerciales.
+    La fecha de presentación de la solicitud te protege desde el <strong>día 1</strong>,
+    aunque el trámite tarde 12–18 meses.
+  </div>
+
+  <ul class="pasos">
+    <li>
+      <span class="paso-num">1</span>
+      <div>
+        <strong>Ingresar a inpi.gob.ar</strong> y crear una cuenta como persona física o jurídica.
+      </div>
+    </li>
+    <li>
+      <span class="paso-num">2</span>
+      <div>
+        Buscar en la base de marcas si <em>"TodasMisCosas"</em> ya fue registrada por alguien más.
+      </div>
+    </li>
+    <li>
+      <span class="paso-num">3</span>
+      <div>
+        Presentar la solicitud en la <strong>clase 39</strong> (servicios de almacenamiento y transporte)
+        y posiblemente también en clase 42 (servicios tecnológicos / plataforma digital).
+      </div>
+    </li>
+    <li>
+      <span class="paso-num">4</span>
+      <div>
+        <strong>Costo aproximado:</strong> $50–$100 USD por clase. Se puede pagar online.
+      </div>
+    </li>
+  </ul>
+
+  <h3>B) Copyright sobre el Código y Diseño</h3>
+
+  <p>
+    En Argentina, el derecho de autor sobre software existe <strong>automáticamente</strong>
+    desde el momento de su creación (Ley 11.723). Para hacerlo oponible en juicio
+    con mayor facilidad, se puede registrar formalmente:
+  </p>
+
+  <div class="box">
+    <strong>DNDA</strong> — Dirección Nacional del Derecho de Autor<br/>
+    Registro de obra inédita (software + diseño visual).<br/>
+    Costo aproximado: muy bajo (~$20 USD). Web: <strong>argentina.gob.ar/justicia/dnda</strong>
+  </div>
+
+  <h3>C) Dominios Web</h3>
+
+  <p>Asegurarse de tener registradas las variantes del dominio para que nadie las tome:</p>
+
+  <table>
+    <thead>
+      <tr><th>Dominio</th><th>Estado recomendado</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>todasmiscosas.com</td><td class="check-si">✅ Ya registrado (dominio principal)</td></tr>
+      <tr><td>todasmiscosas.com.ar</td><td class="check-warn">⚠️ Verificar y registrar si no está tomado</td></tr>
+      <tr><td>todasmiscosas.net</td><td class="check-warn">⚠️ Opcional pero recomendado</td></tr>
+    </tbody>
+  </table>
+
+
+  <!-- ────────────────────────────────────────── -->
+  <h2>3. Lo que NO se Puede Proteger</h2>
+
+  <div class="box gris">
+    La <strong>idea</strong> de una plataforma de alquiler de espacios de almacenamiento
+    entre particulares <strong>no es protegible</strong> como tal — existe en otros países bajo
+    distintas formas. Lo que sí se protege es el nombre, el diseño, el código
+    y la ejecución concreta del negocio.
+  </div>
+
+  <p>
+    Un competidor puede lanzar un negocio similar sin infringir ninguna ley.
+    Lo que <strong>no puede hacer legalmente</strong> es:
+  </p>
+
+  <ul class="pasos">
+    <li><span class="paso-num">✗</span> Usar el nombre "TodasMisCosas" (si está registrado como marca).</li>
+    <li><span class="paso-num">✗</span> Copiar el código fuente (protegido por copyright).</li>
+    <li><span class="paso-num">✗</span> Reproducir el diseño visual / identidad de la plataforma.</li>
+    <li><span class="paso-num">✗</span> Registrar todasmiscosas.com.ar si ya fue tomado por ustedes.</li>
+  </ul>
+
+
+  <!-- ────────────────────────────────────────── -->
+  <h2>4. Plan de Acción — Prioridades</h2>
+
+  <div class="alerta">
+    <strong>Importante:</strong> Las acciones de mayor impacto son las legales, no las técnicas.
+    El código en el servidor ya está protegido. Lo urgente es proteger el nombre.
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Acción</th>
+        <th>Urgencia</th>
+        <th>Costo estimado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>Registrar la marca "TodasMisCosas" en el INPI</strong></td>
+        <td class="check-no">ALTA — Hacer ya</td>
+        <td>~$100–$200 USD</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>Verificar que el repo de GitHub es privado</strong></td>
+        <td class="check-no">ALTA — 2 minutos</td>
+        <td>Sin costo</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>Registrar dominio todasmiscosas.com.ar</strong></td>
+        <td class="check-warn">MEDIA</td>
+        <td>~$10–$20 USD/año</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>Registrar obra en la DNDA (copyright del software)</strong></td>
+        <td class="check-warn">MEDIA</td>
+        <td>~$20 USD</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>Revisar accesos al VPS y al repo</strong></td>
+        <td class="check-warn">MEDIA</td>
+        <td>Sin costo</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>Registrar variantes del dominio (.net, .ar)</td>
+        <td class="check-si">BAJA</td>
+        <td>~$30–$50 USD</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <!-- ────────────────────────────────────────── -->
+  <h2>5. Resumen Ejecutivo</h2>
+
+  <div class="box verde">
+    <p>
+      <strong>TMC ya está bien protegida técnicamente</strong> gracias a la arquitectura
+      servidor-cliente y al repositorio privado.
+    </p>
+    <p style="margin-top:8px">
+      La <strong>acción más importante antes del lanzamiento</strong> es presentar la solicitud
+      de registro de marca ante el INPI para que el nombre "TodasMisCosas" quede
+      reservado legalmente desde la fecha de presentación.
+    </p>
+    <p style="margin-top:8px">
+      La ventaja competitiva real de TMC no está solo en el código:
+      está en la <strong>red de usuarios, la confianza de la comunidad y la ejecución</strong>.
+      Eso no se puede copiar.
+    </p>
+  </div>
+
+
+  <!-- FOOTER -->
+  <div class="footer">
+    TodasMisCosas.com · Documento de uso interno · Confidencial<br/>
+    Preparado por el equipo técnico — Mayo 2026
+  </div>
+
+</body>
+</html>

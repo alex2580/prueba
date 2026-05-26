@@ -10,7 +10,8 @@ router.post('/preferencia',  requireAuth, [
 ], ctrl.crearPreferencia);
 
 // MercadoPago webhook — no auth (MP calls this directly)
-router.post('/webhook', express.raw({ type: 'application/json' }), ctrl.webhook);
+// express.json() global ya parsea el body; express.raw() en ruta lo pisaba con Buffer vacío
+router.post('/webhook', ctrl.webhook);
 
 router.get('/estado/:reservaId', requireAuth, ctrl.estado);
 

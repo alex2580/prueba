@@ -10,7 +10,7 @@ import { ChatModal } from '@/components/chat/ChatModal';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { OTPStep } from '@/components/auth/OTPStep';
-import { SiteLogo } from '@/components/ui/SiteLogo';
+import { SiteHeader } from '@/components/ui/SiteHeader';
 
 export default function EspacioPage() {
   const { id } = useParams<{ id: string }>();
@@ -52,18 +52,10 @@ export default function EspacioPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
-      {/* Minimal header */}
-      <header className="site-header">
-        <SiteLogo onClick={() => router.push('/')} />
-        <div />
-        <div style={{ display: 'flex', gap: '.5rem' }}>
-          {user ? (
-            <button className="nav-btn" onClick={() => router.push('/panel')}>Mi Panel</button>
-          ) : (
-            <button className="nav-btn" onClick={() => setAuthModal(true)}>Iniciar sesión</button>
-          )}
-        </div>
-      </header>
+      <SiteHeader
+        onLoginClick={() => { setAuthTab('login'); setAuthModal(true); }}
+        onRegisterClick={() => { setAuthTab('register'); setAuthModal(true); }}
+      />
 
       <div className="page-scroll">
         <DetalleEspacio

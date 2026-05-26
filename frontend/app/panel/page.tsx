@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { Avatar } from '@/components/ui/Avatar';
 import { formatARS, formatFechaCorta } from '@/lib/utils';
-import { SiteLogo } from '@/components/ui/SiteLogo';
+import { SiteHeader } from '@/components/ui/SiteHeader';
 import { CalendarioDisponibilidad, type Disponibilidad } from '@/components/publicar/CalendarioDisponibilidad';
 
 const MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || '';
@@ -34,7 +34,7 @@ const CATEGORIAS = [
 
 export default function PanelPage() {
   const router = useRouter();
-  const { user, token, loading: authLoading, logout, isAdmin } = useAuth();
+  const { user, token, loading: authLoading } = useAuth();
   const isOferente = user?.tipo === 'oferente' || user?.tipo === 'admin';
 
   // Reservas propias (as demandante — for all users)
@@ -466,26 +466,7 @@ export default function PanelPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
-      <header className="site-header">
-        <SiteLogo onClick={() => router.push('/')} />
-        <nav className="nav">
-          <button className="nav-btn active">Mi Panel</button>
-          <button className="nav-btn" onClick={() => router.push('/')}>Explorar</button>
-        </nav>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem' }}>
-          <Avatar nombre={user.nombre} size={34} />
-          <div>
-            <div style={{ fontSize: '.82rem', fontWeight: 600, lineHeight: 1.2 }}>{user.nombre}</div>
-            <div style={{ fontSize: '.7rem', color: 'var(--text3)', textTransform: 'capitalize' }}>{user.tipo}</div>
-          </div>
-          {isAdmin && (
-            <button className="nav-btn" style={{ color: 'var(--orange)', fontWeight: 700 }} onClick={() => router.push('/admin')}>
-              ⚙️ Admin
-            </button>
-          )}
-          <button className="nav-btn" onClick={logout} style={{ marginLeft: '.25rem' }}>Salir</button>
-        </div>
-      </header>
+      <SiteHeader />
 
       <div className="page-scroll">
         <div style={{ maxWidth: 1000, margin: '0 auto', padding: '2rem 1rem' }}>

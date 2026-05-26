@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { SiteLogo } from '@/components/ui/SiteLogo';
+import { SiteHeader } from '@/components/ui/SiteHeader';
 
 const PASOS = [
   {
@@ -43,18 +43,7 @@ export default function ComoFuncionaPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
-      {/* Header */}
-      <header className="site-header">
-        <SiteLogo onClick={() => router.push('/')} />
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.95rem', color: 'var(--orange)' }}>
-            💡 Cómo funciona
-          </span>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <button className="nav-btn" onClick={() => router.push('/')}>← Volver al mapa</button>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* Hero */}
       <div style={{

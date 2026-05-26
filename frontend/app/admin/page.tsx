@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
-import { SiteLogo } from '@/components/ui/SiteLogo';
+import { SiteHeader } from '@/components/ui/SiteHeader';
 import { formatFechaCorta, formatARS, COMISION_TMC } from '@/lib/utils';
 
 // ── Types ──────────────────────────────────────────────────────
@@ -1492,26 +1492,7 @@ export default function AdminPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
-      {/* Header */}
-      <header className="site-header">
-        <SiteLogo onClick={() => router.push('/')} />
-        <nav>
-          <button className="nav-btn" onClick={() => router.push('/panel')}>
-            ← Mi Panel
-          </button>
-        </nav>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
-          <span style={{ fontSize: '.78rem', color: 'var(--text3)' }}>{user?.nombre}</span>
-          <span style={{
-            fontSize: '.68rem', fontWeight: 800,
-            padding: '2px 8px', borderRadius: '99px',
-            background: 'rgba(232,98,42,.18)', color: 'var(--orange)',
-            fontFamily: 'Sora, sans-serif',
-          }}>
-            ADMIN
-          </span>
-        </div>
-      </header>
+      <SiteHeader />
 
       <div className="page-scroll">
         <div style={{ maxWidth: 900, margin: '0 auto', padding: '2rem 1rem' }}>

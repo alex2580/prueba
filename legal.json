@@ -1,0 +1,288 @@
+{
+  "_meta": {
+    "fuente": "TodasMisCosas.com v56",
+    "pagina": "Legal — Términos, Disclaimers y Seguros",
+    "version": "1.0",
+    "fecha": "Marzo 2025",
+    "revision": "Junio 2025",
+    "secciones": 4
+  },
+
+  "hero": {
+    "icono": "⚖️",
+    "titulo": "Términos de Uso y Disclaimers",
+    "descripcion": "TodasMisCosas.com opera como plataforma de conexión entre quien busca espacio de almacenamiento (Demandante) y quien lo ofrece (Oferente). Este documento establece las condiciones, limitaciones de responsabilidad y recomendaciones de uso.",
+    "nav": [
+      { "id": "sec1", "emoji": "🚫", "label": "Prohibiciones", "color": "yellow" },
+      { "id": "sec2", "emoji": "👤", "label": "Demandante",    "color": "blue" },
+      { "id": "sec3", "emoji": "🛡",  "label": "Seguros",       "color": "green" },
+      { "id": "sec4", "emoji": "🏭", "label": "Oferente",      "color": "orange" }
+    ]
+  },
+
+  "secciones": {
+
+    "sec1": {
+      "id": "sec1",
+      "emoji": "🚫",
+      "titulo": "Bienes y Usos Prohibidos",
+      "subtitulo": "Cláusula de exclusión de responsabilidad — Objetos y actividades no permitidas",
+      "color": "yellow",
+      "disclaimer_plataforma": "TodasMisCosas.com actúa exclusivamente como plataforma tecnológica de intermediación. No somos parte del contrato de depósito entre Oferente y Demandante, ni asumimos responsabilidad alguna por la naturaleza, estado, legalidad o valor de los bienes almacenados.",
+      "prohibiciones": [
+        {
+          "emoji": "🔫",
+          "nombre": "Armas de fuego, municiones y explosivos",
+          "detalle": "Incluyendo armas de colección sin habilitación RENAR vigente."
+        },
+        {
+          "emoji": "🧪",
+          "nombre": "Sustancias peligrosas e inflamables",
+          "detalle": "Combustibles, solventes, productos químicos sin habilitación OPDS."
+        },
+        {
+          "emoji": "💊",
+          "nombre": "Drogas y estupefacientes",
+          "detalle": "Toda sustancia prohibida por la Ley 23.737 y modificatorias."
+        },
+        {
+          "emoji": "☢️",
+          "nombre": "Materiales radiactivos o biohazard",
+          "detalle": "Residuos patológicos, materiales contaminantes, residuos especiales."
+        },
+        {
+          "emoji": "💰",
+          "nombre": "Dinero en efectivo no declarado",
+          "detalle": "Divisas, criptoactivos físicos o cualquier instrumento al portador."
+        },
+        {
+          "emoji": "🐾",
+          "nombre": "Animales vivos",
+          "detalle": "De cualquier especie. Los espacios no están habilitados para tal fin."
+        },
+        {
+          "emoji": "🖼️",
+          "nombre": "Bienes de procedencia ilícita",
+          "detalle": "Objetos robados, falsificados o sin respaldo documental de origen."
+        },
+        {
+          "emoji": "💣",
+          "nombre": "Armamento o material bélico",
+          "detalle": "Incluye artefactos, detonadores y cualquier material de uso militar."
+        }
+      ],
+      "deslinde": {
+        "titulo": "Deslinde de Responsabilidad",
+        "parrafos": [
+          "TodasMisCosas.com no realiza inspecciones ni verificación del contenido de los espacios arrendados. El Demandante es el único responsable de la legalidad, naturaleza y condición de los bienes que almacena, asumiendo plena responsabilidad civil, penal y administrativa por su tenencia.",
+          "El Oferente tiene derecho a rechazar o dar por terminado el contrato de depósito si tiene conocimiento fundado o sospecha razonable de que los bienes almacenados contradicen estas condiciones, sin que ello genere derecho a compensación alguna para el Demandante.",
+          "TodasMisCosas.com se reserva el derecho de denunciar ante las autoridades competentes cualquier uso indebido de los espacios publicados en su plataforma, pudiendo suspender o inhabilitar permanentemente las cuentas involucradas."
+        ],
+        "base_legal": "CCyC Ley 26.994 arts. 1356-1375 (Contrato de Depósito) · Ley 24.240 (Defensa del Consumidor) · Ley 25.326 (Protección de Datos Personales) · Estándares OCDE para plataformas digitales de economía colaborativa."
+      }
+    },
+
+    "sec2": {
+      "id": "sec2",
+      "emoji": "👤",
+      "titulo": "Condiciones para el Demandante",
+      "subtitulo": "Quien busca y reserva el espacio de almacenamiento",
+      "color": "blue",
+      "condiciones": [
+        {
+          "emoji": "🔗",
+          "titulo": "Somos un intermediario, no un depositario",
+          "texto": "TodasMisCosas.com conecta al Demandante con el Oferente. No somos parte del contrato de depósito, no custodiamos bienes ni somos responsables por pérdidas, robos, daños o deterioro de los objetos almacenados en los espacios publicados en nuestra plataforma."
+        },
+        {
+          "emoji": "📋",
+          "titulo": "Verificación del espacio",
+          "texto": "Es responsabilidad del Demandante visitar e inspeccionar el espacio antes de almacenar bienes de valor. TodasMisCosas.com no garantiza las condiciones físicas, medidas de seguridad ni habilitaciones del espacio ofrecido."
+        },
+        {
+          "emoji": "📸",
+          "titulo": "Documentar el estado al ingreso",
+          "texto": "Recomendamos enfáticamente registrar fotográficamente el estado de los bienes al momento de ingresarlos. Este registro podrá ser necesario ante cualquier reclamo. La plataforma provee un Acta de Check-in digital."
+        },
+        {
+          "emoji": "⚖️",
+          "titulo": "Contrato directamente con el Oferente",
+          "texto": "El Demandante reconoce que la relación contractual de depósito se establece exclusivamente con el Oferente. TodasMisCosas.com facilita el pago y la comunicación pero no actúa como garante del cumplimiento de las obligaciones del Oferente."
+        },
+        {
+          "emoji": "🚫",
+          "titulo": "Bienes suntuosos y de alto valor",
+          "texto": "Para almacenar objetos de alto valor económico, artístico o sentimental (obras de arte, joyas, colecciones, instrumentos musicales, etc.), el Demandante acepta hacerlo bajo su exclusiva responsabilidad y reconoce que TodasMisCosas.com no ofrece cobertura por estos bienes salvo contratación expresa de un seguro habilitado a tal efecto."
+        },
+        {
+          "emoji": "🔄",
+          "titulo": "Proceso de reclamos",
+          "texto": "En caso de incidente, el Demandante deberá notificar a TodasMisCosas.com dentro de las 24 horas de detectado el mismo. La plataforma actuará como mediador de buena fe pero no asume obligación de indemnizar ni de resolver el conflicto."
+        }
+      ],
+      "recomendacion": "Si estás evaluando almacenar objetos cuyo valor supere los $500.000 ARS (o su equivalente en USD), te recomendamos fuertemente contratar un seguro de bienes en guarda antes de iniciar la reserva."
+    },
+
+    "sec3": {
+      "id": "sec3",
+      "emoji": "🛡",
+      "titulo": "Seguros Disponibles",
+      "subtitulo": "Coberturas opcionales para bienes almacenados · Ofrecidos por aseguradoras habilitadas",
+      "color": "green",
+      "disclaimer": "TodasMisCosas.com ofrece, en conjunto con aseguradoras habilitadas ante la Superintendencia de Seguros de la Nación (SSN), coberturas opcionales. TodasMisCosas.com actúa como canal de distribución y no es la aseguradora. Las pólizas son emitidas y administradas por terceros.",
+      "coberturas": [
+        {
+          "emoji": "📦",
+          "nombre": "Seguro Básico de Bienes en Guarda",
+          "target": "Para uso residencial y personal",
+          "precio": "$150/mes",
+          "badge": "Incluible en reserva",
+          "featured": false,
+          "cobertura": "Cubre robo con violencia, incendio y daños por agua.",
+          "limite": "Hasta $500.000 ARS por ítem · Cobertura total: $2.000.000 ARS"
+        },
+        {
+          "emoji": "🏢",
+          "nombre": "Seguro Empresarial de Depósito",
+          "target": "Para stock, archivo y materiales",
+          "precio": "$450/mes",
+          "badge": "B2B",
+          "featured": false,
+          "cobertura": "Cubre robo simple y con violencia, incendio, inundación y daños eléctricos.",
+          "limite": "Hasta $5.000.000 ARS por siniestro"
+        },
+        {
+          "emoji": "💎",
+          "nombre": "Seguro para Bienes Suntuosos",
+          "target": "Obras de arte, joyas, colecciones, instrumentos",
+          "precio": "Desde $980/mes",
+          "badge": "⭐ Recomendado",
+          "featured": true,
+          "featured_label": "RECOMENDADO PARA BIENES DE VALOR",
+          "cobertura": "Cobertura a todo riesgo con tasación previa. Requiere inventario y valuación certificada.",
+          "limite": "Monto asegurado a acordar · Requiere peritaje previo"
+        },
+        {
+          "emoji": "❄️",
+          "nombre": "Seguro para Mercadería Sensible",
+          "target": "Farmacéuticos, alimentos, electrónicos",
+          "precio": "$620/mes",
+          "badge": "Especializado",
+          "featured": false,
+          "cobertura": "Cubre daños por temperatura, humedad y corte de cadena de frío.",
+          "limite": "Hasta $3.000.000 ARS"
+        },
+        {
+          "emoji": "🚚",
+          "nombre": "Seguro de Transporte y Guarda",
+          "target": "Para reservas que incluyan delivery",
+          "precio": "$280/mes",
+          "badge": "Add-on",
+          "featured": false,
+          "cobertura": "Cubre desde el retiro hasta la devolución, incluyendo el traslado.",
+          "limite": "Hasta $1.500.000 ARS"
+        }
+      ],
+      "condiciones": {
+        "titulo": "Condiciones y Limitaciones",
+        "items": [
+          { "key": "Pre-existencias", "texto": "Los seguros no cubren daños previos a la contratación. Se recomienda el Acta de Check-in fotográfica al inicio." },
+          { "key": "Bienes no asegurables", "texto": "Dinero en efectivo, documentos de identidad, objetos de procedencia no comprobable, armas o cualquier bien prohibido por la Sección 1." },
+          { "key": "Siniestros", "texto": "Deben reportarse dentro de las 48hs a TodasMisCosas.com y directamente a la aseguradora. La plataforma facilita el proceso pero no interviene en la liquidación del siniestro." },
+          { "key": "Coberturas exactas", "texto": "Las condiciones definitivas constan en la póliza emitida por la aseguradora. Los montos indicados son orientativos y pueden variar." }
+        ]
+      }
+    },
+
+    "sec4": {
+      "id": "sec4",
+      "emoji": "🏭",
+      "titulo": "Condiciones para el Oferente",
+      "subtitulo": "Quien publica y ofrece el espacio de almacenamiento",
+      "color": "orange",
+      "espacios_permitidos": [
+        { "emoji": "🏠", "tipo": "Cocheras y garajes",             "detalle": "Particulares o de edificios. Con o sin acceso 24hs." },
+        { "emoji": "📦", "tipo": "Bauleras y boxes",               "detalle": "Espacios individuales en edificios residenciales o comerciales." },
+        { "emoji": "🏭", "tipo": "Galpones y depósitos",           "detalle": "Industriales, logísticos o comerciales. Con acceso para vehículos." },
+        { "emoji": "🏢", "tipo": "Depósitos en locales comerciales","detalle": "Espacio libre en tiendas, showrooms o negocios." },
+        { "emoji": "🏗️", "tipo": "Galpones industriales",          "detalle": "Con playa de maniobra, estanterías o sistemas de refrigeración." },
+        { "emoji": "🌳", "tipo": "Espacios al aire libre",          "detalle": "Patios, terrenos o predios cercados y vigilados." }
+      ],
+      "obligaciones": [
+        {
+          "emoji": "✅",
+          "titulo": "Veracidad de la publicación",
+          "texto": "El Oferente garantiza que la descripción, fotos, dimensiones, precio y condiciones del espacio publicado son veraces y actualizadas. Publicaciones engañosas serán dadas de baja y la cuenta podrá ser suspendida."
+        },
+        {
+          "emoji": "🔑",
+          "titulo": "Disponibilidad del espacio",
+          "texto": "El Oferente se compromete a garantizar el acceso al espacio durante el período de la reserva confirmada. La cancelación unilateral sin causa justificada puede generar penalidades y afectar la calificación de la cuenta."
+        },
+        {
+          "emoji": "⚠️",
+          "titulo": "Deber de vigilancia y denuncia",
+          "texto": "Si el Oferente detecta o sospecha que los bienes almacenados son ilegales, peligrosos o contravienen las condiciones de la plataforma, debe notificar inmediatamente a TodasMisCosas.com. El silencio no exime de responsabilidad."
+        },
+        {
+          "emoji": "🛡",
+          "titulo": "Seguro del inmueble",
+          "texto": "El Oferente es responsable de contar con el seguro de incendio y responsabilidad civil del inmueble. TodasMisCosas.com no cubre daños estructurales ni a terceros que deriven del uso del espacio."
+        },
+        {
+          "emoji": "📄",
+          "titulo": "Documentación en regla",
+          "texto": "El Oferente declara que el espacio cumple con las habilitaciones municipales requeridas para su uso como depósito o almacenamiento. TodasMisCosas.com puede solicitar documentación en cualquier momento."
+        },
+        {
+          "emoji": "💰",
+          "titulo": "Declaración fiscal",
+          "texto": "Los ingresos generados por el alquiler de espacios son renta gravada. El Oferente es responsable de su correcta declaración ante AFIP. TodasMisCosas.com emitirá el comprobante correspondiente por la comisión cobrada (10%) pero no actúa como agente de retención del ingreso bruto del Oferente."
+        }
+      ],
+      "modelo_reglamento": {
+        "titulo": "REGLAMENTO DE USO DEL ESPACIO",
+        "nota": "Este es un modelo orientativo. Se recomienda adaptarlo con un profesional jurídico antes de ponerlo en uso. TodasMisCosas.com no presta asesoramiento legal.",
+        "clausulas": [
+          {
+            "numero": 1,
+            "nombre": "USO PERMITIDO",
+            "texto": "El espacio está habilitado exclusivamente para almacenamiento de bienes muebles de uso personal, doméstico o comercial lícito. Se permiten: cajas, muebles, electrodomésticos, indumentaria, materiales de construcción no peligrosos, bicicletas y elementos deportivos."
+          },
+          {
+            "numero": 2,
+            "nombre": "ACCESO",
+            "texto": "El acceso al espacio se realizará en los horarios pactados. Fuera del horario convenido, se deberá coordinar con el Oferente con un mínimo de [X] horas de anticipación."
+          },
+          {
+            "numero": 3,
+            "nombre": "PROHIBICIONES EXPRESAS",
+            "texto": "Queda expresamente prohibido almacenar armas, municiones, explosivos, sustancias inflamables, estupefacientes, dinero en efectivo no declarado, animales vivos o cualquier bien de procedencia ilícita. El incumplimiento dará lugar a la rescisión inmediata del contrato y a la denuncia ante autoridades competentes."
+          },
+          {
+            "numero": 4,
+            "nombre": "RESPONSABILIDAD",
+            "texto": "El Oferente no asume responsabilidad por pérdida, robo, daño o deterioro de los bienes almacenados salvo que medie dolo o negligencia grave de su parte debidamente comprobada. Se recomienda al Demandante contratar un seguro de bienes en guarda."
+          },
+          {
+            "numero": 5,
+            "nombre": "ESTADO DEL ESPACIO",
+            "texto": "El Demandante acepta el espacio en las condiciones descriptas en la publicación. Cualquier deterioro imputable al Demandante será debitado del depósito de garantía o facturado separadamente."
+          },
+          {
+            "numero": 6,
+            "nombre": "JURISDICCIÓN",
+            "texto": "Ante cualquier controversia, las partes se someten a la jurisdicción de los Tribunales Ordinarios de la Ciudad Autónoma de Buenos Aires, renunciando a cualquier otro fuero."
+          }
+        ]
+      }
+    }
+  },
+
+  "vigencia": {
+    "version": "1.0",
+    "fecha_vigencia": "Marzo 2025",
+    "proxima_revision": "Junio 2025",
+    "texto": "Estos términos y condiciones entran en vigencia desde la fecha de publicación y pueden ser actualizados por TodasMisCosas.com en cualquier momento. Los usuarios serán notificados por email ante cambios sustanciales. El uso continuado de la plataforma implica la aceptación de las condiciones vigentes."
+  }
+}

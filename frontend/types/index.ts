@@ -209,6 +209,7 @@ export interface FiltrosEspacios {
   disponible?: boolean;
   q?: string;
   periodo?: 'dia' | 'mes' | '';
+  con_seguridad?: boolean;
 }
 
 export interface ApiResponse<T = unknown> {
