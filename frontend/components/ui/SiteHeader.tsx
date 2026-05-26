@@ -37,6 +37,12 @@ export function SiteHeader({ onLoginClick, onRegisterClick }: SiteHeaderProps) {
         >
           📋 Legales
         </button>
+        <button
+          className={`btn-register ${pathname === '/publicar' ? 'active' : ''}`}
+          onClick={() => router.push('/publicar')}
+        >
+          ➕ Publicar espacio
+        </button>
       </nav>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', justifyContent: 'flex-end' }}>
@@ -53,9 +59,6 @@ export function SiteHeader({ onLoginClick, onRegisterClick }: SiteHeaderProps) {
             )}
             <button className="nav-btn" onClick={() => router.push('/panel')}>Mi cuenta</button>
             <button className="nav-btn" onClick={logout}>Salir</button>
-            <button className="btn-register" onClick={() => router.push('/publicar')}>
-              Publicar espacio
-            </button>
           </>
         ) : (
           <>
@@ -66,7 +69,7 @@ export function SiteHeader({ onLoginClick, onRegisterClick }: SiteHeaderProps) {
               Ingresar
             </button>
             <button
-              className="btn-register"
+              className="btn-login"
               onClick={onRegisterClick ?? (() => router.push('/auth/register'))}
             >
               Registrarse
