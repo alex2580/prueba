@@ -302,8 +302,9 @@ export default function ReservarPage() {
   // Step 1 state
   const [fechaDesde, setFechaDesde] = useState('');
   const [fechaHasta, setFechaHasta] = useState('');
-  const [diasMulti, setDiasMulti] = useState<string[]>([]); // para modo 'dia' — días salteados
+  const [diasMulti, setDiasMulti] = useState<string[]>([]);
   const [step1Error, setStep1Error] = useState('');
+  const [periodoElegido, setPeriodoElegido] = useState<'dia' | 'mes' | null>(null);
   const [fechasOcupadas, setFechasOcupadas] = useState<string[]>([]);
 
   // Step 2 state
@@ -340,10 +341,14 @@ export default function ReservarPage() {
 
   const disponibilidad = (espacio as any)?.disponibilidad as { dias?: string[]; meses?: string[] } | undefined;
 
-  // Modo del calendario según precios configurados
+  // Modo del calendario según precios configurados y elección del usuario
   const tieneDia = Number(espacio?.precio_dia) > 0;
   const tieneMes = Number(espacio?.precio_mes) > 0;
-  const modoCalendario: ModoCalendario = tieneDia && tieneMes ? 'ambos' : tieneMes ? 'mes' : 'dia';
+  const ambosPrecios = tieneDia && tieneMes;
+  const modoEfectivo: 'dia' | 'mes' = ambosPrecios
+    ? (periodoElegido ?? 'dia')
+    : tieneMes ? 'mes' : 'dia';
+  const modoCalendario: ModoCalendario = modoEfectivo;
 
   const precioEstimado = espacio
     ? modoCalendario === 'dia'
@@ -356,7 +361,7 @@ export default function ReservarPage() {
   const diasSeleccionados = modoCalendario === 'dia'
     ? diasMulti.length
     : fechaDesde && fechaHasta ? diasEntre(fechaDesde, fechaHasta) : 0;
-  const esMensual = modoCalendario !== 'dia' && diasSeleccionados >= 28;
+  const esMensual = modoCalendario === 'mes' && diasSeleccionados >= 28;
 
   const serviciosTotal = servicios.reduce((acc, s) => acc + SERVICIOS_ADICIONALES[s].precio, 0);
   const totalFinal = precioEstimado + serviciosTotal;
@@ -366,6 +371,7 @@ export default function ReservarPage() {
   }
 
   function goToStep2() {
+    if (ambosPrecios && periodoElegido === null) { setStep1Error('Seleccioná si querés reservar por día o por mes.'); return; }
     if (modoCalendario === 'dia') {
       if (diasMulti.length === 0) { setStep1Error('Seleccioná al menos un día en el calendario.'); return; }
     } else {
@@ -549,52 +555,95 @@ export default function ReservarPage() {
                     <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.82rem', color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: '1rem' }}>
                       📅 Disponibilidad & Fechas
                     </div>
-                    <MiniCalendar
-                      diasDisponibles={disponibilidad?.dias}
-                      diasOcupados={fechasOcupadas}
-                      fechaDesde={fechaDesde}
-                      fechaHasta={fechaHasta}
-                      onSelect={(d, h) => { setFechaDesde(d); setFechaHasta(h); setStep1Error(''); }}
-                      modo={modoCalendario}
-                      diasMulti={diasMulti}
-                      onSelectMulti={dias => { setDiasMulti(dias); setStep1Error(''); }}
-                    />
 
-                    {modoCalendario === 'ambos' && (
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.75rem', marginTop: '1rem' }}>
-                        <label className="form-label">
-                          Desde
-                          <input type="date" value={fechaDesde}
-                            onChange={e => { setFechaDesde(e.target.value); setStep1Error(''); }}
-                            min={new Date().toISOString().split('T')[0]}
-                            style={{ marginTop: '.3rem' }} />
-                        </label>
-                        <label className="form-label">
-                          Hasta
-                          <input type="date" value={fechaHasta}
-                            onChange={e => { setFechaHasta(e.target.value); setStep1Error(''); }}
-                            min={fechaDesde || new Date().toISOString().split('T')[0]}
-                            style={{ marginTop: '.3rem' }} />
-                        </label>
+                    {/* Selector de período — solo cuando hay ambos precios */}
+                    {ambosPrecios && (
+                      <div style={{ display: 'flex', gap: '.75rem', marginBottom: '1.25rem' }}>
+                        {(['dia', 'mes'] as const).map(p => (
+                          <button
+                            key={p}
+                            onClick={() => {
+                              setPeriodoElegido(p);
+                              setFechaDesde('');
+                              setFechaHasta('');
+                              setDiasMulti([]);
+                              setStep1Error('');
+                            }}
+                            style={{
+                              flex: 1,
+                              padding: '.7rem',
+                              borderRadius: 'var(--r2)',
+                              border: `2px solid ${periodoElegido === p ? 'var(--orange)' : 'var(--border)'}`,
+                              background: periodoElegido === p ? 'rgba(232,98,42,.08)' : 'var(--surface)',
+                              cursor: 'pointer',
+                              textAlign: 'center',
+                              transition: 'all .15s',
+                            }}
+                          >
+                            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1rem', color: periodoElegido === p ? 'var(--orange)' : 'var(--text)' }}>
+                              {p === 'dia' ? formatARS(espacio!.precio_dia) : formatARS(espacio!.precio_mes)}
+                            </div>
+                            <div style={{ fontSize: '.72rem', color: periodoElegido === p ? 'var(--orange)' : 'var(--text3)', fontWeight: 600, marginTop: '.15rem' }}>
+                              {p === 'dia' ? '📅 Por día' : '📆 Por mes'}
+                            </div>
+                          </button>
+                        ))}
                       </div>
                     )}
 
-                    {/* Price preview */}
-                    {fechaDesde && fechaHasta && precioEstimado > 0 && (
-                      <div style={{
-                        marginTop: '1rem', padding: '.9rem 1.1rem',
-                        background: 'rgba(232,98,42,.06)', border: '1px solid rgba(232,98,42,.18)',
-                        borderRadius: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                      }}>
-                        <div style={{ fontSize: '.82rem', color: 'var(--text2)' }}>
-                          {esMensual
-                            ? `${Math.ceil(diasSeleccionados / 30)} mes${Math.ceil(diasSeleccionados / 30) !== 1 ? 'es' : ''} × ${formatARS(espacio.precio_mes)}/mes`
-                            : `${diasSeleccionados} día${diasSeleccionados !== 1 ? 's' : ''} × ${formatARS(espacio.precio_dia)}/día`}
-                        </div>
-                        <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.05rem', color: 'var(--orange)' }}>
-                          {formatARS(precioEstimado)}
-                        </div>
-                      </div>
+                    {/* Mostrar calendario solo cuando ya eligió período (o solo tiene uno) */}
+                    {(!ambosPrecios || periodoElegido !== null) && (
+                      <>
+                        <MiniCalendar
+                          diasDisponibles={disponibilidad?.dias}
+                          diasOcupados={fechasOcupadas}
+                          fechaDesde={fechaDesde}
+                          fechaHasta={fechaHasta}
+                          onSelect={(d, h) => { setFechaDesde(d); setFechaHasta(h); setStep1Error(''); }}
+                          modo={modoCalendario}
+                          diasMulti={diasMulti}
+                          onSelectMulti={dias => { setDiasMulti(dias); setStep1Error(''); }}
+                        />
+
+                        {modoCalendario === 'mes' && (
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.75rem', marginTop: '1rem' }}>
+                            <label className="form-label">
+                              Desde
+                              <input type="date" value={fechaDesde}
+                                onChange={e => { setFechaDesde(e.target.value); setStep1Error(''); }}
+                                min={new Date().toISOString().split('T')[0]}
+                                style={{ marginTop: '.3rem' }} />
+                            </label>
+                            <label className="form-label">
+                              Hasta
+                              <input type="date" value={fechaHasta}
+                                onChange={e => { setFechaHasta(e.target.value); setStep1Error(''); }}
+                                min={fechaDesde || new Date().toISOString().split('T')[0]}
+                                style={{ marginTop: '.3rem' }} />
+                            </label>
+                          </div>
+                        )}
+
+                        {/* Price preview */}
+                        {precioEstimado > 0 && (
+                          <div style={{
+                            marginTop: '1rem', padding: '.9rem 1.1rem',
+                            background: 'rgba(232,98,42,.06)', border: '1px solid rgba(232,98,42,.18)',
+                            borderRadius: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                          }}>
+                            <div style={{ fontSize: '.82rem', color: 'var(--text2)' }}>
+                              {modoCalendario === 'dia'
+                                ? `${diasSeleccionados} día${diasSeleccionados !== 1 ? 's' : ''} × ${formatARS(espacio.precio_dia)}/día`
+                                : esMensual
+                                  ? `${Math.ceil(diasSeleccionados / 30)} mes${Math.ceil(diasSeleccionados / 30) !== 1 ? 'es' : ''} × ${formatARS(espacio.precio_mes)}/mes`
+                                  : `${diasSeleccionados} día${diasSeleccionados !== 1 ? 's' : ''} × ${formatARS(espacio.precio_dia)}/día`}
+                            </div>
+                            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.05rem', color: 'var(--orange)' }}>
+                              {formatARS(precioEstimado)}
+                            </div>
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
 
