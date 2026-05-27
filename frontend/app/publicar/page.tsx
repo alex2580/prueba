@@ -19,10 +19,11 @@ const MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || '';
 const CATEGORIAS = [
   { value: 'cochera',    label: '🚗 Cochera' },
   { value: 'galpon',     label: '🏭 Galpón' },
+  { value: 'local',      label: '🏪 Local' },
   { value: 'habitacion', label: '🛏️ Habitación' },
   { value: 'sotano',     label: '🏚️ Sótano' },
   { value: 'terraza',    label: '🌿 Terraza' },
-  { value: 'abierto',    label: '🌳 Espacio abierto' },
+  { value: 'abierto',    label: '🌳 Esp. abierto' },
   { value: 'estante',    label: '📦 Estantería' },
 ];
 
@@ -598,7 +599,7 @@ export default function PublicarPage() {
               {/* Categoría */}
               <div>
                 <label className="form-label">Tipo de espacio *</label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '.5rem', marginTop: '.4rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '.5rem', marginTop: '.4rem' }}>
                   {CATEGORIAS.map(c => (
                     <button
                       key={c.value}
