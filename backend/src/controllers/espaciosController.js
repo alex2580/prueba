@@ -34,7 +34,7 @@ async function getEspacioWithFotos(id) {
 // GET /api/espacios
 async function listar(req, res, next) {
   try {
-    const { barrio, tipo, precio_max, precio_min, disponible, q, periodo, con_seguridad, pais, rating_min } = req.query;
+    const { barrio, tipo, precio_max, precio_min, disponible, q, periodo, con_seguridad, pais, rating_min, seguridad_min } = req.query;
 
     let sql = `
       SELECT e.id, e.nombre, e.direccion, e.barrio, e.m2, e.tipo,
@@ -71,6 +71,19 @@ async function listar(req, res, next) {
     }
     if (pais) { sql += ' AND e.pais = ?'; params.push(pais); }
     if (rating_min) { sql += ' AND e.rating >= ?'; params.push(Number(rating_min)); }
+    if (seguridad_min) {
+      sql += ` AND ROUND((
+        COALESCE(JSON_EXTRACT(e.seguridad,'$.techo_impermeable'),false) +
+        COALESCE(JSON_EXTRACT(e.seguridad,'$.cerradura'),false) +
+        COALESCE(JSON_EXTRACT(e.seguridad,'$.camaras'),false) +
+        COALESCE(JSON_EXTRACT(e.seguridad,'$.iluminacion'),false) +
+        COALESCE(JSON_EXTRACT(e.seguridad,'$.acceso_controlado'),false) +
+        COALESCE(JSON_EXTRACT(e.seguridad,'$.seco_ventilado'),false) +
+        COALESCE(JSON_EXTRACT(e.seguridad,'$.acceso_24h'),false) +
+        COALESCE(JSON_EXTRACT(e.seguridad,'$.extintor'),false)
+      ) / 8 * 5) >= ?`;
+      params.push(Number(seguridad_min));
+    }
     if (q) {
       sql += ' AND (e.nombre LIKE ? OR e.descripcion LIKE ? OR e.barrio LIKE ? OR e.direccion LIKE ?)';
       const like = `%${q}%`;
