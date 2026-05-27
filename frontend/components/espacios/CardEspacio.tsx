@@ -165,7 +165,7 @@ export function CardEspacio({ espacio, onClick }: CardEspacioProps) {
           <div className="espacio-card__title" style={{ margin: 0 }}>{espacio.nombre}</div>
         </div>
 
-        <div className="espacio-card__address">📍 {espacio.barrio} · {espacio.m2} m²</div>
+        <div className="espacio-card__address">📍 {espacio.barrio}{espacio.m2 ? ` · ${espacio.m2} m²` : ''}</div>
 
         <div className="espacio-card__meta">
           <RatingDisplay value={espacio.rating ?? 0} count={espacio.reviews_count} size="sm" />

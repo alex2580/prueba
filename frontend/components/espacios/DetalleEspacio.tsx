@@ -57,7 +57,7 @@ export function DetalleEspacio({ espacio, onReservar, onChat }: DetalleEspacioPr
               <Badge variant={espacio.tipo === 'exclusivo' ? 'blue' : 'orange'}>
                 {espacio.tipo === 'exclusivo' ? '🔒 Exclusivo' : '🤝 Compartido'}
               </Badge>
-              <span style={{ fontSize: '.82rem', color: 'var(--text3)' }}>📐 {espacio.m2} m²</span>
+              {espacio.m2 ? <span style={{ fontSize: '.82rem', color: 'var(--text3)' }}>📐 {espacio.m2} m²</span> : null}
               {espacio.reservas_mes > 0 && (
                 <span style={{ fontSize: '.82rem', color: 'var(--text3)' }}>
                   🔥 {espacio.reservas_mes} reservas este mes
@@ -201,7 +201,7 @@ export function DetalleEspacio({ espacio, onReservar, onChat }: DetalleEspacioPr
 
             <div style={{ marginTop: '1rem', display: 'grid', gap: '.5rem' }}>
               {[
-                ['📐', 'Superficie', `${espacio.m2} m²`],
+                ...(espacio.m2 ? [['📐', 'Superficie', `${espacio.m2} m²`]] : []),
                 ['📍', 'Barrio', espacio.barrio],
                 ['🔑', 'Tipo', espacio.tipo === 'exclusivo' ? 'Uso exclusivo' : 'Compartido'],
               ].map(([emoji, label, val]) => (

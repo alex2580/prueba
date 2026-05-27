@@ -100,7 +100,7 @@ export function PanelOferente({ espacios, reservas, loading, onEliminarEspacio, 
                   )}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>{e.nombre}</div>
-                    <div style={{ fontSize: '.78rem', color: 'var(--text3)' }}>📍 {e.barrio} · {e.m2} m²</div>
+                    <div style={{ fontSize: '.78rem', color: 'var(--text3)' }}>📍 {e.barrio}{e.m2 ? ` · ${e.m2} m²` : ''}</div>
                     <div style={{ fontSize: '.82rem', fontWeight: 700, marginTop: '.2rem', display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
                       {e.precio_dia > 0 && <span style={{ color: 'var(--orange)' }}>{formatARS(e.precio_dia)}/día</span>}
                       {e.precio_mes > 0 && <span style={{ color: 'var(--orange)' }}>{formatARS(e.precio_mes)}/mes</span>}
