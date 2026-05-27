@@ -43,7 +43,7 @@ export interface Espacio {
   nombre: string;
   direccion: string;
   barrio: string;
-  m2: number;
+  m2?: number;
   tipo: EspacioTipo;
   precio_dia: number;
   precio_mes: number;
@@ -77,7 +77,7 @@ export interface EspacioFormData {
   nombre: string;
   direccion: string;
   barrio: string;
-  m2: number;
+  m2?: number;
   tipo: EspacioTipo;
   precio_dia: number;
   precio_mes: number;
