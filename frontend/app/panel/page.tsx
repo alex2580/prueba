@@ -7,7 +7,8 @@ import { useRouter } from 'next/navigation';
 import { Loader } from '@googlemaps/js-api-loader';
 import { useAuth } from '@/hooks/useAuth';
 import { useReservas } from '@/hooks/useReservas';
-import { espaciosAPI, reservasAPI, usuariosAPI, reviewsAPI } from '@/lib/api';
+import { espaciosAPI, reservasAPI, usuariosAPI, reviewsAPI, favoritosAPI } from '@/lib/api';
+import { CardEspacio } from '@/components/espacios/CardEspacio';
 import { SeguridadChecklist } from '@/components/publicar/SeguridadChecklist';
 import type { Espacio, Reserva } from '@/types';
 import { MONEDAS } from '@/types';
@@ -48,6 +49,11 @@ export default function PanelPage() {
   const [reservasRecibidas, setReservasRecibidas] = useState<Reserva[]>([]);
   const [loadingOferente, setLoadingOferente] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+
+  // Favoritos
+  const [favoritos, setFavoritos] = useState<Espacio[]>([]);
+  const [favIds, setFavIds] = useState<Set<string>>(new Set());
+  const [favLoading, setFavLoading] = useState(false);
 
   // Edit modal
   const [editando, setEditando] = useState<Espacio | null>(null);
@@ -121,6 +127,31 @@ export default function PanelPage() {
   }, [isOferente, token]);
 
   useEffect(() => { cargarDatosOferente(); }, [cargarDatosOferente, refreshKey]);
+
+  const cargarFavoritos = useCallback(async () => {
+    if (!token) return;
+    setFavLoading(true);
+    try {
+      const data = await favoritosAPI.listar(token);
+      setFavoritos(data);
+      setFavIds(new Set(data.map(e => e.id)));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setFavLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => { cargarFavoritos(); }, [cargarFavoritos]);
+
+  function handleToggleFavoritoPanel(id: string, val: boolean) {
+    setFavIds(prev => {
+      const next = new Set(prev);
+      if (val) next.add(id); else next.delete(id);
+      return next;
+    });
+    if (!val) setFavoritos(prev => prev.filter(e => e.id !== id));
+  }
 
   async function handleToggleDisponible(id: string, disponible: boolean) {
     if (!token) return;
@@ -579,6 +610,33 @@ export default function PanelPage() {
                     onPagar={r.estado === 'confirmada' ? () => router.push(`/reserva/${r.id}/checkout`) : undefined}
                     onCalificar={['pagada', 'finalizada'].includes(r.estado) ? () => abrirReview(r) : undefined}
                     onExtender={r.estado === 'pagada' ? () => abrirExtension(r) : undefined}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* ── SECTION: Mis favoritos ── */}
+          <section style={{ marginBottom: '2.5rem' }}>
+            <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.1rem', marginBottom: '1.2rem' }}>
+              ❤️ Mis favoritos
+            </h2>
+            {favLoading ? (
+              <p style={{ color: 'var(--text3)' }}>Cargando…</p>
+            ) : favoritos.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text3)', background: 'var(--surface)', borderRadius: 'var(--r2)', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: '2rem', marginBottom: '.5rem' }}>🤍</div>
+                <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, marginBottom: '.3rem' }}>No tenés favoritos guardados</div>
+                <p style={{ fontSize: '.85rem' }}>Tocá el corazón en una publicación para guardarla acá.</p>
+              </div>
+            ) : (
+              <div className="espacios-grid">
+                {favoritos.map(e => (
+                  <CardEspacio
+                    key={e.id}
+                    espacio={e}
+                    isFavorito={favIds.has(e.id)}
+                    onToggleFavorito={handleToggleFavoritoPanel}
                   />
                 ))}
               </div>

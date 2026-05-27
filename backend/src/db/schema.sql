@@ -159,6 +159,19 @@ CREATE TABLE IF NOT EXISTS servicios_adicionales (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ─────────────────────────────────────────────────────────────
+--  FAVORITOS
+-- ─────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS favoritos (
+  id         VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  usuario_id VARCHAR(36) NOT NULL,
+  espacio_id VARCHAR(36) NOT NULL,
+  created_at DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_favorito (usuario_id, espacio_id),
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+  FOREIGN KEY (espacio_id) REFERENCES espacios(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ─────────────────────────────────────────────────────────────
 --  SEED DATA — Usuarios demo
 -- ─────────────────────────────────────────────────────────────
 INSERT IGNORE INTO usuarios (id, supabase_id, nombre, email, tel, tipo, verificado) VALUES

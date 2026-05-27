@@ -6,15 +6,20 @@ import type { Espacio } from '@/types';
 import { RatingDisplay } from '@/components/ui/Rating';
 import { formatARS } from '@/lib/utils';
 import { getFotoFallback } from '@/lib/fotosFallback';
+import { favoritosAPI } from '@/lib/api';
+import { useAuth } from '@/hooks/useAuth';
 
 interface CardEspacioProps {
   espacio: Espacio;
   onClick?: () => void;
+  isFavorito?: boolean;
+  onToggleFavorito?: (id: string, val: boolean) => void;
 }
 
-export function CardEspacio({ espacio, onClick }: CardEspacioProps) {
+export function CardEspacio({ espacio, onClick, isFavorito = false, onToggleFavorito }: CardEspacioProps) {
   const router = useRouter();
-  const [favorito, setFavorito] = useState(false);
+  const { user, token } = useAuth();
+  const [favorito, setFavorito] = useState(isFavorito);
   const [imgIdx, setImgIdx] = useState(0);
 
   function handleClick() {
@@ -90,7 +95,20 @@ export function CardEspacio({ espacio, onClick }: CardEspacioProps) {
 
         {/* Favorito */}
         <button
-          onClick={e => { e.stopPropagation(); setFavorito(f => !f); }}
+          onClick={async e => {
+            e.stopPropagation();
+            if (!user || !token) { router.push('/auth/login'); return; }
+            const newVal = !favorito;
+            setFavorito(newVal);
+            onToggleFavorito?.(espacio.id, newVal);
+            try {
+              if (newVal) await favoritosAPI.agregar(espacio.id, token);
+              else await favoritosAPI.eliminar(espacio.id, token);
+            } catch {
+              setFavorito(!newVal);
+              onToggleFavorito?.(espacio.id, !newVal);
+            }
+          }}
           style={{
             position: 'absolute', top: 10, right: 10,
             background: 'rgba(255,255,255,.92)',

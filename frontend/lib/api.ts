@@ -220,3 +220,12 @@ export const emailAPI = {
       method: 'POST', body: JSON.stringify(data),
     }, token),
 };
+
+export const favoritosAPI = {
+  listar:    (token: string) => fetchAPI<Espacio[]>('/api/favoritos', {}, token),
+  listarIds: (token: string) => fetchAPI<string[]>('/api/favoritos/ids', {}, token),
+  agregar:   (espacio_id: string, token: string) =>
+    fetchAPI<{ ok: boolean }>('/api/favoritos', { method: 'POST', body: JSON.stringify({ espacio_id }) }, token),
+  eliminar:  (espacio_id: string, token: string) =>
+    fetchAPI<{ ok: boolean }>(`/api/favoritos/${espacio_id}`, { method: 'DELETE' }, token),
+};
