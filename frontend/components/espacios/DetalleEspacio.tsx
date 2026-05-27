@@ -35,9 +35,10 @@ export function DetalleEspacio({ espacio, onReservar, onChat }: DetalleEspacioPr
       {/* Gallery */}
       <GaleriaFotos imgs={espacio.imgs} nombre={espacio.nombre} espacioId={espacio.id} />
 
-      <div style={{ marginTop: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 320px', gap: '1.5rem' }}>
-        {/* Left: info */}
-        <div>
+      <div className="detalle-grid" style={{ marginTop: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 320px', gap: '1.5rem', alignItems: 'start' }}>
+
+        {/* Left col — header + tabs */}
+        <div className="detalle-info">
           {/* Header */}
           <div style={{ marginBottom: '1rem' }}>
             {espacio.badge && (
@@ -166,7 +167,7 @@ export function DetalleEspacio({ espacio, onReservar, onChat }: DetalleEspacioPr
         </div>
 
         {/* Right: booking panel */}
-        <div style={{ position: 'sticky', top: 80, height: 'fit-content' }}>
+        <div className="detalle-booking" style={{ position: 'sticky', top: 80, height: 'fit-content' }}>
           <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r3)', padding: '1.4rem', boxShadow: 'var(--s3)' }}>
             <div style={{ marginBottom: '1rem' }}>
               {Number(espacio.precio_mes) > 0 && (

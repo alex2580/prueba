@@ -942,6 +942,18 @@ select.filter-pill {
 .gap-md { gap: 1rem; }
 .gap-lg { gap: 1.5rem; }
 
+/* Detalle espacio — layout responsive */
+@media (max-width: 768px) {
+  .detalle-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .detalle-info  { order: 1; }
+  .detalle-booking {
+    position: static !important;
+    order: 2;
+  }
+}
+
 /* Solo visible en mobile y tablet (oculto en desktop > 1024px) */
 .solo-mobile-tablet { display: block; }
 @media (min-width: 1025px) { .solo-mobile-tablet { display: none !important; } }
