@@ -414,6 +414,9 @@ textarea { resize: vertical; line-height: 1.6; }
 select.filter-pill {
   display: inline-block;
   appearance: auto;
+  max-width: 145px;
+  min-width: 0;
+  flex-shrink: 1;
 }
 
 /* ── Search bar ───────────────────────────────────────────── */
