@@ -259,7 +259,9 @@ async function subirFotos(req, res, next) {
 
     const urls = [];
     for (const file of files) {
+      console.log(`[subirFotos] uploading ${file.originalname} (${file.size} bytes) to Supabase…`);
       const url = await uploadFile(file.buffer, 'espacios', file.originalname);
+      console.log(`[subirFotos] uploaded → ${url}`);
       await query(
         'INSERT INTO espacio_fotos (espacio_id, url, orden) VALUES (?, ?, ?)',
         [espacio.id, url, orden++]
@@ -269,6 +271,7 @@ async function subirFotos(req, res, next) {
 
     res.json({ urls });
   } catch (err) {
+    console.error('[subirFotos] ERROR:', err.message);
     next(err);
   }
 }

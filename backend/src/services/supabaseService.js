@@ -55,16 +55,33 @@ async function listUsers() {
  * @param {string} originalName - original filename (for extension detection)
  * @returns {Promise<string>} public URL
  */
+async function ensureBucket(bucket) {
+  const { data: buckets, error: listErr } = await supabase.storage.listBuckets();
+  if (listErr) throw new Error(`No se pudo listar buckets: ${listErr.message}`);
+  const exists = buckets?.some(b => b.name === bucket);
+  if (!exists) {
+    const { error: createErr } = await supabase.storage.createBucket(bucket, { public: true });
+    if (createErr) throw new Error(`No se pudo crear bucket '${bucket}': ${createErr.message}`);
+  }
+}
+
 async function uploadFile(buffer, bucket, originalName) {
   const ext = path.extname(originalName).toLowerCase() || '.jpg';
   const filename = `${uuidv4()}${ext}`;
+  const contentType = _mimeFromExt(ext);
 
-  const { error } = await supabase.storage
+  let { error } = await supabase.storage
     .from(bucket)
-    .upload(filename, buffer, {
-      contentType: _mimeFromExt(ext),
-      upsert: false,
-    });
+    .upload(filename, buffer, { contentType, upsert: false });
+
+  // Si el bucket no existe, lo crea y reintenta una vez
+  if (error && (error.message?.includes('Bucket not found') || error.statusCode === '404' || error.error === 'Bucket not found')) {
+    await ensureBucket(bucket);
+    const retry = await supabase.storage
+      .from(bucket)
+      .upload(filename, buffer, { contentType, upsert: false });
+    error = retry.error;
+  }
 
   if (error) throw new Error(`Supabase Storage upload failed: ${error.message}`);
 
@@ -77,4 +94,4 @@ function _mimeFromExt(ext) {
   return map[ext] || 'image/jpeg';
 }
 
-module.exports = { verifyToken, getUser, deleteUser, listUsers, uploadFile };
+module.exports = { verifyToken, getUser, deleteUser, listUsers, uploadFile, ensureBucket };
