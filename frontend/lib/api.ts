@@ -43,7 +43,7 @@ export const espaciosAPI = {
     if (filtros?.con_seguridad) params.set('con_seguridad', 'true');
     if (filtros?.pais)         params.set('pais', filtros.pais);
     if (filtros?.rating_min)     params.set('rating_min', String(filtros.rating_min));
-    if (filtros?.seguridad_max) params.set('seguridad_max', String(filtros.seguridad_max));
+    if (filtros?.seguridad_min) params.set('seguridad_min', String(filtros.seguridad_min));
     const qs = params.toString() ? `?${params}` : '';
     return fetchAPI<Espacio[]>(`/api/espacios${qs}`, {}, token);
   },

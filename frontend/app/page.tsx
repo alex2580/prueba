@@ -116,8 +116,8 @@ export default function HomePage() {
   const PRECIO_MAX_HOME = filtros.periodo === 'dia' ? PRECIO_MAX_DIA : PRECIO_MAX_MES;
   const precioValHome = filtros.precio_max ?? PRECIO_MAX_HOME;
 
-  const filtrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.periodo || filtros.barrio || filtros.q || filtros.pais || filtros.seguridad_max);
-  const hayFiltrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.periodo || userLocation || filtros.q || filtros.pais || filtros.seguridad_max);
+  const filtrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.periodo || filtros.barrio || filtros.q || filtros.pais || filtros.seguridad_min);
+  const hayFiltrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.periodo || userLocation || filtros.q || filtros.pais || filtros.seguridad_min);
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
@@ -357,27 +357,27 @@ export default function HomePage() {
                   display: 'inline-flex', alignItems: 'center', gap: '.15rem',
                   padding: '.3rem .9rem',
                   borderRadius: 999, flexShrink: 0,
-                  border: `1.5px solid ${filtros.seguridad_max ? 'var(--text)' : 'var(--border2)'}`,
-                  background: filtros.seguridad_max ? 'var(--text)' : 'var(--surface)',
+                  border: `1.5px solid ${filtros.seguridad_min ? 'var(--text)' : 'var(--border2)'}`,
+                  background: filtros.seguridad_min ? 'var(--text)' : 'var(--surface)',
                 }}>
                   {[1, 2, 3, 4, 5].map(star => (
                     <span
                       key={star}
-                      onClick={() => aplicarFiltros({ seguridad_max: filtros.seguridad_max === star ? undefined : star })}
+                      onClick={() => aplicarFiltros({ seguridad_min: filtros.seguridad_min === star ? undefined : star })}
                       title={`${star} estrella${star !== 1 ? 's' : ''} de seguridad mínimo`}
                       style={{
                         fontSize: '1rem', cursor: 'pointer', lineHeight: 1,
-                        color: star <= (filtros.seguridad_max || 0) ? 'var(--amber)' : filtros.seguridad_max ? 'rgba(255,255,255,.25)' : 'var(--border)',
+                        color: star <= (filtros.seguridad_min || 0) ? 'var(--amber)' : filtros.seguridad_min ? 'rgba(255,255,255,.25)' : 'var(--border)',
                         transition: 'color .12s',
                       }}
                     >★</span>
                   ))}
                   <span style={{
                     fontSize: '.78rem', fontWeight: 700, whiteSpace: 'nowrap',
-                    color: filtros.seguridad_max ? '#fff' : 'var(--text)',
+                    color: filtros.seguridad_min ? '#fff' : 'var(--text)',
                     fontFamily: 'Sora, sans-serif', marginLeft: '.3rem',
                   }}>
-                    {filtros.seguridad_max ? `1-${filtros.seguridad_max} ★` : 'Nivel de Seguridad'}
+                    {filtros.seguridad_min ? `${filtros.seguridad_min}+ ★` : 'Nivel de Seguridad'}
                   </span>
                 </div>
 
