@@ -384,7 +384,7 @@ export default function PublicarPage() {
         nombre: form.nombre,
         direccion: form.direccion,
         barrio: form.barrio || 'Buenos Aires',
-        m2: form.m2 ? Number(form.m2) : null,
+        m2: form.m2 ? Number(form.m2) : undefined,
         tipo: (form.tipo || 'exclusivo') as 'exclusivo' | 'compartido',
         categoria: form.categoria,
         precio_dia: Number(form.precio_dia) || 0,
