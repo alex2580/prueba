@@ -733,7 +733,7 @@ export default function PublicarPage() {
                   style={{ display: 'none' }} />
 
                 {/* Botones de carga */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.6rem' }}>
+                <div className="foto-upload-grid" style={{ display: 'grid', gap: '.6rem' }}>
                   <button type="button" onClick={() => galeriaRef.current?.click()} style={{
                     padding: '.7rem .5rem', borderRadius: 'var(--r2)',
                     border: '1.5px solid var(--border)', background: 'var(--surface2)',
@@ -742,14 +742,16 @@ export default function PublicarPage() {
                   }}>
                     🖼️ Elegir fotos
                   </button>
-                  <button type="button" onClick={() => cameraRef.current?.click()} disabled={fotos.length >= 5} style={{
-                    padding: '.7rem .5rem', borderRadius: 'var(--r2)',
-                    border: '1.5px solid var(--border)', background: 'var(--surface2)',
-                    cursor: fotos.length >= 5 ? 'not-allowed' : 'pointer',
-                    fontFamily: 'Sora, sans-serif', fontWeight: 600,
-                    fontSize: '.82rem', color: fotos.length >= 5 ? 'var(--text3)' : 'var(--text2)',
-                    transition: 'border-color .15s',
-                  }}>
+                  <button type="button" onClick={() => cameraRef.current?.click()} disabled={fotos.length >= 5}
+                    className="solo-mobile-tablet"
+                    style={{
+                      padding: '.7rem .5rem', borderRadius: 'var(--r2)',
+                      border: '1.5px solid var(--border)', background: 'var(--surface2)',
+                      cursor: fotos.length >= 5 ? 'not-allowed' : 'pointer',
+                      fontFamily: 'Sora, sans-serif', fontWeight: 600,
+                      fontSize: '.82rem', color: fotos.length >= 5 ? 'var(--text3)' : 'var(--text2)',
+                      transition: 'border-color .15s', width: '100%',
+                    }}>
                     📸 Tomar foto
                   </button>
                 </div>
