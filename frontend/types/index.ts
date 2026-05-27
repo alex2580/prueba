@@ -213,7 +213,7 @@ export interface FiltrosEspacios {
   con_seguridad?: boolean;
   pais?: string;
   rating_min?: number;
-  seguridad_min?: number;
+  seguridad_max?: number;
 }
 
 export interface ApiResponse<T = unknown> {
