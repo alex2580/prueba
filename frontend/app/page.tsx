@@ -325,32 +325,34 @@ export default function HomePage() {
                   📆 Por mes
                 </button>
 
-                {/* Precio — pill con slider inline */}
-                <div style={{
-                  display: 'inline-flex', alignItems: 'center', gap: '.5rem',
-                  padding: '.3rem .65rem .3rem .9rem',
-                  borderRadius: 999, flexShrink: 0,
-                  border: `1.5px solid ${precioValHome < PRECIO_MAX_HOME ? 'var(--text)' : 'var(--border2)'}`,
-                  background: precioValHome < PRECIO_MAX_HOME ? 'var(--text)' : 'var(--surface)',
-                }}>
-                  <span style={{
-                    fontSize: '.82rem', fontWeight: 700, whiteSpace: 'nowrap',
-                    color: precioValHome < PRECIO_MAX_HOME ? '#fff' : 'var(--text)',
-                    fontFamily: 'Sora, sans-serif',
+                {/* Precio — solo visible cuando hay periodo seleccionado */}
+                {filtros.periodo && (
+                  <div style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '.5rem',
+                    padding: '.3rem .65rem .3rem .9rem',
+                    borderRadius: 999, flexShrink: 0,
+                    border: `1.5px solid ${precioValHome < PRECIO_MAX_HOME ? 'var(--text)' : 'var(--border2)'}`,
+                    background: precioValHome < PRECIO_MAX_HOME ? 'var(--text)' : 'var(--surface)',
                   }}>
-                    💰 {precioValHome < PRECIO_MAX_HOME ? `$${precioValHome.toLocaleString('es-AR')}` : 'Precio'}
-                  </span>
-                  <input
-                    type="range"
-                    min={0} max={PRECIO_MAX_HOME} step={PRECIO_STEP}
-                    value={precioValHome > PRECIO_MAX_HOME ? PRECIO_MAX_HOME : precioValHome}
-                    onChange={e => {
-                      const val = Number(e.target.value);
-                      aplicarFiltros({ precio_max: val < PRECIO_MAX_HOME ? val : undefined });
-                    }}
-                    style={{ width: 80, cursor: 'pointer', accentColor: precioValHome < PRECIO_MAX_HOME ? '#fff' : 'var(--orange)' }}
-                  />
-                </div>
+                    <span style={{
+                      fontSize: '.82rem', fontWeight: 700, whiteSpace: 'nowrap',
+                      color: precioValHome < PRECIO_MAX_HOME ? '#fff' : 'var(--text)',
+                      fontFamily: 'Sora, sans-serif',
+                    }}>
+                      💰 {precioValHome < PRECIO_MAX_HOME ? `$${precioValHome.toLocaleString('es-AR')}` : `Precio/${filtros.periodo === 'dia' ? 'día' : 'mes'}`}
+                    </span>
+                    <input
+                      type="range"
+                      min={0} max={PRECIO_MAX_HOME} step={PRECIO_STEP}
+                      value={precioValHome > PRECIO_MAX_HOME ? PRECIO_MAX_HOME : precioValHome}
+                      onChange={e => {
+                        const val = Number(e.target.value);
+                        aplicarFiltros({ precio_max: val < PRECIO_MAX_HOME ? val : undefined });
+                      }}
+                      style={{ width: 80, cursor: 'pointer', accentColor: precioValHome < PRECIO_MAX_HOME ? '#fff' : 'var(--orange)' }}
+                    />
+                  </div>
+                )}
 
                 {/* Nivel de Seguridad — pill con estrellas inline */}
                 <div style={{
