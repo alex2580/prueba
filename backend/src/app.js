@@ -19,6 +19,7 @@ const chatRouter      = require('./routes/chat');
 const emailRouter     = require('./routes/email');
 const adminRouter     = require('./routes/admin');
 const authRouter      = require('./routes/auth');
+const webhookRouter   = require('./routes/webhook');
 
 const app = express();
 
@@ -62,6 +63,7 @@ app.use('/api/chat',      chatRouter);
 app.use('/api/email',     emailRouter);
 app.use('/api/admin',     adminRouter);
 app.use('/api/auth',      authRouter);
+app.use('/api/webhook',   webhookRouter);
 
 // ── 404 ────────────────────────────────────────────────────────
 app.use((req, res) => {
