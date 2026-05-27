@@ -461,7 +461,7 @@ export default function HomePage() {
         open={contactoOpen}
         onClose={() => setContactoOpen(false)}
         title="💬 Contactanos"
-        subtitle="Consultás, quejas o sugerencias. Te respondemos a la brevedad."
+        subtitle="Consultás, reclamos o sugerencias. Te respondemos a la brevedad."
         maxWidth="520px"
       >
         {contactoSuccess ? (
