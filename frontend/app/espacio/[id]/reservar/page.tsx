@@ -517,7 +517,7 @@ export default function ReservarPage() {
                     </h2>
                     <div style={{ fontSize: '.83rem', color: 'var(--text3)', marginBottom: '.75rem' }}>
                       📍 {espacio.barrio} · {espacio.direccion}
-                      {espacio.m2 ? ` · ${espacio.m2} m²` : ''}
+                      {Number(espacio.m2) > 0 ? ` · ${espacio.m2} m²` : ''}
                       {' · '}{espacio.tipo === 'exclusivo' ? '🔐 Exclusivo' : '🤲 Compartido'}
                     </div>
                     {espacio.descripcion && (
