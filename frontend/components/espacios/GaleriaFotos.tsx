@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { getFotosFallback, getFotoFallback } from '@/lib/fotosFallback';
 
 interface GaleriaFotosProps {
@@ -13,6 +13,18 @@ export function GaleriaFotos({ imgs, nombre, espacioId }: GaleriaFotosProps) {
   const displayImgs = imgs.length > 0 ? imgs : (espacioId ? getFotosFallback(espacioId, 4) : []);
   const [current, setCurrent] = useState(0);
   const [lightbox, setLightbox] = useState(false);
+  const touchStartX = useRef<number | null>(null);
+
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartX.current = e.touches[0].clientX;
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) diff > 0 ? next() : prev();
+    touchStartX.current = null;
+  }
 
   if (!displayImgs.length) return (
     <div style={{ height: 360, background: 'var(--surface2)', display: 'flex', alignItems: 'center',
@@ -29,7 +41,9 @@ export function GaleriaFotos({ imgs, nombre, espacioId }: GaleriaFotosProps) {
       <div style={{ position: 'relative', borderRadius: 'var(--r3)', overflow: 'hidden' }}>
         {/* Main image */}
         <div style={{ position: 'relative', height: 360, cursor: 'zoom-in' }}
-          onClick={() => setLightbox(true)}>
+          onClick={() => setLightbox(true)}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}>
           <img
             src={displayImgs[current]}
             alt={`${nombre} — foto ${current + 1}`}
@@ -97,6 +111,8 @@ export function GaleriaFotos({ imgs, nombre, espacioId }: GaleriaFotosProps) {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
           onClick={() => setLightbox(false)}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
         >
           <img
             src={displayImgs[current]}
