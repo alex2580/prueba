@@ -129,6 +129,23 @@ export function CardEspacio({ espacio, onClick }: CardEspacioProps) {
           </div>
         )}
 
+        {/* Tipo — bottom left sobre la foto */}
+        <div style={{ position: 'absolute', bottom: 10, left: 10, zIndex: 2 }}>
+          <span style={{
+            fontSize: '11px', fontWeight: 800,
+            fontFamily: 'Sora, sans-serif',
+            padding: '.18rem .6rem',
+            borderRadius: '999px',
+            border: `1.5px solid ${espacio.tipo === 'exclusivo' ? 'var(--ink)' : 'var(--orange)'}`,
+            color: espacio.tipo === 'exclusivo' ? 'var(--ink)' : 'var(--orange)',
+            background: espacio.tipo === 'exclusivo' ? 'rgba(255,255,255,.92)' : 'rgba(255,255,255,.92)',
+            backdropFilter: 'blur(4px)',
+            whiteSpace: 'nowrap',
+          }}>
+            {espacio.tipo === 'exclusivo' ? '🔒 Exclusivo' : '🤝 Compartido'}
+          </span>
+        </div>
+
         {/* No disponible overlay */}
         {!espacio.disponible && (
           <div style={{
@@ -144,22 +161,8 @@ export function CardEspacio({ espacio, onClick }: CardEspacioProps) {
       </div>
 
       <div className="espacio-card__body">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '.4rem', marginBottom: '.2rem' }}>
+        <div style={{ marginBottom: '.2rem' }}>
           <div className="espacio-card__title" style={{ margin: 0 }}>{espacio.nombre}</div>
-          {/* Badge Exclusivo / Compartido */}
-          <span style={{
-            flexShrink: 0,
-            fontSize: '11px', fontWeight: 800,
-            fontFamily: 'Sora, sans-serif',
-            padding: '.18rem .6rem',
-            borderRadius: '999px',
-            border: `1.5px solid ${espacio.tipo === 'exclusivo' ? 'var(--ink)' : 'var(--orange)'}`,
-            color: espacio.tipo === 'exclusivo' ? 'var(--ink)' : 'var(--orange)',
-            background: espacio.tipo === 'exclusivo' ? 'rgba(30,41,59,.07)' : 'rgba(249,115,22,.08)',
-            whiteSpace: 'nowrap',
-          }}>
-            {espacio.tipo === 'exclusivo' ? '🔒 Exclusivo' : '🤝 Compartido'}
-          </span>
         </div>
 
         <div className="espacio-card__address">📍 {espacio.barrio} · {espacio.m2} m²</div>
