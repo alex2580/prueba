@@ -55,7 +55,9 @@ export default function PanelPage() {
   const [editForm, setEditForm] = useState({
     nombre: '', descripcion: '', direccion: '',
     precio_dia: '', precio_mes: '', categoria: '', moneda: 'ARS',
+    m2: '', lat: '', lng: '',
   });
+  const editDireccionRef = useRef<HTMLInputElement>(null);
 
   // Profile edit
   const [perfilOpen, setPerfilOpen] = useState(false);
@@ -153,6 +155,9 @@ export default function PanelPage() {
       precio_mes: String(esp.precio_mes || ''),
       categoria: (esp as any).categoria || '',
       moneda: esp.moneda || 'ARS',
+      m2: esp.m2 ? String(esp.m2) : '',
+      lat: esp.lat ? String(esp.lat) : '',
+      lng: esp.lng ? String(esp.lng) : '',
     });
     setEditDisponibilidad((esp as any).disponibilidad || {});
     setEditSeguridad((esp as any).seguridad || {});
@@ -224,6 +229,40 @@ export default function PanelPage() {
       document.getElementById('pac-fix')?.remove();
     };
   }, [perfilOpen]);
+
+  // Google Maps autocomplete for edit espacio address
+  useEffect(() => {
+    if (!editando || !MAPS_KEY) return;
+    const style = document.createElement('style');
+    style.id = 'pac-fix-edit';
+    style.textContent = '.pac-container { z-index: 99999 !important; }';
+    document.head.appendChild(style);
+    const timer = setTimeout(() => {
+      if (!editDireccionRef.current) return;
+      const loader = new Loader({ apiKey: MAPS_KEY, version: 'weekly' });
+      loader.load().then(async (google) => {
+        if (!editDireccionRef.current) return;
+        const { Autocomplete } = await google.maps.importLibrary('places') as any;
+        const ac = new Autocomplete(editDireccionRef.current, {
+          fields: ['formatted_address', 'geometry'],
+        });
+        ac.addListener('place_changed', () => {
+          const place = ac.getPlace();
+          if (!place.geometry?.location) return;
+          setEditForm(f => ({
+            ...f,
+            direccion: place.formatted_address || f.direccion,
+            lat: String(place.geometry.location.lat()),
+            lng: String(place.geometry.location.lng()),
+          }));
+        });
+      });
+    }, 200);
+    return () => {
+      clearTimeout(timer);
+      document.getElementById('pac-fix-edit')?.remove();
+    };
+  }, [editando]);
 
   async function handleGuardarPerfil() {
     if (!token) return;
@@ -353,10 +392,10 @@ export default function PanelPage() {
         barrio: editando.barrio,
         precio_dia: Number(editForm.precio_dia) || 0,
         precio_mes: Number(editForm.precio_mes) || 0,
-        m2: editando.m2,
+        m2: editForm.m2 ? Number(editForm.m2) : null,
         tipo: editando.tipo,
-        lat: editando.lat,
-        lng: editando.lng,
+        lat: editForm.lat ? Number(editForm.lat) : editando.lat,
+        lng: editForm.lng ? Number(editForm.lng) : editando.lng,
         moneda: editForm.moneda || 'ARS',
         categoria: editForm.categoria || undefined,
         disponibilidad: editDisponibilidad,
@@ -1253,7 +1292,7 @@ export default function PanelPage() {
 
               <div>
                 <label className="form-label">Dirección</label>
-                <input value={editForm.direccion} onChange={e => setEditForm(f => ({ ...f, direccion: e.target.value }))}
+                <input ref={editDireccionRef} value={editForm.direccion} onChange={e => setEditForm(f => ({ ...f, direccion: e.target.value }))}
                   placeholder="Calle y número" />
               </div>
 
@@ -1265,6 +1304,12 @@ export default function PanelPage() {
                       <option key={m.value} value={m.value}>{m.flag} {m.label} ({m.simbolo})</option>
                     ))}
                   </select>
+                </div>
+                <div>
+                  <label className="form-label">Superficie (m²)</label>
+                  <input type="number" value={editForm.m2} min="1"
+                    onChange={e => setEditForm(f => ({ ...f, m2: e.target.value }))}
+                    placeholder="" />
                 </div>
               </div>
 
