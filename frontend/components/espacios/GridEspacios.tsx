@@ -9,6 +9,7 @@ interface GridEspaciosProps {
   onCardClick?: (espacio: Espacio) => void;
   favoritos?: Set<string>;
   onToggleFavorito?: (id: string, val: boolean) => void;
+  token?: string | null;
 }
 
 function SkeletonCard() {
@@ -30,7 +31,7 @@ function SkeletonCard() {
   );
 }
 
-export function GridEspacios({ espacios, loading, onCardClick, favoritos, onToggleFavorito }: GridEspaciosProps) {
+export function GridEspacios({ espacios, loading, onCardClick, favoritos, onToggleFavorito, token }: GridEspaciosProps) {
   if (loading) {
     return (
       <div className="espacios-grid">
@@ -62,6 +63,7 @@ export function GridEspacios({ espacios, loading, onCardClick, favoritos, onTogg
           onClick={onCardClick ? () => onCardClick(espacio) : undefined}
           isFavorito={favoritos?.has(espacio.id)}
           onToggleFavorito={onToggleFavorito}
+          token={token}
         />
       ))}
     </div>

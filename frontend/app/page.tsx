@@ -37,6 +37,22 @@ export default function HomePage() {
   const [geoLoading, setGeoLoading] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
   const [chatEspacio, setChatEspacio] = useState<Espacio | null>(null);
+  const [favIds, setFavIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (!token) { setFavIds(new Set()); return; }
+    import('@/lib/api').then(({ favoritosAPI }) =>
+      favoritosAPI.listarIds(token).then(ids => setFavIds(new Set(ids))).catch(() => {})
+    );
+  }, [token]);
+
+  function handleToggleFavorito(id: string, val: boolean) {
+    setFavIds(prev => {
+      const next = new Set(prev);
+      if (val) next.add(id); else next.delete(id);
+      return next;
+    });
+  }
 
   useEffect(() => {
     if (user?.lat && user?.lng && !userLocation) {
@@ -416,6 +432,9 @@ export default function HomePage() {
                 espacios={espacios}
                 loading={loading}
                 onCardClick={espacio => router.push(`/espacio/${espacio.id}`)}
+                favoritos={favIds}
+                onToggleFavorito={handleToggleFavorito}
+                token={token}
               />
             </div>
 

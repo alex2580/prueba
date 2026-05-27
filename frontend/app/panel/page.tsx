@@ -637,6 +637,7 @@ export default function PanelPage() {
                     espacio={e}
                     isFavorito={favIds.has(e.id)}
                     onToggleFavorito={handleToggleFavoritoPanel}
+                    token={token}
                   />
                 ))}
               </div>

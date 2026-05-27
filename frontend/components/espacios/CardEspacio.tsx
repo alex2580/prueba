@@ -7,18 +7,17 @@ import { RatingDisplay } from '@/components/ui/Rating';
 import { formatARS } from '@/lib/utils';
 import { getFotoFallback } from '@/lib/fotosFallback';
 import { favoritosAPI } from '@/lib/api';
-import { useAuth } from '@/hooks/useAuth';
 
 interface CardEspacioProps {
   espacio: Espacio;
   onClick?: () => void;
   isFavorito?: boolean;
   onToggleFavorito?: (id: string, val: boolean) => void;
+  token?: string | null;
 }
 
-export function CardEspacio({ espacio, onClick, isFavorito = false, onToggleFavorito }: CardEspacioProps) {
+export function CardEspacio({ espacio, onClick, isFavorito = false, onToggleFavorito, token }: CardEspacioProps) {
   const router = useRouter();
-  const { user, token } = useAuth();
   const [favorito, setFavorito] = useState(isFavorito);
   const [imgIdx, setImgIdx] = useState(0);
 
@@ -97,7 +96,7 @@ export function CardEspacio({ espacio, onClick, isFavorito = false, onToggleFavo
         <button
           onClick={async e => {
             e.stopPropagation();
-            if (!user || !token) { router.push('/auth/login'); return; }
+            if (!token) { router.push('/auth/login'); return; }
             const newVal = !favorito;
             setFavorito(newVal);
             onToggleFavorito?.(espacio.id, newVal);
