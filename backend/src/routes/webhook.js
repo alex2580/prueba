@@ -10,25 +10,27 @@ const BACKEND_PM2 = process.env.BACKEND_PM2_NAME || 'tmc-backend';
 const FRONTEND_PM2= process.env.FRONTEND_PM2_NAME || 'tmc-frontend';
 
 function verifySignature(req) {
-  if (!SECRET) return true; // sin secret configurado, permitir (solo para setup inicial)
+  if (!SECRET) return true;
   const sig = req.headers['x-hub-signature-256'];
   if (!sig) return false;
+  const raw = req.rawBody || Buffer.from(JSON.stringify(req.body));
   const expected = 'sha256=' + crypto
     .createHmac('sha256', SECRET)
-    .update(req.body)
+    .update(raw)
     .digest('hex');
-  return crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected));
+  try {
+    return crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected));
+  } catch { return false; }
 }
 
 // POST /api/webhook/deploy
-router.post('/deploy', express.raw({ type: 'application/json' }), (req, res) => {
+router.post('/deploy', (req, res) => {
   if (!verifySignature(req)) {
     console.warn('[webhook] firma inválida');
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const payload = JSON.parse(req.body.toString());
-  const branch  = payload?.ref?.replace('refs/heads/', '');
+  const branch = req.body?.ref?.replace('refs/heads/', '');
 
   if (branch !== 'master') {
     return res.json({ message: `Branch ${branch} ignorada` });
