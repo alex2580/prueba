@@ -229,6 +229,8 @@ export default function PublicarPage() {
   }, [user, token, publicarPendiente]);
 
   const direccionRef  = useRef<HTMLInputElement>(null);
+  const cameraRef     = useRef<HTMLInputElement>(null);
+  const galeriaRef    = useRef<HTMLInputElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapObjRef     = useRef<any>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -327,6 +329,17 @@ export default function PublicarPage() {
     setFotoPrincipal(0);
     const comprimidas = await Promise.all(files.map(f => comprimirImagen(f)));
     setFotos(comprimidas);
+    e.target.value = '';
+  }
+
+  async function handleCameraCapture(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || fotos.length >= 5) return;
+    const preview = URL.createObjectURL(file);
+    const comprimida = await comprimirImagen(file);
+    setPreviews(prev => [...prev, preview]);
+    setFotos(prev => [...prev, comprimida]);
+    e.target.value = '';
   }
 
   function toggleSeguridad(key: string) {
@@ -492,7 +505,7 @@ export default function PublicarPage() {
                     // Resetear todo el formulario
                     setEspacioPublicadoId(null);
                     setPaso(0);
-                    setForm({ categoria: '', nombre: '', descripcion: '', direccion: '', barrio: '', m2: '', precio_dia: '0', precio_mes: '0', lat: '', lng: '', tipo: 'exclusivo', moneda: 'ARS' });
+                    setForm({ categoria: '', nombre: '', descripcion: '', direccion: '', barrio: '', m2: '', precio_dia: '', precio_mes: '', lat: '', lng: '', tipo: 'exclusivo', moneda: 'ARS' });
                     setFotos([]);
                     setPreviews([]);
                     setFotoPrincipal(0);
@@ -673,7 +686,7 @@ export default function PublicarPage() {
                     type="number"
                     value={form.m2}
                     onChange={e => set('m2', e.target.value)}
-                    placeholder="Ej: 12"
+                    placeholder=""
                     min="0"
                   />
                 </div>
@@ -684,12 +697,12 @@ export default function PublicarPage() {
                 <div>
                   <label className="form-label">Precio por día</label>
                   <input type="number" value={form.precio_dia} onChange={e => set('precio_dia', e.target.value)}
-                    placeholder="850" min="0" />
+                    placeholder="" min="0" />
                 </div>
                 <div>
                   <label className="form-label">Precio por mes</label>
                   <input type="number" value={form.precio_mes} onChange={e => set('precio_mes', e.target.value)}
-                    placeholder="18000" min="0" />
+                    placeholder="" min="0" />
                 </div>
               </div>
 
@@ -713,10 +726,33 @@ export default function PublicarPage() {
                 <p style={{ fontSize: '.8rem', color: 'var(--text3)', marginBottom: '.8rem' }}>
                   Subí fotos claras del espacio. Hacé click en una foto para marcarla como principal.
                 </p>
-                <input
-                  type="file" accept="image/*" multiple onChange={handleFotoChange}
-                  style={{ padding: '.5rem', borderRadius: 'var(--r2)', cursor: 'pointer', width: '100%' }}
-                />
+                {/* Inputs ocultos */}
+                <input ref={galeriaRef} type="file" accept="image/*" multiple onChange={handleFotoChange}
+                  style={{ display: 'none' }} />
+                <input ref={cameraRef} type="file" accept="image/*" capture="environment" onChange={handleCameraCapture}
+                  style={{ display: 'none' }} />
+
+                {/* Botones de carga */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.6rem' }}>
+                  <button type="button" onClick={() => galeriaRef.current?.click()} style={{
+                    padding: '.7rem .5rem', borderRadius: 'var(--r2)',
+                    border: '1.5px solid var(--border)', background: 'var(--surface2)',
+                    cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontWeight: 600,
+                    fontSize: '.82rem', color: 'var(--text2)', transition: 'border-color .15s',
+                  }}>
+                    🖼️ Elegir fotos
+                  </button>
+                  <button type="button" onClick={() => cameraRef.current?.click()} disabled={fotos.length >= 5} style={{
+                    padding: '.7rem .5rem', borderRadius: 'var(--r2)',
+                    border: '1.5px solid var(--border)', background: 'var(--surface2)',
+                    cursor: fotos.length >= 5 ? 'not-allowed' : 'pointer',
+                    fontFamily: 'Sora, sans-serif', fontWeight: 600,
+                    fontSize: '.82rem', color: fotos.length >= 5 ? 'var(--text3)' : 'var(--text2)',
+                    transition: 'border-color .15s',
+                  }}>
+                    📸 Tomar foto
+                  </button>
+                </div>
                 {previews.length > 0 && (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '.5rem', marginTop: '.8rem' }}>
                     {previews.map((url, i) => (
