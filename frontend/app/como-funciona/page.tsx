@@ -7,7 +7,7 @@ const PASOS = [
   {
     icon: '🔍',
     titulo: 'Buscás un espacio',
-    desc: 'Usá el mapa para explorar depósitos, cocheras y galpones. Filtrá por tipo, barrio y precio.',
+    desc: 'Seleccioná una tarjeta en la página o en el mapa para explorar depósitos, cocheras, galpones, etc. Podés filtrar de distintas maneras.',
   },
   {
     icon: '📦',
@@ -17,7 +17,7 @@ const PASOS = [
   {
     icon: '💳',
     titulo: 'Pagás de forma segura',
-    desc: 'MercadoPago retiene el dinero hasta que confirmás el acceso al espacio.',
+    desc: 'Podés pagar con Mercado Pago.',
   },
   {
     icon: '🔑',
