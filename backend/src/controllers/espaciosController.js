@@ -360,4 +360,25 @@ async function fechasOcupadas(req, res, next) {
   }
 }
 
-module.exports = { listar, obtener, crear, actualizar, eliminar, subirFotos, misEspacios, reactivar, fechasOcupadas };
+async function debugSeguridad(req, res, next) {
+  try {
+    const rows = await query(
+      `SELECT id, nombre,
+        seguridad,
+        ROUND((
+          COALESCE(JSON_EXTRACT(seguridad,'$.techo_impermeable'),0) +
+          COALESCE(JSON_EXTRACT(seguridad,'$.cerradura'),0) +
+          COALESCE(JSON_EXTRACT(seguridad,'$.camaras'),0) +
+          COALESCE(JSON_EXTRACT(seguridad,'$.iluminacion'),0) +
+          COALESCE(JSON_EXTRACT(seguridad,'$.acceso_controlado'),0) +
+          COALESCE(JSON_EXTRACT(seguridad,'$.seco_ventilado'),0) +
+          COALESCE(JSON_EXTRACT(seguridad,'$.acceso_24h'),0) +
+          COALESCE(JSON_EXTRACT(seguridad,'$.extintor'),0)
+        ) / 8 * 5) AS score_calculado
+       FROM espacios WHERE activo = TRUE ORDER BY id DESC LIMIT 20`
+    );
+    res.json(rows);
+  } catch (err) { next(err); }
+}
+
+module.exports = { listar, obtener, crear, actualizar, eliminar, subirFotos, misEspacios, reactivar, fechasOcupadas, debugSeguridad };
