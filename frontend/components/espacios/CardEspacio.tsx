@@ -163,23 +163,37 @@ export function CardEspacio({ espacio, onClick }: CardEspacioProps) {
           )}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: '.4rem', flexWrap: 'wrap', borderTop: '1px solid var(--border)', paddingTop: '.6rem', marginTop: '.1rem' }}>
-          {hasMes && (
-            <>
-              <span className="espacio-card__price" style={{ color: accentColor }}>{formatARS(espacio.precio_mes)}</span>
-              <span className="espacio-card__price-label">/mes</span>
-            </>
+        <div style={{
+          display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
+          borderTop: '1px solid var(--border)', paddingTop: '.6rem', marginTop: '.1rem',
+          gap: '.5rem',
+        }}>
+          {/* Izquierda — precio por mes */}
+          {hasMes ? (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '.05rem' }}>
+              <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.5px', color: 'var(--text3)' }}>
+                📆 por mes
+              </span>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '.2rem' }}>
+                <span className="espacio-card__price" style={{ color: accentColor }}>{formatARS(espacio.precio_mes)}</span>
+              </div>
+            </div>
+          ) : (
+            <div />
           )}
-          {hasDia && !hasMes && (
-            <>
-              <span className="espacio-card__price" style={{ color: accentColor }}>{formatARS(espacio.precio_dia)}</span>
-              <span className="espacio-card__price-label">/día</span>
-            </>
-          )}
-          {hasDia && hasMes && (
-            <span style={{ fontSize: '11px', color: 'var(--text3)', marginLeft: 'auto' }}>
-              {formatARS(espacio.precio_dia)}/día
-            </span>
+
+          {/* Derecha — precio por día */}
+          {hasDia ? (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '.05rem' }}>
+              <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.5px', color: 'var(--text3)' }}>
+                📅 por día
+              </span>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '.2rem' }}>
+                <span className="espacio-card__price" style={{ color: accentColor, fontSize: hasMes ? '.95rem' : undefined }}>{formatARS(espacio.precio_dia)}</span>
+              </div>
+            </div>
+          ) : (
+            <div />
           )}
         </div>
       </div>
