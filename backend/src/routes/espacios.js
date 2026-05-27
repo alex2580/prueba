@@ -18,9 +18,6 @@ const validarEspacio = [
   body('lng').isFloat().withMessage('Longitud inválida'),
 ];
 
-// Temporal: debug seguridad scores
-router.get('/debug-seguridad',     ctrl.debugSeguridad);
-
 // Public routes
 router.get('/',                    optionalAuth, ctrl.listar);
 router.get('/mis-espacios',        requireAuth, requireOferente, ctrl.misEspacios);

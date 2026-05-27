@@ -360,25 +360,4 @@ async function fechasOcupadas(req, res, next) {
   }
 }
 
-async function debugSeguridad(req, res, next) {
-  try {
-    const rows = await query(
-      `SELECT id, nombre,
-        seguridad,
-        ROUND((
-          IF(JSON_UNQUOTE(JSON_EXTRACT(seguridad,'$.techo_impermeable'))  = 'true', 1, 0) +
-          IF(JSON_UNQUOTE(JSON_EXTRACT(seguridad,'$.cerradura'))          = 'true', 1, 0) +
-          IF(JSON_UNQUOTE(JSON_EXTRACT(seguridad,'$.camaras'))            = 'true', 1, 0) +
-          IF(JSON_UNQUOTE(JSON_EXTRACT(seguridad,'$.iluminacion'))        = 'true', 1, 0) +
-          IF(JSON_UNQUOTE(JSON_EXTRACT(seguridad,'$.acceso_controlado'))  = 'true', 1, 0) +
-          IF(JSON_UNQUOTE(JSON_EXTRACT(seguridad,'$.seco_ventilado'))     = 'true', 1, 0) +
-          IF(JSON_UNQUOTE(JSON_EXTRACT(seguridad,'$.acceso_24h'))         = 'true', 1, 0) +
-          IF(JSON_UNQUOTE(JSON_EXTRACT(seguridad,'$.extintor'))           = 'true', 1, 0)
-        ) / 8 * 5) AS score_calculado
-       FROM espacios WHERE activo = TRUE ORDER BY id DESC LIMIT 20`
-    );
-    res.json(rows);
-  } catch (err) { next(err); }
-}
-
-module.exports = { listar, obtener, crear, actualizar, eliminar, subirFotos, misEspacios, reactivar, fechasOcupadas, debugSeguridad };
+module.exports = { listar, obtener, crear, actualizar, eliminar, subirFotos, misEspacios, reactivar, fechasOcupadas };
