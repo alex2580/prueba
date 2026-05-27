@@ -7,6 +7,8 @@ import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { SiteHeader } from '@/components/ui/SiteHeader';
 import { formatFechaCorta, formatARS, COMISION_TMC } from '@/lib/utils';
+import { chatAPI } from '@/lib/api';
+import type { Conversacion } from '@/types';
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -1440,6 +1442,104 @@ function TabOperaciones({ token }: { token: string }) {
   );
 }
 
+// ── Tab: Conversaciones ────────────────────────────────────────
+
+type ConvAdmin = Conversacion & { demandante_email?: string; oferente_email?: string; total_mensajes?: number };
+
+function TabConversaciones({ token }: { token: string }) {
+  const [convs, setConvs] = useState<ConvAdmin[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [filtro, setFiltro] = useState({ espacio_id: '', demandante_id: '', oferente_id: '' });
+
+  async function cargar(f = filtro) {
+    setLoading(true);
+    try {
+      const data = await chatAPI.listarConversacionesAdmin(token, {
+        espacio_id: f.espacio_id || undefined,
+        demandante_id: f.demandante_id || undefined,
+        oferente_id: f.oferente_id || undefined,
+      });
+      setConvs(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => { cargar(); }, []);
+
+  return (
+    <div style={{ display: 'grid', gap: '1rem' }}>
+      {/* Filtros */}
+      <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '1rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '.75rem' }}>
+        <div>
+          <label className="form-label">ID Publicación</label>
+          <input value={filtro.espacio_id} onChange={e => setFiltro(f => ({ ...f, espacio_id: e.target.value }))} placeholder="espacio_id…" />
+        </div>
+        <div>
+          <label className="form-label">ID Demandante</label>
+          <input value={filtro.demandante_id} onChange={e => setFiltro(f => ({ ...f, demandante_id: e.target.value }))} placeholder="usuario_id…" />
+        </div>
+        <div>
+          <label className="form-label">ID Oferente</label>
+          <input value={filtro.oferente_id} onChange={e => setFiltro(f => ({ ...f, oferente_id: e.target.value }))} placeholder="usuario_id…" />
+        </div>
+        <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+          <Button onClick={() => cargar(filtro)} loading={loading} size="sm" style={{ width: '100%' }}>
+            🔍 Buscar
+          </Button>
+        </div>
+      </div>
+
+      {/* Lista */}
+      {loading ? (
+        <p style={{ color: 'var(--text3)' }}>Cargando…</p>
+      ) : convs.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--text3)', background: 'var(--surface)', borderRadius: 'var(--r2)', border: '1px solid var(--border)' }}>
+          <div style={{ fontSize: '2rem', marginBottom: '.5rem' }}>💬</div>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>No hay conversaciones</div>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gap: '.6rem' }}>
+          {convs.map(conv => (
+            <div key={conv.id} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '.85rem 1rem', display: 'grid', gap: '.25rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '.5rem', flexWrap: 'wrap' }}>
+                <div>
+                  <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.88rem' }}>
+                    📦 {conv.espacio_nombre} <span style={{ color: 'var(--text3)', fontSize: '.72rem', fontWeight: 400 }}>({conv.barrio})</span>
+                  </div>
+                  <div style={{ fontSize: '.76rem', color: 'var(--text3)', marginTop: '.1rem' }}>
+                    👤 Demandante: <span style={{ color: 'var(--text2)', fontWeight: 600 }}>{conv.demandante_nombre}</span>
+                    {conv.demandante_email && <span style={{ opacity: .7 }}> · {conv.demandante_email}</span>}
+                  </div>
+                  <div style={{ fontSize: '.76rem', color: 'var(--text3)' }}>
+                    🏪 Oferente: <span style={{ color: 'var(--text2)', fontWeight: 600 }}>{conv.oferente_nombre}</span>
+                    {conv.oferente_email && <span style={{ opacity: .7 }}> · {conv.oferente_email}</span>}
+                  </div>
+                </div>
+                <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                  <div style={{ fontSize: '.72rem', color: 'var(--text3)' }}>Mensajes</div>
+                  <div style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--blue)' }}>{conv.total_mensajes ?? '—'}</div>
+                </div>
+              </div>
+              {conv.ultimo_msg && (
+                <div style={{ fontSize: '.78rem', color: 'var(--text3)', background: 'var(--surface2)', borderRadius: 6, padding: '.35rem .6rem', marginTop: '.25rem' }}>
+                  "{conv.ultimo_msg}"
+                </div>
+              )}
+              <div style={{ fontSize: '.7rem', color: 'var(--text3)', marginTop: '.1rem' }}>
+                Último mensaje: {conv.ultimo_msg_at ? new Date(conv.ultimo_msg_at).toLocaleString('es-AR') : '—'}
+                <span style={{ marginLeft: '.5rem', opacity: .6 }}>· ID espacio: {conv.espacio_id}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Main page ──────────────────────────────────────────────────
 
 export default function AdminPage() {
@@ -1488,6 +1588,7 @@ export default function AdminPage() {
     { key: 'solicitudes-puntaje',  label: '🛡️ Puntuación', badge: solicitudesPendientes || undefined },
     { key: 'campanas',             label: '📣 Campañas' },
     { key: 'usuarios',             label: '👤 Usuarios' },
+    { key: 'conversaciones',       label: '💬 Conversaciones' },
   ];
 
   return (
@@ -1508,6 +1609,7 @@ export default function AdminPage() {
           {tab === 'solicitudes-puntaje' && token && <TabSolicitudesPuntuacion token={token} />}
           {tab === 'campanas'            && token && <TabCampanas token={token} />}
           {tab === 'usuarios'            && token && <TabUsuarios token={token} />}
+          {tab === 'conversaciones'      && token && <TabConversaciones token={token} />}
         </div>
       </div>
     </div>

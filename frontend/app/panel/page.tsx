@@ -7,8 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Loader } from '@googlemaps/js-api-loader';
 import { useAuth } from '@/hooks/useAuth';
 import { useReservas } from '@/hooks/useReservas';
-import { espaciosAPI, reservasAPI, usuariosAPI, reviewsAPI, chatAPI } from '@/lib/api';
-import type { Conversacion } from '@/types';
+import { espaciosAPI, reservasAPI, usuariosAPI, reviewsAPI } from '@/lib/api';
 import { SeguridadChecklist } from '@/components/publicar/SeguridadChecklist';
 import type { Espacio, Reserva } from '@/types';
 import { MONEDAS } from '@/types';
@@ -89,11 +88,6 @@ export default function PanelPage() {
   const [extLoading, setExtLoading] = useState(false);
   const [extError, setExtError] = useState('');
 
-  // Admin chat audit
-  const [adminConvs, setAdminConvs] = useState<(Conversacion & { demandante_email?: string; oferente_email?: string; total_mensajes?: number })[]>([]);
-  const [adminConvsLoading, setAdminConvsLoading] = useState(false);
-  const [adminConvsFiltro, setAdminConvsFiltro] = useState({ espacio_id: '', demandante_id: '', oferente_id: '' });
-  const [adminConvsTab, setAdminConvsTab] = useState(false);
 
   // Review modal
   const [reviewModal, setReviewModal] = useState(false);
@@ -496,23 +490,6 @@ export default function PanelPage() {
     }
   }
 
-  async function cargarConversacionesAdmin(filtros = adminConvsFiltro) {
-    if (!token || !isAdmin) return;
-    setAdminConvsLoading(true);
-    try {
-      const data = await chatAPI.listarConversacionesAdmin(token, {
-        espacio_id: filtros.espacio_id || undefined,
-        demandante_id: filtros.demandante_id || undefined,
-        oferente_id: filtros.oferente_id || undefined,
-      });
-      setAdminConvs(data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setAdminConvsLoading(false);
-    }
-  }
-
   async function handleEliminarEspacio(id: string) {
     if (!token) return;
     if (!window.confirm('¿Eliminar este espacio? Esta acción no se puede deshacer.')) return;
@@ -607,111 +584,6 @@ export default function PanelPage() {
               </div>
             )}
           </section>
-
-          {/* ── SECTION ADMIN: Auditoría de conversaciones ── */}
-          {isAdmin && (
-            <section style={{ marginBottom: '2.5rem' }}>
-              <div
-                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', cursor: 'pointer' }}
-                onClick={() => {
-                  setAdminConvsTab(t => !t);
-                  if (!adminConvsTab) cargarConversacionesAdmin();
-                }}
-              >
-                <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '.5rem' }}>
-                  💬 Auditoría de Conversaciones
-                  <span style={{ fontSize: '.75rem', background: 'rgba(232,98,42,.12)', color: 'var(--orange)', borderRadius: 6, padding: '2px 8px', fontWeight: 700 }}>Admin</span>
-                </h2>
-                <span style={{ color: 'var(--text3)', fontSize: '.85rem' }}>{adminConvsTab ? '▲ Ocultar' : '▼ Ver'}</span>
-              </div>
-
-              {adminConvsTab && (
-                <div style={{ display: 'grid', gap: '1rem' }}>
-                  {/* Filtros */}
-                  <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '1rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '.75rem' }}>
-                    <div>
-                      <label className="form-label">ID Publicación</label>
-                      <input
-                        value={adminConvsFiltro.espacio_id}
-                        onChange={e => setAdminConvsFiltro(f => ({ ...f, espacio_id: e.target.value }))}
-                        placeholder="espacio_id…"
-                      />
-                    </div>
-                    <div>
-                      <label className="form-label">ID Demandante</label>
-                      <input
-                        value={adminConvsFiltro.demandante_id}
-                        onChange={e => setAdminConvsFiltro(f => ({ ...f, demandante_id: e.target.value }))}
-                        placeholder="usuario_id…"
-                      />
-                    </div>
-                    <div>
-                      <label className="form-label">ID Oferente</label>
-                      <input
-                        value={adminConvsFiltro.oferente_id}
-                        onChange={e => setAdminConvsFiltro(f => ({ ...f, oferente_id: e.target.value }))}
-                        placeholder="usuario_id…"
-                      />
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-                      <Button
-                        onClick={() => cargarConversacionesAdmin(adminConvsFiltro)}
-                        loading={adminConvsLoading}
-                        size="sm"
-                        style={{ width: '100%' }}
-                      >
-                        🔍 Buscar
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Lista de conversaciones */}
-                  {adminConvsLoading ? (
-                    <p style={{ color: 'var(--text3)' }}>Cargando…</p>
-                  ) : adminConvs.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--text3)', background: 'var(--surface)', borderRadius: 'var(--r2)', border: '1px solid var(--border)' }}>
-                      No hay conversaciones registradas.
-                    </div>
-                  ) : (
-                    <div style={{ display: 'grid', gap: '.6rem' }}>
-                      {adminConvs.map(conv => (
-                        <div key={conv.id} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '.85rem 1rem', display: 'grid', gap: '.25rem' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '.5rem', flexWrap: 'wrap' }}>
-                            <div>
-                              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.88rem' }}>
-                                📦 {conv.espacio_nombre} <span style={{ color: 'var(--text3)', fontSize: '.72rem', fontWeight: 400 }}>({conv.barrio})</span>
-                              </div>
-                              <div style={{ fontSize: '.76rem', color: 'var(--text3)', marginTop: '.1rem' }}>
-                                👤 Demandante: <span style={{ color: 'var(--text2)', fontWeight: 600 }}>{conv.demandante_nombre}</span>
-                                {conv.demandante_email && <span style={{ opacity: .7 }}> · {conv.demandante_email}</span>}
-                              </div>
-                              <div style={{ fontSize: '.76rem', color: 'var(--text3)' }}>
-                                🏪 Oferente: <span style={{ color: 'var(--text2)', fontWeight: 600 }}>{conv.oferente_nombre}</span>
-                                {conv.oferente_email && <span style={{ opacity: .7 }}> · {conv.oferente_email}</span>}
-                              </div>
-                            </div>
-                            <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                              <div style={{ fontSize: '.72rem', color: 'var(--text3)' }}>Mensajes</div>
-                              <div style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--blue)' }}>{conv.total_mensajes ?? '—'}</div>
-                            </div>
-                          </div>
-                          {conv.ultimo_msg && (
-                            <div style={{ fontSize: '.78rem', color: 'var(--text3)', background: 'var(--surface2)', borderRadius: 6, padding: '.35rem .6rem', marginTop: '.25rem' }}>
-                              "{conv.ultimo_msg}"
-                            </div>
-                          )}
-                          <div style={{ fontSize: '.7rem', color: 'var(--text3)', marginTop: '.1rem' }}>
-                            Último mensaje: {conv.ultimo_msg_at ? new Date(conv.ultimo_msg_at).toLocaleString('es-AR') : '—'}
-                            <span style={{ marginLeft: '.5rem', opacity: .6 }}>· ID espacio: {conv.espacio_id}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-            </section>
-          )}
 
           {/* ── SECTION 2: Mis espacios publicados (oferente only) ── */}
           {isOferente && (
