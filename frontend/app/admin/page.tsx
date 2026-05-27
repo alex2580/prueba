@@ -1585,7 +1585,7 @@ export default function AdminPage() {
     { key: 'notificaciones',       label: '🔔 Notificaciones', badge: notifUnread || undefined },
     { key: 'operaciones',          label: '💼 Operaciones' },
     { key: 'consultas',            label: '📬 Consultas' },
-    { key: 'solicitudes-puntaje',  label: '🛡️ Puntuación', badge: solicitudesPendientes || undefined },
+    { key: 'solicitudes-puntaje',  label: '🛡️ Servicios adicionales', badge: solicitudesPendientes || undefined },
     { key: 'campanas',             label: '📣 Campañas' },
     { key: 'usuarios',             label: '👤 Usuarios' },
     { key: 'conversaciones',       label: '💬 Conversaciones' },
