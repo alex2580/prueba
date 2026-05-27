@@ -129,13 +129,6 @@ export function CardEspacio({ espacio, onClick }: CardEspacioProps) {
           </div>
         )}
 
-        {/* Tipo */}
-        <div style={{ position: 'absolute', bottom: 10, left: 10, zIndex: 2 }}>
-          <span className={`pill ${espacio.tipo === 'exclusivo' ? 'pill--blue' : 'pill--orange'}`}>
-            {espacio.tipo === 'exclusivo' ? '🔒 Exclusivo' : '🤝 Compartido'}
-          </span>
-        </div>
-
         {/* No disponible overlay */}
         {!espacio.disponible && (
           <div style={{
