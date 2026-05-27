@@ -392,7 +392,7 @@ export default function PanelPage() {
         barrio: editando.barrio,
         precio_dia: Number(editForm.precio_dia) || 0,
         precio_mes: Number(editForm.precio_mes) || 0,
-        m2: editForm.m2 ? Number(editForm.m2) : null,
+        m2: editForm.m2 ? Number(editForm.m2) : undefined,
         tipo: editando.tipo,
         lat: editForm.lat ? Number(editForm.lat) : editando.lat,
         lng: editForm.lng ? Number(editForm.lng) : editando.lng,
