@@ -73,14 +73,14 @@ async function listar(req, res, next) {
     if (rating_min) { sql += ' AND e.rating >= ?'; params.push(Number(rating_min)); }
     if (seguridad_min) {
       sql += ` AND ROUND((
-        COALESCE(JSON_EXTRACT(e.seguridad,'$.techo_impermeable'),0) +
-        COALESCE(JSON_EXTRACT(e.seguridad,'$.cerradura'),0) +
-        COALESCE(JSON_EXTRACT(e.seguridad,'$.camaras'),0) +
-        COALESCE(JSON_EXTRACT(e.seguridad,'$.iluminacion'),0) +
-        COALESCE(JSON_EXTRACT(e.seguridad,'$.acceso_controlado'),0) +
-        COALESCE(JSON_EXTRACT(e.seguridad,'$.seco_ventilado'),0) +
-        COALESCE(JSON_EXTRACT(e.seguridad,'$.acceso_24h'),0) +
-        COALESCE(JSON_EXTRACT(e.seguridad,'$.extintor'),0)
+        IF(JSON_UNQUOTE(JSON_EXTRACT(e.seguridad,'$.techo_impermeable'))  = 'true', 1, 0) +
+        IF(JSON_UNQUOTE(JSON_EXTRACT(e.seguridad,'$.cerradura'))          = 'true', 1, 0) +
+        IF(JSON_UNQUOTE(JSON_EXTRACT(e.seguridad,'$.camaras'))            = 'true', 1, 0) +
+        IF(JSON_UNQUOTE(JSON_EXTRACT(e.seguridad,'$.iluminacion'))        = 'true', 1, 0) +
+        IF(JSON_UNQUOTE(JSON_EXTRACT(e.seguridad,'$.acceso_controlado'))  = 'true', 1, 0) +
+        IF(JSON_UNQUOTE(JSON_EXTRACT(e.seguridad,'$.seco_ventilado'))     = 'true', 1, 0) +
+        IF(JSON_UNQUOTE(JSON_EXTRACT(e.seguridad,'$.acceso_24h'))         = 'true', 1, 0) +
+        IF(JSON_UNQUOTE(JSON_EXTRACT(e.seguridad,'$.extintor'))           = 'true', 1, 0)
       ) / 8 * 5) >= ?`;
       params.push(Number(seguridad_min));
     }
@@ -366,14 +366,14 @@ async function debugSeguridad(req, res, next) {
       `SELECT id, nombre,
         seguridad,
         ROUND((
-          COALESCE(JSON_EXTRACT(seguridad,'$.techo_impermeable'),0) +
-          COALESCE(JSON_EXTRACT(seguridad,'$.cerradura'),0) +
-          COALESCE(JSON_EXTRACT(seguridad,'$.camaras'),0) +
-          COALESCE(JSON_EXTRACT(seguridad,'$.iluminacion'),0) +
-          COALESCE(JSON_EXTRACT(seguridad,'$.acceso_controlado'),0) +
-          COALESCE(JSON_EXTRACT(seguridad,'$.seco_ventilado'),0) +
-          COALESCE(JSON_EXTRACT(seguridad,'$.acceso_24h'),0) +
-          COALESCE(JSON_EXTRACT(seguridad,'$.extintor'),0)
+          IF(JSON_UNQUOTE(JSON_EXTRACT(seguridad,'$.techo_impermeable'))  = 'true', 1, 0) +
+          IF(JSON_UNQUOTE(JSON_EXTRACT(seguridad,'$.cerradura'))          = 'true', 1, 0) +
+          IF(JSON_UNQUOTE(JSON_EXTRACT(seguridad,'$.camaras'))            = 'true', 1, 0) +
+          IF(JSON_UNQUOTE(JSON_EXTRACT(seguridad,'$.iluminacion'))        = 'true', 1, 0) +
+          IF(JSON_UNQUOTE(JSON_EXTRACT(seguridad,'$.acceso_controlado'))  = 'true', 1, 0) +
+          IF(JSON_UNQUOTE(JSON_EXTRACT(seguridad,'$.seco_ventilado'))     = 'true', 1, 0) +
+          IF(JSON_UNQUOTE(JSON_EXTRACT(seguridad,'$.acceso_24h'))         = 'true', 1, 0) +
+          IF(JSON_UNQUOTE(JSON_EXTRACT(seguridad,'$.extintor'))           = 'true', 1, 0)
         ) / 8 * 5) AS score_calculado
        FROM espacios WHERE activo = TRUE ORDER BY id DESC LIMIT 20`
     );
