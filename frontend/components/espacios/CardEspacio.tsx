@@ -151,7 +151,24 @@ export function CardEspacio({ espacio, onClick }: CardEspacioProps) {
       </div>
 
       <div className="espacio-card__body">
-        <div className="espacio-card__title">{espacio.nombre}</div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '.4rem', marginBottom: '.2rem' }}>
+          <div className="espacio-card__title" style={{ margin: 0 }}>{espacio.nombre}</div>
+          {/* Badge Exclusivo / Compartido */}
+          <span style={{
+            flexShrink: 0,
+            fontSize: '11px', fontWeight: 800,
+            fontFamily: 'Sora, sans-serif',
+            padding: '.18rem .6rem',
+            borderRadius: '999px',
+            border: `1.5px solid ${espacio.tipo === 'exclusivo' ? 'var(--ink)' : 'var(--orange)'}`,
+            color: espacio.tipo === 'exclusivo' ? 'var(--ink)' : 'var(--orange)',
+            background: espacio.tipo === 'exclusivo' ? 'rgba(30,41,59,.07)' : 'rgba(249,115,22,.08)',
+            whiteSpace: 'nowrap',
+          }}>
+            {espacio.tipo === 'exclusivo' ? '🔒 Exclusivo' : '🤝 Compartido'}
+          </span>
+        </div>
+
         <div className="espacio-card__address">📍 {espacio.barrio} · {espacio.m2} m²</div>
 
         <div className="espacio-card__meta">
@@ -170,31 +187,23 @@ export function CardEspacio({ espacio, onClick }: CardEspacioProps) {
         }}>
           {/* Izquierda — precio por mes */}
           {hasMes ? (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '.05rem' }}>
-              <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.5px', color: 'var(--text3)' }}>
-                📆 por mes
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '.1rem' }}>
+              <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text2)', fontFamily: 'Sora, sans-serif' }}>
+                📆 Por mes
               </span>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '.2rem' }}>
-                <span className="espacio-card__price" style={{ color: accentColor }}>{formatARS(espacio.precio_mes)}</span>
-              </div>
+              <span className="espacio-card__price" style={{ color: accentColor }}>{formatARS(espacio.precio_mes)}</span>
             </div>
-          ) : (
-            <div />
-          )}
+          ) : <div />}
 
           {/* Derecha — precio por día */}
           {hasDia ? (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '.05rem' }}>
-              <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.5px', color: 'var(--text3)' }}>
-                📅 por día
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '.1rem' }}>
+              <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text2)', fontFamily: 'Sora, sans-serif' }}>
+                📅 Por día
               </span>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '.2rem' }}>
-                <span className="espacio-card__price" style={{ color: accentColor, fontSize: hasMes ? '.95rem' : undefined }}>{formatARS(espacio.precio_dia)}</span>
-              </div>
+              <span className="espacio-card__price" style={{ color: accentColor, fontSize: hasMes ? '.95rem' : undefined }}>{formatARS(espacio.precio_dia)}</span>
             </div>
-          ) : (
-            <div />
-          )}
+          ) : <div />}
         </div>
       </div>
     </article>
