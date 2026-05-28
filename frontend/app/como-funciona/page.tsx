@@ -3,11 +3,11 @@
 import { useRouter } from 'next/navigation';
 import { SiteHeader } from '@/components/ui/SiteHeader';
 
-const PASOS = [
+const PASOS_RESERVAR = [
   {
     icon: '🔍',
     titulo: 'Buscás un espacio',
-    desc: 'Seleccioná una tarjeta en la página o en el mapa para explorar depósitos, cocheras, galpones, etc. Podés filtrar de distintas maneras.',
+    desc: 'Seleccioná una tarjeta o hacé click en las publicaciones del mapa. Puede ser compartido o solo para vos.',
   },
   {
     icon: '📦',
@@ -22,7 +22,30 @@ const PASOS = [
   {
     icon: '🔑',
     titulo: 'Coordinás el acceso',
-    desc: 'Coordinás el acceso con el oferente. Vos y el que publicó el espacio recibirán el mismo PIN de 4 dígitos por correo para que puedan identificarse.',
+    desc: 'Vos y el que publicó el espacio recibirán el mismo PIN de 4 dígitos por correo para que puedan identificarse.',
+  },
+];
+
+const PASOS_PUBLICAR = [
+  {
+    icon: '📢',
+    titulo: 'Publicás tu espacio',
+    desc: 'Andá al botón "Publicar espacio" y contale a todos qué espacio ofrecés. Si es para uso exclusivo o compartido, si lo alquilás por día, por mes o de ambas formas. No olvides marcar en el calendario qué días o meses estará disponible.',
+  },
+  {
+    icon: '📷',
+    titulo: 'Subís fotos',
+    desc: 'Podés subir hasta un máximo de 5 fotos.',
+  },
+  {
+    icon: '🛡️',
+    titulo: 'Definís el grado de seguridad',
+    desc: 'Hacé click en las medidas de seguridad que tiene tu espacio. Esto le permite saber a quienes buscan espacio con qué medidas de seguridad disponés para cuidar sus bienes.',
+  },
+  {
+    icon: '👤',
+    titulo: 'Te registrás',
+    desc: 'Si no te identificaste aún, este es el momento. Cuando alguien proceda con la reserva de tu sitio, ambos recibirán un PIN de 4 dígitos por correo para identificarse.',
   },
 ];
 
@@ -33,11 +56,64 @@ const PARA_QUIEN = [
   { icon: '🚚', titulo: 'Logística', desc: 'Galpones con acceso para camiones.' },
 ];
 
+function PasoCard({ paso, index, accentColor, bgColor, borderColor }: {
+  paso: { icon: string; titulo: string; desc: string };
+  index: number;
+  accentColor: string;
+  bgColor: string;
+  borderColor: string;
+}) {
+  return (
+    <div style={{
+      background: 'var(--surface)',
+      border: `1px solid ${borderColor}`,
+      borderRadius: 'var(--r3)',
+      padding: '1.1rem 1.25rem',
+      display: 'flex', gap: '.9rem', alignItems: 'flex-start',
+    }}>
+      <div style={{
+        width: 42, height: 42, borderRadius: 11, flexShrink: 0,
+        background: bgColor, border: `1px solid ${borderColor}`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: '1.2rem', position: 'relative',
+      }}>
+        {paso.icon}
+        <span style={{
+          position: 'absolute', top: -8, right: -8,
+          background: accentColor, color: '#fff',
+          borderRadius: '50%', width: 18, height: 18,
+          fontSize: '.62rem', fontWeight: 800,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontFamily: 'Sora, sans-serif',
+        }}>{index + 1}</span>
+      </div>
+      <div>
+        <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.92rem', color: 'var(--text)', marginBottom: '.25rem' }}>
+          {paso.titulo}
+        </div>
+        <div style={{ fontSize: '.8rem', color: 'var(--text2)', lineHeight: 1.65 }}>
+          {paso.desc}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ComoFuncionaPage() {
   const router = useRouter();
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
+      <style>{`
+        .cf-sections { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+        @media (min-width: 860px) { .cf-sections { grid-template-columns: 1fr 1fr; } }
+        .cf-steps { display: grid; grid-template-columns: 1fr; gap: .75rem; }
+        @media (min-width: 560px) { .cf-steps { grid-template-columns: 1fr 1fr; } }
+        @media (min-width: 860px) { .cf-steps { grid-template-columns: 1fr; } }
+        .pq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        @media (min-width: 640px) { .pq-grid { grid-template-columns: repeat(4, 1fr); } }
+      `}</style>
+
       <SiteHeader />
 
       {/* Hero */}
@@ -60,98 +136,159 @@ export default function ComoFuncionaPage() {
       </div>
 
       <div className="page-scroll" style={{ flex: 1 }}>
-        <div style={{ maxWidth: 900, margin: '0 auto', padding: '2.5rem 1.5rem' }}>
+        <div style={{ maxWidth: 980, margin: '0 auto', padding: '2.5rem 1.25rem' }}>
 
           {/* Tipos de espacio */}
-          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.15rem', marginBottom: '1.25rem', color: 'var(--text)' }}>
+          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.1rem', marginBottom: '1.1rem', color: 'var(--text)' }}>
             Tipos de espacio
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
-            <div style={{ background: 'var(--surface)', border: '1px solid rgba(30,41,59,.18)', borderRadius: 'var(--r3)', padding: '1.4rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', marginBottom: '.75rem' }}>
-                <span style={{ fontSize: '1.6rem' }}>🔒</span>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
+            <div style={{ background: 'var(--surface)', border: '1px solid rgba(30,41,59,.18)', borderRadius: 'var(--r3)', padding: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', marginBottom: '.65rem' }}>
+                <span style={{ fontSize: '1.5rem' }}>🔒</span>
                 <div>
-                  <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '1rem', color: 'var(--text)' }}>Exclusivo</div>
+                  <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.95rem', color: 'var(--text)' }}>Exclusivo</div>
                   <span className="pill pill--dark">Mayor privacidad</span>
                 </div>
               </div>
-              <div style={{ fontSize: '.82rem', color: 'var(--text2)', lineHeight: 1.65 }}>
+              <div style={{ fontSize: '.8rem', color: 'var(--text2)', lineHeight: 1.65 }}>
                 Solo vos usás el espacio. Acceso privado, tu candado.
               </div>
             </div>
-            <div style={{ background: 'var(--surface)', border: '1px solid rgba(232,98,42,.28)', borderRadius: 'var(--r3)', padding: '1.4rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', marginBottom: '.75rem' }}>
-                <span style={{ fontSize: '1.6rem' }}>🤝</span>
+            <div style={{ background: 'var(--surface)', border: '1px solid rgba(232,98,42,.28)', borderRadius: 'var(--r3)', padding: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', marginBottom: '.65rem' }}>
+                <span style={{ fontSize: '1.5rem' }}>🤝</span>
                 <div>
-                  <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '1rem', color: 'var(--orange)' }}>Compartido</div>
+                  <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.95rem', color: 'var(--orange)' }}>Compartido</div>
                   <span className="pill pill--orange">Mejor precio</span>
                 </div>
               </div>
-              <div style={{ fontSize: '.82rem', color: 'var(--text2)', lineHeight: 1.65 }}>
+              <div style={{ fontSize: '.8rem', color: 'var(--text2)', lineHeight: 1.65 }}>
                 Compartís con otros. Costo dividido, ideal largo plazo.
               </div>
             </div>
           </div>
 
-          {/* Pasos */}
-          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.15rem', marginBottom: '1.25rem', color: 'var(--text)' }}>
-            Los 4 pasos
-          </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
-            {PASOS.map((paso, i) => (
-              <div key={paso.titulo} style={{
-                background: 'var(--surface)',
-                border: '1px solid var(--border)',
-                borderRadius: 'var(--r3)',
-                padding: '1.25rem 1.4rem',
-                display: 'flex', gap: '1rem', alignItems: 'flex-start',
+          {/* Doble sección: Reservar + Publicar */}
+          <div className="cf-sections" style={{ marginBottom: '2.5rem' }}>
+
+            {/* ── Para Reservar ── */}
+            <div style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--r4)',
+              overflow: 'hidden',
+            }}>
+              {/* Header sección */}
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(232,98,42,.12) 0%, rgba(232,98,42,.04) 100%)',
+                borderBottom: '1px solid rgba(232,98,42,.2)',
+                padding: '1.1rem 1.4rem',
+                display: 'flex', alignItems: 'center', gap: '.75rem',
               }}>
                 <div style={{
-                  width: 44, height: 44, borderRadius: 12, flexShrink: 0,
-                  background: 'rgba(232,98,42,.12)', border: '1px solid rgba(232,98,42,.25)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '1.3rem', position: 'relative',
-                }}>
-                  {paso.icon}
-                  <span style={{
-                    position: 'absolute', top: -8, right: -8,
-                    background: 'var(--orange)', color: '#fff',
-                    borderRadius: '50%', width: 18, height: 18,
-                    fontSize: '.65rem', fontWeight: 800,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontFamily: 'Sora, sans-serif',
-                  }}>{i + 1}</span>
-                </div>
+                  width: 40, height: 40, borderRadius: 10, flexShrink: 0,
+                  background: 'rgba(232,98,42,.15)', border: '1px solid rgba(232,98,42,.3)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem',
+                }}>🔍</div>
                 <div>
-                  <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.95rem', color: 'var(--text)', marginBottom: '.3rem' }}>
-                    {paso.titulo}
+                  <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1rem', color: 'var(--orange)' }}>
+                    Para Reservar
                   </div>
-                  <div style={{ fontSize: '.82rem', color: 'var(--text2)', lineHeight: 1.65 }}>
-                    {paso.desc}
-                  </div>
+                  <div style={{ fontSize: '.75rem', color: 'var(--text3)' }}>4 pasos simples</div>
                 </div>
               </div>
-            ))}
+              {/* Steps */}
+              <div className="cf-steps" style={{ padding: '1.1rem' }}>
+                {PASOS_RESERVAR.map((paso, i) => (
+                  <PasoCard
+                    key={paso.titulo}
+                    paso={paso}
+                    index={i}
+                    accentColor="var(--orange)"
+                    bgColor="rgba(232,98,42,.09)"
+                    borderColor="rgba(232,98,42,.18)"
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* ── Para Publicar ── */}
+            <div style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--r4)',
+              overflow: 'hidden',
+            }}>
+              {/* Header sección */}
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(30,64,175,.1) 0%, rgba(30,64,175,.03) 100%)',
+                borderBottom: '1px solid rgba(30,64,175,.18)',
+                padding: '1.1rem 1.4rem',
+                display: 'flex', alignItems: 'center', gap: '.75rem',
+              }}>
+                <div style={{
+                  width: 40, height: 40, borderRadius: 10, flexShrink: 0,
+                  background: 'rgba(30,64,175,.12)', border: '1px solid rgba(30,64,175,.25)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem',
+                }}>📢</div>
+                <div>
+                  <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1rem', color: '#1e40af' }}>
+                    Para Publicar
+                  </div>
+                  <div style={{ fontSize: '.75rem', color: 'var(--text3)' }}>4 pasos simples</div>
+                </div>
+              </div>
+              {/* Steps */}
+              <div className="cf-steps" style={{ padding: '1.1rem' }}>
+                {PASOS_PUBLICAR.map((paso, i) => (
+                  <PasoCard
+                    key={paso.titulo}
+                    paso={paso}
+                    index={i}
+                    accentColor="#1e40af"
+                    bgColor="rgba(30,64,175,.08)"
+                    borderColor="rgba(30,64,175,.15)"
+                  />
+                ))}
+              </div>
+              {/* Nota */}
+              <div style={{
+                margin: '0 1.1rem 1.1rem',
+                background: 'rgba(245,158,11,.07)',
+                border: '1px solid rgba(245,158,11,.3)',
+                borderRadius: 'var(--r2)',
+                padding: '.85rem 1rem',
+                fontSize: '.78rem',
+                color: 'var(--text2)',
+                lineHeight: 1.7,
+              }}>
+                <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, color: '#b45309' }}>📌 Nota: </span>
+                No olvides identificar en el perfil de tu cuenta el <strong>CBU o Alias bancario</strong> para recibir en 48hs el importe neto de tu publicación cuando alguien te elija.{' '}
+                <strong>TodasMisCosas cobra el 15%</strong> por las operaciones concretadas. Si no entendés algo, consultanos antes.
+              </div>
+            </div>
+
           </div>
 
           {/* Para quién */}
-          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.15rem', marginBottom: '1.25rem', color: 'var(--text)' }}>
+          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.1rem', marginBottom: '1.1rem', color: 'var(--text)' }}>
             ¿Para quién es TodasMisCosas.com?
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
+          <div className="pq-grid" style={{ marginBottom: '2.5rem' }}>
             {PARA_QUIEN.map(p => (
               <div key={p.titulo} style={{
                 background: 'var(--surface)',
                 border: '1px solid var(--border)',
                 borderRadius: 'var(--r3)',
-                padding: '1.4rem 1rem',
+                padding: '1.25rem 1rem',
                 textAlign: 'center',
               }}>
-                <div style={{ fontSize: '2rem', marginBottom: '.6rem' }}>{p.icon}</div>
-                <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.9rem', color: 'var(--text)', marginBottom: '.35rem' }}>
+                <div style={{ fontSize: '2rem', marginBottom: '.5rem' }}>{p.icon}</div>
+                <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.88rem', color: 'var(--text)', marginBottom: '.3rem' }}>
                   {p.titulo}
                 </div>
-                <div style={{ fontSize: '.78rem', color: 'var(--text2)', lineHeight: 1.6 }}>
+                <div style={{ fontSize: '.75rem', color: 'var(--text2)', lineHeight: 1.6 }}>
                   {p.desc}
                 </div>
               </div>
