@@ -580,16 +580,19 @@ export default function ReservarPage() {
                     {/* Mostrar calendario solo cuando ya eligió período (o solo tiene uno) */}
                     {(!ambosPrecios || periodoElegido !== null) && (
                       <>
-                        <MiniCalendar
-                          diasDisponibles={disponibilidad?.dias}
-                          diasOcupados={fechasOcupadas}
-                          fechaDesde={fechaDesde}
-                          fechaHasta={fechaHasta}
-                          onSelect={(d, h) => { setFechaDesde(d); setFechaHasta(h); setStep1Error(''); }}
-                          modo={modoCalendario}
-                          diasMulti={diasMulti}
-                          onSelectMulti={dias => { setDiasMulti(dias); setStep1Error(''); }}
-                        />
+                        {/* Calendario de días: solo cuando el modo NO es mes */}
+                        {modoCalendario !== 'mes' && (
+                          <MiniCalendar
+                            diasDisponibles={disponibilidad?.dias}
+                            diasOcupados={fechasOcupadas}
+                            fechaDesde={fechaDesde}
+                            fechaHasta={fechaHasta}
+                            onSelect={(d, h) => { setFechaDesde(d); setFechaHasta(h); setStep1Error(''); }}
+                            modo={modoCalendario}
+                            diasMulti={diasMulti}
+                            onSelectMulti={dias => { setDiasMulti(dias); setStep1Error(''); }}
+                          />
+                        )}
 
                         {modoCalendario === 'mes' && (
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.75rem', marginTop: '1rem' }}>
