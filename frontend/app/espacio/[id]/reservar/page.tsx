@@ -531,20 +531,6 @@ export default function ReservarPage() {
                         {espacio.descripcion}
                       </p>
                     )}
-                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                      {espacio.precio_dia > 0 && (
-                        <div style={{ background: 'rgba(232,98,42,.08)', border: '1px solid rgba(232,98,42,.2)', borderRadius: 8, padding: '.5rem .9rem', textAlign: 'center' }}>
-                          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.1rem', color: 'var(--orange)' }}>{formatARS(espacio.precio_dia)}</div>
-                          <div style={{ fontSize: '.68rem', color: 'var(--text3)', fontWeight: 600 }}>por día</div>
-                        </div>
-                      )}
-                      {espacio.precio_mes > 0 && (
-                        <div style={{ background: 'rgba(232,98,42,.08)', border: '1px solid rgba(232,98,42,.2)', borderRadius: 8, padding: '.5rem .9rem', textAlign: 'center' }}>
-                          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.1rem', color: 'var(--orange)' }}>{formatARS(espacio.precio_mes)}</div>
-                          <div style={{ fontSize: '.68rem', color: 'var(--text3)', fontWeight: 600 }}>por mes</div>
-                        </div>
-                      )}
-                    </div>
                   </div>
 
                   {/* Divider */}
