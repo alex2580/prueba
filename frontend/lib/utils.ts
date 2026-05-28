@@ -17,6 +17,12 @@ export function diasEntre(desde: string, hasta: string): number {
   return differenceInDays(parseISO(hasta), parseISO(desde)) + 1;
 }
 
+export function mesesEntre(desde: string, hasta: string): number {
+  const d = parseISO(desde);
+  const h = parseISO(hasta);
+  return (h.getFullYear() * 12 + h.getMonth()) - (d.getFullYear() * 12 + d.getMonth()) + 1;
+}
+
 export function calcularPrecio(
   desde: string,
   hasta: string,

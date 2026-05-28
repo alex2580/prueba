@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/Button';
 import type { Espacio } from '@/types';
 import { SERVICIOS_ADICIONALES } from '@/types';
 import type { ServicioTipo } from '@/types';
-import { formatARS, calcularPrecio, diasEntre } from '@/lib/utils';
+import { formatARS, calcularPrecio, diasEntre, mesesEntre } from '@/lib/utils';
 import { getFotoFallback, getFotosFallback } from '@/lib/fotosFallback';
 import QRCode from 'qrcode';
 
@@ -350,18 +350,24 @@ export default function ReservarPage() {
     : tieneMes ? 'mes' : 'dia';
   const modoCalendario: ModoCalendario = modoEfectivo;
 
+  const cantMeses = modoCalendario === 'mes' && fechaDesde && fechaHasta
+    ? mesesEntre(fechaDesde, fechaHasta)
+    : 0;
+
   const precioEstimado = espacio
     ? modoCalendario === 'dia'
       ? diasMulti.length * Number(espacio.precio_dia)
-      : fechaDesde && fechaHasta
-        ? calcularPrecio(fechaDesde, fechaHasta, Number(espacio.precio_dia), Number(espacio.precio_mes))
-        : 0
+      : modoCalendario === 'mes'
+        ? cantMeses * Number(espacio.precio_mes)
+        : fechaDesde && fechaHasta
+          ? calcularPrecio(fechaDesde, fechaHasta, Number(espacio.precio_dia), Number(espacio.precio_mes))
+          : 0
     : 0;
 
   const diasSeleccionados = modoCalendario === 'dia'
     ? diasMulti.length
     : fechaDesde && fechaHasta ? diasEntre(fechaDesde, fechaHasta) : 0;
-  const esMensual = modoCalendario === 'mes' && diasSeleccionados >= 28;
+  const esMensual = modoCalendario === 'mes' && cantMeses > 0;
 
   const serviciosTotal = servicios.reduce((acc, s) => acc + SERVICIOS_ADICIONALES[s].precio, 0);
   const totalFinal = precioEstimado + serviciosTotal;
@@ -641,7 +647,7 @@ export default function ReservarPage() {
                               {modoCalendario === 'dia'
                                 ? `${diasSeleccionados} día${diasSeleccionados !== 1 ? 's' : ''} × ${formatARS(espacio.precio_dia)}/día`
                                 : esMensual
-                                  ? `${Math.ceil(diasSeleccionados / 30)} mes${Math.ceil(diasSeleccionados / 30) !== 1 ? 'es' : ''} × ${formatARS(espacio.precio_mes)}/mes`
+                                  ? `${cantMeses} mes${cantMeses !== 1 ? 'es' : ''} × ${formatARS(espacio.precio_mes)}/mes`
                                   : `${diasSeleccionados} día${diasSeleccionados !== 1 ? 's' : ''} × ${formatARS(espacio.precio_dia)}/día`}
                             </div>
                             <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.05rem', color: 'var(--orange)' }}>
@@ -834,7 +840,7 @@ export default function ReservarPage() {
                           ['Ubicación', `${espacio.barrio} · ${espacio.direccion}`],
                           ['Desde', fechaDesde],
                           ['Hasta', fechaHasta],
-                          ['Duración', `${diasSeleccionados} días (${esMensual ? Math.ceil(diasSeleccionados / 30) + ' mes/es' : diasSeleccionados + ' días'})`],
+                          ['Duración', esMensual ? `${cantMeses} mes${cantMeses !== 1 ? 'es' : ''}` : `${diasSeleccionados} día${diasSeleccionados !== 1 ? 's' : ''}`],
                         ].map(([label, val]) => (
                           <div key={label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '.84rem' }}>
                             <span style={{ color: 'var(--text3)' }}>{label}</span>
