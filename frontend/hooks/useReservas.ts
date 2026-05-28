@@ -33,5 +33,11 @@ export function useReservas(token: string | null, tipo: 'mias' | 'recibidas' = '
     setReservas(prev => prev.map(r => r.id === id ? { ...r, estado: 'cancelada' } : r));
   }, [token]);
 
-  return { reservas, loading, error, recargar: cargar, cancelar };
+  const ocultar = useCallback(async (id: string) => {
+    if (!token) return;
+    await reservasAPI.ocultar(id, token);
+    setReservas(prev => prev.filter(r => r.id !== id));
+  }, [token]);
+
+  return { reservas, loading, error, recargar: cargar, cancelar, ocultar };
 }

@@ -18,5 +18,6 @@ router.post('/',             requireAuth, validarReserva, ctrl.crear);
 router.post('/:id/extender', requireAuth, ctrl.extender);
 router.patch('/:id/estado',  requireAuth, ctrl.cambiarEstado);
 router.delete('/:id',        requireAuth, ctrl.cancelar);
+router.patch('/:id/ocultar', requireAuth, ctrl.ocultar);
 
 module.exports = router;

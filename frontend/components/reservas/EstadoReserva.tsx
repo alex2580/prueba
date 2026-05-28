@@ -13,9 +13,10 @@ interface EstadoReservaProps {
   onPagar?: () => void;
   onCalificar?: () => void;
   onExtender?: () => void;
+  onEliminar?: () => void;
 }
 
-export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar, onExtender }: EstadoReservaProps) {
+export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar, onExtender, onEliminar }: EstadoReservaProps) {
   const dias = diasEntre(reserva.fecha_desde, reserva.fecha_hasta);
 
   return (
@@ -129,6 +130,25 @@ export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar, onExt
               ⭐ Calificar espacio
             </Button>
           )}
+        </div>
+      )}
+
+      {['cancelada', 'finalizada'].includes(reserva.estado) && onEliminar && (
+        <div style={{ marginTop: '.6rem', display: 'flex', justifyContent: 'flex-end' }}>
+          <button
+            onClick={onEliminar}
+            style={{
+              background: 'none', border: 'none', cursor: 'pointer',
+              fontSize: '.75rem', color: 'var(--text3)',
+              display: 'flex', alignItems: 'center', gap: '.3rem',
+              padding: '.25rem .5rem', borderRadius: 'var(--r1)',
+              transition: 'color .15s',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'var(--red)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'var(--text3)')}
+          >
+            🗑️ Borrar del historial
+          </button>
         </div>
       )}
     </div>

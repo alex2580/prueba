@@ -16,6 +16,9 @@ async function listar(req, res, next) {
   try {
     const isAdmin = req.user.tipo === 'admin';
     // Para demandantes ocultamos 'pendiente': son reservas creadas pero sin pago confirmado
+    const whereClause = isAdmin
+      ? '1=1'
+      : "r.usuario_id = ? AND r.estado != 'pendiente' AND (r.oculta_demandante IS NULL OR r.oculta_demandante = 0)";
     const sql = `
       SELECT r.*,
              e.nombre AS espacio_nombre, e.barrio AS espacio_barrio, e.lat, e.lng,
@@ -24,11 +27,28 @@ async function listar(req, res, next) {
       FROM reservas r
       JOIN espacios e ON r.espacio_id = e.id
       JOIN usuarios u ON r.usuario_id = u.id
-      WHERE ${isAdmin ? '1=1' : "r.usuario_id = ? AND r.estado != 'pendiente'"}
+      WHERE ${whereClause}
       ORDER BY r.created_at DESC
     `;
     const params = isAdmin ? [] : [req.user.id];
-    const reservas = await query(sql, params);
+    let reservas;
+    try {
+      reservas = await query(sql, params);
+    } catch (_) {
+      // Fallback si oculta_demandante aún no existe en la DB
+      const sqlFallback = `
+        SELECT r.*,
+               e.nombre AS espacio_nombre, e.barrio AS espacio_barrio, e.lat, e.lng,
+               e.oferente_id, e.seguridad AS espacio_seguridad,
+               u.nombre AS usuario_nombre, u.email AS usuario_email
+        FROM reservas r
+        JOIN espacios e ON r.espacio_id = e.id
+        JOIN usuarios u ON r.usuario_id = u.id
+        WHERE ${isAdmin ? '1=1' : "r.usuario_id = ? AND r.estado != 'pendiente'"}
+        ORDER BY r.created_at DESC
+      `;
+      reservas = await query(sqlFallback, params);
+    }
     res.json(reservas.map(parseSeguridad));
   } catch (err) {
     next(err);
@@ -416,4 +436,25 @@ async function extender(req, res, next) {
   }
 }
 
-module.exports = { listar, recibidas, obtener, crear, cambiarEstado, cancelar, extender };
+// PATCH /api/reservas/:id/ocultar  (demandante: ocultar del historial propio)
+async function ocultar(req, res, next) {
+  try {
+    const reserva = await queryOne(
+      'SELECT id, usuario_id, estado FROM reservas WHERE id = ?',
+      [req.params.id]
+    );
+    if (!reserva) return res.status(404).json({ error: 'Reserva no encontrada' });
+    if (reserva.usuario_id !== req.user.id) {
+      return res.status(403).json({ error: 'Sin permisos' });
+    }
+    if (!['cancelada', 'finalizada'].includes(reserva.estado)) {
+      return res.status(400).json({ error: 'Solo podés borrar reservas canceladas o finalizadas' });
+    }
+    await query('UPDATE reservas SET oculta_demandante = 1 WHERE id = ?', [reserva.id]);
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { listar, recibidas, obtener, crear, cambiarEstado, cancelar, extender, ocultar };

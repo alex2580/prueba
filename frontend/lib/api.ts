@@ -99,6 +99,9 @@ export const reservasAPI = {
 
   cancelar: (id: string, token: string) =>
     fetchAPI<{ message: string }>(`/api/reservas/${id}`, { method: 'DELETE' }, token),
+
+  ocultar: (id: string, token: string) =>
+    fetchAPI<{ ok: boolean }>(`/api/reservas/${id}/ocultar`, { method: 'PATCH' }, token),
 };
 
 // ── Reviews ────────────────────────────────────────────────────

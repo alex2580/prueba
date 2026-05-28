@@ -42,7 +42,7 @@ export default function PanelPage() {
   const isAdmin = user?.tipo === 'admin';
 
   // Reservas propias (as demandante — for all users)
-  const { reservas: misReservas, loading: misResLoading, cancelar } = useReservas(token, 'mias');
+  const { reservas: misReservas, loading: misResLoading, cancelar, ocultar: ocultarReserva } = useReservas(token, 'mias');
 
   // Oferente-specific data
   const [misEspacios, setMisEspacios] = useState<Espacio[]>([]);
@@ -586,6 +586,7 @@ export default function PanelPage() {
                     onPagar={r.estado === 'confirmada' ? () => router.push(`/reserva/${r.id}/checkout`) : undefined}
                     onCalificar={['pagada', 'finalizada'].includes(r.estado) ? () => abrirReview(r) : undefined}
                     onExtender={r.estado === 'pagada' ? () => abrirExtension(r) : undefined}
+                    onEliminar={['cancelada', 'finalizada'].includes(r.estado) ? () => ocultarReserva(r.id) : undefined}
                   />
                 ))}
               </div>
