@@ -594,18 +594,35 @@ export default function ReservarPage() {
                         {modoCalendario === 'mes' && (
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.75rem', marginTop: '1rem' }}>
                             <label className="form-label">
-                              Desde
-                              <input type="date" value={fechaDesde}
-                                onChange={e => { setFechaDesde(e.target.value); setStep1Error(''); }}
-                                min={new Date().toISOString().split('T')[0]}
-                                style={{ marginTop: '.3rem' }} />
+                              Desde (mes)
+                              <input
+                                type="month"
+                                value={fechaDesde ? fechaDesde.slice(0, 7) : ''}
+                                onChange={e => {
+                                  if (!e.target.value) { setFechaDesde(''); return; }
+                                  const [y, m] = e.target.value.split('-').map(Number);
+                                  setFechaDesde(`${y}-${String(m).padStart(2, '0')}-01`);
+                                  setStep1Error('');
+                                }}
+                                min={new Date().toISOString().slice(0, 7)}
+                                style={{ marginTop: '.3rem' }}
+                              />
                             </label>
                             <label className="form-label">
-                              Hasta
-                              <input type="date" value={fechaHasta}
-                                onChange={e => { setFechaHasta(e.target.value); setStep1Error(''); }}
-                                min={fechaDesde || new Date().toISOString().split('T')[0]}
-                                style={{ marginTop: '.3rem' }} />
+                              Hasta (mes)
+                              <input
+                                type="month"
+                                value={fechaHasta ? fechaHasta.slice(0, 7) : ''}
+                                onChange={e => {
+                                  if (!e.target.value) { setFechaHasta(''); return; }
+                                  const [y, m] = e.target.value.split('-').map(Number);
+                                  const lastDay = new Date(y, m, 0).getDate();
+                                  setFechaHasta(`${y}-${String(m).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`);
+                                  setStep1Error('');
+                                }}
+                                min={fechaDesde ? fechaDesde.slice(0, 7) : new Date().toISOString().slice(0, 7)}
+                                style={{ marginTop: '.3rem' }}
+                              />
                             </label>
                           </div>
                         )}

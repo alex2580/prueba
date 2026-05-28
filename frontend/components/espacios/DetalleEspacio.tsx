@@ -170,17 +170,39 @@ export function DetalleEspacio({ espacio, onReservar, onChat }: DetalleEspacioPr
         <div className="detalle-booking" style={{ position: 'sticky', top: 80, height: 'fit-content' }}>
           <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r3)', padding: '1.4rem', boxShadow: 'var(--s3)' }}>
             <div style={{ marginBottom: '1rem' }}>
-              {Number(espacio.precio_mes) > 0 && (
-                <div style={{ fontSize: '1.6rem', fontFamily: 'Sora, sans-serif', fontWeight: 800, color: 'var(--orange)' }}>
-                  {formatARS(espacio.precio_mes)}
-                  <span style={{ fontSize: '.9rem', color: 'var(--text3)', fontWeight: 400 }}>/mes</span>
+              {Number(espacio.precio_mes) > 0 && Number(espacio.precio_dia) > 0 ? (
+                /* Ambos precios: misma jerarquía visual */
+                <div style={{ display: 'flex', gap: '.75rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                  <div>
+                    <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text3)', fontFamily: 'Sora, sans-serif', marginBottom: '.1rem' }}>📆 POR MES</div>
+                    <div style={{ fontSize: '1.45rem', fontFamily: 'Sora, sans-serif', fontWeight: 800, color: 'var(--orange)' }}>
+                      {formatARS(espacio.precio_mes)}
+                    </div>
+                  </div>
+                  <div style={{ width: 1, background: 'var(--border)', alignSelf: 'stretch', margin: '.1rem 0' }} />
+                  <div>
+                    <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text3)', fontFamily: 'Sora, sans-serif', marginBottom: '.1rem' }}>📅 POR DÍA</div>
+                    <div style={{ fontSize: '1.45rem', fontFamily: 'Sora, sans-serif', fontWeight: 800, color: 'var(--orange)' }}>
+                      {formatARS(espacio.precio_dia)}
+                    </div>
+                  </div>
                 </div>
-              )}
-              {Number(espacio.precio_dia) > 0 && (
-                <div style={{ fontSize: Number(espacio.precio_mes) > 0 ? '.82rem' : '1.6rem', fontFamily: 'Sora, sans-serif', fontWeight: Number(espacio.precio_mes) > 0 ? 400 : 800, color: Number(espacio.precio_mes) > 0 ? 'var(--text3)' : 'var(--orange)', marginTop: Number(espacio.precio_mes) > 0 ? '.2rem' : 0 }}>
-                  {formatARS(espacio.precio_dia)}
-                  <span style={{ fontSize: '.9rem', color: 'var(--text3)', fontWeight: 400 }}>/día</span>
-                </div>
+              ) : (
+                /* Un solo precio: display grande */
+                <>
+                  {Number(espacio.precio_mes) > 0 && (
+                    <div style={{ fontSize: '1.6rem', fontFamily: 'Sora, sans-serif', fontWeight: 800, color: 'var(--orange)' }}>
+                      {formatARS(espacio.precio_mes)}
+                      <span style={{ fontSize: '.9rem', color: 'var(--text3)', fontWeight: 400 }}>/mes</span>
+                    </div>
+                  )}
+                  {Number(espacio.precio_dia) > 0 && (
+                    <div style={{ fontSize: '1.6rem', fontFamily: 'Sora, sans-serif', fontWeight: 800, color: 'var(--orange)' }}>
+                      {formatARS(espacio.precio_dia)}
+                      <span style={{ fontSize: '.9rem', color: 'var(--text3)', fontWeight: 400 }}>/día</span>
+                    </div>
+                  )}
+                </>
               )}
             </div>
 
