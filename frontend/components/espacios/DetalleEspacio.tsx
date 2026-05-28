@@ -20,6 +20,7 @@ interface DetalleEspacioProps {
 export function DetalleEspacio({ espacio, onReservar, onChat }: DetalleEspacioProps) {
   const router = useRouter();
   const [tab, setTab] = useState<'info' | 'reviews'>('info');
+  const precioColor = espacio.tipo === 'exclusivo' ? 'var(--text)' : 'var(--orange)';
 
   return (
     <div style={{ maxWidth: 860, margin: '0 auto', padding: '2rem 1rem' }}>
@@ -175,14 +176,14 @@ export function DetalleEspacio({ espacio, onReservar, onChat }: DetalleEspacioPr
                 <div style={{ display: 'flex', gap: '.75rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
                   <div>
                     <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text3)', fontFamily: 'Sora, sans-serif', marginBottom: '.1rem' }}>📆 POR MES</div>
-                    <div style={{ fontSize: '1.45rem', fontFamily: 'Sora, sans-serif', fontWeight: 800, color: 'var(--orange)' }}>
+                    <div style={{ fontSize: '1.45rem', fontFamily: 'Sora, sans-serif', fontWeight: 800, color: precioColor }}>
                       {formatARS(espacio.precio_mes)}
                     </div>
                   </div>
                   <div style={{ width: 1, background: 'var(--border)', alignSelf: 'stretch', margin: '.1rem 0' }} />
                   <div>
                     <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text3)', fontFamily: 'Sora, sans-serif', marginBottom: '.1rem' }}>📅 POR DÍA</div>
-                    <div style={{ fontSize: '1.45rem', fontFamily: 'Sora, sans-serif', fontWeight: 800, color: 'var(--orange)' }}>
+                    <div style={{ fontSize: '1.45rem', fontFamily: 'Sora, sans-serif', fontWeight: 800, color: precioColor }}>
                       {formatARS(espacio.precio_dia)}
                     </div>
                   </div>
@@ -191,13 +192,13 @@ export function DetalleEspacio({ espacio, onReservar, onChat }: DetalleEspacioPr
                 /* Un solo precio: display grande */
                 <>
                   {Number(espacio.precio_mes) > 0 && (
-                    <div style={{ fontSize: '1.6rem', fontFamily: 'Sora, sans-serif', fontWeight: 800, color: 'var(--orange)' }}>
+                    <div style={{ fontSize: '1.6rem', fontFamily: 'Sora, sans-serif', fontWeight: 800, color: precioColor }}>
                       {formatARS(espacio.precio_mes)}
                       <span style={{ fontSize: '.9rem', color: 'var(--text3)', fontWeight: 400 }}>/mes</span>
                     </div>
                   )}
                   {Number(espacio.precio_dia) > 0 && (
-                    <div style={{ fontSize: '1.6rem', fontFamily: 'Sora, sans-serif', fontWeight: 800, color: 'var(--orange)' }}>
+                    <div style={{ fontSize: '1.6rem', fontFamily: 'Sora, sans-serif', fontWeight: 800, color: precioColor }}>
                       {formatARS(espacio.precio_dia)}
                       <span style={{ fontSize: '.9rem', color: 'var(--text3)', fontWeight: 400 }}>/día</span>
                     </div>
