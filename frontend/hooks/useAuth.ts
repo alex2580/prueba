@@ -250,6 +250,10 @@ export function useAuth() {
     }
   }, []);
 
+  const refreshUser = useCallback(async () => {
+    if (state.token) await loadUser(state.token);
+  }, [state.token, loadUser]);
+
   const logout = useCallback(async () => {
     localStorage.removeItem('tmc_otp_pending');
     otpFlowRef.current = false;
@@ -274,5 +278,6 @@ export function useAuth() {
     verifyOTP,
     reenviarOTP,
     logout,
+    refreshUser,
   };
 }

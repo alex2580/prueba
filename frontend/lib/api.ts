@@ -207,6 +207,16 @@ export const usuariosAPI = {
       method: 'POST', body: JSON.stringify({ codigo }),
     }, token),
 
+  solicitarCambioPerfil: (token: string) =>
+    fetchAPI<{ ok: boolean; email_hint: string }>('/api/usuarios/me/solicitar-cambio-perfil', {
+      method: 'POST',
+    }, token),
+
+  verificarCambioPerfil: (codigo: string, token: string) =>
+    fetchAPI<{ ok: boolean }>('/api/usuarios/me/verificar-cambio-perfil', {
+      method: 'POST', body: JSON.stringify({ codigo }),
+    }, token),
+
   sync: (data: { supabase_id: string; nombre: string; email: string; tipo?: string; tel?: string }) =>
     fetchAPI<Usuario>('/api/usuarios/sync', { method: 'POST', body: JSON.stringify(data) }),
 

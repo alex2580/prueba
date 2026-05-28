@@ -37,7 +37,7 @@ const CATEGORIAS = [
 
 export default function PanelPage() {
   const router = useRouter();
-  const { user, token, loading: authLoading } = useAuth();
+  const { user, token, loading: authLoading, refreshUser } = useAuth();
   const isOferente = user?.tipo === 'oferente' || user?.tipo === 'admin';
   const isAdmin = user?.tipo === 'admin';
 
@@ -72,9 +72,9 @@ export default function PanelPage() {
   const [perfilLoading, setPerfilLoading] = useState(false);
   const [perfilError, setPerfilError] = useState('');
   const [perfilOk, setPerfilOk] = useState(false);
-  const [perfilStep, setPerfilStep] = useState<'form' | 'otp_tel'>('form');
+  const [perfilStep, setPerfilStep] = useState<'form' | 'otp_perfil'>('form');
   const [perfilOtpDigits, setPerfilOtpDigits] = useState(['', '', '', '', '', '']);
-  const [perfilOtpTelHint, setPerfilOtpTelHint] = useState('');
+  const [perfilOtpEmailHint, setPerfilOtpEmailHint] = useState('');
   const perfilOtpRefs = useRef<(HTMLInputElement | null)[]>([]);
   const perfilDireccionRef = useRef<HTMLInputElement>(null);
   const [editDisponibilidad, setEditDisponibilidad] = useState<Disponibilidad>({});
@@ -294,54 +294,17 @@ export default function PanelPage() {
     if (!perfilForm.nombre.trim()) { setPerfilError('El nombre es obligatorio'); return; }
     setPerfilLoading(true);
     setPerfilError('');
-
-    const telCambiado = perfilForm.tel.trim() !== (user?.tel || '').trim() && perfilForm.tel.trim() !== '';
-
     try {
-      // Subir avatar si se seleccionó uno nuevo
       if (perfilAvatarFile) {
         await usuariosAPI.subirAvatar(perfilAvatarFile, token);
       }
-
-      // Si cambió el teléfono, solicitar OTP antes de guardar
-      if (telCambiado) {
-        const res = await usuariosAPI.solicitarCambioTel(perfilForm.tel.trim(), token);
-        setPerfilOtpTelHint(res.tel_hint);
-        setPerfilStep('otp_tel');
-        setPerfilOtpDigits(['', '', '', '', '', '']);
-        setTimeout(() => perfilOtpRefs.current[0]?.focus(), 100);
-
-        // Guardar resto de campos (sin teléfono)
-        await usuariosAPI.actualizar({
-          nombre: perfilForm.nombre,
-          tel: user?.tel || '',
-          dni: perfilForm.dni || undefined,
-          email: perfilForm.email || undefined,
-          direccion: perfilForm.direccion || undefined,
-          pais: perfilForm.pais || undefined,
-          lat: perfilForm.lat ? Number(perfilForm.lat) : undefined,
-          lng: perfilForm.lng ? Number(perfilForm.lng) : undefined,
-          cbu_alias: perfilForm.cbu_alias || undefined,
-        }, token);
-        return;
-      }
-
-      // Sin cambio de teléfono: guardar todo directamente
-      await usuariosAPI.actualizar({
-        nombre: perfilForm.nombre,
-        tel: perfilForm.tel,
-        dni: perfilForm.dni || undefined,
-        email: perfilForm.email || undefined,
-        direccion: perfilForm.direccion || undefined,
-        pais: perfilForm.pais || undefined,
-        lat: perfilForm.lat ? Number(perfilForm.lat) : undefined,
-        lng: perfilForm.lng ? Number(perfilForm.lng) : undefined,
-        cbu_alias: perfilForm.cbu_alias || undefined,
-      }, token);
-      setPerfilOk(true);
-      setTimeout(() => setPerfilOpen(false), 1500);
+      const res = await usuariosAPI.solicitarCambioPerfil(token);
+      setPerfilOtpEmailHint(res.email_hint);
+      setPerfilStep('otp_perfil');
+      setPerfilOtpDigits(['', '', '', '', '', '']);
+      setTimeout(() => perfilOtpRefs.current[0]?.focus(), 100);
     } catch (err) {
-      setPerfilError(err instanceof Error ? err.message : 'Error al guardar');
+      setPerfilError(err instanceof Error ? err.message : 'Error al enviar el código');
     } finally {
       setPerfilLoading(false);
     }
@@ -353,7 +316,7 @@ export default function PanelPage() {
     next[idx] = v;
     setPerfilOtpDigits(next);
     if (v && idx < 5) perfilOtpRefs.current[idx + 1]?.focus();
-    if (v && next.every(d => d !== '')) handleVerificarCambioTel(next.join(''));
+    if (v && next.every(d => d !== '')) handleVerificarCambioPerfil(next.join(''));
   }
 
   function handlePerfilOtpKeyDown(idx: number, e: React.KeyboardEvent<HTMLInputElement>) {
@@ -371,15 +334,28 @@ export default function PanelPage() {
     setPerfilOtpDigits(next);
     const lastFilled = Math.min(text.length, 5);
     perfilOtpRefs.current[lastFilled]?.focus();
-    if (text.length === 6) handleVerificarCambioTel(text);
+    if (text.length === 6) handleVerificarCambioPerfil(text);
   }
 
-  async function handleVerificarCambioTel(codigo: string) {
+  async function handleVerificarCambioPerfil(codigo: string) {
     if (!token) return;
     setPerfilLoading(true);
     setPerfilError('');
     try {
-      await usuariosAPI.verificarCambioTel(codigo, token);
+      await usuariosAPI.verificarCambioPerfil(codigo, token);
+      // OTP válido → guardar todos los cambios del perfil
+      await usuariosAPI.actualizar({
+        nombre: perfilForm.nombre,
+        tel: perfilForm.tel || undefined,
+        dni: perfilForm.dni || undefined,
+        email: perfilForm.email || undefined,
+        direccion: perfilForm.direccion || undefined,
+        pais: perfilForm.pais || undefined,
+        lat: perfilForm.lat ? Number(perfilForm.lat) : undefined,
+        lng: perfilForm.lng ? Number(perfilForm.lng) : undefined,
+        cbu_alias: perfilForm.cbu_alias || undefined,
+      }, token);
+      await refreshUser();
       setPerfilOk(true);
       setTimeout(() => setPerfilOpen(false), 1500);
     } catch (err) {
@@ -791,8 +767,8 @@ export default function PanelPage() {
       <Modal
         open={perfilOpen}
         onClose={() => setPerfilOpen(false)}
-        title={perfilStep === 'otp_tel' ? '📱 Verificá tu nuevo teléfono' : '✏️ Editar perfil'}
-        subtitle={perfilStep === 'otp_tel' ? 'Ingresá el código que enviamos a tu nuevo número' : 'Actualizá tus datos personales y tu dirección'}
+        title={perfilStep === 'otp_perfil' ? '📧 Verificá tu identidad' : '✏️ Editar perfil'}
+        subtitle={perfilStep === 'otp_perfil' ? 'Ingresá el código que enviamos a tu email' : 'Actualizá tus datos personales y tu dirección'}
         maxWidth="500px"
       >
         <div style={{ display: 'grid', gap: '1rem' }}>
@@ -801,11 +777,11 @@ export default function PanelPage() {
               <div style={{ fontSize: '2.5rem', marginBottom: '.5rem' }}>✅</div>
               <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>Perfil actualizado</div>
             </div>
-          ) : perfilStep === 'otp_tel' ? (
+          ) : perfilStep === 'otp_perfil' ? (
             <>
               <p style={{ color: 'var(--text2)', fontSize: '.88rem', textAlign: 'center', margin: 0 }}>
-                Enviamos un código de 6 dígitos por SMS y WhatsApp a{' '}
-                <strong style={{ color: 'var(--text)' }}>{perfilOtpTelHint}</strong>
+                Enviamos un código de 6 dígitos al email{' '}
+                <strong style={{ color: 'var(--text)' }}>{perfilOtpEmailHint}</strong>
               </p>
               <div style={{ display: 'flex', gap: '.5rem', justifyContent: 'center' }}>
                 {perfilOtpDigits.map((d, i) => (
@@ -835,12 +811,12 @@ export default function PanelPage() {
               </div>
               {perfilError && <div className="alert alert--error">{perfilError}</div>}
               <Button
-                onClick={() => handleVerificarCambioTel(perfilOtpDigits.join(''))}
+                onClick={() => handleVerificarCambioPerfil(perfilOtpDigits.join(''))}
                 loading={perfilLoading}
                 disabled={perfilOtpDigits.some(d => !d) || perfilLoading}
                 style={{ width: '100%' }}
               >
-                Verificar y guardar teléfono
+                Verificar y guardar cambios
               </Button>
               <button
                 type="button"
@@ -908,14 +884,7 @@ export default function PanelPage() {
                   />
                 </div>
                 <div>
-                  <label className="form-label">
-                    Teléfono
-                    {perfilForm.tel.trim() !== (user?.tel || '').trim() && perfilForm.tel.trim() && (
-                      <span style={{ fontSize: '.7rem', color: 'var(--orange)', marginLeft: '.4rem' }}>
-                        🔐 requiere verificación
-                      </span>
-                    )}
-                  </label>
+                  <label className="form-label">Teléfono</label>
                   <input value={perfilForm.tel}
                     onChange={e => setPerfilForm(f => ({ ...f, tel: e.target.value }))}
                     placeholder="+54 9 11 ..." />

@@ -1,8 +1,7 @@
 const { query, queryOne } = require('../db/connection');
 const { validationResult } = require('express-validator');
 const supabaseService = require('../services/supabaseService');
-const { sendCambioTelConfirmado, sendBienvenida } = require('../services/emailService');
-const { sendSMS, sendWhatsApp } = require('../services/twilioService');
+const { sendCambioTelConfirmado, sendBienvenida, sendOTP } = require('../services/emailService');
 
 const OTP_EXPIRY_MIN = 10;
 
@@ -234,17 +233,12 @@ async function solicitarCambioTel(req, res, next) {
       [usuario.id, codigo, expiresAt, telNormalizado]
     );
 
-    const msg = `TodasMisCosas: Tu código para cambiar el teléfono es ${codigo}. Válido ${OTP_EXPIRY_MIN} minutos.`;
-    Promise.allSettled([
-      sendSMS(telNormalizado, msg),
-      sendWhatsApp(telNormalizado, msg),
-    ]).then(results => {
-      results.forEach((r, i) => {
-        if (r.status === 'rejected') console.warn(`[cambio-tel OTP] canal ${i}:`, r.reason?.message);
-      });
-    });
+    sendOTP(usuario.email, usuario.nombre, { codigo, expiraEn: OTP_EXPIRY_MIN })
+      .catch(e => console.warn('[cambio-tel OTP] email error:', e.message));
 
-    res.json({ ok: true, tel_hint: telNormalizado.slice(0, 4) + '***' + telNormalizado.slice(-3) });
+    const atIdx = usuario.email.indexOf('@');
+    const emailHint = usuario.email.slice(0, 2) + '***' + usuario.email.slice(atIdx);
+    res.json({ ok: true, tel_hint: telNormalizado.slice(0, 4) + '***' + telNormalizado.slice(-3), email_hint: emailHint });
   } catch (err) {
     next(err);
   }
@@ -304,6 +298,78 @@ async function verificarCambioTel(req, res, next) {
   }
 }
 
+// POST /api/usuarios/me/solicitar-cambio-perfil
+// Genera OTP por email para validar cualquier cambio de perfil
+async function solicitarCambioPerfil(req, res, next) {
+  try {
+    const usuario = req.user;
+
+    await query(
+      `UPDATE auth_otp SET usado = 1 WHERE usuario_id = ? AND tipo = 'cambio_perfil' AND usado = 0`,
+      [usuario.id]
+    );
+
+    const codigo = generarCodigo();
+    const expiresAt = new Date(Date.now() + OTP_EXPIRY_MIN * 60 * 1000);
+
+    await query(
+      `INSERT INTO auth_otp (usuario_id, codigo, expires_at, tipo) VALUES (?, ?, ?, 'cambio_perfil')`,
+      [usuario.id, codigo, expiresAt]
+    );
+
+    sendOTP(usuario.email, usuario.nombre, { codigo, expiraEn: OTP_EXPIRY_MIN })
+      .catch(e => console.warn('[cambio-perfil OTP] email error:', e.message));
+
+    const atIdx = usuario.email.indexOf('@');
+    const emailHint = usuario.email.slice(0, 2) + '***' + usuario.email.slice(atIdx);
+    res.json({ ok: true, email_hint: emailHint });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// POST /api/usuarios/me/verificar-cambio-perfil
+async function verificarCambioPerfil(req, res, next) {
+  try {
+    const { codigo } = req.body;
+    if (!codigo || String(codigo).length !== 6) {
+      return res.status(400).json({ error: 'Código inválido — debe tener 6 dígitos' });
+    }
+
+    const usuario = req.user;
+
+    const otp = await queryOne(
+      `SELECT * FROM auth_otp
+       WHERE usuario_id = ? AND tipo = 'cambio_perfil' AND usado = 0 AND expires_at > NOW()
+       ORDER BY created_at DESC LIMIT 1`,
+      [usuario.id]
+    );
+
+    if (!otp) {
+      return res.status(400).json({ error: 'El código expiró o ya fue utilizado. Solicitá uno nuevo.', code: 'OTP_EXPIRED' });
+    }
+
+    if ((otp.intentos || 0) >= 3) {
+      await query('UPDATE auth_otp SET usado = 1 WHERE id = ?', [otp.id]);
+      return res.status(429).json({ error: 'Demasiados intentos incorrectos. Solicitá un nuevo código.', code: 'OTP_MAX_INTENTOS' });
+    }
+
+    if (String(codigo).trim() !== String(otp.codigo)) {
+      await query('UPDATE auth_otp SET intentos = intentos + 1 WHERE id = ?', [otp.id]);
+      const restantes = 3 - (otp.intentos || 0) - 1;
+      return res.status(400).json({
+        error: `Código incorrecto. Te ${restantes > 0 ? `quedan ${restantes} intento${restantes !== 1 ? 's' : ''}` : 'queda 1 intento'}.`,
+        code: 'OTP_INCORRECTO',
+      });
+    }
+
+    await query('UPDATE auth_otp SET usado = 1 WHERE id = ?', [otp.id]);
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+}
+
 // POST /api/usuarios/me/avatar
 async function subirAvatar(req, res, next) {
   try {
@@ -316,4 +382,4 @@ async function subirAvatar(req, res, next) {
   }
 }
 
-module.exports = { perfil, actualizar, sync, verPerfil, listar, cambiarTipo, solicitarCambioTel, verificarCambioTel, subirAvatar };
+module.exports = { perfil, actualizar, sync, verPerfil, listar, cambiarTipo, solicitarCambioTel, verificarCambioTel, solicitarCambioPerfil, verificarCambioPerfil, subirAvatar };

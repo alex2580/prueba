@@ -20,6 +20,10 @@ router.post('/me/solicitar-cambio-tel', requireAuth, [
 router.post('/me/verificar-cambio-tel', requireAuth, [
   body('codigo').trim().notEmpty().isLength({ min: 6, max: 6 }),
 ], ctrl.verificarCambioTel);
+router.post('/me/solicitar-cambio-perfil', requireAuth, ctrl.solicitarCambioPerfil);
+router.post('/me/verificar-cambio-perfil', requireAuth, [
+  body('codigo').trim().notEmpty().isLength({ min: 6, max: 6 }),
+], ctrl.verificarCambioPerfil);
 router.post('/sync',        [
   body('supabase_id').notEmpty(),
   body('nombre').trim().notEmpty(),
