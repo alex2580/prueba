@@ -1422,6 +1422,74 @@ Ambos reciben el disclaimer de que TMC actúa como intermediario y link a térmi
 
 ---
 
+## 27–28 de Mayo 2026 — v1.6.0
+
+### Sistema de favoritos (end-to-end)
+
+Implementación completa del módulo de favoritos.
+
+#### Backend
+- `backend/src/controllers/favoritosController.js` — `listar()`, `listarIds()`, `agregar()` (INSERT IGNORE), `eliminar()`
+- `backend/src/routes/favoritos.js` — GET `/`, GET `/ids`, POST `/`, DELETE `/:espacio_id` — todos con `requireAuth`
+- Registrado en `app.js` como `/api/favoritos`
+
+#### Frontend
+- `frontend/lib/favoritosAPI.ts` — funciones `getFavoritosIds`, `toggleFavorito`
+- `CardEspacio.tsx` — recibe `token` como prop (evita race condition de `useAuth` en hijos)
+- `GridEspacios.tsx` — propaga `token` a cada card
+- `app/page.tsx` — pasa `token` desde el estado autenticado
+- `panel/page.tsx` — pestaña Favoritos con grid de espacios guardados
+
+#### Tabla en producción
+Guille ejecutó el CREATE TABLE en el VPS (`srv2021.hstgr.io:3306`, db `u713501758_todasmiscosas`):
+```sql
+CREATE TABLE IF NOT EXISTS favoritos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id INT NOT NULL,
+  espacio_id INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY unique_favorito (usuario_id, espacio_id),
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+  FOREIGN KEY (espacio_id) REFERENCES espacios(id) ON DELETE CASCADE
+);
+```
+
+---
+
+### Flujo de reserva — mejoras de UX
+
+#### Selector de período (`reservar/page.tsx`)
+- Cuando el espacio tiene ambos precios (día y mes): se muestran botones de selección de período en lugar de mostrar ambos precios simultáneamente en naranja
+- Modo `modoCalendario`: `'dia' | 'mes' | 'ambos'`
+
+#### Inputs de fecha por mes (`type="month"`)
+- Cuando `modoCalendario === 'mes'`: los inputs de fecha cambian a `type="month"` mostrando selector año/mes
+- El valor `YYYY-MM` se convierte internamente: `fechaDesde` → primer día del mes, `fechaHasta` → último día del mes (calculado con `new Date(y, m, 0).getDate()`)
+
+#### Ocultar calendario de días al reservar por mes
+- `MiniCalendar` solo se renderiza cuando `modoCalendario !== 'mes'`
+- Evita confusión de mostrar grilla de días cuando el usuario reserva por mes
+
+**Commits:** `4b73a73`, `30b25c1`
+
+---
+
+### DetalleEspacio — paridad visual de precios
+
+En el panel derecho de la ficha de espacio (`DetalleEspacio.tsx`):
+- Cuando existen ambos precios (`precio_dia` y `precio_mes`): se muestran lado a lado con igual jerarquía visual (mismo tamaño de fuente 1.45rem, etiquetas "POR MES" / "POR DÍA" en 11px)
+- Cuando hay un solo precio: display grande original con sufijo `/mes` o `/día`
+- Fix: MySQL devuelve DECIMAL como string `"0.00"` (truthy en JS) → se usa `Number(x) > 0` para la comparación
+
+---
+
+### CI/CD — fix IPv6 en deploy
+
+- Secret `VPS_HOST` tenía dirección IPv6 que `appleboy/ssh-action` no resuelve en GitHub Actions
+- Fix: reemplazado por IPv4 del VPS Hostinger
+
+---
+
 ## 26 de Mayo 2026
 
 ### Diseño responsive — mobile y tablet
