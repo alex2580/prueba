@@ -36,6 +36,19 @@ async function start() {
     process.exit(1);
   }
 
+  if (dbOk) {
+    const { pool } = require('./db/connection');
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS reservas_ocultas (
+        reserva_id VARCHAR(36) NOT NULL,
+        usuario_id VARCHAR(36) NOT NULL,
+        oculta_en  DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (reserva_id, usuario_id),
+        INDEX idx_usuario (usuario_id)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    `).catch(e => console.error('⚠️  reservas_ocultas:', e.message));
+  }
+
   server.listen(PORT, () => {
     console.log(`\n📦 TodasMisCosas API`);
     console.log(`   HTTP  → http://localhost:${PORT}`);
