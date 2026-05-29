@@ -283,6 +283,15 @@ function TabConsultas({ token }: { token: string }) {
     setItems(prev => prev.map(c => c.id === id ? { ...c, estado: 'resuelta' } : c));
   }
 
+  async function borrarConsulta(id: string) {
+    if (!confirm('¿Eliminar esta consulta? Esta acción no se puede deshacer.')) return;
+    await fetch(`/api/admin/consultas/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setItems(prev => prev.filter(c => c.id !== id));
+  }
+
   const filtered = items.filter(c => {
     if (filtro === 'pendientes') return c.estado === 'pendiente';
     if (filtro === 'resueltas')  return c.estado === 'resuelta';
@@ -371,7 +380,7 @@ function TabConsultas({ token }: { token: string }) {
               )}
 
               {/* Actions */}
-              <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
                 <button
                   className="btn-ghost"
                   style={{ fontSize: '.78rem', border: '1px solid var(--border)' }}
@@ -388,6 +397,13 @@ function TabConsultas({ token }: { token: string }) {
                     ✅ Marcar resuelta
                   </button>
                 )}
+                <button
+                  className="btn-ghost"
+                  style={{ fontSize: '.78rem', color: 'var(--red)', border: '1px solid rgba(239,68,68,.3)', marginLeft: 'auto' }}
+                  onClick={() => borrarConsulta(c.id)}
+                >
+                  🗑️ Borrar
+                </button>
               </div>
             </div>
           ))}
@@ -811,6 +827,15 @@ function TabSolicitudesPuntuacion({ token }: { token: string }) {
     setItems(prev => prev.map(s => s.id === id ? { ...s, estado } : s));
   }
 
+  async function borrarSolicitud(id: string) {
+    if (!confirm('¿Eliminar esta solicitud? Esta acción no se puede deshacer.')) return;
+    await fetch(`/api/admin/solicitudes-puntuacion/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setItems(prev => prev.filter(s => s.id !== id));
+  }
+
   const filtered = items.filter(s => filtro === 'todas' || s.estado === filtro);
   const pendientes = items.filter(s => s.estado === 'pendiente').length;
 
@@ -887,7 +912,7 @@ function TabSolicitudesPuntuacion({ token }: { token: string }) {
               )}
 
               {/* Actions */}
-              <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
                 <a
                   href={`mailto:${s.email}?subject=Mejorá la seguridad de tu espacio en TodasMisCosas`}
                   style={{
@@ -923,6 +948,17 @@ function TabSolicitudesPuntuacion({ token }: { token: string }) {
                     ✅ Marcar resuelto
                   </button>
                 )}
+                <button
+                  onClick={() => borrarSolicitud(s.id)}
+                  style={{
+                    padding: '.38rem .9rem', borderRadius: 'var(--r2)',
+                    border: '1px solid rgba(239,68,68,.3)', background: 'transparent',
+                    color: 'var(--red)', fontSize: '.78rem', fontWeight: 600, cursor: 'pointer',
+                    marginLeft: 'auto',
+                  }}
+                >
+                  🗑️ Borrar
+                </button>
               </div>
             </div>
           ))}

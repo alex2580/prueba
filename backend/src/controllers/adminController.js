@@ -169,6 +169,16 @@ async function actualizarEstadoConsulta(req, res, next) {
   }
 }
 
+async function eliminarConsulta(req, res, next) {
+  try {
+    const result = await query('DELETE FROM admin_consultas WHERE id = ?', [req.params.id]);
+    if (!result.affectedRows) return res.status(404).json({ error: 'Consulta no encontrada' });
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+}
+
 // ── Campañas ───────────────────────────────────────────────────
 
 // GET /api/admin/campanas
@@ -399,6 +409,16 @@ async function actualizarEstadoSolicitud(req, res, next) {
   }
 }
 
+async function eliminarSolicitudPuntuacion(req, res, next) {
+  try {
+    const result = await query('DELETE FROM admin_solicitudes_puntuacion WHERE id = ?', [req.params.id]);
+    if (!result.affectedRows) return res.status(404).json({ error: 'Solicitud no encontrada' });
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+}
+
 // ── Operaciones / Finanzas ─────────────────────────────────────
 
 const COMISION = 0.15;
@@ -471,6 +491,7 @@ module.exports = {
   getConsultas,
   responderConsulta,
   actualizarEstadoConsulta,
+  eliminarConsulta,
   getCampanas,
   crearCampana,
   eliminarCampana,
@@ -481,6 +502,7 @@ module.exports = {
   crearSolicitudPuntuacion,
   getSolicitudesPuntuacion,
   actualizarEstadoSolicitud,
+  eliminarSolicitudPuntuacion,
   insertSolicitudPuntuacion,
   getOperaciones,
 };

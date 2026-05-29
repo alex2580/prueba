@@ -21,6 +21,7 @@ router.patch('/notificaciones/:id/leido', ctrl.marcarLeido);
 router.get('/consultas',                ctrl.getConsultas);
 router.post('/consultas/:id/responder', ctrl.responderConsulta);
 router.patch('/consultas/:id/estado',   ctrl.actualizarEstadoConsulta);
+router.delete('/consultas/:id',         ctrl.eliminarConsulta);
 
 // Campañas
 router.get('/campanas',                 ctrl.getCampanas);
@@ -35,6 +36,7 @@ router.patch('/usuarios/:id/desbloquear',       ctrl.desbloquearUsuario);
 // Solicitudes de mejora de puntuación
 router.get('/solicitudes-puntuacion',                      ctrl.getSolicitudesPuntuacion);
 router.patch('/solicitudes-puntuacion/:id/estado',         ctrl.actualizarEstadoSolicitud);
+router.delete('/solicitudes-puntuacion/:id',               ctrl.eliminarSolicitudPuntuacion);
 
 // Operaciones / Finanzas
 router.get('/operaciones',                                 ctrl.getOperaciones);
