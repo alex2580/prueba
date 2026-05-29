@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { espaciosAPI, reservasAPI, pagosAPI, adminAPI } from '@/lib/api';
 import { LoginForm } from '@/components/auth/LoginForm';
@@ -291,7 +291,9 @@ function StepBar({ step }: { step: number }) {
 export default function ReservarPage() {
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
   const espacioId = params.id as string;
+  const volverUrl = searchParams.get('from') === 'mapa' ? '/?vista=mapa' : '/';
   const { user, token, login, register, loading: authLoading, error: authError,
           otpPending, otpEmailHint, otpCanales, verifyOTP, reenviarOTP } = useAuth();
 
@@ -482,7 +484,7 @@ export default function ReservarPage() {
       <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)', gap: '1rem' }}>
         <span style={{ fontSize: '2.5rem' }}>😕</span>
         <span style={{ color: 'var(--text2)' }}>No se encontró el espacio</span>
-        <button className="btn-secondary" onClick={() => router.push('/')}>← Volver al mapa</button>
+        <button className="btn-secondary" onClick={() => router.push(volverUrl)}>← Volver al mapa</button>
       </div>
     );
   }
@@ -491,14 +493,14 @@ export default function ReservarPage() {
     <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
       <header className="site-header">
-        <SiteLogo onClick={() => router.push('/')} />
+        <SiteLogo onClick={() => router.push(volverUrl)} />
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.9rem', color: 'var(--orange)' }}>
             Reservar espacio
           </span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <button className="nav-btn" onClick={() => router.push('/')}>← Volver al mapa</button>
+          <button className="nav-btn" onClick={() => router.push(volverUrl)}>← Volver al mapa</button>
         </div>
       </header>
 

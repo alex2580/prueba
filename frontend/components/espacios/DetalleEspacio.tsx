@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import type { Espacio } from '@/types';
 import { GaleriaFotos } from './GaleriaFotos';
 import { RatingDisplay } from '@/components/ui/Rating';
@@ -19,14 +19,16 @@ interface DetalleEspacioProps {
 
 export function DetalleEspacio({ espacio, onReservar, onChat }: DetalleEspacioProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [tab, setTab] = useState<'info' | 'reviews'>('info');
+  const volverUrl = searchParams.get('from') === 'mapa' ? '/?vista=mapa' : '/';
   const precioColor = espacio.tipo === 'exclusivo' ? 'var(--text)' : 'var(--orange)';
 
   return (
     <div style={{ maxWidth: 860, margin: '0 auto', padding: '2rem 1rem' }}>
       {/* Back */}
       <button
-        onClick={() => router.back()}
+        onClick={() => router.push(volverUrl)}
         className="btn-ghost"
         style={{ marginBottom: '1.2rem', display: 'flex', alignItems: 'center', gap: '.4rem' }}
       >

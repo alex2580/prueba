@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import type { Espacio, EspacioTipo } from '@/types';
 import { useEspacios } from '@/hooks/useEspacios';
@@ -27,7 +27,10 @@ export default function HomePage() {
     otpPending, otpEmailHint, otpCanales, verifyOTP, reenviarOTP } = useAuth();
   const { espacios, loading, error: espaciosError, filtros, aplicarFiltros, limpiarFiltros } = useEspacios();
 
-  const [vista, setVista] = useState<Vista>('lista');
+  const searchParams = useSearchParams();
+  const [vista, setVista] = useState<Vista>(() =>
+    searchParams.get('vista') === 'mapa' ? 'mapa' : 'lista'
+  );
   const [selectedEspacio, setSelectedEspacio] = useState<Espacio | null>(null);
   const [authModal, setAuthModal] = useState(false);
   const [authTab, setAuthTab] = useState<'login' | 'register'>('login');
@@ -253,8 +256,8 @@ export default function HomePage() {
               <MarkerEspacioCard
                 espacio={selectedEspacio}
                 onClose={() => setSelectedEspacio(null)}
-                onVerDetalle={() => router.push(`/espacio/${selectedEspacio.id}`)}
-                onReservar={() => handleReservar(selectedEspacio)}
+                onVerDetalle={() => router.push(`/espacio/${selectedEspacio.id}?from=mapa`)}
+                onReservar={() => router.push(`/espacio/${selectedEspacio.id}/reservar?from=mapa`)}
                 onChat={() => handleChatFromMap(selectedEspacio)}
               />
             )}
