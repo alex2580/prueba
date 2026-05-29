@@ -56,6 +56,7 @@ interface PublicacionAdmin {
   precio_mes: number | null;
   moneda: string;
   disponible: number;
+  activo: number;
   inactiva_auto: number;
   rating: number | null;
   reviews_count: number;
@@ -1628,7 +1629,7 @@ function TabPublicaciones({ token }: { token: string }) {
       });
       if (res.ok) {
         setPublicaciones(prev =>
-          prev.map(p => p.id === pub.id ? { ...p, disponible: nuevoEstado, inactiva_auto: 0 } : p)
+          prev.map(p => p.id === pub.id ? { ...p, disponible: nuevoEstado, activo: nuevoEstado, inactiva_auto: 0 } : p)
         );
       }
     } finally {
@@ -1637,8 +1638,8 @@ function TabPublicaciones({ token }: { token: string }) {
   }
 
   const filtradas = publicaciones.filter(p => {
-    if (filtro === 'activas') return p.disponible === 1;
-    if (filtro === 'inactivas') return p.disponible === 0;
+    if (filtro === 'activas') return p.activo === 1 && p.disponible === 1;
+    if (filtro === 'inactivas') return p.activo === 0 || p.disponible === 0;
     return true;
   });
 
@@ -1659,8 +1660,8 @@ function TabPublicaciones({ token }: { token: string }) {
     <div>
       <div style={{ display: 'flex', gap: '.5rem', marginBottom: '1.25rem', flexWrap: 'wrap', alignItems: 'center' }}>
         <button style={pillStyle('todas')}    onClick={() => setFiltro('todas')}>Todas ({publicaciones.length})</button>
-        <button style={pillStyle('activas')}  onClick={() => setFiltro('activas')}>Activas ({publicaciones.filter(p => p.disponible === 1).length})</button>
-        <button style={pillStyle('inactivas')} onClick={() => setFiltro('inactivas')}>Inactivas ({publicaciones.filter(p => p.disponible === 0).length})</button>
+        <button style={pillStyle('activas')}  onClick={() => setFiltro('activas')}>Activas ({publicaciones.filter(p => p.activo === 1 && p.disponible === 1).length})</button>
+        <button style={pillStyle('inactivas')} onClick={() => setFiltro('inactivas')}>Inactivas ({publicaciones.filter(p => p.activo === 0 || p.disponible === 0).length})</button>
       </div>
 
       {loading && <div style={{ color: 'var(--text3)', padding: '2rem 0' }}>Cargando…</div>}
@@ -1705,10 +1706,10 @@ function TabPublicaciones({ token }: { token: string }) {
                   borderRadius: 99,
                   fontSize: '.75rem',
                   fontWeight: 700,
-                  background: pub.disponible ? 'rgba(16,185,129,.15)' : 'rgba(239,68,68,.1)',
-                  color: pub.disponible ? 'var(--mint)' : 'var(--red)',
+                  background: !pub.activo ? 'rgba(239,68,68,.1)' : pub.disponible ? 'rgba(16,185,129,.15)' : 'rgba(245,158,11,.12)',
+                  color: !pub.activo ? 'var(--red)' : pub.disponible ? 'var(--mint)' : 'var(--amber)',
                 }}>
-                  {pub.disponible ? '● Activa' : pub.inactiva_auto ? '● Pausada auto' : '● Inactiva'}
+                  {!pub.activo ? '● No visible' : pub.disponible ? '● Activa' : pub.inactiva_auto ? '● Pausada auto' : '● Pausada'}
                 </span>
 
                 <div style={{ display: 'flex', gap: '.4rem' }}>

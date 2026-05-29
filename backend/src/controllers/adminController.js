@@ -355,7 +355,7 @@ async function getPublicaciones(req, res, next) {
     const rows = await query(`
       SELECT e.id, e.nombre, e.barrio, e.pais, e.categoria, e.tipo,
              e.precio_dia, e.precio_mes, e.moneda,
-             e.disponible, e.inactiva_auto, e.rating, e.reviews_count,
+             e.disponible, e.activo, e.inactiva_auto, e.rating, e.reviews_count,
              e.reservas_mes, e.created_at,
              u.id AS oferente_id, u.nombre AS oferente_nombre, u.email AS oferente_email
       FROM espacios e
@@ -377,9 +377,10 @@ async function getPublicaciones(req, res, next) {
 async function toggleDisponibleAdmin(req, res, next) {
   try {
     const { disponible } = req.body;
+    const nuevoDisponible = disponible ? 1 : 0;
     const result = await query(
-      'UPDATE espacios SET disponible = ?, inactiva_auto = 0 WHERE id = ?',
-      [disponible ? 1 : 0, req.params.id]
+      'UPDATE espacios SET disponible = ?, inactiva_auto = 0, activo = ? WHERE id = ?',
+      [nuevoDisponible, nuevoDisponible, req.params.id]
     );
     if (!result.affectedRows) return res.status(404).json({ error: 'Espacio no encontrado' });
     res.json({ ok: true });
