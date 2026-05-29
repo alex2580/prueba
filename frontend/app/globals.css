@@ -962,6 +962,17 @@ select.filter-pill {
 .foto-upload-grid { grid-template-columns: 1fr; }
 @media (max-width: 1024px) { .foto-upload-grid { grid-template-columns: 1fr 1fr; } }
 
+/* Datos de reserva: 4 columnas en desktop, 2 en mobile */
+.reserva-datos-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: .5rem;
+  margin: 1rem 0 .9rem;
+}
+@media (max-width: 500px) {
+  .reserva-datos-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
 /* Secciones desplegables del panel */
 .seccion-toggle {
   width: 100%;

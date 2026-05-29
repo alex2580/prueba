@@ -5,7 +5,6 @@ import { EstadoBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { formatARS, formatFechaCorta, diasEntre } from '@/lib/utils';
 import { TimelineReserva } from '@/components/reservas/TimelineReserva';
-import { SEGURIDAD_OPCIONES } from '@/components/publicar/SeguridadChecklist';
 
 interface EstadoReservaProps {
   reserva: Reserva;
@@ -38,7 +37,7 @@ export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar, onExt
 
       <TimelineReserva estado={reserva.estado} />
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.5rem', margin: '1rem 0 .9rem' }}>
+      <div className="reserva-datos-grid">
         {[
           ['📅 Desde', formatFechaCorta(reserva.fecha_desde)],
           ['📅 Hasta',  formatFechaCorta(reserva.fecha_hasta)],
@@ -66,42 +65,6 @@ export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar, onExt
         </div>
       )}
 
-      {reserva.espacio_seguridad && (() => {
-        const activos = SEGURIDAD_OPCIONES.filter(o => reserva.espacio_seguridad![o.key]);
-        if (activos.length === 0) return null;
-        const stars = Math.round((activos.length / SEGURIDAD_OPCIONES.length) * 5);
-        return (
-          <div style={{
-            background: 'var(--surface2)', border: '1px solid var(--border)',
-            borderRadius: 'var(--r2)', padding: '.75rem 1rem', marginBottom: '.9rem',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '.6rem' }}>
-              <div style={{ fontSize: '.78rem', color: 'var(--text3)', display: 'flex', alignItems: 'center', gap: '.35rem' }}>
-                🛡️ Seguridad del espacio
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '.3rem' }}>
-                <span style={{ color: 'var(--orange)', fontSize: '.85rem', letterSpacing: 1 }}>
-                  {[1,2,3,4,5].map(n => (
-                    <span key={n} style={{ opacity: n <= stars ? 1 : 0.2 }}>★</span>
-                  ))}
-                </span>
-                <span style={{ fontSize: '.68rem', color: 'var(--text3)' }}>{activos.length}/{SEGURIDAD_OPCIONES.length}</span>
-              </div>
-            </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.35rem' }}>
-              {activos.map(opt => (
-                <span key={opt.key} style={{
-                  background: 'rgba(232,98,42,.1)', border: '1px solid rgba(232,98,42,.25)',
-                  borderRadius: '999px', padding: '.2rem .6rem',
-                  fontSize: '.72rem', color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '.3rem',
-                }}>
-                  {opt.emoji} {opt.label}
-                </span>
-              ))}
-            </div>
-          </div>
-        );
-      })()}
 
       {(reserva.estado === 'pendiente' || reserva.estado === 'confirmada') && (
         <div style={{ display: 'flex', gap: '.6rem' }}>
