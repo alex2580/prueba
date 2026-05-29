@@ -55,6 +55,11 @@ export default function PanelPage() {
   const [favIds, setFavIds] = useState<Set<string>>(new Set());
   const [favLoading, setFavLoading] = useState(false);
 
+  // Secciones desplegables
+  const [openReservas, setOpenReservas] = useState(true);
+  const [openFavoritos, setOpenFavoritos] = useState(true);
+  const [openEspacios, setOpenEspacios] = useState(true);
+
   // Edit modal
   const [editando, setEditando] = useState<Espacio | null>(null);
   const [editForm, setEditForm] = useState({
@@ -558,80 +563,125 @@ export default function PanelPage() {
           )}
 
           {/* ── SECTION 1: Mis reservas realizadas ── */}
-          <section style={{ marginBottom: '2.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem' }}>
-              <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.1rem' }}>
-                📅 Mis reservas realizadas
-              </h2>
-              <Button variant="secondary" size="sm" onClick={() => router.push('/')}>
-                🔍 Buscar espacios
-              </Button>
-            </div>
+          <section style={{ marginBottom: '1.5rem' }}>
+            <button
+              onClick={() => setOpenReservas(v => !v)}
+              className="seccion-toggle"
+            >
+              <span style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                <span>📅 Mis reservas realizadas</span>
+                {!misResLoading && (
+                  <span className="pill pill--gray" style={{ fontSize: '.7rem', padding: '.1rem .45rem' }}>
+                    {misReservas.length}
+                  </span>
+                )}
+              </span>
+              <span className={`seccion-chevron${openReservas ? ' open' : ''}`}>▾</span>
+            </button>
 
-            {misResLoading ? (
-              <p style={{ color: 'var(--text3)' }}>Cargando…</p>
-            ) : misReservas.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text3)', background: 'var(--surface)', borderRadius: 'var(--r2)', border: '1px solid var(--border)' }}>
-                <div style={{ fontSize: '2rem', marginBottom: '.5rem' }}>📦</div>
-                <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, marginBottom: '.3rem' }}>No tenés reservas aún</div>
-                <p style={{ fontSize: '.85rem' }}>Explorá espacios disponibles en Buenos Aires.</p>
+            <div className={`seccion-body${openReservas ? ' open' : ''}`}>
+              <div style={{ paddingTop: '.75rem' }}>
+                <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
+                  <Button variant="secondary" size="sm" onClick={() => router.push('/')}>
+                    🔍 Buscar espacios
+                  </Button>
+                </div>
+                {misResLoading ? (
+                  <p style={{ color: 'var(--text3)' }}>Cargando…</p>
+                ) : misReservas.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text3)', background: 'var(--surface)', borderRadius: 'var(--r2)', border: '1px solid var(--border)' }}>
+                    <div style={{ fontSize: '2rem', marginBottom: '.5rem' }}>📦</div>
+                    <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, marginBottom: '.3rem' }}>No tenés reservas aún</div>
+                    <p style={{ fontSize: '.85rem' }}>Explorá espacios disponibles en Buenos Aires.</p>
+                  </div>
+                ) : (
+                  <div style={{ display: 'grid', gap: '.85rem' }}>
+                    {misReservas.map(r => (
+                      <EstadoReserva
+                        key={r.id}
+                        reserva={r}
+                        onCancelar={!['cancelada', 'finalizada'].includes(r.estado) ? () => cancelar(r.id) : undefined}
+                        onPagar={r.estado === 'confirmada' ? () => router.push(`/reserva/${r.id}/checkout`) : undefined}
+                        onCalificar={['pagada', 'finalizada'].includes(r.estado) ? () => abrirReview(r) : undefined}
+                        onExtender={r.estado === 'pagada' ? () => abrirExtension(r) : undefined}
+                        onEliminar={['cancelada', 'finalizada'].includes(r.estado) ? () => ocultarReserva(r.id) : undefined}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
-            ) : (
-              <div style={{ display: 'grid', gap: '.85rem' }}>
-                {misReservas.map(r => (
-                  <EstadoReserva
-                    key={r.id}
-                    reserva={r}
-                    onCancelar={!['cancelada', 'finalizada'].includes(r.estado) ? () => cancelar(r.id) : undefined}
-                    onPagar={r.estado === 'confirmada' ? () => router.push(`/reserva/${r.id}/checkout`) : undefined}
-                    onCalificar={['pagada', 'finalizada'].includes(r.estado) ? () => abrirReview(r) : undefined}
-                    onExtender={r.estado === 'pagada' ? () => abrirExtension(r) : undefined}
-                    onEliminar={['cancelada', 'finalizada'].includes(r.estado) ? () => ocultarReserva(r.id) : undefined}
-                  />
-                ))}
-              </div>
-            )}
+            </div>
           </section>
 
           {/* ── SECTION: Mis favoritos ── */}
-          <section style={{ marginBottom: '2.5rem' }}>
-            <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.1rem', marginBottom: '1.2rem' }}>
-              ❤️ Mis favoritos
-            </h2>
-            {favLoading ? (
-              <p style={{ color: 'var(--text3)' }}>Cargando…</p>
-            ) : favoritos.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text3)', background: 'var(--surface)', borderRadius: 'var(--r2)', border: '1px solid var(--border)' }}>
-                <div style={{ fontSize: '2rem', marginBottom: '.5rem' }}>🤍</div>
-                <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, marginBottom: '.3rem' }}>No tenés favoritos guardados</div>
-                <p style={{ fontSize: '.85rem' }}>Tocá el corazón en una publicación para guardarla acá.</p>
+          <section style={{ marginBottom: '1.5rem' }}>
+            <button
+              onClick={() => setOpenFavoritos(v => !v)}
+              className="seccion-toggle"
+            >
+              <span style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                <span>❤️ Mis favoritos</span>
+                {!favLoading && (
+                  <span className="pill pill--gray" style={{ fontSize: '.7rem', padding: '.1rem .45rem' }}>
+                    {favoritos.length}
+                  </span>
+                )}
+              </span>
+              <span className={`seccion-chevron${openFavoritos ? ' open' : ''}`}>▾</span>
+            </button>
+
+            <div className={`seccion-body${openFavoritos ? ' open' : ''}`}>
+              <div style={{ paddingTop: '.75rem' }}>
+                {favLoading ? (
+                  <p style={{ color: 'var(--text3)' }}>Cargando…</p>
+                ) : favoritos.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text3)', background: 'var(--surface)', borderRadius: 'var(--r2)', border: '1px solid var(--border)' }}>
+                    <div style={{ fontSize: '2rem', marginBottom: '.5rem' }}>🤍</div>
+                    <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, marginBottom: '.3rem' }}>No tenés favoritos guardados</div>
+                    <p style={{ fontSize: '.85rem' }}>Tocá el corazón en una publicación para guardarla acá.</p>
+                  </div>
+                ) : (
+                  <div className="espacios-grid">
+                    {favoritos.map(e => (
+                      <CardEspacio
+                        key={e.id}
+                        espacio={e}
+                        isFavorito={favIds.has(e.id)}
+                        onToggleFavorito={handleToggleFavoritoPanel}
+                        token={token}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="espacios-grid">
-                {favoritos.map(e => (
-                  <CardEspacio
-                    key={e.id}
-                    espacio={e}
-                    isFavorito={favIds.has(e.id)}
-                    onToggleFavorito={handleToggleFavoritoPanel}
-                    token={token}
-                  />
-                ))}
-              </div>
-            )}
+            </div>
           </section>
 
           {/* ── SECTION 2: Mis espacios publicados (oferente only) ── */}
           {isOferente && (
-            <section>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem' }}>
-                <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.1rem' }}>
-                  Mis espacios publicados
-                </h2>
-                <Button variant="primary" size="sm" onClick={() => router.push('/publicar')}>
-                  ➕ Publicar espacio
-                </Button>
-              </div>
+            <section style={{ marginBottom: '1.5rem' }}>
+              <button
+                onClick={() => setOpenEspacios(v => !v)}
+                className="seccion-toggle"
+              >
+                <span style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                  <span>🏠 Mis espacios publicados</span>
+                  {!loadingOferente && (
+                    <span className="pill pill--gray" style={{ fontSize: '.7rem', padding: '.1rem .45rem' }}>
+                      {misEspacios.length}
+                    </span>
+                  )}
+                </span>
+                <span className={`seccion-chevron${openEspacios ? ' open' : ''}`}>▾</span>
+              </button>
+
+              <div className={`seccion-body${openEspacios ? ' open' : ''}`}>
+                <div style={{ paddingTop: '.75rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+                  <Button variant="primary" size="sm" onClick={() => router.push('/publicar')}>
+                    ➕ Publicar espacio
+                  </Button>
+                </div>
 
               {loadingOferente ? (
                 <p style={{ color: 'var(--text3)' }}>Cargando…</p>
@@ -759,6 +809,8 @@ export default function PanelPage() {
                   })}
                 </div>
               )}
+                </div>
+              </div>
             </section>
           )}
 
