@@ -362,7 +362,12 @@ async function getPublicaciones(req, res, next) {
       JOIN usuarios u ON e.oferente_id = u.id
       ORDER BY e.created_at DESC
     `);
-    res.json(rows);
+    res.json(rows.map(r => ({
+      ...r,
+      precio_dia:   r.precio_dia  != null ? parseFloat(r.precio_dia)  : null,
+      precio_mes:   r.precio_mes  != null ? parseFloat(r.precio_mes)  : null,
+      rating:       r.rating      != null ? parseFloat(r.rating)      : null,
+    })));
   } catch (err) {
     next(err);
   }
