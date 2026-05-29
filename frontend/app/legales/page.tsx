@@ -142,6 +142,8 @@ export default function LegalesPage() {
                 'Materiales inflamables, corrosivos o radioactivos',
                 'Alimentos perecederos sin refrigeración adecuada',
                 'Animales vivos',
+                'Animales muertos',
+                'Elementos de riesgo biológico',
                 'Objetos robados o de procedencia ilícita',
                 'Residuos peligrosos o patológicos',
                 'Dinero en efectivo o valores negociables',

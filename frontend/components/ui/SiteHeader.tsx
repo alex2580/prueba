@@ -20,7 +20,7 @@ export function SiteHeader({ onLoginClick, onRegisterClick }: SiteHeaderProps) {
 
   const navItems = [
     { label: 'Buscar espacios', path: '/' },
-    { label: 'Cómo funciona',   path: '/como-funciona' },
+    { label: '¿Cómo funciona?', path: '/como-funciona' },
     { label: 'Legales',         path: '/legales' },
   ];
 
