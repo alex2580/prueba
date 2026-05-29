@@ -26,17 +26,17 @@ export function StatsOferente({ espacios, reservas }: StatsOferenteProps) {
   const totalReviews = espacios.reduce((acc, e) => acc + e.reviews_count, 0);
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
+    <div className="stats-grid">
       <StatCard emoji="💰" label="Ingresos del mes (neto)" value={formatARS(ingresosMes)} color="var(--mint)" />
       <StatCard emoji="🏦" label="Ingresos totales (neto)" value={formatARS(ingresosTotal)} color="var(--orange)" />
       <StatCard emoji="📦" label="Espacios activos" value={String(espacios.filter(e => e.disponible).length)} />
       <StatCard emoji="📅" label="Reservas recibidas" value={String(reservas.length)} />
-      <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '1rem' }}>
+      <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '1rem', minWidth: 0 }}>
         <div style={{ fontSize: '1.5rem', marginBottom: '.3rem' }}>⭐</div>
         <div style={{ marginBottom: '.15rem' }}>
           <RatingDisplay value={avgRating} count={totalReviews} />
         </div>
-        <div style={{ fontSize: '.75rem', color: 'var(--text3)' }}>Valoración promedio</div>
+        <div style={{ fontSize: 'clamp(.65rem, 1.2vw, .75rem)', color: 'var(--text3)', lineHeight: 1.3, marginTop: '.1rem' }}>Valoración promedio</div>
       </div>
     </div>
   );
@@ -44,12 +44,12 @@ export function StatsOferente({ espacios, reservas }: StatsOferenteProps) {
 
 function StatCard({ emoji, label, value, color }: { emoji: string; label: string; value: string; color?: string }) {
   return (
-    <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '1rem' }}>
+    <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '1rem', minWidth: 0 }}>
       <div style={{ fontSize: '1.5rem', marginBottom: '.3rem' }}>{emoji}</div>
-      <div style={{ fontSize: '1.25rem', fontFamily: 'Sora, sans-serif', fontWeight: 800, color: color || 'var(--text)' }}>
+      <div style={{ fontSize: 'clamp(.95rem, 2vw, 1.25rem)', fontFamily: 'Sora, sans-serif', fontWeight: 800, color: color || 'var(--text)', wordBreak: 'break-word' }}>
         {value}
       </div>
-      <div style={{ fontSize: '.75rem', color: 'var(--text3)' }}>{label}</div>
+      <div style={{ fontSize: 'clamp(.65rem, 1.2vw, .75rem)', color: 'var(--text3)', lineHeight: 1.3, marginTop: '.1rem' }}>{label}</div>
     </div>
   );
 }

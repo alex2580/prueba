@@ -961,3 +961,16 @@ select.filter-pill {
 /* Grid de botones de subida de fotos: 2 col en mobile/tablet, 1 col en desktop */
 .foto-upload-grid { grid-template-columns: 1fr; }
 @media (max-width: 1024px) { .foto-upload-grid { grid-template-columns: 1fr 1fr; } }
+
+/* Stats cards del panel oferente: 5 en fila (desktop) → 3 (tablet) → 2 (mobile) */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+}
+@media (max-width: 900px) {
+  .stats-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 560px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
