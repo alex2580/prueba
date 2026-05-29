@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import type { Espacio, EspacioTipo } from '@/types';
 import { useEspacios } from '@/hooks/useEspacios';
@@ -27,10 +27,12 @@ export default function HomePage() {
     otpPending, otpEmailHint, otpCanales, verifyOTP, reenviarOTP } = useAuth();
   const { espacios, loading, error: espaciosError, filtros, aplicarFiltros, limpiarFiltros } = useEspacios();
 
-  const searchParams = useSearchParams();
-  const [vista, setVista] = useState<Vista>(() =>
-    searchParams.get('vista') === 'mapa' ? 'mapa' : 'lista'
-  );
+  const [vista, setVista] = useState<Vista>('lista');
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('vista') === 'mapa') setVista('mapa');
+  }, []);
   const [selectedEspacio, setSelectedEspacio] = useState<Espacio | null>(null);
   const [authModal, setAuthModal] = useState(false);
   const [authTab, setAuthTab] = useState<'login' | 'register'>('login');
