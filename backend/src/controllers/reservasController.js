@@ -450,7 +450,13 @@ async function ocultar(req, res, next) {
     if (!['cancelada', 'finalizada'].includes(reserva.estado)) {
       return res.status(400).json({ error: 'Solo podés borrar reservas canceladas o finalizadas' });
     }
-    await query('UPDATE reservas SET oculta_demandante = 1 WHERE id = ?', [reserva.id]);
+    try {
+      await query('UPDATE reservas SET oculta_demandante = 1 WHERE id = ?', [reserva.id]);
+    } catch (_colErr) {
+      // Columna no existe aún — crearla y reintentar
+      await query('ALTER TABLE reservas ADD COLUMN oculta_demandante TINYINT(1) NOT NULL DEFAULT 0');
+      await query('UPDATE reservas SET oculta_demandante = 1 WHERE id = ?', [reserva.id]);
+    }
     res.json({ ok: true });
   } catch (err) {
     next(err);
