@@ -141,6 +141,7 @@ function TabBar({
     <div style={{
       display: 'flex', borderBottom: '1px solid var(--border)',
       background: 'var(--surface)', marginBottom: '1.5rem',
+      overflowX: 'auto', WebkitOverflowScrolling: 'touch',
     }}>
       {tabs.map(t => (
         <button
@@ -160,6 +161,8 @@ function TabBar({
             alignItems: 'center',
             gap: '.4rem',
             transition: 'color .15s',
+            flexShrink: 0,
+            whiteSpace: 'nowrap',
           }}
         >
           {t.label}
