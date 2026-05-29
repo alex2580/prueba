@@ -298,36 +298,46 @@ async function verificarCambioTel(req, res, next) {
   }
 }
 
+// Tabla dedicada para OTP de cambio de perfil — sin depender del timezone de MySQL.
+// expires_at se guarda como BIGINT (Unix ms) y se compara en Node.js.
+async function initPerfilOtpTable() {
+  await query(`
+    CREATE TABLE IF NOT EXISTS perfil_otp (
+      id          VARCHAR(36)  PRIMARY KEY,
+      usuario_id  VARCHAR(36)  NOT NULL,
+      codigo      VARCHAR(6)   NOT NULL,
+      usado       TINYINT(1)   NOT NULL DEFAULT 0,
+      intentos    INT          NOT NULL DEFAULT 0,
+      expires_at  BIGINT       NOT NULL,
+      created_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      INDEX idx_usuario (usuario_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  `);
+}
+
 // POST /api/usuarios/me/solicitar-cambio-perfil
-// Genera OTP por email para validar cualquier cambio de perfil
 async function solicitarCambioPerfil(req, res, next) {
   try {
     const usuario = req.user;
 
-    // Lazy migration: ensure tipo column exists
-    try {
-      await query(`ALTER TABLE auth_otp ADD COLUMN tipo VARCHAR(30) NOT NULL DEFAULT 'login'`);
-    } catch (e) {
-      if (e.code !== 'ER_DUP_FIELDNAME') throw e;
-    }
+    await initPerfilOtpTable();
+
+    // Invalidar OTPs previos del usuario
+    await query(`UPDATE perfil_otp SET usado = 1 WHERE usuario_id = ? AND usado = 0`, [usuario.id]);
+
+    const codigo    = generarCodigo();
+    const expiresAt = Date.now() + OTP_EXPIRY_MIN * 60 * 1000; // Unix ms
+    const id        = require('crypto').randomUUID();
 
     await query(
-      `UPDATE auth_otp SET usado = 1 WHERE usuario_id = ? AND tipo = 'cambio_perfil' AND usado = 0`,
-      [usuario.id]
-    );
-
-    const codigo = generarCodigo();
-    const expiresAt = new Date(Date.now() + OTP_EXPIRY_MIN * 60 * 1000);
-
-    await query(
-      `INSERT INTO auth_otp (usuario_id, codigo, expires_at, tipo) VALUES (?, ?, ?, 'cambio_perfil')`,
-      [usuario.id, codigo, expiresAt]
+      `INSERT INTO perfil_otp (id, usuario_id, codigo, expires_at) VALUES (?, ?, ?, ?)`,
+      [id, usuario.id, codigo, expiresAt]
     );
 
     sendOTP(usuario.email, usuario.nombre, { codigo, expiraEn: OTP_EXPIRY_MIN })
       .catch(e => console.warn('[cambio-perfil OTP] email error:', e.message));
 
-    const atIdx = usuario.email.indexOf('@');
+    const atIdx    = usuario.email.indexOf('@');
     const emailHint = usuario.email.slice(0, 2) + '***' + usuario.email.slice(atIdx);
     res.json({ ok: true, email_hint: emailHint });
   } catch (err) {
@@ -346,23 +356,29 @@ async function verificarCambioPerfil(req, res, next) {
     const usuario = req.user;
 
     const otp = await queryOne(
-      `SELECT * FROM auth_otp
-       WHERE usuario_id = ? AND tipo = 'cambio_perfil' AND usado = 0 AND expires_at > NOW()
+      `SELECT * FROM perfil_otp
+       WHERE usuario_id = ? AND usado = 0
        ORDER BY created_at DESC LIMIT 1`,
       [usuario.id]
     );
 
     if (!otp) {
-      return res.status(400).json({ error: 'El código expiró o ya fue utilizado. Solicitá uno nuevo.', code: 'OTP_EXPIRED' });
+      return res.status(400).json({ error: 'No hay ningún código activo. Solicitá uno nuevo.', code: 'OTP_NOT_FOUND' });
+    }
+
+    // Comparación de expiración en Node.js — sin depender del timezone de MySQL
+    if (otp.expires_at < Date.now()) {
+      await query('UPDATE perfil_otp SET usado = 1 WHERE id = ?', [otp.id]);
+      return res.status(400).json({ error: 'El código expiró. Solicitá uno nuevo.', code: 'OTP_EXPIRED' });
     }
 
     if ((otp.intentos || 0) >= 3) {
-      await query('UPDATE auth_otp SET usado = 1 WHERE id = ?', [otp.id]);
-      return res.status(429).json({ error: 'Demasiados intentos incorrectos. Solicitá un nuevo código.', code: 'OTP_MAX_INTENTOS' });
+      await query('UPDATE perfil_otp SET usado = 1 WHERE id = ?', [otp.id]);
+      return res.status(429).json({ error: 'Demasiados intentos. Solicitá un nuevo código.', code: 'OTP_MAX_INTENTOS' });
     }
 
-    if (String(codigo).trim() !== String(otp.codigo)) {
-      await query('UPDATE auth_otp SET intentos = intentos + 1 WHERE id = ?', [otp.id]);
+    if (String(codigo).trim() !== String(otp.codigo).trim()) {
+      await query('UPDATE perfil_otp SET intentos = intentos + 1 WHERE id = ?', [otp.id]);
       const restantes = 3 - (otp.intentos || 0) - 1;
       return res.status(400).json({
         error: `Código incorrecto. Te ${restantes > 0 ? `quedan ${restantes} intento${restantes !== 1 ? 's' : ''}` : 'queda 1 intento'}.`,
@@ -370,7 +386,7 @@ async function verificarCambioPerfil(req, res, next) {
       });
     }
 
-    await query('UPDATE auth_otp SET usado = 1 WHERE id = ?', [otp.id]);
+    await query('UPDATE perfil_otp SET usado = 1 WHERE id = ?', [otp.id]);
     res.json({ ok: true });
   } catch (err) {
     next(err);
