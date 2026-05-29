@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { Modal } from '@/components/ui/Modal';
@@ -43,6 +43,27 @@ interface Campana {
   fecha_fin: string;
   activa: number;
   color: string;
+}
+
+interface PublicacionAdmin {
+  id: string;
+  nombre: string;
+  barrio: string;
+  pais: string;
+  categoria: string;
+  tipo: string;
+  precio_dia: number | null;
+  precio_mes: number | null;
+  moneda: string;
+  disponible: number;
+  inactiva_auto: number;
+  rating: number | null;
+  reviews_count: number;
+  reservas_mes: number;
+  created_at: string;
+  oferente_id: string;
+  oferente_nombre: string;
+  oferente_email: string;
 }
 
 // ── Helpers ────────────────────────────────────────────────────
@@ -1577,6 +1598,162 @@ function TabConversaciones({ token }: { token: string }) {
   );
 }
 
+// ── Tab Publicaciones ──────────────────────────────────────────
+
+function TabPublicaciones({ token }: { token: string }) {
+  const [publicaciones, setPublicaciones] = useState<PublicacionAdmin[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filtro, setFiltro] = useState<'todas' | 'activas' | 'inactivas'>('todas');
+  const [toggling, setToggling] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch('/api/admin/publicaciones', { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then((data: PublicacionAdmin[]) => setPublicaciones(Array.isArray(data) ? data : []))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [token]);
+
+  async function toggleDisponible(pub: PublicacionAdmin) {
+    setToggling(pub.id);
+    const nuevoEstado = pub.disponible ? 0 : 1;
+    try {
+      const res = await fetch(`/api/admin/publicaciones/${pub.id}/disponible`, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ disponible: nuevoEstado }),
+      });
+      if (res.ok) {
+        setPublicaciones(prev =>
+          prev.map(p => p.id === pub.id ? { ...p, disponible: nuevoEstado, inactiva_auto: 0 } : p)
+        );
+      }
+    } finally {
+      setToggling(null);
+    }
+  }
+
+  const filtradas = publicaciones.filter(p => {
+    if (filtro === 'activas') return p.disponible === 1;
+    if (filtro === 'inactivas') return p.disponible === 0;
+    return true;
+  });
+
+  const pillStyle = (key: typeof filtro) => ({
+    padding: '.35rem .85rem',
+    borderRadius: 99,
+    border: 'none',
+    fontFamily: 'Sora, sans-serif',
+    fontWeight: filtro === key ? 700 : 500,
+    fontSize: '.82rem',
+    cursor: 'pointer',
+    background: filtro === key ? 'var(--orange)' : 'var(--surface2)',
+    color: filtro === key ? '#fff' : 'var(--text2)',
+    transition: 'background .15s',
+  } as React.CSSProperties);
+
+  return (
+    <div>
+      <div style={{ display: 'flex', gap: '.5rem', marginBottom: '1.25rem', flexWrap: 'wrap', alignItems: 'center' }}>
+        <button style={pillStyle('todas')}    onClick={() => setFiltro('todas')}>Todas ({publicaciones.length})</button>
+        <button style={pillStyle('activas')}  onClick={() => setFiltro('activas')}>Activas ({publicaciones.filter(p => p.disponible === 1).length})</button>
+        <button style={pillStyle('inactivas')} onClick={() => setFiltro('inactivas')}>Inactivas ({publicaciones.filter(p => p.disponible === 0).length})</button>
+      </div>
+
+      {loading && <div style={{ color: 'var(--text3)', padding: '2rem 0' }}>Cargando…</div>}
+      {!loading && filtradas.length === 0 && (
+        <div style={{ color: 'var(--text3)', padding: '2rem 0' }}>Sin publicaciones en esta categoría.</div>
+      )}
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '.75rem' }}>
+        {filtradas.map(pub => (
+          <div key={pub.id} style={{
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+            borderRadius: 10,
+            padding: '1rem',
+          }}>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+              <div style={{ flex: 1, minWidth: 200 }}>
+                <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.97rem', marginBottom: '.2rem' }}>
+                  {pub.nombre}
+                </div>
+                <div style={{ fontSize: '.8rem', color: 'var(--text3)', marginBottom: '.3rem' }}>
+                  {pub.barrio} · {pub.categoria} · {pub.tipo}
+                </div>
+                <div style={{ fontSize: '.8rem', color: 'var(--text2)' }}>
+                  {pub.precio_dia != null && <span>Día: <b>{formatARS(pub.precio_dia)}</b> </span>}
+                  {pub.precio_mes != null && <span>Mes: <b>{formatARS(pub.precio_mes)}</b> </span>}
+                  {pub.moneda && pub.moneda !== 'ARS' && <span style={{ opacity: .7 }}>({pub.moneda})</span>}
+                </div>
+                <div style={{ fontSize: '.77rem', color: 'var(--text3)', marginTop: '.25rem' }}>
+                  👤 {pub.oferente_nombre}
+                  {pub.oferente_email && <span style={{ opacity: .7 }}> · {pub.oferente_email}</span>}
+                </div>
+                <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginTop: '.1rem' }}>
+                  ⭐ {pub.rating?.toFixed(1) ?? '—'} · {pub.reviews_count} reseñas · {pub.reservas_mes} reservas/mes
+                  <span style={{ opacity: .6 }}> · Alta: {new Date(pub.created_at).toLocaleDateString('es-AR')}</span>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem', alignItems: 'flex-end', flexShrink: 0 }}>
+                <span style={{
+                  padding: '.25rem .7rem',
+                  borderRadius: 99,
+                  fontSize: '.75rem',
+                  fontWeight: 700,
+                  background: pub.disponible ? 'rgba(16,185,129,.15)' : 'rgba(239,68,68,.1)',
+                  color: pub.disponible ? 'var(--mint)' : 'var(--red)',
+                }}>
+                  {pub.disponible ? '● Activa' : pub.inactiva_auto ? '● Pausada auto' : '● Inactiva'}
+                </span>
+
+                <div style={{ display: 'flex', gap: '.4rem' }}>
+                  <button
+                    onClick={() => toggleDisponible(pub)}
+                    disabled={toggling === pub.id}
+                    style={{
+                      padding: '.35rem .75rem',
+                      borderRadius: 6,
+                      border: 'none',
+                      fontSize: '.78rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      background: pub.disponible ? 'rgba(239,68,68,.1)' : 'rgba(16,185,129,.15)',
+                      color: pub.disponible ? 'var(--red)' : 'var(--mint)',
+                      opacity: toggling === pub.id ? .6 : 1,
+                    }}
+                  >
+                    {pub.disponible ? 'Pausar' : 'Activar'}
+                  </button>
+                  <a
+                    href={`/espacio/${pub.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      padding: '.35rem .75rem',
+                      borderRadius: 6,
+                      border: '1px solid var(--border)',
+                      fontSize: '.78rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      background: 'var(--surface2)',
+                      color: 'var(--text2)',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    Ver ↗
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── Main page ──────────────────────────────────────────────────
 
 export default function AdminPage() {
@@ -1627,6 +1804,7 @@ export default function AdminPage() {
     { key: 'marketing',            label: '📨 Marketing & Difusión' },
     { key: 'usuarios',             label: '👤 Usuarios' },
     { key: 'conversaciones',       label: '💬 Conversaciones' },
+    { key: 'publicaciones',        label: '🏠 Publicaciones' },
   ];
 
   return (
@@ -1649,6 +1827,7 @@ export default function AdminPage() {
           {tab === 'marketing'           && token && <TabMarketing token={token} />}
           {tab === 'usuarios'            && token && <TabUsuarios token={token} />}
           {tab === 'conversaciones'      && token && <TabConversaciones token={token} />}
+          {tab === 'publicaciones'       && token && <TabPublicaciones token={token} />}
         </div>
       </div>
     </div>
