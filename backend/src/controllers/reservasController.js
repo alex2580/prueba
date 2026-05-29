@@ -11,14 +11,24 @@ function parseSeguridad(r) {
   return r;
 }
 
+// Lazy migration — garantiza que oculta_demandante existe antes de cualquier query
+async function ensureOcultaColumn() {
+  try {
+    await query(`ALTER TABLE reservas ADD COLUMN oculta_demandante TINYINT(1) NOT NULL DEFAULT 0`);
+  } catch (e) {
+    if (e.code !== 'ER_DUP_FIELDNAME') throw e;
+  }
+}
+
 // GET /api/reservas  (admin: all; user: own)
 async function listar(req, res, next) {
   try {
+    await ensureOcultaColumn();
+
     const isAdmin = req.user.tipo === 'admin';
-    // Para demandantes ocultamos 'pendiente': son reservas creadas pero sin pago confirmado
     const whereClause = isAdmin
       ? '1=1'
-      : "r.usuario_id = ? AND r.estado != 'pendiente' AND (r.oculta_demandante IS NULL OR r.oculta_demandante = 0)";
+      : "r.usuario_id = ? AND r.estado != 'pendiente' AND r.oculta_demandante = 0";
     const sql = `
       SELECT r.*,
              e.nombre AS espacio_nombre, e.barrio AS espacio_barrio, e.lat, e.lng,
@@ -31,24 +41,7 @@ async function listar(req, res, next) {
       ORDER BY r.created_at DESC
     `;
     const params = isAdmin ? [] : [req.user.id];
-    let reservas;
-    try {
-      reservas = await query(sql, params);
-    } catch (_) {
-      // Fallback si oculta_demandante aún no existe en la DB
-      const sqlFallback = `
-        SELECT r.*,
-               e.nombre AS espacio_nombre, e.barrio AS espacio_barrio, e.lat, e.lng,
-               e.oferente_id, e.seguridad AS espacio_seguridad,
-               u.nombre AS usuario_nombre, u.email AS usuario_email
-        FROM reservas r
-        JOIN espacios e ON r.espacio_id = e.id
-        JOIN usuarios u ON r.usuario_id = u.id
-        WHERE ${isAdmin ? '1=1' : "r.usuario_id = ? AND r.estado != 'pendiente'"}
-        ORDER BY r.created_at DESC
-      `;
-      reservas = await query(sqlFallback, params);
-    }
+    const reservas = await query(sql, params);
     res.json(reservas.map(parseSeguridad));
   } catch (err) {
     next(err);
@@ -439,6 +432,8 @@ async function extender(req, res, next) {
 // PATCH /api/reservas/:id/ocultar  (demandante: ocultar del historial propio)
 async function ocultar(req, res, next) {
   try {
+    await ensureOcultaColumn();
+
     const reserva = await queryOne(
       'SELECT id, usuario_id, estado FROM reservas WHERE id = ?',
       [req.params.id]
@@ -450,13 +445,8 @@ async function ocultar(req, res, next) {
     if (!['cancelada', 'finalizada'].includes(reserva.estado)) {
       return res.status(400).json({ error: 'Solo podés borrar reservas canceladas o finalizadas' });
     }
-    try {
-      await query('UPDATE reservas SET oculta_demandante = 1 WHERE id = ?', [reserva.id]);
-    } catch (_colErr) {
-      // Columna no existe aún — crearla y reintentar
-      await query('ALTER TABLE reservas ADD COLUMN oculta_demandante TINYINT(1) NOT NULL DEFAULT 0');
-      await query('UPDATE reservas SET oculta_demandante = 1 WHERE id = ?', [reserva.id]);
-    }
+
+    await query('UPDATE reservas SET oculta_demandante = 1 WHERE id = ?', [reserva.id]);
     res.json({ ok: true });
   } catch (err) {
     next(err);
