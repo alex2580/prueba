@@ -1755,3 +1755,126 @@ Adicionalmente:
 - `frontend/app/panel/page.tsx`
 
 **Commit:** `38d3958`
+
+---
+
+## 29 de Mayo 2026 — v1.7.1 (tarde/noche)
+
+### Tab "Publicaciones" en panel Admin
+
+**Nuevo:** Se agregó un tab **Publicaciones** en el panel de administración (`/admin`), accesible solo para el rol `admin`. Permite ver todas las publicaciones del sistema con filtros:
+
+- **Activas**: espacios con `activo = 1` y `disponible = 1`  
+- **Inactivas**: espacios con `activo = 0` o `disponible = 0`
+
+Cada tarjeta muestra:
+- Nombre, tipo, barrio, precio
+- Badge de estado: `● Activa`, `● Pausada`, `● Pausada auto` o `● No visible` (cuando `activo = 0`)
+- Botón **Activar / Pausar** que llama a `PATCH /api/admin/publicaciones/:id/disponible`
+
+**Archivos modificados:**
+- `frontend/app/admin/page.tsx` — nuevo tab `TabPublicaciones`, interfaz `PublicacionAdmin`, lógica de filtros y toggle
+- `backend/src/controllers/adminController.js` — nuevas funciones `getPublicaciones` y `toggleDisponibleAdmin`
+- `backend/src/routes/admin.js` — nuevas rutas `GET /publicaciones` y `PATCH /publicaciones/:id/disponible`
+
+**Commits:** `3075e8e`, `d84b7a1`
+
+---
+
+### Fix: overflow horizontal en TabBar del panel Admin
+
+**Problema:** En pantallas de ancho medio, los tabs del admin quedaban cortados y no se podían ver ni hacer click. La causa era que `.page-scroll` tiene `overflow-y: auto`, que implícitamente hace `overflow-x: hidden`, recortando el TabBar horizontal.
+
+**Fix:** Se agregó `overflowX: 'auto'` al div del TabBar y `flexShrink: 0; whiteSpace: 'nowrap'` a los botones de tab.
+
+**Archivos modificados:**
+- `frontend/app/admin/page.tsx`
+
+**Commit:** `9a431d7`
+
+---
+
+### Fix: crash "Application error" al clickear tab Publicaciones
+
+**Problema:** mysql2 devuelve columnas `DECIMAL` como strings. `pub.rating?.toFixed(1)` se llamaba sobre el string `"4.90"`, y `.toFixed` es `undefined` en strings → TypeError → crash del cliente.
+
+**Fix:** El controlador `getPublicaciones` castea con `parseFloat()` los campos `precio_dia`, `precio_mes` y `rating` antes de responder.
+
+**Archivos modificados:**
+- `backend/src/controllers/adminController.js`
+
+**Commit:** `9a431d7`
+
+---
+
+### Fix: campo `activo` distinguido de `disponible` en admin y panel
+
+**Contexto:** La tabla `espacios` tiene dos campos separados:
+- `activo`: controla si el espacio aparece en home, mapa y resultados de búsqueda
+- `disponible`: controla si acepta reservas
+
+Hasta este fix el admin panel mostraba un espacio como "Activa" basándose solo en `disponible = 1`, aunque `activo = 0` lo ocultaba de la plataforma.
+
+**Cambios:**
+1. `getPublicaciones` ahora incluye `e.activo` en el SELECT
+2. Badge de estado usa `activo && disponible` para determinar "Activa"; si `activo = 0` muestra `● No visible`
+3. Botón **Activar/Pausar** opera sobre ambos campos: setea `disponible = nuevoEstado` y `activo = nuevoEstado`
+4. `toggleDisponibleAdmin` en el backend actualiza ambos campos: `UPDATE espacios SET disponible = ?, inactiva_auto = 0, activo = ? WHERE id = ?`
+
+**Archivos modificados:**
+- `frontend/app/admin/page.tsx`
+- `backend/src/controllers/adminController.js`
+
+**Commits:** `66289fe`, `b13ce57`
+
+---
+
+### Fix: "mis espacios publicados" muestra todos los espacios del oferente
+
+**Problema:** La query `misEspacios` filtraba por `activo = TRUE OR inactiva_auto = 1`, por lo que un espacio con `activo = 0` e `inactiva_auto = 0` no aparecía en el panel del oferente aunque le perteneciera.
+
+**Fix:** Se eliminó el filtro de `activo` de `misEspacios` — los oferentes siempre ven todos sus espacios (activos e inactivos).
+
+**Archivos modificados:**
+- `backend/src/controllers/espaciosController.js`
+
+**Commit:** `627dbba`
+
+---
+
+### Fix: "Activar" desde panel del oferente reactiva la visibilidad en home y mapa
+
+**Problema:** El endpoint `PUT /api/espacios/:id` (actualizar) solo actualizaba `disponible`, nunca `activo`. Un espacio podía tener `disponible = 1` pero `activo = 0` y seguir sin aparecer en home/mapa aunque el oferente lo "activara".
+
+**Fix:** Se modificó la query de `actualizar` para que, cuando `disponible = true`, también setee `activo = TRUE` usando `activo = IF(?, TRUE, activo)`.
+
+**Archivos modificados:**
+- `backend/src/controllers/espaciosController.js`
+
+**Commit:** `5fccad0`
+
+---
+
+### Contenido: Objetos prohibidos en Legales (sección 5)
+
+Se agregaron dos ítems a la lista de objetos prohibidos:
+- **Animales muertos**
+- **Elementos de riesgo biológico**
+
+Ubicados entre "Animales vivos" y "Objetos robados o de procedencia ilícita".
+
+**Archivos modificados:**
+- `frontend/app/legales/page.tsx`
+
+**Commit:** `627dbba`
+
+---
+
+### Contenido: Signo de apertura de pregunta en "¿Cómo funciona?"
+
+El botón de navegación (desktop y mobile) que decía "Cómo funciona" ahora dice **"¿Cómo funciona?"** con el signo de apertura correcto en español.
+
+**Archivos modificados:**
+- `frontend/components/ui/SiteHeader.tsx`
+
+**Commit:** `627dbba`
