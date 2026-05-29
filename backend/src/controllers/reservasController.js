@@ -28,22 +28,13 @@ async function ensureOcultasTable() {
   _ocultasTableReady = true;
 }
 
-// GET /api/reservas  (admin: all; user: own)
+// GET /api/reservas  — reservas propias del usuario logueado (admin o no)
+// El panel admin usa /api/admin/operaciones para la vista global
 async function listar(req, res, next) {
   try {
     await ensureOcultasTable();
 
-    const isAdmin = req.user.tipo === 'admin';
-    const sql = isAdmin
-      ? `SELECT r.*,
-               e.nombre AS espacio_nombre, e.barrio AS espacio_barrio, e.lat, e.lng,
-               e.oferente_id, e.seguridad AS espacio_seguridad,
-               u.nombre AS usuario_nombre, u.email AS usuario_email
-         FROM reservas r
-         JOIN espacios e ON r.espacio_id = e.id
-         JOIN usuarios u ON r.usuario_id = u.id
-         ORDER BY r.created_at DESC`
-      : `SELECT r.*,
+    const sql = `SELECT r.*,
                e.nombre AS espacio_nombre, e.barrio AS espacio_barrio, e.lat, e.lng,
                e.oferente_id, e.seguridad AS espacio_seguridad,
                u.nombre AS usuario_nombre, u.email AS usuario_email
@@ -54,8 +45,7 @@ async function listar(req, res, next) {
          WHERE r.usuario_id = ? AND r.estado != 'pendiente' AND ro.reserva_id IS NULL
          ORDER BY r.created_at DESC`;
 
-    const params = isAdmin ? [] : [req.user.id, req.user.id];
-    const reservas = await query(sql, params);
+    const reservas = await query(sql, [req.user.id, req.user.id]);
     res.json(reservas.map(parseSeguridad));
   } catch (err) {
     next(err);
