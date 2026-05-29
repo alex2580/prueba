@@ -311,6 +311,7 @@ export default function HomePage() {
                   <option value="Brasil">🇧🇷 Brasil</option>
                   <option value="Perú">🇵🇪 Perú</option>
                   <option value="Paraguay">🇵🇾 Paraguay</option>
+                  <option value="Puerto Rico">🇵🇷 Puerto Rico</option>
                 </select>
 
                 {/* Tipo */}
