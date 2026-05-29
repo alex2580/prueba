@@ -1620,7 +1620,7 @@ function TabPublicaciones({ token }: { token: string }) {
 
   async function toggleDisponible(pub: PublicacionAdmin) {
     setToggling(pub.id);
-    const nuevoEstado = pub.disponible ? 0 : 1;
+    const nuevoEstado = (pub.activo && pub.disponible) ? 0 : 1;
     try {
       const res = await fetch(`/api/admin/publicaciones/${pub.id}/disponible`, {
         method: 'PATCH',
@@ -1723,12 +1723,12 @@ function TabPublicaciones({ token }: { token: string }) {
                       fontSize: '.78rem',
                       fontWeight: 600,
                       cursor: 'pointer',
-                      background: pub.disponible ? 'rgba(239,68,68,.1)' : 'rgba(16,185,129,.15)',
-                      color: pub.disponible ? 'var(--red)' : 'var(--mint)',
+                      background: pub.activo && pub.disponible ? 'rgba(239,68,68,.1)' : 'rgba(16,185,129,.15)',
+                      color: pub.activo && pub.disponible ? 'var(--red)' : 'var(--mint)',
                       opacity: toggling === pub.id ? .6 : 1,
                     }}
                   >
-                    {pub.disponible ? 'Pausar' : 'Activar'}
+                    {pub.activo && pub.disponible ? 'Pausar' : 'Activar'}
                   </button>
                   <a
                     href={`/espacio/${pub.id}`}
