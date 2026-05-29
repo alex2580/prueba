@@ -209,12 +209,15 @@ async function actualizar(req, res, next) {
 
     const { nombre, direccion, barrio, m2, tipo, precio_dia, precio_mes, descripcion, lat, lng, disponible, moneda, categoria, disponibilidad } = req.body;
 
+    const nuevoDisponible = disponible !== undefined ? Boolean(disponible) : espacio.disponible;
     await query(
       `UPDATE espacios SET nombre=?, direccion=?, barrio=?, m2=?, tipo=?, precio_dia=?,
-       precio_mes=?, descripcion=?, lat=?, lng=?, disponible=?
+       precio_mes=?, descripcion=?, lat=?, lng=?, disponible=?,
+       activo = IF(?, TRUE, activo)
        WHERE id=?`,
       [nombre, direccion, barrio, m2, tipo, precio_dia, precio_mes, descripcion || '', lat, lng,
-       disponible !== undefined ? Boolean(disponible) : espacio.disponible,
+       nuevoDisponible,
+       nuevoDisponible,
        req.params.id]
     );
 
