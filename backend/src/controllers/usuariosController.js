@@ -304,6 +304,13 @@ async function solicitarCambioPerfil(req, res, next) {
   try {
     const usuario = req.user;
 
+    // Lazy migration: ensure tipo column exists
+    try {
+      await query(`ALTER TABLE auth_otp ADD COLUMN tipo VARCHAR(30) NOT NULL DEFAULT 'login'`);
+    } catch (e) {
+      if (e.code !== 'ER_DUP_FIELDNAME') throw e;
+    }
+
     await query(
       `UPDATE auth_otp SET usado = 1 WHERE usuario_id = ? AND tipo = 'cambio_perfil' AND usado = 0`,
       [usuario.id]

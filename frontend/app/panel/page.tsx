@@ -784,6 +784,14 @@ export default function PanelPage() {
                 Enviamos un código de 6 dígitos al email{' '}
                 <strong style={{ color: 'var(--text)' }}>{perfilOtpEmailHint}</strong>
               </p>
+              <div style={{
+                background: 'rgba(232,98,42,.08)', border: '1px solid rgba(232,98,42,.2)',
+                borderRadius: 'var(--r2)', padding: '.5rem .9rem',
+                fontSize: '.78rem', color: 'var(--text2)', textAlign: 'center',
+              }}>
+                ⏱️ Tenés <strong>10 minutos</strong> para ingresar el código antes de que expire.
+                Revisá también la carpeta de spam.
+              </div>
               <div style={{ display: 'flex', gap: '.5rem', justifyContent: 'center' }}>
                 {perfilOtpDigits.map((d, i) => (
                   <input
@@ -819,13 +827,23 @@ export default function PanelPage() {
               >
                 Verificar y guardar cambios
               </Button>
-              <button
-                type="button"
-                onClick={() => setPerfilStep('form')}
-                style={{ background: 'none', border: 'none', color: 'var(--text3)', fontSize: '.82rem', cursor: 'pointer' }}
-              >
-                ← Volver al formulario
-              </button>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <button
+                  type="button"
+                  onClick={() => setPerfilStep('form')}
+                  style={{ background: 'none', border: 'none', color: 'var(--text3)', fontSize: '.82rem', cursor: 'pointer' }}
+                >
+                  ← Volver al formulario
+                </button>
+                <button
+                  type="button"
+                  onClick={handleGuardarPerfil}
+                  disabled={perfilLoading}
+                  style={{ background: 'none', border: 'none', color: 'var(--orange)', fontSize: '.82rem', cursor: 'pointer', opacity: perfilLoading ? .5 : 1 }}
+                >
+                  Reenviar código
+                </button>
+              </div>
             </>
           ) : (
             <>
