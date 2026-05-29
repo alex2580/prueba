@@ -11,36 +11,50 @@ function parseSeguridad(r) {
   return r;
 }
 
-// Lazy migration — garantiza que oculta_demandante existe antes de cualquier query
-async function ensureOcultaColumn() {
-  try {
-    await query(`ALTER TABLE reservas ADD COLUMN oculta_demandante TINYINT(1) NOT NULL DEFAULT 0`);
-  } catch (e) {
-    if (e.code !== 'ER_DUP_FIELDNAME') throw e;
-  }
+// Inicializa la tabla de reservas ocultas (lazy, idempotente)
+let _ocultasTableReady = false;
+async function ensureOcultasTable() {
+  if (_ocultasTableReady) return;
+  const { pool } = require('../db/connection');
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS reservas_ocultas (
+      reserva_id VARCHAR(36) NOT NULL,
+      usuario_id VARCHAR(36) NOT NULL,
+      oculta_en  DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      PRIMARY KEY (reserva_id, usuario_id),
+      INDEX idx_usuario (usuario_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  `);
+  _ocultasTableReady = true;
 }
 
 // GET /api/reservas  (admin: all; user: own)
 async function listar(req, res, next) {
   try {
-    await ensureOcultaColumn();
+    await ensureOcultasTable();
 
     const isAdmin = req.user.tipo === 'admin';
-    const whereClause = isAdmin
-      ? '1=1'
-      : "r.usuario_id = ? AND r.estado != 'pendiente' AND r.oculta_demandante = 0";
-    const sql = `
-      SELECT r.*,
-             e.nombre AS espacio_nombre, e.barrio AS espacio_barrio, e.lat, e.lng,
-             e.oferente_id, e.seguridad AS espacio_seguridad,
-             u.nombre AS usuario_nombre, u.email AS usuario_email
-      FROM reservas r
-      JOIN espacios e ON r.espacio_id = e.id
-      JOIN usuarios u ON r.usuario_id = u.id
-      WHERE ${whereClause}
-      ORDER BY r.created_at DESC
-    `;
-    const params = isAdmin ? [] : [req.user.id];
+    const sql = isAdmin
+      ? `SELECT r.*,
+               e.nombre AS espacio_nombre, e.barrio AS espacio_barrio, e.lat, e.lng,
+               e.oferente_id, e.seguridad AS espacio_seguridad,
+               u.nombre AS usuario_nombre, u.email AS usuario_email
+         FROM reservas r
+         JOIN espacios e ON r.espacio_id = e.id
+         JOIN usuarios u ON r.usuario_id = u.id
+         ORDER BY r.created_at DESC`
+      : `SELECT r.*,
+               e.nombre AS espacio_nombre, e.barrio AS espacio_barrio, e.lat, e.lng,
+               e.oferente_id, e.seguridad AS espacio_seguridad,
+               u.nombre AS usuario_nombre, u.email AS usuario_email
+         FROM reservas r
+         JOIN espacios e ON r.espacio_id = e.id
+         JOIN usuarios u ON r.usuario_id = u.id
+         LEFT JOIN reservas_ocultas ro ON ro.reserva_id = r.id AND ro.usuario_id = ?
+         WHERE r.usuario_id = ? AND r.estado != 'pendiente' AND ro.reserva_id IS NULL
+         ORDER BY r.created_at DESC`;
+
+    const params = isAdmin ? [] : [req.user.id, req.user.id];
     const reservas = await query(sql, params);
     res.json(reservas.map(parseSeguridad));
   } catch (err) {
@@ -432,7 +446,7 @@ async function extender(req, res, next) {
 // PATCH /api/reservas/:id/ocultar  (demandante: ocultar del historial propio)
 async function ocultar(req, res, next) {
   try {
-    await ensureOcultaColumn();
+    await ensureOcultasTable();
 
     const reserva = await queryOne(
       'SELECT id, usuario_id, estado FROM reservas WHERE id = ?',
@@ -446,7 +460,10 @@ async function ocultar(req, res, next) {
       return res.status(400).json({ error: 'Solo podés borrar reservas canceladas o finalizadas' });
     }
 
-    await query('UPDATE reservas SET oculta_demandante = 1 WHERE id = ?', [reserva.id]);
+    await query(
+      'INSERT INTO reservas_ocultas (reserva_id, usuario_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE reserva_id = reserva_id',
+      [reserva.id, req.user.id]
+    );
     res.json({ ok: true });
   } catch (err) {
     next(err);
