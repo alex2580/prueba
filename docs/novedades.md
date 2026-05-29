@@ -1422,6 +1422,121 @@ Ambos reciben el disclaimer de que TMC actúa como intermediario y link a térmi
 
 ---
 
+## 29 de Mayo 2026 — v1.7.0
+
+### OTP de cambio de perfil — fix definitivo (timezone)
+
+**Problema:** Al editar el perfil, el código OTP llegaba por email pero al ingresarlo aparecía "El código expiró o ya fue utilizado". La causa raíz era que la comparación `expires_at > NOW()` en MySQL dependía del timezone del servidor MySQL, que podía diferir del proceso Node.js, haciendo que el código apareciera vencido inmediatamente.
+
+**Solución:** Se reemplazó completamente el uso de `auth_otp` para el flujo de cambio de perfil por una tabla dedicada `perfil_otp` con `expires_at` como `BIGINT` (Unix timestamp en ms). La verificación de expiración se hace en Node.js con `otp.expires_at < Date.now()`, completamente independiente del timezone del servidor MySQL.
+
+#### Backend (`backend/src/controllers/usuariosController.js`)
+- Nueva función `initPerfilOtpTable()` — crea tabla `perfil_otp` de forma lazy al primer uso
+- `solicitarCambioPerfil()` — genera `expires_at = Date.now() + 10min` (Unix ms), inserta en `perfil_otp`, envía email con `sendOTP()`
+- `verificarCambioPerfil()` — busca en `perfil_otp` sin filtro de tiempo SQL, compara `otp.expires_at < Date.now()` en Node.js
+- `id` generado con `crypto.randomUUID()` en Node.js (sin depender de `DEFAULT (UUID())` de MySQL)
+
+#### Tabla nueva
+```sql
+CREATE TABLE IF NOT EXISTS perfil_otp (
+  id          VARCHAR(36)  PRIMARY KEY,
+  usuario_id  VARCHAR(36)  NOT NULL,
+  codigo      VARCHAR(6)   NOT NULL,
+  usado       TINYINT(1)   NOT NULL DEFAULT 0,
+  intentos    INT          NOT NULL DEFAULT 0,
+  expires_at  BIGINT       NOT NULL,   -- Unix ms, comparado en Node.js
+  created_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_usuario (usuario_id)
+)
+```
+
+#### UI (`frontend/app/panel/page.tsx`)
+- Aviso naranja: *"⏱️ Tenés 10 minutos para ingresar el código antes de que expire. Revisá también la carpeta de spam."*
+- Botón **"Reenviar código"** junto a "← Volver al formulario" para pedir un nuevo OTP sin cerrar el modal
+
+**Commits:** `91b72c6` (UI + lazy migration parcial), `19fb50f` (fix definitivo tabla dedicada)
+
+---
+
+### Servicios adicionales — "a cotizar" en paso 3
+
+**Problema:** En el paso 3 (Cuenta & Pago) del flujo de reserva, los servicios adicionales (Kit de embalaje, Seguro de contenido, etc.) mostraban `$0` porque sus precios están en `0` hasta ser coordinados con un asesor.
+
+**Fix:** Se reemplazó `formatARS(precio)` por `precio > 0 ? formatARS(precio) : 'a cotizar'` en:
+- `frontend/app/espacio/[id]/reservar/page.tsx` — resumen de Cuenta & Pago
+- `frontend/components/reservas/CheckoutReserva.tsx` — card de servicio
+
+**Commit:** `89c80ea`
+
+---
+
+### Sistema de Marketing & Difusión — Campañas de email
+
+Nueva sección en el panel de administradores: **"📨 Marketing & Difusión"**.
+
+#### Funcionalidades
+1. **Envío manual:** redactás una campaña (nombre, asunto, cuerpo HTML con preview inline), elegís destinatarios y la enviás de inmediato.
+2. **Envío automático programado:** toggle con tres modalidades:
+   - **Una vez:** fecha exacta + hora
+   - **Semanal:** día de la semana + hora (lunes a domingo)
+   - **Mensual:** día del mes + hora
+   - Funciona cualquier día incluyendo fines de semana y feriados
+   - Hora en tiempo de Buenos Aires (UTC-3), independiente del timezone del servidor
+3. **Segmentación:** Todos los usuarios / Solo Oferentes / Solo Demandantes (con conteo previo de destinatarios activos)
+4. **Log de envíos:** por cada campaña enviada se registra email, estado (ok/error), fecha y hora
+
+#### Backend
+- `backend/src/controllers/mailingController.js` — CRUD completo + función `sendCampana()` con log individual por destinatario
+- `backend/src/routes/mailing.js` — endpoints bajo `/api/mailing/`, todos protegidos por `requireAdmin`
+- `backend/src/jobs/mailing.js` — cron cada minuto que compara hora de Buenos Aires; los envíos únicos se desactivan solos tras ejecutarse
+- `backend/src/services/emailService.js` — nueva función `sendNewsletter()` con template HTML reutilizable y nota de baja al pie
+- `backend/src/app.js` — registra `/api/mailing` + arranca `iniciarCronMailing()`
+
+#### Tablas nuevas (lazy init)
+```sql
+CREATE TABLE mailing_campanas (
+  id, nombre, asunto, cuerpo_html, destinatarios,
+  estado, enviada_en, total_enviados,
+  prog_activa, prog_tipo, prog_fecha, prog_hora,
+  prog_dia_semana, prog_dia_mes, prog_ultimo_envio,
+  creado_por, created_at, updated_at
+)
+
+CREATE TABLE mailing_log (
+  id, campana_id, email, nombre, estado, error_msg, enviado_en
+)
+```
+
+#### Frontend
+- `frontend/components/admin/TabMarketing.tsx` — componente completo con sub-tabs "Campañas" y "Redactar/Editar"
+- `frontend/app/admin/page.tsx` — nuevo tab `📨 Marketing & Difusión`
+
+**Commit:** `dfe9856`
+
+---
+
+### País — Puerto Rico agregado al filtro
+
+Se agregó `🇵🇷 Puerto Rico` al selector de países en el filtro del home (`frontend/app/page.tsx`).
+
+**Commit:** `dc44dcd`
+
+---
+
+### CI/CD — TypeScript check antes del deploy
+
+El workflow de GitHub Actions ahora tiene dos etapas en secuencia:
+
+1. **`typecheck`** (nuevo): checkout del repo → `npm ci` → `npx tsc --noEmit`. Si hay errores de tipos en el frontend, el pipeline se detiene aquí y el VPS no se toca.
+2. **`deploy`** (existente, ahora condicionado a `needs: typecheck`): SSH al VPS → `git pull` → `deploy.sh` (npm install + build + pm2 reload).
+
+Esto garantiza que ningún código con errores TypeScript llegue a producción.
+
+**Archivo:** `.github/workflows/deploy.yml`
+**Commit:** `a929634`
+
+---
+
 ## 27–28 de Mayo 2026 — v1.6.0
 
 ### Sistema de favoritos (end-to-end)
