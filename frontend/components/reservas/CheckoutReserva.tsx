@@ -88,7 +88,7 @@ export function CheckoutReserva({ reserva, onPagar, loading, error }: CheckoutRe
                 <span style={{ fontSize: '1.2rem' }}>{cfg.emoji}</span>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: '.88rem', fontWeight: 600 }}>{cfg.label}</div>
-                  <div style={{ fontSize: '.75rem', color: 'var(--text3)' }}>{formatARS(cfg.precio)}</div>
+                  <div style={{ fontSize: '.75rem', color: 'var(--text3)' }}>{cfg.precio > 0 ? formatARS(cfg.precio) : 'a cotizar'}</div>
                 </div>
                 <div style={{
                   width: 20, height: 20, borderRadius: 6,

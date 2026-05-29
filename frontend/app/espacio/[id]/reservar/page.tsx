@@ -855,7 +855,9 @@ export default function ReservarPage() {
                         {servicios.map(s => (
                           <div key={s} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '.82rem' }}>
                             <span style={{ color: 'var(--text3)' }}>{SERVICIOS_ADICIONALES[s].emoji} {SERVICIOS_ADICIONALES[s].label}</span>
-                            <span style={{ fontWeight: 600 }}>{formatARS(SERVICIOS_ADICIONALES[s].precio)}</span>
+                            <span style={{ fontWeight: 600, color: SERVICIOS_ADICIONALES[s].precio === 0 ? 'var(--text3)' : 'inherit' }}>
+                              {SERVICIOS_ADICIONALES[s].precio > 0 ? formatARS(SERVICIOS_ADICIONALES[s].precio) : 'a cotizar'}
+                            </span>
                           </div>
                         ))}
                         <div style={{ height: 1, background: 'var(--border)', margin: '.3rem 0' }} />
