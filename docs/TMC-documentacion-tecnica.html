@@ -199,7 +199,7 @@
   <div class="cover-sub">Documentación Técnica Completa</div>
   <div style="font-size:10pt;color:#888;margin-bottom:28px;">Marketplace de almacenamiento urbano — Buenos Aires</div>
   <div class="cover-meta">
-    <b>Versión:</b> 1.5 — Mayo 2026<br>
+    <b>Versión:</b> 1.7.1 — Mayo 2026<br>
     <b>URL producción:</b> https://todasmiscosas.com<br>
     <b>Repositorio:</b> github.com/alex2580/prueba (privado)<br>
     <b>Autores:</b> Alejandro Laporte · Guillermo Domínguez<br>
@@ -1099,6 +1099,8 @@ POST /api/reservas (crear)
   <tr><td>GET</td><td>/admin/operaciones</td><td>✅ Admin</td><td>Resumen financiero + lista de reservas con desglose GMV/comisión/neto</td></tr>
   <tr><td>GET</td><td>/admin/solicitudes-puntuacion</td><td>✅ Admin</td><td>Solicitudes de mejora de puntuación pendientes</td></tr>
   <tr><td>PATCH</td><td>/admin/solicitudes-puntuacion/:id/estado</td><td>✅ Admin</td><td>Actualizar estado de solicitud (contactado / resuelto)</td></tr>
+  <tr><td>GET</td><td>/admin/publicaciones</td><td>✅ Admin</td><td>Todas las publicaciones del sistema (activas e inactivas) con precio, rating, badge de estado</td></tr>
+  <tr><td>PATCH</td><td>/admin/publicaciones/:id/disponible</td><td>✅ Admin</td><td>Activar o pausar un espacio (actualiza <code>activo</code> y <code>disponible</code> simultáneamente)</td></tr>
   <tr><td>GET</td><td>/health</td><td>—</td><td>Health check del backend</td></tr>
 </table>
 
@@ -1242,13 +1244,34 @@ curl http://localhost:4000/health</pre>
   <b>✅ Todo lo demás está funcionando en producción</b>
   Reservas · Pagos · Chat · Reviews · OTP por email · Panel de oferente y demandante ·
   Baja automática por inactividad · Reactivación de publicaciones · Cambio de teléfono con OTP ·
-  Deploy automático · Emails de notificación · Emails de aceptación de T&amp;C · Panel admin con operaciones y solicitudes de puntuación ·
+  Deploy automático · Emails de notificación · Emails de aceptación de T&amp;C ·
+  Panel admin con operaciones, solicitudes de puntuación y gestión de publicaciones (activas/inactivas) ·
   Filtro por período (día/mes) · Marcadores sin precio en estado inicial · Ingresos netos en panel oferente ·
   Comisión 15% aplicada correctamente en todos los indicadores · Diseño responsive mobile/tablet ·
-  Compresión de fotos en cliente · Botón Cancelar en flujo de reserva · Precios día/mes en panel
+  Compresión de fotos en cliente · Botón Cancelar en flujo de reserva · Precios día/mes en panel ·
+  Favoritos · campos <code>activo</code> y <code>disponible</code> gestionados correctamente en admin y panel oferente
 </div>
 
-<h2>Cambios recientes (v1.5 — 26 mayo 2026)</h2>
+<h2>Cambios recientes (v1.7.1 — 29 mayo 2026)</h2>
+<table>
+  <tr><th>Área</th><th>Cambio</th><th>Commit</th></tr>
+  <tr><td>Admin — Publicaciones</td><td>Nuevo tab en panel admin con todas las publicaciones, filtro activas/inactivas, badge <code>● No visible</code> cuando <code>activo=0</code>, botón Activar/Pausar que sincroniza ambos campos <code>activo</code> y <code>disponible</code></td><td><code>3075e8e</code>, <code>d84b7a1</code>, <code>66289fe</code>, <code>b13ce57</code></td></tr>
+  <tr><td>Fix — DECIMAL→string</td><td><code>getPublicaciones</code> castea <code>precio_dia</code>, <code>precio_mes</code>, <code>rating</code> con <code>parseFloat()</code> para prevenir crash en <code>.toFixed()</code></td><td><code>9a431d7</code></td></tr>
+  <tr><td>Fix — mis espacios</td><td><code>misEspacios</code> ya no filtra por <code>activo</code>; oferentes ven todos sus espacios independientemente del estado de visibilidad</td><td><code>627dbba</code></td></tr>
+  <tr><td>Fix — Activar desde panel</td><td><code>PUT /api/espacios/:id</code> usa <code>IF(nuevoDisponible, TRUE, activo)</code> para reactivar visibilidad en home/mapa al activar una publicación</td><td><code>5fccad0</code></td></tr>
+  <tr><td>Legales</td><td>Sección 5 (objetos prohibidos): añadidos "Animales muertos" y "Elementos de riesgo biológico"</td><td><code>627dbba</code></td></tr>
+  <tr><td>Nav</td><td>Botón "Cómo funciona" → "¿Cómo funciona?" (signo de apertura en SiteHeader desktop y mobile)</td><td><code>627dbba</code></td></tr>
+</table>
+
+<h2>Cambios v1.6.0 — 27–28 mayo 2026</h2>
+<table>
+  <tr><th>Área</th><th>Cambio</th><th>Commit</th></tr>
+  <tr><td>Favoritos</td><td>Backend completo (controller + routes) + frontend (favoritosAPI.ts, pestaña Favoritos en panel); token como prop para evitar race condition</td><td><code>4b73a73</code></td></tr>
+  <tr><td>Reserva por mes</td><td><code>type="month"</code> al reservar por mes; MiniCalendar oculto en modo mes; precios side-by-side en DetalleEspacio</td><td><code>30b25c1</code></td></tr>
+  <tr><td>CI/CD</td><td>Fix IPv6: secret <code>VPS_HOST</code> reemplazado por IPv4</td><td><code>79ccbf4</code></td></tr>
+</table>
+
+<h2>Cambios v1.5 — 26 mayo 2026</h2>
 <table>
   <tr><th>Área</th><th>Cambio</th><th>Commit</th></tr>
   <tr><td>Responsive</td><td>SiteHeader reescrito con hamburger menu; viewport meta; breakpoints tablet ≤1024px / mobile ≤640px; bottom-sheet modals</td><td><code>8a9d8de</code></td></tr>
@@ -1276,7 +1299,7 @@ curl http://localhost:4000/health</pre>
      FOOTER
 ══════════════════════════════════════════════════════════════ -->
 <div class="footer">
-  TodasMisCosas.com — Documentación técnica interna · Versión 1.5 · Mayo 2026<br>
+  TodasMisCosas.com — Documentación técnica interna · Versión 1.7.1 · Mayo 2026<br>
   Alejandro Laporte · Guillermo Domínguez<br>
   <em>Este documento es confidencial. No distribuir.</em>
 </div>
