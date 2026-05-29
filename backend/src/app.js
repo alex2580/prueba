@@ -8,6 +8,7 @@ require('dotenv').config();
 const errorHandler = require('./middleware/errorHandler');
 const { iniciarCronRecordatorios } = require('./jobs/recordatorios');
 const { iniciarCronInactividad } = require('./jobs/inactividad');
+const { iniciarCronMailing } = require('./jobs/mailing');
 
 // Routes
 const espaciosRouter  = require('./routes/espacios');
@@ -21,6 +22,7 @@ const adminRouter     = require('./routes/admin');
 const authRouter      = require('./routes/auth');
 const webhookRouter   = require('./routes/webhook');
 const favoritosRouter = require('./routes/favoritos');
+const mailingRouter   = require('./routes/mailing');
 
 const app = express();
 
@@ -69,6 +71,7 @@ app.use('/api/admin',     adminRouter);
 app.use('/api/auth',      authRouter);
 app.use('/api/webhook',   webhookRouter);
 app.use('/api/favoritos', favoritosRouter);
+app.use('/api/mailing',  mailingRouter);
 
 // ── 404 ────────────────────────────────────────────────────────
 app.use((req, res) => {
@@ -81,5 +84,6 @@ app.use(errorHandler);
 // ── Cron jobs ─────────────────────────────────────────────────
 iniciarCronRecordatorios();
 iniciarCronInactividad();
+iniciarCronMailing();
 
 module.exports = app;

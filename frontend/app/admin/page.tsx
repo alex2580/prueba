@@ -9,6 +9,7 @@ import { SiteHeader } from '@/components/ui/SiteHeader';
 import { formatFechaCorta, formatARS, COMISION_TMC } from '@/lib/utils';
 import { chatAPI } from '@/lib/api';
 import type { Conversacion } from '@/types';
+import { TabMarketing } from '@/components/admin/TabMarketing';
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -1587,6 +1588,7 @@ export default function AdminPage() {
     { key: 'consultas',            label: '📬 Consultas' },
     { key: 'solicitudes-puntaje',  label: '🛡️ Servicios adicionales', badge: solicitudesPendientes || undefined },
     { key: 'campanas',             label: '📣 Campañas' },
+    { key: 'marketing',            label: '📨 Marketing & Difusión' },
     { key: 'usuarios',             label: '👤 Usuarios' },
     { key: 'conversaciones',       label: '💬 Conversaciones' },
   ];
@@ -1608,6 +1610,7 @@ export default function AdminPage() {
           {tab === 'consultas'           && token && <TabConsultas token={token} />}
           {tab === 'solicitudes-puntaje' && token && <TabSolicitudesPuntuacion token={token} />}
           {tab === 'campanas'            && token && <TabCampanas token={token} />}
+          {tab === 'marketing'           && token && <TabMarketing token={token} />}
           {tab === 'usuarios'            && token && <TabUsuarios token={token} />}
           {tab === 'conversaciones'      && token && <TabConversaciones token={token} />}
         </div>

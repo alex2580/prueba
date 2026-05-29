@@ -639,6 +639,22 @@ async function sendMejorarPuntuacion({ nombre, email, tel, espacioNombre, puntaj
   });
 }
 
+// ── Newsletter / Mailing masivo ──────────────────────────────────
+async function sendNewsletter(toEmail, nombre, { asunto, cuerpoHtml }) {
+  const html = baseTemplate(asunto, `
+    <p style="font-size:.88rem; color:#94a3b8; margin:0 0 20px;">
+      Hola <span class="highlight">${nombre}</span>, te traemos novedades de <strong style="color:#e8622a;">TodasMisCosas.com</strong>.
+    </p>
+    ${cuerpoHtml}
+    <div style="border-top:1px solid #2d3748; margin-top:28px; padding-top:16px; text-align:center; font-size:11px; color:#475569;">
+      Recibís este email porque sos usuario de TodasMisCosas.com.<br>
+      Para darte de baja escribinos a
+      <a href="mailto:contacto@todasmiscosas.com" style="color:#e8622a;">contacto@todasmiscosas.com</a>
+    </div>
+  `);
+  await transporter.sendMail({ from: FROM, to: toEmail, subject: asunto, html });
+}
+
 module.exports = {
   sendReservaConfirmada,
   sendPagoConfirmado,
@@ -663,4 +679,5 @@ module.exports = {
   sendCambioTelConfirmado,
   sendPublicacionDesactivada,
   sendMejorarPuntuacion,
+  sendNewsletter,
 };
