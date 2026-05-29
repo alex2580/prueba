@@ -38,6 +38,10 @@ router.get('/solicitudes-puntuacion',                      ctrl.getSolicitudesPu
 router.patch('/solicitudes-puntuacion/:id/estado',         ctrl.actualizarEstadoSolicitud);
 router.delete('/solicitudes-puntuacion/:id',               ctrl.eliminarSolicitudPuntuacion);
 
+// Publicaciones (espacios)
+router.get('/publicaciones',                               ctrl.getPublicaciones);
+router.patch('/publicaciones/:id/disponible',              ctrl.toggleDisponibleAdmin);
+
 // Operaciones / Finanzas
 router.get('/operaciones',                                 ctrl.getOperaciones);
 
