@@ -1878,3 +1878,42 @@ El botón de navegación (desktop y mobile) que decía "Cómo funciona" ahora di
 - `frontend/components/ui/SiteHeader.tsx`
 
 **Commit:** `627dbba`
+
+---
+
+## 30 de Mayo 2026 — v1.7.2
+
+### Seguridad: 9 controles implementados (puntos 1–3, 7–9, 12, 15, 17)
+
+**Nuevos archivos:**
+- `backend/src/middleware/rateLimits.js` — tres limiters: `apiLimiter` (200/min), `authLimiter` (10/15min), `contactLimiter` (5/h)
+- `SECURITY.md` — política de reporte de vulnerabilidades
+
+**Cambios en backend:**
+
+- **Rate limiting** (`app.js`): `authLimiter` en `/api/auth`, `apiLimiter` en `/api` general
+- **Body limit** (`app.js`): `express.json` bajado de 10MB a 100KB
+- **CORS** (`app.js`): `localhost:3001` excluido en producción
+- **`/sync` protegido** (`routes/usuarios.js`): nuevo middleware `requireSyncAuth` — valida que el JWT corresponde al `supabase_id` del body vía `verifyToken()`
+- **Upload magic bytes** (`middleware/upload.js`): nuevo middleware `validateMagicBytes` aplicado en fotos de espacios y avatar — verifica bytes reales del archivo además del MIME type
+- **Webhook MercadoPago** (`controllers/pagosController.js`): función `verifyMPSignature()` con HMAC-SHA256 sobre header `x-signature`; activo cuando `MP_WEBHOOK_SECRET` está seteado en `.env`
+- **Formularios públicos admin** (`routes/admin.js`): `contactLimiter` aplicado a `/consultas` y `/notificar-servicios`
+
+**Cambios en frontend:**
+- **CSP** (`next.config.js`): header `Content-Security-Policy` con dominios permitidos (Google Maps, Supabase, MercadoPago) + `Permissions-Policy`
+
+**Commit:** `81583ae`
+
+---
+
+### Seguridad: GitHub (puntos 4 parcial, 10, 14)
+
+- **Deploy workflow** (`.github/workflows/deploy.yml`): reemplazado `VPS_PASS` por `SSH_PRIVATE_KEY` (clave ED25519)
+- **Dependabot** (`.github/dependabot.yml`): PRs automáticos semanales para backend, frontend y GitHub Actions
+- **Branch protection** (GitHub Settings): `master` protegida — block force pushes, restrict deletions, require TypeScript check
+- **Dependabot alerts** (GitHub Settings): habilitados dependency graph, alerts y security updates
+- **Secret `SSH_PRIVATE_KEY`** agregado en GitHub Secrets
+
+**Pendiente con Guille (VPS):** agregar clave pública al VPS y deshabilitar `PasswordAuthentication` en sshd_config. Clave pública: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHY/vUOxcf/f0Z2N1Mx62vDau+EV4ilQprimlUZXiX64 tmc-github-actions-deploy`
+
+**Commit:** `a5d64af`
