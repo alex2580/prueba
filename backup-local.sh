@@ -54,6 +54,27 @@ ssh "$VPS_USER@$VPS_HOST" "pm2 save --force > /dev/null 2>&1; cat ~/.pm2/dump.pm
   echo "   ✅ pm2-dump.json" || \
   echo "   ⚠️  No se pudo obtener el dump de PM2"
 
+# ── 6. Cifrar archivos sensibles con GPG ─────────────────────────────────────
+echo "🔐 Cifrando archivos sensibles..."
+if ! command -v gpg &>/dev/null; then
+  echo "   ⚠️  gpg no está instalado — .env guardado en texto plano (INSEGURO)"
+  echo "      Instalá gpg: sudo apt install gnupg  /  brew install gnupg"
+elif [ -z "$TMC_BACKUP_PASSPHRASE" ]; then
+  echo "   ⚠️  Variable TMC_BACKUP_PASSPHRASE no está definida."
+  echo "      Agregá 'export TMC_BACKUP_PASSPHRASE=tu_clave_secreta' en tu ~/.bashrc o ~/.zshrc"
+  echo "      .env guardado en texto plano (INSEGURO)"
+else
+  for f in "$DEST/backend.env" "$DEST/frontend.env.local"; do
+    [ -f "$f" ] || continue
+    gpg --symmetric --cipher-algo AES256 --batch \
+        --passphrase "$TMC_BACKUP_PASSPHRASE" \
+        --output "${f}.gpg" "$f" 2>/dev/null \
+      && rm "$f" \
+      && echo "   ✅ $(basename $f) → $(basename ${f}).gpg (cifrado AES-256)" \
+      || echo "   ⚠️  No se pudo cifrar $f"
+  done
+fi
+
 # ── Limpiar backups viejos (conserva los últimos 10) ─────────────────────────
 echo ""
 echo "🧹 Limpiando backups anteriores (conserva los últimos 10)..."
@@ -69,3 +90,5 @@ echo "════════════════════════�
 echo ""
 echo "Archivos guardados:"
 ls -lh "$DEST"
+echo ""
+echo "Para descifrar: gpg --decrypt backend.env.gpg > backend.env"
