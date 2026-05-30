@@ -9,7 +9,7 @@
     "db:migrate": "node src/db/migrate.js"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.44.2",
+    "@supabase/supabase-js": "^2.106.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
