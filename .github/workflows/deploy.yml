@@ -39,6 +39,6 @@ jobs:
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
-          password: ${{ secrets.VPS_PASS }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /var/www/todasmiscosas && git fetch origin && git reset --hard origin/master && bash /var/www/todasmiscosas/deploy.sh
