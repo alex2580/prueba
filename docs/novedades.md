@@ -1917,3 +1917,25 @@ El botón de navegación (desktop y mobile) que decía "Cómo funciona" ahora di
 **Pendiente con Guille (VPS):** agregar clave pública al VPS y deshabilitar `PasswordAuthentication` en sshd_config. Clave pública: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHY/vUOxcf/f0Z2N1Mx62vDau+EV4ilQprimlUZXiX64 tmc-github-actions-deploy`
 
 **Commit:** `a5d64af`
+
+---
+
+### Seguridad: VPS con Guille (puntos 4, 5, 6, 13) + cierre completo 18/18
+
+**VPS Hostinger — acciones ejecutadas por Guille:**
+
+- **SSH key auth** (punto 4): clave pública ED25519 agregada a `~/.ssh/authorized_keys`; `PasswordAuthentication no` en `/etc/ssh/sshd_config`; `sshd -t` OK + `systemctl reload ssh`. Secret `VPS_PASS` eliminado de GitHub Secrets.
+- **UFW firewall** (punto 5): activo — puertos 22, 80, 443/tcp habilitados; resto bloqueado
+- **Fail2ban** (punto 6): activo desde el inicio de sesión; jail sshd monitoreando `/var/log/auth.log`
+- **PM2 log rotation** (punto 13): `pm2-logrotate` configurado — máx 10MB, 7 días, compresión habilitada, rotación diaria a medianoche
+- **MP_WEBHOOK_SECRET** (punto 3 completo): secret obtenido de MP Dashboard y agregado al `.env` del VPS; firma HMAC-SHA256 ahora activa en producción
+
+**Uptime Robot** (punto 11): monitor HTTPS configurado en `todasmiscosas.com`, intervalo 5 minutos
+
+**Backup cifrado** (punto 16): `backup-local.sh` actualizado — cifra `.env` con GPG AES-256 si `TMC_BACKUP_PASSPHRASE` está definida como variable de entorno
+
+**Documentación JWT** (punto 18): `docs/jwt-secret-rotation.md` creado — procedimiento paso a paso para rotar JWT secret en Supabase + VPS
+
+**Commits:** `dc20be7`, `f6aacd1`
+
+**Estado final:** 18/18 puntos de seguridad completados ✅

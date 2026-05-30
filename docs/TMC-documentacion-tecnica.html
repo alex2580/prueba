@@ -199,7 +199,7 @@
   <div class="cover-sub">Documentación Técnica Completa</div>
   <div style="font-size:10pt;color:#888;margin-bottom:28px;">Marketplace de almacenamiento urbano — Buenos Aires</div>
   <div class="cover-meta">
-    <b>Versión:</b> 1.7.2 — Mayo 2026<br>
+    <b>Versión:</b> 1.7.3 — Mayo 2026<br>
     <b>URL producción:</b> https://todasmiscosas.com<br>
     <b>Repositorio:</b> github.com/alex2580/prueba (privado)<br>
     <b>Autores:</b> Alejandro Laporte · Guillermo Domínguez<br>
@@ -1254,7 +1254,7 @@ curl http://localhost:4000/health</pre>
   Branch protection en master · Dependabot activo · deploy via SSH key
 </div>
 
-<h2>Cambios recientes (v1.7.2 — 30 mayo 2026)</h2>
+<h2>Cambios recientes (v1.7.3 — 30 mayo 2026)</h2>
 <table>
   <tr><th>Área</th><th>Cambio</th><th>Commit</th></tr>
   <tr><td>Seguridad — Rate limiting</td><td>Nuevo <code>middleware/rateLimits.js</code>: 200 req/min general, 10/15min en <code>/api/auth</code>, 5/h en formularios de contacto</td><td><code>81583ae</code></td></tr>
@@ -1265,6 +1265,10 @@ curl http://localhost:4000/health</pre>
   <tr><td>Seguridad — CORS / body</td><td><code>localhost:3001</code> excluido en producción; body limit JSON 10MB → 100KB</td><td><code>81583ae</code></td></tr>
   <tr><td>Seguridad — GitHub</td><td>Deploy via SSH key (ED25519) en vez de contraseña; Dependabot semanal para backend/frontend/actions; branch protection en <code>master</code>; Dependabot alerts habilitados</td><td><code>a5d64af</code></td></tr>
   <tr><td>SECURITY.md</td><td>Política de reporte de vulnerabilidades en raíz del repo</td><td><code>81583ae</code></td></tr>
+  <tr><td>Seguridad — VPS (Guille)</td><td>SSH key auth (ED25519 en authorized_keys + PasswordAuthentication no); UFW activo 22/80/443; Fail2ban jail sshd; PM2 log rotation 10MB/7días; MP_WEBHOOK_SECRET en .env producción</td><td><code>dc20be7</code></td></tr>
+  <tr><td>Seguridad — Monitoreo</td><td>Uptime Robot: monitor HTTPS todasmiscosas.com cada 5 min</td><td>—</td></tr>
+  <tr><td>Seguridad — Backup cifrado</td><td><code>backup-local.sh</code> cifra <code>.env</code> con GPG AES-256 si <code>TMC_BACKUP_PASSPHRASE</code> está definida</td><td><code>f6aacd1</code></td></tr>
+  <tr><td>Docs — Rotación JWT</td><td><code>docs/jwt-secret-rotation.md</code>: procedimiento para rotar JWT secret en Supabase + VPS</td><td><code>f6aacd1</code></td></tr>
 </table>
 
 <h2>Cambios v1.7.1 — 29 mayo 2026</h2>
@@ -1312,7 +1316,7 @@ curl http://localhost:4000/health</pre>
      FOOTER
 ══════════════════════════════════════════════════════════════ -->
 <div class="footer">
-  TodasMisCosas.com — Documentación técnica interna · Versión 1.7.2 · Mayo 2026<br>
+  TodasMisCosas.com — Documentación técnica interna · Versión 1.7.3 · Mayo 2026<br>
   Alejandro Laporte · Guillermo Domínguez<br>
   <em>Este documento es confidencial. No distribuir.</em>
 </div>
