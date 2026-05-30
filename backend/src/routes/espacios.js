@@ -4,7 +4,7 @@ const router = express.Router();
 
 const ctrl  = require('../controllers/espaciosController');
 const { requireAuth, requireOferente, optionalAuth } = require('../middleware/auth');
-const { uploadMiddleware } = require('../middleware/upload');
+const { uploadMiddleware, validateMagicBytes } = require('../middleware/upload');
 
 const validarEspacio = [
   body('nombre').trim().notEmpty().withMessage('Nombre requerido').isLength({ max: 200 }),
@@ -35,6 +35,7 @@ router.post(
   '/:id/fotos',
   requireAuth,
   uploadMiddleware.array('fotos', 10),
+  validateMagicBytes,
   ctrl.subirFotos
 );
 

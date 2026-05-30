@@ -6,6 +6,7 @@ const path = require('path');
 require('dotenv').config();
 
 const errorHandler = require('./middleware/errorHandler');
+const { apiLimiter, authLimiter } = require('./middleware/rateLimits');
 const { iniciarCronRecordatorios } = require('./jobs/recordatorios');
 const { iniciarCronInactividad } = require('./jobs/inactividad');
 const { iniciarCronMailing } = require('./jobs/mailing');
@@ -29,11 +30,12 @@ const app = express();
 // ── Security & middleware ───────────────────────────────────────
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'http://localhost:3000',
+  ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:3001'] : []),
+];
 app.use(cors({
-  origin: [
-    process.env.FRONTEND_URL || 'http://localhost:3000',
-    'http://localhost:3001',
-  ],
+  origin: allowedOrigins,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -41,10 +43,14 @@ app.use(cors({
 
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 app.use(express.json({
-  limit: '10mb',
+  limit: '100kb',
   verify: (req, _res, buf) => { req.rawBody = buf; },
 }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '100kb' }));
+
+// ── Rate limiting ──────────────────────────────────────────────
+app.use('/api/auth', authLimiter);
+app.use('/api', apiLimiter);
 
 // ── Static uploads ─────────────────────────────────────────────
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));

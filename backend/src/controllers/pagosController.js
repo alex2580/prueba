@@ -1,7 +1,36 @@
+const crypto = require('crypto');
 const { queryOne, query } = require('../db/connection');
 const mercadopagoService = require('../services/mercadopagoService');
 const emailService = require('../services/emailService');
 const { validationResult } = require('express-validator');
+
+// Verifies the x-signature header sent by MercadoPago.
+// Returns true if valid, or true when MP_WEBHOOK_SECRET is not configured (graceful degradation).
+// Docs: https://www.mercadopago.com/developers/en/docs/your-integrations/notifications/webhooks
+function verifyMPSignature(req) {
+  const secret = process.env.MP_WEBHOOK_SECRET;
+  if (!secret) {
+    console.warn('[webhook] MP_WEBHOOK_SECRET not set — skipping signature verification');
+    return true;
+  }
+
+  const signatureHeader = req.headers['x-signature'] || '';
+  const requestId      = req.headers['x-request-id'] || '';
+  const { type, data } = req.body;
+
+  const tsMatch = signatureHeader.match(/ts=([^,]+)/);
+  const v1Match = signatureHeader.match(/v1=([^,]+)/);
+  if (!tsMatch || !v1Match) return false;
+
+  const ts       = tsMatch[1];
+  const received = v1Match[1];
+  const dataId   = data?.id ?? '';
+
+  const manifest = `id:${dataId};request-id:${requestId};ts:${ts}`;
+  const expected = crypto.createHmac('sha256', secret).update(manifest).digest('hex');
+
+  return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(received));
+}
 
 // POST /api/pagos/preferencia
 // Crea una preferencia de pago en MercadoPago y devuelve el init_point
@@ -64,6 +93,11 @@ async function crearPreferencia(req, res, next) {
 // MercadoPago llama a este endpoint cuando el pago se procesa
 async function webhook(req, res, next) {
   try {
+    if (!verifyMPSignature(req)) {
+      console.warn('[webhook] Firma inválida — request rechazada');
+      return res.sendStatus(401);
+    }
+
     const { type, data } = req.body;
 
     if (type === 'payment') {

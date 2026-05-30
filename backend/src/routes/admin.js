@@ -3,12 +3,11 @@ const router = express.Router();
 
 const ctrl = require('../controllers/adminController');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
+const { contactLimiter } = require('../middleware/rateLimits');
 
-// ── Public ─────────────────────────────────────────────────────
-// Contact form — no auth required
-router.post('/consultas', ctrl.crearConsulta);
-// Additional services notification — no auth required
-router.post('/notificar-servicios', ctrl.notificarServicios);
+// ── Public (contact forms — intentionally no auth) ─────────────
+router.post('/consultas',          contactLimiter, ctrl.crearConsulta);
+router.post('/notificar-servicios', contactLimiter, ctrl.notificarServicios);
 
 // ── All routes below require admin auth ───────────────────────
 router.use(requireAuth, requireAdmin);
