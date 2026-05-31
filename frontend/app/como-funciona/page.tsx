@@ -123,9 +123,9 @@ export default function ComoFuncionaPage() {
         padding: '3rem 1.5rem 2.5rem',
         textAlign: 'center',
       }}>
-        <div style={{ fontSize: '2.8rem', marginBottom: '.75rem' }}>💡</div>
-        <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: 'clamp(1.6rem, 4vw, 2.4rem)', marginBottom: '.75rem' }}>
-          ¿Cómo <span style={{ color: 'var(--orange)' }}>funciona</span>?
+        <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: 'clamp(2rem, 5vw, 3.2rem)', lineHeight: 1.15, marginBottom: '1.25rem' }}>
+          <span style={{ color: 'var(--text)', display: 'block' }}>Guardá lo que querés</span>
+          <span style={{ color: 'var(--orange)', display: 'block' }}>Donde querés.</span>
         </h1>
         <p style={{ color: 'var(--text2)', fontSize: '.95rem', lineHeight: 1.7, maxWidth: 560, margin: '0 auto 1.75rem' }}>
           Conectamos personas y empresas que necesitan guardar cosas con quienes tienen espacio disponible.
