@@ -14,12 +14,11 @@ interface MarkerEspacioProps {
  * Renders a marker preview card shown when user clicks a map marker.
  * This is the overlay card that appears at the bottom of the map.
  */
-export function MarkerEspacioCard({ espacio, onClose, onVerDetalle, onReservar, onChat }: {
+export function MarkerEspacioCard({ espacio, onClose, onVerDetalle, onReservar }: {
   espacio: Espacio;
   onClose: () => void;
   onVerDetalle: () => void;
   onReservar: () => void;
-  onChat?: () => void;
 }) {
   const imgSrc = espacio.imgs?.[0] || espacio.img_principal || getFotoFallback(espacio.id);
 
@@ -121,11 +120,6 @@ export function MarkerEspacioCard({ espacio, onClose, onVerDetalle, onReservar, 
             <button className="btn-secondary" onClick={onVerDetalle} style={{ padding: '.4rem .9rem', fontSize: '.8rem', borderRadius: 'var(--r2)' }}>
               Ver detalle
             </button>
-            {onChat && (
-              <button className="btn-secondary" onClick={onChat} style={{ padding: '.4rem .9rem', fontSize: '.8rem', borderRadius: 'var(--r2)' }}>
-                💬 Consultar
-              </button>
-            )}
             {espacio.disponible && (
               <button className="btn-primary" onClick={onReservar} style={{ padding: '.4rem .9rem', fontSize: '.8rem', borderRadius: 'var(--r2)' }}>
                 Reservar

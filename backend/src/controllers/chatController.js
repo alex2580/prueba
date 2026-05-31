@@ -103,10 +103,21 @@ async function iniciarConversacion(req, res, next) {
     const { espacio_id, mensaje } = req.body;
     const demandante_id = req.user.id;
 
-    const espacio = await queryOne('SELECT id, oferente_id FROM espacios WHERE id = ? AND activo = TRUE', [espacio_id]);
+    const espacio = await queryOne('SELECT id, oferente_id FROM espacios WHERE id = ?', [espacio_id]);
     if (!espacio) return res.status(404).json({ error: 'Espacio no encontrado' });
     if (espacio.oferente_id === demandante_id) {
       return res.status(400).json({ error: 'No puedes iniciar conversación con tu propio espacio' });
+    }
+
+    // Solo permitir chat si existe reserva pagada/activa/finalizada
+    const reserva = await queryOne(
+      `SELECT id FROM reservas
+       WHERE espacio_id = ? AND demandante_id = ? AND estado IN ('pagada', 'activa', 'finalizada')
+       LIMIT 1`,
+      [espacio_id, demandante_id]
+    );
+    if (!reserva) {
+      return res.status(403).json({ error: 'El chat está disponible solo después de completar un pago' });
     }
 
     const conv = await transaction(async (conn) => {

@@ -6,7 +6,6 @@ import { useEspacio } from '@/hooks/useEspacios';
 import { useAuth } from '@/hooks/useAuth';
 import { DetalleEspacio } from '@/components/espacios/DetalleEspacio';
 import { Modal } from '@/components/ui/Modal';
-import { ChatModal } from '@/components/chat/ChatModal';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { OTPStep } from '@/components/auth/OTPStep';
@@ -19,17 +18,11 @@ export default function EspacioPage() {
   const { user, token, login, register, loading: authLoading, error: authError,
     otpPending, otpEmailHint, otpCanales, verifyOTP, reenviarOTP } = useAuth();
 
-  const [chatModal, setChatModal] = useState(false);
   const [authModal, setAuthModal] = useState(false);
   const [authTab, setAuthTab]     = useState<'login' | 'register'>('login');
 
   function handleReservar() {
     router.push(`/espacio/${id}/reservar`);
-  }
-
-  function handleChat() {
-    if (!user) { setAuthModal(true); return; }
-    setChatModal(true);
   }
 
   if (loading) {
@@ -61,21 +54,8 @@ export default function EspacioPage() {
         <DetalleEspacio
           espacio={espacio}
           onReservar={handleReservar}
-          onChat={handleChat}
         />
       </div>
-
-      {/* Chat Modal */}
-      {user && token && (
-        <ChatModal
-          open={chatModal}
-          onClose={() => setChatModal(false)}
-          espacioId={espacio.id}
-          espacioNombre={espacio.nombre}
-          token={token}
-          userId={user.id}
-        />
-      )}
 
       {/* Auth Modal */}
       <Modal

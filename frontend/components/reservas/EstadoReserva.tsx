@@ -13,9 +13,10 @@ interface EstadoReservaProps {
   onCalificar?: () => void;
   onExtender?: () => void;
   onEliminar?: () => void;
+  onChat?: () => void;
 }
 
-export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar, onExtender, onEliminar }: EstadoReservaProps) {
+export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar, onExtender, onEliminar, onChat }: EstadoReservaProps) {
   const dias = diasEntre(reserva.fecha_desde, reserva.fecha_hasta);
 
   return (
@@ -83,6 +84,11 @@ export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar, onExt
       )}
       {(reserva.estado === 'pagada' || reserva.estado === 'finalizada') && (
         <div style={{ display: 'flex', gap: '.6rem', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+          {onChat && (
+            <Button variant="secondary" onClick={onChat} size="sm">
+              💬 Chat
+            </Button>
+          )}
           {reserva.estado === 'pagada' && onExtender && (
             <Button variant="secondary" onClick={onExtender} size="sm">
               📅 Extender reserva

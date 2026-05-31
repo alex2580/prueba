@@ -14,10 +14,9 @@ import { SEGURIDAD_OPCIONES } from '@/components/publicar/SeguridadChecklist';
 interface DetalleEspacioProps {
   espacio: Espacio;
   onReservar?: () => void;
-  onChat?: () => void;
 }
 
-export function DetalleEspacio({ espacio, onReservar, onChat }: DetalleEspacioProps) {
+export function DetalleEspacio({ espacio, onReservar }: DetalleEspacioProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [tab, setTab] = useState<'info' | 'reviews'>('info');
@@ -219,9 +218,6 @@ export function DetalleEspacio({ espacio, onReservar, onChat }: DetalleEspacioPr
                   ⏳ No disponible actualmente
                 </div>
               )}
-              <Button variant="secondary" onClick={onChat} style={{ width: '100%' }}>
-                💬 Consultar al oferente
-              </Button>
             </div>
 
             <div style={{ marginTop: '1rem', display: 'grid', gap: '.5rem' }}>

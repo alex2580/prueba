@@ -7,7 +7,10 @@ import { useRouter } from 'next/navigation';
 import { Loader } from '@googlemaps/js-api-loader';
 import { useAuth } from '@/hooks/useAuth';
 import { useReservas } from '@/hooks/useReservas';
-import { espaciosAPI, reservasAPI, usuariosAPI, reviewsAPI, favoritosAPI } from '@/lib/api';
+import { espaciosAPI, reservasAPI, usuariosAPI, reviewsAPI, favoritosAPI, chatAPI } from '@/lib/api';
+import { useConversaciones } from '@/hooks/useChat';
+import { ConversacionList } from '@/components/chat/ConversacionList';
+import { MensajesConversacion } from '@/components/chat/MensajesConversacion';
 import { CardEspacio } from '@/components/espacios/CardEspacio';
 import { SeguridadChecklist } from '@/components/publicar/SeguridadChecklist';
 import type { Espacio, Reserva } from '@/types';
@@ -53,11 +56,18 @@ export default function PanelPage() {
   // Favoritos
   const [favoritos, setFavoritos] = useState<Espacio[]>([]);
   const [favIds, setFavIds] = useState<Set<string>>(new Set());
+
+  // Chat / Mensajes
+  const { conversaciones, loading: convLoading, recargar: recargarConvs } = useConversaciones(token);
+  const [selectedConvId, setSelectedConvId] = useState<string | null>(null);
+  const [chatLoadingId, setChatLoadingId] = useState<string | null>(null);
+  const mensajesSectionRef = useRef<HTMLDivElement>(null);
   const [favLoading, setFavLoading] = useState(false);
 
   // Secciones desplegables
   const [openReservas, setOpenReservas] = useState(true);
   const [openFavoritos, setOpenFavoritos] = useState(true);
+  const [openMensajes, setOpenMensajes] = useState(true);
   const [openEspacios, setOpenEspacios] = useState(true);
 
   // Edit modal
@@ -109,6 +119,21 @@ export default function PanelPage() {
   const [reviewLoading, setReviewLoading] = useState(false);
   const [reviewError, setReviewError] = useState('');
   const [reviewOk, setReviewOk] = useState(false);
+
+  async function handleAbrirChat(espacioId: string) {
+    if (!token) return;
+    setChatLoadingId(espacioId);
+    try {
+      const conv = await chatAPI.iniciarConversacion({ espacio_id: espacioId }, token);
+      await recargarConvs();
+      setSelectedConvId(conv.id);
+      setTimeout(() => mensajesSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
+    } catch (e: any) {
+      alert(e?.message || 'No se pudo abrir el chat');
+    } finally {
+      setChatLoadingId(null);
+    }
+  }
 
   useEffect(() => {
     if (!authLoading && !user) router.push('/');
@@ -609,6 +634,7 @@ export default function PanelPage() {
                         onCalificar={['pagada', 'finalizada'].includes(r.estado) ? () => abrirReview(r) : undefined}
                         onExtender={r.estado === 'pagada' ? () => abrirExtension(r) : undefined}
                         onEliminar={['cancelada', 'finalizada'].includes(r.estado) ? () => ocultarReserva(r.id) : undefined}
+                        onChat={['pagada', 'finalizada'].includes(r.estado) ? () => handleAbrirChat(r.espacio_id) : undefined}
                       />
                     ))}
                   </div>
@@ -655,6 +681,52 @@ export default function PanelPage() {
                         token={token}
                       />
                     ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+
+          {/* ── SECTION: Mensajes ── */}
+          <section style={{ marginBottom: '1.5rem' }} ref={mensajesSectionRef}>
+            <button onClick={() => setOpenMensajes(v => !v)} className="seccion-toggle">
+              <span style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                <span>💬 Mensajes</span>
+                {conversaciones.some(c => (c.no_leidos ?? 0) > 0) && (
+                  <span className="pill pill--gray" style={{ fontSize: '.7rem', padding: '.1rem .45rem', background: 'var(--orange)', color: '#fff' }}>
+                    {conversaciones.reduce((acc, c) => acc + (c.no_leidos ?? 0), 0)}
+                  </span>
+                )}
+              </span>
+              <span className={`seccion-chevron${openMensajes ? ' open' : ''}`}>▾</span>
+            </button>
+            <div className={`seccion-body${openMensajes ? ' open' : ''}`}>
+              <div style={{ paddingTop: '.75rem' }}>
+                {convLoading ? (
+                  <p style={{ color: 'var(--text3)' }}>Cargando…</p>
+                ) : conversaciones.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text3)', background: 'var(--surface)', borderRadius: 'var(--r2)', border: '1px solid var(--border)' }}>
+                    <div style={{ fontSize: '2rem', marginBottom: '.5rem' }}>💬</div>
+                    <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, marginBottom: '.3rem' }}>No tenés conversaciones aún</div>
+                    <p style={{ fontSize: '.85rem' }}>El chat se habilita automáticamente cuando completás un pago.</p>
+                  </div>
+                ) : (
+                  <div style={{ display: 'grid', gridTemplateColumns: selectedConvId ? '280px 1fr' : '1fr', gap: '1rem', background: 'var(--surface)', borderRadius: 'var(--r2)', border: '1px solid var(--border)', overflow: 'hidden' }}>
+                    <div style={{ borderRight: selectedConvId ? '1px solid var(--border)' : 'none' }}>
+                      <ConversacionList
+                        conversaciones={conversaciones}
+                        selectedId={selectedConvId}
+                        onSelect={c => setSelectedConvId(c.id)}
+                        userId={user?.id ?? ''}
+                      />
+                    </div>
+                    {selectedConvId && token && user && (
+                      <MensajesConversacion
+                        conversacionId={selectedConvId}
+                        token={token}
+                        userId={user.id}
+                      />
+                    )}
                   </div>
                 )}
               </div>
@@ -802,6 +874,24 @@ export default function PanelPage() {
                                       </div>
                                     </div>
                                     <EstadoBadge estado={r.estado} />
+                                    {['pagada', 'finalizada'].includes(r.estado) && (
+                                      <button
+                                        className="btn-secondary"
+                                        style={{ fontSize: '.72rem', padding: '.2rem .6rem', borderRadius: 'var(--r1)' }}
+                                        onClick={() => {
+                                          setSelectedConvId(null);
+                                          recargarConvs().then(() => {
+                                            const conv = conversaciones.find(c => c.espacio_id === r.espacio_id && c.demandante_id === r.usuario_id);
+                                            if (conv) {
+                                              setSelectedConvId(conv.id);
+                                              mensajesSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                            }
+                                          });
+                                        }}
+                                      >
+                                        💬 Chat
+                                      </button>
+                                    )}
                                   </div>
                                 </div>
                               ))}

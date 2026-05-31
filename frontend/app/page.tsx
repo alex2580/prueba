@@ -17,7 +17,6 @@ import { Button } from '@/components/ui/Button';
 
 const MapaEspacios = dynamic(() => import('@/components/mapa/MapaEspacios').then(m => ({ default: m.MapaEspacios })), { ssr: false });
 const MarkerEspacioCard = dynamic(() => import('@/components/mapa/MarkerEspacio').then(m => ({ default: m.MarkerEspacioCard })), { ssr: false });
-const ChatModal = dynamic(() => import('@/components/chat/ChatModal').then(m => ({ default: m.ChatModal })), { ssr: false });
 
 type Vista = 'mapa' | 'lista';
 
@@ -41,7 +40,6 @@ export default function HomePage() {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [geoLoading, setGeoLoading] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
-  const [chatEspacio, setChatEspacio] = useState<Espacio | null>(null);
   const [favIds, setFavIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -114,11 +112,6 @@ export default function HomePage() {
 
   function handleReservar(espacio: Espacio) {
     router.push(`/espacio/${espacio.id}/reservar`);
-  }
-
-  function handleChatFromMap(espacio: Espacio) {
-    if (!user) { setAuthTab('login'); setAuthModal(true); return; }
-    setChatEspacio(espacio);
   }
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -260,7 +253,6 @@ export default function HomePage() {
                 onClose={() => setSelectedEspacio(null)}
                 onVerDetalle={() => router.push(`/espacio/${selectedEspacio.id}?from=mapa`)}
                 onReservar={() => router.push(`/espacio/${selectedEspacio.id}/reservar?from=mapa`)}
-                onChat={() => handleChatFromMap(selectedEspacio)}
               />
             )}
           </div>
@@ -614,17 +606,6 @@ export default function HomePage() {
         )}
       </Modal>
 
-      {/* Chat Modal — desde el mapa */}
-      {user && token && chatEspacio && (
-        <ChatModal
-          open={!!chatEspacio}
-          onClose={() => setChatEspacio(null)}
-          espacioId={chatEspacio.id}
-          espacioNombre={chatEspacio.nombre}
-          token={token}
-          userId={user.id}
-        />
-      )}
     </div>
   );
 }
