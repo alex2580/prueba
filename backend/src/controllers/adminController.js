@@ -352,17 +352,34 @@ async function desbloquearUsuario(req, res, next) {
 // GET /api/admin/publicaciones
 async function getPublicaciones(req, res, next) {
   try {
-    const rows = await query(`
-      SELECT e.id, e.nombre, e.barrio, e.pais, e.categoria, e.tipo,
-             e.precio_dia, e.precio_mes, e.moneda,
-             e.disponible, e.activo, e.inactiva_auto, e.rating, e.reviews_count,
-             e.reservas_mes, e.created_at,
-             e.eliminado_por_oferente, e.eliminado_at,
-             u.id AS oferente_id, u.nombre AS oferente_nombre, u.email AS oferente_email
-      FROM espacios e
-      JOIN usuarios u ON e.oferente_id = u.id
-      ORDER BY e.created_at DESC
-    `);
+    let rows;
+    try {
+      rows = await query(`
+        SELECT e.id, e.nombre, e.barrio, e.pais, e.categoria, e.tipo,
+               e.precio_dia, e.precio_mes, e.moneda,
+               e.disponible, e.activo, e.inactiva_auto, e.rating, e.reviews_count,
+               e.reservas_mes, e.created_at,
+               e.eliminado_por_oferente, e.eliminado_at,
+               u.id AS oferente_id, u.nombre AS oferente_nombre, u.email AS oferente_email
+        FROM espacios e
+        JOIN usuarios u ON e.oferente_id = u.id
+        ORDER BY e.created_at DESC
+      `);
+    } catch (e) {
+      if (e.code !== 'ER_BAD_FIELD_ERROR') throw e;
+      // Columnas nuevas aún no migradas — fallback sin ellas
+      rows = await query(`
+        SELECT e.id, e.nombre, e.barrio, e.pais, e.categoria, e.tipo,
+               e.precio_dia, e.precio_mes, e.moneda,
+               e.disponible, e.activo, e.inactiva_auto, e.rating, e.reviews_count,
+               e.reservas_mes, e.created_at,
+               u.id AS oferente_id, u.nombre AS oferente_nombre, u.email AS oferente_email
+        FROM espacios e
+        JOIN usuarios u ON e.oferente_id = u.id
+        ORDER BY e.created_at DESC
+      `);
+      rows = rows.map(r => ({ ...r, eliminado_por_oferente: 0, eliminado_at: null }));
+    }
     res.json(rows.map(r => ({
       ...r,
       precio_dia:   r.precio_dia  != null ? parseFloat(r.precio_dia)  : null,
