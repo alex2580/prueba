@@ -23,6 +23,7 @@ import { Modal } from '@/components/ui/Modal';
 import { Avatar } from '@/components/ui/Avatar';
 import { formatARS, formatFechaCorta, netoOferente } from '@/lib/utils';
 import { SiteHeader } from '@/components/ui/SiteHeader';
+import { detectViolation, getViolationMessage } from '@/lib/contactFilter';
 import { CalendarioDisponibilidad, type Disponibilidad } from '@/components/publicar/CalendarioDisponibilidad';
 
 const MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || '';
@@ -809,7 +810,6 @@ export default function PanelPage() {
                             value={respuestasMap[c.id] || ''}
                             onChange={e => {
                               const val = e.target.value;
-                              const { detectViolation, getViolationMessage } = require('@/lib/contactFilter') as typeof import('@/lib/contactFilter');
                               const v = detectViolation(val);
                               if (v) { alert(getViolationMessage(v)); return; }
                               setRespuestasMap(m => ({ ...m, [c.id]: val }));
