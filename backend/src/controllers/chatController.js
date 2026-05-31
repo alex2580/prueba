@@ -1,5 +1,8 @@
 const { query, queryOne, transaction } = require('../db/connection');
 const { validationResult } = require('express-validator');
+const { sendNuevoMensajeChat } = require('../services/emailService');
+
+const CHAT_EMAIL_COOLDOWN_MIN = 15;
 
 // ── HTTP controllers ────────────────────────────────────────────
 
@@ -150,6 +153,11 @@ async function iniciarConversacion(req, res, next) {
       return newConv;
     });
 
+    // Notificar al oferente del primer mensaje
+    if (mensaje) {
+      notificarDestinatario(conv, demandante_id, mensaje);
+    }
+
     res.status(201).json(conv);
   } catch (err) {
     next(err);
@@ -192,10 +200,46 @@ async function enviarMensaje(req, res, next) {
       io.to(`conv:${conv.id}`).emit('nuevo_mensaje', msg);
     }
 
+    // Email al destinatario (sin await — no bloquea la respuesta)
+    notificarDestinatario(conv, req.user.id, texto.trim());
+
     res.status(201).json(msg);
   } catch (err) {
     next(err);
   }
+}
+
+// ── Email notification helper ──────────────────────────────────
+async function notificarDestinatario(conv, autorId, texto) {
+  try {
+    const destinatarioId = conv.demandante_id === autorId ? conv.oferente_id : conv.demandante_id;
+
+    // Cooldown: si el mismo autor ya mandó un mensaje en los últimos N minutos, no reenviar email
+    const reciente = await queryOne(
+      `SELECT id FROM mensajes
+       WHERE conversacion_id = ? AND autor_id = ?
+         AND created_at >= DATE_SUB(NOW(), INTERVAL ? MINUTE)
+         AND id != (SELECT MAX(id) FROM mensajes WHERE conversacion_id = ? AND autor_id = ?)
+       LIMIT 1`,
+      [conv.id, autorId, CHAT_EMAIL_COOLDOWN_MIN, conv.id, autorId]
+    );
+    if (reciente) return;
+
+    const [destinatario, autor, espacio] = await Promise.all([
+      queryOne('SELECT nombre, email FROM usuarios WHERE id = ?', [destinatarioId]),
+      queryOne('SELECT nombre FROM usuarios WHERE id = ?', [autorId]),
+      queryOne('SELECT nombre FROM espacios WHERE id = ?', [conv.espacio_id]),
+    ]);
+
+    if (destinatario?.email && autor && espacio) {
+      await sendNuevoMensajeChat(destinatario.email, destinatario.nombre, {
+        nombreRemitente: autor.nombre,
+        espacioNombre: espacio.nombre,
+        previewMensaje: texto,
+        conversacionId: conv.id,
+      });
+    }
+  } catch (_) { /* no bloquear el flujo si el email falla */ }
 }
 
 // ── Socket.io handlers ─────────────────────────────────────────

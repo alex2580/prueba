@@ -639,6 +639,31 @@ async function sendMejorarPuntuacion({ nombre, email, tel, espacioNombre, puntaj
   });
 }
 
+// ── Chat: nuevo mensaje recibido ────────────────────────────────
+async function sendNuevoMensajeChat(toEmail, nombreDestinatario, { nombreRemitente, espacioNombre, previewMensaje, conversacionId }) {
+  const preview = previewMensaje?.length > 120
+    ? previewMensaje.slice(0, 120) + '…'
+    : previewMensaje;
+
+  const html = baseTemplate('Nuevo mensaje en tu chat', `
+    <h2>💬 Nuevo mensaje de ${nombreRemitente}</h2>
+    <p>Hola <span class="highlight">${nombreDestinatario}</span>, recibiste un mensaje en la conversación sobre <strong>${espacioNombre}</strong>.</p>
+    <div style="background:#0f172a;border-left:3px solid #e8622a;border-radius:0 10px 10px 0;padding:14px 16px;margin:16px 0;">
+      <p style="margin:0;color:#e2e8f0;font-style:italic;">"${preview}"</p>
+      <p style="margin:8px 0 0;font-size:12px;color:#64748b;">— ${nombreRemitente}</p>
+    </div>
+    <a class="btn" href="${process.env.FRONTEND_URL}/panel">Responder →</a>
+    <p style="font-size:12px;color:#64748b;margin-top:16px">Ingresá a tu panel y abrí el chat para responder.</p>
+  `);
+
+  await transporter.sendMail({
+    from: FROM,
+    to: toEmail,
+    subject: `💬 ${nombreRemitente} te envió un mensaje — ${espacioNombre}`,
+    html,
+  });
+}
+
 // ── Newsletter / Mailing masivo ──────────────────────────────────
 async function sendNewsletter(toEmail, nombre, { asunto, cuerpoHtml }) {
   const html = baseTemplate(asunto, `
@@ -680,4 +705,5 @@ module.exports = {
   sendPublicacionDesactivada,
   sendMejorarPuntuacion,
   sendNewsletter,
+  sendNuevoMensajeChat,
 };
