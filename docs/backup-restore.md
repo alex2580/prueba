@@ -45,19 +45,54 @@ scp root@2.24.105.151:/var/backups/todasmiscosas/tmc_backup_20260523_220000.tar.
 
 ### Opción B — Backup automático diario (cron job)
 
-Para que el backup se haga solo todos los días a las 3 AM Argentina, ejecutar en el VPS:
+Ejecutar **una sola vez** en el VPS para dejarlo configurado:
 
 ```bash
-crontab -e
+# 1. Crear los comandos de pausa/reanudación
+cat > /usr/local/bin/tmc-backup-off << 'EOF'
+#!/bin/bash
+mkdir -p /var/backups/todasmiscosas
+touch /var/backups/todasmiscosas/.paused
+echo "⏸️  Backup automático PAUSADO. Corré 'tmc-backup-on' para reactivarlo."
+EOF
+
+cat > /usr/local/bin/tmc-backup-on << 'EOF'
+#!/bin/bash
+rm -f /var/backups/todasmiscosas/.paused
+echo "▶️  Backup automático REACTIVADO. El próximo corre a las 3 AM."
+EOF
+
+chmod +x /usr/local/bin/tmc-backup-off /usr/local/bin/tmc-backup-on
+
+# 2. Agregar el cron (3 AM hora Argentina = 6 AM UTC)
+(crontab -l 2>/dev/null; echo "0 6 * * * bash /var/www/todasmiscosas/backup.sh >> /var/log/tmc-backup.log 2>&1") | crontab -
+
+echo "✅ Cron configurado. Backup automático diario a las 3 AM (ARG)."
 ```
 
-Agregar al final del archivo:
+El script conserva automáticamente los últimos 7 backups y borra los anteriores.
 
-```
-0 3 * * * bash /var/www/todasmiscosas/backup.sh >> /var/log/tmc-backup.log 2>&1
+---
+
+### Pausar / reactivar el backup automático
+
+Cuando estés trabajando en el VPS y no querés que el cron interrumpa:
+
+```bash
+tmc-backup-off   # pausa el backup automático
 ```
 
-Guardar y salir. El script conserva automáticamente los últimos 7 backups y borra los anteriores.
+Cuando terminás:
+
+```bash
+tmc-backup-on    # reactiva el backup automático
+```
+
+El comando `tmc-backup-off` no cancela un backup en curso — solo evita que el siguiente cron lo ejecute. Si querés verificar el estado:
+
+```bash
+ls /var/backups/todasmiscosas/.paused 2>/dev/null && echo "PAUSADO" || echo "ACTIVO"
+```
 
 ---
 

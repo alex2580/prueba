@@ -7,8 +7,16 @@
 
 set -e
 
-DATE=$(date +%Y%m%d_%H%M%S)
 BACKUP_DIR="/var/backups/todasmiscosas"
+PAUSE_FLAG="$BACKUP_DIR/.paused"
+
+# Si el backup está pausado, salir sin hacer nada
+if [ -f "$PAUSE_FLAG" ]; then
+  echo "⏸️  Backup pausado (existe $PAUSE_FLAG). Corré 'tmc-backup-on' para reactivarlo."
+  exit 0
+fi
+
+DATE=$(date +%Y%m%d_%H%M%S)
 BACKUP_NAME="tmc_backup_$DATE"
 APP_DIR="/var/www/todasmiscosas"
 BACKEND_ENV="$APP_DIR/backend/.env"
