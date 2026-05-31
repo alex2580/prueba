@@ -18,7 +18,7 @@ const nextConfig = {
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob: https://*.supabase.co https://maps.googleapis.com https://maps.gstatic.com https://picsum.photos https://fastly.picsum.photos https://todasmiscosas.com",
       "connect-src 'self' https://*.supabase.co wss://todasmiscosas.com ws://localhost:* https://api.mercadopago.com https://maps.googleapis.com",
-      "frame-src https://www.mercadopago.com https://www.mercadolibre.com",
+      "frame-src https://www.mercadopago.com https://www.mercadolibre.com https://maps.google.com https://www.google.com",
       "object-src 'none'",
       "base-uri 'self'",
     ].join('; ');
