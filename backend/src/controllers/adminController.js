@@ -357,6 +357,7 @@ async function getPublicaciones(req, res, next) {
              e.precio_dia, e.precio_mes, e.moneda,
              e.disponible, e.activo, e.inactiva_auto, e.rating, e.reviews_count,
              e.reservas_mes, e.created_at,
+             e.eliminado_por_oferente, e.eliminado_at,
              u.id AS oferente_id, u.nombre AS oferente_nombre, u.email AS oferente_email
       FROM espacios e
       JOIN usuarios u ON e.oferente_id = u.id

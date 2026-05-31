@@ -58,6 +58,8 @@ interface PublicacionAdmin {
   disponible: number;
   activo: number;
   inactiva_auto: number;
+  eliminado_por_oferente: number;
+  eliminado_at: string | null;
   rating: number | null;
   reviews_count: number;
   reservas_mes: number;
@@ -1711,6 +1713,25 @@ function TabPublicaciones({ token }: { token: string }) {
                 }}>
                   {!pub.activo ? '● No visible' : pub.disponible ? '● Activa' : pub.inactiva_auto ? '● Pausada auto' : '● Pausada'}
                 </span>
+
+                {!!pub.eliminado_por_oferente && (
+                  <span style={{
+                    padding: '.2rem .65rem',
+                    borderRadius: 99,
+                    fontSize: '.72rem',
+                    fontWeight: 700,
+                    background: 'rgba(239,68,68,.12)',
+                    color: 'var(--red)',
+                    border: '1px solid rgba(239,68,68,.25)',
+                  }}>
+                    🗑️ Baja por oferente
+                    {pub.eliminado_at && (
+                      <span style={{ fontWeight: 400, opacity: .8 }}>
+                        {' · '}{new Date(pub.eliminado_at).toLocaleDateString('es-AR')}
+                      </span>
+                    )}
+                  </span>
+                )}
 
                 <div style={{ display: 'flex', gap: '.4rem' }}>
                   <button
