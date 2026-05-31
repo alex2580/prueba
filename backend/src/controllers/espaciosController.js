@@ -245,7 +245,7 @@ async function eliminar(req, res, next) {
       return res.status(403).json({ error: 'Sin permisos para eliminar este espacio' });
     }
 
-    await query('UPDATE espacios SET activo = FALSE WHERE id = ?', [req.params.id]);
+    await query('DELETE FROM espacios WHERE id = ?', [req.params.id]);
     res.json({ message: 'Espacio eliminado', id: req.params.id });
   } catch (err) {
     next(err);
