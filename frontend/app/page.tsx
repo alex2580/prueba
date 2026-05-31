@@ -542,7 +542,7 @@ export default function HomePage() {
                 style={{ marginTop: '.4rem' }}
               >
                 <option value="consulta">Consulta</option>
-                <option value="queja">Queja</option>
+                <option value="reclamo">Reclamo</option>
                 <option value="sugerencia">Sugerencia</option>
               </select>
             </label>

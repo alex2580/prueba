@@ -28,7 +28,7 @@ interface Consulta {
   email: string;
   asunto: string;
   mensaje: string;
-  tipo: 'consulta' | 'queja' | 'sugerencia';
+  tipo: 'consulta' | 'reclamo' | 'sugerencia';
   estado: 'pendiente' | 'respondida' | 'resuelta';
   respuesta: string | null;
   fecha: string;
@@ -81,14 +81,14 @@ function tipoIcon(tipo: string) {
 }
 
 function consultaTipoLabel(tipo: string) {
-  const map: Record<string, string> = { consulta: 'Consulta', queja: 'Queja', sugerencia: 'Sugerencia' };
+  const map: Record<string, string> = { consulta: 'Consulta', reclamo: 'Reclamo', sugerencia: 'Sugerencia' };
   return map[tipo] ?? tipo;
 }
 
 function consultaTipoColor(tipo: string) {
   const map: Record<string, string> = {
     consulta: 'var(--blue)',
-    queja: 'var(--red)',
+    reclamo: 'var(--red)',
     sugerencia: 'var(--mint)',
   };
   return map[tipo] ?? 'var(--text3)';
