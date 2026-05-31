@@ -1,4 +1,5 @@
 const { query, queryOne } = require('../db/connection');
+const { sendNuevaConsultaPublica } = require('../services/emailService');
 
 // GET /api/espacios/:id/consultas  — público
 async function listar(req, res, next) {
@@ -24,13 +25,19 @@ async function crear(req, res, next) {
       return res.status(400).json({ error: 'La pregunta no puede estar vacía' });
     }
 
-    const espacio = await queryOne('SELECT id, oferente_id FROM espacios WHERE id = ? AND activo = TRUE', [req.params.id]);
+    const espacio = await queryOne(
+      `SELECT e.id, e.nombre, e.oferente_id, u.nombre AS oferente_nombre, u.email AS oferente_email
+       FROM espacios e
+       JOIN usuarios u ON e.oferente_id = u.id
+       WHERE e.id = ? AND e.activo = TRUE`,
+      [req.params.id]
+    );
     if (!espacio) return res.status(404).json({ error: 'Espacio no encontrado' });
     if (espacio.oferente_id === req.user.id) {
       return res.status(400).json({ error: 'No podés consultar tu propio espacio' });
     }
 
-    const autorNombre = req.user.nombre?.split(' ')[0] || 'Usuario'; // solo el primer nombre
+    const autorNombre = req.user.nombre?.split(' ')[0] || 'Usuario';
 
     await query(
       `INSERT INTO consultas_espacio (espacio_id, autor_id, autor_nombre, pregunta)
@@ -44,6 +51,15 @@ async function crear(req, res, next) {
        ORDER BY created_at DESC LIMIT 1`,
       [req.params.id, req.user.id]
     );
+
+    // Notificar al oferente por email (fire-and-forget)
+    sendNuevaConsultaPublica(espacio.oferente_email, espacio.oferente_nombre, {
+      autorNombre,
+      espacioNombre: espacio.nombre,
+      pregunta: pregunta.trim(),
+      espacioId: espacio.id,
+    }).catch(() => {});
+
     res.status(201).json(nueva);
   } catch (err) {
     next(err);

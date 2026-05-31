@@ -664,6 +664,29 @@ async function sendNuevoMensajeChat(toEmail, nombreDestinatario, { nombreRemiten
   });
 }
 
+// ── Consulta pública en una publicación ─────────────────────────
+async function sendNuevaConsultaPublica(toEmail, nombreOferente, { autorNombre, espacioNombre, pregunta, espacioId }) {
+  const preview = pregunta?.length > 160 ? pregunta.slice(0, 160) + '…' : pregunta;
+
+  const html = baseTemplate('Nueva consulta en tu publicación', `
+    <h2>❓ Nueva consulta de ${autorNombre}</h2>
+    <p>Hola <span class="highlight">${nombreOferente}</span>, alguien hizo una consulta en tu publicación <strong>${espacioNombre}</strong>.</p>
+    <div style="background:#0f172a;border-left:3px solid #e8622a;border-radius:0 10px 10px 0;padding:14px 16px;margin:16px 0;">
+      <p style="margin:0;color:#e2e8f0;font-style:italic;">"${preview}"</p>
+      <p style="margin:8px 0 0;font-size:12px;color:#64748b;">— ${autorNombre}</p>
+    </div>
+    <a class="btn" href="${process.env.FRONTEND_URL}/panel">Responder desde mi panel →</a>
+    <p style="font-size:12px;color:#64748b;margin-top:16px">Ingresá a tu panel y buscá la sección <strong>Consultas pendientes</strong> para responderla.</p>
+  `);
+
+  await transporter.sendMail({
+    from: FROM,
+    to: toEmail,
+    subject: `❓ Nueva consulta en "${espacioNombre}" — TodasMisCosas.com`,
+    html,
+  });
+}
+
 // ── Newsletter / Mailing masivo ──────────────────────────────────
 async function sendNewsletter(toEmail, nombre, { asunto, cuerpoHtml }) {
   const html = baseTemplate(asunto, `
@@ -706,4 +729,5 @@ module.exports = {
   sendMejorarPuntuacion,
   sendNewsletter,
   sendNuevoMensajeChat,
+  sendNuevaConsultaPublica,
 };
