@@ -687,6 +687,34 @@ async function sendNuevaConsultaPublica(toEmail, nombreOferente, { autorNombre, 
   });
 }
 
+// ── Respuesta a consulta pública ────────────────────────────────
+async function sendRespuestaConsultaPublica(toEmail, nombreDemandante, { espacioNombre, pregunta, respuesta, espacioId }) {
+  const previewPregunta = pregunta?.length > 120 ? pregunta.slice(0, 120) + '…' : pregunta;
+  const previewRespuesta = respuesta?.length > 160 ? respuesta.slice(0, 160) + '…' : respuesta;
+
+  const html = baseTemplate('Te respondieron tu consulta', `
+    <h2>💬 El oferente respondió tu consulta</h2>
+    <p>Hola <span class="highlight">${nombreDemandante}</span>, tu consulta sobre <strong>${espacioNombre}</strong> fue respondida.</p>
+    <div style="background:#0f172a;border-left:3px solid #64748b;border-radius:0 10px 10px 0;padding:14px 16px;margin:16px 0 8px;">
+      <p style="margin:0;font-size:12px;color:#64748b;margin-bottom:6px;">Tu pregunta:</p>
+      <p style="margin:0;color:#94a3b8;font-style:italic;">"${previewPregunta}"</p>
+    </div>
+    <div style="background:#0f172a;border-left:3px solid #e8622a;border-radius:0 10px 10px 0;padding:14px 16px;margin:0 0 16px;">
+      <p style="margin:0;font-size:12px;color:#e8622a;margin-bottom:6px;">Respuesta del oferente:</p>
+      <p style="margin:0;color:#e2e8f0;">"${previewRespuesta}"</p>
+    </div>
+    <a class="btn" href="${process.env.FRONTEND_URL}/espacio/${espacioId}">Ver publicación →</a>
+    <p style="font-size:12px;color:#64748b;margin-top:16px">Podés ver la respuesta completa en la sección de consultas de la publicación.</p>
+  `);
+
+  await transporter.sendMail({
+    from: FROM,
+    to: toEmail,
+    subject: `💬 El oferente respondió tu consulta sobre "${espacioNombre}"`,
+    html,
+  });
+}
+
 // ── Newsletter / Mailing masivo ──────────────────────────────────
 async function sendNewsletter(toEmail, nombre, { asunto, cuerpoHtml }) {
   const html = baseTemplate(asunto, `
@@ -730,4 +758,5 @@ module.exports = {
   sendNewsletter,
   sendNuevoMensajeChat,
   sendNuevaConsultaPublica,
+  sendRespuestaConsultaPublica,
 };

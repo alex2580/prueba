@@ -1,5 +1,5 @@
 const { query, queryOne } = require('../db/connection');
-const { sendNuevaConsultaPublica } = require('../services/emailService');
+const { sendNuevaConsultaPublica, sendRespuestaConsultaPublica } = require('../services/emailService');
 
 // GET /api/espacios/:id/consultas  — público
 async function listar(req, res, next) {
@@ -75,9 +75,12 @@ async function responder(req, res, next) {
     }
 
     const consulta = await queryOne(
-      `SELECT c.id, e.oferente_id
+      `SELECT c.id, c.pregunta, c.autor_id, c.espacio_id,
+              e.nombre AS espacio_nombre, e.oferente_id,
+              u.nombre AS autor_nombre_completo, u.email AS autor_email
        FROM consultas_espacio c
        JOIN espacios e ON c.espacio_id = e.id
+       JOIN usuarios u ON c.autor_id = u.id
        WHERE c.id = ?`,
       [req.params.id]
     );
@@ -96,6 +99,15 @@ async function responder(req, res, next) {
        FROM consultas_espacio WHERE id = ?`,
       [req.params.id]
     );
+
+    // Notificar al demandante que recibió respuesta (fire-and-forget)
+    sendRespuestaConsultaPublica(consulta.autor_email, consulta.autor_nombre_completo, {
+      espacioNombre: consulta.espacio_nombre,
+      pregunta: consulta.pregunta,
+      respuesta: respuesta.trim(),
+      espacioId: consulta.espacio_id,
+    }).catch(() => {});
+
     res.json(actualizada);
   } catch (err) {
     next(err);
