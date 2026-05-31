@@ -808,8 +808,9 @@ export default function PanelPage() {
                             value={respuestasMap[c.id] || ''}
                             onChange={e => {
                               const val = e.target.value;
-                              const { hasContactInfo, CONTACT_WARNING } = require('@/lib/contactFilter') as typeof import('@/lib/contactFilter');
-                              if (hasContactInfo(val)) { alert(CONTACT_WARNING); return; }
+                              const { detectViolation, getViolationMessage } = require('@/lib/contactFilter') as typeof import('@/lib/contactFilter');
+                              const v = detectViolation(val);
+                              if (v) { alert(getViolationMessage(v)); return; }
                               setRespuestasMap(m => ({ ...m, [c.id]: val }));
                             }}
                             placeholder="Escribí tu respuesta…"

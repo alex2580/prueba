@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { hasContactInfo, CONTACT_WARNING } from '@/lib/contactFilter';
+import { detectViolation, getViolationMessage } from '@/lib/contactFilter';
 import { Button } from '@/components/ui/Button';
 
 interface Consulta {
@@ -48,9 +48,9 @@ export function ConsultasEspacio({ espacioId, token, userId, oferenteId }: Consu
   function handleChange(val: string) {
     setWarning('');
     setError('');
-    if (hasContactInfo(val)) {
-      setWarning(CONTACT_WARNING);
-      // Truncate at the position where contact info starts — don't append it
+    const violation = detectViolation(val);
+    if (violation) {
+      setWarning(getViolationMessage(violation));
       return;
     }
     setPregunta(val);
@@ -58,7 +58,8 @@ export function ConsultasEspacio({ espacioId, token, userId, oferenteId }: Consu
 
   async function handleEnviar() {
     if (!pregunta.trim() || !token) return;
-    if (hasContactInfo(pregunta)) { setWarning(CONTACT_WARNING); return; }
+    const violation = detectViolation(pregunta);
+    if (violation) { setWarning(getViolationMessage(violation)); return; }
     setEnviando(true);
     setError('');
     try {
