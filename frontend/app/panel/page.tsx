@@ -71,7 +71,7 @@ export default function PanelPage() {
 
   // Profile edit
   const [perfilOpen, setPerfilOpen] = useState(false);
-  const [perfilForm, setPerfilForm] = useState({ nombre: '', tel: '', dni: '', email: '', direccion: '', lat: '', lng: '', pais: '', cbu_alias: '' });
+  const [perfilForm, setPerfilForm] = useState({ nombre: '', tel: '', dni: '', email: '', direccion: '', piso: '', departamento: '', lat: '', lng: '', pais: '', cbu_alias: '' });
   const [perfilAvatarFile, setPerfilAvatarFile] = useState<File | null>(null);
   const [perfilAvatarPreview, setPerfilAvatarPreview] = useState<string>('');
   const [perfilLoading, setPerfilLoading] = useState(false);
@@ -204,6 +204,8 @@ export default function PanelPage() {
       dni: user?.dni || '',
       email: user?.email || '',
       direccion: user?.direccion || '',
+      piso: (user as any)?.piso || '',
+      departamento: (user as any)?.departamento || '',
       lat: user?.lat ? String(user.lat) : '',
       lng: user?.lng ? String(user.lng) : '',
       pais: (user as any)?.pais || '',
@@ -355,6 +357,8 @@ export default function PanelPage() {
         dni: perfilForm.dni || undefined,
         email: perfilForm.email || undefined,
         direccion: perfilForm.direccion || undefined,
+        piso: perfilForm.piso || undefined,
+        departamento: perfilForm.departamento || undefined,
         pais: perfilForm.pais || undefined,
         lat: perfilForm.lat ? Number(perfilForm.lat) : undefined,
         lng: perfilForm.lng ? Number(perfilForm.lng) : undefined,
@@ -981,6 +985,28 @@ export default function PanelPage() {
                     💡 Seleccioná una opción del autocompletado para guardar la ubicación exacta
                   </div>
                 )}
+              </div>
+
+              {/* Piso y Departamento */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label className="form-label">Piso</label>
+                  <input
+                    value={perfilForm.piso}
+                    onChange={e => setPerfilForm(f => ({ ...f, piso: e.target.value }))}
+                    placeholder="Ej: 3"
+                    maxLength={20}
+                  />
+                </div>
+                <div>
+                  <label className="form-label">Departamento</label>
+                  <input
+                    value={perfilForm.departamento}
+                    onChange={e => setPerfilForm(f => ({ ...f, departamento: e.target.value }))}
+                    placeholder="Ej: B"
+                    maxLength={20}
+                  />
+                </div>
               </div>
 
               {/* País — se completa automáticamente con la dirección */}

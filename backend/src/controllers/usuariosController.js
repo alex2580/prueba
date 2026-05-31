@@ -20,13 +20,13 @@ async function perfil(req, res, next) {
     let usuario;
     try {
       usuario = await queryOne(
-        'SELECT id, nombre, email, tel, dni, pais, tipo, verificado, avatar_url, created_at, direccion, lat, lng, cbu_alias FROM usuarios WHERE id = ?',
+        'SELECT id, nombre, email, tel, dni, pais, tipo, verificado, avatar_url, created_at, direccion, piso, departamento, lat, lng, cbu_alias FROM usuarios WHERE id = ?',
         [req.user.id]
       );
     } catch (_) {
       try {
         usuario = await queryOne(
-          'SELECT id, nombre, email, tel, dni, pais, tipo, verificado, avatar_url, created_at, direccion, lat, lng FROM usuarios WHERE id = ?',
+          'SELECT id, nombre, email, tel, dni, pais, tipo, verificado, avatar_url, created_at, direccion, lat, lng, cbu_alias FROM usuarios WHERE id = ?',
           [req.user.id]
         );
       } catch (_2) {
@@ -51,7 +51,7 @@ async function actualizar(req, res, next) {
       return res.status(422).json({ error: 'Datos inválidos', details: errors.array() });
     }
 
-    const { nombre, tel, dni, pais, email, direccion, lat, lng, cbu_alias } = req.body;
+    const { nombre, tel, dni, pais, email, direccion, lat, lng, cbu_alias, piso, departamento } = req.body;
     await query(
       'UPDATE usuarios SET nombre = ?, tel = ? WHERE id = ?',
       [nombre, tel || '', req.user.id]
@@ -76,18 +76,24 @@ async function actualizar(req, res, next) {
       if (cbu_alias !== undefined) {
         await query('UPDATE usuarios SET cbu_alias = ? WHERE id = ?', [cbu_alias || null, req.user.id]);
       }
+      if (piso !== undefined) {
+        await query('UPDATE usuarios SET piso = ? WHERE id = ?', [piso || null, req.user.id]);
+      }
+      if (departamento !== undefined) {
+        await query('UPDATE usuarios SET departamento = ? WHERE id = ?', [departamento || null, req.user.id]);
+      }
     } catch (_) { /* columns may not exist yet */ }
 
     let updated;
     try {
       updated = await queryOne(
-        'SELECT id, nombre, email, tel, dni, pais, tipo, verificado, avatar_url, direccion, lat, lng, cbu_alias FROM usuarios WHERE id = ?',
+        'SELECT id, nombre, email, tel, dni, pais, tipo, verificado, avatar_url, direccion, piso, departamento, lat, lng, cbu_alias FROM usuarios WHERE id = ?',
         [req.user.id]
       );
     } catch (_) {
       try {
         updated = await queryOne(
-          'SELECT id, nombre, email, tel, dni, pais, tipo, verificado, avatar_url, direccion, lat, lng FROM usuarios WHERE id = ?',
+          'SELECT id, nombre, email, tel, dni, pais, tipo, verificado, avatar_url, direccion, lat, lng, cbu_alias FROM usuarios WHERE id = ?',
           [req.user.id]
         );
       } catch (_2) {
