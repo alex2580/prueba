@@ -571,7 +571,8 @@ export default function PanelPage() {
 
   async function handleEliminarEspacio(id: string) {
     if (!token) return;
-    if (!window.confirm('¿Eliminar este espacio? Esta acción no se puede deshacer.')) return;
+    if (!window.confirm('¿Querés dar de baja esta publicación?\n\nVa a dejar de aparecer en el mapa y en las búsquedas.')) return;
+    if (!window.confirm('Segunda confirmación: ¿estás seguro? La publicación quedará desactivada de forma permanente.')) return;
     try {
       await espaciosAPI.eliminar(id, token);
       setRefreshKey(k => k + 1);

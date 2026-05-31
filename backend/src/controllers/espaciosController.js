@@ -245,7 +245,7 @@ async function eliminar(req, res, next) {
       return res.status(403).json({ error: 'Sin permisos para eliminar este espacio' });
     }
 
-    await query('DELETE FROM espacios WHERE id = ?', [req.params.id]);
+    await query('UPDATE espacios SET activo = FALSE WHERE id = ?', [req.params.id]);
     res.json({ message: 'Espacio eliminado', id: req.params.id });
   } catch (err) {
     next(err);
@@ -302,7 +302,7 @@ async function misEspacios(req, res, next) {
               SUM(CASE WHEN r.estado IN ('confirmada','pagada') THEN r.precio_total ELSE 0 END) AS ingresos_total
        FROM espacios e
        LEFT JOIN reservas r ON e.id = r.espacio_id
-       WHERE e.oferente_id = ?
+       WHERE e.oferente_id = ? AND e.activo = TRUE
        GROUP BY e.id
        ORDER BY e.created_at DESC`,
       [req.user.id]
