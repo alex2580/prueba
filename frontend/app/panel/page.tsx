@@ -68,7 +68,25 @@ export default function PanelPage() {
   const [openReservas, setOpenReservas] = useState(true);
   const [openFavoritos, setOpenFavoritos] = useState(true);
   const [openMensajes, setOpenMensajes] = useState(true);
+  const [openConsultas, setOpenConsultas] = useState(true);
   const [openEspacios, setOpenEspacios] = useState(true);
+
+  // Consultas públicas pendientes (oferente)
+  interface ConsultaPendiente { id: number; espacio_id: string; espacio_nombre: string; autor_nombre: string; pregunta: string; created_at: string; }
+  const [consultasPendientes, setConsultasPendientes] = useState<ConsultaPendiente[]>([]);
+  const [respuestasMap, setRespuestasMap] = useState<Record<number, string>>({});
+  const [respondiendo, setRespondiendo] = useState<number | null>(null);
+
+  const cargarConsultasPendientes = useCallback(async () => {
+    if (!token || !isOferente) return;
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/consultas/mis-espacios`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setConsultasPendientes(Array.isArray(data) ? data : []);
+    } catch { /* silencioso */ }
+  }, [token, isOferente]);
 
   // Edit modal
   const [editando, setEditando] = useState<Espacio | null>(null);
@@ -120,6 +138,25 @@ export default function PanelPage() {
   const [reviewError, setReviewError] = useState('');
   const [reviewOk, setReviewOk] = useState(false);
 
+  async function handleResponderConsulta(consultaId: number) {
+    const texto = respuestasMap[consultaId]?.trim();
+    if (!texto || !token) return;
+    setRespondiendo(consultaId);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/consultas/${consultaId}/responder`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ respuesta: texto }),
+      });
+      if (res.ok) {
+        setRespuestasMap(m => { const n = { ...m }; delete n[consultaId]; return n; });
+        await cargarConsultasPendientes();
+      }
+    } finally {
+      setRespondiendo(null);
+    }
+  }
+
   async function handleAbrirChat(espacioId: string) {
     if (!token) return;
     setChatLoadingId(espacioId);
@@ -157,6 +194,7 @@ export default function PanelPage() {
   }, [isOferente, token]);
 
   useEffect(() => { cargarDatosOferente(); }, [cargarDatosOferente, refreshKey]);
+  useEffect(() => { cargarConsultasPendientes(); }, [cargarConsultasPendientes]);
 
   const cargarFavoritos = useCallback(async () => {
     if (!token) return;
@@ -732,6 +770,70 @@ export default function PanelPage() {
               </div>
             </div>
           </section>
+
+          {/* ── SECTION: Consultas pendientes (oferente only) ── */}
+          {isOferente && (
+            <section style={{ marginBottom: '1.5rem' }}>
+              <button onClick={() => setOpenConsultas(v => !v)} className="seccion-toggle">
+                <span style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                  <span>❓ Consultas pendientes</span>
+                  {consultasPendientes.length > 0 && (
+                    <span className="pill pill--gray" style={{ fontSize: '.7rem', padding: '.1rem .45rem', background: 'var(--orange)', color: '#fff' }}>
+                      {consultasPendientes.length}
+                    </span>
+                  )}
+                </span>
+                <span className={`seccion-chevron${openConsultas ? ' open' : ''}`}>▾</span>
+              </button>
+              <div className={`seccion-body${openConsultas ? ' open' : ''}`}>
+                <div style={{ paddingTop: '.75rem' }}>
+                  {consultasPendientes.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--text3)', background: 'var(--surface)', borderRadius: 'var(--r2)', border: '1px solid var(--border)', fontSize: '.85rem' }}>
+                      ✅ No hay consultas pendientes de respuesta
+                    </div>
+                  ) : (
+                    <div style={{ display: 'grid', gap: '.85rem' }}>
+                      {consultasPendientes.map(c => (
+                        <div key={c.id} style={{ background: 'var(--surface)', borderRadius: 'var(--r2)', padding: '1rem', border: '1px solid var(--border)' }}>
+                          <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginBottom: '.35rem' }}>
+                            📦 {c.espacio_nombre}
+                          </div>
+                          <div style={{ display: 'flex', gap: '.5rem', alignItems: 'flex-start', marginBottom: '.75rem' }}>
+                            <span style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--orange)', background: 'rgba(232,98,42,.1)', borderRadius: '99px', padding: '.15rem .55rem', whiteSpace: 'nowrap' }}>
+                              {c.autor_nombre}
+                            </span>
+                            <p style={{ margin: 0, fontSize: '.9rem', color: 'var(--text)', lineHeight: 1.5 }}>{c.pregunta}</p>
+                          </div>
+                          <textarea
+                            value={respuestasMap[c.id] || ''}
+                            onChange={e => {
+                              const val = e.target.value;
+                              const { hasContactInfo, CONTACT_WARNING } = require('@/lib/contactFilter') as typeof import('@/lib/contactFilter');
+                              if (hasContactInfo(val)) { alert(CONTACT_WARNING); return; }
+                              setRespuestasMap(m => ({ ...m, [c.id]: val }));
+                            }}
+                            placeholder="Escribí tu respuesta…"
+                            rows={2}
+                            style={{ width: '100%', resize: 'vertical', fontSize: '.85rem', padding: '.5rem .7rem', borderRadius: 'var(--r2)', background: 'var(--surface2)', border: '1.5px solid var(--border)', boxSizing: 'border-box', marginBottom: '.5rem' }}
+                          />
+                          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <Button
+                              size="sm"
+                              onClick={() => handleResponderConsulta(c.id)}
+                              loading={respondiendo === c.id}
+                              disabled={!respuestasMap[c.id]?.trim()}
+                            >
+                              Responder →
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
+          )}
 
           {/* ── SECTION 2: Mis espacios publicados (oferente only) ── */}
           {isOferente && (

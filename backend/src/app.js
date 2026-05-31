@@ -22,8 +22,9 @@ const emailRouter     = require('./routes/email');
 const adminRouter     = require('./routes/admin');
 const authRouter      = require('./routes/auth');
 const webhookRouter   = require('./routes/webhook');
-const favoritosRouter = require('./routes/favoritos');
-const mailingRouter   = require('./routes/mailing');
+const favoritosRouter  = require('./routes/favoritos');
+const mailingRouter    = require('./routes/mailing');
+const consultasRouter  = require('./routes/consultasEspacio');
 
 const app = express();
 
@@ -78,6 +79,7 @@ app.use('/api/auth',      authRouter);
 app.use('/api/webhook',   webhookRouter);
 app.use('/api/favoritos', favoritosRouter);
 app.use('/api/mailing',  mailingRouter);
+app.use('/api',          consultasRouter);
 
 // ── 404 ────────────────────────────────────────────────────────
 app.use((req, res) => {

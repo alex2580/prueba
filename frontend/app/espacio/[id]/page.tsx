@@ -54,6 +54,8 @@ export default function EspacioPage() {
         <DetalleEspacio
           espacio={espacio}
           onReservar={handleReservar}
+          token={token}
+          userId={user?.id}
         />
       </div>
 

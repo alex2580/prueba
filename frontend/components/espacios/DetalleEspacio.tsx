@@ -10,13 +10,16 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { formatARS, formatFecha } from '@/lib/utils';
 import { SEGURIDAD_OPCIONES } from '@/components/publicar/SeguridadChecklist';
+import { ConsultasEspacio } from './ConsultasEspacio';
 
 interface DetalleEspacioProps {
   espacio: Espacio;
   onReservar?: () => void;
+  token?: string | null;
+  userId?: string | null;
 }
 
-export function DetalleEspacio({ espacio, onReservar }: DetalleEspacioProps) {
+export function DetalleEspacio({ espacio, onReservar, token, userId }: DetalleEspacioProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [tab, setTab] = useState<'info' | 'reviews'>('info');
@@ -234,6 +237,16 @@ export function DetalleEspacio({ espacio, onReservar }: DetalleEspacioProps) {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Consultas públicas */}
+      <div style={{ maxWidth: 700, margin: '0 auto', padding: '0 1rem 2rem' }}>
+        <ConsultasEspacio
+          espacioId={espacio.id}
+          token={token ?? null}
+          userId={userId ?? null}
+          oferenteId={espacio.oferente_id}
+        />
       </div>
     </div>
   );
