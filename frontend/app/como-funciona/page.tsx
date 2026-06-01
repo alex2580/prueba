@@ -197,6 +197,26 @@ export default function ComoFuncionaPage() {
                   </div>
                   <div style={{ fontSize: '.75rem', color: 'var(--text3)' }}>4 pasos simples</div>
                 </div>
+                {/* Sello GRATIS — búsqueda */}
+                <div style={{ marginLeft: 'auto', flexShrink: 0 }}>
+                  <div style={{
+                    width: 72, height: 72, borderRadius: '50%',
+                    background: 'linear-gradient(145deg, #22c55e 0%, #16a34a 55%, #15803d 100%)',
+                    boxShadow: '0 0 0 2.5px #fff, 0 0 0 5px #16a34a, 0 6px 20px rgba(22,163,74,.55)',
+                    display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', justifyContent: 'center',
+                    transform: 'rotate(-10deg)',
+                    gap: 1,
+                  }}>
+                    <span style={{ fontSize: '1.1rem', lineHeight: 1 }}>✓</span>
+                    <span style={{
+                      fontFamily: 'Sora, sans-serif', fontWeight: 900,
+                      fontSize: '.78rem', color: '#fff',
+                      letterSpacing: '.06em', lineHeight: 1,
+                      textShadow: '0 1px 3px rgba(0,0,0,.25)',
+                    }}>GRATIS</span>
+                  </div>
+                </div>
               </div>
               {/* Steps */}
               <div className="cf-steps" style={{ padding: '1.1rem' }}>
@@ -237,6 +257,26 @@ export default function ComoFuncionaPage() {
                     Para Publicar
                   </div>
                   <div style={{ fontSize: '.75rem', color: 'var(--text3)' }}>4 pasos simples</div>
+                </div>
+                {/* Sello GRATIS — publicar */}
+                <div style={{ marginLeft: 'auto', flexShrink: 0 }}>
+                  <div style={{
+                    width: 72, height: 72, borderRadius: '50%',
+                    background: 'linear-gradient(145deg, #22c55e 0%, #16a34a 55%, #15803d 100%)',
+                    boxShadow: '0 0 0 2.5px #fff, 0 0 0 5px #16a34a, 0 6px 20px rgba(22,163,74,.55)',
+                    display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', justifyContent: 'center',
+                    transform: 'rotate(-10deg)',
+                    gap: 1,
+                  }}>
+                    <span style={{ fontSize: '1.1rem', lineHeight: 1 }}>✓</span>
+                    <span style={{
+                      fontFamily: 'Sora, sans-serif', fontWeight: 900,
+                      fontSize: '.78rem', color: '#fff',
+                      letterSpacing: '.06em', lineHeight: 1,
+                      textShadow: '0 1px 3px rgba(0,0,0,.25)',
+                    }}>GRATIS</span>
+                  </div>
                 </div>
               </div>
               {/* Steps */}
