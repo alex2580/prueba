@@ -360,6 +360,7 @@ async function getPublicaciones(req, res, next) {
                e.disponible, e.activo, e.inactiva_auto, e.rating, e.reviews_count,
                e.reservas_mes, e.created_at,
                e.eliminado_por_oferente, e.eliminado_at,
+               e.fecha_vencimiento, e.vencida,
                u.id AS oferente_id, u.nombre AS oferente_nombre, u.email AS oferente_email
         FROM espacios e
         JOIN usuarios u ON e.oferente_id = u.id
@@ -378,7 +379,7 @@ async function getPublicaciones(req, res, next) {
         JOIN usuarios u ON e.oferente_id = u.id
         ORDER BY e.created_at DESC
       `);
-      rows = rows.map(r => ({ ...r, eliminado_por_oferente: 0, eliminado_at: null }));
+      rows = rows.map(r => ({ ...r, eliminado_por_oferente: 0, eliminado_at: null, fecha_vencimiento: null, vencida: 0 }));
     }
     res.json(rows.map(r => ({
       ...r,

@@ -10,6 +10,7 @@ const { apiLimiter, authLimiter } = require('./middleware/rateLimits');
 const { iniciarCronRecordatorios } = require('./jobs/recordatorios');
 const { iniciarCronInactividad } = require('./jobs/inactividad');
 const { iniciarCronMailing } = require('./jobs/mailing');
+const { iniciarCronVencimiento } = require('./jobs/vencimiento');
 
 // Routes
 const espaciosRouter  = require('./routes/espacios');
@@ -93,5 +94,6 @@ app.use(errorHandler);
 iniciarCronRecordatorios();
 iniciarCronInactividad();
 iniciarCronMailing();
+iniciarCronVencimiento();
 
 module.exports = app;

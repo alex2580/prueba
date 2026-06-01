@@ -60,6 +60,8 @@ interface PublicacionAdmin {
   inactiva_auto: number;
   eliminado_por_oferente: number;
   eliminado_at: string | null;
+  fecha_vencimiento: string | null;
+  vencida: number;
   rating: number | null;
   reviews_count: number;
   reservas_mes: number;
@@ -1609,7 +1611,7 @@ function TabConversaciones({ token }: { token: string }) {
 function TabPublicaciones({ token }: { token: string }) {
   const [publicaciones, setPublicaciones] = useState<PublicacionAdmin[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filtro, setFiltro] = useState<'todas' | 'activas' | 'inactivas'>('todas');
+  const [filtro, setFiltro] = useState<'todas' | 'activas' | 'inactivas' | 'vencidas'>('todas');
   const [toggling, setToggling] = useState<string | null>(null);
 
   useEffect(() => {
@@ -1640,12 +1642,13 @@ function TabPublicaciones({ token }: { token: string }) {
   }
 
   const filtradas = publicaciones.filter(p => {
-    if (filtro === 'activas') return p.activo === 1 && p.disponible === 1;
-    if (filtro === 'inactivas') return p.activo === 0 || p.disponible === 0;
+    if (filtro === 'activas')   return p.activo === 1 && p.disponible === 1 && !p.vencida;
+    if (filtro === 'inactivas') return (p.activo === 0 || p.disponible === 0) && !p.vencida;
+    if (filtro === 'vencidas')  return p.vencida === 1;
     return true;
   });
 
-  const pillStyle = (key: typeof filtro) => ({
+  const pillStyle = (key: 'todas' | 'activas' | 'inactivas' | 'vencidas') => ({
     padding: '.35rem .85rem',
     borderRadius: 99,
     border: 'none',
@@ -1662,8 +1665,11 @@ function TabPublicaciones({ token }: { token: string }) {
     <div>
       <div style={{ display: 'flex', gap: '.5rem', marginBottom: '1.25rem', flexWrap: 'wrap', alignItems: 'center' }}>
         <button style={pillStyle('todas')}    onClick={() => setFiltro('todas')}>Todas ({publicaciones.length})</button>
-        <button style={pillStyle('activas')}  onClick={() => setFiltro('activas')}>Activas ({publicaciones.filter(p => p.activo === 1 && p.disponible === 1).length})</button>
-        <button style={pillStyle('inactivas')} onClick={() => setFiltro('inactivas')}>Inactivas ({publicaciones.filter(p => p.activo === 0 || p.disponible === 0).length})</button>
+        <button style={pillStyle('activas')}  onClick={() => setFiltro('activas')}>Activas ({publicaciones.filter(p => p.activo === 1 && p.disponible === 1 && !p.vencida).length})</button>
+        <button style={pillStyle('inactivas')} onClick={() => setFiltro('inactivas')}>Inactivas ({publicaciones.filter(p => (p.activo === 0 || p.disponible === 0) && !p.vencida).length})</button>
+        <button style={{ ...pillStyle('vencidas'), ...(filtro === 'vencidas' ? {} : { color: '#ef4444' }) }} onClick={() => setFiltro('vencidas')}>
+          🔴 Vencidas ({publicaciones.filter(p => p.vencida === 1).length})
+        </button>
       </div>
 
       {loading && <div style={{ color: 'var(--text3)', padding: '2rem 0' }}>Cargando…</div>}
@@ -1699,6 +1705,9 @@ function TabPublicaciones({ token }: { token: string }) {
                 <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginTop: '.1rem' }}>
                   ⭐ {pub.rating?.toFixed(1) ?? '—'} · {pub.reviews_count} reseñas · {pub.reservas_mes} reservas/mes
                   <span style={{ opacity: .6 }}> · Alta: {new Date(pub.created_at).toLocaleDateString('es-AR')}</span>
+                  {pub.fecha_vencimiento && !pub.vencida && (
+                    <span style={{ opacity: .6 }}> · Vence: {new Date(pub.fecha_vencimiento).toLocaleDateString('es-AR')}</span>
+                  )}
                 </div>
               </div>
 
@@ -1713,6 +1722,25 @@ function TabPublicaciones({ token }: { token: string }) {
                 }}>
                   {!pub.activo ? '● No visible' : pub.disponible ? '● Activa' : pub.inactiva_auto ? '● Pausada auto' : '● Pausada'}
                 </span>
+
+                {!!pub.vencida && (
+                  <span style={{
+                    padding: '.2rem .65rem',
+                    borderRadius: 99,
+                    fontSize: '.72rem',
+                    fontWeight: 700,
+                    background: 'rgba(239,68,68,.18)',
+                    color: '#ef4444',
+                    border: '1.5px solid rgba(239,68,68,.4)',
+                  }}>
+                    🔴 Publicación vencida
+                    {pub.fecha_vencimiento && (
+                      <span style={{ fontWeight: 400, opacity: .8 }}>
+                        {' · '}{new Date(pub.fecha_vencimiento).toLocaleDateString('es-AR')}
+                      </span>
+                    )}
+                  </span>
+                )}
 
                 {!!pub.eliminado_por_oferente && (
                   <span style={{

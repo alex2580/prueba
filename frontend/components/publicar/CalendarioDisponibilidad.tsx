@@ -4,9 +4,11 @@ import { useState } from 'react';
 import {
   format, startOfMonth, endOfMonth, eachDayOfInterval,
   isSameDay, isSameMonth, addMonths, subMonths,
-  startOfWeek, endOfWeek, isToday, isBefore, startOfToday,
+  startOfWeek, endOfWeek, isToday, isBefore, isAfter, startOfToday, addDays,
 } from 'date-fns';
 import { es } from 'date-fns/locale';
+
+const DIAS_VIGENCIA = 90;
 
 export interface Disponibilidad {
   dias?: string[];   // ['2026-05-21', ...]
@@ -25,13 +27,14 @@ const DIAS_SEMANA = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa', 'Do'];
 function CalendarioDias({ dias, onChange }: { dias: string[]; onChange: (d: string[]) => void }) {
   const [mes, setMes] = useState(new Date());
   const hoy = startOfToday();
+  const limite = addDays(hoy, DIAS_VIGENCIA);
 
   const inicio = startOfWeek(startOfMonth(mes), { weekStartsOn: 1 });
   const fin    = endOfWeek(endOfMonth(mes),     { weekStartsOn: 1 });
   const celdas = eachDayOfInterval({ start: inicio, end: fin });
 
   function toggleDia(fecha: Date) {
-    if (isBefore(fecha, hoy)) return;
+    if (isBefore(fecha, hoy) || isAfter(fecha, limite)) return;
     const key = format(fecha, 'yyyy-MM-dd');
     if (dias.includes(key)) {
       onChange(dias.filter(d => d !== key));
@@ -69,6 +72,8 @@ function CalendarioDias({ dias, onChange }: { dias: string[]; onChange: (d: stri
         {celdas.map(dia => {
           const key       = format(dia, 'yyyy-MM-dd');
           const pasado    = isBefore(dia, hoy);
+          const fuera     = isAfter(dia, limite);
+          const bloqueado = pasado || fuera;
           const delMes    = isSameMonth(dia, mes);
           const selected  = dias.includes(key);
           const esHoy     = isToday(dia);
@@ -78,17 +83,18 @@ function CalendarioDias({ dias, onChange }: { dias: string[]; onChange: (d: stri
               key={key}
               type="button"
               onClick={() => toggleDia(dia)}
-              disabled={pasado}
+              disabled={bloqueado}
+              title={fuera ? 'Fuera del período de vigencia (90 días)' : undefined}
               style={{
                 padding: '6px 2px',
                 borderRadius: 6,
                 border: esHoy ? '1.5px solid var(--orange)' : '1.5px solid transparent',
                 background: selected ? 'var(--orange)' : 'transparent',
-                color: selected ? '#fff' : pasado || !delMes ? 'var(--text3)' : 'var(--text)',
+                color: selected ? '#fff' : bloqueado || !delMes ? 'var(--text3)' : 'var(--text)',
                 fontSize: '.78rem',
                 fontWeight: selected ? 700 : 400,
-                cursor: pasado ? 'not-allowed' : 'pointer',
-                opacity: !delMes ? 0.3 : 1,
+                cursor: bloqueado ? 'not-allowed' : 'pointer',
+                opacity: !delMes ? 0.3 : fuera ? 0.25 : 1,
                 transition: 'all .1s',
               }}
             >
@@ -117,8 +123,14 @@ const MESES_NOMBRES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', '
 
 function SelectorMeses({ meses, onChange }: { meses: string[]; onChange: (m: string[]) => void }) {
   const [anio, setAnio] = useState(new Date().getFullYear());
-  const mesActual = new Date().getMonth();
-  const anioActual = new Date().getFullYear();
+  const hoy = new Date();
+  const mesActual = hoy.getMonth();
+  const anioActual = hoy.getFullYear();
+
+  // Fecha límite: 3 meses desde hoy
+  const limiteDate = addMonths(hoy, 3);
+  const mesLimite  = limiteDate.getMonth();
+  const anioLimite = limiteDate.getFullYear();
 
   function toggleMes(idx: number) {
     const key = `${anio}-${String(idx + 1).padStart(2, '0')}`;
@@ -131,6 +143,10 @@ function SelectorMeses({ meses, onChange }: { meses: string[]; onChange: (m: str
 
   function isPasado(idx: number) {
     return anio < anioActual || (anio === anioActual && idx < mesActual);
+  }
+
+  function isFuera(idx: number) {
+    return anio > anioLimite || (anio === anioLimite && idx > mesLimite);
   }
 
   return (
@@ -155,23 +171,26 @@ function SelectorMeses({ meses, onChange }: { meses: string[]; onChange: (m: str
           const key      = `${anio}-${String(idx + 1).padStart(2, '0')}`;
           const selected = meses.includes(key);
           const pasado   = isPasado(idx);
+          const fuera    = isFuera(idx);
+          const bloqueado = pasado || fuera;
 
           return (
             <button
               key={key}
               type="button"
-              onClick={() => !pasado && toggleMes(idx)}
-              disabled={pasado}
+              onClick={() => !bloqueado && toggleMes(idx)}
+              disabled={bloqueado}
+              title={fuera ? 'Fuera del período de vigencia (3 meses)' : undefined}
               style={{
                 padding: '.5rem',
                 borderRadius: 8,
                 border: `1.5px solid ${selected ? 'var(--orange)' : 'var(--border)'}`,
                 background: selected ? 'var(--orange)' : 'var(--surface2)',
-                color: selected ? '#fff' : pasado ? 'var(--text3)' : 'var(--text2)',
+                color: selected ? '#fff' : bloqueado ? 'var(--text3)' : 'var(--text2)',
                 fontSize: '.8rem',
                 fontWeight: selected ? 700 : 400,
-                cursor: pasado ? 'not-allowed' : 'pointer',
-                opacity: pasado ? 0.4 : 1,
+                cursor: bloqueado ? 'not-allowed' : 'pointer',
+                opacity: bloqueado ? 0.25 : 1,
                 transition: 'all .1s',
               }}
             >
