@@ -484,7 +484,7 @@ export default function ReservarPage() {
       <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)', gap: '1rem' }}>
         <span style={{ fontSize: '2.5rem' }}>😕</span>
         <span style={{ color: 'var(--text2)' }}>No se encontró el espacio</span>
-        <button className="btn-secondary" onClick={() => router.push(volverUrl)}>← Volver al mapa</button>
+        <button className="btn-secondary" onClick={() => router.push(volverUrl)}>← Volver</button>
       </div>
     );
   }
@@ -501,7 +501,7 @@ export default function ReservarPage() {
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <button className="nav-btn" onClick={() => router.push(volverUrl)}>
-            <span className="hide-mobile">← Volver al mapa</span>
+            <span className="hide-mobile">← Volver</span>
             <span className="show-mobile">←</span>
           </button>
         </div>
