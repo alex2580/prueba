@@ -66,11 +66,11 @@ export default function PanelPage() {
   const [favLoading, setFavLoading] = useState(false);
 
   // Secciones desplegables
-  const [openReservas, setOpenReservas] = useState(true);
-  const [openFavoritos, setOpenFavoritos] = useState(true);
-  const [openMensajes, setOpenMensajes] = useState(true);
-  const [openConsultas, setOpenConsultas] = useState(true);
-  const [openEspacios, setOpenEspacios] = useState(true);
+  const [openReservas, setOpenReservas] = useState(false);
+  const [openFavoritos, setOpenFavoritos] = useState(false);
+  const [openMensajes, setOpenMensajes] = useState(false);
+  const [openConsultas, setOpenConsultas] = useState(false);
+  const [openEspacios, setOpenEspacios] = useState(false);
 
   // Consultas públicas pendientes (oferente)
   interface ConsultaPendiente { id: number; espacio_id: string; espacio_nombre: string; autor_nombre: string; pregunta: string; created_at: string; }

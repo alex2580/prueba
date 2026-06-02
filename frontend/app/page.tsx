@@ -369,7 +369,9 @@ export default function HomePage() {
                 )}
 
                 {/* Nivel de Seguridad — pill con estrellas inline */}
-                <div style={{
+                <div
+                  title="Filtrá espacios según su nivel de seguridad. Consideramos: techo impermeable, cerradura, cámaras, iluminación, acceso controlado, ambiente seco/ventilado, acceso 24hs y extintor."
+                  style={{
                   display: 'inline-flex', alignItems: 'center', gap: '.15rem',
                   padding: '.3rem .9rem',
                   borderRadius: 999, flexShrink: 0,
