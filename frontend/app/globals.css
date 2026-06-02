@@ -821,6 +821,8 @@ select.filter-pill {
   margin: .5rem 0;
 }
 
+.show-mobile { display: none; }
+
 /* ── Tablet (≤1024px) ─────────────────────────────────────── */
 @media (max-width: 1024px) {
   .site-header { padding: 0 1.25rem; gap: .5rem; }
@@ -886,6 +888,10 @@ select.filter-pill {
 
   /* Hide "Hasta" text, keep value */
   .filter-pill .precio-label { display: none; }
+
+  /* Utilidades mobile */
+  .hide-mobile { display: none !important; }
+  .show-mobile { display: inline !important; }
 
   /* Contacto button — solo ícono en mobile */
   .contacto-label { display: none; }

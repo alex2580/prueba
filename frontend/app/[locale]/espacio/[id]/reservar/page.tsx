@@ -494,13 +494,16 @@ export default function ReservarPage() {
       {/* Header */}
       <header className="site-header">
         <SiteLogo onClick={() => router.push(volverUrl)} />
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div className="hide-mobile" style={{ display: 'flex', justifyContent: 'center' }}>
           <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.9rem', color: 'var(--orange)' }}>
             Reservar espacio
           </span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <button className="nav-btn" onClick={() => router.push(volverUrl)}>← Volver al mapa</button>
+          <button className="nav-btn" onClick={() => router.push(volverUrl)}>
+            <span className="hide-mobile">← Volver al mapa</span>
+            <span className="show-mobile">←</span>
+          </button>
         </div>
       </header>
 

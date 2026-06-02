@@ -102,11 +102,12 @@ function PasoSeguridad({
             </div>
             {token && (
               enviado ? (
-                <div style={{ fontSize: '.72rem', color: 'var(--mint)', fontWeight: 600 }}>
+                <div className="hide-mobile" style={{ fontSize: '.72rem', color: 'var(--mint)', fontWeight: 600 }}>
                   ✅ ¡Solicitud enviada!
                 </div>
               ) : (
                 <button
+                  className="hide-mobile"
                   onClick={handleMejorar}
                   disabled={enviando}
                   style={{
