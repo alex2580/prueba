@@ -27,10 +27,6 @@ async function crearPreferencia({ titulo, monto, reservaId, usuarioEmail, usuari
         description: `Reserva ${fechaDesde} al ${fechaHasta}`,
       },
     ],
-    payer: {
-      email: usuarioEmail,
-      name: usuarioNombre,
-    },
     back_urls: {
       success: `${FRONTEND_URL}/reserva/${reservaId}/confirmacion?estado=success`,
       failure: `${FRONTEND_URL}/reserva/${reservaId}/confirmacion?estado=failure`,
