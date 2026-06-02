@@ -119,107 +119,74 @@ function CalendarioDias({ dias, onChange }: { dias: string[]; onChange: (d: stri
   );
 }
 
-const MESES_COMPLETOS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-const DIAS_CAB = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-
 function SelectorMeses({ meses, onChange }: { meses: string[]; onChange: (m: string[]) => void }) {
-  // Límite: mes actual (idx 0) + 2 meses más = 3 meses en total
-  const [viewDate, setViewDate] = useState(() => {
-    const d = new Date();
-    return new Date(d.getFullYear(), d.getMonth(), 1);
-  });
-
   const now = new Date();
-  const minView = new Date(now.getFullYear(), now.getMonth(), 1);
-  const maxView = new Date(now.getFullYear(), now.getMonth() + 2, 1); // +2 → 3 meses totales
+  const minMes = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const maxDate = new Date(now.getFullYear(), now.getMonth() + 2, 1);
+  const maxMes  = `${maxDate.getFullYear()}-${String(maxDate.getMonth() + 1).padStart(2, '0')}`;
 
-  const year = viewDate.getFullYear();
-  const mi   = viewDate.getMonth();
-  const key  = `${year}-${String(mi + 1).padStart(2, '0')}`;
-  const selected = meses.includes(key);
+  // Derivar desde/hasta del array de meses (siempre ordenado)
+  const desde = meses.length > 0 ? meses[0] : '';
+  const hasta  = meses.length > 0 ? meses[meses.length - 1] : '';
 
-  const canPrev = viewDate > minView;
-  const canNext = viewDate < maxView;
-
-  const firstDow   = new Date(year, mi, 1).getDay();
-  const daysInMonth = new Date(year, mi + 1, 0).getDate();
-  const cells: (number | null)[] = [];
-  for (let i = 0; i < firstDow; i++) cells.push(null);
-  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
-
-  function toggleMes() {
-    if (selected) onChange(meses.filter(m => m !== key));
-    else onChange([...meses, key].sort());
+  function buildArray(d: string, h: string): string[] {
+    if (!d) return [];
+    if (!h || h < d) return [d];
+    const result: string[] = [];
+    const [dy, dm] = d.split('-').map(Number);
+    const [hy, hm] = h.split('-').map(Number);
+    let y = dy, m = dm;
+    while (y < hy || (y === hy && m <= hm)) {
+      result.push(`${y}-${String(m).padStart(2, '0')}`);
+      m++;
+      if (m > 12) { m = 1; y++; }
+    }
+    return result;
   }
 
-  function prevMonth() {
-    if (canPrev) setViewDate(new Date(year, mi - 1, 1));
+  function handleDesde(val: string) {
+    if (!val) { onChange([]); return; }
+    const newHasta = hasta && hasta >= val ? hasta : '';
+    onChange(buildArray(val, newHasta));
   }
-  function nextMonth() {
-    if (canNext) setViewDate(new Date(year, mi + 1, 1));
+
+  function handleHasta(val: string) {
+    if (!val) { onChange(desde ? [desde] : []); return; }
+    onChange(buildArray(desde || val, val));
   }
 
   return (
     <div>
-      {/* Indicador de modo — igual que en reservar */}
-      <div style={{
-        fontSize: '.72rem', fontWeight: 600, borderRadius: 6,
-        padding: '.25rem .65rem', marginBottom: '.75rem',
-        color: selected ? '#3b82f6' : 'var(--text3)',
-        background: selected ? 'rgba(59,130,246,.1)' : 'rgba(0,0,0,.03)',
-        border: `1px solid ${selected ? 'rgba(59,130,246,.25)' : 'var(--border)'}`,
-      }}>
-        {selected
-          ? `🗓 ${MESES_COMPLETOS[mi]} marcado como disponible — tocá de nuevo para quitar`
-          : '🗓 Tocá el calendario para marcar el mes completo como disponible'}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.75rem' }}>
+        <label className="form-label">
+          Desde (mes)
+          <input
+            type="month"
+            value={desde}
+            onChange={e => handleDesde(e.target.value)}
+            min={minMes}
+            max={maxMes}
+            style={{ marginTop: '.3rem' }}
+          />
+        </label>
+        <label className="form-label">
+          Hasta (mes)
+          <input
+            type="month"
+            value={hasta}
+            onChange={e => handleHasta(e.target.value)}
+            min={desde || minMes}
+            max={maxMes}
+            style={{ marginTop: '.3rem' }}
+          />
+        </label>
       </div>
-
-      {/* Navegación mes */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.75rem' }}>
-        <button type="button" onClick={prevMonth}
-          style={{ background: 'none', border: 'none', cursor: canPrev ? 'pointer' : 'default', fontSize: '1rem', color: 'var(--text2)', padding: '.2rem .5rem', opacity: canPrev ? 1 : 0.25 }}>
-          ←
-        </button>
-        <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.88rem' }}>
-          {MESES_COMPLETOS[mi]} {year}
-        </span>
-        <button type="button" onClick={nextMonth}
-          style={{ background: 'none', border: 'none', cursor: canNext ? 'pointer' : 'default', fontSize: '1rem', color: 'var(--text2)', padding: '.2rem .5rem', opacity: canNext ? 1 : 0.25 }}>
-          →
-        </button>
-      </div>
-
-      {/* Grilla de días — click en cualquier celda togglea el mes */}
-      <div onClick={toggleMes} style={{ cursor: 'pointer', userSelect: 'none' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
-          {DIAS_CAB.map(d => (
-            <div key={d} style={{ textAlign: 'center', fontSize: '.62rem', color: '#aaa', fontWeight: 700, padding: '.2rem 0', letterSpacing: '.02em' }}>{d}</div>
-          ))}
-          {cells.map((d, i) => {
-            if (!d) return <div key={i} />;
-            return (
-              <div key={i} style={{
-                textAlign: 'center', fontSize: '.78rem', padding: '.32rem .1rem',
-                borderRadius: 6, transition: 'all .1s',
-                background: selected ? 'rgba(59,130,246,.85)' : 'rgba(16,185,129,.07)',
-                color: selected ? '#fff' : 'var(--text)',
-                border: selected ? '1.5px solid #3b82f6' : '1px solid rgba(16,185,129,.2)',
-                fontWeight: selected ? 700 : 400,
-              }}>
-                {d}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Resumen total */}
       {meses.length > 0 && (
-        <div style={{ marginTop: '.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ marginTop: '.6rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ fontSize: '.75rem', color: 'var(--mint)' }}>
             ✅ {meses.length} mes{meses.length !== 1 ? 'es' : ''} disponible{meses.length !== 1 ? 's' : ''}
           </span>
-          <button type="button" onClick={e => { e.stopPropagation(); onChange([]); }}
+          <button type="button" onClick={() => onChange([])}
             style={{ background: 'none', border: 'none', color: 'var(--text3)', fontSize: '.72rem', cursor: 'pointer' }}>
             Limpiar
           </button>
