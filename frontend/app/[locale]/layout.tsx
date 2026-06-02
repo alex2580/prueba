@@ -2,17 +2,14 @@ import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { locales } from '@/navigation';
 import '../globals.css';
+
+const locales = ['es', 'pt'] as const;
 
 type Props = {
   children: React.ReactNode;
   params: { locale: string };
 };
-
-export async function generateStaticParams() {
-  return locales.map(locale => ({ locale }));
-}
 
 export async function generateMetadata({ params: { locale } }: Props): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: 'metadata' });
