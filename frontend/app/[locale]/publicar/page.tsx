@@ -75,7 +75,7 @@ function PasoSeguridad({
 
   return (
     <div style={{ display: 'grid', gap: '1.2rem' }}>
-      <div style={cardStyle}>
+      <div style={cardStyle} className="seguridad-card">
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
           <div>
@@ -85,7 +85,7 @@ function PasoSeguridad({
                 Nivel de seguridad
               </span>
             </div>
-            <p style={{ fontSize: '.74rem', color: 'var(--text3)', margin: 0 }}>
+            <p className="seguridad-cursor-hint" style={{ fontSize: '.74rem', color: 'var(--text3)', margin: 0 }}>
               Pasá el cursor sobre cada ítem para ver detalles
             </p>
           </div>
@@ -131,12 +131,13 @@ function PasoSeguridad({
         </div>
 
         {/* Lista */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '.45rem' }}>
+        <div className="seguridad-lista" style={{ display: 'flex', flexDirection: 'column', gap: '.45rem' }}>
           {SEGURIDAD_OPCIONES.map(opt => {
             const activo = !!seguridad[opt.key];
             return (
               <div
                 key={opt.key}
+                className="seguridad-item"
                 title={opt.detalle}
                 onClick={() => onToggle(opt.key)}
                 style={{

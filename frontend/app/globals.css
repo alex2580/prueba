@@ -844,7 +844,7 @@ select.filter-pill {
   }
   .nav { display: none; }
   .header-actions { display: none; }
-  .hamburger { display: inline-flex; }
+  .hamburger { display: inline-flex; grid-column: 3; }
 
   /* Search */
   .list-search-row { flex-wrap: wrap; }
@@ -886,6 +886,19 @@ select.filter-pill {
 
   /* Hide "Hasta" text, keep value */
   .filter-pill .precio-label { display: none; }
+
+  /* Contacto button — solo ícono en mobile */
+  .contacto-label { display: none; }
+  .contacto-btn { padding: .55rem .7rem !important; }
+
+  /* Reservar paso 2 — botón continuar wrappeable */
+  .btn-continuar-reserva { white-space: normal !important; line-height: 1.3; }
+
+  /* Publicar paso 3 Seguridad — compacto en mobile */
+  .seguridad-cursor-hint { display: none; }
+  .seguridad-lista { gap: .3rem !important; }
+  .seguridad-item { padding: .38rem .65rem !important; }
+  .seguridad-card { padding: .75rem !important; }
 }
 
 /* ── Chat ─────────────────────────────────────────────────── */

@@ -681,7 +681,7 @@ export default function ReservarPage() {
                     </p>
                   </div>
 
-                  <div style={{ display: 'grid', gap: '.65rem' }}>
+                  <div style={{ display: 'grid', gap: '.5rem' }}>
                     {(['transporte', 'seguro', 'embalaje'] as ServicioTipo[]).map(tipo => {
                       const cfg = SERVICIOS_ADICIONALES[tipo];
                       const active = servicios.includes(tipo);
@@ -690,8 +690,8 @@ export default function ReservarPage() {
                           key={tipo}
                           onClick={() => toggleServicio(tipo)}
                           style={{
-                            display: 'flex', alignItems: 'center', gap: '.85rem',
-                            padding: '.9rem 1rem',
+                            display: 'flex', alignItems: 'center', gap: '.75rem',
+                            padding: '.7rem .85rem',
                             background: active ? 'rgba(232,98,42,.07)' : 'var(--surface2)',
                             border: `1.5px solid ${active ? 'rgba(232,98,42,.35)' : 'var(--border)'}`,
                             borderRadius: 'var(--r2)',
@@ -750,7 +750,7 @@ export default function ReservarPage() {
 
                   <div style={{ display: 'flex', gap: '.75rem' }}>
                     <button className="btn-secondary" onClick={() => setStep(1)} style={{ flex: 1 }}>← Atrás</button>
-                    <Button variant="primary" onClick={() => setStep(3)} style={{ flex: 2 }}>
+                    <Button variant="primary" onClick={() => setStep(3)} style={{ flex: 2 }} className="btn-continuar-reserva">
                       Continuar → Cuenta y pago
                     </Button>
                   </div>

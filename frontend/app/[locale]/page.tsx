@@ -459,6 +459,7 @@ export default function HomePage() {
 
       {/* Floating Contacto button */}
       <button
+        className="contacto-btn"
         onClick={() => { setContactoOpen(true); setContactoSuccess(false); setContactoError(''); }}
         style={{
           position: 'fixed', bottom: '1.5rem', right: '1.5rem',
@@ -472,7 +473,7 @@ export default function HomePage() {
         onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--orange)'; (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--orange)'; }}
         onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--text2)'; (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border2)'; }}
       >
-        💬 Contacto
+        💬<span className="contacto-label"> Contacto</span>
       </button>
 
       {/* Contacto modal */}
