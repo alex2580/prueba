@@ -233,7 +233,19 @@ async function notificarServicios(req, res, next) {
     if (!emailDemandante || !espacioNombre || !Array.isArray(servicios) || !servicios.length) {
       return res.status(400).json({ error: 'Faltan datos requeridos' });
     }
-    await sendServiciosAdicionales('contacto@todasmiscosas.com', {
+
+    // Guardar siempre en el panel admin, independiente del email
+    await query(
+      'INSERT INTO admin_notificaciones (id, tipo, mensaje, fecha, datos) VALUES (UUID(), ?, ?, NOW(), ?)',
+      [
+        'servicios_adicionales',
+        `🛎️ Servicios adicionales — ${espacioNombre} (${nombreDemandante || emailDemandante})`,
+        JSON.stringify({ nombreDemandante, emailDemandante, telDemandante, espacioNombre, servicios, fechaDesde, fechaHasta }),
+      ]
+    );
+
+    // Email secundario — no bloquea la respuesta si falla
+    sendServiciosAdicionales('contacto@todasmiscosas.com', {
       nombreDemandante: nombreDemandante || 'Sin nombre',
       emailDemandante,
       telDemandante,
@@ -241,7 +253,8 @@ async function notificarServicios(req, res, next) {
       servicios,
       fechaDesde: fechaDesde || '—',
       fechaHasta: fechaHasta || '—',
-    });
+    }).catch(e => console.warn('[notificarServicios] email error:', e.message));
+
     res.json({ ok: true });
   } catch (err) {
     next(err);
