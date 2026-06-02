@@ -145,44 +145,74 @@ function TabBar({
 }) {
   return (
     <div style={{
-      display: 'flex', borderBottom: '1px solid var(--border)',
-      background: 'var(--surface)', marginBottom: '1.5rem',
-      overflowX: 'auto', WebkitOverflowScrolling: 'touch',
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
+      gap: '.55rem',
+      marginBottom: '1.75rem',
     }}>
-      {tabs.map(t => (
-        <button
-          key={t.key}
-          onClick={() => onSelect(t.key)}
-          style={{
-            padding: '.75rem 1.25rem',
-            background: 'none',
-            border: 'none',
-            borderBottom: active === t.key ? '2px solid var(--orange)' : '2px solid transparent',
-            color: active === t.key ? 'var(--orange)' : 'var(--text2)',
-            fontFamily: 'Sora, sans-serif',
-            fontWeight: active === t.key ? 700 : 500,
-            fontSize: '.88rem',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '.4rem',
-            transition: 'color .15s',
-            flexShrink: 0,
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {t.label}
-          {!!t.badge && (
-            <span style={{
-              background: 'var(--orange)', color: '#fff',
-              borderRadius: '99px', fontSize: '.65rem',
-              padding: '1px 6px', fontWeight: 700,
-            }}>
-              {t.badge}
-            </span>
-          )}
-        </button>
-      ))}
+      {tabs.map(t => {
+        const isActive = active === t.key;
+        const spaceIdx = t.label.indexOf(' ');
+        const icon = spaceIdx > -1 ? t.label.slice(0, spaceIdx) : t.label;
+        const text = spaceIdx > -1 ? t.label.slice(spaceIdx + 1) : '';
+
+        return (
+          <button
+            key={t.key}
+            onClick={() => onSelect(t.key)}
+            style={{
+              position: 'relative',
+              padding: '.85rem .5rem .75rem',
+              background: isActive ? 'rgba(232,98,42,.1)' : 'var(--surface)',
+              border: `1.5px solid ${isActive ? 'var(--orange)' : 'var(--border)'}`,
+              borderRadius: 'var(--r3)',
+              color: isActive ? 'var(--orange)' : 'var(--text2)',
+              fontFamily: 'Sora, sans-serif',
+              fontWeight: isActive ? 700 : 500,
+              fontSize: '.75rem',
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '.38rem',
+              transition: 'all .15s',
+              textAlign: 'center',
+              lineHeight: 1.25,
+              minHeight: 72,
+              boxShadow: isActive ? '0 0 0 3px rgba(232,98,42,.15)' : 'none',
+            }}
+          >
+            <span style={{ fontSize: '1.3rem', lineHeight: 1 }}>{icon}</span>
+            <span style={{ lineHeight: 1.25 }}>{text}</span>
+            {!!t.badge && (
+              <span style={{
+                position: 'absolute',
+                top: -7,
+                right: -7,
+                background: '#ef4444',
+                color: '#fff',
+                borderRadius: 99,
+                fontSize: '.6rem',
+                fontWeight: 800,
+                fontFamily: 'Sora, sans-serif',
+                minWidth: 20,
+                height: 20,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0 4px',
+                border: '2.5px solid var(--bg)',
+                boxShadow: '0 2px 6px rgba(239,68,68,.5)',
+                lineHeight: 1,
+                zIndex: 1,
+              }}>
+                {t.badge}
+              </span>
+            )}
+          </button>
+        );
+      })}
     </div>
   );
 }
