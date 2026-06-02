@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { useRouter } from '@/navigation';
 import dynamic from 'next/dynamic';
 import type { Espacio, EspacioTipo } from '@/types';
 import { useEspacios } from '@/hooks/useEspacios';
@@ -21,6 +22,7 @@ const MarkerEspacioCard = dynamic(() => import('@/components/mapa/MarkerEspacio'
 type Vista = 'mapa' | 'lista';
 
 export default function HomePage() {
+  const t = useTranslations('home');
   const router = useRouter();
   const { user, token, loading: authLoading, login, register, logout, error: authError, isAdmin,
     otpPending, otpEmailHint, otpCanales, verifyOTP, reenviarOTP } = useAuth();
@@ -170,7 +172,7 @@ export default function HomePage() {
               onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--text)'; }}
               onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border2)'; }}
             >
-              ≡ Ver lista
+              {t('verLista')}
             </button>
 
             {/* Filtros — flotante arriba derecha */}
@@ -195,7 +197,7 @@ export default function HomePage() {
                 }}
               >
                 <span>⚙️</span>
-                Filtros
+                {t('filtros')}
                 {filtrosActivos && (
                   <span style={{
                     background: 'var(--orange)', color: '#fff',
@@ -271,7 +273,7 @@ export default function HomePage() {
                   <input
                     type="text"
                     className="search-bar-input"
-                    placeholder="Buscar por barrio, dirección o tipo…"
+                    placeholder={t('searchPlaceholder')}
                     value={busqueda}
                     onChange={e => handleBusqueda(e.target.value)}
                   />
@@ -299,7 +301,7 @@ export default function HomePage() {
                   className={`filter-pill ${filtros.pais ? 'active' : ''}`}
                   style={{ cursor: 'pointer', fontFamily: 'inherit' }}
                 >
-                  <option value="">🌍 País</option>
+                  <option value="">{t('pais')}</option>
                   <option value="Argentina">🇦🇷 Argentina</option>
                   <option value="Uruguay">🇺🇾 Uruguay</option>
                   <option value="Chile">🇨🇱 Chile</option>
@@ -316,13 +318,13 @@ export default function HomePage() {
                   className={`filter-pill ${filtros.tipo === 'exclusivo' ? 'active' : ''}`}
                   onClick={() => aplicarFiltros({ tipo: (filtros.tipo === 'exclusivo' ? '' : 'exclusivo') as EspacioTipo })}
                 >
-                  🔒 Exclusivo
+                  {t('exclusivo')}
                 </button>
                 <button
                   className={`filter-pill ${filtros.tipo === 'compartido' ? 'active' : ''}`}
                   onClick={() => aplicarFiltros({ tipo: (filtros.tipo === 'compartido' ? '' : 'compartido') as EspacioTipo })}
                 >
-                  🤝 Compartido
+                  {t('compartido')}
                 </button>
 
                 {/* Período */}
@@ -330,13 +332,13 @@ export default function HomePage() {
                   className={`filter-pill ${filtros.periodo === 'dia' ? 'active' : ''}`}
                   onClick={() => aplicarFiltros({ periodo: filtros.periodo === 'dia' ? '' : 'dia', precio_max: undefined })}
                 >
-                  📅 Por día
+                  {t('porDia')}
                 </button>
                 <button
                   className={`filter-pill ${filtros.periodo === 'mes' ? 'active' : ''}`}
                   onClick={() => aplicarFiltros({ periodo: filtros.periodo === 'mes' ? '' : 'mes', precio_max: undefined })}
                 >
-                  📆 Por mes
+                  {t('porMes')}
                 </button>
 
                 {/* Precio — solo visible cuando hay periodo seleccionado */}
@@ -353,7 +355,7 @@ export default function HomePage() {
                       color: precioValHome < PRECIO_MAX_HOME ? '#fff' : 'var(--text)',
                       fontFamily: 'Sora, sans-serif',
                     }}>
-                      💰 {precioValHome < PRECIO_MAX_HOME ? `$${precioValHome.toLocaleString('es-AR')}` : `Precio/${filtros.periodo === 'dia' ? 'día' : 'mes'}`}
+                      💰 {precioValHome < PRECIO_MAX_HOME ? `$${precioValHome.toLocaleString('es-AR')}` : (filtros.periodo === 'dia' ? t('precioDia') : t('precioMes'))}
                     </span>
                     <input
                       type="range"
@@ -370,7 +372,7 @@ export default function HomePage() {
 
                 {/* Nivel de Seguridad — pill con estrellas inline */}
                 <div
-                  title="Filtrá espacios según su nivel de seguridad. Consideramos: techo impermeable, cerradura, cámaras, iluminación, acceso controlado, ambiente seco/ventilado, acceso 24hs y extintor."
+                  title={t('seguridadTooltip')}
                   style={{
                   display: 'inline-flex', alignItems: 'center', gap: '.15rem',
                   padding: '.3rem .9rem',
@@ -395,7 +397,7 @@ export default function HomePage() {
                     color: filtros.seguridad_min ? '#fff' : 'var(--text)',
                     fontFamily: 'Sora, sans-serif', marginLeft: '.3rem',
                   }}>
-                    {filtros.seguridad_min ? `${filtros.seguridad_min}+ ★` : 'Nivel de Seguridad'}
+                    {filtros.seguridad_min ? `${filtros.seguridad_min}+ ★` : t('nivelSeguridad')}
                   </span>
                 </div>
 
@@ -406,7 +408,7 @@ export default function HomePage() {
                     style={{ color: 'var(--orange)', borderColor: 'rgba(232,98,42,.3)' }}
                     onClick={() => { limpiarFiltros(); setUserLocation(null); setBusqueda(''); }}
                   >
-                    ✕ Limpiar
+                    {t('limpiar')}
                   </button>
                 )}
               </div>
@@ -416,15 +418,13 @@ export default function HomePage() {
             <div style={{ maxWidth: 1200, margin: '0 auto', padding: '1.25rem 1.5rem 7rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                 <span style={{ fontFamily: 'Sora, sans-serif', fontSize: '.82rem', fontWeight: 600, color: 'var(--text2)' }}>
-                  {loading ? 'Cargando…' : espaciosError ? 'Error al cargar' : (
-                    `${espacios.length} espacio${espacios.length !== 1 ? 's' : ''} encontrado${espacios.length !== 1 ? 's' : ''}`
-                  )}
+                  {loading ? t('cargando') : espaciosError ? t('errorCargar') : t('espaciosEncontrados', { count: espacios.length })}
                 </span>
               </div>
 
               {espaciosError && !loading && (
                 <div className="alert alert--error" style={{ marginBottom: '1rem' }}>
-                  {espaciosError} — Verificá tu conexión o recargá la página.
+                  {espaciosError} {t('errorConexion')}
                 </div>
               )}
 
@@ -440,7 +440,7 @@ export default function HomePage() {
 
             {/* Floating "Ver en Mapa" button */}
             <button className="btn-ver-mapa" onClick={() => setVista('mapa')}>
-              🗺️ Ver en mapa
+              {t('verMapa')}
               {!loading && espacios.length > 0 && (
                 <span style={{
                   background: 'rgba(255,255,255,.2)',

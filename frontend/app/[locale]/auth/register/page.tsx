@@ -1,15 +1,16 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { useRouter } from '@/navigation';
 import { useAuth } from '@/hooks/useAuth';
-import { LoginForm } from '@/components/auth/LoginForm';
+import { RegisterForm } from '@/components/auth/RegisterForm';
 import { OTPStep } from '@/components/auth/OTPStep';
-import Image from 'next/image';
 
-export default function LoginPage() {
+export default function RegisterPage() {
+  const t = useTranslations('auth');
   const router = useRouter();
-  const { user, login, verifyOTP, reenviarOTP, loading, error, otpPending, otpEmailHint, otpCanales } = useAuth();
+  const { user, register, verifyOTP, reenviarOTP, loading, error, otpPending, otpEmailHint, otpCanales } = useAuth();
 
   useEffect(() => {
     if (user) router.push('/panel');
@@ -20,22 +21,22 @@ export default function LoginPage() {
       <div style={{
         background: 'var(--surface)', border: '1px solid var(--border)',
         borderRadius: 'var(--r4)', overflow: 'hidden',
-        width: 'min(420px, 100%)', boxShadow: 'var(--s5)',
+        width: 'min(440px, 100%)', boxShadow: 'var(--s5)',
       }}>
         <div style={{ height: 5, background: 'linear-gradient(90deg, var(--orange), var(--amber) 40%, var(--blue) 70%, var(--mint))' }} />
         <div style={{ padding: '2rem' }}>
           {!otpPending ? (
             <>
               <div style={{ textAlign: 'center', marginBottom: '1.8rem' }}>
-                <Image src="/logo.png" alt="TodasMisCosas" width={140} height={42} style={{ objectFit: 'contain', marginBottom: '.25rem' }} priority />
+                <div style={{ fontSize: '2.5rem', marginBottom: '.5rem' }}>🚀</div>
                 <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.4rem', marginBottom: '.25rem' }}>
-                  Bienvenido de vuelta
+                  {t('registerTitulo')}
                 </h1>
-                <p style={{ color: 'var(--text2)', fontSize: '.85rem' }}>Ingresá a tu cuenta de TodasMisCosas</p>
+                <p style={{ color: 'var(--text2)', fontSize: '.85rem' }}>{t('registerDesc')}</p>
               </div>
-              <LoginForm
-                onLogin={login}
-                onSwitch={() => router.push('/auth/register')}
+              <RegisterForm
+                onRegister={register}
+                onSwitch={() => router.push('/auth/login')}
                 loading={loading}
                 error={error}
               />
