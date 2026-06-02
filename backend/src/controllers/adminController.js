@@ -1,5 +1,6 @@
 const { query, queryOne } = require('../db/connection');
 const { sendContacto, sendServiciosAdicionales, sendCuentaBloqueada, sendCuentaDesbloqueada } = require('../services/emailService');
+const emailConfig = require('../services/emailConfig');
 
 // ── Bootstrap tables ───────────────────────────────────────────
 async function initTables() {
@@ -545,6 +546,32 @@ async function getOperaciones(req, res, next) {
   }
 }
 
+// ── GET /api/admin/email-config ────────────────────────────────
+async function getEmailConfig(req, res, next) {
+  try {
+    const rows = await emailConfig.getAll();
+    const result = {};
+    rows.forEach(r => { result[r.clave] = r.habilitado !== 0; });
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+}
+
+// ── PATCH /api/admin/email-config ──────────────────────────────
+async function updateEmailConfig(req, res, next) {
+  try {
+    const updates = req.body;
+    if (!updates || typeof updates !== 'object') {
+      return res.status(400).json({ error: 'Body inválido' });
+    }
+    await emailConfig.setMany(updates);
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getNotificaciones,
   marcarLeido,
@@ -568,4 +595,6 @@ module.exports = {
   getOperaciones,
   getPublicaciones,
   toggleDisponibleAdmin,
+  getEmailConfig,
+  updateEmailConfig,
 };

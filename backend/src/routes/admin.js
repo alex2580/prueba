@@ -44,4 +44,8 @@ router.patch('/publicaciones/:id/disponible',              ctrl.toggleDisponible
 // Operaciones / Finanzas
 router.get('/operaciones',                                 ctrl.getOperaciones);
 
+// Configuración de emails
+router.get('/email-config',                                ctrl.getEmailConfig);
+router.patch('/email-config',                              ctrl.updateEmailConfig);
+
 module.exports = router;

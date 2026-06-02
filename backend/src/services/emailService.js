@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const emailConfig = require('./emailConfig');
 require('dotenv').config();
 
 const transporter = nodemailer.createTransport({
@@ -53,6 +54,7 @@ function baseTemplate(titulo, contenido) {
 }
 
 async function sendReservaConfirmada(toEmail, nombre, { espacioNombre, fechaDesde, fechaHasta, precioTotal, reservaId, pin }) {
+  if (!await emailConfig.isEnabled('reserva_confirmada')) return;
   const html = baseTemplate('Reserva confirmada', `
     <h2>✅ Reserva confirmada</h2>
     <p>Hola <span class="highlight">${nombre}</span>, tu reserva fue registrada correctamente.</p>
@@ -84,6 +86,7 @@ async function sendReservaConfirmada(toEmail, nombre, { espacioNombre, fechaDesd
 }
 
 async function sendPagoConfirmado(toEmail, nombre, { espacioNombre, monto, reservaId, paymentId }) {
+  if (!await emailConfig.isEnabled('pago_confirmado')) return;
   const html = baseTemplate('Pago confirmado', `
     <h2>💳 Pago aprobado</h2>
     <p>Hola <span class="highlight">${nombre}</span>, tu pago fue acreditado exitosamente.</p>
@@ -108,6 +111,7 @@ async function sendPagoConfirmado(toEmail, nombre, { espacioNombre, monto, reser
 }
 
 async function sendBienvenida(toEmail, nombre, tipo) {
+  if (!await emailConfig.isEnabled('bienvenida')) return;
   const accionPrincipal = tipo === 'oferente'
     ? '<p>Desde tu panel podés publicar tus espacios y empezar a recibir reservas.</p>'
     : '<p>Desde tu panel podés buscar espacios y realizar reservas en toda la ciudad.</p>';
@@ -151,6 +155,7 @@ async function sendBienvenida(toEmail, nombre, tipo) {
 
 // ── Ambas partes: confirmación legal al crear una reserva ────────
 async function sendAceptacionOperacion(toEmail, nombre, { rol, espacioNombre, fechaDesde, fechaHasta, precioTotal, reservaId }) {
+  if (!await emailConfig.isEnabled('aceptacion_operacion')) return;
   const esOferente = rol === 'oferente';
   const rolLabel   = esOferente ? 'Oferente' : 'Demandante';
 
@@ -220,6 +225,7 @@ async function sendAceptacionOperacion(toEmail, nombre, { rol, espacioNombre, fe
 }
 
 async function sendContacto(toEmail, { nombre, emailRemitente, asunto, mensaje }) {
+  if (!await emailConfig.isEnabled('contacto')) return;
   const html = baseTemplate('Consulta recibida', `
     <h2>📩 Nueva consulta</h2>
     <p><strong>De:</strong> ${nombre} (${emailRemitente})</p>
@@ -237,6 +243,7 @@ async function sendContacto(toEmail, { nombre, emailRemitente, asunto, mensaje }
 }
 
 async function sendServiciosAdicionales(toEmail, { nombreDemandante, emailDemandante, telDemandante, espacioNombre, servicios, fechaDesde, fechaHasta }) {
+  if (!await emailConfig.isEnabled('servicios_adicionales')) return;
   const etiquetas = {
     transporte: '🚚 Servicio de Transporte',
     seguro:     '🛡️ Seguro de Contenido',
@@ -275,6 +282,7 @@ async function sendServiciosAdicionales(toEmail, { nombreDemandante, emailDemand
 
 // ── Oferente: nueva solicitud de reserva recibida ───────────────
 async function sendNuevaReserva(toEmail, nombreOferente, { demandanteNombre, demandanteEmail, demandanteTel, espacioNombre, fechaDesde, fechaHasta, precioTotal, reservaId, pin }) {
+  if (!await emailConfig.isEnabled('nueva_reserva')) return;
   const html = baseTemplate('Nueva solicitud de reserva', `
     <h2>🔔 Nueva solicitud de reserva</h2>
     <p>Hola <span class="highlight">${nombreOferente}</span>, recibiste una solicitud para tu espacio.</p>
@@ -310,6 +318,7 @@ async function sendNuevaReserva(toEmail, nombreOferente, { demandanteNombre, dem
 
 // ── Demandante: el oferente aprobó su reserva ────────────────────
 async function sendReservaAprobada(toEmail, nombreDemandante, { espacioNombre, fechaDesde, fechaHasta, precioTotal, reservaId }) {
+  if (!await emailConfig.isEnabled('reserva_aprobada')) return;
   const html = baseTemplate('Tu reserva fue aprobada', `
     <h2>✅ ¡Tu reserva fue aprobada!</h2>
     <p>Hola <span class="highlight">${nombreDemandante}</span>, el oferente confirmó tu solicitud.</p>
@@ -336,6 +345,7 @@ async function sendReservaAprobada(toEmail, nombreDemandante, { espacioNombre, f
 const COMISION_PLATAFORMA = 0.15; // 15%
 
 async function sendPagoRecibidoOferente(toEmail, nombreOferente, { demandanteNombre, espacioNombre, monto, reservaId }) {
+  if (!await emailConfig.isEnabled('pago_recibido_oferente')) return;
   const montoTotal    = Number(monto);
   const comision      = Math.round(montoTotal * COMISION_PLATAFORMA);
   const montoNeto     = montoTotal - comision;
@@ -380,6 +390,7 @@ async function sendPagoRecibidoOferente(toEmail, nombreOferente, { demandanteNom
 
 // ── Ambos: la reserva fue cancelada ─────────────────────────────
 async function sendReservaCancelada(toEmail, nombre, { espacioNombre, fechaDesde, fechaHasta, canceladoPor }) {
+  if (!await emailConfig.isEnabled('reserva_cancelada')) return;
   const html = baseTemplate('Reserva cancelada', `
     <h2>❌ Reserva cancelada</h2>
     <p>Hola <span class="highlight">${nombre}</span>, la siguiente reserva fue cancelada.</p>
@@ -428,6 +439,7 @@ function _recordatorioBase(diasRestantes, { nombre, espacioNombre, fechaHasta, r
 }
 
 async function sendRecordatorio5Dias(toEmail, nombre, datos) {
+  if (!await emailConfig.isEnabled('recordatorios_reserva')) return;
   await transporter.sendMail({
     from: FROM, to: toEmail,
     subject: `⏰ Tu reserva en ${datos.espacioNombre} vence en 5 días`,
@@ -435,6 +447,7 @@ async function sendRecordatorio5Dias(toEmail, nombre, datos) {
   });
 }
 async function sendRecordatorio2Dias(toEmail, nombre, datos) {
+  if (!await emailConfig.isEnabled('recordatorios_reserva')) return;
   await transporter.sendMail({
     from: FROM, to: toEmail,
     subject: `⚡ Tu reserva en ${datos.espacioNombre} vence en 2 días`,
@@ -442,6 +455,7 @@ async function sendRecordatorio2Dias(toEmail, nombre, datos) {
   });
 }
 async function sendRecordatorio1Dia(toEmail, nombre, datos) {
+  if (!await emailConfig.isEnabled('recordatorios_reserva')) return;
   await transporter.sendMail({
     from: FROM, to: toEmail,
     subject: `🚨 Tu reserva en ${datos.espacioNombre} vence mañana`,
@@ -449,6 +463,7 @@ async function sendRecordatorio1Dia(toEmail, nombre, datos) {
   });
 }
 async function sendRecordatorio0Dias(toEmail, nombre, datos) {
+  if (!await emailConfig.isEnabled('recordatorios_reserva')) return;
   await transporter.sendMail({
     from: FROM, to: toEmail,
     subject: `🔔 Hoy finaliza tu reserva en ${datos.espacioNombre}`,
@@ -458,6 +473,7 @@ async function sendRecordatorio0Dias(toEmail, nombre, datos) {
 
 // ── Demandante: extensión de reserva confirmada ──────────────────
 async function sendExtensionConfirmada(toEmail, nombre, { espacioNombre, fechaHastaAnterior, nuevaFechaHasta, monto, reservaId }) {
+  if (!await emailConfig.isEnabled('extension_confirmada')) return;
   const html = baseTemplate('Extensión confirmada', `
     <h2>✅ Extensión de reserva confirmada</h2>
     <p>Hola <span class="highlight">${nombre}</span>, tu extensión fue procesada exitosamente.</p>
@@ -485,6 +501,7 @@ async function sendExtensionConfirmada(toEmail, nombre, { espacioNombre, fechaHa
 
 // ── Demandante: reserva finalizada — invitación a dejar reseña ──
 async function sendReservaFinalizada(toEmail, nombreDemandante, { espacioNombre, reservaId }) {
+  if (!await emailConfig.isEnabled('reserva_finalizada')) return;
   const html = baseTemplate('Tu estadía finalizó', `
     <h2>🏁 Tu estadía finalizó</h2>
     <p>Hola <span class="highlight">${nombreDemandante}</span>, tu reserva en <strong>${espacioNombre}</strong> fue marcada como finalizada.</p>
@@ -501,6 +518,7 @@ async function sendReservaFinalizada(toEmail, nombreDemandante, { espacioNombre,
 
 // ── OTP: código de verificación de acceso ───────────────────────
 async function sendOTP(toEmail, nombre, { codigo, expiraEn }) {
+  if (!await emailConfig.isEnabled('otp')) return;
   const html = baseTemplate('Código de verificación', `
     <h2>🔐 Código de verificación</h2>
     <p>Hola <span class="highlight">${nombre}</span>, alguien (esperemos que seas vos) está intentando ingresar a tu cuenta.</p>
@@ -524,6 +542,7 @@ async function sendOTP(toEmail, nombre, { codigo, expiraEn }) {
 
 // ── Notificación de acceso exitoso ───────────────────────────────
 async function sendLoginNotificacion(toEmail, nombre, { fecha, ip, dispositivo }) {
+  if (!await emailConfig.isEnabled('login_notificacion')) return;
   const html = baseTemplate('Acceso confirmado a tu cuenta', `
     <h2>✅ Acceso confirmado</h2>
     <p>Hola <span class="highlight">${nombre}</span>, se registró un acceso exitoso a tu cuenta.</p>
@@ -547,6 +566,7 @@ async function sendLoginNotificacion(toEmail, nombre, { fecha, ip, dispositivo }
 
 // ── Cuenta bloqueada por admin ───────────────────────────────────
 async function sendCuentaBloqueada(toEmail, nombre, { motivo }) {
+  if (!await emailConfig.isEnabled('cuenta_bloqueada')) return;
   const html = baseTemplate('Cuenta suspendida', `
     <h2>⛔ Tu cuenta ha sido suspendida</h2>
     <p>Hola <span class="highlight">${nombre}</span>, tu cuenta en TodasMisCosas fue suspendida por un administrador.</p>
@@ -567,6 +587,7 @@ async function sendCuentaBloqueada(toEmail, nombre, { motivo }) {
 
 // ── Cuenta desbloqueada por admin ────────────────────────────────
 async function sendCuentaDesbloqueada(toEmail, nombre) {
+  if (!await emailConfig.isEnabled('cuenta_desbloqueada')) return;
   const html = baseTemplate('Cuenta reactivada', `
     <h2>✅ Tu cuenta fue reactivada</h2>
     <p>Hola <span class="highlight">${nombre}</span>, nos complace informarte que tu cuenta en TodasMisCosas fue reactivada.</p>
@@ -582,6 +603,7 @@ async function sendCuentaDesbloqueada(toEmail, nombre) {
 
 // ── Cambio de teléfono confirmado ────────────────────────────────
 async function sendCambioTelConfirmado(toEmail, nombre, { telNuevo }) {
+  if (!await emailConfig.isEnabled('cambio_tel')) return;
   const html = baseTemplate('Teléfono actualizado', `
     <h2>📱 Tu teléfono fue actualizado</h2>
     <p>Hola <span class="highlight">${nombre}</span>, te confirmamos que el número de teléfono asociado a tu cuenta fue actualizado exitosamente.</p>
@@ -600,6 +622,7 @@ async function sendCambioTelConfirmado(toEmail, nombre, { telNuevo }) {
 
 // ── Publicación desactivada por inactividad ──────────────────────
 async function sendPublicacionDesactivada(toEmail, nombre, { espacioNombre, diasInactivo }) {
+  if (!await emailConfig.isEnabled('publicacion_desactivada')) return;
   const html = baseTemplate('Publicación desactivada por inactividad', `
     <h2>⏸️ Publicación pausada automáticamente</h2>
     <p>Hola <span class="highlight">${nombre}</span>, tu publicación estuvo inactiva durante más de ${diasInactivo} días y fue pausada automáticamente para mantener la calidad del marketplace.</p>
@@ -618,6 +641,7 @@ async function sendPublicacionDesactivada(toEmail, nombre, { espacioNombre, dias
 }
 
 async function sendMejorarPuntuacion({ nombre, email, tel, espacioNombre, puntajeActual }) {
+  if (!await emailConfig.isEnabled('mejorar_puntuacion')) return;
   const adminTo = process.env.ADMIN_EMAILS || 'contacto@todasmiscosas.com';
   const html = baseTemplate('Solicitud para mejorar puntuación de seguridad', `
     <h2>🛡️ Solicitud: Mejorar puntuación de seguridad</h2>
@@ -641,6 +665,7 @@ async function sendMejorarPuntuacion({ nombre, email, tel, espacioNombre, puntaj
 
 // ── Chat: nuevo mensaje recibido ────────────────────────────────
 async function sendNuevoMensajeChat(toEmail, nombreDestinatario, { nombreRemitente, espacioNombre, previewMensaje, conversacionId }) {
+  if (!await emailConfig.isEnabled('chat_mensaje')) return;
   const preview = previewMensaje?.length > 120
     ? previewMensaje.slice(0, 120) + '…'
     : previewMensaje;
@@ -666,6 +691,7 @@ async function sendNuevoMensajeChat(toEmail, nombreDestinatario, { nombreRemiten
 
 // ── Consulta pública en una publicación ─────────────────────────
 async function sendNuevaConsultaPublica(toEmail, nombreOferente, { autorNombre, espacioNombre, pregunta, espacioId }) {
+  if (!await emailConfig.isEnabled('consulta_publica')) return;
   const preview = pregunta?.length > 160 ? pregunta.slice(0, 160) + '…' : pregunta;
 
   const html = baseTemplate('Nueva consulta en tu publicación', `
@@ -689,6 +715,7 @@ async function sendNuevaConsultaPublica(toEmail, nombreOferente, { autorNombre, 
 
 // ── Respuesta a consulta pública ────────────────────────────────
 async function sendRespuestaConsultaPublica(toEmail, nombreDemandante, { espacioNombre, pregunta, respuesta, espacioId }) {
+  if (!await emailConfig.isEnabled('respuesta_consulta')) return;
   const previewPregunta = pregunta?.length > 120 ? pregunta.slice(0, 120) + '…' : pregunta;
   const previewRespuesta = respuesta?.length > 160 ? respuesta.slice(0, 160) + '…' : respuesta;
 
@@ -717,6 +744,7 @@ async function sendRespuestaConsultaPublica(toEmail, nombreDemandante, { espacio
 
 // ── Vencimiento de publicación: aviso 30 días antes ────────────
 async function sendAvisoVencimientoPublicacion(toEmail, nombre, { espacioNombre, fechaVencimiento }) {
+  if (!await emailConfig.isEnabled('aviso_vencimiento_publicacion')) return;
   const html = baseTemplate('Tu publicación vence en 30 días', `
     <h2>⚠️ Tu publicación vence el ${fechaVencimiento}</h2>
     <p>Hola <span class="highlight">${nombre}</span>, tu publicación en TodasMisCosas.com está próxima a vencer.</p>
@@ -738,6 +766,7 @@ async function sendAvisoVencimientoPublicacion(toEmail, nombre, { espacioNombre,
 
 // ── Publicación vencida ─────────────────────────────────────────
 async function sendPublicacionVencida(toEmail, nombre, { espacioNombre }) {
+  if (!await emailConfig.isEnabled('publicacion_vencida')) return;
   const html = baseTemplate('Tu publicación venció', `
     <h2>🔴 Tu publicación venció</h2>
     <p>Hola <span class="highlight">${nombre}</span>, tu publicación <strong>${espacioNombre}</strong> llegó al final de su vigencia de 90 días y fue dada de baja automáticamente.</p>
@@ -754,6 +783,7 @@ async function sendPublicacionVencida(toEmail, nombre, { espacioNombre }) {
 
 // ── Newsletter / Mailing masivo ──────────────────────────────────
 async function sendNewsletter(toEmail, nombre, { asunto, cuerpoHtml }) {
+  if (!await emailConfig.isEnabled('newsletter')) return;
   const html = baseTemplate(asunto, `
     <p style="font-size:.88rem; color:#94a3b8; margin:0 0 20px;">
       Hola <span class="highlight">${nombre}</span>, te traemos novedades de <strong style="color:#e8622a;">TodasMisCosas.com</strong>.

@@ -10,6 +10,7 @@ import { formatFechaCorta, formatARS, COMISION_TMC } from '@/lib/utils';
 import { chatAPI } from '@/lib/api';
 import type { Conversacion } from '@/types';
 import { TabMarketing } from '@/components/admin/TabMarketing';
+import { TabEmailConfig } from '@/components/admin/TabEmailConfig';
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -1858,6 +1859,7 @@ export default function AdminPage() {
     { key: 'usuarios',             label: '👤 Usuarios' },
     { key: 'conversaciones',       label: '💬 Conversaciones' },
     { key: 'publicaciones',        label: '🏠 Publicaciones' },
+    { key: 'emails',               label: '✉️ Emails' },
   ];
 
   return (
@@ -1881,6 +1883,7 @@ export default function AdminPage() {
           {tab === 'usuarios'            && token && <TabUsuarios token={token} />}
           {tab === 'conversaciones'      && token && <TabConversaciones token={token} />}
           {tab === 'publicaciones'       && token && <TabPublicaciones token={token} />}
+          {tab === 'emails'              && token && <TabEmailConfig token={token} />}
         </div>
       </div>
     </div>
