@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import {
-  format, startOfMonth, endOfMonth, eachDayOfInterval,
-  isSameDay, isSameMonth, addMonths, subMonths,
+  format, addMonths, subMonths,
+  isSameMonth, startOfMonth, endOfMonth, eachDayOfInterval,
   startOfWeek, endOfWeek, isToday, isBefore, isAfter, startOfToday, addDays,
 } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -119,93 +119,107 @@ function CalendarioDias({ dias, onChange }: { dias: string[]; onChange: (d: stri
   );
 }
 
-const MESES_NOMBRES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+const MESES_COMPLETOS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const DIAS_CAB = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 
 function SelectorMeses({ meses, onChange }: { meses: string[]; onChange: (m: string[]) => void }) {
-  const [anio, setAnio] = useState(new Date().getFullYear());
-  const hoy = new Date();
-  const mesActual = hoy.getMonth();
-  const anioActual = hoy.getFullYear();
+  // Límite: mes actual (idx 0) + 2 meses más = 3 meses en total
+  const [viewDate, setViewDate] = useState(() => {
+    const d = new Date();
+    return new Date(d.getFullYear(), d.getMonth(), 1);
+  });
 
-  // Fecha límite: 3 meses desde hoy
-  const limiteDate = addMonths(hoy, 3);
-  const mesLimite  = limiteDate.getMonth();
-  const anioLimite = limiteDate.getFullYear();
+  const now = new Date();
+  const minView = new Date(now.getFullYear(), now.getMonth(), 1);
+  const maxView = new Date(now.getFullYear(), now.getMonth() + 2, 1); // +2 → 3 meses totales
 
-  function toggleMes(idx: number) {
-    const key = `${anio}-${String(idx + 1).padStart(2, '0')}`;
-    if (meses.includes(key)) {
-      onChange(meses.filter(m => m !== key));
-    } else {
-      onChange([...meses, key].sort());
-    }
+  const year = viewDate.getFullYear();
+  const mi   = viewDate.getMonth();
+  const key  = `${year}-${String(mi + 1).padStart(2, '0')}`;
+  const selected = meses.includes(key);
+
+  const canPrev = viewDate > minView;
+  const canNext = viewDate < maxView;
+
+  const firstDow   = new Date(year, mi, 1).getDay();
+  const daysInMonth = new Date(year, mi + 1, 0).getDate();
+  const cells: (number | null)[] = [];
+  for (let i = 0; i < firstDow; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+
+  function toggleMes() {
+    if (selected) onChange(meses.filter(m => m !== key));
+    else onChange([...meses, key].sort());
   }
 
-  function isPasado(idx: number) {
-    return anio < anioActual || (anio === anioActual && idx < mesActual);
+  function prevMonth() {
+    if (canPrev) setViewDate(new Date(year, mi - 1, 1));
   }
-
-  function isFuera(idx: number) {
-    return anio > anioLimite || (anio === anioLimite && idx > mesLimite);
+  function nextMonth() {
+    if (canNext) setViewDate(new Date(year, mi + 1, 1));
   }
 
   return (
     <div>
-      {/* Navegación año */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '.75rem' }}>
-        <button type="button" onClick={() => setAnio(a => a - 1)}
-          style={{ background: 'none', border: 'none', color: 'var(--text2)', cursor: 'pointer', fontSize: '1.1rem', padding: '4px 8px' }}>
-          ‹
+      {/* Indicador de modo — igual que en reservar */}
+      <div style={{
+        fontSize: '.72rem', fontWeight: 600, borderRadius: 6,
+        padding: '.25rem .65rem', marginBottom: '.75rem',
+        color: selected ? '#3b82f6' : 'var(--text3)',
+        background: selected ? 'rgba(59,130,246,.1)' : 'rgba(0,0,0,.03)',
+        border: `1px solid ${selected ? 'rgba(59,130,246,.25)' : 'var(--border)'}`,
+      }}>
+        {selected
+          ? `🗓 ${MESES_COMPLETOS[mi]} marcado como disponible — tocá de nuevo para quitar`
+          : '🗓 Tocá el calendario para marcar el mes completo como disponible'}
+      </div>
+
+      {/* Navegación mes */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.75rem' }}>
+        <button type="button" onClick={prevMonth}
+          style={{ background: 'none', border: 'none', cursor: canPrev ? 'pointer' : 'default', fontSize: '1rem', color: 'var(--text2)', padding: '.2rem .5rem', opacity: canPrev ? 1 : 0.25 }}>
+          ←
         </button>
-        <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.9rem', color: 'var(--text)' }}>
-          {anio}
+        <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.88rem' }}>
+          {MESES_COMPLETOS[mi]} {year}
         </span>
-        <button type="button" onClick={() => setAnio(a => a + 1)}
-          style={{ background: 'none', border: 'none', color: 'var(--text2)', cursor: 'pointer', fontSize: '1.1rem', padding: '4px 8px' }}>
-          ›
+        <button type="button" onClick={nextMonth}
+          style={{ background: 'none', border: 'none', cursor: canNext ? 'pointer' : 'default', fontSize: '1rem', color: 'var(--text2)', padding: '.2rem .5rem', opacity: canNext ? 1 : 0.25 }}>
+          →
         </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '.4rem' }}>
-        {MESES_NOMBRES.map((nombre, idx) => {
-          const key      = `${anio}-${String(idx + 1).padStart(2, '0')}`;
-          const selected = meses.includes(key);
-          const pasado   = isPasado(idx);
-          const fuera    = isFuera(idx);
-          const bloqueado = pasado || fuera;
-
-          return (
-            <button
-              key={key}
-              type="button"
-              onClick={() => !bloqueado && toggleMes(idx)}
-              disabled={bloqueado}
-              title={fuera ? 'Fuera del período de vigencia (3 meses)' : undefined}
-              style={{
-                padding: '.5rem',
-                borderRadius: 8,
-                border: `1.5px solid ${selected ? 'var(--orange)' : 'var(--border)'}`,
-                background: selected ? 'var(--orange)' : 'var(--surface2)',
-                color: selected ? '#fff' : bloqueado ? 'var(--text3)' : 'var(--text2)',
-                fontSize: '.8rem',
+      {/* Grilla de días — click en cualquier celda togglea el mes */}
+      <div onClick={toggleMes} style={{ cursor: 'pointer', userSelect: 'none' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
+          {DIAS_CAB.map(d => (
+            <div key={d} style={{ textAlign: 'center', fontSize: '.62rem', color: '#aaa', fontWeight: 700, padding: '.2rem 0', letterSpacing: '.02em' }}>{d}</div>
+          ))}
+          {cells.map((d, i) => {
+            if (!d) return <div key={i} />;
+            return (
+              <div key={i} style={{
+                textAlign: 'center', fontSize: '.78rem', padding: '.32rem .1rem',
+                borderRadius: 6, transition: 'all .1s',
+                background: selected ? 'rgba(59,130,246,.85)' : 'rgba(16,185,129,.07)',
+                color: selected ? '#fff' : 'var(--text)',
+                border: selected ? '1.5px solid #3b82f6' : '1px solid rgba(16,185,129,.2)',
                 fontWeight: selected ? 700 : 400,
-                cursor: bloqueado ? 'not-allowed' : 'pointer',
-                opacity: bloqueado ? 0.25 : 1,
-                transition: 'all .1s',
-              }}
-            >
-              {nombre}
-            </button>
-          );
-        })}
+              }}>
+                {d}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
+      {/* Resumen total */}
       {meses.length > 0 && (
         <div style={{ marginTop: '.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ fontSize: '.75rem', color: 'var(--mint)' }}>
             ✅ {meses.length} mes{meses.length !== 1 ? 'es' : ''} disponible{meses.length !== 1 ? 's' : ''}
           </span>
-          <button type="button" onClick={() => onChange([])}
+          <button type="button" onClick={e => { e.stopPropagation(); onChange([]); }}
             style={{ background: 'none', border: 'none', color: 'var(--text3)', fontSize: '.72rem', cursor: 'pointer' }}>
             Limpiar
           </button>
