@@ -39,9 +39,9 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -4 -H "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null || true
+          ssh-keyscan -4 -H "2.24.105.151" >> ~/.ssh/known_hosts 2>/dev/null || true
           ssh -4 -i ~/.ssh/deploy_key \
             -o StrictHostKeyChecking=no \
             -o AddressFamily=inet \
-            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
+            "${{ secrets.VPS_USER }}@2.24.105.151" \
             "cd /var/www/todasmiscosas && git fetch origin && git reset --hard origin/master && bash /var/www/todasmiscosas/deploy.sh"
