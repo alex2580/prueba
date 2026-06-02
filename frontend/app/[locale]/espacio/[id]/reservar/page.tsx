@@ -508,7 +508,7 @@ export default function ReservarPage() {
       </header>
 
       <div className="page-scroll" style={{ flex: 1 }}>
-        <div style={{ maxWidth: 680, margin: '0 auto', padding: '2rem 1rem 4rem' }}>
+        <div className="reservar-outer-wrap" style={{ maxWidth: 680, margin: '0 auto', padding: '2rem 1rem 4rem' }}>
 
           {/* Card contenedor */}
           <div style={{
@@ -833,13 +833,13 @@ export default function ReservarPage() {
                     </div>
                   ) : (
                     /* Logged in: show summary and pay button */
-                    <div style={{ display: 'grid', gap: '1rem' }}>
+                    <div className="paso3-grid" style={{ display: 'grid', gap: '1rem' }}>
                       <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.15rem' }}>
                         💳 Resumen y pago
                       </h2>
 
                       {/* Resumen */}
-                      <div style={{ background: 'var(--surface2)', borderRadius: 10, padding: '1rem', display: 'grid', gap: '.5rem' }}>
+                      <div className="resumen-pago-card" style={{ background: 'var(--surface2)', borderRadius: 10, padding: '1rem', display: 'grid', gap: '.5rem' }}>
                         {[
                           ['Espacio', espacio.nombre],
                           ['Ubicación', `${espacio.barrio} · ${espacio.direccion}`],
@@ -915,7 +915,7 @@ export default function ReservarPage() {
 
                       {/* Payment buttons — hidden once QR is shown */}
                       {!qrDataUrl && (
-                        <div style={{ display: 'grid', gap: '.6rem' }}>
+                        <div className="paso3-pay-btns" style={{ display: 'grid', gap: '.6rem' }}>
                           <Button variant="primary" onClick={handlePagar} loading={payLoading} style={{ width: '100%', fontSize: '1rem', padding: '.9rem' }}>
                             💳 Pagar online con MercadoPago
                           </Button>

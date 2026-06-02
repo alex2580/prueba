@@ -905,6 +905,13 @@ select.filter-pill {
   .seguridad-lista { gap: .3rem !important; }
   .seguridad-item { padding: .38rem .65rem !important; }
   .seguridad-card { padding: .75rem !important; }
+
+  /* Reservar paso 3 Resumen y pago — compacto en mobile */
+  .reservar-outer-wrap { padding-bottom: 1rem !important; }
+  .paso3-grid { gap: .55rem !important; }
+  .paso3-grid > h2 { font-size: 1rem !important; }
+  .resumen-pago-card { padding: .6rem !important; gap: .3rem !important; }
+  .paso3-pay-btns button { padding: .6rem !important; font-size: .9rem !important; }
 }
 
 /* ── Chat ─────────────────────────────────────────────────── */
