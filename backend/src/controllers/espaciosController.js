@@ -159,7 +159,7 @@ async function crear(req, res, next) {
       await conn.execute(
         `INSERT INTO espacios (nombre, direccion, barrio, m2, tipo, precio_dia, precio_mes, descripcion, oferente_id, lat, lng)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [nombre, direccion, barrio || '', m2 || null, tipo || 'exclusivo',
+        [nombre, direccion, barrio || '', m2 ?? 0, tipo || 'exclusivo',
          precio_dia || 0, precio_mes || 0, descripcion || '', req.user.id, lat || -34.6037, lng || -58.3816]
       );
     });
