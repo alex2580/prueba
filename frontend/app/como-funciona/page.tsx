@@ -30,7 +30,7 @@ const PASOS_PUBLICAR = [
   {
     icon: '📢',
     titulo: 'Publicás tu espacio',
-    desc: 'Andá al botón "Publicar espacio" y contale a todos qué espacio ofrecés. Si es para uso exclusivo o compartido, si lo alquilás por día, por mes o de ambas formas. Marcá en el calendario los días o meses en que estará disponible (podés marcar hasta 90 días desde hoy). Tu publicación tiene una vigencia de 90 días — 30 días antes de que venza te avisamos por mail.',
+    desc: 'Andá al botón "Publicar espacio" y contale a todos qué espacio ofrecés: si es exclusivo o compartido, si lo alquilás por día, por mes o ambas formas. Marcá en el calendario los días o meses en que estará disponible.',
   },
   {
     icon: '📷',
@@ -110,6 +110,8 @@ export default function ComoFuncionaPage() {
         .cf-steps { display: grid; grid-template-columns: 1fr; gap: .75rem; }
         @media (min-width: 560px) { .cf-steps { grid-template-columns: 1fr 1fr; } }
         @media (min-width: 860px) { .cf-steps { grid-template-columns: 1fr; } }
+        .cf-notas { display: grid; grid-template-columns: 1fr; gap: .75rem; }
+        @media (min-width: 640px) { .cf-notas { grid-template-columns: repeat(3, 1fr); } }
         .pq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
         @media (min-width: 640px) { .pq-grid { grid-template-columns: repeat(4, 1fr); } }
       `}</style>
@@ -292,52 +294,48 @@ export default function ComoFuncionaPage() {
                   />
                 ))}
               </div>
-              {/* Nota */}
-              <div style={{
-                margin: '0 1.1rem .6rem',
-                background: 'rgba(34,197,94,.07)',
-                border: '1px solid rgba(34,197,94,.3)',
-                borderRadius: 'var(--r2)',
-                padding: '.85rem 1rem',
-                fontSize: '.78rem',
-                color: 'var(--text2)',
-                lineHeight: 1.7,
-              }}>
-                <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, color: '#15803d' }}>✅ Publicar es gratis: </span>
-                Buscar un espacio y publicar uno son servicios <strong>100% gratuitos</strong>.{' '}
-                <strong>TodasMisCosas cobra el 15% de comisión únicamente cuando se concreta una reserva.</strong>{' '}
-                Si nadie te reserva, no pagás nada.
-              </div>
-              <div style={{
-                margin: '0 1.1rem .6rem',
-                background: 'rgba(245,158,11,.07)',
-                border: '1px solid rgba(245,158,11,.3)',
-                borderRadius: 'var(--r2)',
-                padding: '.85rem 1rem',
-                fontSize: '.78rem',
-                color: 'var(--text2)',
-                lineHeight: 1.7,
-              }}>
-                <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, color: '#b45309' }}>⏳ Vigencia 90 días: </span>
-                Cada publicación tiene una vigencia de <strong>90 días</strong>. Te avisamos por mail 30 días antes de que venza.
-                Al vencer, la publicación se desactiva y podés crear una nueva para seguir ofreciendo tu espacio.
-              </div>
-              <div style={{
-                margin: '0 1.1rem 1.1rem',
-                background: 'rgba(245,158,11,.07)',
-                border: '1px solid rgba(245,158,11,.3)',
-                borderRadius: 'var(--r2)',
-                padding: '.85rem 1rem',
-                fontSize: '.78rem',
-                color: 'var(--text2)',
-                lineHeight: 1.7,
-              }}>
-                <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, color: '#b45309' }}>📌 CBU / Alias: </span>
-                No olvides cargarlo en el perfil de tu cuenta para recibir en <strong>48hs</strong> el importe neto cuando alguien te elija.
-                Si no entendés algo, consultanos antes.
-              </div>
             </div>
 
+          </div>
+
+          {/* Notas informativas — fila completa debajo de ambas columnas */}
+          <div className="cf-notas" style={{ marginBottom: '2.5rem' }}>
+            <div style={{
+              background: 'rgba(34,197,94,.07)',
+              border: '1px solid rgba(34,197,94,.3)',
+              borderRadius: 'var(--r3)',
+              padding: '1rem 1.15rem',
+              fontSize: '.8rem',
+              color: 'var(--text2)',
+              lineHeight: 1.7,
+            }}>
+              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, color: '#15803d', marginBottom: '.35rem' }}>✅ Publicar es gratis</div>
+              Buscar y publicar son <strong>100% gratuitos</strong>. TodasMisCosas cobra el <strong>15% de comisión únicamente cuando se concreta una reserva</strong>. Si nadie te reserva, no pagás nada.
+            </div>
+            <div style={{
+              background: 'rgba(245,158,11,.07)',
+              border: '1px solid rgba(245,158,11,.3)',
+              borderRadius: 'var(--r3)',
+              padding: '1rem 1.15rem',
+              fontSize: '.8rem',
+              color: 'var(--text2)',
+              lineHeight: 1.7,
+            }}>
+              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, color: '#b45309', marginBottom: '.35rem' }}>⏳ Vigencia 90 días</div>
+              Cada publicación tiene una vigencia de <strong>90 días</strong>. Te avisamos por mail 30 días antes de que venza. Al vencer podés crear una nueva.
+            </div>
+            <div style={{
+              background: 'rgba(245,158,11,.07)',
+              border: '1px solid rgba(245,158,11,.3)',
+              borderRadius: 'var(--r3)',
+              padding: '1rem 1.15rem',
+              fontSize: '.8rem',
+              color: 'var(--text2)',
+              lineHeight: 1.7,
+            }}>
+              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, color: '#b45309', marginBottom: '.35rem' }}>📌 CBU / Alias</div>
+              Cargalo en tu perfil para recibir en <strong>48hs</strong> el importe neto cuando alguien te elija. ¿Dudas? Consultanos antes.
+            </div>
           </div>
 
           {/* Para quién */}
