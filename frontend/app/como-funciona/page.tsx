@@ -30,7 +30,7 @@ const PASOS_PUBLICAR = [
   {
     icon: '📢',
     titulo: 'Publicás tu espacio',
-    desc: 'Andá al botón "Publicar espacio" y contale a todos qué espacio ofrecés. Si es para uso exclusivo o compartido, si lo alquilás por día, por mes o de ambas formas. No olvides marcar en el calendario qué días o meses estará disponible.',
+    desc: 'Andá al botón "Publicar espacio" y contale a todos qué espacio ofrecés. Si es para uso exclusivo o compartido, si lo alquilás por día, por mes o de ambas formas. Marcá en el calendario los días o meses en que estará disponible (podés marcar hasta 90 días desde hoy). Tu publicación tiene una vigencia de 90 días — 30 días antes de que venza te avisamos por mail.',
   },
   {
     icon: '📷',
@@ -294,6 +294,35 @@ export default function ComoFuncionaPage() {
               </div>
               {/* Nota */}
               <div style={{
+                margin: '0 1.1rem .6rem',
+                background: 'rgba(34,197,94,.07)',
+                border: '1px solid rgba(34,197,94,.3)',
+                borderRadius: 'var(--r2)',
+                padding: '.85rem 1rem',
+                fontSize: '.78rem',
+                color: 'var(--text2)',
+                lineHeight: 1.7,
+              }}>
+                <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, color: '#15803d' }}>✅ Publicar es gratis: </span>
+                Buscar un espacio y publicar uno son servicios <strong>100% gratuitos</strong>.{' '}
+                <strong>TodasMisCosas cobra el 15% de comisión únicamente cuando se concreta una reserva.</strong>{' '}
+                Si nadie te reserva, no pagás nada.
+              </div>
+              <div style={{
+                margin: '0 1.1rem .6rem',
+                background: 'rgba(245,158,11,.07)',
+                border: '1px solid rgba(245,158,11,.3)',
+                borderRadius: 'var(--r2)',
+                padding: '.85rem 1rem',
+                fontSize: '.78rem',
+                color: 'var(--text2)',
+                lineHeight: 1.7,
+              }}>
+                <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, color: '#b45309' }}>⏳ Vigencia 90 días: </span>
+                Cada publicación tiene una vigencia de <strong>90 días</strong>. Te avisamos por mail 30 días antes de que venza.
+                Al vencer, la publicación se desactiva y podés crear una nueva para seguir ofreciendo tu espacio.
+              </div>
+              <div style={{
                 margin: '0 1.1rem 1.1rem',
                 background: 'rgba(245,158,11,.07)',
                 border: '1px solid rgba(245,158,11,.3)',
@@ -303,9 +332,9 @@ export default function ComoFuncionaPage() {
                 color: 'var(--text2)',
                 lineHeight: 1.7,
               }}>
-                <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, color: '#b45309' }}>📌 Nota: </span>
-                No olvides identificar en el perfil de tu cuenta el <strong>CBU o Alias bancario</strong> para recibir en 48hs el importe neto de tu publicación cuando alguien te elija.{' '}
-                <strong>TodasMisCosas cobra el 15%</strong> por las operaciones concretadas. Si no entendés algo, consultanos antes.
+                <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, color: '#b45309' }}>📌 CBU / Alias: </span>
+                No olvides cargarlo en el perfil de tu cuenta para recibir en <strong>48hs</strong> el importe neto cuando alguien te elija.
+                Si no entendés algo, consultanos antes.
               </div>
             </div>
 

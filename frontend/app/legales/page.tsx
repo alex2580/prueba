@@ -55,7 +55,7 @@ export default function LegalesPage() {
             📋 Términos y Condiciones
           </h1>
           <p style={{ color: 'var(--text3)', fontSize: '.82rem', marginBottom: '2.5rem' }}>
-            Última actualización: mayo 2026
+            Última actualización: junio 2026
           </p>
 
           {/* 1 */}
@@ -83,6 +83,7 @@ export default function LegalesPage() {
               <li>Cumplir con la legislación vigente en materia de alquileres, impuestos y habilitaciones municipales.</li>
               <li>No permitir el ingreso de objetos prohibidos (ver sección 5).</li>
               <li>Conservar el espacio limpio y libre de plagas durante la locación.</li>
+              <li>Renovar la publicación creando una nueva cuando venza el plazo de 90 días, si desea continuar ofreciendo el espacio (ver sección 11).</li>
             </ul>
           </section>
 
@@ -161,10 +162,13 @@ export default function LegalesPage() {
           <section style={sectionStyle}>
             <h2 style={h2Style}>6. Pagos y comisiones</h2>
             <p style={pStyle}>
-              Los pagos se procesan a través de MercadoPago. TodasMisCosas.com cobra una comisión de servicio
-              sobre cada transacción completada. El monto de la comisión se muestra claramente antes de confirmar
-              la reserva. El oferente recibe el importe neto una vez confirmado el inicio del período de locación
-              mediante el PIN de verificación.
+              La publicación de espacios y la búsqueda de los mismos son servicios <strong>completamente gratuitos</strong> para todos los usuarios.
+              Los pagos se procesan a través de MercadoPago. TodasMisCosas.com cobra una <strong>comisión del 15%</strong> exclusivamente sobre
+              las transacciones completadas — no se cobra ningún importe por publicar un espacio ni por realizar una reserva.
+              El monto de la comisión se desglosa claramente antes de confirmar la reserva.
+              El oferente recibe el importe neto (precio acordado menos la comisión del 15%) dentro de las <strong>48 horas</strong> de
+              confirmado el inicio del período de locación mediante el PIN de verificación,
+              siempre que tenga cargado su CBU o Alias bancario en el perfil de su cuenta.
             </p>
           </section>
 
@@ -208,6 +212,22 @@ export default function LegalesPage() {
               a la jurisdicción de los Tribunales Ordinarios de la Ciudad Autónoma de Buenos Aires,
               renunciando a cualquier otro fuero que pudiera corresponder.
             </p>
+          </section>
+
+          {/* 11 */}
+          <section style={sectionStyle}>
+            <h2 style={h2Style}>11. Vigencia de las publicaciones</h2>
+            <p style={{ ...pStyle, marginBottom: '.75rem' }}>
+              Cada publicación de espacio tiene una vigencia de <strong>90 días corridos</strong> contados desde la fecha de publicación.
+              Durante ese período, el espacio es visible para los demandantes y puede recibir reservas.
+            </p>
+            <ul style={ulStyle}>
+              <li><strong>Aviso previo:</strong> 30 días antes del vencimiento, la plataforma notifica al oferente por correo electrónico para que pueda tomar acción.</li>
+              <li><strong>Vencimiento automático:</strong> Al cumplirse los 90 días, la publicación se desactiva automáticamente y deja de ser visible para los demandantes.</li>
+              <li><strong>Renovación:</strong> Para continuar ofreciendo el espacio, el oferente debe crear una nueva publicación. No existe renovación automática.</li>
+              <li><strong>Reservas vigentes:</strong> Las reservas confirmadas al momento del vencimiento no se ven afectadas y continúan normalmente hasta su fecha de finalización.</li>
+              <li><strong>Sin costo:</strong> Crear una nueva publicación tras el vencimiento es gratuito, igual que la publicación original.</li>
+            </ul>
           </section>
 
           <div style={{
