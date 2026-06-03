@@ -66,6 +66,9 @@ export interface Espacio {
   activo?: boolean;
   inactiva_auto?: boolean;
   created_at?: string;
+  fecha_vencimiento?: string | null;
+  vencida?: number;
+  aviso_vencimiento_enviado?: number;
   // Panel stats
   total_reservas?: number;
   ingresos_total?: number;

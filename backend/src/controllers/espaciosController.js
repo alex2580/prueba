@@ -307,7 +307,7 @@ async function misEspacios(req, res, next) {
               SUM(CASE WHEN r.estado IN ('confirmada','pagada') THEN r.precio_total ELSE 0 END) AS ingresos_total
        FROM espacios e
        LEFT JOIN reservas r ON e.id = r.espacio_id
-       WHERE e.oferente_id = ? AND e.activo = TRUE
+       WHERE e.oferente_id = ? AND (e.activo = TRUE OR e.vencida = 1)
        GROUP BY e.id
        ORDER BY e.created_at DESC`,
       [req.user.id]

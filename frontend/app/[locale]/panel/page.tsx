@@ -875,8 +875,32 @@ export default function PanelPage() {
                 <div style={{ display: 'grid', gap: '1.2rem' }}>
                   {misEspacios.map(esp => {
                     const reservasEsp = reservasRecibidas.filter(r => r.espacio_id === esp.id);
+                    const esVencida = !!esp.vencida;
+                    const diasRestantes = esp.fecha_vencimiento && !esVencida
+                      ? Math.ceil((new Date(esp.fecha_vencimiento).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+                      : null;
+                    const proximaAVencer = diasRestantes !== null && diasRestantes <= 30;
                     return (
-                      <div key={esp.id} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', overflow: 'hidden' }}>
+                      <div key={esp.id} style={{ background: 'var(--surface)', border: `1px solid ${esVencida ? 'rgba(239,68,68,.4)' : 'var(--border)'}`, borderRadius: 'var(--r2)', overflow: 'hidden', opacity: esVencida ? .85 : 1 }}>
+                        {/* Banner vencida */}
+                        {esVencida && (
+                          <div style={{ background: 'rgba(239,68,68,.12)', borderBottom: '1px solid rgba(239,68,68,.25)', padding: '.5rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span style={{ fontSize: '.78rem', fontWeight: 700, color: '#f87171' }}>
+                              🔴 Publicación vencida — venció el {esp.fecha_vencimiento ? new Date(esp.fecha_vencimiento).toLocaleDateString('es-AR') : ''}
+                            </span>
+                            <a href="/publicar" style={{ fontSize: '.75rem', color: 'var(--orange)', fontWeight: 700, textDecoration: 'none' }}>
+                              + Publicar de nuevo
+                            </a>
+                          </div>
+                        )}
+                        {/* Banner próxima a vencer */}
+                        {proximaAVencer && (
+                          <div style={{ background: 'rgba(245,158,11,.1)', borderBottom: '1px solid rgba(245,158,11,.25)', padding: '.4rem 1rem' }}>
+                            <span style={{ fontSize: '.76rem', fontWeight: 700, color: '#f59e0b' }}>
+                              ⚠️ Vence en {diasRestantes} día{diasRestantes !== 1 ? 's' : ''} ({new Date(esp.fecha_vencimiento!).toLocaleDateString('es-AR')})
+                            </span>
+                          </div>
+                        )}
                         {/* Space info row */}
                         <div style={{ padding: '1rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
                           {esp.img_principal && (
@@ -895,9 +919,18 @@ export default function PanelPage() {
                               {esp.precio_dia > 0 && <span style={{ color: 'var(--orange)' }}>{formatARS(esp.precio_dia)}/día</span>}
                               {esp.precio_mes > 0 && <span style={{ color: 'var(--orange)' }}>{formatARS(esp.precio_mes)}/mes</span>}
                             </div>
+                            {esp.fecha_vencimiento && !esVencida && !proximaAVencer && (
+                              <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginTop: '.2rem' }}>
+                                📅 Vence el {new Date(esp.fecha_vencimiento).toLocaleDateString('es-AR')}
+                              </div>
+                            )}
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem', flexShrink: 0, alignItems: 'flex-end' }}>
-                            {esp.inactiva_auto ? (
+                            {esVencida ? (
+                              <span style={{ fontSize: '.72rem', background: 'rgba(239,68,68,.15)', color: '#f87171', border: '1px solid rgba(239,68,68,.3)', borderRadius: 'var(--r1)', padding: '.2rem .6rem', fontWeight: 700 }}>
+                                🔴 Vencida
+                              </span>
+                            ) : esp.inactiva_auto ? (
                               <span style={{ fontSize: '.72rem', background: 'rgba(239,68,68,.15)', color: '#f87171', border: '1px solid rgba(239,68,68,.3)', borderRadius: 'var(--r1)', padding: '.2rem .6rem', fontWeight: 700 }}>
                                 ⏸️ Pausada por inactividad
                               </span>
@@ -907,7 +940,11 @@ export default function PanelPage() {
                               </span>
                             )}
                             <div style={{ display: 'flex', gap: '.4rem' }}>
-                              {esp.inactiva_auto ? (
+                              {esVencida ? (
+                                <a href="/publicar" className="btn-ghost" style={{ fontSize: '.73rem', color: 'var(--orange)', fontWeight: 700 }}>
+                                  + Publicar de nuevo
+                                </a>
+                              ) : esp.inactiva_auto ? (
                                 <button
                                   className="btn-ghost"
                                   style={{ fontSize: '.73rem', color: 'var(--mint)', fontWeight: 700 }}
@@ -933,13 +970,15 @@ export default function PanelPage() {
                                   </button>
                                 </>
                               )}
-                              <button
-                                className="btn-ghost"
-                                style={{ fontSize: '.73rem', color: 'var(--red)' }}
-                                onClick={() => handleEliminarEspacio(esp.id)}
-                              >
-                                Borrar
-                              </button>
+                              {!esVencida && (
+                                <button
+                                  className="btn-ghost"
+                                  style={{ fontSize: '.73rem', color: 'var(--red)' }}
+                                  onClick={() => handleEliminarEspacio(esp.id)}
+                                >
+                                  Borrar
+                                </button>
+                              )}
                             </div>
                           </div>
                         </div>
