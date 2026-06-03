@@ -991,7 +991,7 @@ export default function PanelPage() {
                                 </>
                               )}
                               {!esVencida && (() => {
-                                const tieneReservaActiva = reservasEsp.some(r => r.estado === 'pagada' || r.estado === 'activa');
+                                const tieneReservaActiva = reservasEsp.some(r => r.estado === 'pagada');
                                 return (
                                   <button
                                     className="btn-ghost"
