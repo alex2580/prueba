@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
-import { espaciosAPI, reservasAPI, pagosAPI, adminAPI } from '@/lib/api';
+import { espaciosAPI, reservasAPI, pagosAPI } from '@/lib/api';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { OTPStep } from '@/components/auth/OTPStep';
@@ -398,19 +398,7 @@ export default function ReservarPage() {
     const fdDesde = modoCalendario === 'dia' ? diasMulti[0] : fechaDesde;
     const fdHasta = modoCalendario === 'dia' ? diasMulti[diasMulti.length - 1] : fechaHasta;
     try {
-      const reserva = await reservasAPI.crear({ espacio_id: espacioId, fecha_desde: fdDesde, fecha_hasta: fdHasta }, token);
-
-      if (servicios.length) {
-        await adminAPI.notificarServicios({
-          nombreDemandante: user.nombre,
-          emailDemandante: user.email,
-          telDemandante: user.tel,
-          espacioNombre: espacio.nombre,
-          servicios,
-          fechaDesde: fdDesde,
-          fechaHasta: fdHasta,
-        }).catch(() => {}); // fire-and-forget, don't block payment
-      }
+      const reserva = await reservasAPI.crear({ espacio_id: espacioId, fecha_desde: fdDesde, fecha_hasta: fdHasta, servicios }, token);
 
       const pref = await pagosAPI.crearPreferencia(reserva.id, token);
       window.location.href = pref.init_point;
@@ -427,19 +415,7 @@ export default function ReservarPage() {
     const fdDesde = modoCalendario === 'dia' ? diasMulti[0] : fechaDesde;
     const fdHasta = modoCalendario === 'dia' ? diasMulti[diasMulti.length - 1] : fechaHasta;
     try {
-      const reserva = await reservasAPI.crear({ espacio_id: espacioId, fecha_desde: fdDesde, fecha_hasta: fdHasta }, token);
-
-      if (servicios.length) {
-        await adminAPI.notificarServicios({
-          nombreDemandante: user.nombre,
-          emailDemandante: user.email,
-          telDemandante: user.tel,
-          espacioNombre: espacio.nombre,
-          servicios,
-          fechaDesde: fdDesde,
-          fechaHasta: fdHasta,
-        }).catch(() => {});
-      }
+      const reserva = await reservasAPI.crear({ espacio_id: espacioId, fecha_desde: fdDesde, fecha_hasta: fdHasta, servicios }, token);
 
       const pref = await pagosAPI.crearPreferencia(reserva.id, token);
       const dataUrl = await QRCode.toDataURL(pref.init_point, {

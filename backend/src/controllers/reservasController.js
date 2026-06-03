@@ -119,7 +119,11 @@ async function crear(req, res, next) {
       return res.status(422).json({ error: 'Datos inválidos', details: errors.array() });
     }
 
-    const { espacio_id, fecha_desde, fecha_hasta, notas } = req.body;
+    const { espacio_id, fecha_desde, fecha_hasta, notas, servicios: serviciosReq } = req.body;
+    const serviciosValidos = ['seguro', 'embalaje', 'transporte', 'limpieza'];
+    const serviciosFiltrados = Array.isArray(serviciosReq)
+      ? serviciosReq.filter(s => serviciosValidos.includes(s))
+      : [];
 
     // Verify espacio exists and is available
     const espacio = await queryOne(
@@ -163,50 +167,17 @@ async function crear(req, res, next) {
         'SELECT * FROM reservas WHERE usuario_id = ? ORDER BY created_at DESC LIMIT 1',
         [req.user.id]
       );
-      return rows[0];
+      const nuevaReserva = rows[0];
+      for (const tipo of serviciosFiltrados) {
+        await conn.execute(
+          'INSERT INTO servicios_adicionales (reserva_id, tipo, precio) VALUES (?, ?, 0)',
+          [nuevaReserva.id, tipo]
+        );
+      }
+      return nuevaReserva;
     });
 
-    // Email al demandante: reserva recibida
-    emailService.sendReservaConfirmada(req.user.email, req.user.nombre, {
-      espacioNombre: espacio.nombre,
-      fechaDesde: fecha_desde,
-      fechaHasta: fecha_hasta,
-      precioTotal: precio_total,
-      reservaId: reserva.id,
-      pin,
-    }).catch(e => console.warn('Email demandante:', e.message));
-
-    // Email al oferente: nueva solicitud recibida
-    const oferente = await queryOne('SELECT email, nombre FROM usuarios WHERE id = ?', [espacio.oferente_id]);
-    if (oferente) {
-      emailService.sendNuevaReserva(oferente.email, oferente.nombre, {
-        demandanteNombre: req.user.nombre,
-        demandanteEmail: req.user.email || '',
-        demandanteTel:   req.user.tel || '',
-        espacioNombre: espacio.nombre,
-        fechaDesde: fecha_desde,
-        fechaHasta: fecha_hasta,
-        precioTotal: precio_total,
-        reservaId: reserva.id,
-        pin,
-      }).catch(e => console.warn('Email oferente:', e.message));
-    }
-
-    // Confirmación legal para ambas partes
-    const legalData = {
-      espacioNombre: espacio.nombre,
-      fechaDesde: fecha_desde,
-      fechaHasta: fecha_hasta,
-      precioTotal: precio_total,
-      reservaId: reserva.id,
-    };
-    emailService.sendAceptacionOperacion(req.user.email, req.user.nombre, { rol: 'demandante', ...legalData })
-      .catch(e => console.warn('Email legal demandante:', e.message));
-    if (oferente) {
-      emailService.sendAceptacionOperacion(oferente.email, oferente.nombre, { rol: 'oferente', ...legalData })
-        .catch(e => console.warn('Email legal oferente:', e.message));
-    }
-
+    // Emails y notificaciones se envían únicamente cuando el pago se confirma (webhook MP)
     res.status(201).json(reserva);
   } catch (err) {
     next(err);

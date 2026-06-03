@@ -194,15 +194,24 @@ async function webhook(req, res, next) {
         const usuario = await queryOne('SELECT * FROM usuarios WHERE id = ?', [reserva.usuario_id]);
         const espacio = await queryOne('SELECT nombre, oferente_id FROM espacios WHERE id = ?', [reserva.espacio_id]);
         if (usuario && espacio) {
-          // Email al demandante
+          const oferente = await queryOne('SELECT * FROM usuarios WHERE id = ?', [espacio.oferente_id]);
+
+          const fDesde = reserva.fecha_desde instanceof Date
+            ? reserva.fecha_desde.toISOString().slice(0, 10)
+            : String(reserva.fecha_desde).slice(0, 10);
+          const fHasta = reserva.fecha_hasta instanceof Date
+            ? reserva.fecha_hasta.toISOString().slice(0, 10)
+            : String(reserva.fecha_hasta).slice(0, 10);
+
+          // Pago confirmado al demandante
           emailService.sendPagoConfirmado(usuario.email, usuario.nombre, {
             espacioNombre: espacio.nombre,
             monto: reserva.precio_total,
             reservaId: reserva.id,
             paymentId,
           }).catch(e => console.warn('Email pago demandante:', e.message));
-          // Email al oferente
-          const oferente = await queryOne('SELECT email, nombre FROM usuarios WHERE id = ?', [espacio.oferente_id]);
+
+          // Pago recibido al oferente
           if (oferente) {
             emailService.sendPagoRecibidoOferente(oferente.email, oferente.nombre, {
               demandanteNombre: usuario.nombre,
@@ -210,6 +219,80 @@ async function webhook(req, res, next) {
               monto: reserva.precio_total,
               reservaId: reserva.id,
             }).catch(e => console.warn('Email pago oferente:', e.message));
+          }
+
+          // Reserva confirmada con PIN al demandante
+          emailService.sendReservaConfirmada(usuario.email, usuario.nombre, {
+            espacioNombre: espacio.nombre,
+            fechaDesde: fDesde,
+            fechaHasta: fHasta,
+            precioTotal: reserva.precio_total,
+            reservaId: reserva.id,
+            pin: reserva.pin_acceso,
+          }).catch(e => console.warn('Email reserva confirmada demandante:', e.message));
+
+          // Nueva reserva con PIN al oferente
+          if (oferente) {
+            emailService.sendNuevaReserva(oferente.email, oferente.nombre, {
+              demandanteNombre: usuario.nombre,
+              demandanteEmail: usuario.email || '',
+              demandanteTel:   usuario.tel || '',
+              espacioNombre: espacio.nombre,
+              fechaDesde: fDesde,
+              fechaHasta: fHasta,
+              precioTotal: reserva.precio_total,
+              reservaId: reserva.id,
+              pin: reserva.pin_acceso,
+            }).catch(e => console.warn('Email nueva reserva oferente:', e.message));
+          }
+
+          // Confirmación legal para ambas partes
+          const legalData = {
+            espacioNombre: espacio.nombre,
+            fechaDesde: fDesde,
+            fechaHasta: fHasta,
+            precioTotal: reserva.precio_total,
+            reservaId: reserva.id,
+          };
+          emailService.sendAceptacionOperacion(usuario.email, usuario.nombre, { rol: 'demandante', ...legalData })
+            .catch(e => console.warn('Email legal demandante:', e.message));
+          if (oferente) {
+            emailService.sendAceptacionOperacion(oferente.email, oferente.nombre, { rol: 'oferente', ...legalData })
+              .catch(e => console.warn('Email legal oferente:', e.message));
+          }
+
+          // Servicios adicionales → notificar admin si los hay
+          const servicios = await query(
+            "SELECT tipo FROM servicios_adicionales WHERE reserva_id = ? AND estado = 'activo'",
+            [reserva.id]
+          );
+          if (servicios.length > 0) {
+            const tiposServicios = servicios.map(s => s.tipo);
+            query(
+              'INSERT INTO admin_notificaciones (id, tipo, mensaje, fecha, datos) VALUES (UUID(), ?, ?, NOW(), ?)',
+              [
+                'servicios_adicionales',
+                `🛎️ Servicios adicionales — ${espacio.nombre} (${usuario.nombre || usuario.email})`,
+                JSON.stringify({
+                  nombreDemandante: usuario.nombre,
+                  emailDemandante: usuario.email,
+                  telDemandante: usuario.tel,
+                  espacioNombre: espacio.nombre,
+                  servicios: tiposServicios,
+                  fechaDesde: fDesde,
+                  fechaHasta: fHasta,
+                }),
+              ]
+            ).catch(e => console.warn('Admin notif servicios:', e.message));
+            emailService.sendServiciosAdicionales('contacto@todasmiscosas.com', {
+              nombreDemandante: usuario.nombre || 'Sin nombre',
+              emailDemandante: usuario.email,
+              telDemandante: usuario.tel || '',
+              espacioNombre: espacio.nombre,
+              servicios: tiposServicios,
+              fechaDesde: fDesde,
+              fechaHasta: fHasta,
+            }).catch(e => console.warn('Email servicios adicionales:', e.message));
           }
         }
       }
