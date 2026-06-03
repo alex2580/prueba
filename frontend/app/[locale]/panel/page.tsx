@@ -990,15 +990,19 @@ export default function PanelPage() {
                                   </button>
                                 </>
                               )}
-                              {!esVencida && (
-                                <button
-                                  className="btn-ghost"
-                                  style={{ fontSize: '.73rem', color: 'var(--red)' }}
-                                  onClick={() => handleEliminarEspacio(esp.id)}
-                                >
-                                  Borrar
-                                </button>
-                              )}
+                              {!esVencida && (() => {
+                                const tieneReservaActiva = reservasEsp.some(r => r.estado === 'pagada' || r.estado === 'activa');
+                                return (
+                                  <button
+                                    className="btn-ghost"
+                                    style={{ fontSize: '.73rem', color: tieneReservaActiva ? 'var(--text3)' : 'var(--red)', cursor: tieneReservaActiva ? 'not-allowed' : 'pointer', opacity: tieneReservaActiva ? 0.5 : 1 }}
+                                    onClick={() => !tieneReservaActiva && handleEliminarEspacio(esp.id)}
+                                    title={tieneReservaActiva ? 'No podés eliminar este espacio mientras tenga una reserva activa o pagada' : undefined}
+                                  >
+                                    Borrar
+                                  </button>
+                                );
+                              })()}
                             </div>
                           </div>
                         </div>

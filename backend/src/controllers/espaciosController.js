@@ -247,6 +247,14 @@ async function eliminar(req, res, next) {
       return res.status(403).json({ error: 'Sin permisos para eliminar este espacio' });
     }
 
+    const reservaActiva = await queryOne(
+      `SELECT id FROM reservas WHERE espacio_id = ? AND estado IN ('pagada', 'activa') LIMIT 1`,
+      [req.params.id]
+    );
+    if (reservaActiva) {
+      return res.status(400).json({ error: 'No podés eliminar este espacio mientras tenga una reserva activa o pagada.' });
+    }
+
     await query(
       'UPDATE espacios SET activo = FALSE, eliminado_por_oferente = TRUE, eliminado_at = NOW() WHERE id = ?',
       [req.params.id]
