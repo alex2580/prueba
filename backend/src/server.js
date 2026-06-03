@@ -38,6 +38,8 @@ async function start() {
 
   if (dbOk) {
     const { pool } = require('./db/connection');
+
+    // reservas_ocultas
     await pool.query(`
       CREATE TABLE IF NOT EXISTS reservas_ocultas (
         reserva_id VARCHAR(36) NOT NULL,
@@ -47,6 +49,29 @@ async function start() {
         INDEX idx_usuario (usuario_id)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
     `).catch(e => console.error('⚠️  reservas_ocultas:', e.message));
+
+    // Columnas de vencimiento (idempotente — IF NOT EXISTS)
+    await pool.query(`ALTER TABLE espacios ADD COLUMN IF NOT EXISTS fecha_vencimiento DATE NULL`).catch(e => console.error('⚠️  fecha_vencimiento:', e.message));
+    await pool.query(`ALTER TABLE espacios ADD COLUMN IF NOT EXISTS vencida TINYINT(1) NOT NULL DEFAULT 0`).catch(e => console.error('⚠️  vencida:', e.message));
+    await pool.query(`ALTER TABLE espacios ADD COLUMN IF NOT EXISTS aviso_vencimiento_enviado TINYINT(1) NOT NULL DEFAULT 0`).catch(e => console.error('⚠️  aviso_vencimiento_enviado:', e.message));
+
+    // Retroactivo: espacios sin fecha_vencimiento la obtienen desde su created_at
+    await pool.query(`
+      UPDATE espacios
+      SET fecha_vencimiento = DATE_ADD(created_at, INTERVAL 90 DAY)
+      WHERE fecha_vencimiento IS NULL AND activo = TRUE
+    `).catch(e => console.error('⚠️  retroactivo vencimiento:', e.message));
+
+    // Expirar espacios cuya fecha_vencimiento ya pasó
+    await pool.query(`
+      UPDATE espacios
+      SET activo = FALSE, vencida = 1, disponible = FALSE
+      WHERE fecha_vencimiento IS NOT NULL
+        AND fecha_vencimiento < CURDATE()
+        AND vencida = 0
+    `).catch(e => console.error('⚠️  expirar vencidos:', e.message));
+
+    console.log('✅ Startup migrations OK');
   }
 
   server.listen(PORT, () => {
