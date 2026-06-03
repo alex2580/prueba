@@ -173,6 +173,26 @@ export default function PanelPage() {
     }
   }
 
+  async function handleAbrirChatOferente(espacioId: string, demandanteId: string) {
+    if (!token) return;
+    setChatLoadingId(espacioId + demandanteId);
+    try {
+      const convs = await chatAPI.listarConversaciones(token);
+      const conv = convs.find((c: any) => c.espacio_id === espacioId && c.demandante_id === demandanteId);
+      if (conv) {
+        await recargarConvs();
+        setSelectedConvId(conv.id);
+        setTimeout(() => mensajesSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
+      } else {
+        alert('Todavía no hay conversación iniciada por el inquilino para esta reserva.');
+      }
+    } catch {
+      alert('No se pudo abrir el chat');
+    } finally {
+      setChatLoadingId(null);
+    }
+  }
+
   useEffect(() => {
     if (!authLoading && !user) router.push('/');
   }, [authLoading, user, router]);
@@ -1041,16 +1061,7 @@ export default function PanelPage() {
                                           <button
                                             className="btn-secondary"
                                             style={{ fontSize: '.72rem', padding: '.2rem .6rem', borderRadius: 'var(--r1)' }}
-                                            onClick={() => {
-                                              setSelectedConvId(null);
-                                              recargarConvs().then(() => {
-                                                const conv = conversaciones.find(c => c.espacio_id === r.espacio_id && c.demandante_id === r.usuario_id);
-                                                if (conv) {
-                                                  setSelectedConvId(conv.id);
-                                                  mensajesSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                                                }
-                                              });
-                                            }}
+                                            onClick={() => handleAbrirChatOferente(r.espacio_id, r.usuario_id!)}
                                           >
                                             💬 Chat
                                           </button>

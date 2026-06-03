@@ -112,7 +112,7 @@ async function iniciarConversacion(req, res, next) {
     // Solo permitir chat si existe reserva pagada/activa/finalizada
     const reserva = await queryOne(
       `SELECT id FROM reservas
-       WHERE espacio_id = ? AND demandante_id = ? AND estado IN ('pagada', 'activa', 'finalizada')
+       WHERE espacio_id = ? AND usuario_id = ? AND estado IN ('pagada', 'activa', 'finalizada')
        LIMIT 1`,
       [espacio_id, demandante_id]
     );
