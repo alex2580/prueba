@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { espaciosAPI, reservasAPI, pagosAPI } from '@/lib/api';
@@ -314,6 +314,7 @@ export default function ReservarPage() {
   const [step1Error, setStep1Error] = useState('');
   const [periodoElegido, setPeriodoElegido] = useState<'dia' | 'mes' | null>(null);
   const [fechasOcupadas, setFechasOcupadas] = useState<string[]>([]);
+  const mesesOcupados = useMemo(() => new Set(fechasOcupadas.map(f => f.slice(0, 7))), [fechasOcupadas]);
 
   // Step 2 state
   const [servicios, setServicios] = useState<ServicioTipo[]>([]);
@@ -418,6 +419,10 @@ export default function ReservarPage() {
       if (!fechaDesde || !fechaHasta) { setStep1Error('Seleccioná las fechas de inicio y fin.'); return; }
       if (fechaHasta < fechaDesde) { setStep1Error('La fecha de fin debe ser posterior a la de inicio.'); return; }
       if (cantMeses > 3) { setStep1Error('La reserva no puede superar los 3 meses.'); return; }
+    }
+    if (modoCalendario !== 'dia' && fechaDesde && fechaHasta) {
+      const overlap = fechasOcupadas.some(f => f >= fechaDesde && f <= fechaHasta);
+      if (overlap) { setStep1Error('El período seleccionado incluye fechas ya reservadas. Por favor elegí otras fechas.'); return; }
     }
     if (!espacio?.precio_dia && !espacio?.precio_mes) { setStep1Error('Este espacio no tiene precio configurado.'); return; }
     setStep1Error('');
@@ -620,6 +625,15 @@ export default function ReservarPage() {
                           />
                         )}
 
+                        {modoCalendario === 'mes' && mesesOcupados.size > 0 && (
+                          <div style={{ fontSize: '.73rem', color: '#b45309', background: 'rgba(180,83,9,.07)', border: '1px solid rgba(180,83,9,.2)', borderRadius: 7, padding: '.45rem .75rem', marginTop: '.75rem' }}>
+                            🚫 Meses no disponibles: {Array.from(mesesOcupados).sort().map(m => {
+                              const [y, mo] = m.split('-');
+                              const nombres = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+                              return `${nombres[Number(mo) - 1]} ${y}`;
+                            }).join(', ')}
+                          </div>
+                        )}
                         {modoCalendario === 'mes' && (
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.75rem', marginTop: '1rem' }}>
                             <label className="form-label">

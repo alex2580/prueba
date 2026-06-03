@@ -356,7 +356,7 @@ async function fechasOcupadas(req, res, next) {
   try {
     const reservas = await query(
       `SELECT fecha_desde, fecha_hasta FROM reservas
-       WHERE espacio_id = ? AND estado IN ('confirmada','pagada','activa')`,
+       WHERE espacio_id = ? AND estado IN ('pendiente','confirmada','pagada','activa')`,
       [req.params.id]
     );
     const ocupadas = new Set();
