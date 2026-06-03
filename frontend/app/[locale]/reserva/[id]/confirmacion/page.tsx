@@ -23,10 +23,11 @@ export default function ConfirmacionPage() {
     if (!token) { router.push('/'); return; }
 
     const { status } = parseMPReturnParams(searchParams);
-    const fallback = status === 'success' ? 'pagada' : status === 'failure' ? 'cancelada' : 'pendiente';
+    const mpApproved = status === 'success';
 
     let attempts = 0;
     const MAX_ATTEMPTS = 15;
+    let synced = false;
 
     const check = async () => {
       try {
@@ -36,12 +37,26 @@ export default function ConfirmacionPage() {
         setLoading(false);
         if (data.estado === 'pagada' || data.estado === 'cancelada') return;
       } catch {
-        setEstado(fallback);
+        setEstado(mpApproved ? 'pagada' : 'pendiente');
         setLoading(false);
         return;
       }
 
       attempts++;
+
+      // Tras 5 intentos sin cambio y MP dijo success → sincronizar contra MP directo
+      if (mpApproved && !synced && attempts === 5) {
+        synced = true;
+        try {
+          const sync = await pagosAPI.sincronizar(id, token);
+          if (sync.estado === 'pagada') {
+            setEstado('pagada');
+            setLoading(false);
+            return;
+          }
+        } catch { /* continuar polling */ }
+      }
+
       if (attempts < MAX_ATTEMPTS) {
         setTimeout(check, 3000);
       }

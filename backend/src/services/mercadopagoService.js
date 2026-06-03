@@ -92,4 +92,20 @@ async function obtenerPago(paymentId) {
   return payment;
 }
 
-module.exports = { crearPreferencia, crearPreferenciaExtension, obtenerPago };
+/**
+ * Busca pagos por external_reference (= reservaId).
+ * Retorna el pago aprobado más reciente, o null.
+ */
+async function buscarPagoPorReferencia(externalRef) {
+  try {
+    const result = await paymentAPI.search({
+      options: { external_reference: externalRef, sort: 'date_created', criteria: 'desc' },
+    });
+    const pagos = result?.results || [];
+    return pagos.find(p => p.status === 'approved') || pagos[0] || null;
+  } catch {
+    return null;
+  }
+}
+
+module.exports = { crearPreferencia, crearPreferenciaExtension, obtenerPago, buscarPagoPorReferencia };

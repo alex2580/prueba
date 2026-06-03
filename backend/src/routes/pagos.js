@@ -14,5 +14,6 @@ router.post('/preferencia',  requireAuth, [
 router.post('/webhook', ctrl.webhook);
 
 router.get('/estado/:reservaId', requireAuth, ctrl.estado);
+router.post('/sincronizar/:reservaId', requireAuth, ctrl.sincronizar);
 
 module.exports = router;

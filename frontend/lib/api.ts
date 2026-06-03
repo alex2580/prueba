@@ -132,6 +132,10 @@ export const pagosAPI = {
   estado: (reservaId: string, token: string) =>
     fetchAPI<{ id: string; estado: string; mp_payment_id?: string; precio_total: number }>
       (`/api/pagos/estado/${reservaId}`, {}, token),
+
+  sincronizar: (reservaId: string, token: string) =>
+    fetchAPI<{ estado: string }>
+      (`/api/pagos/sincronizar/${reservaId}`, { method: 'POST' }, token),
 };
 
 // ── Chat ────────────────────────────────────────────────────
