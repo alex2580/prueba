@@ -177,6 +177,9 @@ async function webhook(req, res, next) {
       const reserva = await queryOne('SELECT * FROM reservas WHERE id = ?', [reservaId]);
       if (!reserva) return res.sendStatus(200);
 
+      // Si ya está pagada, ignorar cualquier webhook posterior (evita retroceso por webhooks fuera de orden)
+      if (reserva.estado === 'pagada') return res.sendStatus(200);
+
       const status = payment.status; // approved | pending | rejected | cancelled
 
       let nuevoEstado;
