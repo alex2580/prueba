@@ -382,9 +382,11 @@ export default function ReservarPage() {
     if (ambosPrecios && periodoElegido === null) { setStep1Error('Seleccioná si querés reservar por día o por mes.'); return; }
     if (modoCalendario === 'dia') {
       if (diasMulti.length === 0) { setStep1Error('Seleccioná al menos un día en el calendario.'); return; }
+      if (diasMulti.length > 90) { setStep1Error('La reserva no puede superar los 90 días (3 meses).'); return; }
     } else {
       if (!fechaDesde || !fechaHasta) { setStep1Error('Seleccioná las fechas de inicio y fin.'); return; }
       if (fechaHasta < fechaDesde) { setStep1Error('La fecha de fin debe ser posterior a la de inicio.'); return; }
+      if (cantMeses > 3) { setStep1Error('La reserva no puede superar los 3 meses.'); return; }
     }
     if (!espacio?.precio_dia && !espacio?.precio_mes) { setStep1Error('Este espacio no tiene precio configurado.'); return; }
     setStep1Error('');
@@ -611,6 +613,7 @@ export default function ReservarPage() {
                                   setStep1Error('');
                                 }}
                                 min={fechaDesde ? fechaDesde.slice(0, 7) : new Date().toISOString().slice(0, 7)}
+                                max={fechaDesde ? (() => { const d = new Date(fechaDesde); d.setMonth(d.getMonth() + 2); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; })() : undefined}
                                 style={{ marginTop: '.3rem' }}
                               />
                             </label>

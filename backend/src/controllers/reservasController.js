@@ -151,6 +151,9 @@ async function crear(req, res, next) {
     const desde = new Date(fecha_desde);
     const hasta  = new Date(fecha_hasta);
     const dias   = Math.ceil((hasta - desde) / (1000 * 60 * 60 * 24)) + 1;
+
+    if (dias < 1) return res.status(400).json({ error: 'Las fechas seleccionadas no son válidas.' });
+    if (dias > 90) return res.status(400).json({ error: 'La reserva no puede superar los 90 días (3 meses).' });
     const precio_total = dias >= 28
       ? Math.ceil(dias / 30) * espacio.precio_mes
       : dias * espacio.precio_dia;
