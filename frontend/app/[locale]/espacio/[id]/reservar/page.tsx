@@ -352,6 +352,14 @@ export default function ReservarPage() {
     : tieneMes ? 'mes' : 'dia';
   const modoCalendario: ModoCalendario = modoEfectivo;
 
+  // Pre-llenar DESDE con el mes actual cuando el modo es 'mes'
+  useEffect(() => {
+    if (modoCalendario === 'mes' && !fechaDesde) {
+      const hoy = new Date();
+      setFechaDesde(`${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-01`);
+    }
+  }, [modoCalendario, fechaDesde]);
+
   const cantMeses = modoCalendario === 'mes' && fechaDesde && fechaHasta
     ? mesesEntre(fechaDesde, fechaHasta)
     : 0;
@@ -539,7 +547,12 @@ export default function ReservarPage() {
                             key={p}
                             onClick={() => {
                               setPeriodoElegido(p);
-                              setFechaDesde('');
+                              if (p === 'mes') {
+                                const hoy = new Date();
+                                setFechaDesde(`${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-01`);
+                              } else {
+                                setFechaDesde('');
+                              }
                               setFechaHasta('');
                               setDiasMulti([]);
                               setStep1Error('');
@@ -590,14 +603,8 @@ export default function ReservarPage() {
                               <input
                                 type="month"
                                 value={fechaDesde ? fechaDesde.slice(0, 7) : ''}
-                                onChange={e => {
-                                  if (!e.target.value) { setFechaDesde(''); return; }
-                                  const [y, m] = e.target.value.split('-').map(Number);
-                                  setFechaDesde(`${y}-${String(m).padStart(2, '0')}-01`);
-                                  setStep1Error('');
-                                }}
-                                min={new Date().toISOString().slice(0, 7)}
-                                style={{ marginTop: '.3rem' }}
+                                disabled
+                                style={{ marginTop: '.3rem', opacity: .7, cursor: 'not-allowed' }}
                               />
                             </label>
                             <label className="form-label">
