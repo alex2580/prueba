@@ -989,55 +989,77 @@ export default function PanelPage() {
                             <div style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: '.6rem' }}>
                               Reservas recibidas ({reservasEsp.length})
                             </div>
-                            <div style={{ display: 'grid', gap: '.5rem' }}>
-                              {reservasEsp.map(r => (
-                                <div
-                                  key={r.id}
-                                  style={{
-                                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                                    background: 'var(--surface2)', borderRadius: 'var(--r1)', padding: '.6rem .8rem',
-                                  }}
-                                >
-                                  <div>
-                                    <div style={{ fontWeight: 600, fontSize: '.85rem' }}>{r.usuario_nombre}</div>
-                                    <div style={{ fontSize: '.75rem', color: 'var(--text3)' }}>
-                                      {formatFechaCorta(r.fecha_desde)} → {formatFechaCorta(r.fecha_hasta)}
-                                    </div>
-                                    {r.pin_acceso && ['confirmada', 'pagada', 'activa', 'finalizada'].includes(r.estado) && (
-                                      <div style={{ marginTop: '.25rem', fontSize: '.73rem', color: 'var(--text3)' }}>
-                                        🔑 PIN: <span style={{ fontFamily: 'monospace', fontWeight: 700, color: 'var(--orange)', letterSpacing: '.1em' }}>{r.pin_acceso}</span>
+                            <div style={{ display: 'grid', gap: '.6rem' }}>
+                              {reservasEsp.map(r => {
+                                const diasHastaInicio = Math.ceil((new Date(r.fecha_desde).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+                                const esPagada = r.estado === 'pagada';
+                                const esActiva = ['pagada', 'confirmada'].includes(r.estado);
+                                const iniciaHoy = diasHastaInicio === 0;
+                                const iniciaMañana = diasHastaInicio === 1;
+                                const iniciaProximo = diasHastaInicio > 1 && diasHastaInicio <= 7;
+                                const yaComenzo = diasHastaInicio < 0 && esPagada;
+                                return (
+                                  <div key={r.id} style={{ background: 'var(--surface2)', borderRadius: 'var(--r1)', overflow: 'hidden', border: esPagada ? '1px solid rgba(34,197,94,.25)' : '1px solid transparent' }}>
+                                    {/* Alerta disponibilidad */}
+                                    {esPagada && (iniciaHoy || iniciaMañana || iniciaProximo) && (
+                                      <div style={{ background: iniciaHoy || iniciaMañana ? 'rgba(232,98,42,.12)' : 'rgba(245,158,11,.08)', borderBottom: `1px solid ${iniciaHoy || iniciaMañana ? 'rgba(232,98,42,.25)' : 'rgba(245,158,11,.2)'}`, padding: '.35rem .8rem', fontSize: '.73rem', fontWeight: 700, color: iniciaHoy || iniciaMañana ? 'var(--orange)' : '#f59e0b' }}>
+                                        {iniciaHoy ? '🔔 ¡El espacio debe estar disponible HOY!' : iniciaMañana ? '🔔 Disponibilizá el espacio mañana' : `🗓️ Disponibilizá el espacio en ${diasHastaInicio} días (${formatFechaCorta(r.fecha_desde)})`}
                                       </div>
                                     )}
-                                  </div>
-                                  <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '.2rem' }}>
-                                    <div>
-                                      <div style={{ fontSize: '.68rem', color: 'var(--text3)' }}>Obtuviste (neto)</div>
-                                      <div style={{ fontSize: '.88rem', fontWeight: 700, color: 'var(--mint)' }}>
-                                        {formatARS(netoOferente(r.precio_total))}
+                                    {esPagada && yaComenzo && (
+                                      <div style={{ background: 'rgba(34,197,94,.08)', borderBottom: '1px solid rgba(34,197,94,.2)', padding: '.35rem .8rem', fontSize: '.73rem', fontWeight: 700, color: 'var(--mint)' }}>
+                                        ✅ Reserva en curso — finaliza el {formatFechaCorta(r.fecha_hasta)}
+                                      </div>
+                                    )}
+                                    {/* Contenido */}
+                                    <div style={{ padding: '.6rem .8rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '.5rem' }}>
+                                      <div style={{ flex: 1, minWidth: 0 }}>
+                                        <div style={{ fontWeight: 700, fontSize: '.86rem' }}>{r.usuario_nombre}</div>
+                                        {esActiva && r.usuario_email && (
+                                          <div style={{ fontSize: '.73rem', color: 'var(--text3)', marginTop: '.1rem' }}>
+                                            ✉️ {r.usuario_email}{r.usuario_tel ? ` · 📞 ${r.usuario_tel}` : ''}
+                                          </div>
+                                        )}
+                                        <div style={{ fontSize: '.76rem', color: 'var(--text2)', marginTop: '.2rem', fontWeight: 600 }}>
+                                          📅 {formatFechaCorta(r.fecha_desde)} → {formatFechaCorta(r.fecha_hasta)}
+                                        </div>
+                                        {r.pin_acceso && esActiva && (
+                                          <div style={{ marginTop: '.2rem', fontSize: '.73rem' }}>
+                                            🔑 PIN de acceso: <span style={{ fontFamily: 'monospace', fontWeight: 700, color: 'var(--orange)', letterSpacing: '.1em' }}>{r.pin_acceso}</span>
+                                          </div>
+                                        )}
+                                      </div>
+                                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '.25rem', flexShrink: 0 }}>
+                                        <EstadoBadge estado={r.estado} />
+                                        <div style={{ textAlign: 'right' }}>
+                                          <div style={{ fontSize: '.67rem', color: 'var(--text3)' }}>Recibís (neto)</div>
+                                          <div style={{ fontSize: '.9rem', fontWeight: 700, color: esPagada ? 'var(--mint)' : 'var(--text3)' }}>
+                                            {formatARS(netoOferente(r.precio_total))}
+                                          </div>
+                                        </div>
+                                        {['pagada', 'finalizada'].includes(r.estado) && (
+                                          <button
+                                            className="btn-secondary"
+                                            style={{ fontSize: '.72rem', padding: '.2rem .6rem', borderRadius: 'var(--r1)' }}
+                                            onClick={() => {
+                                              setSelectedConvId(null);
+                                              recargarConvs().then(() => {
+                                                const conv = conversaciones.find(c => c.espacio_id === r.espacio_id && c.demandante_id === r.usuario_id);
+                                                if (conv) {
+                                                  setSelectedConvId(conv.id);
+                                                  mensajesSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                                }
+                                              });
+                                            }}
+                                          >
+                                            💬 Chat
+                                          </button>
+                                        )}
                                       </div>
                                     </div>
-                                    <EstadoBadge estado={r.estado} />
-                                    {['pagada', 'finalizada'].includes(r.estado) && (
-                                      <button
-                                        className="btn-secondary"
-                                        style={{ fontSize: '.72rem', padding: '.2rem .6rem', borderRadius: 'var(--r1)' }}
-                                        onClick={() => {
-                                          setSelectedConvId(null);
-                                          recargarConvs().then(() => {
-                                            const conv = conversaciones.find(c => c.espacio_id === r.espacio_id && c.demandante_id === r.usuario_id);
-                                            if (conv) {
-                                              setSelectedConvId(conv.id);
-                                              mensajesSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                                            }
-                                          });
-                                        }}
-                                      >
-                                        💬 Chat
-                                      </button>
-                                    )}
                                   </div>
-                                </div>
-                              ))}
+                                );
+                              })}
                             </div>
                           </div>
                         )}
