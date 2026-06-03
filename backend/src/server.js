@@ -71,6 +71,31 @@ async function start() {
         AND vencida = 0
     `).catch(e => console.error('⚠️  expirar vencidos:', e.message));
 
+    // Tabla email_config (feature flags de emails)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS email_config (
+        clave      VARCHAR(100) NOT NULL,
+        habilitado TINYINT(1)   NOT NULL DEFAULT 1,
+        updated_at TIMESTAMP    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        PRIMARY KEY (clave)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    `).catch(e => console.error('⚠️  email_config table:', e.message));
+
+    const EMAIL_KEYS = [
+      'nueva_reserva','pago_recibido_oferente','publicacion_desactivada',
+      'aviso_vencimiento_publicacion','publicacion_vencida','consulta_publica',
+      'reserva_confirmada','reserva_aprobada','pago_confirmado',
+      'recordatorios_reserva','extension_confirmada','reserva_finalizada',
+      'respuesta_consulta','bienvenida','aceptacion_operacion','reserva_cancelada',
+      'chat_mensaje','otp','login_notificacion','cuenta_bloqueada',
+      'cuenta_desbloqueada','cambio_tel','servicios_adicionales',
+      'mejorar_puntuacion','contacto','newsletter',
+    ];
+    for (const clave of EMAIL_KEYS) {
+      await pool.query('INSERT IGNORE INTO email_config (clave, habilitado) VALUES (?, 1)', [clave])
+        .catch(e => console.error(`⚠️  email_config insert ${clave}:`, e.message));
+    }
+
     console.log('✅ Startup migrations OK');
   }
 
