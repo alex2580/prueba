@@ -342,4 +342,4 @@ async function sincronizar(req, res, next) {
   }
 }
 
-module.exports = { crearPreferencia, webhook, estado, sincronizar };
+module.exports = { crearPreferencia, webhook, estado, sincronizar, procesarPagada: _procesarPagada };

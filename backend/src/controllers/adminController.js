@@ -564,6 +564,8 @@ async function getOperaciones(req, res, next) {
 async function sincronizarPendientes(req, res, next) {
   try {
     const mercadopagoService = require('../services/mercadopagoService');
+    const { procesarPagada } = require('./pagosController');
+
     const pendientes = await query(`
       SELECT * FROM reservas
       WHERE estado IN ('pendiente', 'confirmada')
@@ -579,8 +581,11 @@ async function sincronizarPendientes(req, res, next) {
             'UPDATE reservas SET estado = ?, mp_payment_id = ?, mp_status = ? WHERE id = ?',
             ['pagada', String(payment.id), payment.status, reserva.id]
           );
+          const reservaActualizada = await query('SELECT * FROM reservas WHERE id = ?', [reserva.id]);
+          procesarPagada(reservaActualizada[0] || reserva, payment.id)
+            .catch(e => console.warn(`[admin sync] emails reserva ${reserva.id}:`, e.message));
           actualizadas++;
-          console.log(`[admin sync] Reserva ${reserva.id} actualizada a pagada`);
+          console.log(`[admin sync] Reserva ${reserva.id} pagada + emails disparados`);
         }
       } catch (e) {
         console.warn(`[admin sync] Error sincronizando reserva ${reserva.id}:`, e.message);
