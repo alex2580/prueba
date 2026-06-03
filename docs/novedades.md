@@ -774,6 +774,100 @@ Solo funciona si `inactiva_auto = 1`. Si alguien intenta reactivar un espacio qu
 
 ---
 
+## 2–3 de Junio 2026 — v1.8.0
+
+### Confiabilidad de pagos — sistema de 3 capas
+
+El flujo de confirmación de pagos MercadoPago ahora tiene redundancia completa:
+
+| Capa | Mecanismo | Cuándo actúa |
+|------|-----------|-------------|
+| 1 | Webhook MP → `/api/pagos/webhook` | Inmediato al aprobar MP |
+| 2 | Botón admin "🔄 Sincronizar pagos pendientes" | Fallback manual ante demoras de webhook |
+| 3 | Cron automático cada 5 minutos | Rescata cualquier reserva no procesada en las últimas 24h |
+
+Las tres capas llaman a `procesarPagada()` — función compartida que dispara todos los emails de confirmación (demandante, oferente, admin) y actualiza el estado de la reserva.
+
+**Archivos nuevos:**
+- `backend/src/jobs/syncPagos.js` — cron job de sincronización automática
+
+**Archivos modificados:**
+- `backend/src/controllers/pagosController.js` — exporta `procesarPagada`
+- `backend/src/controllers/adminController.js` — `sincronizarPendientes` ahora llama `procesarPagada`
+- `backend/src/app.js` — registra `iniciarCronSyncPagos`
+
+---
+
+### Fix: Webhook MP rechazaba todos los pagos
+
+**Problema:** Después de configurar `MP_WEBHOOK_SECRET` en el VPS, la función `verifyMPSignature` rechazaba todos los webhooks con 403 porque MercadoPago no envía el header `x-signature` en algunos eventos (dependiendo de la configuración del dashboard).
+
+**Fix:** La función ahora tiene lógica diferenciada:
+- Sin header `x-signature` → acepta (con warning en log)
+- Con header presente pero firma inválida → rechaza
+- Sin `MP_WEBHOOK_SECRET` configurado → acepta
+
+Esto también revela la causa raíz de por qué los pagos no actualizaban: `MP_WEBHOOK_SECRET` tenía entrada doble en `.env` (una vacía y una válida); `dotenv` leía la primera (vacía) y la firma fallaba. Guille corrigió el `.env` y ejecutó `pm2 reload all`.
+
+---
+
+### Restricción: máximo 90 días por reserva
+
+Las reservas ahora tienen un tope duro de 90 días (3 meses).
+
+**Backend:** `reservasController.js` devuelve 400 si `dias > 90` antes de crear la preferencia en MP.
+
+**Frontend (`espacio/[id]/reservar/page.tsx`):**
+- Modo día: `goToStep2` rechaza si `diasMulti.length > 90`
+- Modo mes: `goToStep2` rechaza si `cantMeses > 3`
+- `MiniCalendar` acepta prop `maxDate` que deshabilita días pasados ese tope; `canGoNext` bloquea la navegación del mes
+- Input HASTA (mes): `max={maxMesHasta}` calculado con aritmética de strings (sin `new Date()` para evitar bug de timezone UTC-3)
+- Input DESDE (mes): deshabilitado y pre-cargado con el mes actual
+
+**Fix de timezone:** `new Date("YYYY-MM-DD")` parsea como UTC midnight, que en UTC-3 equivale al día anterior → el mes máximo calculaba un mes menos de lo correcto. Solución: split del string `"YYYY-MM"` y aritmética de enteros.
+
+---
+
+### Fix: Vencimiento 90 días de publicaciones — startup automático
+
+El cron `jobs/vencimiento.js` ya existía, pero las columnas que necesita (`fecha_vencimiento`, `vencida`, `aviso_vencimiento_enviado`) nunca se creaban porque la migración era manual.
+
+**Fix en `backend/src/server.js`:** bloque de startup que corre en cada deploy:
+```js
+// Idempotente — ALTER TABLE IF NOT EXISTS
+await pool.query(`ALTER TABLE espacios ADD COLUMN IF NOT EXISTS fecha_vencimiento DATE NULL`).catch(...)
+await pool.query(`ALTER TABLE espacios ADD COLUMN IF NOT EXISTS vencida TINYINT(1) NOT NULL DEFAULT 0`).catch(...)
+await pool.query(`ALTER TABLE espacios ADD COLUMN IF NOT EXISTS aviso_vencimiento_enviado TINYINT(1) NOT NULL DEFAULT 0`).catch(...)
+// Retroactivo: asigna fecha_vencimiento a espacios sin ella
+await pool.query(`UPDATE espacios SET fecha_vencimiento = DATE_ADD(created_at, INTERVAL 90 DAY) WHERE fecha_vencimiento IS NULL AND activo = TRUE`).catch(...)
+// Expira vencidos
+await pool.query(`UPDATE espacios SET activo = FALSE, vencida = 1, disponible = FALSE WHERE fecha_vencimiento < CURDATE() AND vencida = 0`).catch(...)
+```
+
+La tabla `email_config` (con sus 26 claves) también se auto-crea en el mismo bloque de startup.
+
+---
+
+### Fix: Chat del oferente — dos bugs resueltos
+
+**Bug 1 — SQL:** `chatController.iniciarConversacion` buscaba reservas con `WHERE demandante_id = ?` pero la tabla `reservas` tiene columna `usuario_id`. El chat del oferente devolvía 403 ("chat disponible solo después de un pago") aunque hubiera reservas pagadas.
+
+**Bug 2 — React stale closure:** El botón "Chat" en las tarjetas de reservas del oferente buscaba conversaciones dentro de un `useEffect` que leía el estado `conversaciones` al momento del montaje, ignorando los datos cargados posteriormente. Se reemplazó por `handleAbrirChatOferente(espacioId, demandanteId)` que llama `chatAPI.listarConversaciones(token)` en tiempo real.
+
+**Archivos modificados:**
+- `backend/src/controllers/chatController.js`
+- `frontend/app/[locale]/panel/page.tsx`
+
+---
+
+### CI/CD: Retry automático en deploy SSH
+
+El deploy a veces falla por timeouts intermitentes de la red de Hostinger. Se agregó un loop de 3 intentos con 15 segundos de espera entre cada uno, con `ConnectTimeout=30` en el comando SSH.
+
+**Archivo:** `.github/workflows/deploy.yml`
+
+---
+
 ## 25 de Mayo 2026
 
 ### PIN de acceso en reservas

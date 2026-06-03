@@ -1251,10 +1251,30 @@ curl http://localhost:4000/health</pre>
   Compresión de fotos en cliente · Botón Cancelar en flujo de reserva · Precios día/mes en panel ·
   Favoritos · campos <code>activo</code> y <code>disponible</code> gestionados correctamente en admin y panel oferente ·
   Rate limiting · validación magic bytes en uploads · CSP · webhook MP con firma · <code>/sync</code> autenticado ·
-  Branch protection en master · Dependabot activo · deploy via SSH key
+  Branch protection en master · Dependabot activo · deploy via SSH key ·
+  Restricción 90 días en reservas · cron syncPagos cada 5 min · chat oferente corregido ·
+  vencimiento publicaciones auto-startup · retry SSH en CI/CD
 </div>
 
-<h2>Cambios recientes (v1.7.3 — 30 mayo 2026)</h2>
+<h2>Cambios recientes (v1.8.0 — 2–3 junio 2026)</h2>
+<table>
+  <tr><th>Área</th><th>Cambio</th><th>Archivo/Commit</th></tr>
+  <tr><td>Pagos — Cron syncPagos</td><td>Nuevo job <code>backend/src/jobs/syncPagos.js</code> que cada 5 min consulta reservas pendientes/confirmadas de las últimas 24h contra MP y llama <code>procesarPagada()</code> si el pago fue aprobado</td><td><code>syncPagos.js</code></td></tr>
+  <tr><td>Pagos — procesarPagada exportado</td><td><code>pagosController._procesarPagada</code> exportado como <code>procesarPagada</code>; compartido por webhook, admin sync y cron — única fuente de verdad para emails post-pago</td><td><code>pagosController.js</code></td></tr>
+  <tr><td>Admin — Sincronizar pendientes</td><td>Botón "🔄 Sincronizar pagos pendientes" en tab Operaciones; llama <code>POST /api/admin/sincronizar-pendientes</code>; ahora dispara emails via <code>procesarPagada</code></td><td><code>adminController.js</code></td></tr>
+  <tr><td>Fix — Webhook MP x-signature</td><td><code>verifyMPSignature</code> ahora acepta cuando no hay header <code>x-signature</code> (solo rechaza si está presente e inválido); fix de root cause: <code>.env</code> tenía <code>MP_WEBHOOK_SECRET</code> duplicado con línea vacía primera</td><td><code>pagosController.js</code></td></tr>
+  <tr><td>Reservas — Límite 90 días</td><td>Backend: 400 si <code>dias &gt; 90</code>. Frontend: <code>goToStep2</code> rechaza <code>diasMulti.length &gt; 90</code> y <code>cantMeses &gt; 3</code>. MiniCalendar acepta prop <code>maxDate</code> + <code>canGoNext</code> bloquea navegación. Input HASTA con <code>max</code> calculado por aritmética de strings</td><td><code>reservasController.js</code>, <code>reservar/page.tsx</code></td></tr>
+  <tr><td>Fix — Timezone en cálculo de mes</td><td><code>new Date("YYYY-MM-DD")</code> parsea como UTC midnight → en UTC-3 = día anterior → mes máximo incorrecto. Fix: split del string <code>"YYYY-MM"</code> + aritmética de enteros sin <code>new Date()</code></td><td><code>reservar/page.tsx</code></td></tr>
+  <tr><td>Fix — DESDE (mes) vacío</td><td>Input DESDE deshabilitado y pre-cargado con mes actual via <code>useEffect</code> y en click de "Por mes"</td><td><code>reservar/page.tsx</code></td></tr>
+  <tr><td>Fix — MiniCalendar maxDate</td><td>MiniCalendar recibe <code>maxDate</code> (hoy + 89 días como string); días y meses más allá del límite se deshabilitan/ocultan</td><td><code>reservar/page.tsx</code></td></tr>
+  <tr><td>Fix — Vencimiento espacios startup</td><td>Columnas <code>fecha_vencimiento</code>, <code>vencida</code>, <code>aviso_vencimiento_enviado</code> se crean con <code>ALTER TABLE IF NOT EXISTS</code> en startup de <code>server.js</code>; retroactivo para espacios existentes; tabla <code>email_config</code> también auto-creada</td><td><code>server.js</code></td></tr>
+  <tr><td>Fix — Chat oferente (SQL)</td><td><code>chatController.iniciarConversacion</code> usaba <code>demandante_id</code> en query a <code>reservas</code>; columna correcta es <code>usuario_id</code></td><td><code>chatController.js</code></td></tr>
+  <tr><td>Fix — Chat oferente (stale closure)</td><td>Botón Chat en tarjetas del oferente leía estado <code>conversaciones</code> obsoleto (montado en <code>useEffect</code>). Reemplazado por <code>handleAbrirChatOferente()</code> que fetcha en tiempo real con <code>chatAPI.listarConversaciones()</code></td><td><code>panel/page.tsx</code></td></tr>
+  <tr><td>Panel oferente — Tarjetas reserva</td><td>Rediseño: borde verde para reservas pagadas, alertas de disponibilidad del espacio, datos de contacto del demandante visibles</td><td><code>panel/page.tsx</code></td></tr>
+  <tr><td>CI/CD — Retry SSH</td><td>Loop de 3 intentos con 15s de espera entre cada uno; <code>ConnectTimeout=30</code>; evita fallos por timeouts intermitentes de Hostinger</td><td><code>deploy.yml</code></td></tr>
+</table>
+
+<h2>Cambios v1.7.3 — 30 mayo 2026</h2>
 <table>
   <tr><th>Área</th><th>Cambio</th><th>Commit</th></tr>
   <tr><td>Seguridad — Rate limiting</td><td>Nuevo <code>middleware/rateLimits.js</code>: 200 req/min general, 10/15min en <code>/api/auth</code>, 5/h en formularios de contacto</td><td><code>81583ae</code></td></tr>
@@ -1316,7 +1336,7 @@ curl http://localhost:4000/health</pre>
      FOOTER
 ══════════════════════════════════════════════════════════════ -->
 <div class="footer">
-  TodasMisCosas.com — Documentación técnica interna · Versión 1.7.3 · Mayo 2026<br>
+  TodasMisCosas.com — Documentación técnica interna · Versión 1.8.0 · Junio 2026<br>
   Alejandro Laporte · Guillermo Domínguez<br>
   <em>Este documento es confidencial. No distribuir.</em>
 </div>
