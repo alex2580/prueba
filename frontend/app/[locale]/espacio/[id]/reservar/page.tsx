@@ -29,6 +29,7 @@ function MiniCalendar({
   modo = 'ambos',
   diasMulti = [],
   onSelectMulti,
+  maxDate,
 }: {
   diasDisponibles?: string[];
   diasOcupados?: string[];
@@ -38,6 +39,7 @@ function MiniCalendar({
   modo?: ModoCalendario;
   diasMulti?: string[];
   onSelectMulti?: (dias: string[]) => void;
+  maxDate?: string;
 }) {
   const [month, setMonth] = useState(() => new Date());
   const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -55,6 +57,7 @@ function MiniCalendar({
   }
   function isAvail(d: Date) {
     const iso = toISO(d);
+    if (maxDate && iso > maxDate) return false;
     if (diasOcupados.includes(iso)) return false;
     if (!diasDisponibles?.length) return true;
     return diasDisponibles.includes(iso);
@@ -73,6 +76,9 @@ function MiniCalendar({
     ? Math.round((new Date(fechaHasta).getTime() - new Date(fechaDesde).getTime()) / 86400000) + 1
     : 0;
   const esMensual = diasSelec >= 28;
+
+  const maxDateObj = maxDate ? new Date(maxDate + 'T12:00:00') : null;
+  const canGoNext = !maxDateObj || new Date(year, mi + 1, 1) <= maxDateObj;
 
   function handleClick(d: Date) {
     if (d < today || !isAvail(d)) return;
@@ -146,8 +152,8 @@ function MiniCalendar({
           {MONTHS[mi]} {year}
         </span>
         <button
-          onClick={() => setMonth(m => new Date(m.getFullYear(), m.getMonth() + 1, 1))}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: 'var(--text2)', padding: '.2rem .5rem' }}
+          onClick={() => canGoNext && setMonth(m => new Date(m.getFullYear(), m.getMonth() + 1, 1))}
+          style={{ background: 'none', border: 'none', cursor: canGoNext ? 'pointer' : 'default', fontSize: '1rem', color: canGoNext ? 'var(--text2)' : '#ccc', padding: '.2rem .5rem' }}
         >→</button>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
@@ -363,6 +369,23 @@ export default function ReservarPage() {
   const cantMeses = modoCalendario === 'mes' && fechaDesde && fechaHasta
     ? mesesEntre(fechaDesde, fechaHasta)
     : 0;
+
+  // Fecha máxima para reservas por día (hoy + 89 días = 90 días totales)
+  const maxDate90 = (() => {
+    const d = new Date(); d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() + 89);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  })();
+
+  // Mes máximo para reservas por mes (sin new Date para evitar bug de timezone)
+  const maxMesHasta = (() => {
+    if (!fechaDesde) return undefined;
+    const [y, m] = fechaDesde.split('-').map(Number);
+    const totalM = (y * 12 + m - 1) + 2; // +2 meses más = 3 meses totales
+    const maxY = Math.floor(totalM / 12);
+    const maxM = (totalM % 12) + 1;
+    return `${maxY}-${String(maxM).padStart(2, '0')}`;
+  })();
 
   const precioEstimado = espacio
     ? modoCalendario === 'dia'
@@ -593,6 +616,7 @@ export default function ReservarPage() {
                             modo={modoCalendario}
                             diasMulti={diasMulti}
                             onSelectMulti={dias => { setDiasMulti(dias); setStep1Error(''); }}
+                            maxDate={maxDate90}
                           />
                         )}
 
@@ -620,7 +644,7 @@ export default function ReservarPage() {
                                   setStep1Error('');
                                 }}
                                 min={fechaDesde ? fechaDesde.slice(0, 7) : new Date().toISOString().slice(0, 7)}
-                                max={fechaDesde ? (() => { const d = new Date(fechaDesde); d.setMonth(d.getMonth() + 2); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; })() : undefined}
+                                max={maxMesHasta}
                                 style={{ marginTop: '.3rem' }}
                               />
                             </label>
