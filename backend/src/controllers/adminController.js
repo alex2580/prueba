@@ -559,6 +559,40 @@ async function getOperaciones(req, res, next) {
   }
 }
 
+// ── POST /api/admin/sincronizar-pendientes ─────────────────────
+// Recorre reservas pendientes de las últimas 48h y las sincroniza contra MP.
+async function sincronizarPendientes(req, res, next) {
+  try {
+    const mercadopagoService = require('../services/mercadopagoService');
+    const pendientes = await query(`
+      SELECT * FROM reservas
+      WHERE estado IN ('pendiente', 'confirmada')
+        AND created_at >= DATE_SUB(NOW(), INTERVAL 48 HOUR)
+    `);
+
+    let actualizadas = 0;
+    for (const reserva of pendientes) {
+      try {
+        const payment = await mercadopagoService.buscarPagoPorReferencia(reserva.id);
+        if (payment && payment.status === 'approved') {
+          await query(
+            'UPDATE reservas SET estado = ?, mp_payment_id = ?, mp_status = ? WHERE id = ?',
+            ['pagada', String(payment.id), payment.status, reserva.id]
+          );
+          actualizadas++;
+          console.log(`[admin sync] Reserva ${reserva.id} actualizada a pagada`);
+        }
+      } catch (e) {
+        console.warn(`[admin sync] Error sincronizando reserva ${reserva.id}:`, e.message);
+      }
+    }
+
+    res.json({ ok: true, revisadas: pendientes.length, actualizadas });
+  } catch (err) {
+    next(err);
+  }
+}
+
 // ── GET /api/admin/email-config ────────────────────────────────
 async function getEmailConfig(req, res, next) {
   try {
@@ -610,4 +644,5 @@ module.exports = {
   toggleDisponibleAdmin,
   getEmailConfig,
   updateEmailConfig,
+  sincronizarPendientes,
 };

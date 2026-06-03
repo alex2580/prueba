@@ -1387,6 +1387,8 @@ function TabOperaciones({ token }: { token: string }) {
   const [error, setError] = useState('');
   const [filtroEstado, setFiltroEstado] = useState('todas');
   const [busqueda, setBusqueda] = useState('');
+  const [syncLoading, setSyncLoading] = useState(false);
+  const [syncResult, setSyncResult] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -1406,6 +1408,24 @@ function TabOperaciones({ token }: { token: string }) {
   }, [token]);
 
   useEffect(() => { load(); }, [load]);
+
+  async function handleSincronizar() {
+    setSyncLoading(true);
+    setSyncResult(null);
+    try {
+      const res = await fetch('/api/admin/sincronizar-pendientes', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setSyncResult(`Revisadas: ${data.revisadas} · Actualizadas a pagada: ${data.actualizadas}`);
+      if (data.actualizadas > 0) load();
+    } catch {
+      setSyncResult('Error al sincronizar');
+    } finally {
+      setSyncLoading(false);
+    }
+  }
 
   const filtered = reservas.filter(r => {
     const matchEstado = filtroEstado === 'todas'
@@ -1448,6 +1468,18 @@ function TabOperaciones({ token }: { token: string }) {
           ))}
         </div>
       )}
+
+      {/* Sync button */}
+      <div style={{ display: 'flex', gap: '.75rem', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap' }}>
+        <button
+          onClick={handleSincronizar}
+          disabled={syncLoading}
+          style={{ padding: '.45rem 1rem', borderRadius: 'var(--r2)', border: '1px solid var(--border)', background: 'var(--surface)', cursor: syncLoading ? 'wait' : 'pointer', fontSize: '.82rem', fontWeight: 700, color: 'var(--orange)' }}
+        >
+          {syncLoading ? '⏳ Sincronizando…' : '🔄 Sincronizar pagos pendientes'}
+        </button>
+        {syncResult && <span style={{ fontSize: '.78rem', color: 'var(--text2)' }}>{syncResult}</span>}
+      </div>
 
       {/* Filters */}
       <div style={{ display: 'flex', gap: '.65rem', flexWrap: 'wrap', marginBottom: '1rem', alignItems: 'center' }}>

@@ -48,4 +48,7 @@ router.get('/operaciones',                                 ctrl.getOperaciones);
 router.get('/email-config',                                ctrl.getEmailConfig);
 router.patch('/email-config',                              ctrl.updateEmailConfig);
 
+// Sincronizar reservas pendientes contra MercadoPago
+router.post('/sincronizar-pendientes',                     ctrl.sincronizarPendientes);
+
 module.exports = router;

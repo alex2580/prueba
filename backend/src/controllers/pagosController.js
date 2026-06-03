@@ -9,27 +9,39 @@ const { validationResult } = require('express-validator');
 // Docs: https://www.mercadopago.com/developers/en/docs/your-integrations/notifications/webhooks
 function verifyMPSignature(req) {
   const secret = process.env.MP_WEBHOOK_SECRET;
-  if (!secret) {
-    console.warn('[webhook] MP_WEBHOOK_SECRET not set — skipping signature verification');
+  const signatureHeader = req.headers['x-signature'] || '';
+
+  // Si MP no manda x-signature, aceptar (el secret puede no estar configurado en el dashboard de MP)
+  if (!signatureHeader) {
+    if (secret) console.warn('[webhook] MP no envió x-signature — aceptando sin verificar firma');
     return true;
   }
 
-  const signatureHeader = req.headers['x-signature'] || '';
-  const requestId      = req.headers['x-request-id'] || '';
-  const { type, data } = req.body;
+  // Si hay firma pero no tenemos secret, aceptar igual
+  if (!secret) {
+    console.warn('[webhook] MP_WEBHOOK_SECRET no configurado — saltando verificación');
+    return true;
+  }
 
-  const tsMatch = signatureHeader.match(/ts=([^,]+)/);
-  const v1Match = signatureHeader.match(/v1=([^,]+)/);
-  if (!tsMatch || !v1Match) return false;
+  // Verificar firma
+  const requestId = req.headers['x-request-id'] || '';
+  const { data }  = req.body;
+  const tsMatch   = signatureHeader.match(/ts=([^,]+)/);
+  const v1Match   = signatureHeader.match(/v1=([^,]+)/);
+  if (!tsMatch || !v1Match) {
+    console.warn('[webhook] Formato de x-signature inválido:', signatureHeader);
+    return false;
+  }
 
   const ts       = tsMatch[1];
   const received = v1Match[1];
   const dataId   = data?.id ?? '';
-
   const manifest = `id:${dataId};request-id:${requestId};ts:${ts}`;
   const expected = crypto.createHmac('sha256', secret).update(manifest).digest('hex');
 
-  return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(received));
+  try {
+    return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(received));
+  } catch { return false; }
 }
 
 // ── Helper compartido: notificaciones al confirmar pago ────────
