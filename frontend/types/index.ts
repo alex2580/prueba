@@ -147,6 +147,10 @@ export interface Reserva {
   usuario_email?: string;
   usuario_tel?: string;
   servicios?: ServicioAdicional[];
+  // Escrow
+  escrow_liberado?: number;
+  escrow_liberado_at?: string | null;
+  escrow_neto_oferente?: number | null;
 }
 
 export interface Review {

@@ -781,6 +781,174 @@ async function sendPublicacionVencida(toEmail, nombre, { espacioNombre }) {
   });
 }
 
+// ── Escrow: pago retenido — al demandante ───────────────────────
+async function sendEscrowRetenidoDemandante(toEmail, nombre, { espacioNombre, monto, reservaId, fechaDesde }) {
+  if (!await emailConfig.isEnabled('escrow_retenido')) return;
+  const html = baseTemplate('Tu pago está protegido', `
+    <h2>🔒 Tu pago está protegido en escrow</h2>
+    <p>Hola <span class="highlight">${nombre}</span>, tu pago fue acreditado y está retenido de forma segura por TodasMisCosas.</p>
+    <div class="info-row">
+      <div><div class="info-label">Espacio</div><div class="info-val">${espacioNombre}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Monto protegido</div><div class="info-val">$${Number(monto).toLocaleString('es-AR')}</div></div>
+    </div>
+    <div style="background:#0f2f1a;border:1px solid #166534;border-radius:12px;padding:16px 20px;margin:20px 0;">
+      <p style="color:#86efac;font-size:13px;margin:0 0 8px;font-weight:700;">🛡️ ¿Cómo funciona la protección escrow?</p>
+      <ul style="color:#86efac;font-size:12px;line-height:1.9;padding-left:18px;margin:0;">
+        <li>El dinero queda retenido — el oferente <strong>no lo recibe aún</strong>.</li>
+        <li>Cuando accedas al espacio el <strong>${fechaDesde}</strong>, confirmás el acceso desde tu panel.</li>
+        <li>Recién ahí el pago se libera al oferente.</li>
+        <li>Si no podés acceder, contactanos antes de confirmar — podemos mediar.</li>
+      </ul>
+    </div>
+    <a class="btn" href="${process.env.FRONTEND_URL}/panel">Ir a mi panel →</a>
+  `);
+  await transporter.sendMail({
+    from: FROM, to: toEmail,
+    subject: `🔒 Pago protegido en escrow — ${espacioNombre}`,
+    html,
+  });
+}
+
+// ── Escrow: pago retenido — al oferente ─────────────────────────
+async function sendEscrowRetenidoOferente(toEmail, nombre, { demandanteNombre, espacioNombre, monto, reservaId, fechaDesde }) {
+  if (!await emailConfig.isEnabled('escrow_retenido')) return;
+  const montoTotal = Number(monto);
+  const comision   = Math.round(montoTotal * 0.15);
+  const montoNeto  = montoTotal - comision;
+  const html = baseTemplate('Reserva pagada — en escrow', `
+    <h2>💰 Reserva pagada — pago en custodia</h2>
+    <p>Hola <span class="highlight">${nombre}</span>, el demandante completó el pago de tu espacio.</p>
+    <div class="info-row">
+      <div><div class="info-label">Espacio</div><div class="info-val">${espacioNombre}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Inquilino</div><div class="info-val">${demandanteNombre}</div></div>
+    </div>
+    <div style="margin:20px 0;background:#0f172a;border-radius:12px;padding:16px 20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="color:#94a3b8;font-size:13px;">Valor total de la reserva</span>
+        <span style="color:#e2e8f0;font-weight:600;">$${montoTotal.toLocaleString('es-AR')}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #1e293b;">
+        <span style="color:#94a3b8;font-size:13px;">Comisión TodasMisCosas (15%)</span>
+        <span style="color:#ef4444;font-weight:600;">- $${comision.toLocaleString('es-AR')}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="color:#f1f5f9;font-size:15px;font-weight:700;">Tu pago neto</span>
+        <span style="color:#10b981;font-size:18px;font-weight:800;">$${montoNeto.toLocaleString('es-AR')}</span>
+      </div>
+    </div>
+    <div style="background:#1a1a0a;border:1px solid #d97706;border-radius:10px;padding:14px 16px;margin-bottom:20px;">
+      <p style="color:#fcd34d;font-size:13px;margin:0;">
+        ⏳ <strong>El pago está retenido en escrow.</strong> Lo recibirás automáticamente en tu cuenta registrada dentro de las 48 horas hábiles a partir de que el demandante confirme el acceso el <strong>${fechaDesde}</strong> — o de forma automática si no lo confirma a tiempo.
+      </p>
+    </div>
+    <p>Asegurate de tener el espacio listo y el CBU/Alias cargado en tu perfil para recibir la transferencia.</p>
+    <a class="btn" href="${process.env.FRONTEND_URL}/panel">Ver en mi panel →</a>
+  `);
+  await transporter.sendMail({
+    from: FROM, to: toEmail,
+    subject: `💰 Reserva pagada — $${montoNeto.toLocaleString('es-AR')} en escrow · ${espacioNombre}`,
+    html,
+  });
+}
+
+// ── Escrow liberado — admin (instrucción de transferencia) ───────
+async function sendEscrowLiberadoAdmin(toEmail, { reservaId, espacioNombre, oferenteNombre, oferenteCbu, monto, demandanteNombre, autoRelease = false }) {
+  const motivo = autoRelease
+    ? '⏱️ Liberación automática (48 hs desde fecha de inicio sin confirmación del demandante)'
+    : '✅ El demandante confirmó el acceso al espacio';
+  const html = baseTemplate('Escrow liberado — transferir al oferente', `
+    <h2>💸 Acción requerida: transferir pago al oferente</h2>
+    <p>${motivo}</p>
+    <div class="info-row">
+      <div><div class="info-label">Reserva ID</div><div class="info-val" style="font-family:monospace;font-size:.85rem;">${reservaId}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Espacio</div><div class="info-val">${espacioNombre}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Demandante</div><div class="info-val">${demandanteNombre}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Oferente</div><div class="info-val">${oferenteNombre}</div></div>
+    </div>
+    <div style="margin:20px 0;background:#0f172a;border-radius:12px;padding:16px 20px;border:2px solid #10b981;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <span style="color:#86efac;font-size:13px;font-weight:700;">CBU / Alias del oferente</span>
+        <span style="color:#fff;font-family:monospace;font-size:1.1rem;font-weight:800;">${oferenteCbu}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="color:#86efac;font-size:13px;font-weight:700;">Monto a transferir</span>
+        <span style="color:#10b981;font-size:1.3rem;font-weight:800;">$${Number(monto).toLocaleString('es-AR')}</span>
+      </div>
+    </div>
+    <a class="btn" href="${process.env.FRONTEND_URL}/admin">Ver en panel admin →</a>
+  `);
+  await transporter.sendMail({
+    from: FROM, to: toEmail,
+    subject: `💸 Transferir $${Number(monto).toLocaleString('es-AR')} al oferente — ${espacioNombre}`,
+    html,
+  });
+}
+
+// ── Escrow liberado — al oferente (tu plata viene) ───────────────
+async function sendAccesoConfirmadoOferente(toEmail, nombre, { espacioNombre, monto, reservaId, autoRelease = false }) {
+  if (!await emailConfig.isEnabled('escrow_liberado')) return;
+  const motivo = autoRelease
+    ? 'El sistema liberó el pago automáticamente (48 hs desde el inicio sin confirmación del demandante).'
+    : 'El demandante confirmó que accedió al espacio.';
+  const html = baseTemplate('¡Tu pago está en camino!', `
+    <h2>🎉 ¡Tu pago fue liberado!</h2>
+    <p>Hola <span class="highlight">${nombre}</span>, ${motivo}</p>
+    <div class="info-row">
+      <div><div class="info-label">Espacio</div><div class="info-val">${espacioNombre}</div></div>
+    </div>
+    <div style="margin:20px 0;background:#0f2f1a;border-radius:12px;padding:16px 20px;border:1px solid #166534;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="color:#86efac;font-size:15px;font-weight:700;">Monto a recibir</span>
+        <span style="color:#10b981;font-size:1.4rem;font-weight:800;">$${Number(monto).toLocaleString('es-AR')}</span>
+      </div>
+    </div>
+    <div style="background:#1e293b;border-radius:10px;padding:12px 16px;margin-bottom:20px;">
+      <p style="color:#94a3b8;font-size:13px;margin:0;">
+        ⏱️ Recibirás la transferencia dentro de las <strong style="color:#e2e8f0">48 horas hábiles</strong> en la cuenta bancaria registrada en tu perfil.
+      </p>
+    </div>
+    <a class="btn" href="${process.env.FRONTEND_URL}/panel">Ver en mi panel →</a>
+  `);
+  await transporter.sendMail({
+    from: FROM, to: toEmail,
+    subject: `🎉 Pago liberado — $${Number(monto).toLocaleString('es-AR')} en camino · ${espacioNombre}`,
+    html,
+  });
+}
+
+// ── Escrow liberado — al demandante (confirmaste acceso) ─────────
+async function sendAccesoConfirmadoDemandante(toEmail, nombre, { espacioNombre, reservaId }) {
+  if (!await emailConfig.isEnabled('escrow_liberado')) return;
+  const html = baseTemplate('Acceso confirmado', `
+    <h2>✅ ¡Acceso confirmado!</h2>
+    <p>Hola <span class="highlight">${nombre}</span>, confirmaste el acceso a <strong>${espacioNombre}</strong>.</p>
+    <p>El pago fue liberado al oferente. ¡Esperemos que tu experiencia sea excelente!</p>
+    <div style="background:#1e293b;border-radius:10px;padding:12px 16px;margin:16px 0;">
+      <p style="color:#94a3b8;font-size:13px;margin:0;">
+        ¿Tuviste algún problema para acceder? Contactanos a
+        <a href="mailto:contacto@todasmiscosas.com" style="color:#e8622a;">contacto@todasmiscosas.com</a>
+        antes de confirmar la próxima vez para que podamos mediar.
+      </p>
+    </div>
+    <a class="btn" href="${process.env.FRONTEND_URL}/panel">Ver mis reservas →</a>
+  `);
+  await transporter.sendMail({
+    from: FROM, to: toEmail,
+    subject: `✅ Acceso confirmado — ${espacioNombre}`,
+    html,
+  });
+}
+
 // ── Newsletter / Mailing masivo ──────────────────────────────────
 async function sendNewsletter(toEmail, nombre, { asunto, cuerpoHtml }) {
   if (!await emailConfig.isEnabled('newsletter')) return;
@@ -799,6 +967,11 @@ async function sendNewsletter(toEmail, nombre, { asunto, cuerpoHtml }) {
 }
 
 module.exports = {
+  sendEscrowRetenidoDemandante,
+  sendEscrowRetenidoOferente,
+  sendEscrowLiberadoAdmin,
+  sendAccesoConfirmadoOferente,
+  sendAccesoConfirmadoDemandante,
   sendReservaConfirmada,
   sendPagoConfirmado,
   sendBienvenida,

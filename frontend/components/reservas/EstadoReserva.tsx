@@ -14,9 +14,10 @@ interface EstadoReservaProps {
   onExtender?: () => void;
   onEliminar?: () => void;
   onChat?: () => void;
+  onConfirmarAcceso?: () => void;
 }
 
-export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar, onExtender, onEliminar, onChat }: EstadoReservaProps) {
+export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar, onExtender, onEliminar, onChat, onConfirmarAcceso }: EstadoReservaProps) {
   const dias = diasEntre(reserva.fecha_desde, reserva.fecha_hasta);
 
   return (
@@ -82,6 +83,33 @@ export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar, onExt
           )}
         </div>
       )}
+      {reserva.estado === 'pagada' && !reserva.escrow_liberado && onConfirmarAcceso && (
+        <div style={{
+          background: '#0f2f1a', border: '1px solid #166534',
+          borderRadius: 'var(--r2)', padding: '.9rem 1rem', marginBottom: '.75rem',
+        }}>
+          <p style={{ color: '#86efac', fontSize: '.8rem', margin: '0 0 .6rem', fontWeight: 700 }}>
+            🔒 Tu pago está protegido en escrow
+          </p>
+          <p style={{ color: '#86efac', fontSize: '.75rem', margin: '0 0 .75rem', lineHeight: 1.6 }}>
+            Cuando accedas al espacio, confirmá el ingreso para liberar el pago al oferente.
+          </p>
+          <Button variant="primary" onClick={onConfirmarAcceso} size="sm" style={{ width: '100%' }}>
+            ✅ Confirmar acceso al espacio
+          </Button>
+        </div>
+      )}
+
+      {reserva.estado === 'pagada' && reserva.escrow_liberado === 1 && (
+        <div style={{
+          background: 'var(--surface2)', border: '1px solid var(--border)',
+          borderRadius: 'var(--r2)', padding: '.75rem 1rem', marginBottom: '.75rem',
+          fontSize: '.78rem', color: 'var(--text3)',
+        }}>
+          ✅ Acceso confirmado — el pago fue liberado al oferente
+        </div>
+      )}
+
       {(reserva.estado === 'pagada' || reserva.estado === 'finalizada') && (
         <div style={{ display: 'flex', gap: '.6rem', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
           {onChat && (

@@ -166,9 +166,10 @@ export default function LegalesPage() {
               Los pagos se procesan a través de MercadoPago. TodasMisCosas.com cobra una <strong>comisión del 15%</strong> exclusivamente sobre
               las transacciones completadas — no se cobra ningún importe por publicar un espacio ni por realizar una reserva.
               El monto de la comisión se desglosa claramente antes de confirmar la reserva.
-              El oferente recibe el importe neto (precio acordado menos la comisión del 15%) dentro de las <strong>48 horas</strong> de
-              confirmado el inicio del período de locación mediante el PIN de verificación,
-              siempre que tenga cargado su CBU o Alias bancario en el perfil de su cuenta.
+              El pago queda retenido en custodia (escrow) hasta que el demandante confirme el acceso al espacio.
+              El oferente recibe el importe neto (precio acordado menos la comisión del 15%) dentro de las <strong>48 horas hábiles</strong> de
+              la confirmación de acceso, siempre que tenga cargado su CBU o Alias bancario en el perfil de su cuenta.
+              Ver sección 12 para el detalle completo del sistema escrow.
             </p>
           </section>
 
@@ -228,6 +229,25 @@ export default function LegalesPage() {
               <li><strong>Reservas vigentes:</strong> Las reservas confirmadas al momento del vencimiento no se ven afectadas y continúan normalmente hasta su fecha de finalización.</li>
               <li><strong>Sin costo:</strong> Crear una nueva publicación tras el vencimiento es gratuito, igual que la publicación original.</li>
             </ul>
+          </section>
+
+          {/* 12 */}
+          <section style={sectionStyle}>
+            <h2 style={h2Style}>12. Sistema de protección escrow</h2>
+            <p style={{ ...pStyle, marginBottom: '.75rem' }}>
+              TodasMisCosas.com utiliza un sistema de <strong>custodia de pago (escrow)</strong> para proteger tanto al demandante como al oferente en cada transacción:
+            </p>
+            <ul style={ulStyle}>
+              <li><strong>Retención del pago:</strong> Al completarse el pago por MercadoPago, el monto queda retenido por la plataforma. El oferente <strong>no recibe el dinero en ese momento</strong>.</li>
+              <li><strong>Confirmación de acceso:</strong> Una vez llegada la fecha de inicio de la reserva, el demandante debe confirmar desde su panel que efectivamente accedió al espacio.</li>
+              <li><strong>Liberación del pago:</strong> Tras la confirmación, la plataforma transfiere el importe neto (precio total menos la comisión del 15%) al CBU o Alias bancario registrado por el oferente en su perfil, dentro de las 48 horas hábiles.</li>
+              <li><strong>Liberación automática:</strong> Si el demandante no confirma el acceso dentro de las 48 horas posteriores al inicio de la reserva, el sistema libera el pago automáticamente al oferente.</li>
+              <li><strong>Disputas:</strong> Si el demandante tiene inconvenientes para acceder al espacio, debe contactar a TodasMisCosas.com <strong>antes de confirmar el acceso</strong>, escribiendo a <a href="mailto:contacto@todasmiscosas.com" style={{ color: 'var(--orange)' }}>contacto@todasmiscosas.com</a>. Una vez confirmado el acceso, el pago es definitivo.</li>
+              <li><strong>CBU / Alias requerido:</strong> Para recibir las transferencias, el oferente debe tener su CBU o Alias bancario cargado en su perfil. TodasMisCosas.com no se responsabiliza por demoras causadas por datos bancarios incorrectos o faltantes.</li>
+            </ul>
+            <p style={{ ...pStyle, marginTop: '.75rem' }}>
+              Este mecanismo no constituye intermediación financiera en los términos de la Ley 21.526, sino una mediación comercial destinada a garantizar el cumplimiento de las obligaciones de ambas partes antes de liberar los fondos.
+            </p>
           </section>
 
           <div style={{

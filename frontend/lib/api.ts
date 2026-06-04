@@ -102,6 +102,9 @@ export const reservasAPI = {
 
   ocultar: (id: string, token: string) =>
     fetchAPI<{ ok: boolean }>(`/api/reservas/${id}/ocultar`, { method: 'PATCH' }, token),
+
+  confirmarAcceso: (id: string, token: string) =>
+    fetchAPI<{ ok: boolean; message: string }>(`/api/reservas/${id}/confirmar-acceso`, { method: 'POST' }, token),
 };
 
 // ── Reviews ────────────────────────────────────────────────────

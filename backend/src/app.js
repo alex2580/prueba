@@ -12,6 +12,7 @@ const { iniciarCronInactividad } = require('./jobs/inactividad');
 const { iniciarCronMailing } = require('./jobs/mailing');
 const { iniciarCronVencimiento } = require('./jobs/vencimiento');
 const { iniciarCronSyncPagos } = require('./jobs/syncPagos');
+const { iniciarCronEscrow }    = require('./jobs/escrow');
 
 // Routes
 const espaciosRouter  = require('./routes/espacios');
@@ -97,5 +98,6 @@ iniciarCronInactividad();
 iniciarCronMailing();
 iniciarCronVencimiento();
 iniciarCronSyncPagos();
+iniciarCronEscrow();
 
 module.exports = app;

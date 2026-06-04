@@ -434,4 +434,76 @@ async function ocultar(req, res, next) {
   }
 }
 
-module.exports = { listar, recibidas, obtener, crear, cambiarEstado, cancelar, extender, ocultar };
+// POST /api/reservas/:id/confirmar-acceso  (demandante confirma que ingresó al espacio)
+async function confirmarAcceso(req, res, next) {
+  try {
+    const reserva = await queryOne(
+      `SELECT r.*,
+              e.nombre AS espacio_nombre, e.oferente_id,
+              u.nombre AS usuario_nombre, u.email AS usuario_email,
+              u2.nombre AS oferente_nombre, u2.email AS oferente_email, u2.cbu_alias AS oferente_cbu
+       FROM reservas r
+       JOIN espacios e ON r.espacio_id = e.id
+       JOIN usuarios u ON r.usuario_id = u.id
+       JOIN usuarios u2 ON e.oferente_id = u2.id
+       WHERE r.id = ?`,
+      [req.params.id]
+    );
+    if (!reserva) return res.status(404).json({ error: 'Reserva no encontrada' });
+    if (reserva.usuario_id !== req.user.id) {
+      return res.status(403).json({ error: 'Solo el demandante puede confirmar el acceso' });
+    }
+    if (reserva.estado !== 'pagada') {
+      return res.status(409).json({ error: 'Solo podés confirmar el acceso en reservas en estado pagada' });
+    }
+    if (reserva.escrow_liberado) {
+      return res.status(409).json({ error: 'El escrow ya fue liberado para esta reserva' });
+    }
+
+    const hoy   = new Date();
+    const desde = new Date(reserva.fecha_desde);
+    // Ignorar hora — comparar solo fecha
+    hoy.setHours(0, 0, 0, 0);
+    desde.setHours(0, 0, 0, 0);
+    if (hoy < desde) {
+      const dStr = String(reserva.fecha_desde).slice(0, 10);
+      return res.status(409).json({ error: `No podés confirmar el acceso antes de la fecha de inicio (${dStr})` });
+    }
+
+    const neto = Number(reserva.escrow_neto_oferente) || Math.round(Number(reserva.precio_total) * 0.85);
+
+    await query(
+      `UPDATE reservas SET escrow_liberado = 1, escrow_liberado_at = NOW() WHERE id = ?`,
+      [reserva.id]
+    );
+
+    const adminEmail = process.env.ADMIN_EMAILS || 'contacto@todasmiscosas.com';
+    emailService.sendEscrowLiberadoAdmin(adminEmail, {
+      reservaId: reserva.id,
+      espacioNombre: reserva.espacio_nombre,
+      oferenteNombre: reserva.oferente_nombre,
+      oferenteCbu: reserva.oferente_cbu || '(sin CBU/alias registrado)',
+      monto: neto,
+      demandanteNombre: reserva.usuario_nombre,
+      autoRelease: false,
+    }).catch(e => console.warn('Email escrow admin:', e.message));
+
+    emailService.sendAccesoConfirmadoOferente(reserva.oferente_email, reserva.oferente_nombre, {
+      espacioNombre: reserva.espacio_nombre,
+      monto: neto,
+      reservaId: reserva.id,
+      autoRelease: false,
+    }).catch(e => console.warn('Email acceso oferente:', e.message));
+
+    emailService.sendAccesoConfirmadoDemandante(reserva.usuario_email, reserva.usuario_nombre, {
+      espacioNombre: reserva.espacio_nombre,
+      reservaId: reserva.id,
+    }).catch(e => console.warn('Email acceso demandante:', e.message));
+
+    res.json({ ok: true, message: 'Acceso confirmado. El pago será transferido al oferente dentro de las 48 horas hábiles.' });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { listar, recibidas, obtener, crear, cambiarEstado, cancelar, extender, ocultar, confirmarAcceso };

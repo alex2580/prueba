@@ -58,16 +58,25 @@ async function _procesarPagada(reserva, paymentId) {
     ? reserva.fecha_hasta.toISOString().slice(0, 10)
     : String(reserva.fecha_hasta).slice(0, 10);
 
-  emailService.sendPagoConfirmado(usuario.email, usuario.nombre, {
-    espacioNombre: espacio.nombre, monto: reserva.precio_total,
-    reservaId: reserva.id, paymentId,
-  }).catch(e => console.warn('Email pago demandante:', e.message));
+  // Inicializar escrow
+  const netoOferente = Math.round(Number(reserva.precio_total) * 0.85);
+  await query(
+    `UPDATE reservas SET escrow_liberado = 0, escrow_neto_oferente = ? WHERE id = ?`,
+    [netoOferente, reserva.id]
+  ).catch(e => console.warn('SET escrow:', e.message));
 
+  // Email demandante: tu pago está protegido en escrow
+  emailService.sendEscrowRetenidoDemandante(usuario.email, usuario.nombre, {
+    espacioNombre: espacio.nombre, monto: reserva.precio_total,
+    reservaId: reserva.id, fechaDesde: fDesde,
+  }).catch(e => console.warn('Email escrow demandante:', e.message));
+
+  // Email oferente: pago retenido en escrow, lo recibirás al confirmar acceso
   if (oferente) {
-    emailService.sendPagoRecibidoOferente(oferente.email, oferente.nombre, {
+    emailService.sendEscrowRetenidoOferente(oferente.email, oferente.nombre, {
       demandanteNombre: usuario.nombre, espacioNombre: espacio.nombre,
-      monto: reserva.precio_total, reservaId: reserva.id,
-    }).catch(e => console.warn('Email pago oferente:', e.message));
+      monto: reserva.precio_total, reservaId: reserva.id, fechaDesde: fDesde,
+    }).catch(e => console.warn('Email escrow oferente:', e.message));
   }
 
   emailService.sendReservaConfirmada(usuario.email, usuario.nombre, {

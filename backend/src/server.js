@@ -86,7 +86,7 @@ async function start() {
       'aviso_vencimiento_publicacion','publicacion_vencida','consulta_publica',
       'reserva_confirmada','reserva_aprobada','pago_confirmado',
       'recordatorios_reserva','extension_confirmada','reserva_finalizada',
-      'respuesta_consulta','bienvenida','aceptacion_operacion','reserva_cancelada',
+      'respuesta_consulta','bienvenida','aceptacion_operacion','reserva_cancelada','escrow_retenido','escrow_liberado',
       'chat_mensaje','otp','login_notificacion','cuenta_bloqueada',
       'cuenta_desbloqueada','cambio_tel','servicios_adicionales',
       'mejorar_puntuacion','contacto','newsletter',
@@ -95,6 +95,11 @@ async function start() {
       await pool.query('INSERT IGNORE INTO email_config (clave, habilitado) VALUES (?, 1)', [clave])
         .catch(e => console.error(`⚠️  email_config insert ${clave}:`, e.message));
     }
+
+    // Columnas de escrow en reservas
+    await pool.query(`ALTER TABLE reservas ADD COLUMN IF NOT EXISTS escrow_liberado TINYINT(1) NOT NULL DEFAULT 0`).catch(e => console.error('⚠️  escrow_liberado:', e.message));
+    await pool.query(`ALTER TABLE reservas ADD COLUMN IF NOT EXISTS escrow_liberado_at DATETIME NULL`).catch(e => console.error('⚠️  escrow_liberado_at:', e.message));
+    await pool.query(`ALTER TABLE reservas ADD COLUMN IF NOT EXISTS escrow_neto_oferente DECIMAL(10,2) NULL`).catch(e => console.error('⚠️  escrow_neto_oferente:', e.message));
 
     console.log('✅ Startup migrations OK');
   }

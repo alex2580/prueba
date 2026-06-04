@@ -590,6 +590,18 @@ export default function PanelPage() {
     }
   }
 
+  async function handleConfirmarAcceso(reservaId: string) {
+    if (!token) return;
+    if (!window.confirm('¿Confirmás que accediste al espacio?\n\nEsto libera el pago al oferente. Solo confirmá si ya ingresaste.')) return;
+    try {
+      await reservasAPI.confirmarAcceso(reservaId, token);
+      setRefreshKey(k => k + 1);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      window.alert(msg || 'Error al confirmar acceso');
+    }
+  }
+
   async function handleEliminarEspacio(id: string) {
     if (!token) return;
     if (!window.confirm('¿Querés dar de baja esta publicación?\n\nVa a dejar de aparecer en el mapa y en las búsquedas.')) return;
@@ -695,6 +707,11 @@ export default function PanelPage() {
                         onExtender={r.estado === 'pagada' ? () => abrirExtension(r) : undefined}
                         onEliminar={['cancelada', 'finalizada'].includes(r.estado) ? () => ocultarReserva(r.id) : undefined}
                         onChat={['pagada', 'finalizada'].includes(r.estado) ? () => handleAbrirChat(r.espacio_id) : undefined}
+                        onConfirmarAcceso={
+                          r.estado === 'pagada' && !r.escrow_liberado && new Date() >= new Date(r.fecha_desde)
+                            ? () => handleConfirmarAcceso(r.id)
+                            : undefined
+                        }
                       />
                     ))}
                   </div>
@@ -1050,6 +1067,16 @@ export default function PanelPage() {
                                         {r.pin_acceso && esActiva && (
                                           <div style={{ marginTop: '.2rem', fontSize: '.73rem' }}>
                                             🔑 PIN de acceso: <span style={{ fontFamily: 'monospace', fontWeight: 700, color: 'var(--orange)', letterSpacing: '.1em' }}>{r.pin_acceso}</span>
+                                          </div>
+                                        )}
+                                        {esPagada && !r.escrow_liberado && (
+                                          <div style={{ marginTop: '.25rem', fontSize: '.7rem', color: '#f59e0b', fontWeight: 600 }}>
+                                            ⏳ Esperando confirmación del demandante
+                                          </div>
+                                        )}
+                                        {esPagada && r.escrow_liberado === 1 && (
+                                          <div style={{ marginTop: '.25rem', fontSize: '.7rem', color: 'var(--mint)', fontWeight: 600 }}>
+                                            ✅ Acceso confirmado — pago en camino
                                           </div>
                                         )}
                                       </div>
