@@ -378,23 +378,47 @@ export default function ReservarPage() {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   })();
 
-  // Mes máximo para reservas por mes (sin new Date para evitar bug de timezone)
+  // Último mes COMPLETO cubierto por la publicación (mes donde último día <= fecha_vencimiento)
+  // e.g. vencimiento=2026-08-15 → julio (jul31 < ago15), vencimiento=2026-08-31 → agosto
+  const ultimoMesCompletoVenc = (() => {
+    const venc = espacio?.fecha_vencimiento;
+    if (!venc) return undefined;
+    const [vy, vm, vd] = venc.split('-').map(Number);
+    const lastDayOfVenMonth = new Date(vy, vm, 0).getDate();
+    if (vd >= lastDayOfVenMonth) return `${vy}-${String(vm).padStart(2, '0')}`;
+    const prevM = vm - 1;
+    if (prevM === 0) return `${vy - 1}-12`;
+    return `${vy}-${String(prevM).padStart(2, '0')}`;
+  })();
+
+  // Fecha máxima para reservas por día: el menor entre 90 días y el vencimiento
+  const maxDateFinal = (() => {
+    const venc = espacio?.fecha_vencimiento;
+    if (!venc) return maxDate90;
+    return maxDate90 < venc ? maxDate90 : venc;
+  })();
+
+  // Mes máximo para reservas por mes (3 meses desde inicio, capeado por vencimiento)
   const maxMesHasta = (() => {
-    if (!fechaDesde) return undefined;
+    if (!fechaDesde) return ultimoMesCompletoVenc;
     const [y, m] = fechaDesde.split('-').map(Number);
     const totalM = (y * 12 + m - 1) + 2; // +2 meses más = 3 meses totales
     const maxY = Math.floor(totalM / 12);
     const maxM = (totalM % 12) + 1;
-    return `${maxY}-${String(maxM).padStart(2, '0')}`;
+    const base = `${maxY}-${String(maxM).padStart(2, '0')}`;
+    if (!ultimoMesCompletoVenc) return base;
+    return base < ultimoMesCompletoVenc ? base : ultimoMesCompletoVenc;
   })();
 
-  // Mes máximo para el campo DESDE (el inicio puede ser hasta mes actual + 2)
+  // Mes máximo para el campo DESDE (mes actual + 2, capeado por vencimiento)
   const maxMesDesde = (() => {
     const hoy = new Date();
     const totalM = hoy.getFullYear() * 12 + hoy.getMonth() + 2;
     const maxY = Math.floor(totalM / 12);
     const maxM = (totalM % 12) + 1;
-    return `${maxY}-${String(maxM).padStart(2, '0')}`;
+    const base = `${maxY}-${String(maxM).padStart(2, '0')}`;
+    if (!ultimoMesCompletoVenc) return base;
+    return base < ultimoMesCompletoVenc ? base : ultimoMesCompletoVenc;
   })();
 
   const minMesDesde = new Date().toISOString().slice(0, 7);
@@ -446,6 +470,19 @@ export default function ReservarPage() {
             ? `Los siguientes meses tienen días ya reservados: ${mesesConflicto.join(', ')}. Cambiá el período de inicio o fin.`
             : 'El período seleccionado incluye fechas ya reservadas. Por favor elegí otras fechas.'
         );
+        return;
+      }
+    }
+    // Validar que la reserva no supere la fecha de vencimiento de la publicación
+    if (espacio?.fecha_vencimiento) {
+      const venc = espacio.fecha_vencimiento;
+      if (modoCalendario === 'dia') {
+        if (diasMulti.some(d => d > venc)) {
+          setStep1Error(`Algunos días seleccionados superan la fecha límite de esta publicación (${venc}).`);
+          return;
+        }
+      } else if (fechaHasta && fechaHasta > venc) {
+        setStep1Error(`La reserva no puede extenderse más allá del vencimiento de esta publicación (${venc}).`);
         return;
       }
     }
@@ -646,7 +683,7 @@ export default function ReservarPage() {
                             modo={modoCalendario}
                             diasMulti={diasMulti}
                             onSelectMulti={dias => { setDiasMulti(dias); setStep1Error(''); }}
-                            maxDate={maxDate90}
+                            maxDate={maxDateFinal}
                           />
                         )}
 
