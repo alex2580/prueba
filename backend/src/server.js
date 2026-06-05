@@ -101,6 +101,10 @@ async function start() {
     await pool.query(`ALTER TABLE reservas ADD COLUMN IF NOT EXISTS escrow_liberado_at DATETIME NULL`).catch(e => console.error('⚠️  escrow_liberado_at:', e.message));
     await pool.query(`ALTER TABLE reservas ADD COLUMN IF NOT EXISTS escrow_neto_oferente DECIMAL(10,2) NULL`).catch(e => console.error('⚠️  escrow_neto_oferente:', e.message));
 
+    // Columnas para reservas de días sueltos
+    await pool.query(`ALTER TABLE reservas ADD COLUMN IF NOT EXISTS modo VARCHAR(10) NULL`).catch(e => console.error('⚠️  reservas.modo:', e.message));
+    await pool.query(`ALTER TABLE reservas ADD COLUMN IF NOT EXISTS dias_json TEXT NULL`).catch(e => console.error('⚠️  reservas.dias_json:', e.message));
+
     console.log('✅ Startup migrations OK');
   }
 

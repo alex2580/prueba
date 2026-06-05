@@ -355,19 +355,27 @@ async function reactivar(req, res, next) {
 async function fechasOcupadas(req, res, next) {
   try {
     const reservas = await query(
-      `SELECT fecha_desde, fecha_hasta FROM reservas
+      `SELECT fecha_desde, fecha_hasta, modo, dias_json FROM reservas
        WHERE espacio_id = ? AND estado IN ('pendiente','confirmada','pagada','activa')`,
       [req.params.id]
     );
     const ocupadas = new Set();
-    reservas.forEach(({ fecha_desde, fecha_hasta }) => {
-      const desde = new Date(fecha_desde);
-      const hasta = new Date(fecha_hasta);
-      for (let d = new Date(desde); d <= hasta; d.setDate(d.getDate() + 1)) {
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        ocupadas.add(`${y}-${m}-${day}`);
+    reservas.forEach(({ fecha_desde, fecha_hasta, modo, dias_json }) => {
+      if (modo === 'dia' && dias_json) {
+        // Reserva de días sueltos: solo bloquear los días exactos seleccionados
+        try {
+          JSON.parse(dias_json).forEach(d => ocupadas.add(d));
+        } catch (_) {}
+      } else {
+        // Reserva de rango: expandir todos los días del rango
+        const fd = String(fecha_desde).slice(0, 10);
+        const fh = String(fecha_hasta).slice(0, 10);
+        const d = new Date(fd + 'T12:00:00');
+        const hasta = new Date(fh + 'T12:00:00');
+        while (d <= hasta) {
+          ocupadas.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
+          d.setDate(d.getDate() + 1);
+        }
       }
     });
     res.json({ fechas: [...ocupadas] });

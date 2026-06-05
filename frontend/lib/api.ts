@@ -91,7 +91,7 @@ export const reservasAPI = {
   obtener: (id: string, token: string) =>
     fetchAPI<Reserva>(`/api/reservas/${id}`, {}, token),
 
-  crear: (data: { espacio_id: string; fecha_desde: string; fecha_hasta: string; notas?: string; servicios?: string[] }, token: string) =>
+  crear: (data: { espacio_id: string; fecha_desde: string; fecha_hasta: string; notas?: string; servicios?: string[]; modo?: string; diasMulti?: string[] }, token: string) =>
     fetchAPI<Reserva>('/api/reservas', { method: 'POST', body: JSON.stringify(data) }, token),
 
   cambiarEstado: (id: string, estado: string, token: string) =>

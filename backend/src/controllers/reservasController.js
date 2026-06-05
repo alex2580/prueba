@@ -4,6 +4,17 @@ const { v4: uuidv4 } = require('uuid');
 const emailService = require('../services/emailService');
 const mercadopagoService = require('../services/mercadopagoService');
 
+function expandirRango(fechaDesde, fechaHasta) {
+  const dias = [];
+  const d = new Date(fechaDesde + 'T12:00:00');
+  const hasta = new Date(fechaHasta + 'T12:00:00');
+  while (d <= hasta) {
+    dias.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
+    d.setDate(d.getDate() + 1);
+  }
+  return dias;
+}
+
 function parseSeguridad(r) {
   if (r.espacio_seguridad && typeof r.espacio_seguridad === 'string') {
     try { r.espacio_seguridad = JSON.parse(r.espacio_seguridad); } catch (_) { r.espacio_seguridad = null; }
@@ -119,11 +130,17 @@ async function crear(req, res, next) {
       return res.status(422).json({ error: 'Datos inválidos', details: errors.array() });
     }
 
-    const { espacio_id, fecha_desde, fecha_hasta, notas, servicios: serviciosReq } = req.body;
+    const { espacio_id, fecha_desde, fecha_hasta, notas, servicios: serviciosReq, modo, diasMulti } = req.body;
     const serviciosValidos = ['seguro', 'embalaje', 'transporte', 'limpieza'];
     const serviciosFiltrados = Array.isArray(serviciosReq)
       ? serviciosReq.filter(s => serviciosValidos.includes(s))
       : [];
+
+    // Para reservas de días sueltos, los días vienen en diasMulti (ordenados)
+    const esMododia = modo === 'dia' && Array.isArray(diasMulti) && diasMulti.length > 0;
+    const diasOrdenados = esMododia ? [...diasMulti].sort() : null;
+    const fdDesde = esMododia ? diasOrdenados[0] : fecha_desde;
+    const fdHasta = esMododia ? diasOrdenados[diasOrdenados.length - 1] : fecha_hasta;
 
     // Verify espacio exists and is available
     const espacio = await queryOne(
@@ -137,20 +154,39 @@ async function crear(req, res, next) {
     }
 
     // Check no overlapping reservas
-    const overlap = await queryOne(
-      `SELECT id FROM reservas
-       WHERE espacio_id = ? AND estado NOT IN ('cancelada')
-         AND fecha_desde <= ? AND fecha_hasta >= ?`,
-      [espacio_id, fecha_hasta, fecha_desde]
-    );
-    if (overlap) {
-      return res.status(409).json({ error: 'El espacio ya está reservado para esas fechas' });
+    if (esMododia) {
+      // Para días sueltos: verificar que ninguno de los días seleccionados esté ocupado
+      const ocupadas = await query(
+        `SELECT fecha_desde, fecha_hasta, dias_json, modo FROM reservas
+         WHERE espacio_id = ? AND estado NOT IN ('cancelada')
+           AND fecha_desde <= ? AND fecha_hasta >= ?`,
+        [espacio_id, fdHasta, fdDesde]
+      );
+      for (const r of ocupadas) {
+        const diasOcupados = r.modo === 'dia' && r.dias_json
+          ? JSON.parse(r.dias_json)
+          : expandirRango(r.fecha_desde, r.fecha_hasta);
+        const conflicto = diasOrdenados.some(d => diasOcupados.includes(d));
+        if (conflicto) {
+          return res.status(409).json({ error: 'Uno o más días seleccionados ya están reservados por otro usuario.' });
+        }
+      }
+    } else {
+      const overlap = await queryOne(
+        `SELECT id FROM reservas
+         WHERE espacio_id = ? AND estado NOT IN ('cancelada')
+           AND fecha_desde <= ? AND fecha_hasta >= ?`,
+        [espacio_id, fdHasta, fdDesde]
+      );
+      if (overlap) {
+        return res.status(409).json({ error: 'El espacio ya está reservado para esas fechas' });
+      }
     }
 
     // Calculate price
-    const desde = new Date(fecha_desde);
-    const hasta  = new Date(fecha_hasta);
-    const dias   = Math.ceil((hasta - desde) / (1000 * 60 * 60 * 24)) + 1;
+    const desde = new Date(fdDesde + 'T12:00:00');
+    const hasta  = new Date(fdHasta + 'T12:00:00');
+    const dias   = esMododia ? diasOrdenados.length : (Math.ceil((hasta - desde) / (1000 * 60 * 60 * 24)) + 1);
 
     if (dias < 1) return res.status(400).json({ error: 'Las fechas seleccionadas no son válidas.' });
     if (dias > 90) return res.status(400).json({ error: 'La reserva no puede superar los 90 días (3 meses).' });
@@ -159,12 +195,13 @@ async function crear(req, res, next) {
       : dias * espacio.precio_dia;
 
     const pin = String(Math.floor(1000 + Math.random() * 9000));
+    const diasJsonStr = esMododia ? JSON.stringify(diasOrdenados) : null;
 
     const reserva = await transaction(async (conn) => {
       await conn.execute(
-        `INSERT INTO reservas (espacio_id, usuario_id, fecha_desde, fecha_hasta, precio_total, notas, pin_acceso)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [espacio_id, req.user.id, fecha_desde, fecha_hasta, precio_total, notas || '', pin]
+        `INSERT INTO reservas (espacio_id, usuario_id, fecha_desde, fecha_hasta, precio_total, notas, pin_acceso, modo, dias_json)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [espacio_id, req.user.id, fdDesde, fdHasta, precio_total, notas || '', pin, modo || null, diasJsonStr]
       );
       const [rows] = await conn.execute(
         'SELECT * FROM reservas WHERE usuario_id = ? ORDER BY created_at DESC LIMIT 1',

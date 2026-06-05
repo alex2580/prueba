@@ -12,6 +12,7 @@ const pool = mysql.createPool({
   queueLimit: 0,
   timezone: '-03:00',
   charset: 'utf8mb4',
+  dateStrings: true,
 });
 
 async function query(sql, params = []) {

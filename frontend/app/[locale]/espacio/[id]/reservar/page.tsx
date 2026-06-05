@@ -381,8 +381,9 @@ export default function ReservarPage() {
   // Último mes COMPLETO cubierto por la publicación (mes donde último día <= fecha_vencimiento)
   // e.g. vencimiento=2026-08-15 → julio (jul31 < ago15), vencimiento=2026-08-31 → agosto
   const ultimoMesCompletoVenc = (() => {
-    const venc = espacio?.fecha_vencimiento;
-    if (!venc) return undefined;
+    const raw = espacio?.fecha_vencimiento;
+    if (!raw) return undefined;
+    const venc = String(raw).slice(0, 10);
     const [vy, vm, vd] = venc.split('-').map(Number);
     const lastDayOfVenMonth = new Date(vy, vm, 0).getDate();
     if (vd >= lastDayOfVenMonth) return `${vy}-${String(vm).padStart(2, '0')}`;
@@ -392,9 +393,11 @@ export default function ReservarPage() {
   })();
 
   // Fecha máxima para reservas por día: el menor entre 90 días y el vencimiento
+  // Se saneiza a YYYY-MM-DD por si mysql2 devuelve ISO completo ("2026-08-30T...")
   const maxDateFinal = (() => {
-    const venc = espacio?.fecha_vencimiento;
-    if (!venc) return maxDate90;
+    const raw = espacio?.fecha_vencimiento;
+    if (!raw) return maxDate90;
+    const venc = String(raw).slice(0, 10);
     return maxDate90 < venc ? maxDate90 : venc;
   })();
 
@@ -450,6 +453,8 @@ export default function ReservarPage() {
     if (modoCalendario === 'dia') {
       if (diasMulti.length === 0) { setStep1Error('Seleccioná al menos un día en el calendario.'); return; }
       if (diasMulti.length > 90) { setStep1Error('La reserva no puede superar los 90 días (3 meses).'); return; }
+      const conflicto = diasMulti.find(d => fechasOcupadas.includes(d));
+      if (conflicto) { setStep1Error(`El día ${conflicto} ya está reservado. Por favor quitalo de tu selección.`); return; }
     } else {
       if (!fechaDesde || !fechaHasta) { setStep1Error('Seleccioná las fechas de inicio y fin.'); return; }
       if (fechaHasta < fechaDesde) { setStep1Error('La fecha de fin debe ser posterior a la de inicio.'); return; }
@@ -498,7 +503,11 @@ export default function ReservarPage() {
     const fdDesde = modoCalendario === 'dia' ? diasMulti[0] : fechaDesde;
     const fdHasta = modoCalendario === 'dia' ? diasMulti[diasMulti.length - 1] : fechaHasta;
     try {
-      const reserva = await reservasAPI.crear({ espacio_id: espacioId, fecha_desde: fdDesde, fecha_hasta: fdHasta, servicios }, token);
+      const reserva = await reservasAPI.crear({
+        espacio_id: espacioId, fecha_desde: fdDesde, fecha_hasta: fdHasta, servicios,
+        modo: modoCalendario,
+        diasMulti: modoCalendario === 'dia' ? diasMulti : undefined,
+      }, token);
 
       const pref = await pagosAPI.crearPreferencia(reserva.id, token);
       window.location.href = pref.init_point;
@@ -515,7 +524,11 @@ export default function ReservarPage() {
     const fdDesde = modoCalendario === 'dia' ? diasMulti[0] : fechaDesde;
     const fdHasta = modoCalendario === 'dia' ? diasMulti[diasMulti.length - 1] : fechaHasta;
     try {
-      const reserva = await reservasAPI.crear({ espacio_id: espacioId, fecha_desde: fdDesde, fecha_hasta: fdHasta, servicios }, token);
+      const reserva = await reservasAPI.crear({
+        espacio_id: espacioId, fecha_desde: fdDesde, fecha_hasta: fdHasta, servicios,
+        modo: modoCalendario,
+        diasMulti: modoCalendario === 'dia' ? diasMulti : undefined,
+      }, token);
 
       const pref = await pagosAPI.crearPreferencia(reserva.id, token);
       const dataUrl = await QRCode.toDataURL(pref.init_point, {
