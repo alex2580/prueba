@@ -199,7 +199,7 @@
   <div class="cover-sub">Documentación Técnica Completa</div>
   <div style="font-size:10pt;color:#888;margin-bottom:28px;">Marketplace de almacenamiento urbano — Buenos Aires</div>
   <div class="cover-meta">
-    <b>Versión:</b> 1.7.3 — Mayo 2026<br>
+    <b>Versión:</b> 1.9.0 — Junio 2026<br>
     <b>URL producción:</b> https://todasmiscosas.com<br>
     <b>Repositorio:</b> github.com/alex2580/prueba (privado)<br>
     <b>Autores:</b> Alejandro Laporte · Guillermo Domínguez<br>
@@ -1256,7 +1256,21 @@ curl http://localhost:4000/health</pre>
   vencimiento publicaciones auto-startup · retry SSH en CI/CD
 </div>
 
-<h2>Cambios recientes (v1.8.0 — 2–3 junio 2026)</h2>
+<h2>Cambios recientes (v1.9.0 — 5 junio 2026)</h2>
+<table>
+  <tr><th>Área</th><th>Cambio</th><th>Archivo/Commit</th></tr>
+  <tr><td>Escrow — DB</td><td>3 columnas nuevas en <code>reservas</code>: <code>escrow_liberado TINYINT(1) DEFAULT 0</code>, <code>escrow_liberado_at DATETIME NULL</code>, <code>escrow_neto_oferente DECIMAL(10,2) NULL</code>. Se crean automáticamente en startup vía <code>server.js</code></td><td><code>server.js</code></td></tr>
+  <tr><td>Escrow — Backend pagos</td><td><code>_procesarPagada</code> ahora inicializa <code>escrow_liberado=0</code> y <code>escrow_neto_oferente=precio×0.85</code>. Reemplaza emails de pago inmediato por emails de retención en escrow</td><td><code>pagosController.js</code></td></tr>
+  <tr><td>Escrow — Endpoint confirmar acceso</td><td>Nuevo <code>POST /api/reservas/:id/confirmar-acceso</code>: solo el demandante, solo desde <code>fecha_desde</code>. Libera escrow, dispara emails a admin (instrucción transferencia), oferente y demandante</td><td><code>reservasController.js</code>, <code>routes/reservas.js</code></td></tr>
+  <tr><td>Escrow — Cron auto-release</td><td>Nuevo <code>backend/src/jobs/escrow.js</code>: cron cada hora en el minuto :30 que libera escrows cuya <code>fecha_desde</code> fue hace 48+ horas sin confirmación del demandante</td><td><code>jobs/escrow.js</code>, <code>app.js</code></td></tr>
+  <tr><td>Escrow — Emails (5 nuevas plantillas)</td><td><code>sendEscrowRetenidoDemandante</code>, <code>sendEscrowRetenidoOferente</code>, <code>sendEscrowLiberadoAdmin</code>, <code>sendAccesoConfirmadoOferente</code>, <code>sendAccesoConfirmadoDemandante</code></td><td><code>emailService.js</code></td></tr>
+  <tr><td>Escrow — Panel demandante</td><td>Caja amber "Pago protegido — podrás confirmar a partir del [fecha]" para reservas con fecha futura. Caja verde con botón "✅ Confirmar acceso al espacio" desde <code>fecha_desde</code> en adelante. Estado "✅ Acceso confirmado" post-liberación</td><td><code>EstadoReserva.tsx</code>, <code>panel/page.tsx</code></td></tr>
+  <tr><td>Escrow — Panel oferente</td><td>"🔒 Escrow activo — confirmación a partir del [fecha]" cuando fecha es futura; "⏳ Esperando confirmación" cuando llegó la fecha; "✅ Acceso confirmado — pago en camino" post-liberación</td><td><code>panel/page.tsx</code></td></tr>
+  <tr><td>Legales</td><td>Sección 12 nueva "Sistema de protección escrow" con flujo completo. Sección 6 (Pagos) actualizada para mencionar retención y liberación del pago</td><td><code>legales/page.tsx</code></td></tr>
+  <tr><td>Types / API</td><td>Interfaz <code>Reserva</code> +3 campos escrow. <code>reservasAPI.confirmarAcceso()</code> agregado</td><td><code>types/index.ts</code>, <code>lib/api.ts</code></td></tr>
+</table>
+
+<h2>Cambios v1.8.0 — 2–3 junio 2026</h2>
 <table>
   <tr><th>Área</th><th>Cambio</th><th>Archivo/Commit</th></tr>
   <tr><td>Pagos — Cron syncPagos</td><td>Nuevo job <code>backend/src/jobs/syncPagos.js</code> que cada 5 min consulta reservas pendientes/confirmadas de las últimas 24h contra MP y llama <code>procesarPagada()</code> si el pago fue aprobado</td><td><code>syncPagos.js</code></td></tr>
@@ -1336,7 +1350,7 @@ curl http://localhost:4000/health</pre>
      FOOTER
 ══════════════════════════════════════════════════════════════ -->
 <div class="footer">
-  TodasMisCosas.com — Documentación técnica interna · Versión 1.8.0 · Junio 2026<br>
+  TodasMisCosas.com — Documentación técnica interna · Versión 1.9.0 · Junio 2026<br>
   Alejandro Laporte · Guillermo Domínguez<br>
   <em>Este documento es confidencial. No distribuir.</em>
 </div>

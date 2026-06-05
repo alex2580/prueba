@@ -774,6 +774,34 @@ Solo funciona si `inactiva_auto = 1`. Si alguien intenta reactivar un espacio qu
 
 ---
 
+## 5 de Junio 2026 — v1.9.0
+
+### Sistema de protección escrow
+
+Implementación completa de escrow para proteger al demandante y garantizar el pago al oferente.
+
+**Flujo:**
+1. Demandante paga → el dinero queda **retenido en custodia** por TMC (no se transfiere al oferente aún)
+2. Al llegar la fecha de inicio, el demandante confirma acceso desde su panel
+3. TMC recibe instrucción de transferencia → 85% al oferente, 15% queda como comisión
+4. Si el demandante no confirma en 48 hs desde el inicio, el sistema libera automáticamente
+
+**Backend:**
+- `reservas.escrow_liberado`, `escrow_liberado_at`, `escrow_neto_oferente` — 3 columnas nuevas, auto-creadas en startup
+- `_procesarPagada` ahora inicializa `escrow_liberado=0` y `escrow_neto=precio×0.85` en lugar de notificar pago inmediato
+- Endpoint `POST /api/reservas/:id/confirmar-acceso` — solo el demandante, solo desde `fecha_desde`
+- Job `backend/src/jobs/escrow.js` — cron horario (:30) que auto-libera escrows 48h después de `fecha_desde`
+- 5 nuevas plantillas de email: retenido (demandante + oferente), liberado (admin con instrucción + oferente + demandante)
+
+**Frontend:**
+- Panel demandante — caja **amber** "Pago protegido en escrow — podrás confirmar a partir del [fecha]" cuando fecha futura; caja **verde** con botón "✅ Confirmar acceso" cuando fecha llegó
+- Panel oferente — indicador "🔒 Escrow activo — confirmación a partir del [fecha]" / "⏳ Esperando confirmación" / "✅ Acceso confirmado — pago en camino"
+- Legales — sección 12 "Sistema de protección escrow" + sección 6 actualizada
+
+**Commits:** `780ce07` (implementación base), `c878890` (fix fechas futuras)
+
+---
+
 ## 2–3 de Junio 2026 — v1.8.0
 
 ### Confiabilidad de pagos — sistema de 3 capas
