@@ -1069,9 +1069,11 @@ export default function PanelPage() {
                                             🔑 PIN de acceso: <span style={{ fontFamily: 'monospace', fontWeight: 700, color: 'var(--orange)', letterSpacing: '.1em' }}>{r.pin_acceso}</span>
                                           </div>
                                         )}
-                                        {esPagada && !r.escrow_liberado && (
+                                        {esPagada && r.escrow_neto_oferente != null && !r.escrow_liberado && (
                                           <div style={{ marginTop: '.25rem', fontSize: '.7rem', color: '#f59e0b', fontWeight: 600 }}>
-                                            ⏳ Esperando confirmación del demandante
+                                            {new Date() < new Date(r.fecha_desde)
+                                              ? `🔒 Escrow activo — confirmación a partir del ${formatFechaCorta(r.fecha_desde)}`
+                                              : '⏳ Esperando confirmación de acceso del demandante'}
                                           </div>
                                         )}
                                         {esPagada && r.escrow_liberado === 1 && (
