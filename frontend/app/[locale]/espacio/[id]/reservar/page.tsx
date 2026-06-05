@@ -388,6 +388,17 @@ export default function ReservarPage() {
     return `${maxY}-${String(maxM).padStart(2, '0')}`;
   })();
 
+  // Mes máximo para el campo DESDE (el inicio puede ser hasta mes actual + 2)
+  const maxMesDesde = (() => {
+    const hoy = new Date();
+    const totalM = hoy.getFullYear() * 12 + hoy.getMonth() + 2;
+    const maxY = Math.floor(totalM / 12);
+    const maxM = (totalM % 12) + 1;
+    return `${maxY}-${String(maxM).padStart(2, '0')}`;
+  })();
+
+  const minMesDesde = new Date().toISOString().slice(0, 7);
+
   const precioEstimado = espacio
     ? modoCalendario === 'dia'
       ? diasMulti.length * Number(espacio.precio_dia)
@@ -422,7 +433,21 @@ export default function ReservarPage() {
     }
     if (modoCalendario !== 'dia' && fechaDesde && fechaHasta) {
       const overlap = fechasOcupadas.some(f => f >= fechaDesde && f <= fechaHasta);
-      if (overlap) { setStep1Error('El período seleccionado incluye fechas ya reservadas. Por favor elegí otras fechas.'); return; }
+      if (overlap) {
+        const mesesConflicto = Array.from(mesesOcupados)
+          .filter(mk => mk >= fechaDesde.slice(0, 7) && mk <= fechaHasta.slice(0, 7))
+          .map(mk => {
+            const [y, mo] = mk.split('-');
+            const nombres = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+            return `${nombres[Number(mo) - 1]} ${y}`;
+          });
+        setStep1Error(
+          mesesConflicto.length
+            ? `Los siguientes meses tienen días ya reservados: ${mesesConflicto.join(', ')}. Cambiá el período de inicio o fin.`
+            : 'El período seleccionado incluye fechas ya reservadas. Por favor elegí otras fechas.'
+        );
+        return;
+      }
     }
     if (!espacio?.precio_dia && !espacio?.precio_mes) { setStep1Error('Este espacio no tiene precio configurado.'); return; }
     setStep1Error('');
@@ -627,7 +652,7 @@ export default function ReservarPage() {
 
                         {modoCalendario === 'mes' && mesesOcupados.size > 0 && (
                           <div style={{ fontSize: '.73rem', color: '#b45309', background: 'rgba(180,83,9,.07)', border: '1px solid rgba(180,83,9,.2)', borderRadius: 7, padding: '.45rem .75rem', marginTop: '.75rem' }}>
-                            🚫 Meses no disponibles: {Array.from(mesesOcupados).sort().map(m => {
+                            🚫 Meses con días reservados (no disponibles para reserva mensual): {Array.from(mesesOcupados).sort().map(m => {
                               const [y, mo] = m.split('-');
                               const nombres = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
                               return `${nombres[Number(mo) - 1]} ${y}`;
@@ -641,9 +666,25 @@ export default function ReservarPage() {
                               <input
                                 type="month"
                                 value={fechaDesde ? fechaDesde.slice(0, 7) : ''}
-                                disabled
-                                style={{ marginTop: '.3rem', opacity: .7, cursor: 'not-allowed' }}
+                                onChange={e => {
+                                  if (!e.target.value) { setFechaDesde(''); setFechaHasta(''); return; }
+                                  const [y, m] = e.target.value.split('-').map(Number);
+                                  setFechaDesde(`${y}-${String(m).padStart(2, '0')}-01`);
+                                  setFechaHasta('');
+                                  setStep1Error('');
+                                }}
+                                min={minMesDesde}
+                                max={maxMesDesde}
+                                style={{
+                                  marginTop: '.3rem',
+                                  borderColor: fechaDesde && mesesOcupados.has(fechaDesde.slice(0, 7)) ? '#ef4444' : undefined,
+                                }}
                               />
+                              {fechaDesde && mesesOcupados.has(fechaDesde.slice(0, 7)) && (
+                                <span style={{ fontSize: '.68rem', color: '#ef4444', marginTop: '.2rem', display: 'block' }}>
+                                  Este mes tiene días reservados — elegí otro
+                                </span>
+                              )}
                             </label>
                             <label className="form-label">
                               Hasta (mes)
@@ -657,10 +698,18 @@ export default function ReservarPage() {
                                   setFechaHasta(`${y}-${String(m).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`);
                                   setStep1Error('');
                                 }}
-                                min={fechaDesde ? fechaDesde.slice(0, 7) : new Date().toISOString().slice(0, 7)}
+                                min={fechaDesde ? fechaDesde.slice(0, 7) : minMesDesde}
                                 max={maxMesHasta}
-                                style={{ marginTop: '.3rem' }}
+                                style={{
+                                  marginTop: '.3rem',
+                                  borderColor: fechaHasta && mesesOcupados.has(fechaHasta.slice(0, 7)) ? '#ef4444' : undefined,
+                                }}
                               />
+                              {fechaHasta && mesesOcupados.has(fechaHasta.slice(0, 7)) && (
+                                <span style={{ fontSize: '.68rem', color: '#ef4444', marginTop: '.2rem', display: 'block' }}>
+                                  Este mes tiene días reservados — elegí otro
+                                </span>
+                              )}
                             </label>
                           </div>
                         )}
