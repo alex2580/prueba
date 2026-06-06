@@ -144,16 +144,22 @@ async function crear(req, res, next) {
 
     // Verify espacio exists and is available
     const espacio = await queryOne(
-      'SELECT id, precio_dia, precio_mes, disponible, oferente_id, nombre FROM espacios WHERE id = ? AND activo = TRUE',
+      'SELECT id, precio_dia, precio_mes, disponible, cupo_disponible, tipo, oferente_id, nombre FROM espacios WHERE id = ? AND activo = TRUE',
       [espacio_id]
     );
     if (!espacio) return res.status(404).json({ error: 'Espacio no encontrado' });
     if (!espacio.disponible) return res.status(409).json({ error: 'El espacio no está disponible' });
+    if (espacio.tipo === 'compartido' && !espacio.cupo_disponible) {
+      return res.status(409).json({ error: 'Este espacio compartido no tiene disponibilidad en este momento. El oferente informará cuando vuelva a tener cupo.' });
+    }
     if (espacio.oferente_id === req.user.id) {
       return res.status(400).json({ error: 'No puedes reservar tu propio espacio' });
     }
 
-    // Check no overlapping reservas
+    // Check no overlapping reservas (solo para espacios exclusivos)
+    if (espacio.tipo === 'compartido') {
+      // Compartidos permiten múltiples reservas simultáneas — no se chequea solapamiento
+    } else
     if (esMododia) {
       // Para días sueltos: verificar que ninguno de los días seleccionados esté ocupado
       const ocupadas = await query(

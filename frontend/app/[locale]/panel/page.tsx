@@ -473,6 +473,16 @@ export default function PanelPage() {
     }
   }
 
+  async function handleToggleCupo(id: string, cupoActual: boolean) {
+    if (!token) return;
+    try {
+      await espaciosAPI.toggleCupo(id, !cupoActual, token);
+      setRefreshKey(k => k + 1);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   async function handleGuardarEdicion() {
     if (!token || !editando) return;
     if (!editForm.nombre.trim()) { setEditError('El nombre es obligatorio'); return; }
@@ -998,13 +1008,24 @@ export default function PanelPage() {
                                   >
                                     ✏️ Editar
                                   </button>
-                                  <button
-                                    className="btn-ghost"
-                                    style={{ fontSize: '.73rem' }}
-                                    onClick={() => handleToggleDisponible(esp.id, !esp.disponible)}
-                                  >
-                                    {esp.disponible ? 'Pausar' : 'Activar'}
-                                  </button>
+                                  {esp.tipo === 'compartido' ? (
+                                    <button
+                                      className="btn-ghost"
+                                      style={{ fontSize: '.73rem', fontWeight: 700, color: esp.cupo_disponible !== false ? '#16a34a' : '#dc2626' }}
+                                      onClick={() => handleToggleCupo(esp.id, esp.cupo_disponible !== false)}
+                                      title={esp.cupo_disponible !== false ? 'Tenés disponibilidad — click para marcar cupo completo' : 'Cupo completo — click para abrir disponibilidad'}
+                                    >
+                                      {esp.cupo_disponible !== false ? '🟢 Con cupo' : '🔴 Cupo lleno'}
+                                    </button>
+                                  ) : (
+                                    <button
+                                      className="btn-ghost"
+                                      style={{ fontSize: '.73rem' }}
+                                      onClick={() => handleToggleDisponible(esp.id, !esp.disponible)}
+                                    >
+                                      {esp.disponible ? 'Pausar' : 'Activar'}
+                                    </button>
+                                  )}
                                 </>
                               )}
                               {!esVencida && (() => {

@@ -77,6 +77,12 @@ export const espaciosAPI = {
 
   misEspacios: (token: string) =>
     fetchAPI<Espacio[]>('/api/espacios/mis-espacios', {}, token),
+
+  toggleCupo: (id: string, cupo_disponible: boolean, token: string) =>
+    fetchAPI<{ ok: boolean; cupo_disponible: boolean }>(`/api/espacios/${id}/cupo`, {
+      method: 'PATCH',
+      body: JSON.stringify({ cupo_disponible }),
+    }, token),
 };
 
 // ── Reservas ────────────────────────────────────────────────────

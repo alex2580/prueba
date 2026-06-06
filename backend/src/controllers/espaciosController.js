@@ -39,7 +39,7 @@ async function listar(req, res, next) {
     let sql = `
       SELECT e.id, e.nombre, e.direccion, e.barrio, e.m2, e.tipo,
              e.precio_dia, e.precio_mes, e.descripcion,
-             e.lat, e.lng, e.disponible, e.rating, e.reviews_count,
+             e.lat, e.lng, e.disponible, e.cupo_disponible, e.rating, e.reviews_count,
              e.reservas_mes, e.badge, e.created_at,
              u.nombre AS oferente_nombre, u.email AS oferente_email, u.tel AS oferente_tel,
              (SELECT url FROM espacio_fotos ef WHERE ef.espacio_id = e.id ORDER BY ef.orden LIMIT 1) AS img_principal
@@ -354,6 +354,10 @@ async function reactivar(req, res, next) {
 
 async function fechasOcupadas(req, res, next) {
   try {
+    const espacio = await queryOne('SELECT tipo FROM espacios WHERE id = ?', [req.params.id]);
+    // Compartidos: múltiples clientes coexisten — el calendario nunca bloquea por reservas previas
+    if (espacio?.tipo === 'compartido') return res.json({ fechas: [] });
+
     const reservas = await query(
       `SELECT fecha_desde, fecha_hasta, modo, dias_json FROM reservas
        WHERE espacio_id = ? AND estado IN ('pendiente','confirmada','pagada','activa')`,
@@ -384,4 +388,23 @@ async function fechasOcupadas(req, res, next) {
   }
 }
 
-module.exports = { listar, obtener, crear, actualizar, eliminar, subirFotos, misEspacios, reactivar, fechasOcupadas };
+// PATCH /api/espacios/:id/cupo  — oferente activa/desactiva disponibilidad de compartido
+async function toggleCupo(req, res, next) {
+  try {
+    const espacio = await queryOne('SELECT id, oferente_id, tipo, cupo_disponible FROM espacios WHERE id = ?', [req.params.id]);
+    if (!espacio) return res.status(404).json({ error: 'Espacio no encontrado' });
+    if (espacio.oferente_id !== req.user.id && req.user.tipo !== 'admin') {
+      return res.status(403).json({ error: 'No tenés permiso para modificar este espacio' });
+    }
+    if (espacio.tipo !== 'compartido') {
+      return res.status(400).json({ error: 'Solo los espacios compartidos tienen control de cupo' });
+    }
+    const nuevo = req.body.cupo_disponible ? 1 : 0;
+    await query('UPDATE espacios SET cupo_disponible = ? WHERE id = ?', [nuevo, espacio.id]);
+    res.json({ ok: true, cupo_disponible: nuevo === 1 });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { listar, obtener, crear, actualizar, eliminar, subirFotos, misEspacios, reactivar, fechasOcupadas, toggleCupo };

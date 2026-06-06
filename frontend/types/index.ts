@@ -65,6 +65,7 @@ export interface Espacio {
   reviews_data?: Review[];
   activo?: boolean;
   inactiva_auto?: boolean;
+  cupo_disponible?: boolean;
   created_at?: string;
   fecha_vencimiento?: string | null;
   vencida?: number;

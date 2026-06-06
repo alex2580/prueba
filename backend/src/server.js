@@ -105,6 +105,9 @@ async function start() {
     await pool.query(`ALTER TABLE reservas ADD COLUMN IF NOT EXISTS modo VARCHAR(10) NULL`).catch(e => console.error('⚠️  reservas.modo:', e.message));
     await pool.query(`ALTER TABLE reservas ADD COLUMN IF NOT EXISTS dias_json TEXT NULL`).catch(e => console.error('⚠️  reservas.dias_json:', e.message));
 
+    // Cupo disponible para espacios compartidos
+    await pool.query(`ALTER TABLE espacios ADD COLUMN IF NOT EXISTS cupo_disponible TINYINT(1) NOT NULL DEFAULT 1`).catch(e => console.error('⚠️  cupo_disponible:', e.message));
+
     console.log('✅ Startup migrations OK');
   }
 

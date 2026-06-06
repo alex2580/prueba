@@ -677,8 +677,17 @@ export default function ReservarPage() {
                   {/* Divider */}
                   <div style={{ height: 1, background: 'var(--border)' }} />
 
+                  {/* Bloqueo cupo lleno — solo compartidos */}
+                  {espacio.tipo === 'compartido' && espacio.cupo_disponible === false && (
+                    <div style={{ background: 'rgba(239,68,68,.08)', border: '1px solid rgba(239,68,68,.3)', borderRadius: 10, padding: '1rem 1.1rem', textAlign: 'center' }}>
+                      <div style={{ fontSize: '1.4rem', marginBottom: '.35rem' }}>🔴</div>
+                      <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, color: '#dc2626', marginBottom: '.25rem' }}>Cupo completo</div>
+                      <div style={{ fontSize: '.82rem', color: 'var(--text2)' }}>El oferente informó que no tiene disponibilidad en este momento. Podés contactarlo para consultar cuándo vuelve a tener cupo.</div>
+                    </div>
+                  )}
+
                   {/* Calendario */}
-                  <div>
+                  {(espacio.tipo !== 'compartido' || espacio.cupo_disponible !== false) && <div>
                     <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.82rem', color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: '1rem' }}>
                       📅 Disponibilidad & Fechas
                     </div>
@@ -859,13 +868,15 @@ export default function ReservarPage() {
                         )}
                       </>
                     )}
-                  </div>
+                  </div>}
 
                   {step1Error && <p style={{ fontSize: '.8rem', color: '#e8622a', fontWeight: 600 }}>{step1Error}</p>}
 
-                  <Button variant="primary" onClick={goToStep2} style={{ width: '100%' }}>
-                    Continuar → Servicios adicionales
-                  </Button>
+                  {(espacio.tipo !== 'compartido' || espacio.cupo_disponible !== false) && (
+                    <Button variant="primary" onClick={goToStep2} style={{ width: '100%' }}>
+                      Continuar → Servicios adicionales
+                    </Button>
+                  )}
                 </div>
               )}
 
