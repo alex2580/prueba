@@ -1015,7 +1015,7 @@ export default function PanelPage() {
                                       onClick={() => handleToggleCupo(esp.id, esp.cupo_disponible !== false)}
                                       title={esp.cupo_disponible !== false ? 'Tenés disponibilidad — click para marcar cupo completo' : 'Cupo completo — click para abrir disponibilidad'}
                                     >
-                                      {esp.cupo_disponible !== false ? '🟢 Con cupo' : '🔴 Cupo lleno'}
+                                      {esp.cupo_disponible !== false ? '🟢 Tengo Espacio' : '🔴 No tengo Espacio'}
                                     </button>
                                   ) : (
                                     <button
