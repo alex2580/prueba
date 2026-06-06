@@ -424,7 +424,29 @@ export default function ReservarPage() {
     return base < ultimoMesCompletoVenc ? base : ultimoMesCompletoVenc;
   })();
 
-  const minMesDesde = new Date().toISOString().slice(0, 7);
+  // Para modo mes: el primer mes seleccionable es el próximo mes completo
+  // (el mes en curso ya comenzó, no se puede reservar un mes completo que arrancó en el pasado)
+  const minMesDesde = (() => {
+    const hoy = new Date();
+    const next = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 1);
+    return `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, '0')}`;
+  })();
+
+  // Lista de meses seleccionables en modo mes: desde minMesDesde hasta ultimoMesCompletoVenc
+  // Excluye los meses con al menos un día ya ocupado (no disponibles para reserva mensual)
+  const mesesDisponiblesParaMes = (() => {
+    if (!ultimoMesCompletoVenc) return [];
+    const meses: string[] = [];
+    const [startY, startM] = minMesDesde.split('-').map(Number);
+    const [endY, endM] = ultimoMesCompletoVenc.split('-').map(Number);
+    let y = startY; let m = startM;
+    while (y < endY || (y === endY && m <= endM)) {
+      const key = `${y}-${String(m).padStart(2, '0')}`;
+      meses.push(key);
+      m++; if (m > 12) { m = 1; y++; }
+    }
+    return meses;
+  })();
 
   const precioEstimado = espacio
     ? modoCalendario === 'dia'
@@ -700,69 +722,97 @@ export default function ReservarPage() {
                           />
                         )}
 
-                        {modoCalendario === 'mes' && mesesOcupados.size > 0 && (
-                          <div style={{ fontSize: '.73rem', color: '#b45309', background: 'rgba(180,83,9,.07)', border: '1px solid rgba(180,83,9,.2)', borderRadius: 7, padding: '.45rem .75rem', marginTop: '.75rem' }}>
-                            🚫 Meses con días reservados (no disponibles para reserva mensual): {Array.from(mesesOcupados).sort().map(m => {
-                              const [y, mo] = m.split('-');
-                              const nombres = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-                              return `${nombres[Number(mo) - 1]} ${y}`;
-                            }).join(', ')}
-                          </div>
-                        )}
-                        {modoCalendario === 'mes' && (
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.75rem', marginTop: '1rem' }}>
-                            <label className="form-label">
-                              Desde (mes)
-                              <input
-                                type="month"
-                                value={fechaDesde ? fechaDesde.slice(0, 7) : ''}
-                                onChange={e => {
-                                  if (!e.target.value) { setFechaDesde(''); setFechaHasta(''); return; }
-                                  const [y, m] = e.target.value.split('-').map(Number);
-                                  setFechaDesde(`${y}-${String(m).padStart(2, '0')}-01`);
-                                  setFechaHasta('');
-                                  setStep1Error('');
-                                }}
-                                min={minMesDesde}
-                                max={maxMesDesde}
-                                style={{
-                                  marginTop: '.3rem',
-                                  borderColor: fechaDesde && mesesOcupados.has(fechaDesde.slice(0, 7)) ? '#ef4444' : undefined,
-                                }}
-                              />
-                              {fechaDesde && mesesOcupados.has(fechaDesde.slice(0, 7)) && (
-                                <span style={{ fontSize: '.68rem', color: '#ef4444', marginTop: '.2rem', display: 'block' }}>
-                                  Este mes tiene días reservados — elegí otro
-                                </span>
+                        {modoCalendario === 'mes' && (() => {
+                          const NOMBRES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+                          const mesDesde = fechaDesde ? fechaDesde.slice(0, 7) : '';
+                          const mesHasta = fechaHasta ? fechaHasta.slice(0, 7) : '';
+
+                          function labelMes(key: string) {
+                            const [y, mo] = key.split('-');
+                            return `${NOMBRES[Number(mo) - 1]} ${y}`;
+                          }
+
+                          function handleClickMes(key: string) {
+                            if (mesesOcupados.has(key)) return;
+                            const [y, m] = key.split('-').map(Number);
+                            const lastDay = new Date(y, m, 0).getDate();
+                            if (!mesDesde || mesHasta) {
+                              // Primera selección: fija DESDE y limpia HASTA
+                              setFechaDesde(`${y}-${String(m).padStart(2, '0')}-01`);
+                              setFechaHasta('');
+                            } else if (key < mesDesde) {
+                              // Click en mes anterior al DESDE: resetea
+                              setFechaDesde(`${y}-${String(m).padStart(2, '0')}-01`);
+                              setFechaHasta('');
+                            } else {
+                              // Segunda selección: fija HASTA
+                              setFechaHasta(`${y}-${String(m).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`);
+                            }
+                            setStep1Error('');
+                          }
+
+                          if (mesesDisponiblesParaMes.length === 0) {
+                            return (
+                              <div style={{ fontSize: '.82rem', color: '#ef4444', marginTop: '1rem', textAlign: 'center' }}>
+                                No hay meses completos disponibles para reserva mensual en esta publicación.
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <div style={{ marginTop: '1rem' }}>
+                              <div style={{ fontSize: '.73rem', color: 'var(--text3)', marginBottom: '.6rem' }}>
+                                {!mesDesde ? '🗓 Tocá el mes de inicio' : !mesHasta ? '🗓 Ahora tocá el mes de fin (o el mismo para reservar 1 mes)' : `📅 ${labelMes(mesDesde)} → ${labelMes(mesHasta)}`}
+                              </div>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.5rem' }}>
+                                {mesesDisponiblesParaMes.map(key => {
+                                  const ocupado = mesesOcupados.has(key);
+                                  const isDesde = key === mesDesde;
+                                  const isHasta = key === mesHasta;
+                                  const inRange = mesDesde && mesHasta && key > mesDesde && key < mesHasta;
+                                  const isEdge = isDesde || isHasta;
+                                  return (
+                                    <button
+                                      key={key}
+                                      type="button"
+                                      onClick={() => handleClickMes(key)}
+                                      disabled={ocupado}
+                                      style={{
+                                        padding: '.4rem .9rem',
+                                        borderRadius: 20,
+                                        border: isEdge ? '2px solid var(--orange)' : inRange ? '2px solid rgba(232,98,42,.4)' : '1.5px solid #ddd',
+                                        background: isEdge ? 'var(--orange)' : inRange ? 'rgba(232,98,42,.1)' : ocupado ? '#f3f3f3' : '#fff',
+                                        color: isEdge ? '#fff' : ocupado ? '#bbb' : 'var(--text)',
+                                        fontFamily: 'Sora, sans-serif',
+                                        fontWeight: isEdge ? 700 : 500,
+                                        fontSize: '.82rem',
+                                        cursor: ocupado ? 'not-allowed' : 'pointer',
+                                        position: 'relative',
+                                      }}
+                                    >
+                                      {labelMes(key)}
+                                      {ocupado && <span style={{ fontSize: '.62rem', display: 'block', color: '#bbb' }}>días ocupados</span>}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                              {mesDesde && !mesHasta && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const [y, m] = mesDesde.split('-').map(Number);
+                                    const lastDay = new Date(y, m, 0).getDate();
+                                    setFechaHasta(`${y}-${String(m).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`);
+                                    setStep1Error('');
+                                  }}
+                                  style={{ marginTop: '.6rem', fontSize: '.72rem', color: 'var(--orange)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                                >
+                                  ↩ Reservar solo {labelMes(mesDesde)}
+                                </button>
                               )}
-                            </label>
-                            <label className="form-label">
-                              Hasta (mes)
-                              <input
-                                type="month"
-                                value={fechaHasta ? fechaHasta.slice(0, 7) : ''}
-                                onChange={e => {
-                                  if (!e.target.value) { setFechaHasta(''); return; }
-                                  const [y, m] = e.target.value.split('-').map(Number);
-                                  const lastDay = new Date(y, m, 0).getDate();
-                                  setFechaHasta(`${y}-${String(m).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`);
-                                  setStep1Error('');
-                                }}
-                                min={fechaDesde ? fechaDesde.slice(0, 7) : minMesDesde}
-                                max={maxMesHasta}
-                                style={{
-                                  marginTop: '.3rem',
-                                  borderColor: fechaHasta && mesesOcupados.has(fechaHasta.slice(0, 7)) ? '#ef4444' : undefined,
-                                }}
-                              />
-                              {fechaHasta && mesesOcupados.has(fechaHasta.slice(0, 7)) && (
-                                <span style={{ fontSize: '.68rem', color: '#ef4444', marginTop: '.2rem', display: 'block' }}>
-                                  Este mes tiene días reservados — elegí otro
-                                </span>
-                              )}
-                            </label>
-                          </div>
-                        )}
+                            </div>
+                          );
+                        })()}
 
                         {/* Price preview */}
                         {precioEstimado > 0 && (
