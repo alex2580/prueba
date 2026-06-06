@@ -60,7 +60,7 @@
     "exclusivoDesc": "Somente você usa o espaço. Acesso privado, seu cadeado.",
     "compartidoTitulo": "Compartilhado",
     "compartidoPill": "Melhor preço",
-    "compartidoDesc": "Compartilha com outros. Custo dividido, ideal para longo prazo.",
+    "compartidoDesc": "Vários clientes usam o espaço ao mesmo tempo. Preço mais baixo, ideal para longo prazo. O anunciante abre ou fecha as vagas pelo painel quando quiser.",
     "reservarTitulo": "Para Reservar",
     "reservarSubtitulo": "4 passos simples",
     "publicarTitulo": "Para Publicar",
@@ -73,7 +73,7 @@
       { "icon": "🔑", "titulo": "Coordena o acesso", "desc": "Você e quem publicou o espaço receberão o mesmo PIN de 4 dígitos por e-mail para se identificarem." }
     ],
     "pasosPublicar": [
-      { "icon": "📢", "titulo": "Publica seu espaço", "desc": "Vá ao botão \"Publicar espaço\" e conte a todos qual espaço você oferece: se é exclusivo ou compartilhado, se aluga por dia, por mês ou ambas as formas. Marque no calendário os dias ou meses em que estará disponível." },
+      { "icon": "📢", "titulo": "Publica seu espaço", "desc": "Vá ao botão \"Publicar espaço\" e conte a todos qual espaço você oferece: se é exclusivo ou compartilhado, se aluga por dia, por mês ou ambas as formas. Marque no calendário os dias ou meses em que estará disponível. Se for compartilhado, pelo painel você pode abrir ou fechar as vagas com o botão 🟢 Tenho Espaço / 🔴 Não tenho Espaço." },
       { "icon": "📷", "titulo": "Envia fotos", "desc": "Você pode enviar até 5 fotos." },
       { "icon": "🛡️", "titulo": "Define o nível de segurança", "desc": "Clique nas medidas de segurança que seu espaço possui. Isso permite que quem busca espaço saiba quais medidas você oferece para cuidar dos pertences." },
       { "icon": "👤", "titulo": "Se cadastra", "desc": "Se ainda não se identificou, este é o momento. Quando alguém reservar seu espaço, ambos receberão um PIN de 4 dígitos por e-mail para se identificarem." }

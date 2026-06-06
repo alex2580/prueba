@@ -250,6 +250,21 @@ export default function LegalesPage() {
             </p>
           </section>
 
+          {/* 13 */}
+          <section style={sectionStyle}>
+            <h2 style={h2Style}>13. Espacios compartidos</h2>
+            <p style={{ ...pStyle, marginBottom: '.75rem' }}>
+              Los espacios del tipo <strong>"compartido"</strong> permiten que múltiples clientes almacenen sus objetos en el mismo espacio de forma simultánea. En este modelo aplican las siguientes reglas:
+            </p>
+            <ul style={ulStyle}>
+              <li><strong>Disponibilidad múltiple:</strong> el calendario no bloquea fechas por reservas previas. El espacio puede recibir nuevas reservas aunque ya tenga clientes activos, siempre que el oferente tenga el cupo habilitado.</li>
+              <li><strong>Control de cupo:</strong> el oferente puede activar o desactivar la disponibilidad para nuevas reservas en cualquier momento desde su panel, usando el botón <strong>🟢 Tengo Espacio</strong> (acepta nuevas reservas) / <strong>🔴 No tengo Espacio</strong> (cupo cerrado). Cuando el cupo está desactivado, la plataforma bloquea automáticamente la posibilidad de nuevas reservas para ese espacio.</li>
+              <li><strong>Reservas vigentes:</strong> el cambio de estado del cupo no afecta las reservas ya confirmadas y pagadas. Estas continúan normalmente hasta su fecha de finalización.</li>
+              <li><strong>Responsabilidad del oferente:</strong> en espacios compartidos, el oferente es responsable de asegurar que la capacidad real del espacio sea suficiente para todos los clientes simultáneos. Deberá cerrar el cupo cuando el espacio se encuentre al límite de su capacidad, antes de aceptar nuevas reservas.</li>
+              <li><strong>Privacidad entre clientes:</strong> los datos de contacto de otros clientes que comparten el mismo espacio no son visibles entre sí en ningún momento.</li>
+            </ul>
+          </section>
+
           <div style={{
             background: 'var(--surface)',
             border: '1px solid var(--border)',
