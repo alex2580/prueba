@@ -1754,7 +1754,7 @@ function TabPublicaciones({ token }: { token: string }) {
                   {pub.nombre}
                 </div>
                 <div style={{ fontSize: '.8rem', color: 'var(--text3)', marginBottom: '.3rem' }}>
-                  {pub.barrio} · {pub.categoria} · {pub.tipo}
+                  {pub.barrio} · {pub.categoria}
                 </div>
                 <div style={{ fontSize: '.8rem', color: 'var(--text2)' }}>
                   {pub.precio_dia != null && <span>Día: <b>{formatARS(pub.precio_dia)}</b> </span>}
@@ -1784,6 +1784,18 @@ function TabPublicaciones({ token }: { token: string }) {
                   color: !pub.activo ? 'var(--red)' : pub.disponible ? 'var(--mint)' : 'var(--amber)',
                 }}>
                   {!pub.activo ? '● No visible' : pub.disponible ? '● Activa' : pub.inactiva_auto ? '● Pausada auto' : '● Pausada'}
+                </span>
+
+                <span style={{
+                  padding: '.25rem .7rem',
+                  borderRadius: 99,
+                  fontSize: '.75rem',
+                  fontWeight: 700,
+                  background: pub.tipo === 'compartido' ? 'rgba(232,98,42,.1)' : 'rgba(30,41,59,.07)',
+                  color: pub.tipo === 'compartido' ? 'var(--orange)' : 'var(--text2)',
+                  border: `1.5px solid ${pub.tipo === 'compartido' ? 'rgba(232,98,42,.3)' : 'rgba(30,41,59,.15)'}`,
+                }}>
+                  {pub.tipo === 'compartido' ? '🤝 Compartido' : '🔒 Exclusivo'}
                 </span>
 
                 {!!pub.vencida && (
