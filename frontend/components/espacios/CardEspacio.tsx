@@ -146,8 +146,23 @@ export function CardEspacio({ espacio, onClick, isFavorito = false, onToggleFavo
           </div>
         )}
 
-        {/* Tipo — bottom left sobre la foto */}
-        <div style={{ position: 'absolute', bottom: 10, left: 10, zIndex: 2 }}>
+        {/* Tipo + cupo — bottom left sobre la foto */}
+        <div style={{ position: 'absolute', bottom: 10, left: 10, zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '.28rem' }}>
+          {espacio.tipo === 'compartido' && (
+            <span style={{
+              fontSize: '11px', fontWeight: 800,
+              fontFamily: 'Sora, sans-serif',
+              padding: '.18rem .6rem',
+              borderRadius: '999px',
+              border: `1.5px solid ${espacio.cupo_disponible !== false ? '#16a34a' : '#dc2626'}`,
+              color: espacio.cupo_disponible !== false ? '#16a34a' : '#dc2626',
+              background: 'rgba(255,255,255,.92)',
+              backdropFilter: 'blur(4px)',
+              whiteSpace: 'nowrap',
+            }}>
+              {espacio.cupo_disponible !== false ? '🟢 Espacio disponible' : '🔴 Sin espacio'}
+            </span>
+          )}
           <span style={{
             fontSize: '11px', fontWeight: 800,
             fontFamily: 'Sora, sans-serif',
@@ -155,7 +170,7 @@ export function CardEspacio({ espacio, onClick, isFavorito = false, onToggleFavo
             borderRadius: '999px',
             border: `1.5px solid ${espacio.tipo === 'exclusivo' ? 'var(--ink)' : 'var(--orange)'}`,
             color: espacio.tipo === 'exclusivo' ? 'var(--ink)' : 'var(--orange)',
-            background: espacio.tipo === 'exclusivo' ? 'rgba(255,255,255,.92)' : 'rgba(255,255,255,.92)',
+            background: 'rgba(255,255,255,.92)',
             backdropFilter: 'blur(4px)',
             whiteSpace: 'nowrap',
           }}>

@@ -112,6 +112,7 @@ async function listar(req, res, next) {
       ...e,
       moneda: e.moneda || 'ARS',
       imgs: fotoMap[e.id] || (e.img_principal ? [e.img_principal] : []),
+      cupo_disponible: e.cupo_disponible !== 0,
     }));
 
     res.json(result);
