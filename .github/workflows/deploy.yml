@@ -41,17 +41,17 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -4 -H "2.24.105.151" >> ~/.ssh/known_hosts 2>/dev/null || true
 
-          for attempt in 1 2 3; do
-            echo "🔄 Intento $attempt/3..."
+          for attempt in 1 2 3 4 5; do
+            echo "🔄 Intento $attempt/5..."
             ssh -4 -i ~/.ssh/deploy_key \
               -o StrictHostKeyChecking=no \
               -o AddressFamily=inet \
-              -o ConnectTimeout=30 \
+              -o ConnectTimeout=60 \
               "${{ secrets.VPS_USER }}@2.24.105.151" \
               "cd /var/www/todasmiscosas && git fetch origin && git reset --hard origin/master && bash /var/www/todasmiscosas/deploy.sh" \
             && echo "✅ Deploy OK" && exit 0
-            echo "⚠️ Intento $attempt fallido, esperando 15s..."
-            sleep 15
+            echo "⚠️ Intento $attempt fallido, esperando 30s..."
+            sleep 30
           done
-          echo "❌ Deploy falló después de 3 intentos"
+          echo "❌ Deploy falló después de 5 intentos"
           exit 1
