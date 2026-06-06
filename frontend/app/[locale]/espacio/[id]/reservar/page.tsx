@@ -359,13 +359,17 @@ export default function ReservarPage() {
     : tieneMes ? 'mes' : 'dia';
   const modoCalendario: ModoCalendario = modoEfectivo;
 
-  // Pre-llenar DESDE con el mes actual cuando el modo es 'mes'
+  // Auto-seleccionar cuando hay exactamente 1 mes disponible
   useEffect(() => {
-    if (modoCalendario === 'mes' && !fechaDesde) {
-      const hoy = new Date();
-      setFechaDesde(`${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-01`);
-    }
-  }, [modoCalendario, fechaDesde]);
+    if (modoCalendario !== 'mes') return;
+    if (mesesDisponiblesParaMes.length !== 1) return;
+    const key = mesesDisponiblesParaMes[0];
+    const [y, m] = key.split('-').map(Number);
+    const lastDay = new Date(y, m, 0).getDate();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    setFechaDesde(`${y}-${pad(m)}-01`);
+    setFechaHasta(`${y}-${pad(m)}-${pad(lastDay)}`);
+  }, [modoCalendario, mesesDisponiblesParaMes.join(',')]);
 
   const cantMeses = modoCalendario === 'mes' && fechaDesde && fechaHasta
     ? mesesEntre(fechaDesde, fechaHasta)
@@ -687,12 +691,7 @@ export default function ReservarPage() {
                             key={p}
                             onClick={() => {
                               setPeriodoElegido(p);
-                              if (p === 'mes') {
-                                const hoy = new Date();
-                                setFechaDesde(`${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-01`);
-                              } else {
-                                setFechaDesde('');
-                              }
+                              setFechaDesde('');
                               setFechaHasta('');
                               setDiasMulti([]);
                               setStep1Error('');
@@ -751,17 +750,27 @@ export default function ReservarPage() {
                             if (mesesOcupados.has(key)) return;
                             const [y, m] = key.split('-').map(Number);
                             const lastDay = new Date(y, m, 0).getDate();
-                            if (!mesDesde || mesHasta) {
-                              // Primera selección: fija DESDE y limpia HASTA
-                              setFechaDesde(`${y}-${String(m).padStart(2, '0')}-01`);
-                              setFechaHasta('');
+                            const pad = (n: number) => String(n).padStart(2, '0');
+                            // mesDesde es válido solo si está en la lista de chips disponibles
+                            const desdeValido = mesDesde && mesesDisponiblesParaMes.includes(mesDesde);
+                            if (!desdeValido || mesHasta) {
+                              // Primera selección (o stale de otro modo): fija DESDE
+                              setFechaDesde(`${y}-${pad(m)}-01`);
+                              // Si hay un solo chip disponible o el chip clickeado es el mismo mes → selección completa inmediata
+                              if (mesesDisponiblesParaMes.length === 1 || key === mesDesde) {
+                                setFechaHasta(`${y}-${pad(m)}-${pad(lastDay)}`);
+                              } else {
+                                setFechaHasta('');
+                              }
                             } else if (key < mesDesde) {
-                              // Click en mes anterior al DESDE: resetea
-                              setFechaDesde(`${y}-${String(m).padStart(2, '0')}-01`);
+                              setFechaDesde(`${y}-${pad(m)}-01`);
                               setFechaHasta('');
+                            } else if (key === mesDesde) {
+                              // Click en el mismo mes que ya está como DESDE → cierra selección
+                              setFechaHasta(`${y}-${pad(m)}-${pad(lastDay)}`);
                             } else {
                               // Segunda selección: fija HASTA
-                              setFechaHasta(`${y}-${String(m).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`);
+                              setFechaHasta(`${y}-${pad(m)}-${pad(lastDay)}`);
                             }
                             setStep1Error('');
                           }
