@@ -320,7 +320,10 @@ async function misEspacios(req, res, next) {
        ORDER BY e.created_at DESC`,
       [req.user.id]
     );
-    res.json(espacios.map(parseJsonFields));
+    res.json(espacios.map(e => ({
+      ...parseJsonFields(e),
+      cupo_disponible: e.cupo_disponible !== 0,
+    })));
   } catch (err) {
     next(err);
   }
