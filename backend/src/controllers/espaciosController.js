@@ -34,7 +34,7 @@ async function getEspacioWithFotos(id) {
 // GET /api/espacios
 async function listar(req, res, next) {
   try {
-    const { barrio, tipo, precio_max, precio_min, disponible, q, periodo, con_seguridad, pais, rating_min, seguridad_min } = req.query;
+    const { barrio, tipo, precio_max, precio_min, disponible, q, periodo, con_seguridad, pais, rating_min, seguridad_min, con_cupo } = req.query;
 
     let sql = `
       SELECT e.id, e.nombre, e.direccion, e.barrio, e.m2, e.tipo,
@@ -66,6 +66,7 @@ async function listar(req, res, next) {
     }
 
     if (disponible !== undefined) { sql += ' AND e.disponible = ?'; params.push(disponible === 'true' ? 1 : 0); }
+    if (con_cupo === 'true')      { sql += ' AND e.cupo_disponible = 1'; }
     if (con_seguridad === 'true') {
       sql += " AND e.seguridad IS NOT NULL AND e.seguridad NOT IN ('null', '{}', '')";
     }

@@ -132,8 +132,8 @@ export default function HomePage() {
   const PRECIO_MAX_HOME = filtros.periodo === 'dia' ? PRECIO_MAX_DIA : PRECIO_MAX_MES;
   const precioValHome = filtros.precio_max ?? PRECIO_MAX_HOME;
 
-  const filtrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.periodo || filtros.barrio || filtros.q || filtros.pais || filtros.seguridad_min);
-  const hayFiltrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.periodo || userLocation || filtros.q || filtros.pais || filtros.seguridad_min);
+  const filtrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.periodo || filtros.barrio || filtros.q || filtros.pais || filtros.seguridad_min || filtros.con_cupo);
+  const hayFiltrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.periodo || userLocation || filtros.q || filtros.pais || filtros.seguridad_min || filtros.con_cupo);
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
@@ -322,10 +322,21 @@ export default function HomePage() {
                 </button>
                 <button
                   className={`filter-pill ${filtros.tipo === 'compartido' ? 'active' : ''}`}
-                  onClick={() => aplicarFiltros({ tipo: (filtros.tipo === 'compartido' ? '' : 'compartido') as EspacioTipo })}
+                  onClick={() => aplicarFiltros({
+                    tipo: (filtros.tipo === 'compartido' ? '' : 'compartido') as EspacioTipo,
+                    ...(filtros.tipo === 'compartido' ? { con_cupo: undefined } : {}),
+                  })}
                 >
                   {t('compartido')}
                 </button>
+                {filtros.tipo === 'compartido' && (
+                  <button
+                    className={`filter-pill ${filtros.con_cupo ? 'active' : ''}`}
+                    onClick={() => aplicarFiltros({ con_cupo: filtros.con_cupo ? undefined : true })}
+                  >
+                    🟢 Con espacio disponible
+                  </button>
+                )}
 
                 {/* Período */}
                 <button

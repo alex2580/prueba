@@ -222,6 +222,7 @@ export interface FiltrosEspacios {
   pais?: string;
   rating_min?: number;
   seguridad_min?: number;
+  con_cupo?: boolean;
 }
 
 export interface ApiResponse<T = unknown> {

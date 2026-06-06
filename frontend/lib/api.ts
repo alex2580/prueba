@@ -41,6 +41,7 @@ export const espaciosAPI = {
     if (filtros?.q)             params.set('q', filtros.q);
     if (filtros?.periodo)       params.set('periodo', filtros.periodo);
     if (filtros?.con_seguridad) params.set('con_seguridad', 'true');
+    if (filtros?.con_cupo)      params.set('con_cupo', 'true');
     if (filtros?.pais)         params.set('pais', filtros.pais);
     if (filtros?.rating_min)     params.set('rating_min', String(filtros.rating_min));
     if (filtros?.seguridad_min) params.set('seguridad_min', String(filtros.seguridad_min));
