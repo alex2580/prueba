@@ -785,7 +785,7 @@ async function sendPublicacionVencida(toEmail, nombre, { espacioNombre }) {
 async function sendEscrowRetenidoDemandante(toEmail, nombre, { espacioNombre, monto, reservaId, fechaDesde }) {
   if (!await emailConfig.isEnabled('escrow_retenido')) return;
   const html = baseTemplate('Tu pago está protegido', `
-    <h2>🔒 Tu pago está protegido en escrow</h2>
+    <h2>🔒 Tu pago está en depósito en garantía</h2>
     <p>Hola <span class="highlight">${nombre}</span>, tu pago fue acreditado y está retenido de forma segura por TodasMisCosas.</p>
     <div class="info-row">
       <div><div class="info-label">Espacio</div><div class="info-val">${espacioNombre}</div></div>
@@ -794,7 +794,7 @@ async function sendEscrowRetenidoDemandante(toEmail, nombre, { espacioNombre, mo
       <div><div class="info-label">Monto protegido</div><div class="info-val">$${Number(monto).toLocaleString('es-AR')}</div></div>
     </div>
     <div style="background:#0f2f1a;border:1px solid #166534;border-radius:12px;padding:16px 20px;margin:20px 0;">
-      <p style="color:#86efac;font-size:13px;margin:0 0 8px;font-weight:700;">🛡️ ¿Cómo funciona la protección escrow?</p>
+      <p style="color:#86efac;font-size:13px;margin:0 0 8px;font-weight:700;">🛡️ ¿Cómo funciona el depósito en garantía?</p>
       <ul style="color:#86efac;font-size:12px;line-height:1.9;padding-left:18px;margin:0;">
         <li>El dinero queda retenido — el proveedor <strong>no lo recibe aún</strong>.</li>
         <li>Cuando accedas al espacio el <strong>${fechaDesde}</strong>, confirmás el acceso desde tu panel.</li>
@@ -806,7 +806,7 @@ async function sendEscrowRetenidoDemandante(toEmail, nombre, { espacioNombre, mo
   `);
   await transporter.sendMail({
     from: FROM, to: toEmail,
-    subject: `🔒 Pago protegido en escrow — ${espacioNombre}`,
+    subject: `🔒 Depósito en garantía — ${espacioNombre}`,
     html,
   });
 }
@@ -817,7 +817,7 @@ async function sendEscrowRetenidoOferente(toEmail, nombre, { demandanteNombre, e
   const montoTotal = Number(monto);
   const comision   = Math.round(montoTotal * 0.15);
   const montoNeto  = montoTotal - comision;
-  const html = baseTemplate('Reserva pagada — en escrow', `
+  const html = baseTemplate('Reserva pagada — depósito en garantía', `
     <h2>💰 Reserva pagada — pago en custodia</h2>
     <p>Hola <span class="highlight">${nombre}</span>, el cliente completó el pago de tu espacio.</p>
     <div class="info-row">
@@ -842,7 +842,7 @@ async function sendEscrowRetenidoOferente(toEmail, nombre, { demandanteNombre, e
     </div>
     <div style="background:#1a1a0a;border:1px solid #d97706;border-radius:10px;padding:14px 16px;margin-bottom:20px;">
       <p style="color:#fcd34d;font-size:13px;margin:0;">
-        ⏳ <strong>El pago está retenido en escrow.</strong> Lo recibirás automáticamente en tu cuenta registrada dentro de las 48 horas hábiles a partir de que el cliente confirme el acceso el <strong>${fechaDesde}</strong> — o de forma automática si no lo confirma a tiempo.
+        ⏳ <strong>El pago está en depósito en garantía.</strong> Lo recibirás automáticamente en tu cuenta registrada dentro de las 48 horas hábiles a partir de que el cliente confirme el acceso el <strong>${fechaDesde}</strong> — o de forma automática si no lo confirma a tiempo.
       </p>
     </div>
     <p>Asegurate de tener el espacio listo y el CBU/Alias cargado en tu perfil para recibir la transferencia.</p>
@@ -850,7 +850,7 @@ async function sendEscrowRetenidoOferente(toEmail, nombre, { demandanteNombre, e
   `);
   await transporter.sendMail({
     from: FROM, to: toEmail,
-    subject: `💰 Reserva pagada — $${montoNeto.toLocaleString('es-AR')} en escrow · ${espacioNombre}`,
+    subject: `💰 Reserva pagada — $${montoNeto.toLocaleString('es-AR')} en depósito en garantía · ${espacioNombre}`,
     html,
   });
 }
@@ -860,7 +860,7 @@ async function sendEscrowLiberadoAdmin(toEmail, { reservaId, espacioNombre, ofer
   const motivo = autoRelease
     ? '⏱️ Liberación automática (48 hs desde fecha de inicio sin confirmación del cliente)'
     : '✅ El cliente confirmó el acceso al espacio';
-  const html = baseTemplate('Escrow liberado — transferir al proveedor', `
+  const html = baseTemplate('Depósito en garantía liberado — transferir al proveedor', `
     <h2>💸 Acción requerida: transferir pago al proveedor</h2>
     <p>${motivo}</p>
     <div class="info-row">

@@ -166,10 +166,10 @@ export default function LegalesPage() {
               Los pagos se procesan a través de MercadoPago. TodasMisCosas.com cobra una <strong>comisión del 15%</strong> exclusivamente sobre
               las transacciones completadas — no se cobra ningún importe por publicar un espacio ni por realizar una reserva.
               El monto de la comisión se desglosa claramente antes de confirmar la reserva.
-              El pago queda retenido en custodia (escrow) hasta que el cliente confirme el acceso al espacio.
+              El pago queda retenido en depósito en garantía hasta que el cliente confirme el acceso al espacio.
               El proveedor recibe el importe neto (precio acordado menos la comisión del 15%) dentro de las <strong>48 horas hábiles</strong> de
               la confirmación de acceso, siempre que tenga cargado su CBU o Alias bancario en el perfil de su cuenta.
-              Ver sección 12 para el detalle completo del sistema escrow.
+              Ver sección 12 para el detalle completo del sistema de depósito en garantía.
             </p>
           </section>
 
@@ -233,9 +233,9 @@ export default function LegalesPage() {
 
           {/* 12 */}
           <section style={sectionStyle}>
-            <h2 style={h2Style}>12. Sistema de protección escrow</h2>
+            <h2 style={h2Style}>12. Sistema de depósito en garantía</h2>
             <p style={{ ...pStyle, marginBottom: '.75rem' }}>
-              TodasMisCosas.com utiliza un sistema de <strong>custodia de pago (escrow)</strong> para proteger tanto al cliente como al proveedor en cada transacción:
+              TodasMisCosas.com utiliza un sistema de <strong>depósito en garantía</strong> para proteger tanto al cliente como al proveedor en cada transacción:
             </p>
             <ul style={ulStyle}>
               <li><strong>Retención del pago:</strong> Al completarse el pago por MercadoPago, el monto queda retenido por la plataforma. El proveedor <strong>no recibe el dinero en ese momento</strong>.</li>

@@ -1093,8 +1093,8 @@ export default function PanelPage() {
                                         {esPagada && r.escrow_neto_oferente != null && !r.escrow_liberado && (
                                           <div style={{ marginTop: '.25rem', fontSize: '.7rem', color: '#f59e0b', fontWeight: 600 }}>
                                             {new Date() < new Date(r.fecha_desde)
-                                              ? `🔒 Escrow activo — confirmación a partir del ${formatFechaCorta(r.fecha_desde)}`
-                                              : '⏳ Esperando confirmación de acceso del demandante'}
+                                              ? `🔒 Depósito en garantía activo — confirmación a partir del ${formatFechaCorta(r.fecha_desde)}`
+                                              : '⏳ Esperando confirmación de acceso del cliente'}
                                           </div>
                                         )}
                                         {esPagada && r.escrow_liberado === 1 && (
