@@ -774,6 +774,57 @@ Solo funciona si `inactiva_auto = 1`. Si alguien intenta reactivar un espacio qu
 
 ---
 
+## 6 de Junio 2026 — v1.10.0
+
+### Control de cupo para espacios compartidos
+
+En espacios de tipo **compartido**, múltiples demandantes pueden coexistir en el mismo espacio. El sistema anterior bloqueaba fechas al recibir la primera reserva, impidiendo que otros demandantes reservaran el mismo período. Esta versión corrige ese comportamiento y le da al oferente control manual sobre su disponibilidad.
+
+#### Lógica de negocio
+
+| Estado | Botón en panel | Efecto en el calendario |
+|--------|---------------|------------------------|
+| Tiene lugar disponible | 🟢 **Tengo Espacio** | Las fechas no se bloquean — cualquier demandante puede reservar |
+| Sin lugar | 🔴 **No tengo Espacio** | El calendario se oculta y no se puede reservar |
+
+El oferente alterna entre ambos estados con un solo click desde su panel, en tiempo real.
+
+#### Backend
+
+- **Columna nueva** `espacios.cupo_disponible TINYINT(1) DEFAULT 1` — auto-migrada en startup de `server.js`
+- **`GET /api/espacios/:id/fechas-ocupadas`**: para espacios compartidos devuelve siempre `[]` — las reservas previas no bloquean fechas
+- **`POST /api/reservas`**: omite chequeo de solapamiento de fechas para compartidos; rechaza con 409 si `cupo_disponible = 0`
+- **Nuevo endpoint** `PATCH /api/espacios/:id/cupo` — requiere auth de oferente; body `{ cupo_disponible: boolean }`
+
+#### Frontend
+
+- **Panel oferente**: botón 🟢 **Tengo Espacio** / 🔴 **No tengo Espacio** reemplaza a "Pausar/Activar" en espacios compartidos
+- **`/espacio/:id/reservar`**: cuando `cupo_disponible = false`, muestra bloqueo visual rojo "Cupo completo" y oculta calendario y botón Continuar
+- **`types/index.ts`**: campo `cupo_disponible?: boolean` en interface `Espacio`
+- **`lib/api.ts`**: método `espaciosAPI.toggleCupo(id, cupo_disponible, token)`
+
+**Commits:** `c126805` (feature completa), `fbb985f` (labels "Tengo Espacio / No tengo Espacio")
+
+---
+
+### Fixes selector de mes en flujo de reserva mensual
+
+Corrección de dos bugs en el selector de chips de mes (`/espacio/:id/reservar`, modo mensual):
+
+**Bug 1 — Pre-fill incorrecto causaba 3 meses al seleccionar 1:**
+El `useEffect` pre-llenaba `fechaDesde` con el mes actual (junio), aunque los chips disponibles empezaran en agosto. El estado quedaba Jun→Ago = 3 meses aunque el usuario solo viera y clickeara el chip de agosto.
+
+**Solución:** se eliminó el pre-fill. En su lugar, cuando hay exactamente 1 chip disponible, se auto-selecciona ese mes completo al montar.
+
+**Bug 2 — TS2448: variable usada antes de su declaración:**
+El `useEffect` de auto-selección estaba ubicado antes de la declaración de `mesesDisponiblesParaMes`, causando error de compilación TypeScript.
+
+**Solución:** se movió el `useEffect` para después de la declaración de `mesesDisponiblesParaMes`.
+
+**Commits:** `2421c32`, `08d2157`
+
+---
+
 ## 5 de Junio 2026 — v1.9.0
 
 ### Sistema de protección escrow
