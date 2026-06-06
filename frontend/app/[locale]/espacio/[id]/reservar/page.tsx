@@ -359,18 +359,6 @@ export default function ReservarPage() {
     : tieneMes ? 'mes' : 'dia';
   const modoCalendario: ModoCalendario = modoEfectivo;
 
-  // Auto-seleccionar cuando hay exactamente 1 mes disponible
-  useEffect(() => {
-    if (modoCalendario !== 'mes') return;
-    if (mesesDisponiblesParaMes.length !== 1) return;
-    const key = mesesDisponiblesParaMes[0];
-    const [y, m] = key.split('-').map(Number);
-    const lastDay = new Date(y, m, 0).getDate();
-    const pad = (n: number) => String(n).padStart(2, '0');
-    setFechaDesde(`${y}-${pad(m)}-01`);
-    setFechaHasta(`${y}-${pad(m)}-${pad(lastDay)}`);
-  }, [modoCalendario, mesesDisponiblesParaMes.join(',')]);
-
   const cantMeses = modoCalendario === 'mes' && fechaDesde && fechaHasta
     ? mesesEntre(fechaDesde, fechaHasta)
     : 0;
@@ -466,6 +454,18 @@ export default function ReservarPage() {
     }
     return meses;
   })();
+
+  // Auto-seleccionar cuando hay exactamente 1 mes disponible
+  useEffect(() => {
+    if (modoCalendario !== 'mes') return;
+    if (mesesDisponiblesParaMes.length !== 1) return;
+    const key = mesesDisponiblesParaMes[0];
+    const [y, m] = key.split('-').map(Number);
+    const lastDay = new Date(y, m, 0).getDate();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    setFechaDesde(`${y}-${pad(m)}-01`);
+    setFechaHasta(`${y}-${pad(m)}-${pad(lastDay)}`);
+  }, [modoCalendario, mesesDisponiblesParaMes.join(',')]);
 
   const precioEstimado = espacio
     ? modoCalendario === 'dia'
