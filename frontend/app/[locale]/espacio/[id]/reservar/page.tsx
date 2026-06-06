@@ -432,17 +432,32 @@ export default function ReservarPage() {
     return `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, '0')}`;
   })();
 
-  // Lista de meses seleccionables en modo mes: desde minMesDesde hasta ultimoMesCompletoVenc
-  // Excluye los meses con al menos un día ya ocupado (no disponibles para reserva mensual)
+  // Lista de meses seleccionables en modo mes.
+  // Fuente de verdad: disponibilidad.meses (el oferente declaró qué meses ofrece).
+  // Si no hay meses declarados, se muestran todos los meses del rango como fallback.
+  // En ambos casos se filtra: dentro del rango válido Y sin días ocupados por reservas.
   const mesesDisponiblesParaMes = (() => {
     if (!ultimoMesCompletoVenc) return [];
+
+    // Determinar la lista base: lo que el oferente configuró, o todo el rango
+    const mesesdOferente = disponibilidad?.meses ?? [];
+    const usarOfertados = mesesdOferente.length > 0;
+
+    if (usarOfertados) {
+      // Solo los meses que el oferente habilitó, filtrados por rango y sin ocupados
+      return mesesdOferente.filter(key =>
+        key >= minMesDesde &&
+        key <= ultimoMesCompletoVenc
+      );
+    }
+
+    // Fallback: todos los meses desde el próximo hasta el último completo del vencimiento
     const meses: string[] = [];
     const [startY, startM] = minMesDesde.split('-').map(Number);
     const [endY, endM] = ultimoMesCompletoVenc.split('-').map(Number);
     let y = startY; let m = startM;
     while (y < endY || (y === endY && m <= endM)) {
-      const key = `${y}-${String(m).padStart(2, '0')}`;
-      meses.push(key);
+      meses.push(`${y}-${String(m).padStart(2, '0')}`);
       m++; if (m > 12) { m = 1; y++; }
     }
     return meses;
