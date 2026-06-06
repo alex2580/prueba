@@ -39,7 +39,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -4 -H "2.24.105.151" >> ~/.ssh/known_hosts 2>/dev/null || true
+          ssh-keyscan -4 -H "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null || true
 
           for attempt in 1 2 3 4 5; do
             echo "🔄 Intento $attempt/5..."
@@ -47,7 +47,8 @@ jobs:
               -o StrictHostKeyChecking=no \
               -o AddressFamily=inet \
               -o ConnectTimeout=60 \
-              "${{ secrets.VPS_USER }}@2.24.105.151" \
+              -p "${{ secrets.VPS_PORT || '22' }}" \
+              "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
               "cd /var/www/todasmiscosas && git fetch origin && git reset --hard origin/master && bash /var/www/todasmiscosas/deploy.sh" \
             && echo "✅ Deploy OK" && exit 0
             echo "⚠️ Intento $attempt fallido, esperando 30s..."
