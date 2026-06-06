@@ -132,10 +132,10 @@ async function sendBienvenida(toEmail, nombre, tipo) {
       </p>
       <div style="background:#0f172a;border-radius:10px;padding:14px 16px;margin-bottom:14px;">
         <ul style="font-size:12px;color:#94a3b8;line-height:2;padding-left:18px;margin:0;">
-          <li>TodasMisCosas opera como <strong style="color:#e2e8f0">plataforma de conexión</strong> entre Demandante y Oferente. No es parte del contrato de almacenamiento ni responsable por daños a los bienes.</li>
+          <li>TodasMisCosas opera como <strong style="color:#e2e8f0">plataforma de conexión</strong> entre Cliente y Proveedor. No es parte del contrato de almacenamiento ni responsable por daños a los bienes.</li>
           <li>Queda <strong style="color:#e2e8f0">prohibido</strong> almacenar o transportar bienes peligrosos, ilegales, armas, explosivos, sustancias controladas o de procedencia no comprobable.</li>
           <li>Cada usuario es <strong style="color:#e2e8f0">responsable de sus bienes y del espacio</strong> que ofrece o utiliza.</li>
-          <li>TodasMisCosas cobra una <strong style="color:#e2e8f0">comisión del 15%</strong> sobre el valor de cada reserva efectivamente cobrada al Oferente.</li>
+          <li>TodasMisCosas cobra una <strong style="color:#e2e8f0">comisión del 15%</strong> sobre el valor de cada reserva efectivamente cobrada al Proveedor.</li>
           <li>Las transacciones se realizan a través de <strong style="color:#e2e8f0">MercadoPago</strong>. El pago queda retenido hasta la confirmación de acceso al espacio.</li>
         </ul>
       </div>
@@ -157,7 +157,7 @@ async function sendBienvenida(toEmail, nombre, tipo) {
 async function sendAceptacionOperacion(toEmail, nombre, { rol, espacioNombre, fechaDesde, fechaHasta, precioTotal, reservaId }) {
   if (!await emailConfig.isEnabled('aceptacion_operacion')) return;
   const esOferente = rol === 'oferente';
-  const rolLabel   = esOferente ? 'Oferente' : 'Demandante';
+  const rolLabel   = esOferente ? 'Proveedor' : 'Cliente';
 
   const obligaciones = esOferente
     ? [
@@ -169,7 +169,7 @@ async function sendAceptacionOperacion(toEmail, nombre, { rol, espacioNombre, fe
     : [
         'Declarar veraz y completamente el tipo de bienes que serán almacenados.',
         'No ingresar al espacio bienes prohibidos, peligrosos, ilegales o de procedencia no comprobable.',
-        'Respetar los horarios y condiciones de acceso acordados con el Oferente.',
+        'Respetar los horarios y condiciones de acceso acordados con el Proveedor.',
         'Asumir responsabilidad civil por daños que tus bienes pudieran causar al espacio o a terceros.',
       ];
 
@@ -254,9 +254,9 @@ async function sendServiciosAdicionales(toEmail, { nombreDemandante, emailDemand
 
   const html = baseTemplate('Solicitud de servicios adicionales', `
     <h2>🛎️ Nueva solicitud de servicios adicionales</h2>
-    <p>Un demandante solicitó servicios adicionales al reservar un espacio. Contactarlo a la brevedad.</p>
+    <p>Un cliente solicitó servicios adicionales al reservar un espacio. Contactarlo a la brevedad.</p>
     <div class="info-row">
-      <div><div class="info-label">Demandante</div><div class="info-val">${nombreDemandante}</div></div>
+      <div><div class="info-label">Cliente</div><div class="info-val">${nombreDemandante}</div></div>
     </div>
     <div class="info-row">
       <div><div class="info-label">Email</div><div class="info-val">${emailDemandante}</div></div>
@@ -304,7 +304,7 @@ async function sendNuevaReserva(toEmail, nombreOferente, { demandanteNombre, dem
     <div style="margin:24px 0;padding:20px;background:#0f172a;border-radius:12px;text-align:center;">
       <p style="margin:0 0 8px;color:#94a3b8;font-size:13px;text-transform:uppercase;letter-spacing:.08em;">🔐 PIN de acceso al espacio</p>
       <span style="font-family:monospace;font-size:2.6rem;font-weight:900;color:#e8622a;letter-spacing:.4em;">${pin}</span>
-      <p style="margin:10px 0 0;color:#64748b;font-size:12px;">El demandante tiene el mismo código — verificalo al momento de la entrega.</p>
+      <p style="margin:10px 0 0;color:#64748b;font-size:12px;">El cliente tiene el mismo código — verificalo al momento de la entrega.</p>
     </div>` : ''}
     <p>Ingresá a tu panel para confirmar o rechazar la solicitud.</p>
     <a class="btn" href="${process.env.FRONTEND_URL}/panel">Ver solicitud en mi panel →</a>
@@ -321,7 +321,7 @@ async function sendReservaAprobada(toEmail, nombreDemandante, { espacioNombre, f
   if (!await emailConfig.isEnabled('reserva_aprobada')) return;
   const html = baseTemplate('Tu reserva fue aprobada', `
     <h2>✅ ¡Tu reserva fue aprobada!</h2>
-    <p>Hola <span class="highlight">${nombreDemandante}</span>, el oferente confirmó tu solicitud.</p>
+    <p>Hola <span class="highlight">${nombreDemandante}</span>, el proveedor confirmó tu solicitud.</p>
     <div class="info-row">
       <div><div class="info-label">Espacio</div><div class="info-val">${espacioNombre}</div></div>
     </div>
@@ -352,7 +352,7 @@ async function sendPagoRecibidoOferente(toEmail, nombreOferente, { demandanteNom
 
   const html = baseTemplate('Pago recibido por tu espacio', `
     <h2>💰 ¡Pago acreditado!</h2>
-    <p>Hola <span class="highlight">${nombreOferente}</span>, el demandante completó el pago de tu espacio.</p>
+    <p>Hola <span class="highlight">${nombreOferente}</span>, el cliente completó el pago de tu espacio.</p>
     <div class="info-row">
       <div><div class="info-label">Espacio</div><div class="info-val">${espacioNombre}</div></div>
     </div>
@@ -645,13 +645,13 @@ async function sendMejorarPuntuacion({ nombre, email, tel, espacioNombre, puntaj
   const adminTo = process.env.ADMIN_EMAILS || 'contacto@todasmiscosas.com';
   const html = baseTemplate('Solicitud para mejorar puntuación de seguridad', `
     <h2>🛡️ Solicitud: Mejorar puntuación de seguridad</h2>
-    <p>Un oferente quiere mejorar la puntuación de seguridad de su publicación. Contactarlo a la brevedad.</p>
+    <p>Un proveedor quiere mejorar la puntuación de seguridad de su publicación. Contactarlo a la brevedad.</p>
     <div class="info-row"><div><div class="info-label">Nombre</div><div class="info-val">${nombre}</div></div></div>
     <div class="info-row"><div><div class="info-label">Email</div><div class="info-val"><a href="mailto:${email}" style="color:#e8622a">${email}</a></div></div></div>
     <div class="info-row"><div><div class="info-label">Teléfono</div><div class="info-val">${tel || 'No informado'}</div></div></div>
     <div class="info-row"><div><div class="info-label">Espacio</div><div class="info-val">${espacioNombre || 'No especificado'}</div></div></div>
     <div class="info-row"><div><div class="info-label">Puntuación actual</div><div class="info-val">${puntajeActual} / 5 estrellas</div></div></div>
-    <a class="btn" href="mailto:${email}?subject=Mejorá la seguridad de tu espacio en TodasMisCosas">Responder al oferente →</a>
+    <a class="btn" href="mailto:${email}?subject=Mejorá la seguridad de tu espacio en TodasMisCosas">Responder al proveedor →</a>
   `);
 
   await transporter.sendMail({
@@ -720,14 +720,14 @@ async function sendRespuestaConsultaPublica(toEmail, nombreDemandante, { espacio
   const previewRespuesta = respuesta?.length > 160 ? respuesta.slice(0, 160) + '…' : respuesta;
 
   const html = baseTemplate('Te respondieron tu consulta', `
-    <h2>💬 El oferente respondió tu consulta</h2>
+    <h2>💬 El proveedor respondió tu consulta</h2>
     <p>Hola <span class="highlight">${nombreDemandante}</span>, tu consulta sobre <strong>${espacioNombre}</strong> fue respondida.</p>
     <div style="background:#0f172a;border-left:3px solid #64748b;border-radius:0 10px 10px 0;padding:14px 16px;margin:16px 0 8px;">
       <p style="margin:0;font-size:12px;color:#64748b;margin-bottom:6px;">Tu pregunta:</p>
       <p style="margin:0;color:#94a3b8;font-style:italic;">"${previewPregunta}"</p>
     </div>
     <div style="background:#0f172a;border-left:3px solid #e8622a;border-radius:0 10px 10px 0;padding:14px 16px;margin:0 0 16px;">
-      <p style="margin:0;font-size:12px;color:#e8622a;margin-bottom:6px;">Respuesta del oferente:</p>
+      <p style="margin:0;font-size:12px;color:#e8622a;margin-bottom:6px;">Respuesta del proveedor:</p>
       <p style="margin:0;color:#e2e8f0;">"${previewRespuesta}"</p>
     </div>
     <a class="btn" href="${process.env.FRONTEND_URL}/espacio/${espacioId}">Ver publicación →</a>
@@ -737,7 +737,7 @@ async function sendRespuestaConsultaPublica(toEmail, nombreDemandante, { espacio
   await transporter.sendMail({
     from: FROM,
     to: toEmail,
-    subject: `💬 El oferente respondió tu consulta sobre "${espacioNombre}"`,
+    subject: `💬 El proveedor respondió tu consulta sobre "${espacioNombre}"`,
     html,
   });
 }
@@ -796,9 +796,9 @@ async function sendEscrowRetenidoDemandante(toEmail, nombre, { espacioNombre, mo
     <div style="background:#0f2f1a;border:1px solid #166534;border-radius:12px;padding:16px 20px;margin:20px 0;">
       <p style="color:#86efac;font-size:13px;margin:0 0 8px;font-weight:700;">🛡️ ¿Cómo funciona la protección escrow?</p>
       <ul style="color:#86efac;font-size:12px;line-height:1.9;padding-left:18px;margin:0;">
-        <li>El dinero queda retenido — el oferente <strong>no lo recibe aún</strong>.</li>
+        <li>El dinero queda retenido — el proveedor <strong>no lo recibe aún</strong>.</li>
         <li>Cuando accedas al espacio el <strong>${fechaDesde}</strong>, confirmás el acceso desde tu panel.</li>
-        <li>Recién ahí el pago se libera al oferente.</li>
+        <li>Recién ahí el pago se libera al proveedor.</li>
         <li>Si no podés acceder, contactanos antes de confirmar — podemos mediar.</li>
       </ul>
     </div>
@@ -819,7 +819,7 @@ async function sendEscrowRetenidoOferente(toEmail, nombre, { demandanteNombre, e
   const montoNeto  = montoTotal - comision;
   const html = baseTemplate('Reserva pagada — en escrow', `
     <h2>💰 Reserva pagada — pago en custodia</h2>
-    <p>Hola <span class="highlight">${nombre}</span>, el demandante completó el pago de tu espacio.</p>
+    <p>Hola <span class="highlight">${nombre}</span>, el cliente completó el pago de tu espacio.</p>
     <div class="info-row">
       <div><div class="info-label">Espacio</div><div class="info-val">${espacioNombre}</div></div>
     </div>
@@ -842,7 +842,7 @@ async function sendEscrowRetenidoOferente(toEmail, nombre, { demandanteNombre, e
     </div>
     <div style="background:#1a1a0a;border:1px solid #d97706;border-radius:10px;padding:14px 16px;margin-bottom:20px;">
       <p style="color:#fcd34d;font-size:13px;margin:0;">
-        ⏳ <strong>El pago está retenido en escrow.</strong> Lo recibirás automáticamente en tu cuenta registrada dentro de las 48 horas hábiles a partir de que el demandante confirme el acceso el <strong>${fechaDesde}</strong> — o de forma automática si no lo confirma a tiempo.
+        ⏳ <strong>El pago está retenido en escrow.</strong> Lo recibirás automáticamente en tu cuenta registrada dentro de las 48 horas hábiles a partir de que el cliente confirme el acceso el <strong>${fechaDesde}</strong> — o de forma automática si no lo confirma a tiempo.
       </p>
     </div>
     <p>Asegurate de tener el espacio listo y el CBU/Alias cargado en tu perfil para recibir la transferencia.</p>
@@ -858,10 +858,10 @@ async function sendEscrowRetenidoOferente(toEmail, nombre, { demandanteNombre, e
 // ── Escrow liberado — admin (instrucción de transferencia) ───────
 async function sendEscrowLiberadoAdmin(toEmail, { reservaId, espacioNombre, oferenteNombre, oferenteCbu, monto, demandanteNombre, autoRelease = false }) {
   const motivo = autoRelease
-    ? '⏱️ Liberación automática (48 hs desde fecha de inicio sin confirmación del demandante)'
-    : '✅ El demandante confirmó el acceso al espacio';
-  const html = baseTemplate('Escrow liberado — transferir al oferente', `
-    <h2>💸 Acción requerida: transferir pago al oferente</h2>
+    ? '⏱️ Liberación automática (48 hs desde fecha de inicio sin confirmación del cliente)'
+    : '✅ El cliente confirmó el acceso al espacio';
+  const html = baseTemplate('Escrow liberado — transferir al proveedor', `
+    <h2>💸 Acción requerida: transferir pago al proveedor</h2>
     <p>${motivo}</p>
     <div class="info-row">
       <div><div class="info-label">Reserva ID</div><div class="info-val" style="font-family:monospace;font-size:.85rem;">${reservaId}</div></div>
@@ -870,14 +870,14 @@ async function sendEscrowLiberadoAdmin(toEmail, { reservaId, espacioNombre, ofer
       <div><div class="info-label">Espacio</div><div class="info-val">${espacioNombre}</div></div>
     </div>
     <div class="info-row">
-      <div><div class="info-label">Demandante</div><div class="info-val">${demandanteNombre}</div></div>
+      <div><div class="info-label">Cliente</div><div class="info-val">${demandanteNombre}</div></div>
     </div>
     <div class="info-row">
-      <div><div class="info-label">Oferente</div><div class="info-val">${oferenteNombre}</div></div>
+      <div><div class="info-label">Proveedor</div><div class="info-val">${oferenteNombre}</div></div>
     </div>
     <div style="margin:20px 0;background:#0f172a;border-radius:12px;padding:16px 20px;border:2px solid #10b981;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <span style="color:#86efac;font-size:13px;font-weight:700;">CBU / Alias del oferente</span>
+        <span style="color:#86efac;font-size:13px;font-weight:700;">CBU / Alias del proveedor</span>
         <span style="color:#fff;font-family:monospace;font-size:1.1rem;font-weight:800;">${oferenteCbu}</span>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -889,7 +889,7 @@ async function sendEscrowLiberadoAdmin(toEmail, { reservaId, espacioNombre, ofer
   `);
   await transporter.sendMail({
     from: FROM, to: toEmail,
-    subject: `💸 Transferir $${Number(monto).toLocaleString('es-AR')} al oferente — ${espacioNombre}`,
+    subject: `💸 Transferir $${Number(monto).toLocaleString('es-AR')} al proveedor — ${espacioNombre}`,
     html,
   });
 }
@@ -898,8 +898,8 @@ async function sendEscrowLiberadoAdmin(toEmail, { reservaId, espacioNombre, ofer
 async function sendAccesoConfirmadoOferente(toEmail, nombre, { espacioNombre, monto, reservaId, autoRelease = false }) {
   if (!await emailConfig.isEnabled('escrow_liberado')) return;
   const motivo = autoRelease
-    ? 'El sistema liberó el pago automáticamente (48 hs desde el inicio sin confirmación del demandante).'
-    : 'El demandante confirmó que accedió al espacio.';
+    ? 'El sistema liberó el pago automáticamente (48 hs desde el inicio sin confirmación del cliente).'
+    : 'El cliente confirmó que accedió al espacio.';
   const html = baseTemplate('¡Tu pago está en camino!', `
     <h2>🎉 ¡Tu pago fue liberado!</h2>
     <p>Hola <span class="highlight">${nombre}</span>, ${motivo}</p>
@@ -932,7 +932,7 @@ async function sendAccesoConfirmadoDemandante(toEmail, nombre, { espacioNombre, 
   const html = baseTemplate('Acceso confirmado', `
     <h2>✅ ¡Acceso confirmado!</h2>
     <p>Hola <span class="highlight">${nombre}</span>, confirmaste el acceso a <strong>${espacioNombre}</strong>.</p>
-    <p>El pago fue liberado al oferente. ¡Esperemos que tu experiencia sea excelente!</p>
+    <p>El pago fue liberado al proveedor. ¡Esperemos que tu experiencia sea excelente!</p>
     <div style="background:#1e293b;border-radius:10px;padding:12px 16px;margin:16px 0;">
       <p style="color:#94a3b8;font-size:13px;margin:0;">
         ¿Tuviste algún problema para acceder? Contactanos a
