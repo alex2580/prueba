@@ -110,6 +110,7 @@ async function responder(req, res, next) {
 
     res.json(actualizada);
   } catch (err) {
+    console.error('[responder consulta] ERROR:', err.code, err.message, err.sql);
     next(err);
   }
 }
