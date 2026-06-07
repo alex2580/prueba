@@ -29,6 +29,7 @@ export function ConsultasEspacio({ espacioId, token, userId, oferenteId }: Consu
   const [warning, setWarning] = useState('');
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState('');
+  const [enviado, setEnviado] = useState(false);
 
   const cargar = useCallback(async () => {
     setLoading(true);
@@ -48,6 +49,7 @@ export function ConsultasEspacio({ espacioId, token, userId, oferenteId }: Consu
   function handleChange(val: string) {
     setWarning('');
     setError('');
+    setEnviado(false);
     const violation = detectViolation(val);
     if (violation) {
       setWarning(getViolationMessage(violation));
@@ -69,11 +71,12 @@ export function ConsultasEspacio({ espacioId, token, userId, oferenteId }: Consu
         body: JSON.stringify({ pregunta: pregunta.trim() }),
       });
       if (!res.ok) {
-        const data = await res.json();
-        setError(data.error || 'Error al enviar la consulta');
+        const data = await res.json().catch(() => ({}));
+        setError((data as any).error || 'Error al enviar la consulta');
         return;
       }
       setPregunta('');
+      setEnviado(true);
       await cargar();
     } catch {
       setError('Error de conexión');
@@ -116,6 +119,11 @@ export function ConsultasEspacio({ espacioId, token, userId, oferenteId }: Consu
           )}
           {error && (
             <div style={{ fontSize: '.78rem', color: 'var(--red)', marginTop: '.35rem' }}>{error}</div>
+          )}
+          {enviado && (
+            <div style={{ fontSize: '.78rem', color: 'var(--mint)', marginTop: '.35rem', fontWeight: 600 }}>
+              ✅ Consulta enviada. El proveedor recibirá una notificación por email.
+            </div>
           )}
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '.6rem' }}>
             <Button

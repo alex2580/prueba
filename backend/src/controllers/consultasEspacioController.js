@@ -28,7 +28,7 @@ async function crear(req, res, next) {
     const espacio = await queryOne(
       `SELECT e.id, e.nombre, e.oferente_id, u.nombre AS oferente_nombre, u.email AS oferente_email
        FROM espacios e
-       JOIN usuarios u ON e.oferente_id = u.id
+       JOIN usuarios u ON e.oferente_id COLLATE utf8mb4_bin = u.id COLLATE utf8mb4_bin
        WHERE e.id = ? AND e.activo = TRUE`,
       [req.params.id]
     );
