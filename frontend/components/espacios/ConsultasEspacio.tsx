@@ -162,7 +162,7 @@ export function ConsultasEspacio({ espacioId, token, userId, oferenteId }: Consu
               {c.respuesta ? (
                 <div style={{ marginTop: '.6rem', paddingLeft: '.9rem', borderLeft: '3px solid var(--mint)' }}>
                   <div style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--mint)', marginBottom: '.2rem' }}>
-                    Respuesta del oferente
+                    Respuesta del proveedor
                   </div>
                   <p style={{ margin: 0, fontSize: '.88rem', color: 'var(--text2)', lineHeight: 1.5 }}>{c.respuesta}</p>
                 </div>
