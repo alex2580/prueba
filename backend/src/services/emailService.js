@@ -701,8 +701,8 @@ async function sendNuevaConsultaPublica(toEmail, nombreOferente, { autorNombre, 
       <p style="margin:0;color:#e2e8f0;font-style:italic;">"${preview}"</p>
       <p style="margin:8px 0 0;font-size:12px;color:#64748b;">— ${autorNombre}</p>
     </div>
-    <a class="btn" href="${process.env.FRONTEND_URL}/panel">Responder desde mi panel →</a>
-    <p style="font-size:12px;color:#64748b;margin-top:16px">Ingresá a tu panel y buscá la sección <strong>Consultas pendientes</strong> para responderla.</p>
+    <a class="btn" href="${process.env.FRONTEND_URL}/panel">Responder desde mi cuenta →</a>
+    <p style="font-size:12px;color:#64748b;margin-top:16px">Ingresá a tu cuenta y buscá la sección <strong>Consultas pendientes</strong> para responderla.</p>
   `);
 
   await transporter.sendMail({
