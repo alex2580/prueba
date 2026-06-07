@@ -3,6 +3,7 @@ const { validationResult } = require('express-validator');
 const { v4: uuidv4 } = require('uuid');
 const emailService = require('../services/emailService');
 const mercadopagoService = require('../services/mercadopagoService');
+const ledgerService = require('../services/ledgerService');
 
 function expandirRango(fechaDesde, fechaHasta) {
   const dias = [];
@@ -337,6 +338,14 @@ async function cancelar(req, res, next) {
 
     await query('UPDATE reservas SET estado = ? WHERE id = ?', ['cancelada', reserva.id]);
 
+    // Registro contable: si la reserva estaba pagada había dinero en escrow → devolver al cliente
+    if (reserva.estado === 'pagada') {
+      ledgerService.registrarCancelacion(
+        reserva.id, reserva.usuario_id, reserva.precio_total,
+        `Cancelación — ${reserva.espacio_nombre}`
+      ).catch(e => console.warn('Ledger cancelacion:', e.message));
+    }
+
     // Avisar a ambas partes
     const canceladoPor = req.user.id === reserva.usuario_id ? 'el demandante' : 'el oferente';
     const emailData = {
@@ -519,6 +528,12 @@ async function confirmarAcceso(req, res, next) {
       `UPDATE reservas SET escrow_liberado = 1, escrow_liberado_at = NOW() WHERE id = ?`,
       [reserva.id]
     );
+
+    // Registro contable: tmc.escrow → proveedor (85%) + tmc.comision (15%)
+    ledgerService.registrarLiberacion(
+      reserva.id, reserva.oferente_id, reserva.precio_total,
+      `Acceso confirmado — ${reserva.espacio_nombre}`
+    ).catch(e => console.warn('Ledger liberacion:', e.message));
 
     const adminEmail = process.env.ADMIN_EMAILS || 'contacto@todasmiscosas.com';
     emailService.sendEscrowLiberadoAdmin(adminEmail, {

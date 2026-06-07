@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const { queryOne, query } = require('../db/connection');
 const mercadopagoService = require('../services/mercadopagoService');
 const emailService = require('../services/emailService');
+const ledgerService = require('../services/ledgerService');
 const { validationResult } = require('express-validator');
 
 // Verifies the x-signature header sent by MercadoPago.
@@ -64,6 +65,12 @@ async function _procesarPagada(reserva, paymentId) {
     `UPDATE reservas SET escrow_liberado = 0, escrow_neto_oferente = ? WHERE id = ?`,
     [netoOferente, reserva.id]
   ).catch(e => console.warn('SET escrow:', e.message));
+
+  // Registro contable: cliente → tmc.escrow
+  ledgerService.registrarPago(
+    reserva.id, reserva.usuario_id, reserva.precio_total,
+    `Pago MercadoPago — ${espacio.nombre}`
+  ).catch(e => console.warn('Ledger pago:', e.message));
 
   // Email demandante: tu pago está protegido en escrow
   emailService.sendEscrowRetenidoDemandante(usuario.email, usuario.nombre, {
