@@ -152,7 +152,13 @@ export default function PanelPage() {
       if (res.ok) {
         setRespuestasMap(m => { const n = { ...m }; delete n[consultaId]; return n; });
         await cargarConsultasPendientes();
+        alert('✅ Respuesta enviada. El cliente recibirá una notificación por email.');
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(`❌ No se pudo enviar la respuesta: ${data.error || `Error ${res.status}`}`);
       }
+    } catch {
+      alert('❌ Error de conexión al enviar la respuesta.');
     } finally {
       setRespondiendo(null);
     }
