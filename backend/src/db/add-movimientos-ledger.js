@@ -28,4 +28,4 @@ async function run() {
   }
 }
 
-run().catch(e => { console.error('❌', e.message); process.exit(1); });
+run().catch(e => { console.error('❌', e.message || e); process.exit(1); });
