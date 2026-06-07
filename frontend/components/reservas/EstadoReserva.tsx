@@ -91,7 +91,7 @@ export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar, onExt
             borderRadius: 'var(--r2)', padding: '.9rem 1rem', marginBottom: '.75rem',
           }}>
             <p style={{ color: '#86efac', fontSize: '.8rem', margin: '0 0 .6rem', fontWeight: 700 }}>
-              🔒 Tu pago está protegido en escrow
+              🔒 Tu pago está en depósito de garantía
             </p>
             <p style={{ color: '#86efac', fontSize: '.75rem', margin: '0 0 .75rem', lineHeight: 1.6 }}>
               Cuando accedas al espacio, confirmá el ingreso para liberar el pago al oferente. Al confirmar, el chat con el proveedor se cerrará.
@@ -107,7 +107,7 @@ export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar, onExt
             borderRadius: 'var(--r2)', padding: '.9rem 1rem', marginBottom: '.75rem',
           }}>
             <p style={{ color: '#fcd34d', fontSize: '.8rem', margin: '0 0 .4rem', fontWeight: 700 }}>
-              🔒 Pago protegido en escrow
+              🔒 Pago en depósito de garantía
             </p>
             <p style={{ color: '#fcd34d', fontSize: '.75rem', margin: 0, lineHeight: 1.6 }}>
               Tu pago está retenido de forma segura. El <strong>{formatFechaCorta(reserva.fecha_desde)}</strong> vas a poder confirmar el acceso desde tu panel y el pago se liberará al oferente dentro de las 48 hs hábiles.
