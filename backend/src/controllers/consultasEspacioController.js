@@ -75,8 +75,8 @@ async function responder(req, res, next) {
     }
 
     const consulta = await queryOne(
-      `SELECT c.id, c.pregunta, c.autor_id, c.espacio_id,
-              e.nombre AS espacio_nombre, e.oferente_id
+      `SELECT c.id, c.pregunta, c.autor_id,
+              e.id AS espacio_id, e.nombre AS espacio_nombre, e.oferente_id
        FROM consultas_espacio c
        JOIN espacios e ON c.espacio_id = e.id
        WHERE c.id = ?`,
@@ -136,4 +136,23 @@ async function sinResponder(req, res, next) {
   }
 }
 
-module.exports = { listar, crear, responder, sinResponder };
+// GET /api/consultas/mis-espacios/respondidas  — oferente: historial Q&A
+async function consultasRespondidas(req, res, next) {
+  try {
+    const rows = await query(
+      `SELECT c.id, e.nombre AS espacio_nombre,
+              c.autor_nombre, c.pregunta, c.respuesta, c.respuesta_at, c.created_at
+       FROM consultas_espacio c
+       JOIN espacios e ON c.espacio_id = e.id
+       WHERE e.oferente_id = ? AND c.respuesta IS NOT NULL
+       ORDER BY c.respuesta_at DESC
+       LIMIT 50`,
+      [req.user.id]
+    );
+    res.json(rows);
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { listar, crear, responder, sinResponder, consultasRespondidas };

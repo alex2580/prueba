@@ -72,9 +72,12 @@ export default function PanelPage() {
   const [openConsultas, setOpenConsultas] = useState(false);
   const [openEspacios, setOpenEspacios] = useState(false);
 
-  // Consultas públicas pendientes (oferente)
+  // Consultas públicas (oferente)
   interface ConsultaPendiente { id: number; espacio_id: string; espacio_nombre: string; autor_nombre: string; pregunta: string; created_at: string; }
+  interface ConsultaRespondida { id: number; espacio_nombre: string; autor_nombre: string; pregunta: string; respuesta: string; respuesta_at: string; created_at: string; }
   const [consultasPendientes, setConsultasPendientes] = useState<ConsultaPendiente[]>([]);
+  const [consultasRespondidas, setConsultasRespondidas] = useState<ConsultaRespondida[]>([]);
+  const [openConsultasRespondidas, setOpenConsultasRespondidas] = useState(false);
   const [errorConsultas, setErrorConsultas] = useState('');
   const [respuestasMap, setRespuestasMap] = useState<Record<number, string>>({});
   const [respondiendo, setRespondiendo] = useState<number | null>(null);
@@ -96,6 +99,17 @@ export default function PanelPage() {
     } catch (e: any) {
       setErrorConsultas('Error de conexión al cargar consultas');
     }
+  }, [token, isOferente]);
+
+  const cargarConsultasRespondidas = useCallback(async () => {
+    if (!token || !isOferente) return;
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/consultas/mis-espacios/respondidas`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setConsultasRespondidas(Array.isArray(data) ? data : []);
+    } catch { /* silencioso */ }
   }, [token, isOferente]);
 
   // Edit modal
@@ -160,7 +174,8 @@ export default function PanelPage() {
       });
       if (res.ok) {
         setRespuestasMap(m => { const n = { ...m }; delete n[consultaId]; return n; });
-        await cargarConsultasPendientes();
+        await Promise.all([cargarConsultasPendientes(), cargarConsultasRespondidas()]);
+        setOpenConsultasRespondidas(true);
         alert('✅ Respuesta enviada. El cliente recibirá una notificación por email.');
       } else {
         const data = await res.json().catch(() => ({}));
@@ -231,6 +246,7 @@ export default function PanelPage() {
 
   useEffect(() => { cargarDatosOferente(); }, [cargarDatosOferente, refreshKey]);
   useEffect(() => { cargarConsultasPendientes(); }, [cargarConsultasPendientes]);
+  useEffect(() => { cargarConsultasRespondidas(); }, [cargarConsultasRespondidas]);
 
   const cargarFavoritos = useCallback(async () => {
     if (!token) return;
@@ -898,6 +914,44 @@ export default function PanelPage() {
                       ))}
                     </div>
                   )}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* ── SECTION: Historial de consultas respondidas (oferente only) ── */}
+          {isOferente && consultasRespondidas.length > 0 && (
+            <section style={{ marginBottom: '1.5rem' }}>
+              <button onClick={() => setOpenConsultasRespondidas(v => !v)} className="seccion-toggle">
+                <span style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                  <span>💬 Consultas respondidas</span>
+                  <span className="pill pill--gray" style={{ fontSize: '.7rem', padding: '.1rem .45rem' }}>
+                    {consultasRespondidas.length}
+                  </span>
+                </span>
+                <span className={`seccion-chevron${openConsultasRespondidas ? ' open' : ''}`}>▾</span>
+              </button>
+              <div className={`seccion-body${openConsultasRespondidas ? ' open' : ''}`}>
+                <div style={{ paddingTop: '.75rem', display: 'grid', gap: '.85rem' }}>
+                  {consultasRespondidas.map(c => (
+                    <div key={c.id} style={{ background: 'var(--surface)', borderRadius: 'var(--r2)', border: '1px solid var(--border)', overflow: 'hidden' }}>
+                      <div style={{ padding: '.6rem 1rem', fontSize: '.72rem', color: 'var(--text3)', borderBottom: '1px solid var(--border)' }}>
+                        📦 {c.espacio_nombre}
+                      </div>
+                      <div style={{ padding: '1rem' }}>
+                        <div style={{ display: 'flex', gap: '.5rem', alignItems: 'flex-start', marginBottom: '.75rem' }}>
+                          <span style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--orange)', background: 'rgba(232,98,42,.1)', borderRadius: '99px', padding: '.15rem .55rem', whiteSpace: 'nowrap' }}>
+                            {c.autor_nombre}
+                          </span>
+                          <p style={{ margin: 0, fontSize: '.88rem', color: 'var(--text)', lineHeight: 1.5 }}>{c.pregunta}</p>
+                        </div>
+                        <div style={{ background: 'var(--surface2)', borderRadius: 'var(--r2)', padding: '.75rem 1rem', borderLeft: '3px solid var(--orange)' }}>
+                          <div style={{ fontSize: '.68rem', color: 'var(--orange)', fontWeight: 700, marginBottom: '.3rem' }}>Tu respuesta</div>
+                          <p style={{ margin: 0, fontSize: '.88rem', color: 'var(--text)', lineHeight: 1.5 }}>{c.respuesta}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </section>
