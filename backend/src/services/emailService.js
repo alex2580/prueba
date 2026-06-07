@@ -725,7 +725,7 @@ async function sendRespuestaConsultaPublica(toEmail, nombreDemandante, { espacio
       <p style="margin:0 0 6px;font-size:12px;color:#e8622a;">Respuesta del proveedor:</p>
       <p style="margin:0;color:#e2e8f0;">"${previewRespuesta}"</p>
     </div>
-    <a style="display:inline-block;background:linear-gradient(135deg,#e8622a,#d4521a);color:#fff;padding:12px 28px;border-radius:12px;text-decoration:none;font-weight:700;margin:20px 0;" href="${process.env.FRONTEND_URL}/espacio/${espacioId}">Ver publicación →</a>
+    <a style="display:inline-block;background:linear-gradient(135deg,#e8622a,#d4521a);color:#fff;padding:12px 28px;border-radius:12px;text-decoration:none;font-weight:700;margin:20px 0;" href="${process.env.FRONTEND_URL}/es/espacio/${espacioId}">Ver publicación →</a>
     <p style="font-size:12px;color:#64748b;margin-top:16px;">Podés ver la respuesta completa en la sección de consultas de la publicación.</p>
   `);
 
