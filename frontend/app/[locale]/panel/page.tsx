@@ -75,6 +75,7 @@ export default function PanelPage() {
   // Consultas públicas pendientes (oferente)
   interface ConsultaPendiente { id: number; espacio_id: string; espacio_nombre: string; autor_nombre: string; pregunta: string; created_at: string; }
   const [consultasPendientes, setConsultasPendientes] = useState<ConsultaPendiente[]>([]);
+  const [errorConsultas, setErrorConsultas] = useState('');
   const [respuestasMap, setRespuestasMap] = useState<Record<number, string>>({});
   const [respondiendo, setRespondiendo] = useState<number | null>(null);
 
@@ -85,8 +86,16 @@ export default function PanelPage() {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
+      if (!res.ok) {
+        setErrorConsultas(data?.error || `Error ${res.status}`);
+        setConsultasPendientes([]);
+        return;
+      }
+      setErrorConsultas('');
       setConsultasPendientes(Array.isArray(data) ? data : []);
-    } catch { /* silencioso */ }
+    } catch (e: any) {
+      setErrorConsultas('Error de conexión al cargar consultas');
+    }
   }, [token, isOferente]);
 
   // Edit modal
@@ -842,7 +851,11 @@ export default function PanelPage() {
               </button>
               <div className={`seccion-body${openConsultas ? ' open' : ''}`}>
                 <div style={{ paddingTop: '.75rem' }}>
-                  {consultasPendientes.length === 0 ? (
+                  {errorConsultas ? (
+                    <div style={{ padding: '1rem', color: 'var(--red)', background: 'rgba(239,68,68,.08)', borderRadius: 'var(--r2)', border: '1px solid rgba(239,68,68,.25)', fontSize: '.83rem' }}>
+                      ⚠️ {errorConsultas}
+                    </div>
+                  ) : consultasPendientes.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--text3)', background: 'var(--surface)', borderRadius: 'var(--r2)', border: '1px solid var(--border)', fontSize: '.85rem' }}>
                       ✅ No hay consultas pendientes de respuesta
                     </div>

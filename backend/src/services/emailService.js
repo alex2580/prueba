@@ -21,30 +21,25 @@ function baseTemplate(titulo, contenido) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
   <title>${titulo}</title>
   <style>
-    body { font-family: 'Sora', Arial, sans-serif; background: #0f172a; color: #e2e8f0; margin: 0; padding: 0; }
-    .wrap { max-width: 540px; margin: 0 auto; padding: 32px 16px; }
-    .card { background: #1e293b; border-radius: 18px; padding: 32px; border: 1px solid #334155; }
-    .logo { font-size: 28px; font-weight: 800; color: #e8622a; margin-bottom: 8px; }
-    .logo span { color: #82c4ff; }
-    h2 { color: #f1f5f9; margin: 0 0 16px; font-size: 20px; }
-    p { color: #94a3b8; line-height: 1.7; margin: 8px 0; }
+    :root { color-scheme: light; }
     .highlight { color: #e8622a; font-weight: 700; }
-    .btn { display: inline-block; background: linear-gradient(135deg, #e8622a, #d4521a); color: #fff; padding: 12px 28px; border-radius: 12px; text-decoration: none; font-weight: 700; margin: 20px 0; }
-    .info-row { background: #0f172a; border-radius: 10px; padding: 12px 16px; margin: 8px 0; display: flex; justify-content: space-between; }
-    .info-label { color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
-    .info-val { color: #e2e8f0; font-weight: 600; }
-    .footer { text-align: center; color: #475569; font-size: 12px; margin-top: 24px; }
+    .btn { display: inline-block; background: linear-gradient(135deg,#e8622a,#d4521a); color: #fff; padding: 12px 28px; border-radius: 12px; text-decoration: none; font-weight: 700; margin: 20px 0; }
+    .info-row { background: #0f172a; border-radius: 10px; padding: 12px 16px; margin: 8px 0; }
+    .info-label { color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; display: block; }
+    .info-val { color: #e2e8f0; font-weight: 600; display: block; }
   </style>
 </head>
-<body>
-  <div class="wrap">
-    <div class="card">
-      <div class="logo">📦 TodasMisCosas<span>.com</span></div>
+<body style="font-family:'Sora',Arial,sans-serif;background:#0f172a;color:#e2e8f0;margin:0;padding:0;">
+  <div style="max-width:540px;margin:0 auto;padding:32px 16px;">
+    <div style="background:#1e293b;border-radius:18px;padding:32px;border:1px solid #334155;">
+      <div style="font-size:28px;font-weight:800;color:#e8622a;margin-bottom:8px;">📦 TodasMisCosas<span style="color:#82c4ff;">.com</span></div>
       ${contenido}
     </div>
-    <div class="footer">
+    <div style="text-align:center;color:#475569;font-size:12px;margin-top:24px;">
       Este email fue enviado desde TodasMisCosas.com — Buenos Aires<br>
       Si no realizaste esta acción, ignorá este mensaje.
     </div>
@@ -695,14 +690,14 @@ async function sendNuevaConsultaPublica(toEmail, nombreOferente, { autorNombre, 
   const preview = pregunta?.length > 160 ? pregunta.slice(0, 160) + '…' : pregunta;
 
   const html = baseTemplate('Nueva consulta en tu publicación', `
-    <h2>❓ Nueva consulta de ${autorNombre}</h2>
-    <p>Hola <span class="highlight">${nombreOferente}</span>, alguien hizo una consulta en tu publicación <strong>${espacioNombre}</strong>.</p>
+    <h2 style="color:#f1f5f9;margin:0 0 16px;font-size:20px;">❓ Nueva consulta de ${autorNombre}</h2>
+    <p style="color:#94a3b8;line-height:1.7;margin:8px 0;">Hola <span style="color:#e8622a;font-weight:700;">${nombreOferente}</span>, alguien hizo una consulta en tu publicación <strong style="color:#e2e8f0;">${espacioNombre}</strong>.</p>
     <div style="background:#0f172a;border-left:3px solid #e8622a;border-radius:0 10px 10px 0;padding:14px 16px;margin:16px 0;">
       <p style="margin:0;color:#e2e8f0;font-style:italic;">"${preview}"</p>
       <p style="margin:8px 0 0;font-size:12px;color:#64748b;">— ${autorNombre}</p>
     </div>
-    <a class="btn" href="${process.env.FRONTEND_URL}/panel">Responder desde mi cuenta →</a>
-    <p style="font-size:12px;color:#64748b;margin-top:16px">Ingresá a tu cuenta y buscá la sección <strong>Consultas pendientes</strong> para responderla.</p>
+    <a style="display:inline-block;background:linear-gradient(135deg,#e8622a,#d4521a);color:#fff;padding:12px 28px;border-radius:12px;text-decoration:none;font-weight:700;margin:20px 0;" href="${process.env.FRONTEND_URL}/panel">Responder desde mi cuenta →</a>
+    <p style="font-size:12px;color:#64748b;margin-top:16px;">Ingresá a tu cuenta y buscá la sección <strong style="color:#94a3b8;">Consultas pendientes</strong> para responderla.</p>
   `);
 
   await transporter.sendMail({
@@ -720,18 +715,18 @@ async function sendRespuestaConsultaPublica(toEmail, nombreDemandante, { espacio
   const previewRespuesta = respuesta?.length > 160 ? respuesta.slice(0, 160) + '…' : respuesta;
 
   const html = baseTemplate('Te respondieron tu consulta', `
-    <h2>💬 El proveedor respondió tu consulta</h2>
-    <p>Hola <span class="highlight">${nombreDemandante}</span>, tu consulta sobre <strong>${espacioNombre}</strong> fue respondida.</p>
+    <h2 style="color:#f1f5f9;margin:0 0 16px;font-size:20px;">💬 El proveedor respondió tu consulta</h2>
+    <p style="color:#94a3b8;line-height:1.7;margin:8px 0;">Hola <span style="color:#e8622a;font-weight:700;">${nombreDemandante}</span>, tu consulta sobre <strong style="color:#e2e8f0;">${espacioNombre}</strong> fue respondida.</p>
     <div style="background:#0f172a;border-left:3px solid #64748b;border-radius:0 10px 10px 0;padding:14px 16px;margin:16px 0 8px;">
-      <p style="margin:0;font-size:12px;color:#64748b;margin-bottom:6px;">Tu pregunta:</p>
+      <p style="margin:0 0 6px;font-size:12px;color:#64748b;">Tu pregunta:</p>
       <p style="margin:0;color:#94a3b8;font-style:italic;">"${previewPregunta}"</p>
     </div>
     <div style="background:#0f172a;border-left:3px solid #e8622a;border-radius:0 10px 10px 0;padding:14px 16px;margin:0 0 16px;">
-      <p style="margin:0;font-size:12px;color:#e8622a;margin-bottom:6px;">Respuesta del proveedor:</p>
+      <p style="margin:0 0 6px;font-size:12px;color:#e8622a;">Respuesta del proveedor:</p>
       <p style="margin:0;color:#e2e8f0;">"${previewRespuesta}"</p>
     </div>
-    <a class="btn" href="${process.env.FRONTEND_URL}/espacio/${espacioId}">Ver publicación →</a>
-    <p style="font-size:12px;color:#64748b;margin-top:16px">Podés ver la respuesta completa en la sección de consultas de la publicación.</p>
+    <a style="display:inline-block;background:linear-gradient(135deg,#e8622a,#d4521a);color:#fff;padding:12px 28px;border-radius:12px;text-decoration:none;font-weight:700;margin:20px 0;" href="${process.env.FRONTEND_URL}/espacio/${espacioId}">Ver publicación →</a>
+    <p style="font-size:12px;color:#64748b;margin-top:16px;">Podés ver la respuesta completa en la sección de consultas de la publicación.</p>
   `);
 
   await transporter.sendMail({
