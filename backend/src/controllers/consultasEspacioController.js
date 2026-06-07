@@ -76,11 +76,9 @@ async function responder(req, res, next) {
 
     const consulta = await queryOne(
       `SELECT c.id, c.pregunta, c.autor_id, c.espacio_id,
-              e.nombre AS espacio_nombre, e.oferente_id,
-              u.nombre AS autor_nombre_completo, u.email AS autor_email
+              e.nombre AS espacio_nombre, e.oferente_id
        FROM consultas_espacio c
        JOIN espacios e ON c.espacio_id = e.id
-       JOIN usuarios u ON c.autor_id   = u.id
        WHERE c.id = ?`,
       [req.params.id]
     );
@@ -100,13 +98,19 @@ async function responder(req, res, next) {
       [req.params.id]
     );
 
-    // Notificar al demandante que recibió respuesta (fire-and-forget)
-    sendRespuestaConsultaPublica(consulta.autor_email, consulta.autor_nombre_completo, {
-      espacioNombre: consulta.espacio_nombre,
-      pregunta: consulta.pregunta,
-      respuesta: respuesta.trim(),
-      espacioId: consulta.espacio_id,
-    }).catch(() => {});
+    // Notificar al demandante (query separada para evitar mix de collations)
+    const autor = await queryOne(
+      'SELECT nombre, email FROM usuarios WHERE id = ?',
+      [consulta.autor_id]
+    );
+    if (autor?.email) {
+      sendRespuestaConsultaPublica(autor.email, autor.nombre, {
+        espacioNombre: consulta.espacio_nombre,
+        pregunta: consulta.pregunta,
+        respuesta: respuesta.trim(),
+        espacioId: consulta.espacio_id,
+      }).catch(() => {});
+    }
 
     res.json(actualizada);
   } catch (err) {
