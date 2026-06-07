@@ -79,8 +79,8 @@ async function responder(req, res, next) {
               e.nombre AS espacio_nombre, e.oferente_id,
               u.nombre AS autor_nombre_completo, u.email AS autor_email
        FROM consultas_espacio c
-       JOIN espacios e ON c.espacio_id = e.id
-       JOIN usuarios u ON c.autor_id = u.id
+       JOIN espacios e ON c.espacio_id COLLATE utf8mb4_bin = e.id COLLATE utf8mb4_bin
+       JOIN usuarios u ON c.autor_id  COLLATE utf8mb4_bin = u.id COLLATE utf8mb4_bin
        WHERE c.id = ?`,
       [req.params.id]
     );
@@ -110,7 +110,6 @@ async function responder(req, res, next) {
 
     res.json(actualizada);
   } catch (err) {
-    console.error('[responder consulta] ERROR:', err.code, err.message, err.sql);
     next(err);
   }
 }
@@ -122,7 +121,7 @@ async function sinResponder(req, res, next) {
       `SELECT c.id, c.espacio_id, e.nombre AS espacio_nombre,
               c.autor_nombre, c.pregunta, c.created_at
        FROM consultas_espacio c
-       JOIN espacios e ON c.espacio_id = e.id
+       JOIN espacios e ON c.espacio_id COLLATE utf8mb4_bin = e.id COLLATE utf8mb4_bin
        WHERE e.oferente_id = ? AND c.respuesta IS NULL
        ORDER BY c.created_at ASC`,
       [req.user.id]
