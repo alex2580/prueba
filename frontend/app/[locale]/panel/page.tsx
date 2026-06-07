@@ -195,6 +195,7 @@ export default function PanelPage() {
       const conv = await chatAPI.iniciarConversacion({ espacio_id: espacioId }, token);
       await recargarConvs();
       setSelectedConvId(conv.id);
+      setOpenMensajes(true);
       setTimeout(() => mensajesSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
     } catch (e: any) {
       alert(e?.message || 'No se pudo abrir el chat');
@@ -747,7 +748,7 @@ export default function PanelPage() {
                         onCalificar={['pagada', 'finalizada'].includes(r.estado) ? () => abrirReview(r) : undefined}
                         onExtender={r.estado === 'pagada' ? () => abrirExtension(r) : undefined}
                         onEliminar={['cancelada', 'finalizada'].includes(r.estado) ? () => ocultarReserva(r.id) : undefined}
-                        onChat={['pagada', 'finalizada'].includes(r.estado) ? () => handleAbrirChat(r.espacio_id) : undefined}
+                        onChat={['confirmada', 'pagada'].includes(r.estado) && !r.escrow_liberado ? () => handleAbrirChat(r.espacio_id) : undefined}
                         onConfirmarAcceso={
                           r.estado === 'pagada' && !r.escrow_liberado && new Date() >= new Date(r.fecha_desde)
                             ? () => handleConfirmarAcceso(r.id)

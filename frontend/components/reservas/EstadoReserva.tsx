@@ -94,7 +94,7 @@ export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar, onExt
               🔒 Tu pago está protegido en escrow
             </p>
             <p style={{ color: '#86efac', fontSize: '.75rem', margin: '0 0 .75rem', lineHeight: 1.6 }}>
-              Cuando accedas al espacio, confirmá el ingreso para liberar el pago al oferente.
+              Cuando accedas al espacio, confirmá el ingreso para liberar el pago al oferente. Al confirmar, el chat con el proveedor se cerrará.
             </p>
             <Button variant="primary" onClick={onConfirmarAcceso} size="sm" style={{ width: '100%' }}>
               ✅ Confirmar acceso al espacio
@@ -126,7 +126,7 @@ export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar, onExt
         </div>
       )}
 
-      {(reserva.estado === 'pagada' || reserva.estado === 'finalizada') && (
+      {(['confirmada', 'pagada', 'finalizada'].includes(reserva.estado)) && (
         <div style={{ display: 'flex', gap: '.6rem', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
           {onChat && (
             <Button variant="secondary" onClick={onChat} size="sm">
