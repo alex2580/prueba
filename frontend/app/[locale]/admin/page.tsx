@@ -642,7 +642,7 @@ function TabServiciosAdicionales({ token }: { token: string }) {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.4rem .8rem', fontSize: '.82rem', color: 'var(--text2)', marginBottom: '.6rem' }}>
               <div><span style={{ color: 'var(--text3)' }}>Cliente:</span> {String(d?.nombreDemandante ?? '—')}</div>
               <div><span style={{ color: 'var(--text3)' }}>Email:</span> {String(d?.emailDemandante ?? '—')}</div>
-              {d?.telDemandante && <div><span style={{ color: 'var(--text3)' }}>Tel:</span> {String(d.telDemandante)}</div>}
+              {!!d?.telDemandante && <div><span style={{ color: 'var(--text3)' }}>Tel:</span> {String(d.telDemandante)}</div>}
               <div><span style={{ color: 'var(--text3)' }}>Período:</span> {String(d?.fechaDesde ?? '')} → {String(d?.fechaHasta ?? '')}</div>
             </div>
             {servicios.length > 0 && (
