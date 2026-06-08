@@ -607,8 +607,8 @@ async function getMovimientos(req, res, next) {
              r.estado AS reserva_estado,
              r.escrow_liberado, r.escrow_liberado_at,
              e.nombre AS espacio_nombre,
-             ud.nombre AS cliente_nombre, ud.email AS cliente_email,
-             uo.nombre AS proveedor_nombre, uo.email AS proveedor_email
+             ud.nombre AS cliente_nombre,
+             uo.nombre AS proveedor_nombre
       FROM movimientos_ledger ml
       LEFT JOIN reservas r  ON ml.reserva_id = r.id
       LEFT JOIN espacios e  ON r.espacio_id  = e.id

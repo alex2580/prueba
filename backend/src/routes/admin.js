@@ -1,13 +1,29 @@
 const express = require('express');
 const router = express.Router();
+const { body, validationResult } = require('express-validator');
 
 const ctrl = require('../controllers/adminController');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { contactLimiter } = require('../middleware/rateLimits');
 
+const SERVICIOS_PERMITIDOS = ['seguro', 'embalaje', 'transporte', 'limpieza'];
+
 // ── Public (contact forms — intentionally no auth) ─────────────
-router.post('/consultas',          contactLimiter, ctrl.crearConsulta);
-router.post('/notificar-servicios', contactLimiter, ctrl.notificarServicios);
+router.post('/consultas', contactLimiter, ctrl.crearConsulta);
+router.post('/notificar-servicios', contactLimiter, [
+  body('emailDemandante').isEmail().normalizeEmail(),
+  body('nombreDemandante').optional().trim().isLength({ max: 255 }),
+  body('telDemandante').optional().trim().isLength({ max: 30 }),
+  body('espacioNombre').trim().notEmpty().isLength({ max: 255 }),
+  body('servicios').isArray({ min: 1, max: 10 })
+    .custom(arr => arr.every(s => SERVICIOS_PERMITIDOS.includes(s))),
+  body('fechaDesde').optional().isISO8601(),
+  body('fechaHasta').optional().isISO8601(),
+], (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(422).json({ error: 'Datos inválidos', details: errors.array() });
+  next();
+}, ctrl.notificarServicios);
 
 // ── All routes below require admin auth ───────────────────────
 router.use(requireAuth, requireAdmin);
