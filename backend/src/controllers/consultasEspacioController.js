@@ -109,7 +109,7 @@ async function responder(req, res, next) {
         pregunta: consulta.pregunta,
         respuesta: respuesta.trim(),
         espacioId: consulta.espacio_id,
-      }).catch(() => {});
+      }).catch(e => console.warn('Email respuesta consulta pública:', e.message));
     }
 
     res.json(actualizada);
