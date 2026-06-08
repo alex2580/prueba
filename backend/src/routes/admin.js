@@ -68,4 +68,7 @@ router.patch('/email-config',                              ctrl.updateEmailConfi
 // Sincronizar reservas pendientes contra MercadoPago
 router.post('/sincronizar-pendientes',                     ctrl.sincronizarPendientes);
 
+// Auditoría de cambios de perfil
+router.get('/auditoria-perfil',                            ctrl.getAuditoriaPerfil);
+
 module.exports = router;

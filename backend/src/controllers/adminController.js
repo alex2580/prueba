@@ -688,4 +688,22 @@ module.exports = {
   updateEmailConfig,
   sincronizarPendientes,
   getMovimientos,
+  getAuditoriaPerfil,
 };
+
+// ── GET /api/admin/auditoria-perfil ───────────────────────────
+async function getAuditoriaPerfil(req, res, next) {
+  try {
+    const rows = await query(`
+      SELECT ap.id, ap.usuario_id, ap.campo, ap.valor_anterior, ap.valor_nuevo, ap.ip, ap.creado_at,
+             u.nombre AS usuario_nombre, u.email AS usuario_email
+      FROM auditoria_perfil ap
+      LEFT JOIN usuarios u ON ap.usuario_id = u.id
+      ORDER BY ap.creado_at DESC
+      LIMIT 500
+    `);
+    res.json(rows);
+  } catch (err) {
+    next(err);
+  }
+}

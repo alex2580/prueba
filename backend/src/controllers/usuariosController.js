@@ -3,6 +3,16 @@ const { validationResult } = require('express-validator');
 const supabaseService = require('../services/supabaseService');
 const { sendCambioTelConfirmado, sendBienvenida, sendOTP } = require('../services/emailService');
 
+async function _auditarCampo(usuarioId, campo, valorAnterior, valorNuevo, ip) {
+  const ant = valorAnterior == null ? '' : String(valorAnterior);
+  const nvo = valorNuevo   == null ? '' : String(valorNuevo);
+  if (ant === nvo) return;
+  await query(
+    `INSERT INTO auditoria_perfil (usuario_id, campo, valor_anterior, valor_nuevo, ip) VALUES (?, ?, ?, ?, ?)`,
+    [usuarioId, campo, ant || null, nvo || null, ip || null]
+  ).catch(e => console.warn('Auditoría perfil:', e.message));
+}
+
 const OTP_EXPIRY_MIN = 10;
 
 function generarCodigo() {
@@ -52,10 +62,20 @@ async function actualizar(req, res, next) {
     }
 
     const { nombre, tel, dni, pais, email, direccion, lat, lng, cbu_alias, piso, departamento } = req.body;
+    const ip = req.ip || req.headers['x-forwarded-for'] || null;
+
+    // Leer valores actuales para auditoría
+    const actual = await queryOne('SELECT nombre, tel, dni, pais, email, direccion, cbu_alias FROM usuarios WHERE id = ?', [req.user.id]).catch(() => null);
+
     await query(
       'UPDATE usuarios SET nombre = ?, tel = ? WHERE id = ?',
       [nombre, tel || '', req.user.id]
     );
+    if (actual) {
+      await _auditarCampo(req.user.id, 'nombre',   actual.nombre,    nombre,    ip);
+      await _auditarCampo(req.user.id, 'telefono',  actual.tel,       tel || '', ip);
+    }
+
     // Update optional fields
     try {
       if (direccion !== undefined) {
@@ -63,18 +83,23 @@ async function actualizar(req, res, next) {
           'UPDATE usuarios SET direccion = ?, lat = ?, lng = ? WHERE id = ?',
           [direccion || null, lat || null, lng || null, req.user.id]
         );
+        if (actual) await _auditarCampo(req.user.id, 'direccion', actual.direccion, direccion, ip);
       }
       if (dni !== undefined) {
         await query('UPDATE usuarios SET dni = ? WHERE id = ?', [dni || null, req.user.id]);
+        if (actual) await _auditarCampo(req.user.id, 'dni', actual.dni, dni, ip);
       }
       if (pais !== undefined) {
         await query('UPDATE usuarios SET pais = ? WHERE id = ?', [pais || null, req.user.id]);
+        if (actual) await _auditarCampo(req.user.id, 'pais', actual.pais, pais, ip);
       }
       if (email && email !== req.user.email) {
         await query('UPDATE usuarios SET email = ? WHERE id = ?', [email, req.user.id]);
+        if (actual) await _auditarCampo(req.user.id, 'email', actual.email, email, ip);
       }
       if (cbu_alias !== undefined) {
         await query('UPDATE usuarios SET cbu_alias = ? WHERE id = ?', [cbu_alias || null, req.user.id]);
+        if (actual) await _auditarCampo(req.user.id, 'cbu_alias', actual.cbu_alias, cbu_alias, ip);
       }
       if (piso !== undefined) {
         await query('UPDATE usuarios SET piso = ? WHERE id = ?', [piso || null, req.user.id]);
@@ -288,6 +313,7 @@ async function verificarCambioTel(req, res, next) {
 
     // ✅ Código correcto — guardar el nuevo teléfono
     await query('UPDATE auth_otp SET usado = 1 WHERE id = ?', [otp.id]);
+    await _auditarCampo(usuario.id, 'telefono', usuario.tel, otp.tel_nuevo, req.ip || null);
     await query('UPDATE usuarios SET tel = ? WHERE id = ?', [otp.tel_nuevo, usuario.id]);
 
     // Notificar por email

@@ -553,6 +553,102 @@ function CalendarioGrid({ reservas }: { reservas: any[] }) {
   );
 }
 
+function TabAuditoriaPerfil({ token }: { token: string }) {
+  const [rows, setRows] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [busqueda, setBusqueda] = useState('');
+
+  useEffect(() => {
+    fetch('/api/admin/auditoria-perfil', { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then(data => { setRows(Array.isArray(data) ? data : []); setLoading(false); })
+      .catch(() => { setError('Error al cargar historial'); setLoading(false); });
+  }, [token]);
+
+  const CAMPOS: Record<string, string> = {
+    nombre: '👤 Nombre',
+    telefono: '📱 Teléfono',
+    email: '✉️ Email',
+    direccion: '📍 Dirección',
+    dni: '🪪 DNI',
+    pais: '🌎 País',
+    cbu_alias: '🏦 CBU/Alias',
+  };
+
+  const filtrados = rows.filter(r => {
+    const q = busqueda.toLowerCase();
+    return !q || r.usuario_nombre?.toLowerCase().includes(q) || r.usuario_email?.toLowerCase().includes(q) || r.campo?.toLowerCase().includes(q);
+  });
+
+  return (
+    <div>
+      <h2 style={{ fontWeight: 800, fontSize: '1.2rem', marginBottom: '1rem' }}>📋 Historial de cambios de perfil</h2>
+      {loading && <p>Cargando...</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {!loading && !error && (
+        <>
+          <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            <input
+              type="text"
+              placeholder="Buscar por usuario, email o campo..."
+              value={busqueda}
+              onChange={e => setBusqueda(e.target.value)}
+              style={{ padding: '0.5rem 0.75rem', borderRadius: 8, border: '1.5px solid #e5e7eb', flex: 1, fontSize: '0.9rem' }}
+            />
+            <span style={{ fontSize: '0.85rem', color: '#6b7280' }}>{filtrados.length} registros</span>
+          </div>
+          {filtrados.length === 0 ? (
+            <p style={{ color: '#6b7280', textAlign: 'center', padding: '2rem' }}>Sin cambios registrados todavía.</p>
+          ) : (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+                <thead>
+                  <tr style={{ background: '#f9fafb', borderBottom: '2px solid #e5e7eb' }}>
+                    <th style={{ padding: '0.6rem 0.75rem', textAlign: 'left' }}>Fecha</th>
+                    <th style={{ padding: '0.6rem 0.75rem', textAlign: 'left' }}>Usuario</th>
+                    <th style={{ padding: '0.6rem 0.75rem', textAlign: 'left' }}>Campo</th>
+                    <th style={{ padding: '0.6rem 0.75rem', textAlign: 'left' }}>Valor anterior</th>
+                    <th style={{ padding: '0.6rem 0.75rem', textAlign: 'left' }}>Valor nuevo</th>
+                    <th style={{ padding: '0.6rem 0.75rem', textAlign: 'left' }}>IP</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtrados.map((r: any) => (
+                    <tr key={r.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                      <td style={{ padding: '0.6rem 0.75rem', whiteSpace: 'nowrap', color: '#6b7280' }}>
+                        {new Date(r.creado_at).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' })}
+                      </td>
+                      <td style={{ padding: '0.6rem 0.75rem' }}>
+                        <div style={{ fontWeight: 600 }}>{r.usuario_nombre || '—'}</div>
+                        <div style={{ color: '#9ca3af', fontSize: '0.8rem' }}>{r.usuario_email}</div>
+                      </td>
+                      <td style={{ padding: '0.6rem 0.75rem' }}>
+                        <span style={{ background: '#eff6ff', color: '#1d4ed8', borderRadius: 99, padding: '2px 10px', fontWeight: 700, fontSize: '0.8rem' }}>
+                          {CAMPOS[r.campo] || r.campo}
+                        </span>
+                      </td>
+                      <td style={{ padding: '0.6rem 0.75rem', color: '#dc2626', maxWidth: 180, wordBreak: 'break-all' }}>
+                        {r.valor_anterior || <span style={{ color: '#d1d5db' }}>vacío</span>}
+                      </td>
+                      <td style={{ padding: '0.6rem 0.75rem', color: '#16a34a', maxWidth: 180, wordBreak: 'break-all' }}>
+                        {r.valor_nuevo || <span style={{ color: '#d1d5db' }}>vacío</span>}
+                      </td>
+                      <td style={{ padding: '0.6rem 0.75rem', color: '#9ca3af', fontSize: '0.8rem' }}>
+                        {r.ip || '—'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
 function TabCalendarioAdmin({ token }: { token: string }) {
   const [reservas, setReservas] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -2309,6 +2405,7 @@ export default function AdminPage() {
     { key: 'publicaciones',        label: '🏠 Publicaciones' },
     { key: 'calendario',           label: '📅 Calendario' },
     { key: 'movimientos',          label: '💵 Movimientos' },
+    { key: 'auditoria-perfil',     label: '📋 Historial Perfil' },
     { key: 'emails',               label: '✉️ Emails' },
   ];
 
@@ -2335,6 +2432,7 @@ export default function AdminPage() {
           {tab === 'publicaciones'       && token && <TabPublicaciones token={token} />}
           {tab === 'calendario'          && token && <TabCalendarioAdmin token={token} />}
           {tab === 'movimientos'         && token && <TabMovimientos token={token} />}
+          {tab === 'auditoria-perfil'    && token && <TabAuditoriaPerfil token={token} />}
           {tab === 'emails'              && token && <TabEmailConfig token={token} />}
         </div>
       </div>
