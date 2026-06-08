@@ -28,6 +28,81 @@ import { CalendarioDisponibilidad, type Disponibilidad } from '@/components/publ
 
 const MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || '';
 
+function CalendarioProveedor({ reservas }: { reservas: any[] }) {
+  const [mesBase, setMesBase] = useState(() => {
+    const hoy = new Date();
+    return new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+  });
+  const [selDia, setSelDia] = useState<number | null>(null);
+
+  const year = mesBase.getFullYear();
+  const month = mesBase.getMonth();
+  const offset = (new Date(year, month, 1).getDay() + 6) % 7;
+  const diasMes = new Date(year, month + 1, 0).getDate();
+  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const diasSem = ['Lu','Ma','Mi','Ju','Vi','Sa','Do'];
+  const colorEstado: Record<string, string> = {
+    pagada: 'var(--mint)', confirmada: 'var(--orange)',
+    pendiente: '#94a3b8', finalizada: 'var(--blue)', cancelada: 'var(--red)',
+  };
+
+  function rDia(dia: number) {
+    const f = `${year}-${String(month+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
+    return reservas.filter(r => r.fecha_desde?.slice(0,10) <= f && r.fecha_hasta?.slice(0,10) >= f);
+  }
+
+  const selReservas = selDia ? rDia(selDia) : [];
+
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+        <button className="btn-ghost" onClick={() => setMesBase(new Date(year, month-1, 1))}>‹</button>
+        <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, flex: 1, textAlign: 'center' }}>{meses[month]} {year}</span>
+        <button className="btn-ghost" onClick={() => setMesBase(new Date(year, month+1, 1))}>›</button>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2, marginBottom: 2 }}>
+        {diasSem.map(d => <div key={d} style={{ textAlign: 'center', fontSize: '.7rem', fontWeight: 700, color: 'var(--text3)', padding: '.2rem 0' }}>{d}</div>)}
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
+        {Array.from({ length: offset }).map((_, i) => <div key={`e${i}`} />)}
+        {Array.from({ length: diasMes }, (_, i) => i + 1).map(dia => {
+          const rs = rDia(dia);
+          const hoy = new Date();
+          const esHoy = dia === hoy.getDate() && month === hoy.getMonth() && year === hoy.getFullYear();
+          return (
+            <div key={dia} onClick={() => setSelDia(selDia === dia ? null : dia)}
+              style={{ background: selDia === dia ? 'rgba(232,98,42,.12)' : esHoy ? 'rgba(232,98,42,.06)' : 'var(--surface)', border: `1px solid ${esHoy ? 'var(--orange)' : 'var(--border)'}`, borderRadius: 'var(--r1)', padding: '.3rem .15rem', minHeight: 44, cursor: rs.length > 0 ? 'pointer' : 'default' }}>
+              <div style={{ textAlign: 'center', fontSize: '.75rem', fontWeight: esHoy ? 800 : 400, color: esHoy ? 'var(--orange)' : 'var(--text)' }}>{dia}</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'center', marginTop: 2 }}>
+                {rs.slice(0,3).map((r, i) => <div key={i} style={{ width: 7, height: 7, borderRadius: '50%', background: colorEstado[r.estado] ?? 'var(--text3)' }} />)}
+                {rs.length > 3 && <div style={{ fontSize: '.55rem', color: 'var(--text3)' }}>+{rs.length-3}</div>}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {selDia && (
+        <div style={{ marginTop: '1rem', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '1rem' }}>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, marginBottom: '.6rem' }}>
+            {selDia} de {meses[month]}
+          </div>
+          {selReservas.length === 0 ? <p style={{ color: 'var(--text3)', fontSize: '.85rem' }}>Sin reservas este día.</p> : (
+            <div style={{ display: 'grid', gap: '.5rem' }}>
+              {selReservas.map((r, i) => (
+                <div key={i} style={{ padding: '.5rem .75rem', background: 'var(--surface2)', borderRadius: 'var(--r1)', borderLeft: `3px solid ${colorEstado[r.estado] ?? 'var(--text3)'}` }}>
+                  <div style={{ fontWeight: 700, fontSize: '.85rem' }}>{r.espacio_nombre ?? 'Espacio'}</div>
+                  <div style={{ fontSize: '.74rem', color: 'var(--text3)' }}>👤 {r.usuario_nombre} · {r.fecha_desde?.slice(0,10)} → {r.fecha_hasta?.slice(0,10)}</div>
+                  <div style={{ fontSize: '.72rem', fontWeight: 700, color: colorEstado[r.estado], marginTop: '.15rem' }}>{r.estado}</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 const CATEGORIAS = [
   { value: 'cochera',    label: '🚗 Cochera' },
   { value: 'galpon',     label: '🏭 Galpón' },
@@ -78,6 +153,7 @@ export default function PanelPage() {
   const [consultasPendientes, setConsultasPendientes] = useState<ConsultaPendiente[]>([]);
   const [consultasRespondidas, setConsultasRespondidas] = useState<ConsultaRespondida[]>([]);
   const [openConsultasRespondidas, setOpenConsultasRespondidas] = useState(false);
+  const [openCalendario, setOpenCalendario] = useState(false);
   const [errorConsultas, setErrorConsultas] = useState('');
   const [respuestasMap, setRespuestasMap] = useState<Record<number, string>>({});
   const [respondiendo, setRespondiendo] = useState<number | null>(null);
@@ -705,6 +781,274 @@ export default function PanelPage() {
             </div>
           )}
 
+          {/* ── SECTION: Calendario de reservas (oferente only) ── */}
+          {isOferente && reservasRecibidas.length > 0 && (
+            <section style={{ marginBottom: '1.5rem' }}>
+              <button onClick={() => setOpenCalendario(v => !v)} className="seccion-toggle">
+                <span>📅 Calendario de reservas</span>
+                <span className={`seccion-chevron${openCalendario ? ' open' : ''}`}>▾</span>
+              </button>
+              <div className={`seccion-body${openCalendario ? ' open' : ''}`}>
+                <div style={{ paddingTop: '.75rem' }}>
+                  <CalendarioProveedor reservas={reservasRecibidas} />
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* ── SECTION 2: Mis espacios publicados (oferente only) ── */}
+          {isOferente && (
+            <section style={{ marginBottom: '1.5rem' }}>
+              <button
+                onClick={() => setOpenEspacios(v => !v)}
+                className="seccion-toggle"
+              >
+                <span style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                  <span>🏠 Mis espacios publicados</span>
+                  {!loadingOferente && (
+                    <span className="pill pill--gray" style={{ fontSize: '.7rem', padding: '.1rem .45rem' }}>
+                      {misEspacios.length}
+                    </span>
+                  )}
+                </span>
+                <span className={`seccion-chevron${openEspacios ? ' open' : ''}`}>▾</span>
+              </button>
+
+              <div className={`seccion-body${openEspacios ? ' open' : ''}`}>
+                <div style={{ paddingTop: '.75rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+                  <Button variant="primary" size="sm" onClick={() => router.push('/publicar')}>
+                    ➕ Publicar espacio
+                  </Button>
+                </div>
+
+              {loadingOferente ? (
+                <p style={{ color: 'var(--text3)' }}>Cargando…</p>
+              ) : misEspacios.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--text3)', background: 'var(--surface)', borderRadius: 'var(--r2)', border: '1px solid var(--border)' }}>
+                  <div style={{ fontSize: '2.5rem', marginBottom: '.75rem' }}>📦</div>
+                  <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, marginBottom: '.4rem' }}>No tenés espacios publicados</div>
+                  <p style={{ fontSize: '.88rem' }}>Publicá tu primer espacio y empezá a recibir reservas.</p>
+                </div>
+              ) : (
+                <div style={{ display: 'grid', gap: '1.2rem' }}>
+                  {misEspacios.map(esp => {
+                    const reservasEsp = reservasRecibidas.filter(r => r.espacio_id === esp.id);
+                    const esVencida = !!esp.vencida;
+                    const diasRestantes = esp.fecha_vencimiento && !esVencida
+                      ? Math.ceil((new Date(esp.fecha_vencimiento).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+                      : null;
+                    const proximaAVencer = diasRestantes !== null && diasRestantes <= 30;
+                    return (
+                      <div key={esp.id} style={{ background: 'var(--surface)', border: `1px solid ${esVencida ? 'rgba(239,68,68,.4)' : 'var(--border)'}`, borderRadius: 'var(--r2)', overflow: 'hidden', opacity: esVencida ? .85 : 1 }}>
+                        {/* Banner vencida */}
+                        {esVencida && (
+                          <div style={{ background: 'rgba(239,68,68,.12)', borderBottom: '1px solid rgba(239,68,68,.25)', padding: '.5rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span style={{ fontSize: '.78rem', fontWeight: 700, color: '#f87171' }}>
+                              🔴 Publicación vencida — venció el {esp.fecha_vencimiento ? new Date(esp.fecha_vencimiento).toLocaleDateString('es-AR') : ''}
+                            </span>
+                            <a href="/publicar" style={{ fontSize: '.75rem', color: 'var(--orange)', fontWeight: 700, textDecoration: 'none' }}>
+                              + Publicar de nuevo
+                            </a>
+                          </div>
+                        )}
+                        {/* Banner próxima a vencer */}
+                        {proximaAVencer && (
+                          <div style={{ background: 'rgba(245,158,11,.1)', borderBottom: '1px solid rgba(245,158,11,.25)', padding: '.4rem 1rem' }}>
+                            <span style={{ fontSize: '.76rem', fontWeight: 700, color: '#f59e0b' }}>
+                              ⚠️ Vence en {diasRestantes} día{diasRestantes !== 1 ? 's' : ''} ({new Date(esp.fecha_vencimiento!).toLocaleDateString('es-AR')})
+                            </span>
+                          </div>
+                        )}
+                        {/* Space info row */}
+                        <div style={{ padding: '1rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                          {esp.img_principal && (
+                            <img
+                              src={esp.img_principal}
+                              alt={esp.nombre}
+                              style={{ width: 80, height: 60, objectFit: 'cover', borderRadius: 'var(--r1)', flexShrink: 0 }}
+                            />
+                          )}
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>{esp.nombre}</div>
+                            <div style={{ fontSize: '.78rem', color: 'var(--text3)', marginTop: '.15rem' }}>
+                              📍 {esp.barrio}{Number(esp.m2) > 0 ? ` · ${esp.m2} m²` : ''}
+                            </div>
+                            <div style={{ fontSize: '.82rem', fontWeight: 700, marginTop: '.2rem', display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
+                              {esp.precio_dia > 0 && <span style={{ color: 'var(--orange)' }}>{formatARS(esp.precio_dia)}/día</span>}
+                              {esp.precio_mes > 0 && <span style={{ color: 'var(--orange)' }}>{formatARS(esp.precio_mes)}/mes</span>}
+                            </div>
+                            {esp.fecha_vencimiento && !esVencida && !proximaAVencer && (
+                              <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginTop: '.2rem' }}>
+                                📅 Vence el {new Date(esp.fecha_vencimiento).toLocaleDateString('es-AR')}
+                              </div>
+                            )}
+                          </div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem', flexShrink: 0, alignItems: 'flex-end' }}>
+                            {esVencida ? (
+                              <span style={{ fontSize: '.72rem', background: 'rgba(239,68,68,.15)', color: '#f87171', border: '1px solid rgba(239,68,68,.3)', borderRadius: 'var(--r1)', padding: '.2rem .6rem', fontWeight: 700 }}>
+                                🔴 Vencida
+                              </span>
+                            ) : esp.inactiva_auto ? (
+                              <span style={{ fontSize: '.72rem', background: 'rgba(239,68,68,.15)', color: '#f87171', border: '1px solid rgba(239,68,68,.3)', borderRadius: 'var(--r1)', padding: '.2rem .6rem', fontWeight: 700 }}>
+                                ⏸️ Pausada por inactividad
+                              </span>
+                            ) : (
+                              <span className={`pill ${esp.disponible ? 'pill--green' : 'pill--gray'}`}>
+                                {esp.disponible ? '✅ Activo' : '⏸️ Inactivo'}
+                              </span>
+                            )}
+                            <div style={{ display: 'flex', gap: '.4rem' }}>
+                              {esVencida ? (
+                                <a href="/publicar" className="btn-ghost" style={{ fontSize: '.73rem', color: 'var(--orange)', fontWeight: 700 }}>
+                                  + Publicar de nuevo
+                                </a>
+                              ) : esp.inactiva_auto ? (
+                                <button
+                                  className="btn-ghost"
+                                  style={{ fontSize: '.73rem', color: 'var(--mint)', fontWeight: 700 }}
+                                  onClick={() => handleReactivarEspacio(esp.id)}
+                                >
+                                  ▶ Reactivar
+                                </button>
+                              ) : (
+                                <>
+                                  <button
+                                    className="btn-ghost"
+                                    style={{ fontSize: '.73rem', color: 'var(--orange)' }}
+                                    onClick={() => abrirEditar(esp)}
+                                  >
+                                    ✏️ Editar
+                                  </button>
+                                  {esp.tipo === 'compartido' ? (
+                                    <button
+                                      className="btn-ghost"
+                                      style={{ fontSize: '.73rem', fontWeight: 700, color: esp.cupo_disponible !== false ? '#16a34a' : '#dc2626' }}
+                                      onClick={() => handleToggleCupo(esp.id, esp.cupo_disponible !== false)}
+                                      title={esp.cupo_disponible !== false ? 'Tenés disponibilidad — click para marcar cupo completo' : 'Cupo completo — click para abrir disponibilidad'}
+                                    >
+                                      {esp.cupo_disponible !== false ? '🟢 Tengo Espacio' : '🔴 No tengo Espacio'}
+                                    </button>
+                                  ) : (
+                                    <button
+                                      className="btn-ghost"
+                                      style={{ fontSize: '.73rem' }}
+                                      onClick={() => handleToggleDisponible(esp.id, !esp.disponible)}
+                                    >
+                                      {esp.disponible ? 'Pausar' : 'Activar'}
+                                    </button>
+                                  )}
+                                </>
+                              )}
+                              {!esVencida && (() => {
+                                const tieneReservaActiva = reservasEsp.some(r => r.estado === 'pagada');
+                                return (
+                                  <button
+                                    className="btn-ghost"
+                                    style={{ fontSize: '.73rem', color: tieneReservaActiva ? 'var(--text3)' : 'var(--red)', cursor: tieneReservaActiva ? 'not-allowed' : 'pointer', opacity: tieneReservaActiva ? 0.5 : 1 }}
+                                    onClick={() => !tieneReservaActiva && handleEliminarEspacio(esp.id)}
+                                    title={tieneReservaActiva ? 'No podés eliminar este espacio mientras tenga una reserva activa o pagada' : undefined}
+                                  >
+                                    Borrar
+                                  </button>
+                                );
+                              })()}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Reservations received for this space */}
+                        {reservasEsp.length > 0 && (
+                          <div style={{ borderTop: '1px solid var(--border)', padding: '.6rem 1rem .8rem' }}>
+                            <div style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: '.6rem' }}>
+                              Reservas recibidas ({reservasEsp.length})
+                            </div>
+                            <div style={{ display: 'grid', gap: '.6rem' }}>
+                              {reservasEsp.map(r => {
+                                const diasHastaInicio = Math.ceil((new Date(r.fecha_desde).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+                                const esPagada = r.estado === 'pagada';
+                                const esActiva = ['pagada', 'confirmada'].includes(r.estado);
+                                const iniciaHoy = diasHastaInicio === 0;
+                                const iniciaMañana = diasHastaInicio === 1;
+                                const iniciaProximo = diasHastaInicio > 1 && diasHastaInicio <= 7;
+                                const yaComenzo = diasHastaInicio < 0 && esPagada;
+                                return (
+                                  <div key={r.id} style={{ background: 'var(--surface2)', borderRadius: 'var(--r1)', overflow: 'hidden', border: esPagada ? '1px solid rgba(34,197,94,.25)' : '1px solid transparent' }}>
+                                    {/* Alerta disponibilidad */}
+                                    {esPagada && (iniciaHoy || iniciaMañana || iniciaProximo) && (
+                                      <div style={{ background: iniciaHoy || iniciaMañana ? 'rgba(232,98,42,.12)' : 'rgba(245,158,11,.08)', borderBottom: `1px solid ${iniciaHoy || iniciaMañana ? 'rgba(232,98,42,.25)' : 'rgba(245,158,11,.2)'}`, padding: '.35rem .8rem', fontSize: '.73rem', fontWeight: 700, color: iniciaHoy || iniciaMañana ? 'var(--orange)' : '#f59e0b' }}>
+                                        {iniciaHoy ? '🔔 ¡El espacio debe estar disponible HOY!' : iniciaMañana ? '🔔 Disponibilizá el espacio mañana' : `🗓️ Disponibilizá el espacio en ${diasHastaInicio} días (${formatFechaCorta(r.fecha_desde)})`}
+                                      </div>
+                                    )}
+                                    {esPagada && yaComenzo && (
+                                      <div style={{ background: 'rgba(34,197,94,.08)', borderBottom: '1px solid rgba(34,197,94,.2)', padding: '.35rem .8rem', fontSize: '.73rem', fontWeight: 700, color: 'var(--mint)' }}>
+                                        ✅ Reserva en curso — finaliza el {formatFechaCorta(r.fecha_hasta)}
+                                      </div>
+                                    )}
+                                    {/* Contenido */}
+                                    <div style={{ padding: '.6rem .8rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '.5rem' }}>
+                                      <div style={{ flex: 1, minWidth: 0 }}>
+                                        <div style={{ fontWeight: 700, fontSize: '.86rem' }}>{r.usuario_nombre}</div>
+                                        {esActiva && r.usuario_email && (
+                                          <div style={{ fontSize: '.73rem', color: 'var(--text3)', marginTop: '.1rem' }}>
+                                            ✉️ {r.usuario_email}{r.usuario_tel ? ` · 📞 ${r.usuario_tel}` : ''}
+                                          </div>
+                                        )}
+                                        <div style={{ fontSize: '.76rem', color: 'var(--text2)', marginTop: '.2rem', fontWeight: 600 }}>
+                                          📅 {formatFechaCorta(r.fecha_desde)} → {formatFechaCorta(r.fecha_hasta)}
+                                        </div>
+                                        {r.pin_acceso && esActiva && (
+                                          <div style={{ marginTop: '.2rem', fontSize: '.73rem' }}>
+                                            🔑 PIN de acceso: <span style={{ fontFamily: 'monospace', fontWeight: 700, color: 'var(--orange)', letterSpacing: '.1em' }}>{r.pin_acceso}</span>
+                                          </div>
+                                        )}
+                                        {esPagada && r.escrow_neto_oferente != null && !r.escrow_liberado && (
+                                          <div style={{ marginTop: '.25rem', fontSize: '.7rem', color: '#f59e0b', fontWeight: 600 }}>
+                                            {new Date() < new Date(r.fecha_desde)
+                                              ? `🔒 Depósito en garantía activo — confirmación a partir del ${formatFechaCorta(r.fecha_desde)}`
+                                              : '⏳ Esperando confirmación de acceso del cliente'}
+                                          </div>
+                                        )}
+                                        {esPagada && r.escrow_liberado === 1 && (
+                                          <div style={{ marginTop: '.25rem', fontSize: '.7rem', color: 'var(--mint)', fontWeight: 600 }}>
+                                            ✅ Acceso confirmado — pago en camino
+                                          </div>
+                                        )}
+                                      </div>
+                                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '.25rem', flexShrink: 0 }}>
+                                        <EstadoBadge estado={r.estado} />
+                                        <div style={{ textAlign: 'right' }}>
+                                          <div style={{ fontSize: '.67rem', color: 'var(--text3)' }}>Recibís (neto)</div>
+                                          <div style={{ fontSize: '.9rem', fontWeight: 700, color: esPagada ? 'var(--mint)' : 'var(--text3)' }}>
+                                            {formatARS(netoOferente(r.precio_total))}
+                                          </div>
+                                        </div>
+                                        {r.estado === 'pagada' && !r.escrow_liberado && (
+                                          <button
+                                            className="btn-secondary"
+                                            style={{ fontSize: '.72rem', padding: '.2rem .6rem', borderRadius: 'var(--r1)' }}
+                                            onClick={() => handleAbrirChatOferente(r.espacio_id, r.usuario_id!)}
+                                          >
+                                            💬 Chat
+                                          </button>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+                </div>
+              </div>
+            </section>
+          )}
           {/* ── SECTION 1: Mis reservas realizadas ── */}
           <section style={{ marginBottom: '1.5rem' }}>
             <button
@@ -958,259 +1302,6 @@ export default function PanelPage() {
             </section>
           )}
 
-          {/* ── SECTION 2: Mis espacios publicados (oferente only) ── */}
-          {isOferente && (
-            <section style={{ marginBottom: '1.5rem' }}>
-              <button
-                onClick={() => setOpenEspacios(v => !v)}
-                className="seccion-toggle"
-              >
-                <span style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
-                  <span>🏠 Mis espacios publicados</span>
-                  {!loadingOferente && (
-                    <span className="pill pill--gray" style={{ fontSize: '.7rem', padding: '.1rem .45rem' }}>
-                      {misEspacios.length}
-                    </span>
-                  )}
-                </span>
-                <span className={`seccion-chevron${openEspacios ? ' open' : ''}`}>▾</span>
-              </button>
-
-              <div className={`seccion-body${openEspacios ? ' open' : ''}`}>
-                <div style={{ paddingTop: '.75rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
-                  <Button variant="primary" size="sm" onClick={() => router.push('/publicar')}>
-                    ➕ Publicar espacio
-                  </Button>
-                </div>
-
-              {loadingOferente ? (
-                <p style={{ color: 'var(--text3)' }}>Cargando…</p>
-              ) : misEspacios.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--text3)', background: 'var(--surface)', borderRadius: 'var(--r2)', border: '1px solid var(--border)' }}>
-                  <div style={{ fontSize: '2.5rem', marginBottom: '.75rem' }}>📦</div>
-                  <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, marginBottom: '.4rem' }}>No tenés espacios publicados</div>
-                  <p style={{ fontSize: '.88rem' }}>Publicá tu primer espacio y empezá a recibir reservas.</p>
-                </div>
-              ) : (
-                <div style={{ display: 'grid', gap: '1.2rem' }}>
-                  {misEspacios.map(esp => {
-                    const reservasEsp = reservasRecibidas.filter(r => r.espacio_id === esp.id);
-                    const esVencida = !!esp.vencida;
-                    const diasRestantes = esp.fecha_vencimiento && !esVencida
-                      ? Math.ceil((new Date(esp.fecha_vencimiento).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
-                      : null;
-                    const proximaAVencer = diasRestantes !== null && diasRestantes <= 30;
-                    return (
-                      <div key={esp.id} style={{ background: 'var(--surface)', border: `1px solid ${esVencida ? 'rgba(239,68,68,.4)' : 'var(--border)'}`, borderRadius: 'var(--r2)', overflow: 'hidden', opacity: esVencida ? .85 : 1 }}>
-                        {/* Banner vencida */}
-                        {esVencida && (
-                          <div style={{ background: 'rgba(239,68,68,.12)', borderBottom: '1px solid rgba(239,68,68,.25)', padding: '.5rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span style={{ fontSize: '.78rem', fontWeight: 700, color: '#f87171' }}>
-                              🔴 Publicación vencida — venció el {esp.fecha_vencimiento ? new Date(esp.fecha_vencimiento).toLocaleDateString('es-AR') : ''}
-                            </span>
-                            <a href="/publicar" style={{ fontSize: '.75rem', color: 'var(--orange)', fontWeight: 700, textDecoration: 'none' }}>
-                              + Publicar de nuevo
-                            </a>
-                          </div>
-                        )}
-                        {/* Banner próxima a vencer */}
-                        {proximaAVencer && (
-                          <div style={{ background: 'rgba(245,158,11,.1)', borderBottom: '1px solid rgba(245,158,11,.25)', padding: '.4rem 1rem' }}>
-                            <span style={{ fontSize: '.76rem', fontWeight: 700, color: '#f59e0b' }}>
-                              ⚠️ Vence en {diasRestantes} día{diasRestantes !== 1 ? 's' : ''} ({new Date(esp.fecha_vencimiento!).toLocaleDateString('es-AR')})
-                            </span>
-                          </div>
-                        )}
-                        {/* Space info row */}
-                        <div style={{ padding: '1rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                          {esp.img_principal && (
-                            <img
-                              src={esp.img_principal}
-                              alt={esp.nombre}
-                              style={{ width: 80, height: 60, objectFit: 'cover', borderRadius: 'var(--r1)', flexShrink: 0 }}
-                            />
-                          )}
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>{esp.nombre}</div>
-                            <div style={{ fontSize: '.78rem', color: 'var(--text3)', marginTop: '.15rem' }}>
-                              📍 {esp.barrio}{Number(esp.m2) > 0 ? ` · ${esp.m2} m²` : ''}
-                            </div>
-                            <div style={{ fontSize: '.82rem', fontWeight: 700, marginTop: '.2rem', display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
-                              {esp.precio_dia > 0 && <span style={{ color: 'var(--orange)' }}>{formatARS(esp.precio_dia)}/día</span>}
-                              {esp.precio_mes > 0 && <span style={{ color: 'var(--orange)' }}>{formatARS(esp.precio_mes)}/mes</span>}
-                            </div>
-                            {esp.fecha_vencimiento && !esVencida && !proximaAVencer && (
-                              <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginTop: '.2rem' }}>
-                                📅 Vence el {new Date(esp.fecha_vencimiento).toLocaleDateString('es-AR')}
-                              </div>
-                            )}
-                          </div>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem', flexShrink: 0, alignItems: 'flex-end' }}>
-                            {esVencida ? (
-                              <span style={{ fontSize: '.72rem', background: 'rgba(239,68,68,.15)', color: '#f87171', border: '1px solid rgba(239,68,68,.3)', borderRadius: 'var(--r1)', padding: '.2rem .6rem', fontWeight: 700 }}>
-                                🔴 Vencida
-                              </span>
-                            ) : esp.inactiva_auto ? (
-                              <span style={{ fontSize: '.72rem', background: 'rgba(239,68,68,.15)', color: '#f87171', border: '1px solid rgba(239,68,68,.3)', borderRadius: 'var(--r1)', padding: '.2rem .6rem', fontWeight: 700 }}>
-                                ⏸️ Pausada por inactividad
-                              </span>
-                            ) : (
-                              <span className={`pill ${esp.disponible ? 'pill--green' : 'pill--gray'}`}>
-                                {esp.disponible ? '✅ Activo' : '⏸️ Inactivo'}
-                              </span>
-                            )}
-                            <div style={{ display: 'flex', gap: '.4rem' }}>
-                              {esVencida ? (
-                                <a href="/publicar" className="btn-ghost" style={{ fontSize: '.73rem', color: 'var(--orange)', fontWeight: 700 }}>
-                                  + Publicar de nuevo
-                                </a>
-                              ) : esp.inactiva_auto ? (
-                                <button
-                                  className="btn-ghost"
-                                  style={{ fontSize: '.73rem', color: 'var(--mint)', fontWeight: 700 }}
-                                  onClick={() => handleReactivarEspacio(esp.id)}
-                                >
-                                  ▶ Reactivar
-                                </button>
-                              ) : (
-                                <>
-                                  <button
-                                    className="btn-ghost"
-                                    style={{ fontSize: '.73rem', color: 'var(--orange)' }}
-                                    onClick={() => abrirEditar(esp)}
-                                  >
-                                    ✏️ Editar
-                                  </button>
-                                  {esp.tipo === 'compartido' ? (
-                                    <button
-                                      className="btn-ghost"
-                                      style={{ fontSize: '.73rem', fontWeight: 700, color: esp.cupo_disponible !== false ? '#16a34a' : '#dc2626' }}
-                                      onClick={() => handleToggleCupo(esp.id, esp.cupo_disponible !== false)}
-                                      title={esp.cupo_disponible !== false ? 'Tenés disponibilidad — click para marcar cupo completo' : 'Cupo completo — click para abrir disponibilidad'}
-                                    >
-                                      {esp.cupo_disponible !== false ? '🟢 Tengo Espacio' : '🔴 No tengo Espacio'}
-                                    </button>
-                                  ) : (
-                                    <button
-                                      className="btn-ghost"
-                                      style={{ fontSize: '.73rem' }}
-                                      onClick={() => handleToggleDisponible(esp.id, !esp.disponible)}
-                                    >
-                                      {esp.disponible ? 'Pausar' : 'Activar'}
-                                    </button>
-                                  )}
-                                </>
-                              )}
-                              {!esVencida && (() => {
-                                const tieneReservaActiva = reservasEsp.some(r => r.estado === 'pagada');
-                                return (
-                                  <button
-                                    className="btn-ghost"
-                                    style={{ fontSize: '.73rem', color: tieneReservaActiva ? 'var(--text3)' : 'var(--red)', cursor: tieneReservaActiva ? 'not-allowed' : 'pointer', opacity: tieneReservaActiva ? 0.5 : 1 }}
-                                    onClick={() => !tieneReservaActiva && handleEliminarEspacio(esp.id)}
-                                    title={tieneReservaActiva ? 'No podés eliminar este espacio mientras tenga una reserva activa o pagada' : undefined}
-                                  >
-                                    Borrar
-                                  </button>
-                                );
-                              })()}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Reservations received for this space */}
-                        {reservasEsp.length > 0 && (
-                          <div style={{ borderTop: '1px solid var(--border)', padding: '.6rem 1rem .8rem' }}>
-                            <div style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: '.6rem' }}>
-                              Reservas recibidas ({reservasEsp.length})
-                            </div>
-                            <div style={{ display: 'grid', gap: '.6rem' }}>
-                              {reservasEsp.map(r => {
-                                const diasHastaInicio = Math.ceil((new Date(r.fecha_desde).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-                                const esPagada = r.estado === 'pagada';
-                                const esActiva = ['pagada', 'confirmada'].includes(r.estado);
-                                const iniciaHoy = diasHastaInicio === 0;
-                                const iniciaMañana = diasHastaInicio === 1;
-                                const iniciaProximo = diasHastaInicio > 1 && diasHastaInicio <= 7;
-                                const yaComenzo = diasHastaInicio < 0 && esPagada;
-                                return (
-                                  <div key={r.id} style={{ background: 'var(--surface2)', borderRadius: 'var(--r1)', overflow: 'hidden', border: esPagada ? '1px solid rgba(34,197,94,.25)' : '1px solid transparent' }}>
-                                    {/* Alerta disponibilidad */}
-                                    {esPagada && (iniciaHoy || iniciaMañana || iniciaProximo) && (
-                                      <div style={{ background: iniciaHoy || iniciaMañana ? 'rgba(232,98,42,.12)' : 'rgba(245,158,11,.08)', borderBottom: `1px solid ${iniciaHoy || iniciaMañana ? 'rgba(232,98,42,.25)' : 'rgba(245,158,11,.2)'}`, padding: '.35rem .8rem', fontSize: '.73rem', fontWeight: 700, color: iniciaHoy || iniciaMañana ? 'var(--orange)' : '#f59e0b' }}>
-                                        {iniciaHoy ? '🔔 ¡El espacio debe estar disponible HOY!' : iniciaMañana ? '🔔 Disponibilizá el espacio mañana' : `🗓️ Disponibilizá el espacio en ${diasHastaInicio} días (${formatFechaCorta(r.fecha_desde)})`}
-                                      </div>
-                                    )}
-                                    {esPagada && yaComenzo && (
-                                      <div style={{ background: 'rgba(34,197,94,.08)', borderBottom: '1px solid rgba(34,197,94,.2)', padding: '.35rem .8rem', fontSize: '.73rem', fontWeight: 700, color: 'var(--mint)' }}>
-                                        ✅ Reserva en curso — finaliza el {formatFechaCorta(r.fecha_hasta)}
-                                      </div>
-                                    )}
-                                    {/* Contenido */}
-                                    <div style={{ padding: '.6rem .8rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '.5rem' }}>
-                                      <div style={{ flex: 1, minWidth: 0 }}>
-                                        <div style={{ fontWeight: 700, fontSize: '.86rem' }}>{r.usuario_nombre}</div>
-                                        {esActiva && r.usuario_email && (
-                                          <div style={{ fontSize: '.73rem', color: 'var(--text3)', marginTop: '.1rem' }}>
-                                            ✉️ {r.usuario_email}{r.usuario_tel ? ` · 📞 ${r.usuario_tel}` : ''}
-                                          </div>
-                                        )}
-                                        <div style={{ fontSize: '.76rem', color: 'var(--text2)', marginTop: '.2rem', fontWeight: 600 }}>
-                                          📅 {formatFechaCorta(r.fecha_desde)} → {formatFechaCorta(r.fecha_hasta)}
-                                        </div>
-                                        {r.pin_acceso && esActiva && (
-                                          <div style={{ marginTop: '.2rem', fontSize: '.73rem' }}>
-                                            🔑 PIN de acceso: <span style={{ fontFamily: 'monospace', fontWeight: 700, color: 'var(--orange)', letterSpacing: '.1em' }}>{r.pin_acceso}</span>
-                                          </div>
-                                        )}
-                                        {esPagada && r.escrow_neto_oferente != null && !r.escrow_liberado && (
-                                          <div style={{ marginTop: '.25rem', fontSize: '.7rem', color: '#f59e0b', fontWeight: 600 }}>
-                                            {new Date() < new Date(r.fecha_desde)
-                                              ? `🔒 Depósito en garantía activo — confirmación a partir del ${formatFechaCorta(r.fecha_desde)}`
-                                              : '⏳ Esperando confirmación de acceso del cliente'}
-                                          </div>
-                                        )}
-                                        {esPagada && r.escrow_liberado === 1 && (
-                                          <div style={{ marginTop: '.25rem', fontSize: '.7rem', color: 'var(--mint)', fontWeight: 600 }}>
-                                            ✅ Acceso confirmado — pago en camino
-                                          </div>
-                                        )}
-                                      </div>
-                                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '.25rem', flexShrink: 0 }}>
-                                        <EstadoBadge estado={r.estado} />
-                                        <div style={{ textAlign: 'right' }}>
-                                          <div style={{ fontSize: '.67rem', color: 'var(--text3)' }}>Recibís (neto)</div>
-                                          <div style={{ fontSize: '.9rem', fontWeight: 700, color: esPagada ? 'var(--mint)' : 'var(--text3)' }}>
-                                            {formatARS(netoOferente(r.precio_total))}
-                                          </div>
-                                        </div>
-                                        {['pagada', 'finalizada'].includes(r.estado) && (
-                                          <button
-                                            className="btn-secondary"
-                                            style={{ fontSize: '.72rem', padding: '.2rem .6rem', borderRadius: 'var(--r1)' }}
-                                            onClick={() => handleAbrirChatOferente(r.espacio_id, r.usuario_id!)}
-                                          >
-                                            💬 Chat
-                                          </button>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-                </div>
-              </div>
-            </section>
-          )}
 
         </div>
       </div>

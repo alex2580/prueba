@@ -2112,3 +2112,89 @@ El botón de navegación (desktop y mobile) que decía "Cómo funciona" ahora di
 **Commits:** `dc20be7`, `f6aacd1`
 
 **Estado final:** 18/18 puntos de seguridad completados ✅
+
+---
+
+## 7 de Junio 2026
+
+### Fix: scripts de migración DB fallan silenciosamente desde la raíz del proyecto
+
+**Problema:** Al correr `node backend/src/db/<script>.js` desde `/var/www/todasmiscosas`, `dotenv.config()` buscaba el `.env` en el directorio de trabajo actual (raíz) en lugar de en `backend/.env`. Las variables `DB_*` quedaban indefinidas y MySQL fallaba con un error de conexión con mensaje vacío — solo se veía `❌` en la terminal.
+
+**Fix:** `backend/src/db/connection.js` ahora usa `path.resolve(__dirname, '../../.env')` como ruta absoluta, independiente del directorio desde donde se ejecute el script.
+
+**Archivos modificados:**
+- `backend/src/db/connection.js` — `require('dotenv').config()` → `require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })`
+
+**Commit:** `e2b9ef1`
+
+---
+
+### Restricción de formatos y límites en subida de fotos
+
+Se ajustaron los formatos aceptados, el tamaño máximo y la cantidad de fotos por publicación. El frontend y el backend ahora están alineados.
+
+| Parámetro | Antes | Ahora |
+|---|---|---|
+| Formatos | JPEG, PNG, WebP, GIF | JPEG, PNG, WebP |
+| Tamaño máximo por archivo | 20 MB | 5 MB |
+| Fotos por publicación | 10 (backend) | 5 |
+| `accept` en file picker | `image/*` | `image/jpeg,image/png,image/webp` |
+
+**Motivo:** GIF no tiene uso real en un marketplace de espacios físicos. 20 MB era excesivo dado que el frontend ya comprime a JPEG antes de subir. El `accept` amplio permitía que iPhones en HEIC seleccionaran el archivo pero fallaran en el backend.
+
+**Archivos modificados:**
+- `backend/src/middleware/upload.js` — saca GIF de `allowed` y de `validateMagicBytes`; límites: 5 MB y 5 archivos
+- `backend/src/services/supabaseService.js` — saca `.gif` del map de MIME types
+- `frontend/app/[locale]/publicar/page.tsx` — `accept="image/jpeg,image/png,image/webp"` en ambos inputs (galería y cámara)
+
+**Commits:** `e2b9ef1` (connection fix), deploy de imagen en el mismo push
+
+---
+
+### ✅ Flujo de Consultas Públicas — COMPLETO Y EN PRODUCCIÓN
+**Completado: 7 de Junio de 2026 — 17:30 hs (GMT-3, Buenos Aires)**
+
+Implementación completa del sistema de preguntas y respuestas públicas en cada publicación.
+
+#### Qué hace el flujo
+1. Cliente hace una pregunta en la sección "💬 Consultas sobre este espacio" de cualquier publicación
+2. Proveedor recibe email de aviso con link a su panel
+3. Proveedor responde desde "❓ Consultas pendientes" en su dashboard
+4. Cliente recibe email con la respuesta y link a la publicación
+5. El hilo pregunta+respuesta queda visible públicamente en la publicación
+6. Proveedor ve el historial Q&A en "💬 Consultas respondidas" de su panel
+
+#### Bugs encontrados y resueltos durante la sesión
+
+**1. Tabla sin charset explícito → JOINs fallaban en Hostinger MySQL**
+La migración `add-consultas-espacio.js` no especificaba `DEFAULT CHARSET=utf8mb4`. Hostinger asignó un charset diferente a la tabla. Consecuencia: los JOINs entre `consultas_espacio` y `espacios`/`usuarios` con `COLLATE utf8mb4_bin` retornaban 0 filas o error 500.
+- Fix: Eliminar `COLLATE utf8mb4_bin` de todos los JOINs con `consultas_espacio`
+- Fix: Migración adicional `fix-consultas-charset.js` para convertir la tabla a utf8mb4
+- Fix: En `responder`, la query al autor se hace con `WHERE id = ?` separado (no JOIN) para evitar mix de collations
+
+**2. Email link sin prefijo de locale**
+El link "Ver publicación" en el email usaba `/espacio/:id` sin `/es/`. Con next-intl v4 esto falla. Fix: usar `/es/espacio/:id` explícito. Además se usa `e.id` del JOIN con `espacios` (no `c.espacio_id` de `consultas_espacio`) para garantizar el ID correcto.
+
+**3. Texto "Respuesta del oferente" en UI pública**
+Cambiado a "Respuesta del proveedor" en `ConsultasEspacio.tsx`.
+
+#### Migraciones corridas en VPS (por Guille)
+```bash
+cd /var/www/todasmiscosas/backend
+node src/db/add-consultas-espacio.js   # crea la tabla
+node src/db/fix-consultas-charset.js   # convierte charset a utf8mb4
+```
+
+#### Archivos modificados
+- `backend/src/controllers/consultasEspacioController.js` — controller completo con 5 funciones
+- `backend/src/routes/consultasEspacio.js` — 5 rutas registradas
+- `backend/src/db/add-consultas-espacio.js` — migración (ya existía, se corrió en prod)
+- `backend/src/db/fix-consultas-charset.js` — migración nueva para charset
+- `frontend/components/espacios/ConsultasEspacio.tsx` — componente público Q&A
+- `frontend/app/[locale]/panel/page.tsx` — secciones "Consultas pendientes" y "Consultas respondidas"
+- `backend/src/services/emailService.js` — `sendNuevaConsultaPublica` y `sendRespuestaConsultaPublica`
+
+**Commits:** `ac328bb`, `436fec5`, `fff7c9e`, `cae0f61`, `63a247d`, `f4eb85e`, `eefef10`, `5590c69`
+
+**Snapshot completo:** `docs/snapshot-consultas-publicas-07jun2026.md`

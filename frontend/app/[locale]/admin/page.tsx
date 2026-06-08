@@ -292,6 +292,283 @@ function TabNotificaciones({ token }: { token: string }) {
   );
 }
 
+// ── Tab: Movimientos Financieros ──────────────────────────────
+
+interface Movimiento {
+  id: string;
+  reserva_id: string;
+  tipo: 'pago' | 'liberacion' | 'comision' | 'cancelacion';
+  descripcion: string;
+  cuenta_debito: string;
+  cuenta_credito: string;
+  monto: number;
+  moneda: string;
+  creado_at: string;
+  espacio_nombre: string | null;
+  cliente_nombre: string | null;
+  cliente_email: string | null;
+  proveedor_nombre: string | null;
+  reserva_estado: string | null;
+  escrow_liberado: number | null;
+  escrow_liberado_at: string | null;
+  fecha_desde: string | null;
+  fecha_hasta: string | null;
+}
+
+interface ResumenMovimientos {
+  total_pagos: number;
+  total_liberaciones: number;
+  total_comisiones: number;
+  total_cancelaciones: number;
+  saldo_escrow: number;
+}
+
+function tipoMovColor(tipo: string): string {
+  const m: Record<string, string> = {
+    pago:        'var(--mint)',
+    liberacion:  'var(--blue)',
+    comision:    'var(--orange)',
+    cancelacion: 'var(--red)',
+  };
+  return m[tipo] ?? 'var(--text3)';
+}
+
+function tipoMovLabel(tipo: string): string {
+  const m: Record<string, string> = {
+    pago:        '💳 Pago recibido',
+    liberacion:  '✅ Liberación al proveedor',
+    comision:    '💰 Comisión TMC',
+    cancelacion: '↩️ Reintegro',
+  };
+  return m[tipo] ?? tipo;
+}
+
+function TabMovimientos({ token }: { token: string }) {
+  const [movimientos, setMovimientos] = useState<Movimiento[]>([]);
+  const [resumen, setResumen] = useState<ResumenMovimientos | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [filtro, setFiltro] = useState<'todos' | 'pago' | 'liberacion' | 'comision' | 'cancelacion'>('todos');
+
+  useEffect(() => {
+    setLoading(true);
+    fetch('/api/admin/movimientos', { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then(data => {
+        setMovimientos(data.movimientos ?? []);
+        setResumen(data.resumen ?? null);
+      })
+      .catch(e => setError(e.message))
+      .finally(() => setLoading(false));
+  }, [token]);
+
+  const filtered = filtro === 'todos' ? movimientos : movimientos.filter(m => m.tipo === filtro);
+
+  if (loading) return <p style={{ color: 'var(--text3)' }}>Cargando…</p>;
+  if (error) return <p className="alert alert--error">{error}</p>;
+
+  return (
+    <>
+      {/* Resumen */}
+      {resumen && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '.75rem', marginBottom: '1.5rem' }}>
+          {[
+            { label: 'Pagos recibidos',     value: resumen.total_pagos,        color: 'var(--mint)' },
+            { label: 'Liberado a proveedores', value: resumen.total_liberaciones, color: 'var(--blue)' },
+            { label: 'Comisiones TMC',      value: resumen.total_comisiones,    color: 'var(--orange)' },
+            { label: 'Reintegros',          value: resumen.total_cancelaciones, color: 'var(--red)' },
+            { label: 'Saldo en garantía',   value: resumen.saldo_escrow,        color: '#f59e0b' },
+          ].map(({ label, value, color }) => (
+            <div key={label} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '.9rem 1rem' }}>
+              <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginBottom: '.25rem' }}>{label}</div>
+              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.05rem', color }}>{formatARS(value)}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Filtros */}
+      <div style={{ display: 'flex', gap: '.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+        {(['todos', 'pago', 'liberacion', 'comision', 'cancelacion'] as const).map(f => (
+          <button key={f} onClick={() => setFiltro(f)} style={{
+            padding: '.3rem .85rem', borderRadius: '99px', cursor: 'pointer',
+            border: `1px solid ${filtro === f ? 'var(--orange)' : 'var(--border)'}`,
+            background: filtro === f ? 'rgba(232,98,42,.12)' : 'transparent',
+            color: filtro === f ? 'var(--orange)' : 'var(--text2)',
+            fontSize: '.78rem', fontWeight: 600, textTransform: 'capitalize',
+          }}>
+            {f === 'todos' ? 'Todos' : tipoMovLabel(f)}
+          </button>
+        ))}
+      </div>
+
+      {/* Lista */}
+      {!filtered.length ? (
+        <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text3)' }}>
+          <div style={{ fontSize: '2.5rem', marginBottom: '.5rem' }}>📊</div>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>Sin movimientos</div>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gap: '.65rem' }}>
+          {filtered.map(m => (
+            <div key={m.id} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '.85rem 1rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+              <div style={{ width: 6, borderRadius: 99, background: tipoMovColor(m.tipo), alignSelf: 'stretch', flexShrink: 0 }} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '.5rem', marginBottom: '.35rem' }}>
+                  <span style={{ fontSize: '.82rem', fontWeight: 700, color: tipoMovColor(m.tipo) }}>{tipoMovLabel(m.tipo)}</span>
+                  <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '.95rem', color: tipoMovColor(m.tipo), flexShrink: 0 }}>{formatARS(m.monto)}</span>
+                </div>
+                <div style={{ fontSize: '.78rem', color: 'var(--text2)', marginBottom: '.2rem' }}>
+                  {m.espacio_nombre && <span>📦 {m.espacio_nombre} · </span>}
+                  {m.cliente_nombre && <span>👤 {m.cliente_nombre}</span>}
+                </div>
+                {m.fecha_desde && (
+                  <div style={{ fontSize: '.74rem', color: 'var(--text3)' }}>
+                    📅 {m.fecha_desde?.slice(0, 10)} → {m.fecha_hasta?.slice(0, 10)}
+                    {m.reserva_estado && <span style={{ marginLeft: '.5rem', fontWeight: 600 }}>· {m.reserva_estado}</span>}
+                  </div>
+                )}
+                {m.tipo === 'pago' && !m.escrow_liberado && m.reserva_estado === 'pagada' && (
+                  <div style={{ fontSize: '.72rem', color: '#f59e0b', fontWeight: 600, marginTop: '.2rem' }}>
+                    🔒 En depósito de garantía — pendiente de confirmación de acceso
+                  </div>
+                )}
+                {m.escrow_liberado === 1 && m.escrow_liberado_at && (
+                  <div style={{ fontSize: '.72rem', color: 'var(--mint)', marginTop: '.2rem' }}>
+                    ✅ Garantía liberada el {new Date(m.escrow_liberado_at).toLocaleDateString('es-AR')}
+                  </div>
+                )}
+                <div style={{ fontSize: '.7rem', color: 'var(--text3)', marginTop: '.15rem' }}>
+                  {new Date(m.creado_at).toLocaleString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
+// ── Tab: Calendario Admin ──────────────────────────────────────
+
+function CalendarioGrid({ reservas }: { reservas: any[] }) {
+  const [mesBase, setMesBase] = useState(() => {
+    const hoy = new Date();
+    return new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+  });
+
+  const year = mesBase.getFullYear();
+  const month = mesBase.getMonth();
+  const primerDia = new Date(year, month, 1).getDay(); // 0=dom
+  const diasMes = new Date(year, month + 1, 0).getDate();
+  const offset = (primerDia + 6) % 7; // lunes primero
+
+  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const diasSem = ['Lu','Ma','Mi','Ju','Vi','Sa','Do'];
+
+  const estadoColor: Record<string, string> = {
+    pagada: 'var(--mint)', confirmada: 'var(--orange)', pendiente: '#94a3b8',
+    finalizada: 'var(--blue)', cancelada: 'var(--red)',
+  };
+
+  function reservasDelDia(dia: number) {
+    const fecha = `${year}-${String(month+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
+    return reservas.filter(r => {
+      const desde = r.fecha_desde?.slice(0,10);
+      const hasta = r.fecha_hasta?.slice(0,10);
+      return desde && hasta && fecha >= desde && fecha <= hasta;
+    });
+  }
+
+  const [selDia, setSelDia] = useState<number | null>(null);
+  const selReservas = selDia ? reservasDelDia(selDia) : [];
+
+  return (
+    <div>
+      {/* Nav */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+        <button className="btn-ghost" onClick={() => setMesBase(new Date(year, month-1, 1))}>‹</button>
+        <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '1rem', flex: 1, textAlign: 'center' }}>
+          {meses[month]} {year}
+        </span>
+        <button className="btn-ghost" onClick={() => setMesBase(new Date(year, month+1, 1))}>›</button>
+      </div>
+
+      {/* Grid header */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2, marginBottom: 2 }}>
+        {diasSem.map(d => (
+          <div key={d} style={{ textAlign: 'center', fontSize: '.7rem', fontWeight: 700, color: 'var(--text3)', padding: '.3rem 0' }}>{d}</div>
+        ))}
+      </div>
+
+      {/* Grid days */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
+        {Array.from({ length: offset }).map((_, i) => <div key={`e${i}`} />)}
+        {Array.from({ length: diasMes }, (_, i) => i + 1).map(dia => {
+          const rDia = reservasDelDia(dia);
+          const hoy = new Date();
+          const esHoy = dia === hoy.getDate() && month === hoy.getMonth() && year === hoy.getFullYear();
+          return (
+            <div key={dia} onClick={() => setSelDia(selDia === dia ? null : dia)}
+              style={{ background: selDia === dia ? 'rgba(232,98,42,.12)' : esHoy ? 'rgba(232,98,42,.06)' : 'var(--surface)', border: `1px solid ${esHoy ? 'var(--orange)' : 'var(--border)'}`, borderRadius: 'var(--r1)', padding: '.35rem .2rem', minHeight: 48, cursor: rDia.length > 0 ? 'pointer' : 'default', position: 'relative' }}>
+              <div style={{ textAlign: 'center', fontSize: '.78rem', fontWeight: esHoy ? 800 : 400, color: esHoy ? 'var(--orange)' : 'var(--text)' }}>{dia}</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'center', marginTop: 2 }}>
+                {rDia.slice(0, 3).map((r, i) => (
+                  <div key={i} style={{ width: 7, height: 7, borderRadius: '50%', background: estadoColor[r.estado] ?? 'var(--text3)' }} title={r.espacio_nombre ?? ''} />
+                ))}
+                {rDia.length > 3 && <div style={{ fontSize: '.55rem', color: 'var(--text3)' }}>+{rDia.length - 3}</div>}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Detalle día seleccionado */}
+      {selDia && (
+        <div style={{ marginTop: '1rem', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '1rem' }}>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, marginBottom: '.75rem' }}>
+            Reservas activas el {selDia} de {meses[month]}
+          </div>
+          {selReservas.length === 0 ? (
+            <p style={{ color: 'var(--text3)', fontSize: '.85rem' }}>Sin reservas este día.</p>
+          ) : (
+            <div style={{ display: 'grid', gap: '.5rem' }}>
+              {selReservas.map((r, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '.5rem .75rem', background: 'var(--surface2)', borderRadius: 'var(--r1)', borderLeft: `3px solid ${estadoColor[r.estado] ?? 'var(--text3)'}` }}>
+                  <div>
+                    <div style={{ fontSize: '.85rem', fontWeight: 700 }}>{r.espacio_nombre ?? r.nombre ?? 'Espacio'}</div>
+                    <div style={{ fontSize: '.74rem', color: 'var(--text3)' }}>
+                      {r.demandante_nombre ?? r.usuario_nombre ?? ''} · {r.fecha_desde?.slice(0,10)} → {r.fecha_hasta?.slice(0,10)}
+                    </div>
+                  </div>
+                  <span style={{ fontSize: '.72rem', fontWeight: 700, color: estadoColor[r.estado], background: `${estadoColor[r.estado]}22`, borderRadius: 99, padding: '.15rem .5rem' }}>{r.estado}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TabCalendarioAdmin({ token }: { token: string }) {
+  const [reservas, setReservas] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/admin/operaciones', { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then(data => setReservas(data.reservas ?? []))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [token]);
+
+  if (loading) return <p style={{ color: 'var(--text3)' }}>Cargando…</p>;
+  return <CalendarioGrid reservas={reservas} />;
+}
+
 // ── Tab: Servicios Adicionales ────────────────────────────────
 
 function TabServiciosAdicionales({ token }: { token: string }) {
@@ -2030,6 +2307,8 @@ export default function AdminPage() {
     { key: 'usuarios',             label: '👤 Usuarios' },
     { key: 'conversaciones',       label: '💬 Conversaciones' },
     { key: 'publicaciones',        label: '🏠 Publicaciones' },
+    { key: 'calendario',           label: '📅 Calendario' },
+    { key: 'movimientos',          label: '💵 Movimientos' },
     { key: 'emails',               label: '✉️ Emails' },
   ];
 
@@ -2054,6 +2333,8 @@ export default function AdminPage() {
           {tab === 'usuarios'            && token && <TabUsuarios token={token} />}
           {tab === 'conversaciones'      && token && <TabConversaciones token={token} />}
           {tab === 'publicaciones'       && token && <TabPublicaciones token={token} />}
+          {tab === 'calendario'          && token && <TabCalendarioAdmin token={token} />}
+          {tab === 'movimientos'         && token && <TabMovimientos token={token} />}
           {tab === 'emails'              && token && <TabEmailConfig token={token} />}
         </div>
       </div>

@@ -90,7 +90,7 @@ async function uploadFile(buffer, bucket, originalName) {
 }
 
 function _mimeFromExt(ext) {
-  const map = { '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp', '.gif': 'image/gif' };
+  const map = { '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp' };
   return map[ext] || 'image/jpeg';
 }
 

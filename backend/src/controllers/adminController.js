@@ -598,6 +598,43 @@ async function sincronizarPendientes(req, res, next) {
   }
 }
 
+// ── GET /api/admin/movimientos ─────────────────────────────────
+async function getMovimientos(req, res, next) {
+  try {
+    const movimientos = await query(`
+      SELECT ml.*,
+             r.precio_total, r.fecha_desde, r.fecha_hasta,
+             r.estado AS reserva_estado,
+             r.escrow_liberado, r.escrow_liberado_at,
+             e.nombre AS espacio_nombre,
+             ud.nombre AS cliente_nombre, ud.email AS cliente_email,
+             uo.nombre AS proveedor_nombre, uo.email AS proveedor_email
+      FROM movimientos_ledger ml
+      LEFT JOIN reservas r  ON ml.reserva_id = r.id
+      LEFT JOIN espacios e  ON r.espacio_id  = e.id
+      LEFT JOIN usuarios ud ON r.usuario_id  = ud.id
+      LEFT JOIN usuarios uo ON e.oferente_id = uo.id
+      ORDER BY ml.creado_at DESC
+      LIMIT 500
+    `);
+
+    const resumen = await query(`
+      SELECT
+        COALESCE(SUM(CASE WHEN tipo = 'pago'         THEN monto ELSE 0 END), 0) AS total_pagos,
+        COALESCE(SUM(CASE WHEN tipo = 'liberacion'   THEN monto ELSE 0 END), 0) AS total_liberaciones,
+        COALESCE(SUM(CASE WHEN tipo = 'comision'     THEN monto ELSE 0 END), 0) AS total_comisiones,
+        COALESCE(SUM(CASE WHEN tipo = 'cancelacion'  THEN monto ELSE 0 END), 0) AS total_cancelaciones,
+        (SELECT COALESCE(SUM(monto),0) FROM movimientos_ledger WHERE cuenta_credito = 'tmc.escrow')
+          - (SELECT COALESCE(SUM(monto),0) FROM movimientos_ledger WHERE cuenta_debito = 'tmc.escrow') AS saldo_escrow
+      FROM movimientos_ledger
+    `);
+
+    res.json({ movimientos, resumen: resumen[0] });
+  } catch (err) {
+    next(err);
+  }
+}
+
 // ── GET /api/admin/email-config ────────────────────────────────
 async function getEmailConfig(req, res, next) {
   try {
@@ -650,4 +687,5 @@ module.exports = {
   getEmailConfig,
   updateEmailConfig,
   sincronizarPendientes,
+  getMovimientos,
 };

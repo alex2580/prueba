@@ -51,7 +51,14 @@ async function listarConversaciones(req, res, next) {
        JOIN espacios e   ON c.espacio_id    = e.id
        JOIN usuarios ud  ON c.demandante_id = ud.id
        JOIN usuarios uo  ON c.oferente_id   = uo.id
-       WHERE c.demandante_id = ? OR c.oferente_id = ?
+       WHERE c.demandante_id = ?
+          OR (c.oferente_id = ? AND EXISTS (
+               SELECT 1 FROM reservas r
+               WHERE r.espacio_id = c.espacio_id
+                 AND r.usuario_id = c.demandante_id
+                 AND r.estado IN ('confirmada', 'pagada')
+                 AND r.escrow_liberado = 0
+             ))
        ORDER BY c.ultimo_msg_at DESC, c.created_at DESC`,
       [userId, userId, userId]
     );
@@ -109,15 +116,16 @@ async function iniciarConversacion(req, res, next) {
       return res.status(400).json({ error: 'No puedes iniciar conversación con tu propio espacio' });
     }
 
-    // Solo permitir chat si existe reserva pagada/activa/finalizada
+    // Chat disponible desde estado confirmada hasta que el cliente confirme acceso
     const reserva = await queryOne(
       `SELECT id FROM reservas
-       WHERE espacio_id = ? AND usuario_id = ? AND estado IN ('pagada', 'activa', 'finalizada')
+       WHERE espacio_id = ? AND usuario_id = ? AND estado IN ('confirmada', 'pagada', 'activa')
+         AND (estado != 'pagada' OR escrow_liberado = 0)
        LIMIT 1`,
       [espacio_id, demandante_id]
     );
     if (!reserva) {
-      return res.status(403).json({ error: 'El chat está disponible solo después de completar un pago' });
+      return res.status(403).json({ error: 'El chat está disponible desde que el proveedor confirma la reserva hasta que confirmás el acceso al espacio' });
     }
 
     const conv = await transaction(async (conn) => {

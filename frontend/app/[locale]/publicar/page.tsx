@@ -729,9 +729,9 @@ export default function PublicarPage() {
                   Subí fotos claras del espacio. Hacé click en una foto para marcarla como principal.
                 </p>
                 {/* Inputs ocultos */}
-                <input ref={galeriaRef} type="file" accept="image/*" multiple onChange={handleFotoChange}
+                <input ref={galeriaRef} type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={handleFotoChange}
                   style={{ display: 'none' }} />
-                <input ref={cameraRef} type="file" accept="image/*" capture="environment" onChange={handleCameraCapture}
+                <input ref={cameraRef} type="file" accept="image/jpeg,image/png,image/webp" capture="environment" onChange={handleCameraCapture}
                   style={{ display: 'none' }} />
 
                 {/* Botones de carga */}

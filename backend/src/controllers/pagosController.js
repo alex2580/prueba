@@ -123,6 +123,7 @@ async function _procesarPagada(reserva, paymentId) {
         'servicios_adicionales',
         `🛎️ Servicios adicionales — ${espacio.nombre} (${usuario.nombre || usuario.email})`,
         JSON.stringify({
+          reservaId: reserva.id,
           nombreDemandante: usuario.nombre, emailDemandante: usuario.email,
           telDemandante: usuario.tel, espacioNombre: espacio.nombre,
           servicios: tiposServicios, fechaDesde: fDesde, fechaHasta: fHasta,

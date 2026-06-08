@@ -43,6 +43,7 @@ router.patch('/publicaciones/:id/disponible',              ctrl.toggleDisponible
 
 // Operaciones / Finanzas
 router.get('/operaciones',                                 ctrl.getOperaciones);
+router.get('/movimientos',                                 ctrl.getMovimientos);
 
 // Configuración de emails
 router.get('/email-config',                                ctrl.getEmailConfig);
