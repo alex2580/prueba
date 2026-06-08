@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TodasMisCosas — Roadmap v2.0</title>
+<style>
+  :root {
+    --orange:   #e8622a;
+    --orange2:  #f07a44;
+    --navy:     #1a1a2e;
+    --navy2:    #16213e;
+    --navy3:    #0f3460;
+    --teal:     #00b4d8;
+    --green:    #06d6a0;
+    --purple:   #7b5ea7;
+    --yellow:   #ffd166;
+    --red:      #ef476f;
+    --gray:     #f4f4f8;
+    --text1:    #1a1a2e;
+    --text2:    #555;
+    --text3:    #888;
+    --border:   #e0e0ea;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 10.5pt;
+    color: var(--text1);
+    background: #fff;
+    line-height: 1.5;
+  }
+
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 56px 80px;
+  }
+
+  /* ── PORTADA ─────────────────────────────────────── */
+  .cover {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy3) 100%);
+    border-radius: 16px;
+    padding: 52px 56px 44px;
+    margin-bottom: 52px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(232,98,42,.15);
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    right: 60px; bottom: -80px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(0,180,216,.1);
+  }
+  .cover-logo {
+    font-size: 32pt;
+    font-weight: 900;
+    color: var(--orange);
+    letter-spacing: -1px;
+    margin-bottom: 4px;
+  }
+  .cover-title {
+    font-size: 22pt;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .cover-sub {
+    font-size: 11.5pt;
+    color: rgba(255,255,255,.65);
+    margin-bottom: 28px;
+  }
+  .cover-pills {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .cover-pill {
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 99px;
+    padding: 5px 16px;
+    font-size: 9.5pt;
+    color: rgba(255,255,255,.85);
+    font-weight: 600;
+  }
+  .cover-pill.orange { background: rgba(232,98,42,.3); border-color: var(--orange); color: var(--orange2); }
+
+  /* ── RESUMEN EJECUTIVO ───────────────────────────── */
+  .exec-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 52px;
+  }
+  .kpi-box {
+    border-radius: 12px;
+    padding: 20px 18px;
+    text-align: center;
+    border: 2px solid var(--border);
+  }
+  .kpi-box .kpi-num {
+    font-size: 26pt;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .kpi-box .kpi-label {
+    font-size: 8.5pt;
+    color: var(--text2);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .kpi-box.orange { border-color: var(--orange); background: rgba(232,98,42,.05); }
+  .kpi-box.orange .kpi-num { color: var(--orange); }
+  .kpi-box.teal { border-color: var(--teal); background: rgba(0,180,216,.05); }
+  .kpi-box.teal .kpi-num { color: var(--teal); }
+  .kpi-box.green { border-color: var(--green); background: rgba(6,214,160,.05); }
+  .kpi-box.green .kpi-num { color: #04a87f; }
+  .kpi-box.purple { border-color: var(--purple); background: rgba(123,94,167,.05); }
+  .kpi-box.purple .kpi-num { color: var(--purple); }
+
+  /* ── SECCIONES ───────────────────────────────────── */
+  .section-title {
+    font-size: 16pt;
+    font-weight: 800;
+    color: var(--navy);
+    border-left: 5px solid var(--orange);
+    padding-left: 14px;
+    margin-bottom: 24px;
+    margin-top: 52px;
+  }
+  .section-title:first-of-type { margin-top: 0; }
+
+  /* ── TIMELINE HORIZONTAL ─────────────────────────── */
+  .timeline-wrap {
+    position: relative;
+    margin-bottom: 52px;
+  }
+  .timeline-line {
+    position: absolute;
+    top: 28px;
+    left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--orange), var(--teal), var(--green), var(--purple));
+    border-radius: 2px;
+    z-index: 0;
+  }
+  .timeline-quarters {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    position: relative;
+    z-index: 1;
+  }
+  .tq {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .tq-dot {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20pt;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 12px;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 16px rgba(0,0,0,.15);
+    flex-shrink: 0;
+  }
+  .tq-label {
+    font-size: 10pt;
+    font-weight: 700;
+    color: var(--text1);
+    margin-bottom: 3px;
+    text-align: center;
+  }
+  .tq-period {
+    font-size: 8.5pt;
+    color: var(--text3);
+    text-align: center;
+  }
+  .tq-tags {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    width: 100%;
+    padding: 0 8px;
+  }
+  .tq-tag {
+    border-radius: 99px;
+    padding: 3px 10px;
+    font-size: 8pt;
+    font-weight: 600;
+    text-align: center;
+    width: 100%;
+    max-width: 160px;
+  }
+
+  /* ── PILLAR CARDS ────────────────────────────────── */
+  .pillars {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+  .pillar {
+    border-radius: 14px;
+    border: 2px solid var(--border);
+    overflow: hidden;
+  }
+  .pillar-header {
+    padding: 18px 22px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .pillar-icon {
+    font-size: 28pt;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .pillar-title {
+    font-size: 13pt;
+    font-weight: 800;
+    margin-bottom: 3px;
+  }
+  .pillar-tagline {
+    font-size: 8.5pt;
+    opacity: .75;
+    font-weight: 500;
+  }
+  .pillar-body {
+    padding: 0 22px 20px;
+  }
+  .step {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+  }
+  .step-num {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9pt;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .step-content {}
+  .step-name {
+    font-size: 10.5pt;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+  .step-desc {
+    font-size: 9pt;
+    color: var(--text2);
+    line-height: 1.45;
+  }
+  .step-meta {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    border-radius: 99px;
+    padding: 2px 9px;
+    font-size: 7.5pt;
+    font-weight: 700;
+  }
+  .badge-q { background: #fff3e0; color: #e65100; }
+  .badge-crit { background: #fce4ec; color: #c62828; }
+  .badge-high { background: #e8f5e9; color: #2e7d32; }
+  .badge-med  { background: #e3f2fd; color: #1565c0; }
+  .badge-dep  { background: #f3e5f5; color: #6a1b9a; }
+
+  /* Colors per pillar */
+  .p1 .pillar-header { background: linear-gradient(135deg, rgba(239,71,111,.12), rgba(239,71,111,.04)); border-bottom: 1px solid rgba(239,71,111,.2); color: #c62828; }
+  .p1 .pillar-title  { color: #c62828; }
+  .p1 .step-num      { background: var(--red); }
+  .p1 { border-color: rgba(239,71,111,.35); }
+
+  .p2 .pillar-header { background: linear-gradient(135deg, rgba(232,98,42,.12), rgba(232,98,42,.04)); border-bottom: 1px solid rgba(232,98,42,.2); }
+  .p2 .pillar-title  { color: var(--orange); }
+  .p2 .step-num      { background: var(--orange); }
+  .p2 { border-color: rgba(232,98,42,.35); }
+
+  .p3 .pillar-header { background: linear-gradient(135deg, rgba(6,214,160,.12), rgba(6,214,160,.04)); border-bottom: 1px solid rgba(6,214,160,.2); }
+  .p3 .pillar-title  { color: #04a87f; }
+  .p3 .step-num      { background: var(--green); }
+  .p3 { border-color: rgba(6,214,160,.35); }
+
+  .p4 .pillar-header { background: linear-gradient(135deg, rgba(123,94,167,.12), rgba(123,94,167,.04)); border-bottom: 1px solid rgba(123,94,167,.2); }
+  .p4 .pillar-title  { color: var(--purple); }
+  .p4 .step-num      { background: var(--purple); }
+  .p4 { border-color: rgba(123,94,167,.35); }
+
+  /* ── DEPENDENCIAS ────────────────────────────────── */
+  .deps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 52px;
+  }
+  .dep-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    background: var(--gray);
+  }
+  .dep-title {
+    font-size: 9.5pt;
+    font-weight: 700;
+    color: var(--text1);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .dep-list {
+    list-style: none;
+    padding: 0;
+  }
+  .dep-list li {
+    font-size: 8.5pt;
+    color: var(--text2);
+    padding: 3px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .dep-list li::before {
+    content: '→';
+    color: var(--orange);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* ── MÉTRICAS DE ÉXITO ───────────────────────────── */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 52px;
+  }
+  .metric-card {
+    border-radius: 10px;
+    padding: 16px 14px;
+    text-align: center;
+    border: 1.5px solid var(--border);
+  }
+  .metric-card .m-val {
+    font-size: 20pt;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+  .metric-card .m-label {
+    font-size: 8pt;
+    color: var(--text2);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    margin-bottom: 4px;
+  }
+  .metric-card .m-when {
+    font-size: 7.5pt;
+    color: var(--text3);
+  }
+
+  /* ── RIESGOS ─────────────────────────────────────── */
+  .risks {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 52px;
+  }
+  .risk-card {
+    border-radius: 10px;
+    padding: 14px 16px;
+    border: 1.5px solid;
+  }
+  .risk-card.high { border-color: #ef476f; background: rgba(239,71,111,.05); }
+  .risk-card.med  { border-color: #ffd166; background: rgba(255,209,102,.07); }
+  .risk-card .risk-title {
+    font-size: 9.5pt;
+    font-weight: 700;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .risk-card .risk-desc {
+    font-size: 8.5pt;
+    color: var(--text2);
+    margin-bottom: 6px;
+  }
+  .risk-card .risk-mit {
+    font-size: 8pt;
+    color: var(--text3);
+    font-style: italic;
+  }
+
+  /* ── FOOTER ──────────────────────────────────────── */
+  .footer {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 2px solid var(--border);
+    text-align: center;
+    font-size: 8.5pt;
+    color: var(--text3);
+  }
+
+  /* ── PRINT ───────────────────────────────────────── */
+  @media print {
+    .page { padding: 30px 36px; }
+    .pillars { grid-template-columns: 1fr 1fr; }
+    .pillar { break-inside: avoid; }
+    h2 { page-break-before: always; }
+    h2:first-of-type { page-break-before: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ══════ PORTADA ══════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-logo">TodasMisCosas</div>
+  <div class="cover-title">Roadmap v2.0 — Plan de Escala</div>
+  <div class="cover-sub">De MVP validado a plataforma de almacenamiento urbano líder en Argentina · Julio 2026 → Junio 2027</div>
+  <div class="cover-pills">
+    <div class="cover-pill orange">v1.9.2 en producción ✅</div>
+    <div class="cover-pill">4 Pilares estratégicos</div>
+    <div class="cover-pill">4 Trimestres de ejecución</div>
+    <div class="cover-pill">16 funcionalidades clave</div>
+    <div class="cover-pill">Expansión CABA → AMBA → Interior</div>
+  </div>
+</div>
+
+<!-- ══════ KPIs OBJETIVO ═══════════════════════════════════ -->
+<div class="exec-summary">
+  <div class="kpi-box orange">
+    <div class="kpi-num">5×</div>
+    <div class="kpi-label">Crecimiento de reservas para Q2 2027</div>
+  </div>
+  <div class="kpi-box teal">
+    <div class="kpi-num">3</div>
+    <div class="kpi-label">Ciudades nuevas (AMBA + 1 interior)</div>
+  </div>
+  <div class="kpi-box green">
+    <div class="kpi-num">App</div>
+    <div class="kpi-label">Nativa iOS + Android en Q4 2026</div>
+  </div>
+  <div class="kpi-box purple">
+    <div class="kpi-num">0 riesgo</div>
+    <div class="kpi-label">Manual en disputas y escrow</div>
+  </div>
+</div>
+
+<!-- ══════ TIMELINE ══════════════════════════════════════════ -->
+<div class="section-title">Timeline de Ejecución</div>
+
+<div class="timeline-wrap">
+  <div class="timeline-line"></div>
+  <div class="timeline-quarters">
+
+    <div class="tq">
+      <div class="tq-dot" style="background:var(--red);">Q3</div>
+      <div class="tq-label">Confianza</div>
+      <div class="tq-period">Julio · Agosto · Septiembre 2026</div>
+      <div class="tq-tags">
+        <div class="tq-tag" style="background:#fce4ec;color:#c62828;">🪪 KYC / DNI</div>
+        <div class="tq-tag" style="background:#fce4ec;color:#c62828;">🛡️ Seguro integrado</div>
+        <div class="tq-tag" style="background:#fce4ec;color:#c62828;">⭐ Reviews bidireccionales</div>
+        <div class="tq-tag" style="background:#fce4ec;color:#c62828;">🔔 Push notifications</div>
+        <div class="tq-tag" style="background:#fce4ec;color:#c62828;">⚖️ Sistema de disputas</div>
+      </div>
+    </div>
+
+    <div class="tq">
+      <div class="tq-dot" style="background:var(--orange);">Q4</div>
+      <div class="tq-label">Operaciones</div>
+      <div class="tq-period">Octubre · Noviembre · Diciembre 2026</div>
+      <div class="tq-tags">
+        <div class="tq-tag" style="background:#fff3e0;color:#e65100;">📱 App React Native MVP</div>
+        <div class="tq-tag" style="background:#fff3e0;color:#e65100;">🔑 QR / PIN digital</div>
+        <div class="tq-tag" style="background:#fff3e0;color:#e65100;">📊 Analytics proveedor</div>
+        <div class="tq-tag" style="background:#fff3e0;color:#e65100;">💬 Chat con archivos</div>
+        <div class="tq-tag" style="background:#fff3e0;color:#e65100;">💲 Precios dinámicos</div>
+      </div>
+    </div>
+
+    <div class="tq">
+      <div class="tq-dot" style="background:var(--green);">Q1</div>
+      <div class="tq-label">Crecimiento</div>
+      <div class="tq-period">Enero · Febrero · Marzo 2027</div>
+      <div class="tq-tags">
+        <div class="tq-tag" style="background:#e8f5e9;color:#2e7d32;">🗺️ Expansión AMBA</div>
+        <div class="tq-tag" style="background:#e8f5e9;color:#2e7d32;">🎁 Sistema de referidos</div>
+        <div class="tq-tag" style="background:#e8f5e9;color:#2e7d32;">💎 Suscripción Pro</div>
+        <div class="tq-tag" style="background:#e8f5e9;color:#2e7d32;">🔍 SEO por barrio</div>
+        <div class="tq-tag" style="background:#e8f5e9;color:#2e7d32;">🏢 Canal B2B</div>
+      </div>
+    </div>
+
+    <div class="tq">
+      <div class="tq-dot" style="background:var(--purple);">Q2</div>
+      <div class="tq-label">Plataforma</div>
+      <div class="tq-period">Abril · Mayo · Junio 2027</div>
+      <div class="tq-tags">
+        <div class="tq-tag" style="background:#f3e5f5;color:#6a1b9a;">💵 Multi-moneda USD/ARS</div>
+        <div class="tq-tag" style="background:#f3e5f5;color:#6a1b9a;">🔌 API pública v1</div>
+        <div class="tq-tag" style="background:#f3e5f5;color:#6a1b9a;">🗄️ Migración DB</div>
+        <div class="tq-tag" style="background:#f3e5f5;color:#6a1b9a;">📡 Observabilidad</div>
+        <div class="tq-tag" style="background:#f3e5f5;color:#6a1b9a;">🧪 Tests E2E</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════ PILARES ═══════════════════════════════════════════ -->
+<div class="section-title">Los 4 Pilares — Paso a Paso</div>
+
+<div class="pillars">
+
+  <!-- PILAR 1 — CONFIANZA -->
+  <div class="pillar p1">
+    <div class="pillar-header">
+      <div class="pillar-icon">🛡️</div>
+      <div>
+        <div class="pillar-title">Pilar 1 — Confianza</div>
+        <div class="pillar-tagline">Sin confianza no hay transacciones. La confianza es el producto.</div>
+      </div>
+    </div>
+    <div class="pillar-body" style="padding-top:18px;">
+
+      <div class="step">
+        <div class="step-num" style="background:var(--red);">1</div>
+        <div class="step-content">
+          <div class="step-name">KYC / Verificación de identidad</div>
+          <div class="step-desc">Foto DNI frente + dorso + selfie en tiempo real. Integración con Nubarium o Renaper API. Badge "✓ Verificado" en el perfil. Obligatorio para proveedores con espacios > $50.000/mes y para liberar más de $200.000 en escrow.</div>
+          <div class="step-meta">
+            <span class="badge badge-q">Q3 Jul–Ago</span>
+            <span class="badge badge-crit">🔴 Crítico</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num" style="background:var(--red);">2</div>
+        <div class="step-content">
+          <div class="step-name">Seguro de contenido integrado</div>
+          <div class="step-desc">Seguro básico incluido automáticamente en cada reserva. Cobertura hasta $500.000 en bienes almacenados. Prima prorrateada por día, descontada del escrow antes de liberar al proveedor. Partnership con Sancor, La Caja o Federación Patronal.</div>
+          <div class="step-meta">
+            <span class="badge badge-q">Q3 Ago–Sep</span>
+            <span class="badge badge-crit">🔴 Crítico</span>
+            <span class="badge badge-dep">Dep: KYC</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num" style="background:var(--red);">3</div>
+        <div class="step-content">
+          <div class="step-name">Reviews bidireccionales</div>
+          <div class="step-desc">El proveedor puede calificar al cliente (cuidado, puntualidad, comunicación). Perfil público del cliente visible al proveedor antes de confirmar. Historial de reviews visible en ambos perfiles. Rating mínimo 3.5 para acceder a espacios premium.</div>
+          <div class="step-meta">
+            <span class="badge badge-q">Q3 Ago</span>
+            <span class="badge badge-high">🟢 Alto</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num" style="background:var(--red);">4</div>
+        <div class="step-content">
+          <div class="step-name">Sistema formal de disputas</div>
+          <div class="step-desc">Formulario de reclamo con fotos de evidencia. Admin media la disputa con SLA de 48h. El escrow puede retenerse hasta 7 días adicionales durante la mediación. Timeline de la disputa visible para ambas partes en su panel. Resolución documentada.</div>
+          <div class="step-meta">
+            <span class="badge badge-q">Q3 Sep</span>
+            <span class="badge badge-high">🟢 Alto</span>
+            <span class="badge badge-dep">Dep: Seguro</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num" style="background:var(--red);">5</div>
+        <div class="step-content">
+          <div class="step-name">Notificaciones push</div>
+          <div class="step-desc">Firebase Cloud Messaging. Alertas: nuevo mensaje de chat, pago confirmado, reserva próxima a vencer, escrow liberado, nueva consulta. Configurables por tipo. Funciona en web (PWA) y app nativa (Q4). Sin push, la retención depende solo de emails.</div>
+          <div class="step-meta">
+            <span class="badge badge-q">Q3 Sep</span>
+            <span class="badge badge-high">🟢 Alto</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PILAR 2 — OPERACIONES -->
+  <div class="pillar p2">
+    <div class="pillar-header">
+      <div class="pillar-icon">⚙️</div>
+      <div>
+        <div class="pillar-title">Pilar 2 — Operaciones</div>
+        <div class="pillar-tagline">La experiencia del día a día tiene que ser tan buena como la primera vez.</div>
+      </div>
+    </div>
+    <div class="pillar-body" style="padding-top:18px;">
+
+      <div class="step">
+        <div class="step-num" style="background:var(--orange);">1</div>
+        <div class="step-content">
+          <div class="step-name">App React Native — MVP</div>
+          <div class="step-desc">Expo Router compartiendo lógica con Next.js. Funcionalidades: buscar, reservar, chatear, gestionar reservas y espacios, notificaciones push. Publicación en App Store + Google Play. Diseño basado en los componentes web actuales.</div>
+          <div class="step-meta">
+            <span class="badge badge-q">Q4 Oct–Nov</span>
+            <span class="badge badge-crit">🔴 Crítico</span>
+            <span class="badge badge-dep">Dep: Push (Q3)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num" style="background:var(--orange);">2</div>
+        <div class="step-content">
+          <div class="step-name">Acceso físico por QR dinámico</div>
+          <div class="step-desc">QR code generado por reserva, válido solo durante el período contratado. Se invalida automáticamente al liberar el escrow. Compatible con cerraduras inteligentes Tuya Smart. El PIN de texto actual sigue funcionando como fallback. QR escaneable desde la app.</div>
+          <div class="step-meta">
+            <span class="badge badge-q">Q4 Oct</span>
+            <span class="badge badge-crit">🔴 Crítico</span>
+            <span class="badge badge-dep">Dep: App MVP</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num" style="background:var(--orange);">3</div>
+        <div class="step-content">
+          <div class="step-name">Panel analytics para proveedores</div>
+          <div class="step-desc">Gráfico de ingresos mensuales, ocupación por día de la semana, perfil del cliente típico (zona, frecuencia de reserva), comparativa con proveedores similares del mismo barrio. Exportar a CSV/PDF. Sugerencia de precio óptimo basada en demanda.</div>
+          <div class="step-meta">
+            <span class="badge badge-q">Q4 Nov</span>
+            <span class="badge badge-high">🟢 Alto</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num" style="background:var(--orange);">4</div>
+        <div class="step-content">
+          <div class="step-name">Chat con adjuntos (fotos y PDFs)</div>
+          <div class="step-desc">El chat actual es solo texto. v2.0: fotos, PDFs (inventarios, contratos de uso, fotos del espacio). Preview inline de imágenes. Límite 10MB por archivo. Almacenamiento en Supabase Storage bucket <code>chat-attachments</code>. Historial persistente.</div>
+          <div class="step-meta">
+            <span class="badge badge-q">Q4 Nov</span>
+            <span class="badge badge-med">🔵 Medio</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num" style="background:var(--orange);">5</div>
+        <div class="step-content">
+          <div class="step-name">Precios dinámicos por temporada</div>
+          <div class="step-desc">Proveedor define precio diferenciado por período (ej. diciembre+enero +20%, verano -10%). El sistema sugiere precio óptimo basado en demanda histórica del barrio y ocupación del espacio. Los precios dinámicos aplican automáticamente al calcular el total de la reserva.</div>
+          <div class="step-meta">
+            <span class="badge badge-q">Q4 Dic</span>
+            <span class="badge badge-med">🔵 Medio</span>
+            <span class="badge badge-dep">Dep: Analytics</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PILAR 3 — CRECIMIENTO -->
+  <div class="pillar p3">
+    <div class="pillar-header">
+      <div class="pillar-icon">🚀</div>
+      <div>
+        <div class="pillar-title">Pilar 3 — Crecimiento</div>
+        <div class="pillar-tagline">El mercado de CABA tiene techo. La escala viene del AMBA y el interior.</div>
+      </div>
+    </div>
+    <div class="pillar-body" style="padding-top:18px;">
+
+      <div class="step">
+        <div class="step-num" style="background:var(--green);">1</div>
+        <div class="step-content">
+          <div class="step-name">Expansión AMBA — Fase 1</div>
+          <div class="step-desc">GBA Norte (Tigre, San Isidro, Vicente López), GBA Sur (Lanús, Lomas, Quilmes), GBA Oeste (Morón, Tres de Febrero). Campaña de adquisición de proveedores por zona. Geocoding adaptado. Meta: 50 espacios activos por zona en 90 días.</div>
+          <div class="step-meta">
+            <span class="badge badge-q">Q1 Ene–Feb</span>
+            <span class="badge badge-crit">🔴 Crítico</span>
+            <span class="badge badge-dep">Dep: App (Q4)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num" style="background:var(--green);">2</div>
+        <div class="step-content">
+          <div class="step-name">Sistema de referidos</div>
+          <div class="step-desc">Código único por usuario. El referente obtiene crédito TMC al primer pago del referido (ej. $2.000 de descuento en próxima reserva). Crédito visible en el panel. Tracking en tabla <code>referidos</code> + métricas en admin. Viral loop: cliente refiere → cliente → proveedor.</div>
+          <div class="step-meta">
+            <span class="badge badge-q">Q1 Ene</span>
+            <span class="badge badge-high">🟢 Alto</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num" style="background:var(--green);">3</div>
+        <div class="step-content">
+          <div class="step-name">Suscripción proveedor Premium</div>
+          <div class="step-desc">Plan gratuito: 1 espacio, fotos básicas, sin analytics. Plan Pro ($X/mes): hasta 5 espacios, badge "Proveedor Pro", analytics avanzados, soporte prioritario, comisión reducida 10% (vs 15% general). Cobro mensual vía MP Suscripciones. Ingresos recurrentes para TMC.</div>
+          <div class="step-meta">
+            <span class="badge badge-q">Q1 Feb</span>
+            <span class="badge badge-high">🟢 Alto</span>
+            <span class="badge badge-dep">Dep: Analytics (Q4)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num" style="background:var(--green);">4</div>
+        <div class="step-content">
+          <div class="step-name">SEO por barrio y ciudad</div>
+          <div class="step-desc">Páginas estáticas generadas por barrio: "Guardado en Palermo", "Cocheras en Belgrano", "Depósito en Tigre". Schema.org para espacios individuales. Blog/guías: "Cómo guardar muebles al mudarte", "Almacenamiento en AMBA". Generación automática de descripciones con IA. Meta: 30% del tráfico orgánico en 6 meses.</div>
+          <div class="step-meta">
+            <span class="badge badge-q">Q1 Feb–Mar</span>
+            <span class="badge badge-med">🔵 Medio</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num" style="background:var(--green);">5</div>
+        <div class="step-content">
+          <div class="step-name">Canal B2B — Empresas y logística</div>
+          <div class="step-desc">Onboarding de empresas de mudanzas y logística como clientes recurrentes. Facturación mensual consolidada. Descuentos por volumen. Proveedores institucionales: bodegas, cocheras de edificios, galpones industriales. Contrato marco de uso. Ticket promedio 5× mayor que el B2C.</div>
+          <div class="step-meta">
+            <span class="badge badge-q">Q1 Mar</span>
+            <span class="badge badge-high">🟢 Alto</span>
+            <span class="badge badge-dep">Dep: API pública (Q2)</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PILAR 4 — PLATAFORMA -->
+  <div class="pillar p4">
+    <div class="pillar-header">
+      <div class="pillar-icon">🏗️</div>
+      <div>
+        <div class="pillar-title">Pilar 4 — Plataforma</div>
+        <div class="pillar-tagline">La infraestructura tiene que escalar sin que Guille tenga que levantarse a la noche.</div>
+      </div>
+    </div>
+    <div class="pillar-body" style="padding-top:18px;">
+
+      <div class="step">
+        <div class="step-num" style="background:var(--purple);">1</div>
+        <div class="step-content">
+          <div class="step-name">Multi-moneda USD / ARS</div>
+          <div class="step-desc">Proveedores pueden publicar en USD. Cliente elige moneda de pago. Backend convierte al momento del pago con cotización oficial o dólar tarjeta (configurable en admin). Útil para espacios premium y clientes corporativos. Protege al proveedor de la inflación en contratos largos.</div>
+          <div class="step-meta">
+            <span class="badge badge-q">Q2 Abr</span>
+            <span class="badge badge-high">🟢 Alto</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num" style="background:var(--purple);">2</div>
+        <div class="step-content">
+          <div class="step-name">API pública v1 (REST + Swagger)</div>
+          <div class="step-desc">API documentada con OpenAPI/Swagger para integraciones B2B. Endpoints: buscar espacios, crear reservas, consultar estado. Autenticación por API Key. Rate limiting por plan (free / business). Webhooks para eventos (pago confirmado, escrow liberado). Canal B2B depende de esto.</div>
+          <div class="step-meta">
+            <span class="badge badge-q">Q2 Abr–May</span>
+            <span class="badge badge-high">🟢 Alto</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num" style="background:var(--purple);">3</div>
+        <div class="step-content">
+          <div class="step-name">Migración DB — PlanetScale o Supabase Postgres</div>
+          <div class="step-desc">El MySQL de Hostinger tiene limitaciones de escalabilidad, sin branching de esquema ni backups automáticos robustos. Opciones: PlanetScale (MySQL-compatible, branching, edge-ready) o Supabase Postgres (integra con la auth ya en uso). Elimina el punto de falla manual de Guille conectándose por SSH para correr migraciones.</div>
+          <div class="step-meta">
+            <span class="badge badge-q">Q2 May</span>
+            <span class="badge badge-med">🔵 Medio</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num" style="background:var(--purple);">4</div>
+        <div class="step-content">
+          <div class="step-name">Observabilidad — Sentry + Grafana</div>
+          <div class="step-desc">Sentry para errores frontend + backend con context de usuario y stack trace. Grafana/Datadog para métricas: latencia de API por endpoint, queries MySQL lentas, memoria y CPU del PM2. Alertas a Slack/WhatsApp cuando error rate > 1% o latencia p95 > 2s. Actualmente el único monitoreo es Uptime Robot.</div>
+          <div class="step-meta">
+            <span class="badge badge-q">Q2 May</span>
+            <span class="badge badge-med">🔵 Medio</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num" style="background:var(--purple);">5</div>
+        <div class="step-content">
+          <div class="step-name">Tests automatizados — Jest + Playwright</div>
+          <div class="step-desc">Jest + React Testing Library para componentes críticos: flujo de reserva, <code>EstadoReserva</code>, chat lifecycle. Playwright para E2E: ciclo completo pago→escrow→confirmación. Integrados en GitHub Actions antes del TypeScript check. Actualmente no hay tests — cualquier refactor es un salto al vacío.</div>
+          <div class="step-meta">
+            <span class="badge badge-q">Q2 Jun</span>
+            <span class="badge badge-med">🔵 Medio</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /pillars -->
+
+<!-- ══════ DEPENDENCIAS ══════════════════════════════════════ -->
+<div class="section-title">Mapa de Dependencias — ¿Qué necesita qué?</div>
+
+<div class="deps-grid">
+
+  <div class="dep-card">
+    <div class="dep-title">🪪 KYC es prerrequisito de</div>
+    <ul class="dep-list">
+      <li>Seguro integrado (necesita identidad verificada para la póliza)</li>
+      <li>Suscripción Premium (KYC para proveedores Pro)</li>
+      <li>Multi-moneda USD (KYC para montos altos)</li>
+    </ul>
+  </div>
+
+  <div class="dep-card">
+    <div class="dep-title">📱 App nativa es prerrequisito de</div>
+    <ul class="dep-list">
+      <li>QR de acceso físico (escaneo desde app)</li>
+      <li>Expansión AMBA (adopción mobile > 70%)</li>
+      <li>Push notifications nativas (mejor que web push)</li>
+    </ul>
+  </div>
+
+  <div class="dep-card">
+    <div class="dep-title">📊 Analytics es prerrequisito de</div>
+    <ul class="dep-list">
+      <li>Precios dinámicos (usa datos de demanda)</li>
+      <li>Suscripción Premium (el valor del plan Pro son los analytics)</li>
+      <li>SEO por barrio (usa datos de ocupación real)</li>
+    </ul>
+  </div>
+
+  <div class="dep-card">
+    <div class="dep-title">🔌 API pública es prerrequisito de</div>
+    <ul class="dep-list">
+      <li>Canal B2B — empresas de logística necesitan integración</li>
+      <li>Integraciones con cerraduras inteligentes (IoT)</li>
+      <li>Futuras apps de terceros sobre TMC</li>
+    </ul>
+  </div>
+
+  <div class="dep-card">
+    <div class="dep-title">🔔 Push notifications habilita</div>
+    <ul class="dep-list">
+      <li>Retención de usuarios sin depender de emails</li>
+      <li>Chat en tiempo real con alertas instantáneas</li>
+      <li>Alertas de vencimiento de reserva con acción rápida</li>
+    </ul>
+  </div>
+
+  <div class="dep-card">
+    <div class="dep-title">⚖️ Seguro integrado desbloquea</div>
+    <ul class="dep-list">
+      <li>Sistema de disputas (el seguro cubre la mediación)</li>
+      <li>Canal B2B (empresas requieren cobertura mínima)</li>
+      <li>Espacios de mayor valor (muebles, equipos, arte)</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ══════ MÉTRICAS DE ÉXITO ════════════════════════════════ -->
+<div class="section-title">Métricas de Éxito por Trimestre</div>
+
+<div class="metrics-grid">
+
+  <div class="metric-card" style="border-color:var(--red);background:rgba(239,71,111,.04);">
+    <div class="m-val" style="color:var(--red);">80%</div>
+    <div class="m-label">Proveedores KYC verificados</div>
+    <div class="m-when">Meta Q3 2026</div>
+  </div>
+
+  <div class="metric-card" style="border-color:var(--orange);background:rgba(232,98,42,.04);">
+    <div class="m-val" style="color:var(--orange);">4.5⭐</div>
+    <div class="m-label">Rating promedio de espacios</div>
+    <div class="m-when">Meta Q4 2026</div>
+  </div>
+
+  <div class="metric-card" style="border-color:var(--green);background:rgba(6,214,160,.04);">
+    <div class="m-val" style="color:#04a87f;">3 zonas</div>
+    <div class="m-label">AMBA con 50+ espacios c/u</div>
+    <div class="m-when">Meta Q1 2027</div>
+  </div>
+
+  <div class="metric-card" style="border-color:var(--purple);background:rgba(123,94,167,.04);">
+    <div class="m-val" style="color:var(--purple);">&lt; 2s</div>
+    <div class="m-label">Latencia p95 de la API</div>
+    <div class="m-when">Meta Q2 2027</div>
+  </div>
+
+  <div class="metric-card" style="border-color:var(--red);background:rgba(239,71,111,.04);">
+    <div class="m-val" style="color:var(--red);">0</div>
+    <div class="m-label">Disputas sin resolución en 48h</div>
+    <div class="m-when">Meta Q3 2026</div>
+  </div>
+
+  <div class="metric-card" style="border-color:var(--orange);background:rgba(232,98,42,.04);">
+    <div class="m-val" style="color:var(--orange);">4.2⭐</div>
+    <div class="m-label">Rating app en stores</div>
+    <div class="m-when">Meta Q4 2026 (3 meses post-lanzamiento)</div>
+  </div>
+
+  <div class="metric-card" style="border-color:var(--green);background:rgba(6,214,160,.04);">
+    <div class="m-val" style="color:#04a87f;">30%</div>
+    <div class="m-label">Tráfico orgánico SEO</div>
+    <div class="m-when">Meta Q1 2027</div>
+  </div>
+
+  <div class="metric-card" style="border-color:var(--purple);background:rgba(123,94,167,.04);">
+    <div class="m-val" style="color:var(--purple);">5+</div>
+    <div class="m-label">Empresas B2B en API pública</div>
+    <div class="m-when">Meta Q2 2027</div>
+  </div>
+
+</div>
+
+<!-- ══════ RIESGOS ══════════════════════════════════════════ -->
+<div class="section-title">Riesgos y Mitigaciones</div>
+
+<div class="risks">
+
+  <div class="risk-card high">
+    <div class="risk-title">🔴 KYC — costo y fricción en el onboarding</div>
+    <div class="risk-desc">Si el proceso de verificación es muy largo o caro, los proveedores no se registran y el crecimiento de oferta se frena.</div>
+    <div class="risk-mit">Mitigación: KYC opcional al inicio, obligatorio solo para montos > $200.000. Proveedor premium verificado como incentivo, no como barrera.</div>
+  </div>
+
+  <div class="risk-card high">
+    <div class="risk-title">🔴 App nativa — fragmentación de foco técnico</div>
+    <div class="risk-desc">Mantener dos codebases (Next.js + React Native) con el mismo equipo pequeño puede generar deuda técnica doble.</div>
+    <div class="risk-mit">Mitigación: Expo con máxima reutilización de lógica. La app v1 es solo las 5 funciones principales. El web sigue siendo el canal principal hasta validar la adopción mobile.</div>
+  </div>
+
+  <div class="risk-card med">
+    <div class="risk-title">🟡 Expansión AMBA — tracción de proveedores fuera de CABA</div>
+    <div class="risk-desc">Los proveedores en GBA tienen menos experiencia con plataformas digitales. La adopción puede ser más lenta de lo esperado.</div>
+    <div class="risk-mit">Mitigación: Plan de onboarding asistido (llamada + setup), alianzas con administraciones de edificios y empresas de guardamuebles locales como proveedores ancla por zona.</div>
+  </div>
+
+  <div class="risk-card med">
+    <div class="risk-title">🟡 Multi-moneda — riesgo cambiario y regulatorio</div>
+    <div class="risk-desc">Argentina tiene restricciones cambiarias que pueden complicar cobros y transferencias en USD. Las reglas pueden cambiar.</div>
+    <div class="risk-mit">Mitigación: Publicar en USD como referencia, cobrar en ARS al tipo de cambio oficial del día. Consultar con contador especializado antes de implementar. Marco legal explícito en T&C.</div>
+  </div>
+
+  <div class="risk-card med">
+    <div class="risk-title">🟡 Seguro integrado — partner comercial</div>
+    <div class="risk-desc">Conseguir el acuerdo con una aseguradora puede tomar 3–6 meses de negociación. Puede retrasar toda la hoja de ruta de Confianza.</div>
+    <div class="risk-mit">Mitigación: En paralelo, implementar un "seguro simulado" donde TMC retiene parte del escrow como fondo de garantía propio hasta cerrar el acuerdo formal.</div>
+  </div>
+
+  <div class="risk-card med">
+    <div class="risk-title">🟡 Migración DB — riesgo de downtime en producción</div>
+    <div class="risk-desc">Migrar MySQL de Hostinger a PlanetScale/Supabase con datos reales en producción puede generar pérdida de datos o downtime si no se hace con cuidado.</div>
+    <div class="risk-mit">Mitigación: Migración en modo dual-write (escribir en ambas DB simultáneamente por 2 semanas). Validación de integridad fila a fila antes de cortar. Ventana de mantenimiento un domingo a las 3am.</div>
+  </div>
+
+</div>
+
+<!-- ══════ FOOTER ════════════════════════════════════════════ -->
+<div class="footer">
+  TodasMisCosas.com — Roadmap v2.0 · Documento interno confidencial · 7 de Junio 2026<br>
+  Alejandro Laporte · Guillermo Domínguez<br>
+  <em>Este documento no debe distribuirse fuera del equipo fundador.</em>
+</div>
+
+</div><!-- /page -->
+</body>
+</html>
