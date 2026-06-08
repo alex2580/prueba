@@ -292,6 +292,103 @@ function TabNotificaciones({ token }: { token: string }) {
   );
 }
 
+// ── Tab: Servicios Adicionales ────────────────────────────────
+
+function TabServiciosAdicionales({ token }: { token: string }) {
+  const [items, setItems] = useState<Notificacion[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/notificaciones', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error('Error al cargar servicios');
+      const all: Notificacion[] = await res.json();
+      setItems(all.filter(n => n.tipo === 'servicios_adicionales'));
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Error desconocido');
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => { load(); }, [load]);
+
+  async function marcarLeido(id: string) {
+    await fetch(`/api/admin/notificaciones/${id}/leido`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setItems(prev => prev.map(n => n.id === id ? { ...n, leido: 1 } : n));
+  }
+
+  if (loading) return <p style={{ color: 'var(--text3)' }}>Cargando…</p>;
+  if (error) return <p className="alert alert--error">{error}</p>;
+  if (!items.length) return (
+    <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text3)' }}>
+      <div style={{ fontSize: '2.5rem', marginBottom: '.5rem' }}>🛎️</div>
+      <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>Sin solicitudes de servicios adicionales</div>
+    </div>
+  );
+
+  return (
+    <div style={{ display: 'grid', gap: '.85rem' }}>
+      {items.map(n => {
+        const d = (typeof n.datos === 'string' ? JSON.parse(n.datos) : n.datos) as Record<string, unknown> | null;
+        const servicios = Array.isArray(d?.servicios) ? (d.servicios as string[]) : [];
+        return (
+          <div key={n.id} style={{
+            background: n.leido ? 'var(--surface)' : 'var(--surface2)',
+            border: `1px solid ${n.leido ? 'var(--border)' : 'var(--border2)'}`,
+            borderRadius: 'var(--r2)',
+            padding: '1rem 1.1rem',
+            opacity: n.leido ? .65 : 1,
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '.6rem' }}>
+              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.9rem' }}>
+                🛎️ {String(d?.espacioNombre ?? '—')}
+              </div>
+              <div style={{ display: 'flex', gap: '.5rem', alignItems: 'center' }}>
+                <span style={{ fontSize: '.72rem', color: 'var(--text3)' }}>
+                  {new Date(n.fecha).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                </span>
+                {!n.leido && (
+                  <button className="btn-ghost" style={{ fontSize: '.76rem' }} onClick={() => marcarLeido(n.id)}>
+                    ✓ Leído
+                  </button>
+                )}
+              </div>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.4rem .8rem', fontSize: '.82rem', color: 'var(--text2)', marginBottom: '.6rem' }}>
+              <div><span style={{ color: 'var(--text3)' }}>Cliente:</span> {String(d?.nombreDemandante ?? '—')}</div>
+              <div><span style={{ color: 'var(--text3)' }}>Email:</span> {String(d?.emailDemandante ?? '—')}</div>
+              {d?.telDemandante && <div><span style={{ color: 'var(--text3)' }}>Tel:</span> {String(d.telDemandante)}</div>}
+              <div><span style={{ color: 'var(--text3)' }}>Período:</span> {String(d?.fechaDesde ?? '')} → {String(d?.fechaHasta ?? '')}</div>
+            </div>
+            {servicios.length > 0 && (
+              <div style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap' }}>
+                {servicios.map(s => (
+                  <span key={s} style={{
+                    fontSize: '.75rem', fontWeight: 700,
+                    background: 'rgba(232,98,42,.12)', color: 'var(--orange)',
+                    borderRadius: '99px', padding: '.2rem .65rem',
+                    textTransform: 'capitalize',
+                  }}>
+                    {s}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // ── Tab: Consultas ─────────────────────────────────────────────
 
 function TabConsultas({ token }: { token: string }) {
@@ -1905,10 +2002,10 @@ export default function AdminPage() {
         setNotifUnread(Array.isArray(data) ? data.filter(n => !n.leido).length : 0);
       })
       .catch(() => {});
-    fetch('/api/admin/solicitudes-puntuacion', { headers: { Authorization: `Bearer ${token}` } })
+    fetch('/api/admin/notificaciones', { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.json())
-      .then((data: SolicitudPuntuacion[]) => {
-        setSolicitudesPendientes(Array.isArray(data) ? data.filter(s => s.estado === 'pendiente').length : 0);
+      .then((data: Notificacion[]) => {
+        setSolicitudesPendientes(Array.isArray(data) ? data.filter(n => n.tipo === 'servicios_adicionales' && !n.leido).length : 0);
       })
       .catch(() => {});
   }, [token, isAdmin]);
@@ -1951,7 +2048,7 @@ export default function AdminPage() {
           {tab === 'notificaciones'      && token && <TabNotificaciones token={token} />}
           {tab === 'operaciones'         && token && <TabOperaciones token={token} />}
           {tab === 'consultas'           && token && <TabConsultas token={token} />}
-          {tab === 'solicitudes-puntaje' && token && <TabSolicitudesPuntuacion token={token} />}
+          {tab === 'solicitudes-puntaje' && token && <TabServiciosAdicionales token={token} />}
           {tab === 'campanas'            && token && <TabCampanas token={token} />}
           {tab === 'marketing'           && token && <TabMarketing token={token} />}
           {tab === 'usuarios'            && token && <TabUsuarios token={token} />}
