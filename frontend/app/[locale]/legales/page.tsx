@@ -63,7 +63,7 @@ export default function LegalesPage() {
             <h2 style={h2Style}>1. Objeto del servicio</h2>
             <p style={pStyle}>
               TodasMisCosas.com es una plataforma digital que conecta personas que necesitan almacenar objetos
-              ("clientes") con personas o empresas que tienen espacios disponibles ("proveedors").
+              ("clientes") con personas o empresas que tienen espacios disponibles ("proveedores").
               TodasMisCosas.com actúa como intermediario y no es parte del contrato de locación de espacio.
             </p>
           </section>
@@ -191,6 +191,9 @@ export default function LegalesPage() {
               Los datos personales son tratados conforme a la Ley 25.326 de Protección de Datos Personales
               (Argentina). No vendemos ni cedemos datos a terceros. Los datos son utilizados exclusivamente
               para la prestación del servicio y la resolución de disputas entre las partes.
+              La plataforma mantiene un registro interno de auditoría de los cambios realizados al perfil de cada usuario
+              (nombre, teléfono, email, dirección, CBU/Alias), accesible únicamente por el equipo de administración
+              de TodasMisCosas.com con fines de seguridad y soporte.
             </p>
           </section>
 
@@ -263,6 +266,32 @@ export default function LegalesPage() {
               <li><strong>Responsabilidad del proveedor:</strong> en espacios compartidos, el proveedor es responsable de asegurar que la capacidad real del espacio sea suficiente para todos los clientes simultáneos. Deberá cerrar el cupo cuando el espacio se encuentre al límite de su capacidad, antes de aceptar nuevas reservas.</li>
               <li><strong>Privacidad entre clientes:</strong> los datos de contacto de otros clientes que comparten el mismo espacio no son visibles entre sí en ningún momento.</li>
             </ul>
+          </section>
+
+          {/* 14 */}
+          <section style={sectionStyle}>
+            <h2 style={h2Style}>14. Chat entre usuarios</h2>
+            <p style={{ ...pStyle, marginBottom: '.75rem' }}>
+              La plataforma pone a disposición un canal de chat directo entre cliente y proveedor para coordinar el acceso al espacio:
+            </p>
+            <ul style={ulStyle}>
+              <li><strong>Activación:</strong> el chat se habilita automáticamente cuando la reserva pasa al estado <strong>confirmada</strong> (pago procesado exitosamente).</li>
+              <li><strong>Cierre:</strong> el chat se cierra de forma definitiva cuando el cliente confirma el acceso al espacio. Una vez liberado el depósito en garantía, la conversación queda archivada y no puede continuar.</li>
+              <li><strong>Uso permitido:</strong> el chat está destinado exclusivamente a la coordinación logística de la reserva (horarios, acceso, instrucciones). Queda prohibido su uso para acordar pagos fuera de la plataforma, compartir datos de contacto con fines comerciales ajenos al servicio, o cualquier comunicación que infrinja la normativa vigente.</li>
+              <li><strong>Moderación:</strong> TodasMisCosas.com se reserva el derecho de revisar las conversaciones ante una denuncia de mal uso, conforme a la Ley 25.326.</li>
+            </ul>
+          </section>
+
+          {/* 15 */}
+          <section style={sectionStyle}>
+            <h2 style={h2Style}>15. Consultas públicas</h2>
+            <p style={pStyle}>
+              Cualquier usuario registrado puede realizar preguntas sobre una publicación antes de efectuar una reserva.
+              Las preguntas y las respuestas del proveedor son <strong>visibles para todos los visitantes</strong> de la publicación.
+              El proveedor no está obligado a responder, pero se recomienda hacerlo para generar confianza.
+              TodasMisCosas.com no es responsable del contenido de las preguntas ni de las respuestas,
+              aunque se reserva el derecho de eliminar publicaciones que infrinjan sus políticas de uso aceptable.
+            </p>
           </section>
 
           <div style={{

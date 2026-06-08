@@ -62,21 +62,22 @@
     "compartidoPill": "Mejor precio",
     "compartidoDesc": "Varios clientes usan el espacio al mismo tiempo. Precio más bajo, ideal para largo plazo. El proveedor abre o cierra el cupo desde su panel cuando quiere.",
     "reservarTitulo": "Para Reservar",
-    "reservarSubtitulo": "4 pasos simples",
+    "reservarSubtitulo": "5 pasos simples",
     "publicarTitulo": "Para Publicar",
     "publicarSubtitulo": "4 pasos simples",
     "selloGratis": "GRATIS",
     "pasosReservar": [
-      { "icon": "🔍", "titulo": "Buscás un espacio", "desc": "Seleccioná una tarjeta o hacé click en las publicaciones del mapa. Puede ser compartido o solo para vos." },
-      { "icon": "📦", "titulo": "Elegís y reservás", "desc": "Seleccioná el espacio que más te conviene. Alquilá por día o por mes." },
-      { "icon": "💳", "titulo": "Pagás de forma segura", "desc": "Podés pagar con Mercado Pago." },
-      { "icon": "🔑", "titulo": "Coordinás el acceso", "desc": "Vos y el que publicó el espacio recibirán el mismo PIN de 4 dígitos por correo para que puedan identificarse." }
+      { "icon": "🔍", "titulo": "Buscás un espacio", "desc": "Seleccioná una tarjeta o hacé click en las publicaciones del mapa. Puede ser compartido o solo para vos. Desde cada publicación podés hacer preguntas al proveedor antes de reservar — las respuestas son visibles para todos." },
+      { "icon": "📦", "titulo": "Elegís y reservás", "desc": "Seleccioná el espacio que más te conviene. Alquilá por día o por mes. Al reservar podés solicitar servicios adicionales: seguro de contenido, embalaje, transporte o limpieza." },
+      { "icon": "💳", "titulo": "Pagás de forma segura", "desc": "Pagás con MercadoPago. El dinero queda retenido en depósito en garantía — el proveedor no lo recibe hasta que vos confirmés el acceso al espacio." },
+      { "icon": "💬", "titulo": "Coordinás por chat", "desc": "Una vez confirmada la reserva, se habilita un chat directo con el proveedor para coordinar el acceso, días y horarios. Ambos también reciben un PIN de 4 dígitos por correo para identificarse." },
+      { "icon": "🔑", "titulo": "Confirmás el acceso", "desc": "Cuando accedés al espacio, confirmás desde tu panel. En ese momento se libera el pago al proveedor. Si tenés algún inconveniente, contactanos antes de confirmar." }
     ],
     "pasosPublicar": [
       { "icon": "📢", "titulo": "Publicás tu espacio", "desc": "Andá al botón \"Publicar espacio\" y contale a todos qué espacio ofrecés: si es exclusivo o compartido, si lo alquilás por día, por mes o ambas formas. Marcá en el calendario los días o meses en que estará disponible. Si es compartido, desde tu panel podés abrir o cerrar el cupo para nuevas reservas con el botón 🟢 Tengo Espacio / 🔴 No tengo Espacio." },
       { "icon": "📷", "titulo": "Subís fotos", "desc": "Podés subir hasta un máximo de 5 fotos." },
       { "icon": "🛡️", "titulo": "Definís el grado de seguridad", "desc": "Hacé click en las medidas de seguridad que tiene tu espacio. Esto le permite saber a quienes buscan espacio con qué medidas de seguridad disponés para cuidar sus bienes." },
-      { "icon": "👤", "titulo": "Te registrás", "desc": "Si no te identificaste aún, este es el momento. Cuando alguien proceda con la reserva de tu sitio, ambos recibirán un PIN de 4 dígitos por correo para identificarse." }
+      { "icon": "👤", "titulo": "Te registrás y respondés consultas", "desc": "Si no te identificaste aún, este es el momento. Cuando alguien reserva, ambos reciben un PIN de 4 dígitos por correo. También podés responder las preguntas que hagan los interesados directamente desde tu panel — las respuestas quedan visibles en la publicación." }
     ],
     "notaGratisTitle": "✅ Publicar es gratis",
     "notaGratisDesc": "Buscar y publicar son <b>100% gratuitos</b>. TodasMisCosas cobra el <b>15% de comisión únicamente cuando se concreta una reserva</b>. Si nadie te reserva, no pagás nada.",
