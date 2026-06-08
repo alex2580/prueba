@@ -199,7 +199,7 @@
   <div class="cover-sub">Documentación Técnica Completa</div>
   <div style="font-size:10pt;color:#888;margin-bottom:28px;">Marketplace de almacenamiento urbano — Buenos Aires</div>
   <div class="cover-meta">
-    <b>Versión:</b> 1.9.0 — Junio 2026<br>
+    <b>Versión:</b> 1.9.2 — 7 de Junio 2026<br>
     <b>URL producción:</b> https://todasmiscosas.com<br>
     <b>Repositorio:</b> github.com/alex2580/prueba (privado)<br>
     <b>Autores:</b> Alejandro Laporte · Guillermo Domínguez<br>
@@ -226,7 +226,9 @@
     <li><a href="#s11">API — Endpoints completos</a></li>
     <li><a href="#s12">Deploy y CI/CD</a></li>
     <li><a href="#s13">Servicios externos</a></li>
-    <li><a href="#s14">Tareas pendientes</a></li>
+    <li><a href="#s14">Tareas pendientes y changelog</a></li>
+    <li><a href="#s15">Flujo de funcionamiento completo</a></li>
+    <li><a href="#s16">Propuesta v2.0</a></li>
   </ol>
 </div>
 
@@ -1218,7 +1220,7 @@ curl http://localhost:4000/health</pre>
 <!-- ══════════════════════════════════════════════════════════════
      14. TAREAS PENDIENTES
 ══════════════════════════════════════════════════════════════ -->
-<h1 id="s14">14. Tareas Pendientes</h1>
+<h1 id="s14">14. Tareas Pendientes y Changelog</h1>
 
 <div class="alert alert-red">
   <b>🔴 BLOQUEADOR PRODUCCIÓN — Twilio sin configurar</b>
@@ -1255,6 +1257,30 @@ curl http://localhost:4000/health</pre>
   Restricción 90 días en reservas · cron syncPagos cada 5 min · chat oferente corregido ·
   vencimiento publicaciones auto-startup · retry SSH en CI/CD
 </div>
+
+<h2>Cambios v1.9.2 — 7 junio 2026 (noche)</h2>
+<table>
+  <tr><th>Área</th><th>Cambio</th><th>Archivo</th></tr>
+  <tr><td>Chat — ciclo de vida</td><td>Botón Chat habilitado desde estado <code>confirmada</code> (antes solo <code>pagada</code>). Se deshabilita al liberar el depósito de garantía (<code>escrow_liberado = 1</code>). Banner verde avisa: "Al confirmar, el chat se cerrará"</td><td><code>EstadoReserva.tsx</code>, <code>panel/page.tsx</code></td></tr>
+  <tr><td>Chat — filtro proveedor (backend)</td><td><code>chatController.listarConversaciones</code>: el proveedor solo ve conversaciones donde existe una reserva activa (<code>estado IN ('confirmada','pagada') AND escrow_liberado=0</code>). Conversaciones históricas ocultas</td><td><code>chatController.js</code></td></tr>
+  <tr><td>Chat — apertura automática</td><td>Al clic en botón Chat desde panel, <code>setOpenMensajes(true)</code> + scroll automático a la sección Mensajes</td><td><code>panel/page.tsx</code></td></tr>
+  <tr><td>MP — back_urls con /es/</td><td>Todas las <code>back_urls</code> de MercadoPago incluyen prefijo <code>/es/</code> para compatibilidad con next-intl v4. Sin esto, MP redirigía pero el usuario quedaba en la pantalla de MP</td><td><code>mercadopagoService.js</code></td></tr>
+  <tr><td>UI — terminología</td><td>Banners de reserva: "escrow" → "depósito de garantía" en todos los textos visibles. "Respuesta del oferente" → "Respuesta del proveedor" en Q&amp;A público</td><td><code>EstadoReserva.tsx</code>, <code>ConsultasEspacio.tsx</code></td></tr>
+  <tr><td>Admin — Servicios adicionales</td><td>Tab "🛡️ Servicios adicionales" corregido: ahora muestra solicitudes reales de servicios extra (seguro, embalaje, transporte, limpieza). Badge con conteo de no leídos. Datos: cliente, email, tel, espacio, período</td><td><code>admin/page.tsx</code>, <code>pagosController.js</code></td></tr>
+  <tr><td>Admin — Movimientos financieros</td><td>Nuevo tab "💵 Movimientos": resumen (pagos, liberaciones, comisiones, reintegros, saldo escrow) + lista filtrable de <code>movimientos_ledger</code>. Endpoint <code>GET /api/admin/movimientos</code></td><td><code>admin/page.tsx</code>, <code>adminController.js</code>, <code>routes/admin.js</code></td></tr>
+  <tr><td>Admin — Calendario</td><td>Nuevo tab "📅 Calendario": grilla mensual de reservas confirmadas/pagadas. Misma lógica que el calendario del proveedor</td><td><code>admin/page.tsx</code></td></tr>
+  <tr><td>Panel proveedor — Calendario</td><td>Nueva sección "📅 Calendario de reservas recibidas" con grilla mensual. Dots por estado. Click en día muestra detalle de reservas ese día</td><td><code>panel/page.tsx</code></td></tr>
+  <tr><td>Panel proveedor — Orden secciones</td><td>Secciones reordenadas: Mensajes → Calendario → Mis espacios publicados → Mis reservas realizadas → Consultas. El proveedor ve sus espacios antes que sus reservas como cliente</td><td><code>panel/page.tsx</code></td></tr>
+  <tr><td>TypeScript CI fix</td><td>Error <code>unknown not assignable to ReactNode</code> en <code>TabServiciosAdicionales</code>. Fix: <code>!!</code> antes de valor de tipo unknown en condición JSX</td><td><code>admin/page.tsx</code> commit <code>52463c1</code></td></tr>
+</table>
+
+<h2>Cambios v1.9.1 — 7 junio 2026 (mañana)</h2>
+<table>
+  <tr><th>Área</th><th>Cambio</th><th>Commits</th></tr>
+  <tr><td>Consultas públicas</td><td>Sistema Q&amp;A en publicaciones: cliente pregunta en la página del espacio, proveedor responde desde su panel, hilo visible públicamente. Emails a ambas partes. Migraciones: <code>add-consultas-espacio.js</code> + <code>fix-consultas-charset.js</code> (corrección charset Hostinger)</td><td><code>ac328bb</code>→<code>5590c69</code></td></tr>
+  <tr><td>Fix crítico — charset MySQL</td><td>Tabla <code>consultas_espacio</code> sin charset explícito causaba JOINs con 0 filas en Hostinger. Fix: eliminar COLLATE en JOINs, query separada para datos del autor (no JOIN directo con <code>usuarios</code>)</td><td><code>cae0f61</code>, <code>63a247d</code></td></tr>
+  <tr><td>Email links — locale prefix</td><td>Links de email a publicaciones ahora usan <code>/es/espacio/:id</code>. Sin <code>/es/</code> next-intl v4 no resuelve la ruta</td><td><code>f4eb85e</code></td></tr>
+</table>
 
 <h2>Cambios recientes (v1.9.0 — 5 junio 2026)</h2>
 <table>
@@ -1347,10 +1373,222 @@ curl http://localhost:4000/health</pre>
 </table>
 
 <!-- ══════════════════════════════════════════════════════════════
+     15. FLUJO DE FUNCIONAMIENTO COMPLETO
+══════════════════════════════════════════════════════════════ -->
+<h1 id="s15">15. Flujo de Funcionamiento Completo</h1>
+
+<p>Este diagrama describe el ciclo de vida completo de una operación en TodasMisCosas, desde que un proveedor publica un espacio hasta que cobra su pago.</p>
+
+<h2>A. Alta de usuario</h2>
+<table>
+  <tr><th>Paso</th><th>Actor</th><th>Qué ocurre</th><th>Donde</th></tr>
+  <tr><td>1</td><td>Usuario</td><td>Completa formulario registro con email + contraseña</td><td><code>/auth/register</code></td></tr>
+  <tr><td>2</td><td>Supabase Auth</td><td>Crea cuenta y envía email de verificación</td><td>Supabase</td></tr>
+  <tr><td>3</td><td>Backend</td><td><code>POST /api/usuarios/sync</code> crea registro en tabla <code>usuarios</code>. Envía email de bienvenida con T&C aceptados</td><td><code>usuariosController.sync()</code></td></tr>
+  <tr><td>4</td><td>Usuario</td><td>Login → recibe OTP por email (o SMS/WhatsApp si Twilio configurado)</td><td><code>/auth/login</code> → <code>POST /api/auth/otp/verify</code></td></tr>
+  <tr><td>5</td><td>Backend</td><td>JWT validado por middleware <code>requireAuth</code> en cada request subsiguiente</td><td>Todas las rutas protegidas</td></tr>
+</table>
+
+<h2>B. Proveedor publica un espacio</h2>
+<table>
+  <tr><th>Paso</th><th>Actor</th><th>Qué ocurre</th><th>Donde</th></tr>
+  <tr><td>1</td><td>Proveedor</td><td>Completa el formulario de alta (tipo, dimensiones, descripción, precio/día, precio/mes, dirección, fotos, servicios adicionales disponibles)</td><td><code>/publicar</code></td></tr>
+  <tr><td>2</td><td>Frontend</td><td>Comprime fotos en canvas (máx 1600px, JPEG 82%) antes de subir</td><td><code>publicar/page.tsx</code></td></tr>
+  <tr><td>3</td><td>Backend</td><td>Valida magic bytes de fotos. Sube imágenes a Supabase Storage bucket <code>espacios</code>. Guarda en tabla <code>espacios</code> con <code>activo=1, disponible=1</code></td><td><code>espaciosController.js</code></td></tr>
+  <tr><td>4</td><td>Sistema</td><td>Publicación aparece en mapa y listado home. Proveedor puede gestionar cupo (tipo compartido), pausar o reactivar desde su panel</td><td><code>panel/page.tsx</code> → sección "Mis espacios publicados"</td></tr>
+  <tr><td>5</td><td>Sistema</td><td>Cron job diario revisa vencimiento de publicaciones. Si vence, envía aviso por email y marca <code>vencida=1</code></td><td><code>jobs/vencimientos.js</code></td></tr>
+</table>
+
+<h2>C. Cliente descubre y consulta</h2>
+<table>
+  <tr><th>Paso</th><th>Actor</th><th>Qué ocurre</th><th>Donde</th></tr>
+  <tr><td>1</td><td>Cliente</td><td>Busca en el mapa filtrando por tipo (exclusivo/compartido), precio/día o precio/mes, barrio</td><td>Home + Mapa</td></tr>
+  <tr><td>2</td><td>Cliente</td><td>(Opcional) Hace una pregunta pública en la página del espacio</td><td><code>/espacio/:id</code> → <code>ConsultasEspacio.tsx</code></td></tr>
+  <tr><td>3</td><td>Backend</td><td>Guarda pregunta en <code>consultas_espacio</code>. Envía email al proveedor con link a su panel</td><td><code>consultasEspacioController.js</code></td></tr>
+  <tr><td>4</td><td>Proveedor</td><td>Responde desde "❓ Consultas pendientes" en su panel</td><td><code>panel/page.tsx</code></td></tr>
+  <tr><td>5</td><td>Backend</td><td>Guarda respuesta. Envía email al cliente. Pregunta+respuesta queda visible públicamente</td><td><code>consultasEspacioController.responder()</code></td></tr>
+</table>
+
+<h2>D. Cliente reserva</h2>
+<table>
+  <tr><th>Paso</th><th>Actor</th><th>Qué ocurre</th><th>Donde</th></tr>
+  <tr><td>1</td><td>Cliente</td><td>Selecciona fechas (por día o por mes, máx 90 días). Elige servicios adicionales (seguro, embalaje, transporte, limpieza) si los quiere</td><td><code>/espacio/:id/reservar</code></td></tr>
+  <tr><td>2</td><td>Backend</td><td>Crea reserva en estado <code>pendiente</code>. Inserta servicios en <code>servicios_adicionales</code> con <code>estado='activo'</code></td><td><code>reservasController.crearReserva()</code></td></tr>
+  <tr><td>3</td><td>Cliente</td><td>Avanza al checkout. Backend crea preferencia MP con <code>back_urls</code> con prefijo <code>/es/</code></td><td><code>/reserva/:id/checkout</code> → <code>POST /api/pagos/preferencia</code></td></tr>
+  <tr><td>4</td><td>Cliente</td><td>Paga en MercadoPago (tarjeta, transferencia, QR). MP redirige a <code>/es/reserva/:id/confirmacion</code></td><td>MercadoPago Checkout Pro</td></tr>
+  <tr><td>5</td><td>MP → Backend</td><td>Webhook <code>POST /api/pagos/webhook</code> confirma pago. Reserva pasa a <code>pagada</code>. Se inicializa el depósito de garantía (<code>escrow_liberado=0</code>, <code>escrow_neto_oferente=precio×0.85</code>)</td><td><code>pagosController.webhook()</code></td></tr>
+  <tr><td>6</td><td>Sistema</td><td>Si el webhook llega antes que el redirect, la página de confirmación ya muestra el estado pagado. Si llega tarde, el frontend llama <code>POST /api/pagos/sincronizar/:id</code> como fallback</td><td><code>confirmacion/page.tsx</code></td></tr>
+  <tr><td>7</td><td>Sistema</td><td>Emails automáticos: cliente recibe confirmación + PIN de acceso + email T&C. Proveedor recibe aviso de nueva reserva con datos del cliente</td><td><code>emailService.js</code></td></tr>
+  <tr><td>8</td><td>Sistema (si hay servicios)</td><td>Se inserta notificación en <code>admin_notificaciones</code> tipo <code>servicios_adicionales</code>. Admin ve el pedido en su panel para cotizarlo</td><td><code>pagosController._procesarPagada()</code></td></tr>
+  <tr><td>9</td><td>Ledger</td><td>Se registra movimiento <code>tipo='pago'</code> en <code>movimientos_ledger</code>: cliente → tmc.escrow</td><td><code>ledgerService.registrarPago()</code></td></tr>
+</table>
+
+<h2>E. Período de la reserva — Chat y coordinación</h2>
+<table>
+  <tr><th>Paso</th><th>Actor</th><th>Qué ocurre</th><th>Donde</th></tr>
+  <tr><td>1</td><td>Cliente / Proveedor</td><td>Chat habilitado desde estado <code>confirmada</code> hasta liberación del depósito. Se usa para coordinar acceso, horarios, lugar exacto</td><td><code>panel/page.tsx</code> → sección Mensajes</td></tr>
+  <tr><td>2</td><td>Proveedor</td><td>Ve el calendario de reservas recibidas por mes. Puntos de colores por estado</td><td><code>CalendarioProveedor</code> en panel</td></tr>
+  <tr><td>3</td><td>Sistema</td><td>5, 2, 1 y 0 días antes del vencimiento: emails recordatorios al cliente y al proveedor</td><td><code>jobs/recordatorios.js</code></td></tr>
+</table>
+
+<h2>F. Confirmación de acceso y liberación del pago</h2>
+<table>
+  <tr><th>Paso</th><th>Actor</th><th>Qué ocurre</th><th>Donde</th></tr>
+  <tr><td>1</td><td>Cliente</td><td>Desde la fecha de inicio, puede pulsar "✅ Confirmar acceso al espacio". Esto cierra el chat</td><td><code>EstadoReserva.tsx</code></td></tr>
+  <tr><td>2</td><td>Backend</td><td><code>POST /api/reservas/:id/confirmar-acceso</code>: marca <code>escrow_liberado=1</code>. Envía instrucción de transferencia a admin, aviso al proveedor y confirmación al cliente</td><td><code>reservasController.confirmarAcceso()</code></td></tr>
+  <tr><td>3</td><td>Admin</td><td>Recibe email con CBU/alias del proveedor e instrucción de transferir el 85% del monto</td><td><code>sendEscrowLiberadoAdmin()</code></td></tr>
+  <tr><td>4</td><td>Sistema (fallback)</td><td>Cron job cada hora: libera automáticamente escrows donde <code>fecha_desde</code> tiene 48+ horas sin confirmación manual del cliente</td><td><code>jobs/escrow.js</code></td></tr>
+  <tr><td>5</td><td>Ledger</td><td>Registra movimiento <code>liberacion</code> (85% al proveedor) y <code>comision</code> (15% TMC) en <code>movimientos_ledger</code></td><td><code>ledgerService</code></td></tr>
+</table>
+
+<h2>G. Reviews y cierre</h2>
+<table>
+  <tr><th>Paso</th><th>Actor</th><th>Qué ocurre</th><th>Donde</th></tr>
+  <tr><td>1</td><td>Cliente</td><td>Puede dejar una review al proveedor al finalizar la reserva</td><td><code>panel/page.tsx</code></td></tr>
+  <tr><td>2</td><td>Backend</td><td>Review guardada en <code>reviews</code>. Promedio recalculado en <code>espacios.rating</code></td><td><code>reviewsController.js</code></td></tr>
+  <tr><td>3</td><td>Admin</td><td>Puede ver todas las operaciones financieras en el tab "💵 Movimientos". Puede gestionar solicitudes de servicios adicionales desde "🛡️ Servicios adicionales"</td><td><code>admin/page.tsx</code></td></tr>
+</table>
+
+<!-- ══════════════════════════════════════════════════════════════
+     16. PROPUESTA v2.0
+══════════════════════════════════════════════════════════════ -->
+<h1 id="s16">16. Propuesta v2.0</h1>
+
+<p>La v2.0 tiene como objetivo escalar TMC de un MVP funcional a un producto robusto y escalable, listo para expandirse más allá de CABA. Se divide en cuatro pilares: <strong>Confianza</strong>, <strong>Operaciones</strong>, <strong>Crecimiento</strong> y <strong>Tecnología</strong>.</p>
+
+<div class="alert alert-orange" style="margin-bottom:2rem;">
+  <b>Nota de lectura:</b> Las funcionalidades están ordenadas por impacto en el negocio, no por esfuerzo técnico. Las marcadas 🔑 son prerrequisito para escalar la tracción de usuarios.
+</div>
+
+<h2>Pilar 1 — Confianza y Seguridad</h2>
+<table>
+  <tr><th>Funcionalidad</th><th>Descripción</th><th>Impacto</th></tr>
+  <tr>
+    <td>🔑 Verificación de identidad (KYC)</td>
+    <td>Validación de DNI mediante foto del frente + dorso + selfie en tiempo real. Integración con proveedor local (Renaper API, Transunion, Nubarium). Proveedores verificados reciben un badge en sus publicaciones. Requisito para espacios > $50.000/mes</td>
+    <td>🔴 Crítico — genera confianza entre partes que no se conocen</td>
+  </tr>
+  <tr>
+    <td>🔑 Seguro integrado obligatorio</td>
+    <td>Seguro de contenido básico incluido automáticamente en cada reserva (ej. hasta $500.000 en bienes almacenados). Posible partnership con Sancor o La Caja. Prima prorrateada por día, descontada del escrow antes de liberar al proveedor</td>
+    <td>🔴 Crítico — elimina la principal objeción del cliente para guardar cosas valiosas</td>
+  </tr>
+  <tr>
+    <td>Sistema de reviews bidireccional</td>
+    <td>Actualmente el cliente puede dejar review al proveedor. En v2.0, el proveedor también puede calificar al cliente (cuidado del espacio, puntualidad). Perfil público de cliente visible para el proveedor antes de aceptar</td>
+    <td>🟡 Alto — aumenta responsabilidad de ambas partes</td>
+  </tr>
+  <tr>
+    <td>Proceso de disputa formal</td>
+    <td>Formulario de reclamo con fotos de evidencia. Admin media la disputa y puede retener el escrow hasta 7 días adicionales. Timeline de la disputa visible para ambas partes</td>
+    <td>🟡 Alto — cubre el caso extremo que hoy se maneja informalmente</td>
+  </tr>
+</table>
+
+<h2>Pilar 2 — Operaciones y Experiencia</h2>
+<table>
+  <tr><th>Funcionalidad</th><th>Descripción</th><th>Impacto</th></tr>
+  <tr>
+    <td>🔑 Acceso físico por QR/PIN digital</td>
+    <td>PIN de acceso ya existe, pero es solo texto. v2.0: QR code dinámico por reserva (válido solo durante el período), escaneable con smartphone. Compatible con cerraduras inteligentes (Tuya Smart, SmartLock). El QR se invalida al liberar el escrow</td>
+    <td>🔴 Crítico — diferencia TMC de cualquier acuerdo informal entre particulares</td>
+  </tr>
+  <tr>
+    <td>Notificaciones push</td>
+    <td>Firebase Cloud Messaging para alertas en tiempo real: nuevo mensaje de chat, pago confirmado, reserva próxima a vencer, escrow liberado. Sin push, la retención de usuarios depende solo de emails</td>
+    <td>🟡 Alto — aumenta retención y reduce abandono de reservas en curso</td>
+  </tr>
+  <tr>
+    <td>Panel analytics proveedor</td>
+    <td>Gráfico de ingresos mensuales, ocupación por día de la semana, perfil del cliente típico (zona, frecuencia), comparativa con proveedores similares del barrio. Exportar a CSV/PDF</td>
+    <td>🟡 Alto — empodera al proveedor para tomar decisiones de precio</td>
+  </tr>
+  <tr>
+    <td>Precios dinámicos / Temporadas</td>
+    <td>Proveedor puede definir precio diferenciado por período (ej. diciembre+enero +20%). Sistema sugiere precio óptimo basado en demanda del barrio y ocupación histórica</td>
+    <td>🟢 Medio — aumenta ingresos del proveedor y ticket promedio TMC</td>
+  </tr>
+  <tr>
+    <td>Chat mejorado con archivos</td>
+    <td>El chat actual es texto. v2.0: fotos, PDFs (inventarios, contratos). Preview inline. Límite de 10MB por archivo. Almacenamiento en Supabase Storage bucket <code>chat-attachments</code></td>
+    <td>🟢 Medio — simplifica la coordinación de logística compleja</td>
+  </tr>
+</table>
+
+<h2>Pilar 3 — Crecimiento y Adquisición</h2>
+<table>
+  <tr><th>Funcionalidad</th><th>Descripción</th><th>Impacto</th></tr>
+  <tr>
+    <td>🔑 App móvil nativa</td>
+    <td>React Native (Expo) compartiendo lógica con el frontend Next.js. Funcionalidades principales: buscar, reservar, chatear, recibir notificaciones push, gestionar espacios. Publicación en App Store y Google Play</td>
+    <td>🔴 Crítico — el uso mobile supera el 70% del tráfico</td>
+  </tr>
+  <tr>
+    <td>Expansión geográfica</td>
+    <td>Fase 1: AMBA (GBA Norte, GBA Sur, GBA Oeste). Fase 2: Córdoba, Rosario, Mendoza. Requiere: adaptación de geocoding, estrategia de marketing local, posible alianza con proveedores institucionales (bodegas, cocheras de edificios)</td>
+    <td>🔴 Crítico — el mercado de CABA tiene techo, la escala viene del interior</td>
+  </tr>
+  <tr>
+    <td>Sistema de referidos</td>
+    <td>Código único por usuario. El referente obtiene crédito en TMC al primer pago del referido. Crédito usable como descuento en próxima reserva. Tracking en tabla <code>referidos</code></td>
+    <td>🟡 Alto — adquisición viral de bajo costo</td>
+  </tr>
+  <tr>
+    <td>Suscripción proveedor premium</td>
+    <td>Plan gratuito: 1 espacio, fotos básicas, sin analytics. Plan Pro ($X/mes): hasta 5 espacios, badge "Proveedor Verificado Pro", analytics avanzados, soporte prioritario, comisión reducida (10% vs 15%). Cobro mensual vía MP Suscripciones</td>
+    <td>🟡 Alto — ingreso recurrente predecible para TMC</td>
+  </tr>
+  <tr>
+    <td>SEO y contenido generado</td>
+    <td>Páginas estáticas por barrio con metadata OpenGraph: "Guardado en Palermo", "Cocheras en Belgrano". Schema.org para los espacios. Blog/guías: "Cómo guardar tus muebles al mudarte". Generación automática de descripciones con IA</td>
+    <td>🟢 Medio — tráfico orgánico sin costo de adquisición</td>
+  </tr>
+</table>
+
+<h2>Pilar 4 — Tecnología y Plataforma</h2>
+<table>
+  <tr><th>Funcionalidad</th><th>Descripción</th><th>Impacto</th></tr>
+  <tr>
+    <td>Multi-moneda (ARS / USD)</td>
+    <td>Proveedores pueden publicar en USD (cotización oficial o dólar tarjeta). Cliente elige moneda de pago. Backend convierte al momento del pago. Útil para espacios premium y clientes corporativos</td>
+    <td>🟡 Alto — dolarización parcial de los espacios de mayor valor</td>
+  </tr>
+  <tr>
+    <td>API pública v1</td>
+    <td>API REST documentada (Swagger/OpenAPI) para que empresas de logística o mudanzas integren TMC como proveedor de almacenamiento temporal. Autenticación por API Key. Rate limiting por plan</td>
+    <td>🟢 Medio — canal B2B con ticket promedio mayor</td>
+  </tr>
+  <tr>
+    <td>Base de datos → PlanetScale o Supabase DB</td>
+    <td>MySQL en Hostinger tiene limitaciones de escalabilidad y backup automático. Migrar a PlanetScale (MySQL compatible, branching de DB) o Supabase Postgres (integra con Supabase Auth ya en uso). Elimina un punto de falla manual</td>
+    <td>🟢 Medio — reducción de deuda técnica de infraestructura</td>
+  </tr>
+  <tr>
+    <td>Observabilidad y alertas</td>
+    <td>Sentry para errores frontend + backend. Datadog o Grafana para métricas de performance (latencia de API, queries lentas, memoria PM2). Alertas a Slack/WhatsApp cuando error rate > 1% o latencia p95 > 2s</td>
+    <td>🟢 Medio — reducción del MTTR cuando algo falla en producción</td>
+  </tr>
+  <tr>
+    <td>Tests automatizados</td>
+    <td>Jest + React Testing Library para componentes críticos (flujo de reserva, EstadoReserva, chat). Playwright para E2E del flujo completo pago→escrow→confirmación. Integrados en GitHub Actions antes del TypeScript check</td>
+    <td>🟢 Medio — reduce regresiones en cada deploy</td>
+  </tr>
+</table>
+
+<h2>Roadmap sugerido para v2.0</h2>
+<table>
+  <tr><th>Trimestre</th><th>Foco</th><th>Entregables clave</th></tr>
+  <tr><td>Q3 2026 (Jul–Sep)</td><td>Confianza</td><td>KYC básico (selfie + DNI), seguro integrado básico, reviews bidireccionales, notificaciones push</td></tr>
+  <tr><td>Q4 2026 (Oct–Dic)</td><td>Operaciones + Mobile</td><td>App React Native (MVP), QR de acceso, panel analytics proveedor, chat con archivos</td></tr>
+  <tr><td>Q1 2027 (Ene–Mar)</td><td>Crecimiento</td><td>Expansión AMBA, sistema de referidos, suscripción proveedor premium, SEO por barrio</td></tr>
+  <tr><td>Q2 2027 (Abr–Jun)</td><td>Plataforma</td><td>API pública v1, multi-moneda, observabilidad completa, tests automatizados</td></tr>
+</table>
+
+<!-- ══════════════════════════════════════════════════════════════
      FOOTER
 ══════════════════════════════════════════════════════════════ -->
 <div class="footer">
-  TodasMisCosas.com — Documentación técnica interna · Versión 1.9.0 · Junio 2026<br>
+  TodasMisCosas.com — Documentación técnica interna · Versión 1.9.2 · 7 Junio 2026<br>
   Alejandro Laporte · Guillermo Domínguez<br>
   <em>Este documento es confidencial. No distribuir.</em>
 </div>

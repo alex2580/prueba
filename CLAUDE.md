@@ -83,9 +83,10 @@ frontend/
 
 ```bash
 cd /var/www/todasmiscosas/backend
-node src/db/add-consultas-espacio.js
 node src/db/add-eliminado-por-oferente.js
 ```
+
+> `add-consultas-espacio.js` y `fix-consultas-charset.js` ya corrieron en prod (Guille, 7 jun 2026).
 
 ## Variables de entorno críticas (backend .env en VPS)
 
@@ -98,7 +99,7 @@ node src/db/add-eliminado-por-oferente.js
 ## Decisiones de arquitectura
 
 - **Fotos → Supabase Storage** (no filesystem local): multer usa `memoryStorage`
-- **Chat restringido a post-pago**: solo reservas en estado `pagada/activa/finalizada`
+- **Chat restringido**: habilitado desde `confirmada` hasta que se libera el depósito de garantía (`escrow_liberado = 1`). Ver [[feedback-chat-reservas]].
 - **Filtro de contenido**: regex puro (no AI), 4 categorías, aplicado frontend + backend
 - **Soft delete de espacios**: `activo = FALSE` + `eliminado_por_oferente` para trazabilidad
 - **Comisión**: 15% TMC, 85% oferente (`netoOferente()` en utils.ts)

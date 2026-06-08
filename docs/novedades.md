@@ -2198,3 +2198,95 @@ node src/db/fix-consultas-charset.js   # convierte charset a utf8mb4
 **Commits:** `ac328bb`, `436fec5`, `fff7c9e`, `cae0f61`, `63a247d`, `f4eb85e`, `eefef10`, `5590c69`
 
 **Snapshot completo:** `docs/snapshot-consultas-publicas-07jun2026.md`
+
+---
+
+## 7 de Junio 2026 (Noche) — v1.9.2
+
+### 🗂️ Mejoras panel proveedor y admin — Batch de 5 funcionalidades + fixes
+
+#### 1. Chat — ciclo de vida correcto
+
+El botón Chat ahora se habilita desde que la reserva está en estado **confirmada** (antes solo desde `pagada`). Se deshabilita cuando el cliente confirma el acceso al espacio (`escrow_liberado = 1`). El banner verde de depósito de garantía avisa: *"Al confirmar, el chat con el proveedor se cerrará"*.
+
+Al hacer clic en Chat desde el panel → se abre automáticamente la sección Mensajes y hace scroll.
+
+**Archivos:** `EstadoReserva.tsx`, `panel/page.tsx`
+
+#### 2. Chat proveedor — ocultar conversaciones históricas (backend)
+
+`chatController.listarConversaciones` ahora filtra las conversaciones del proveedor: solo muestra aquellas donde existe una reserva activa (`estado IN ('confirmada','pagada') AND escrow_liberado = 0`). Las conversaciones de clientes que ya completaron su reserva no aparecen en la lista del proveedor.
+
+**Archivo:** `backend/src/controllers/chatController.js`
+
+#### 3. Calendario de reservas — proveedor y admin
+
+- **Panel proveedor:** Nueva sección "📅 Calendario de reservas recibidas" — grilla mensual con puntos de colores por estado. Click en día muestra las reservas de ese día con detalle.
+- **Panel admin:** Nuevo tab "📅 Calendario" — misma UI, fuente: endpoint `GET /api/admin/operaciones` con reservas confirmadas/pagadas.
+
+**Archivos:** `panel/page.tsx`, `admin/page.tsx`
+
+#### 4. Admin — Servicios adicionales corregido
+
+El tab "🛡️ Servicios adicionales" ahora muestra las solicitudes reales de clientes. Antes mostraba solicitudes de puntuación (bug de mislabeling del componente). Ahora:
+- Lee `GET /api/admin/notificaciones` filtrado por `tipo='servicios_adicionales'`
+- Muestra: nombre del cliente, email, teléfono, espacio, período, servicios solicitados (badges naranjas)
+- Badge con conteo de no leídos en el tab
+- Botón "Marcar leída" en cada solicitud
+
+**Archivo:** `admin/page.tsx`
+
+#### 5. Admin — Tab Movimientos financieros
+
+Nuevo tab "💵 Movimientos" en el panel admin:
+- **Resumen:** total pagos recibidos, total liberado a proveedores, comisiones TMC (15%), reintegros, saldo actual en escrow
+- **Lista filtrable** por tipo: `pago` / `liberacion` / `comision` / `cancelacion`
+- Cada fila: espacio, cliente, proveedor, monto, estado escrow, fecha liberación
+- Fuente: `GET /api/admin/movimientos` → tabla `movimientos_ledger`
+
+**Archivos:** `admin/page.tsx`, `adminController.js`, `routes/admin.js`
+
+#### 6. Panel proveedor — Reordenamiento de secciones
+
+Orden nuevo (de arriba a abajo):
+1. 💬 Mensajes (chat)
+2. 📅 Calendario de reservas recibidas
+3. 🏠 Mis espacios publicados (con reservas recibidas embebidas)
+4. 📦 Mis reservas realizadas (como cliente)
+5. ❓ Consultas pendientes / 💬 Consultas respondidas
+
+#### Fix — MercadoPago back_urls con /es/
+
+Todas las `back_urls` de MP ahora tienen prefijo `/es/`. Sin esto, al completar el pago el usuario quedaba en la pantalla de MP porque next-intl v4 no resuelve rutas sin el prefijo de locale.
+
+```javascript
+back_urls: {
+  success: `${FRONTEND_URL}/es/reserva/${reservaId}/confirmacion?estado=success`,
+  ...
+}
+```
+
+**Archivo:** `backend/src/services/mercadopagoService.js`
+
+#### Fix — Banners "depósito de garantía"
+
+Los banners amarillo y verde en el panel del cliente ahora dicen "Pago en depósito de garantía" en vez de "escrow".
+
+#### Fix — TypeScript CI (commit 52463c1)
+
+CI fallaba con `Type 'unknown' is not assignable to type 'ReactNode'` en `TabServiciosAdicionales`. Fix: `!!d?.telDemandante` en vez de `d?.telDemandante` como condición JSX.
+
+**Commits:** `274ac58`, `112601c`, `836e6f0`, `fc261b0`, `113522e`, `52463c1`
+**Snapshot completo:** `docs/snapshot-v1.9.2-07jun2026.md`
+
+---
+
+## Documentación actualizada — 7 Junio 2026 (Noche)
+
+- `docs/TMC-documentacion-tecnica.html` actualizado a v1.9.2 con:
+  - Portada: versión 1.9.2 — 7 Junio 2026
+  - Changelog v1.9.1 y v1.9.2 agregados
+  - Nueva sección 15: Flujo de funcionamiento completo (A→G)
+  - Nueva sección 16: Propuesta v2.0 (4 pilares + roadmap Q3 2026 → Q2 2027)
+- `CLAUDE.md` actualizado: migraciones corridas marcadas, arquitectura chat corregida
+- Memoria persistente: 8 archivos en `/home/dellnotee/.claude/projects/-home-dellnotee/memory/`
