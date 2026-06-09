@@ -440,6 +440,85 @@
   .conditional { display: none; }
   .conditional.show { display: block; }
 
+  /* Bienvenida */
+  #bienvenida { display: block; }
+  #bienvenida.oculto { display: none; }
+  .bienvenida-wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 2rem 1.2rem 4rem;
+  }
+  .bienvenida-badge {
+    display: inline-block;
+    background: #1a0e04;
+    border: 1px solid var(--orange);
+    color: var(--orange);
+    font-size: .72rem;
+    font-weight: 800;
+    padding: .25rem .75rem;
+    border-radius: 99px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+  }
+  .bienvenida-title {
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    font-weight: 800;
+    letter-spacing: -.03em;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+  .bienvenida-title span { color: var(--orange); }
+  .bienvenida-desc {
+    font-size: .95rem;
+    color: var(--text2);
+    line-height: 1.75;
+    margin-bottom: 1.8rem;
+  }
+  .bienvenida-links {
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+    margin-bottom: 2rem;
+  }
+  .bienvenida-link {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: .9rem 1.1rem;
+    text-decoration: none;
+    color: var(--text);
+    font-size: .88rem;
+    font-weight: 600;
+    transition: border-color .15s;
+  }
+  .bienvenida-link:hover { border-color: var(--orange); }
+  .bienvenida-link-icon { font-size: 1.2rem; flex-shrink: 0; }
+  .bienvenida-link-sub { font-size: .75rem; color: var(--text3); font-weight: 400; margin-top: .1rem; }
+  .bienvenida-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 1.6rem 0;
+  }
+  .btn-comenzar {
+    width: 100%;
+    padding: .9rem 1.4rem;
+    background: var(--orange);
+    color: #fff;
+    border: none;
+    border-radius: var(--r2);
+    font-family: 'Sora', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    letter-spacing: -.01em;
+    transition: background .15s;
+  }
+  .btn-comenzar:hover { background: var(--orange-dim); }
+
   @media (max-width: 480px) {
     .stars label { font-size: 1.35rem; }
     .nps-btn { width: 36px; height: 36px; font-size: .78rem; }
@@ -457,14 +536,59 @@
   <p>Gracias por ser parte de la fase de prueba. Tus respuestas nos ayudan a mejorar la plataforma antes del lanzamiento.</p>
 </div>
 
-<div class="progress-bar-wrap">
+<div id="bienvenida">
+  <div class="bienvenida-wrap">
+
+    <div class="bienvenida-badge">🧪 Fase de testing — Acceso anticipado</div>
+
+    <h2 class="bienvenida-title">
+      Bienvenido a<br><span>TodasMisCosas.com</span>
+    </h2>
+
+    <p class="bienvenida-desc">
+      <strong style="color:var(--text)">TodasMisCosas</strong> es un marketplace donde particulares pueden alquilar espacio de guardado —
+      habitaciones, sótanos, cocheras, depósitos — a personas que necesitan almacenar sus cosas en el área de
+      Buenos Aires. Todo de forma segura, con pagos gestionados dentro de la plataforma y comunicación directa
+      entre proveedor y cliente.
+    </p>
+
+    <div class="bienvenida-links">
+      <a class="bienvenida-link" href="https://todasmiscosas.com" target="_blank" rel="noopener">
+        <span class="bienvenida-link-icon">🌐</span>
+        <div>
+          <div>Visitá la plataforma</div>
+          <div class="bienvenida-link-sub">todasmiscosas.com</div>
+        </div>
+      </a>
+      <a class="bienvenida-link" href="https://todasmiscosas.com/es/como-funciona" target="_blank" rel="noopener">
+        <span class="bienvenida-link-icon">📖</span>
+        <div>
+          <div>Cómo funciona</div>
+          <div class="bienvenida-link-sub">Paso a paso para publicar o reservar un espacio</div>
+        </div>
+      </a>
+    </div>
+
+    <div class="bienvenida-divider"></div>
+
+    <p style="font-size:.85rem; color:var(--text3); margin-bottom:1.2rem; line-height:1.6;">
+      Esta encuesta tiene 6 pasos y tarda unos 5 minutos. Al final vas a poder copiar tus respuestas
+      y enviárselas a quien te compartió este link.
+    </p>
+
+    <button class="btn-comenzar" onclick="comenzar()">Comenzar encuesta →</button>
+
+  </div>
+</div>
+
+<div class="progress-bar-wrap" id="progressWrap" style="display:none">
   <div class="progress-track">
     <div class="progress-fill" id="progressFill"></div>
   </div>
   <div class="progress-label" id="progressLabel">Paso 1 / 6</div>
 </div>
 
-<div class="steps-nav" id="stepsNav">
+<div class="steps-nav" id="stepsNav" style="display:none">
   <button class="step-pill active" onclick="irA(0)">👤 Datos</button>
   <button class="step-pill" onclick="irA(1)">📋 Registro</button>
   <button class="step-pill" onclick="irA(2)">🏠 Proveedor</button>
@@ -1033,6 +1157,13 @@
   let pasoActual = 0;
   const totalPasos = 6;
   let npsValor = null;
+
+  function comenzar() {
+    document.getElementById('bienvenida').classList.add('oculto');
+    document.getElementById('progressWrap').style.display = 'flex';
+    document.getElementById('stepsNav').style.display = 'flex';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
   function irA(paso) {
     document.getElementById('step-' + pasoActual).classList.remove('visible');
