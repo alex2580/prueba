@@ -26,11 +26,12 @@ async function run() {
       'auth_otp',
       'perfil_otp',
       'auth_sesiones',
-      // Admin
+      // Admin y auditoría
       'admin_notificaciones',
       'admin_consultas',
       'admin_solicitudes_puntuacion',
       'mailing_log',
+      'auditoria_perfil',
     ];
 
     for (const table of tables) {
@@ -38,7 +39,6 @@ async function run() {
         await conn.execute(`DELETE FROM \`${table}\``);
         console.log(`✅ ${table} — limpia`);
       } catch (e) {
-        // La tabla puede no existir aún si nunca se usó esa feature
         if (e.code === 'ER_NO_SUCH_TABLE') {
           console.log(`⚠️  ${table} — no existe (ok)`);
         } else {
@@ -46,12 +46,6 @@ async function run() {
         }
       }
     }
-
-    // Elimina solo usuarios de seed (sin cuenta Supabase real)
-    const [result] = await conn.execute(
-      `DELETE FROM usuarios WHERE supabase_id IS NULL`
-    );
-    console.log(`✅ usuarios seed eliminados: ${result.affectedRows} fila(s)`);
 
     await conn.execute('SET FOREIGN_KEY_CHECKS = 1');
     console.log('\n🎉 Base de datos lista para pruebas desde cero.');
