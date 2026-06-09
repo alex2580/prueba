@@ -61,7 +61,7 @@ export function useMensajes(conversacionId: string | null, token: string | null,
     socket.emit('join_conversation', conversacionId);
 
     socket.on('nuevo_mensaje', (msg: Mensaje) => {
-      setMensajes(prev => [...prev, msg]);
+      setMensajes(prev => prev.find(m => m.id === msg.id) ? prev : [...prev, msg]);
     });
 
     socket.on('user_typing', ({ nombre }: { nombre: string }) => {

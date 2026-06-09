@@ -103,14 +103,14 @@ export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar, onExt
         ) : (
           /* Fecha de inicio aún no llegó — mostrar aviso */
           <div style={{
-            background: '#1a1200', border: '1px solid #d97706',
+            background: '#000', border: '1px solid #444',
             borderRadius: 'var(--r2)', padding: '.9rem 1rem', marginBottom: '.75rem',
           }}>
-            <p style={{ color: '#fcd34d', fontSize: '.8rem', margin: '0 0 .4rem', fontWeight: 700 }}>
+            <p style={{ color: '#fff', fontSize: '.92rem', margin: '0 0 .4rem', fontWeight: 800 }}>
               🔒 Pago en depósito de garantía
             </p>
-            <p style={{ color: '#fcd34d', fontSize: '.75rem', margin: 0, lineHeight: 1.6 }}>
-              Tu pago está retenido de forma segura. El <strong>{formatFechaCorta(reserva.fecha_desde)}</strong> vas a poder confirmar el acceso desde tu panel y el pago se liberará al oferente dentro de las 48 hs hábiles.
+            <p style={{ color: '#fff', fontSize: '.85rem', margin: 0, lineHeight: 1.6 }}>
+              Tu pago está retenido de forma segura. El <strong>{formatFechaCorta(reserva.fecha_desde)}</strong> vas a poder confirmar el acceso desde tu panel y el pago se liberará al proveedor dentro de las 48 hs hábiles.
             </p>
           </div>
         )
