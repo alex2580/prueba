@@ -43,7 +43,7 @@ Se actualiza con cada nueva mejora incorporada al producto.
 >
 > | # | Funcionalidad | Descripción | Estado |
 > |---|--------------|-------------|--------|
-> | D | **Historial de cambios de perfil** | Log de auditoría que registra cuándo el usuario cambió su nombre, teléfono o dirección. Útil para soporte y seguridad. | 🔴 Pendiente |
+> | D | **Historial de cambios de perfil** | Log de auditoría que registra cuándo el usuario cambió su nombre, teléfono o dirección. Útil para soporte y seguridad. | ✅ Implementado 8 jun 2026 |
 >
 > **Completadas del backlog original:**
 >
@@ -2278,6 +2278,97 @@ CI fallaba con `Type 'unknown' is not assignable to type 'ReactNode'` en `TabSer
 
 **Commits:** `274ac58`, `112601c`, `836e6f0`, `fc261b0`, `113522e`, `52463c1`
 **Snapshot completo:** `docs/snapshot-v1.9.2-07jun2026.md`
+
+---
+
+## 8 de Junio 2026 — v1.9.3
+
+### Fix: eco en chat (mensaje duplicado en primer envío)
+
+**Problema:** Al enviar el primer mensaje del chat, el texto aparecía dos veces. La causa era una race condition: si la respuesta del API regresaba antes que el evento socket `nuevo_mensaje`, el mensaje se agregaba al estado por dos caminos distintos — el handler del socket no tenía dedup check.
+
+**Fix:** Se agregó la misma guardia de dedup al listener `nuevo_mensaje` del socket:
+
+```ts
+socket.on('nuevo_mensaje', (msg: Mensaje) => {
+  setMensajes(prev => prev.find(m => m.id === msg.id) ? prev : [...prev, msg]);
+});
+```
+
+**Archivo:** `frontend/hooks/useChat.ts`
+**Commit:** `f73f3c5`
+
+---
+
+### Fix: banner "Pago en depósito de garantía" — diseño unificado
+
+El bloque que se muestra cuando el pago está retenido pero la fecha de inicio aún no llegó tenía fondo oscuro amarillento (`#1a1200`) con texto amarillo (`#fcd34d`), distinto al bloque con botón de confirmar (que ya era negro/blanco). Se unificaron ambos estados.
+
+| Antes | Ahora |
+|-------|-------|
+| `background: '#1a1200'` | `background: '#000'` |
+| `color: '#fcd34d'` | `color: '#fff'` |
+| `fontSize: '.8rem'` título | `fontSize: '.92rem'` / `fontWeight: 800` |
+| `fontSize: '.75rem'` desc | `fontSize: '.85rem'` |
+| "oferente" en el texto | "proveedor" |
+
+**Archivo:** `frontend/components/reservas/EstadoReserva.tsx`
+**Commit:** `f73f3c5`
+
+---
+
+### Historial de cambios de perfil — tab admin
+
+Nueva tabla `auditoria_perfil` y tab **📋 Historial Perfil** en el panel de administración.
+
+**Qué registra:** cada vez que un usuario edita su perfil (nombre, teléfono, email, dirección, DNI, país, CBU/alias), se inserta una fila con el valor anterior, el valor nuevo y la IP.
+
+**Importante:** este tab registra **cambios en datos del perfil**, no reservas ni pagos. Esos movimientos están en el tab **💵 Movimientos**.
+
+**Backend:**
+- Tabla `auditoria_perfil` con columnas: `usuario_id`, `campo`, `valor_anterior`, `valor_nuevo`, `ip`, `creado_at`
+- Función `_auditarCampo()` en `usuariosController.js` — hook en `actualizar()` y `verificarCambioPerfil()`
+- Endpoint `GET /api/admin/auditoria-perfil` — devuelve últimas 500 entradas con JOIN a `usuarios`
+
+**Frontend:**
+- Tab `📋 Historial Perfil` en `admin/page.tsx`
+- Tabla con columnas: Fecha, Usuario, Campo, Valor anterior (rojo), Valor nuevo (verde), IP
+- Buscador por usuario/email/campo
+
+**Migración:** `backend/src/db/add-auditoria-perfil.js` + `fix-nuevas-tablas-charset.js` (charset Hostinger)
+
+**Commits:** previos a la sesión del 8 jun + charset corregido
+
+---
+
+### Reset de datos — preserva todos los usuarios
+
+`backend/src/db/reset-data.js` actualizado:
+
+- **Eliminado:** bloque que borraba usuarios sin `supabase_id` (seed users). Ahora el script no toca la tabla `usuarios` en absoluto.
+- **Agregado:** `auditoria_perfil` a la lista de tablas a limpiar.
+- Útil para hacer reset completo entre rondas de testing sin perder cuentas registradas.
+
+**Comando en VPS:** `cd /var/www/todasmiscosas/backend && node src/db/reset-data.js`
+**Commit:** `9b9f668`
+
+---
+
+### Formulario de testing — form-testers-v1.html
+
+Formulario autocontenido para distribución a testers de la plataforma. Disponible en:
+
+**`https://todasmiscosas.com/form-testers-v1.html`**
+
+**Estructura:**
+- **Pantalla de bienvenida:** descripción del marketplace (Latinoamérica), links a `todasmiscosas.com` y a `Cómo funciona`, botón "Comenzar encuesta"
+- **6 pasos:** Datos del tester → Registro → Experiencia Proveedor → Experiencia Cliente → Chat → Experiencia General
+- **Métricas:** estrellitas (1–5) por sección, NPS (0–10) al final
+- **Salida:** resumen de texto formateado que el tester copia y envía a quien le compartió el link
+- Sin backend, sin dependencias externas — funciona como archivo estático
+
+**Archivo:** `frontend/public/form-testers-v1.html` + `docs/form-testers-v1.html`
+**Commits:** `1ad7408`, `74e1c9a`, `e75cc10`, `731358a`, `649a557`, `b886e6f`
 
 ---
 
