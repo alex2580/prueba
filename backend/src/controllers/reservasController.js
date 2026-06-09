@@ -54,7 +54,7 @@ async function listar(req, res, next) {
          JOIN espacios e ON r.espacio_id = e.id
          JOIN usuarios u ON r.usuario_id = u.id
          LEFT JOIN reservas_ocultas ro ON ro.reserva_id = r.id AND ro.usuario_id = ?
-         WHERE r.usuario_id = ? AND r.estado != 'pendiente' AND ro.reserva_id IS NULL
+         WHERE r.usuario_id = ? AND ro.reserva_id IS NULL
          ORDER BY r.created_at DESC`;
 
     const reservas = await query(sql, [req.user.id, req.user.id]);
