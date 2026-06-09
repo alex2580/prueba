@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC — Formulario de Testing</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0d0f;
+    --surface: #18181b;
+    --surface2: #222226;
+    --border: #2e2e33;
+    --text: #f4f4f5;
+    --text2: #a1a1aa;
+    --text3: #71717a;
+    --orange: #f97316;
+    --orange-dim: #c2540a;
+    --green: #22c55e;
+    --red: #ef4444;
+    --blue: #3b82f6;
+    --r: 12px;
+    --r2: 8px;
+  }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0 0 4rem;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #0d0d0f 0%, #1a0a00 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 1.5rem 1.8rem;
+    text-align: center;
+  }
+  .header-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    margin-bottom: 1.2rem;
+  }
+  .header-logo-icon {
+    width: 40px; height: 40px;
+    background: var(--orange);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+  }
+  .header-logo-text {
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: -.02em;
+  }
+  .header h1 {
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -.03em;
+    margin-bottom: .5rem;
+  }
+  .header h1 span { color: var(--orange); }
+  .header p {
+    color: var(--text2);
+    font-size: .92rem;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Progress */
+  .progress-bar-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .progress-track {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--orange);
+    border-radius: 99px;
+    transition: width .4s ease;
+    width: 0%;
+  }
+  .progress-label {
+    font-size: .75rem;
+    font-weight: 700;
+    color: var(--text3);
+    white-space: nowrap;
+    min-width: 60px;
+    text-align: right;
+  }
+
+  /* Steps nav */
+  .steps-nav {
+    display: flex;
+    gap: .3rem;
+    overflow-x: auto;
+    padding: .8rem 1.5rem;
+    scrollbar-width: none;
+  }
+  .steps-nav::-webkit-scrollbar { display: none; }
+  .step-pill {
+    flex-shrink: 0;
+    padding: .35rem .8rem;
+    border-radius: 99px;
+    font-size: .72rem;
+    font-weight: 700;
+    border: 1.5px solid var(--border);
+    color: var(--text3);
+    background: transparent;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .step-pill.active {
+    background: var(--orange);
+    border-color: var(--orange);
+    color: #fff;
+  }
+  .step-pill.done {
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  /* Container */
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 1.2rem;
+  }
+
+  /* Step sections */
+  .step-section {
+    display: none;
+    padding-top: 1.8rem;
+  }
+  .step-section.visible { display: block; }
+
+  .section-header {
+    margin-bottom: 1.6rem;
+  }
+  .section-number {
+    display: inline-block;
+    background: var(--orange);
+    color: #fff;
+    font-size: .7rem;
+    font-weight: 800;
+    padding: .2rem .6rem;
+    border-radius: 99px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: .6rem;
+  }
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -.02em;
+    margin-bottom: .3rem;
+  }
+  .section-desc {
+    font-size: .85rem;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .card-label {
+    font-size: .88rem;
+    font-weight: 700;
+    margin-bottom: .8rem;
+    line-height: 1.4;
+  }
+  .card-label .req { color: var(--orange); margin-left: .15rem; }
+  .card-hint {
+    font-size: .75rem;
+    color: var(--text3);
+    margin-top: .4rem;
+    line-height: 1.5;
+  }
+
+  /* Inputs */
+  input[type="text"],
+  input[type="email"],
+  textarea,
+  select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--r2);
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    font-size: .88rem;
+    padding: .6rem .9rem;
+    outline: none;
+    transition: border-color .2s;
+    resize: vertical;
+  }
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  textarea:focus,
+  select:focus {
+    border-color: var(--orange);
+  }
+  input::placeholder, textarea::placeholder { color: var(--text3); }
+  textarea { min-height: 80px; }
+
+  /* Radio / Checkbox groups */
+  .radio-group, .check-group {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+  }
+  .radio-option, .check-option {
+    display: flex;
+    align-items: flex-start;
+    gap: .75rem;
+    padding: .7rem .9rem;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--r2);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .radio-option:hover, .check-option:hover {
+    border-color: var(--orange);
+  }
+  .radio-option input, .check-option input {
+    width: auto;
+    margin-top: .1rem;
+    accent-color: var(--orange);
+    flex-shrink: 0;
+  }
+  .radio-option.selected, .check-option.selected {
+    border-color: var(--orange);
+    background: #1a0e04;
+  }
+  .radio-option-label {
+    font-size: .88rem;
+    font-weight: 600;
+  }
+  .radio-option-sub {
+    font-size: .75rem;
+    color: var(--text3);
+    margin-top: .1rem;
+  }
+
+  /* Star rating */
+  .stars {
+    display: flex;
+    gap: .4rem;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+  }
+  .stars input { display: none; }
+  .stars label {
+    font-size: 1.6rem;
+    cursor: pointer;
+    color: var(--border);
+    transition: color .1s;
+    line-height: 1;
+  }
+  .stars input:checked ~ label,
+  .stars label:hover,
+  .stars label:hover ~ label {
+    color: var(--orange);
+  }
+
+  /* NPS */
+  .nps-row {
+    display: flex;
+    gap: .3rem;
+    flex-wrap: wrap;
+  }
+  .nps-btn {
+    width: 42px; height: 42px;
+    border-radius: var(--r2);
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    color: var(--text2);
+    font-size: .85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .nps-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .nps-btn.selected { background: var(--orange); border-color: var(--orange); color: #fff; }
+  .nps-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: .4rem;
+    font-size: .7rem;
+    color: var(--text3);
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 1.4rem 0;
+  }
+
+  /* Alert / info */
+  .info-box {
+    background: #0c1a2e;
+    border: 1px solid #1d4ed8;
+    border-radius: var(--r2);
+    padding: .8rem 1rem;
+    font-size: .82rem;
+    color: #93c5fd;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+  .warning-box {
+    background: #1a1200;
+    border: 1px solid #d97706;
+    border-radius: var(--r2);
+    padding: .8rem 1rem;
+    font-size: .82rem;
+    color: #fcd34d;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+
+  /* Nav buttons */
+  .nav-buttons {
+    display: flex;
+    gap: .75rem;
+    margin-top: 1.8rem;
+    padding-bottom: 1rem;
+  }
+  .btn {
+    padding: .7rem 1.4rem;
+    border-radius: var(--r2);
+    font-family: 'Sora', sans-serif;
+    font-size: .88rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all .15s;
+  }
+  .btn-primary {
+    background: var(--orange);
+    color: #fff;
+    flex: 1;
+  }
+  .btn-primary:hover { background: var(--orange-dim); }
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text2);
+    border: 1.5px solid var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--text3); color: var(--text); }
+  .btn-submit {
+    background: var(--green);
+    color: #fff;
+    flex: 1;
+    font-size: .95rem;
+  }
+  .btn-submit:hover { background: #16a34a; }
+
+  /* Resultado final */
+  #resultado {
+    display: none;
+    padding-top: 2rem;
+  }
+  #resultado.visible { display: block; }
+  .resultado-card {
+    background: #0d1f14;
+    border: 1.5px solid var(--green);
+    border-radius: var(--r);
+    padding: 1.8rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  .resultado-icon { font-size: 3rem; margin-bottom: .8rem; }
+  .resultado-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: -.02em;
+    margin-bottom: .4rem;
+  }
+  .resultado-desc { font-size: .88rem; color: var(--text2); line-height: 1.6; }
+
+  #resumen-texto {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--r2);
+    padding: 1rem;
+    font-size: .78rem;
+    color: var(--text2);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    font-family: monospace;
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: .8rem;
+  }
+  .copy-btn {
+    width: 100%;
+    padding: .7rem;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--r2);
+    color: var(--text2);
+    font-family: 'Sora', sans-serif;
+    font-size: .85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .copy-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .copy-btn.copied { border-color: var(--green); color: var(--green); }
+
+  /* Conditional section */
+  .conditional { display: none; }
+  .conditional.show { display: block; }
+
+  @media (max-width: 480px) {
+    .stars label { font-size: 1.35rem; }
+    .nps-btn { width: 36px; height: 36px; font-size: .78rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">
+    <div class="header-logo-icon">📦</div>
+    <span class="header-logo-text">TodasMisCosas</span>
+  </div>
+  <h1>Formulario de <span>Testing</span></h1>
+  <p>Gracias por ser parte de la fase de prueba. Tus respuestas nos ayudan a mejorar la plataforma antes del lanzamiento.</p>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <div class="progress-label" id="progressLabel">Paso 1 / 6</div>
+</div>
+
+<div class="steps-nav" id="stepsNav">
+  <button class="step-pill active" onclick="irA(0)">👤 Datos</button>
+  <button class="step-pill" onclick="irA(1)">📋 Registro</button>
+  <button class="step-pill" onclick="irA(2)">🏠 Proveedor</button>
+  <button class="step-pill" onclick="irA(3)">🔍 Cliente</button>
+  <button class="step-pill" onclick="irA(4)">💬 Chat</button>
+  <button class="step-pill" onclick="irA(5)">⭐ General</button>
+</div>
+
+<div class="container">
+
+  <!-- PASO 1: Datos del tester -->
+  <div class="step-section visible" id="step-0">
+    <div class="section-header">
+      <div class="section-number">Paso 1 de 6</div>
+      <div class="section-title">Datos del tester</div>
+      <div class="section-desc">Información básica para identificar tu feedback.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Nombre completo <span class="req">*</span></div>
+      <input type="text" id="nombre" placeholder="Tu nombre y apellido">
+    </div>
+
+    <div class="card">
+      <div class="card-label">Email de contacto <span class="req">*</span></div>
+      <input type="email" id="email" placeholder="tu@email.com">
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿Qué rol/es probaste en la plataforma? <span class="req">*</span></div>
+      <div class="radio-group">
+        <label class="radio-option" onclick="seleccionar(this, 'rol')">
+          <input type="radio" name="rol" value="cliente">
+          <div>
+            <div class="radio-option-label">🔍 Solo Cliente</div>
+            <div class="radio-option-sub">Busqué espacios, hice una reserva y/o pagué</div>
+          </div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'rol')">
+          <input type="radio" name="rol" value="proveedor">
+          <div>
+            <div class="radio-option-label">🏠 Solo Proveedor</div>
+            <div class="radio-option-sub">Publiqué un espacio y gestioné reservas</div>
+          </div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'rol')">
+          <input type="radio" name="rol" value="ambos">
+          <div>
+            <div class="radio-option-label">🔄 Ambos roles</div>
+            <div class="radio-option-sub">Probé tanto publicar como reservar</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿Desde qué dispositivo probaste?</div>
+      <div class="radio-group">
+        <label class="radio-option" onclick="seleccionar(this, 'dispositivo')">
+          <input type="radio" name="dispositivo" value="celular">
+          <div><div class="radio-option-label">📱 Celular</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'dispositivo')">
+          <input type="radio" name="dispositivo" value="computadora">
+          <div><div class="radio-option-label">💻 Computadora</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'dispositivo')">
+          <input type="radio" name="dispositivo" value="ambos">
+          <div><div class="radio-option-label">📱💻 Ambos</div></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-primary" onclick="siguiente()">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- PASO 2: Registro y onboarding -->
+  <div class="step-section" id="step-1">
+    <div class="section-header">
+      <div class="section-number">Paso 2 de 6</div>
+      <div class="section-title">Registro y acceso</div>
+      <div class="section-desc">Cómo fue tu experiencia para crear la cuenta y entrar a la plataforma.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿Pudiste crear tu cuenta sin inconvenientes? <span class="req">*</span></div>
+      <div class="radio-group">
+        <label class="radio-option" onclick="seleccionar(this, 'reg_cuenta')">
+          <input type="radio" name="reg_cuenta" value="si">
+          <div><div class="radio-option-label">✅ Sí, sin problemas</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'reg_cuenta')">
+          <input type="radio" name="reg_cuenta" value="dificultad">
+          <div><div class="radio-option-label">⚠️ Con alguna dificultad</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'reg_cuenta')">
+          <input type="radio" name="reg_cuenta" value="no">
+          <div><div class="radio-option-label">❌ No pude completarlo</div></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿El proceso de verificación (email/teléfono) fue claro?</div>
+      <div class="radio-group">
+        <label class="radio-option" onclick="seleccionar(this, 'reg_verificacion')">
+          <input type="radio" name="reg_verificacion" value="muy_claro">
+          <div><div class="radio-option-label">✅ Muy claro</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'reg_verificacion')">
+          <input type="radio" name="reg_verificacion" value="confuso">
+          <div><div class="radio-option-label">🤔 Confuso o lento</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'reg_verificacion')">
+          <input type="radio" name="reg_verificacion" value="no_uso">
+          <div><div class="radio-option-label">— No lo necesité</div></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿Qué tan fácil fue completar tu perfil?</div>
+      <div class="stars" id="stars-reg">
+        <input type="radio" name="stars_reg" id="reg5" value="5"><label for="reg5">★</label>
+        <input type="radio" name="stars_reg" id="reg4" value="4"><label for="reg4">★</label>
+        <input type="radio" name="stars_reg" id="reg3" value="3"><label for="reg3">★</label>
+        <input type="radio" name="stars_reg" id="reg2" value="2"><label for="reg2">★</label>
+        <input type="radio" name="stars_reg" id="reg1" value="1"><label for="reg1">★</label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Comentarios sobre registro o acceso</div>
+      <textarea id="reg_comentario" placeholder="¿Algo confuso? ¿Algún paso que no entendiste? ¿Algo que te sorprendió para bien?"></textarea>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="anterior()">← Atrás</button>
+      <button class="btn btn-primary" onclick="siguiente()">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- PASO 3: Experiencia como Proveedor -->
+  <div class="step-section" id="step-2">
+    <div class="section-header">
+      <div class="section-number">Paso 3 de 6</div>
+      <div class="section-title">Experiencia como Proveedor</div>
+      <div class="section-desc">Publicar un espacio, gestionar reservas y cobros.</div>
+    </div>
+
+    <div class="info-box" id="aviso-no-proveedor" style="display:none">
+      ℹ️ Este paso es para quienes probaron el rol proveedor. Podés saltarlo con "Siguiente" si no publicaste ningún espacio.
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿Pudiste publicar un espacio completo (nombre, fotos, precio)? <span class="req">*</span></div>
+      <div class="radio-group">
+        <label class="radio-option" onclick="seleccionar(this, 'prov_publicar')">
+          <input type="radio" name="prov_publicar" value="si">
+          <div><div class="radio-option-label">✅ Sí, lo publiqué completo</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'prov_publicar')">
+          <input type="radio" name="prov_publicar" value="parcial">
+          <div><div class="radio-option-label">⚠️ Quedó incompleto</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'prov_publicar')">
+          <input type="radio" name="prov_publicar" value="no_intente">
+          <div><div class="radio-option-label">— No lo intenté</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'prov_publicar')">
+          <input type="radio" name="prov_publicar" value="no_pude">
+          <div><div class="radio-option-label">❌ Tuve un error, no pude</div></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿La subida de fotos funcionó correctamente?</div>
+      <div class="radio-group">
+        <label class="radio-option" onclick="seleccionar(this, 'prov_fotos')">
+          <input type="radio" name="prov_fotos" value="si"><div><div class="radio-option-label">✅ Sí, sin problemas</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'prov_fotos')">
+          <input type="radio" name="prov_fotos" value="lento"><div><div class="radio-option-label">🐢 Funcionó pero fue lento</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'prov_fotos')">
+          <input type="radio" name="prov_fotos" value="error"><div><div class="radio-option-label">❌ Tuve un error</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'prov_fotos')">
+          <input type="radio" name="prov_fotos" value="no"><div><div class="radio-option-label">— No subí fotos</div></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿Recibiste la reserva de un cliente en tu panel?</div>
+      <div class="radio-group">
+        <label class="radio-option" onclick="seleccionar(this, 'prov_reserva_recibida')">
+          <input type="radio" name="prov_reserva_recibida" value="si"><div><div class="radio-option-label">✅ Sí, la vi y la confirmé</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'prov_reserva_recibida')">
+          <input type="radio" name="prov_reserva_recibida" value="si_sin_notif"><div><div class="radio-option-label">⚠️ La vi pero no recibí email</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'prov_reserva_recibida')">
+          <input type="radio" name="prov_reserva_recibida" value="no_recibi"><div><div class="radio-option-label">❌ No me llegó ninguna reserva</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'prov_reserva_recibida')">
+          <input type="radio" name="prov_reserva_recibida" value="no_aplica"><div><div class="radio-option-label">— No hubo reservas</div></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿Entendiste cómo funciona el depósito de garantía?</div>
+      <div class="radio-group">
+        <label class="radio-option" onclick="seleccionar(this, 'prov_escrow')">
+          <input type="radio" name="prov_escrow" value="claro"><div><div class="radio-option-label">✅ Sí, quedó claro</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'prov_escrow')">
+          <input type="radio" name="prov_escrow" value="confuso"><div><div class="radio-option-label">🤔 Me confundió un poco</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'prov_escrow')">
+          <input type="radio" name="prov_escrow" value="no_entendi"><div><div class="radio-option-label">❌ No lo entendí</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'prov_escrow')">
+          <input type="radio" name="prov_escrow" value="no_llege"><div><div class="radio-option-label">— No llegué a ese punto</div></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿Qué tan intuitivo fue gestionar tu espacio desde el panel?</div>
+      <div class="stars">
+        <input type="radio" name="stars_prov" id="prov5" value="5"><label for="prov5">★</label>
+        <input type="radio" name="stars_prov" id="prov4" value="4"><label for="prov4">★</label>
+        <input type="radio" name="stars_prov" id="prov3" value="3"><label for="prov3">★</label>
+        <input type="radio" name="stars_prov" id="prov2" value="2"><label for="prov2">★</label>
+        <input type="radio" name="stars_prov" id="prov1" value="1"><label for="prov1">★</label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Comentarios sobre la experiencia como proveedor</div>
+      <textarea id="prov_comentario" placeholder="¿Algo confuso en la publicación? ¿Faltó algún campo? ¿El panel fue fácil de usar?"></textarea>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="anterior()">← Atrás</button>
+      <button class="btn btn-primary" onclick="siguiente()">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- PASO 4: Experiencia como Cliente -->
+  <div class="step-section" id="step-3">
+    <div class="section-header">
+      <div class="section-number">Paso 4 de 6</div>
+      <div class="section-title">Experiencia como Cliente</div>
+      <div class="section-desc">Buscar, reservar y pagar un espacio.</div>
+    </div>
+
+    <div class="info-box" id="aviso-no-cliente" style="display:none">
+      ℹ️ Este paso es para quienes probaron el rol cliente. Podés saltarlo con "Siguiente" si no hiciste ninguna reserva.
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿Encontraste espacios disponibles para reservar? <span class="req">*</span></div>
+      <div class="radio-group">
+        <label class="radio-option" onclick="seleccionar(this, 'cli_encontrar')">
+          <input type="radio" name="cli_encontrar" value="si"><div><div class="radio-option-label">✅ Sí, encontré opciones</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'cli_encontrar')">
+          <input type="radio" name="cli_encontrar" value="pocos"><div><div class="radio-option-label">⚠️ Muy pocos resultados</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'cli_encontrar')">
+          <input type="radio" name="cli_encontrar" value="no"><div><div class="radio-option-label">❌ No encontré nada</div></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿Pudiste completar una reserva?</div>
+      <div class="radio-group">
+        <label class="radio-option" onclick="seleccionar(this, 'cli_reservar')">
+          <input type="radio" name="cli_reservar" value="si"><div><div class="radio-option-label">✅ Sí, la reserva quedó confirmada</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'cli_reservar')">
+          <input type="radio" name="cli_reservar" value="sin_confirmar"><div><div class="radio-option-label">⏳ Quedó en espera de confirmación</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'cli_reservar')">
+          <input type="radio" name="cli_reservar" value="error"><div><div class="radio-option-label">❌ Tuve un error al reservar</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'cli_reservar')">
+          <input type="radio" name="cli_reservar" value="no"><div><div class="radio-option-label">— No lo intenté</div></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿Pudiste completar el pago con MercadoPago?</div>
+      <div class="radio-group">
+        <label class="radio-option" onclick="seleccionar(this, 'cli_pago')">
+          <input type="radio" name="cli_pago" value="si"><div><div class="radio-option-label">✅ Sí, sin problemas</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'cli_pago')">
+          <input type="radio" name="cli_pago" value="error_mp"><div><div class="radio-option-label">❌ Hubo un error en MercadoPago</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'cli_pago')">
+          <input type="radio" name="cli_pago" value="error_vuelta"><div><div class="radio-option-label">⚠️ El pago pasó pero no volvió bien a la plataforma</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'cli_pago')">
+          <input type="radio" name="cli_pago" value="no"><div><div class="radio-option-label">— No llegué al pago</div></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿El PIN de acceso apareció correctamente en tu reserva?</div>
+      <div class="radio-group">
+        <label class="radio-option" onclick="seleccionar(this, 'cli_pin')">
+          <input type="radio" name="cli_pin" value="si"><div><div class="radio-option-label">✅ Sí, lo vi claro</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'cli_pin')">
+          <input type="radio" name="cli_pin" value="no_encontre"><div><div class="radio-option-label">🤔 No lo encontré</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'cli_pin')">
+          <input type="radio" name="cli_pin" value="no_aplica"><div><div class="radio-option-label">— No llegué a tener reserva activa</div></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿Recibiste los emails de notificación (confirmación, pago, etc.)?</div>
+      <div class="radio-group">
+        <label class="radio-option" onclick="seleccionar(this, 'cli_emails')">
+          <input type="radio" name="cli_emails" value="todos"><div><div class="radio-option-label">✅ Sí, llegaron todos</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'cli_emails')">
+          <input type="radio" name="cli_emails" value="algunos"><div><div class="radio-option-label">⚠️ Algunos sí, otros no</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'cli_emails')">
+          <input type="radio" name="cli_emails" value="ninguno"><div><div class="radio-option-label">❌ No llegó ninguno</div></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿Qué tan claro fue el flujo de reserva completo?</div>
+      <div class="stars">
+        <input type="radio" name="stars_cli" id="cli5" value="5"><label for="cli5">★</label>
+        <input type="radio" name="stars_cli" id="cli4" value="4"><label for="cli4">★</label>
+        <input type="radio" name="stars_cli" id="cli3" value="3"><label for="cli3">★</label>
+        <input type="radio" name="stars_cli" id="cli2" value="2"><label for="cli2">★</label>
+        <input type="radio" name="stars_cli" id="cli1" value="1"><label for="cli1">★</label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Comentarios sobre la experiencia como cliente</div>
+      <textarea id="cli_comentario" placeholder="¿El proceso fue intuitivo? ¿Algún paso confuso? ¿Algo que no entendiste?"></textarea>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="anterior()">← Atrás</button>
+      <button class="btn btn-primary" onclick="siguiente()">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- PASO 5: Chat -->
+  <div class="step-section" id="step-4">
+    <div class="section-header">
+      <div class="section-number">Paso 5 de 6</div>
+      <div class="section-title">Chat entre usuarios</div>
+      <div class="section-desc">La comunicación entre proveedor y cliente dentro de la reserva.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿Usaste el chat con el otro usuario? <span class="req">*</span></div>
+      <div class="radio-group">
+        <label class="radio-option" onclick="seleccionar(this, 'chat_uso')">
+          <input type="radio" name="chat_uso" value="si"><div><div class="radio-option-label">✅ Sí, intercambiamos mensajes</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'chat_uso')">
+          <input type="radio" name="chat_uso" value="intente"><div><div class="radio-option-label">⚠️ Lo intenté pero no funcionó</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'chat_uso')">
+          <input type="radio" name="chat_uso" value="no"><div><div class="radio-option-label">— No lo usé</div></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿Los mensajes llegaron en tiempo real sin recargar?</div>
+      <div class="radio-group">
+        <label class="radio-option" onclick="seleccionar(this, 'chat_realtime')">
+          <input type="radio" name="chat_realtime" value="si"><div><div class="radio-option-label">✅ Sí, instantáneo</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'chat_realtime')">
+          <input type="radio" name="chat_realtime" value="lento"><div><div class="radio-option-label">🐢 Con algo de demora</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'chat_realtime')">
+          <input type="radio" name="chat_realtime" value="no"><div><div class="radio-option-label">❌ Tuve que recargar</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'chat_realtime')">
+          <input type="radio" name="chat_realtime" value="no_use"><div><div class="radio-option-label">— No aplica</div></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿Encontraste el botón de chat fácilmente?</div>
+      <div class="radio-group">
+        <label class="radio-option" onclick="seleccionar(this, 'chat_ux')">
+          <input type="radio" name="chat_ux" value="si"><div><div class="radio-option-label">✅ Sí, lo vi enseguida</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'chat_ux')">
+          <input type="radio" name="chat_ux" value="dificil"><div><div class="radio-option-label">🔍 Me costó encontrarlo</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'chat_ux')">
+          <input type="radio" name="chat_ux" value="no_encontre"><div><div class="radio-option-label">❌ No lo encontré</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'chat_ux')">
+          <input type="radio" name="chat_ux" value="no_use"><div><div class="radio-option-label">— No aplica</div></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Comentarios sobre el chat</div>
+      <textarea id="chat_comentario" placeholder="¿Funcionó bien? ¿Algún problema? ¿Sugerís algo para mejorarlo?"></textarea>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="anterior()">← Atrás</button>
+      <button class="btn btn-primary" onclick="siguiente()">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- PASO 6: Experiencia general -->
+  <div class="step-section" id="step-5">
+    <div class="section-header">
+      <div class="section-number">Paso 6 de 6</div>
+      <div class="section-title">Experiencia general</div>
+      <div class="section-desc">Tu opinión global sobre la plataforma.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿La plataforma fue fácil de usar en general?</div>
+      <div class="stars">
+        <input type="radio" name="stars_ux" id="ux5" value="5"><label for="ux5">★</label>
+        <input type="radio" name="stars_ux" id="ux4" value="4"><label for="ux4">★</label>
+        <input type="radio" name="stars_ux" id="ux3" value="3"><label for="ux3">★</label>
+        <input type="radio" name="stars_ux" id="ux2" value="2"><label for="ux2">★</label>
+        <input type="radio" name="stars_ux" id="ux1" value="1"><label for="ux1">★</label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿El diseño te pareció profesional y confiable?</div>
+      <div class="stars">
+        <input type="radio" name="stars_diseno" id="d5" value="5"><label for="d5">★</label>
+        <input type="radio" name="stars_diseno" id="d4" value="4"><label for="d4">★</label>
+        <input type="radio" name="stars_diseno" id="d3" value="3"><label for="d3">★</label>
+        <input type="radio" name="stars_diseno" id="d2" value="2"><label for="d2">★</label>
+        <input type="radio" name="stars_diseno" id="d1" value="1"><label for="d1">★</label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿Encontraste algún error o bug durante la prueba?</div>
+      <div class="radio-group">
+        <label class="radio-option" onclick="seleccionar(this, 'gen_bugs')">
+          <input type="radio" name="gen_bugs" value="no"><div><div class="radio-option-label">✅ No, todo funcionó</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'gen_bugs')">
+          <input type="radio" name="gen_bugs" value="leve"><div><div class="radio-option-label">⚠️ Sí, algo menor</div></div>
+        </label>
+        <label class="radio-option" onclick="seleccionar(this, 'gen_bugs')">
+          <input type="radio" name="gen_bugs" value="grave"><div><div class="radio-option-label">❌ Sí, me impidió completar algo</div></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Si encontraste un bug, describilo acá</div>
+      <textarea id="gen_bug_detalle" placeholder="¿Qué paso? ¿En qué pantalla? ¿Se repitió? Cualquier detalle ayuda."></textarea>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="card">
+      <div class="card-label">¿Qué fue lo que más te gustó de la plataforma?</div>
+      <textarea id="gen_positivo" placeholder="Lo que te sorprendió para bien, lo que funcionó genial, lo que te transmitió confianza…"></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿Qué fue lo más confuso o lo que cambiarías?</div>
+      <textarea id="gen_mejorar" placeholder="Algo que no entendiste, que te trabó, que te pareció raro o que haría que no uses la plataforma…"></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿Qué función le agregarías que no existe hoy?</div>
+      <textarea id="gen_feature" placeholder="Algo que esperabas encontrar y no estaba…"></textarea>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="card">
+      <div class="card-label">En una escala del 0 al 10, ¿recomendarías TodasMisCosas a alguien que necesita guardar cosas?</div>
+      <div class="nps-row" id="npsRow">
+        <button class="nps-btn" onclick="setNPS(0)" data-val="0">0</button>
+        <button class="nps-btn" onclick="setNPS(1)" data-val="1">1</button>
+        <button class="nps-btn" onclick="setNPS(2)" data-val="2">2</button>
+        <button class="nps-btn" onclick="setNPS(3)" data-val="3">3</button>
+        <button class="nps-btn" onclick="setNPS(4)" data-val="4">4</button>
+        <button class="nps-btn" onclick="setNPS(5)" data-val="5">5</button>
+        <button class="nps-btn" onclick="setNPS(6)" data-val="6">6</button>
+        <button class="nps-btn" onclick="setNPS(7)" data-val="7">7</button>
+        <button class="nps-btn" onclick="setNPS(8)" data-val="8">8</button>
+        <button class="nps-btn" onclick="setNPS(9)" data-val="9">9</button>
+        <button class="nps-btn" onclick="setNPS(10)" data-val="10">10</button>
+      </div>
+      <div class="nps-labels">
+        <span>0 = No la recomendaría</span>
+        <span>10 = La recomendaría sin dudarlo</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">¿Algo más que quieras decirnos?</div>
+      <textarea id="gen_otro" placeholder="Cualquier comentario adicional es bienvenido…" style="min-height:100px"></textarea>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="anterior()">← Atrás</button>
+      <button class="btn btn-submit" onclick="enviar()">✅ Enviar respuestas</button>
+    </div>
+  </div>
+
+  <!-- RESULTADO -->
+  <div id="resultado">
+    <div class="resultado-card">
+      <div class="resultado-icon">🎉</div>
+      <div class="resultado-title">¡Gracias por tu feedback!</div>
+      <div class="resultado-desc">
+        Tu opinión es fundamental para mejorar TodasMisCosas antes del lanzamiento.<br>
+        Copiá el resumen de abajo y enviáselo al equipo por WhatsApp o email.
+      </div>
+    </div>
+
+    <div style="font-size:.78rem; color:var(--text3); margin-bottom:.5rem; font-weight:600; text-transform:uppercase; letter-spacing:.06em;">
+      Resumen para compartir
+    </div>
+    <pre id="resumen-texto"></pre>
+    <button class="copy-btn" id="copyBtn" onclick="copiar()">📋 Copiar resumen</button>
+
+    <div style="margin-top:1.5rem; background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:1rem; font-size:.82rem; color:var(--text2); line-height:1.7;">
+      <strong style="color:var(--text)">📬 ¿A quién enviarlo?</strong><br>
+      WhatsApp o email a:<br>
+      <strong style="color:var(--orange)">alejandro.laporte@gmail.com</strong>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+  let pasoActual = 0;
+  const totalPasos = 6;
+  let npsValor = null;
+
+  function irA(paso) {
+    document.getElementById('step-' + pasoActual).classList.remove('visible');
+    pasoActual = paso;
+    document.getElementById('step-' + pasoActual).classList.add('visible');
+    actualizarUI();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function siguiente() {
+    if (pasoActual < totalPasos - 1) irA(pasoActual + 1);
+  }
+
+  function anterior() {
+    if (pasoActual > 0) irA(pasoActual - 1);
+  }
+
+  function actualizarUI() {
+    const pct = Math.round(((pasoActual + 1) / totalPasos) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = 'Paso ' + (pasoActual + 1) + ' / ' + totalPasos;
+
+    const pills = document.querySelectorAll('.step-pill');
+    pills.forEach((p, i) => {
+      p.classList.remove('active', 'done');
+      if (i === pasoActual) p.classList.add('active');
+      else if (i < pasoActual) p.classList.add('done');
+    });
+
+    // Aviso pasos opcionales según rol
+    const rol = document.querySelector('input[name="rol"]:checked')?.value;
+    const avisoNoProv = document.getElementById('aviso-no-proveedor');
+    const avisoNoCli = document.getElementById('aviso-no-cliente');
+    if (avisoNoProv) avisoNoProv.style.display = (rol === 'cliente') ? 'block' : 'none';
+    if (avisoNoCli)  avisoNoCli.style.display  = (rol === 'proveedor') ? 'block' : 'none';
+  }
+
+  function seleccionar(el, nombre) {
+    document.querySelectorAll(`input[name="${nombre}"]`).forEach(r => {
+      r.closest('.radio-option')?.classList.remove('selected');
+    });
+    el.classList.add('selected');
+  }
+
+  function setNPS(val) {
+    npsValor = val;
+    document.querySelectorAll('.nps-btn').forEach(b => {
+      b.classList.toggle('selected', parseInt(b.dataset.val) === val);
+    });
+  }
+
+  function getRadio(name) {
+    return document.querySelector(`input[name="${name}"]:checked`)?.value || '—';
+  }
+
+  function getStars(name) {
+    const v = document.querySelector(`input[name="${name}"]:checked`)?.value;
+    if (!v) return '—';
+    return '★'.repeat(parseInt(v)) + '☆'.repeat(5 - parseInt(v)) + ' (' + v + '/5)';
+  }
+
+  function getTexto(id) {
+    const v = document.getElementById(id)?.value?.trim();
+    return v || '—';
+  }
+
+  function enviar() {
+    const nombre = document.getElementById('nombre').value.trim();
+    const email = document.getElementById('email').value.trim();
+    if (!nombre || !email) {
+      alert('Por favor completá tu nombre y email antes de enviar.');
+      irA(0);
+      return;
+    }
+
+    const ahora = new Date().toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' });
+
+    const resumen = `═══════════════════════════════════════
+FEEDBACK DE TESTING — TodasMisCosas.com
+${ahora}
+═══════════════════════════════════════
+
+👤 TESTER
+  Nombre:     ${nombre}
+  Email:      ${email}
+  Rol:        ${getRadio('rol')}
+  Dispositivo: ${getRadio('dispositivo')}
+
+📋 REGISTRO
+  Creación cuenta:    ${getRadio('reg_cuenta')}
+  Verificación:       ${getRadio('reg_verificacion')}
+  Facilidad perfil:   ${getStars('stars_reg')}
+  Comentarios:        ${getTexto('reg_comentario')}
+
+🏠 PROVEEDOR
+  Publicó espacio:    ${getRadio('prov_publicar')}
+  Fotos:              ${getRadio('prov_fotos')}
+  Reserva recibida:   ${getRadio('prov_reserva_recibida')}
+  Escrow entendido:   ${getRadio('prov_escrow')}
+  Panel (★):          ${getStars('stars_prov')}
+  Comentarios:        ${getTexto('prov_comentario')}
+
+🔍 CLIENTE
+  Encontró espacios:  ${getRadio('cli_encontrar')}
+  Completó reserva:   ${getRadio('cli_reservar')}
+  Pago MP:            ${getRadio('cli_pago')}
+  PIN de acceso:      ${getRadio('cli_pin')}
+  Emails recibidos:   ${getRadio('cli_emails')}
+  Flujo reserva (★):  ${getStars('stars_cli')}
+  Comentarios:        ${getTexto('cli_comentario')}
+
+💬 CHAT
+  Usó el chat:        ${getRadio('chat_uso')}
+  Tiempo real:        ${getRadio('chat_realtime')}
+  Encontró botón:     ${getRadio('chat_ux')}
+  Comentarios:        ${getTexto('chat_comentario')}
+
+⭐ GENERAL
+  UX / Usabilidad:    ${getStars('stars_ux')}
+  Diseño:             ${getStars('stars_diseno')}
+  Bugs:               ${getRadio('gen_bugs')}
+  Detalle bug:        ${getTexto('gen_bug_detalle')}
+  Lo mejor:           ${getTexto('gen_positivo')}
+  A mejorar:          ${getTexto('gen_mejorar')}
+  Feature faltante:   ${getTexto('gen_feature')}
+  NPS (0-10):         ${npsValor !== null ? npsValor : '—'}
+  Otros comentarios:  ${getTexto('gen_otro')}
+
+═══════════════════════════════════════`;
+
+    document.getElementById('resumen-texto').textContent = resumen;
+
+    for (let i = 0; i < totalPasos; i++) {
+      document.getElementById('step-' + i).classList.remove('visible');
+    }
+    document.getElementById('resultado').classList.add('visible');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function copiar() {
+    const texto = document.getElementById('resumen-texto').textContent;
+    navigator.clipboard.writeText(texto).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.textContent = '✅ ¡Copiado!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = '📋 Copiar resumen';
+        btn.classList.remove('copied');
+      }, 2500);
+    });
+  }
+
+  // Init
+  actualizarUI();
+</script>
+</body>
+</html>
