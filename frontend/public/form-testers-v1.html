@@ -599,7 +599,7 @@
 <div class="container">
 
   <!-- PASO 1: Datos del tester -->
-  <div class="step-section visible" id="step-0">
+  <div class="step-section" id="step-0">
     <div class="section-header">
       <div class="section-number">Paso 1 de 6</div>
       <div class="section-title">Datos del tester</div>
@@ -1161,6 +1161,7 @@
     document.getElementById('bienvenida').classList.add('oculto');
     document.getElementById('progressWrap').style.display = 'flex';
     document.getElementById('stepsNav').style.display = 'flex';
+    document.getElementById('step-0').classList.add('visible');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
