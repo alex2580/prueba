@@ -190,7 +190,8 @@ function PasoSeguridad({
 export default function PublicarPage() {
   const router = useRouter();
   const { user, token, login, register, loading: authLoading, error: authError,
-          otpPending, otpEmailHint, otpCanales, verifyOTP, reenviarOTP } = useAuth();
+          otpPending, otpEmailHint, otpCanales, verifyOTP, reenviarOTP,
+          emailConfirmPending, emailConfirmEmail } = useAuth();
 
   const [paso, setPaso] = useState(0);
 
@@ -428,7 +429,7 @@ export default function PublicarPage() {
 
   async function handleRegister(nombre: string, email: string, password: string, tipo: 'oferente' | 'demandante', tel?: string) {
     const ok = await register(nombre, email, password, tipo, tel);
-    if (ok) {
+    if (ok && ok !== 'email-confirm') {
       setAuthModal(false);
       setPublicarPendiente(true);
     }
@@ -824,6 +825,21 @@ export default function PublicarPage() {
                   </Button>
                   {error && <div className="alert alert--error" style={{ marginTop: '.75rem' }}>{error}</div>}
                 </div>
+              ) : emailConfirmPending ? (
+                /* Email confirm pendiente */
+                <div style={cardStyle}>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '2.5rem', marginBottom: '.75rem' }}>📧</div>
+                    <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.95rem', marginBottom: '.4rem' }}>
+                      Revisá tu email
+                    </p>
+                    <p style={{ color: 'var(--text2)', fontSize: '.85rem', lineHeight: 1.6, marginBottom: '.5rem' }}>
+                      Te enviamos un link a <strong>{emailConfirmEmail}</strong>.
+                      Hacé clic para activar tu cuenta y publicar tu espacio.
+                    </p>
+                    <p style={{ fontSize: '.78rem', color: 'var(--text3)' }}>¿No llegó? Revisá spam.</p>
+                  </div>
+                </div>
               ) : otpPending ? (
                 /* OTP pendiente: mostrar verificación de código */
                 <div style={cardStyle}>
@@ -911,10 +927,18 @@ export default function PublicarPage() {
       <Modal
         open={authModal}
         onClose={() => setAuthModal(false)}
-        title={otpPending ? '🔐 Verificá tu identidad' : '👋 Iniciar sesión'}
-        subtitle={otpPending ? 'Ingresá el código que enviamos a tu email' : 'Iniciá sesión para publicar tu espacio'}
+        title={emailConfirmPending ? '📧 Revisá tu email' : otpPending ? '🔐 Verificá tu identidad' : '👋 Iniciar sesión'}
+        subtitle={emailConfirmPending ? undefined : otpPending ? 'Ingresá el código que enviamos a tu email' : 'Iniciá sesión para publicar tu espacio'}
       >
-        {otpPending ? (
+        {emailConfirmPending ? (
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ color: 'var(--text2)', fontSize: '.88rem', lineHeight: 1.6, marginBottom: '.5rem' }}>
+              Te enviamos un link a <strong style={{ color: 'var(--text)' }}>{emailConfirmEmail}</strong>.
+              Hacé clic para activar tu cuenta.
+            </p>
+            <p style={{ fontSize: '.78rem', color: 'var(--text3)', marginTop: '.75rem' }}>¿No llegó? Revisá spam.</p>
+          </div>
+        ) : otpPending ? (
           <>
             <OTPStep
               emailHint={otpEmailHint}

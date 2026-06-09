@@ -18,12 +18,15 @@ interface AuthState {
   otpToken: string | null;
   otpRefreshToken: string | null;
   otpEmailHint: string;
+  emailConfirmPending: boolean;
+  emailConfirmEmail: string;
   otpCanales: OtpCanales;
 }
 
 const INITIAL: AuthState = {
   user: null, token: null, loading: true, error: null,
   otpPending: false, otpToken: null, otpRefreshToken: null, otpEmailHint: '', otpCanales: { email: true, sms: false, whatsapp: false },
+  emailConfirmPending: false, emailConfirmEmail: '',
 };
 
 export function useAuth() {
@@ -209,7 +212,11 @@ export function useAuth() {
     setState(s => ({ ...s, loading: true, error: null }));
     otpFlowRef.current = true;
 
-    const { data, error } = await signUp(email, password, { nombre, tipo });
+    const emailRedirectTo = typeof window !== 'undefined'
+      ? `${window.location.origin}/${window.location.pathname.split('/')[1] || 'es'}/auth/confirm`
+      : undefined;
+
+    const { data, error } = await signUp(email, password, { nombre, tipo }, emailRedirectTo);
     if (error) {
       otpFlowRef.current = false;
       setState(s => ({ ...s, loading: false, error: error.message }));
@@ -224,10 +231,11 @@ export function useAuth() {
 
     const token = data.session?.access_token;
     if (!token) {
-      // Supabase pidió confirmar email — informar al usuario
+      // Supabase tiene confirmación de email activa — marcar flag y mostrar aviso
+      localStorage.setItem('tmc_otp_pending', '1');
       otpFlowRef.current = false;
-      setState(s => ({ ...s, loading: false }));
-      return true;
+      setState(s => ({ ...s, loading: false, emailConfirmPending: true, emailConfirmEmail: email }));
+      return 'email-confirm' as const;
     }
 
     try {
@@ -269,6 +277,8 @@ export function useAuth() {
     otpPending: state.otpPending,
     otpEmailHint: state.otpEmailHint,
     otpCanales: state.otpCanales,
+    emailConfirmPending: state.emailConfirmPending,
+    emailConfirmEmail: state.emailConfirmEmail,
     isAuthenticated: !!state.user,
     isOferente: state.user?.tipo === 'oferente',
     isDemandante: state.user?.tipo === 'demandante',

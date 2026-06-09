@@ -25,7 +25,8 @@ export default function HomePage() {
   const t = useTranslations('home');
   const router = useRouter();
   const { user, token, loading: authLoading, login, register, logout, error: authError, isAdmin,
-    otpPending, otpEmailHint, otpCanales, verifyOTP, reenviarOTP } = useAuth();
+    otpPending, otpEmailHint, otpCanales, verifyOTP, reenviarOTP,
+    emailConfirmPending, emailConfirmEmail } = useAuth();
   const { espacios, loading, error: espaciosError, filtros, aplicarFiltros, limpiarFiltros } = useEspacios();
 
   const [vista, setVista] = useState<Vista>('lista');
@@ -579,10 +580,21 @@ export default function HomePage() {
       <Modal
         open={authModal}
         onClose={() => setAuthModal(false)}
-        title={otpPending ? '🔐 Verificación' : authTab === 'login' ? '👋 Iniciar sesión' : '🚀 Crear cuenta'}
-        subtitle={otpPending ? undefined : authTab === 'login' ? 'Ingresá a tu cuenta de TodasMisCosas' : 'Únite a la comunidad de almacenamiento urbano'}
+        title={emailConfirmPending ? '📧 Revisá tu email' : otpPending ? '🔐 Verificación' : authTab === 'login' ? '👋 Iniciar sesión' : '🚀 Crear cuenta'}
+        subtitle={emailConfirmPending ? undefined : otpPending ? undefined : authTab === 'login' ? 'Ingresá a tu cuenta de TodasMisCosas' : 'Únite a la comunidad de almacenamiento urbano'}
       >
-        {otpPending ? (
+        {emailConfirmPending ? (
+          <div style={{ textAlign: 'center', padding: '.5rem 0' }}>
+            <p style={{ color: 'var(--text2)', fontSize: '.88rem', lineHeight: 1.6, marginBottom: '.5rem' }}>
+              Te enviamos un link de confirmación a{' '}
+              <strong style={{ color: 'var(--text)' }}>{emailConfirmEmail}</strong>.
+            </p>
+            <p style={{ color: 'var(--text2)', fontSize: '.88rem', lineHeight: 1.6, marginBottom: '1rem' }}>
+              Hacé clic en ese link para activar tu cuenta y recibir el código de acceso.
+            </p>
+            <p style={{ fontSize: '.78rem', color: 'var(--text3)' }}>¿No llegó? Revisá la carpeta de spam.</p>
+          </div>
+        ) : otpPending ? (
           <OTPStep
             emailHint={otpEmailHint}
             canales={otpCanales}
@@ -609,7 +621,7 @@ export default function HomePage() {
           <RegisterForm
             onRegister={async (nombre, email, password, tipo, tel) => {
               const ok = await register(nombre, email, password, tipo, tel);
-              if (ok && !otpPending) setAuthModal(false);
+              if (ok && ok !== 'email-confirm' && !otpPending) setAuthModal(false);
               return ok;
             }}
             onSwitch={() => setAuthTab('login')}

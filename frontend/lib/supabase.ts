@@ -29,11 +29,11 @@ export async function signOut(): Promise<void> {
 /**
  * Registra un nuevo usuario en Supabase Auth.
  */
-export async function signUp(email: string, password: string, metadata?: Record<string, string>) {
+export async function signUp(email: string, password: string, metadata?: Record<string, string>, emailRedirectTo?: string) {
   return supabase.auth.signUp({
     email,
     password,
-    options: { data: metadata },
+    options: { data: metadata, ...(emailRedirectTo && { emailRedirectTo }) },
   });
 }
 

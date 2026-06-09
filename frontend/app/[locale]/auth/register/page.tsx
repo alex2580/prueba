@@ -10,7 +10,7 @@ import { OTPStep } from '@/components/auth/OTPStep';
 export default function RegisterPage() {
   const t = useTranslations('auth');
   const router = useRouter();
-  const { user, register, verifyOTP, reenviarOTP, loading, error, otpPending, otpEmailHint, otpCanales } = useAuth();
+  const { user, register, verifyOTP, reenviarOTP, loading, error, otpPending, otpEmailHint, otpCanales, emailConfirmPending, emailConfirmEmail } = useAuth();
 
   useEffect(() => {
     if (user) router.push('/panel');
@@ -25,7 +25,24 @@ export default function RegisterPage() {
       }}>
         <div style={{ height: 5, background: 'linear-gradient(90deg, var(--orange), var(--amber) 40%, var(--blue) 70%, var(--mint))' }} />
         <div style={{ padding: '2rem' }}>
-          {!otpPending ? (
+          {emailConfirmPending ? (
+            <div style={{ textAlign: 'center', padding: '.5rem 0' }}>
+              <div style={{ fontSize: '2.8rem', marginBottom: '.75rem' }}>📧</div>
+              <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.2rem', marginBottom: '.6rem' }}>
+                Revisá tu email
+              </h2>
+              <p style={{ color: 'var(--text2)', fontSize: '.88rem', lineHeight: 1.6, marginBottom: '.5rem' }}>
+                Te enviamos un link de confirmación a{' '}
+                <strong style={{ color: 'var(--text)' }}>{emailConfirmEmail}</strong>.
+              </p>
+              <p style={{ color: 'var(--text2)', fontSize: '.88rem', lineHeight: 1.6, marginBottom: '1.25rem' }}>
+                Hacé clic en ese link para activar tu cuenta y acceder al código de verificación.
+              </p>
+              <p style={{ fontSize: '.78rem', color: 'var(--text3)' }}>
+                ¿No llegó? Revisá la carpeta de spam.
+              </p>
+            </div>
+          ) : !otpPending ? (
             <>
               <div style={{ textAlign: 'center', marginBottom: '1.8rem' }}>
                 <div style={{ fontSize: '2.5rem', marginBottom: '.5rem' }}>🚀</div>

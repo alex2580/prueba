@@ -16,7 +16,7 @@ function EyeIcon({ visible }: { visible: boolean }) {
 }
 
 interface RegisterFormProps {
-  onRegister: (nombre: string, email: string, password: string, tipo: 'oferente' | 'demandante', tel?: string) => Promise<boolean>;
+  onRegister: (nombre: string, email: string, password: string, tipo: 'oferente' | 'demandante', tel?: string) => Promise<boolean | string>;
   onSwitch: () => void;
   loading?: boolean;
   error?: string | null;
