@@ -3,7 +3,7 @@ const { body } = require('express-validator');
 const router = express.Router();
 
 const ctrl = require('../controllers/reservasController');
-const { requireAuth, requireOferente } = require('../middleware/auth');
+const { requireAuth } = require('../middleware/auth');
 
 const validarReserva = [
   body('espacio_id').notEmpty().withMessage('espacio_id requerido'),
@@ -12,7 +12,7 @@ const validarReserva = [
 ];
 
 router.get('/',              requireAuth, ctrl.listar);
-router.get('/recibidas',     requireAuth, requireOferente, ctrl.recibidas);
+router.get('/recibidas',     requireAuth, ctrl.recibidas);
 router.get('/:id',           requireAuth, ctrl.obtener);
 router.post('/',             requireAuth, validarReserva, ctrl.crear);
 router.post('/:id/extender',        requireAuth, ctrl.extender);

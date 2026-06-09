@@ -3,7 +3,7 @@ const { body } = require('express-validator');
 const router = express.Router();
 
 const ctrl  = require('../controllers/espaciosController');
-const { requireAuth, requireOferente, optionalAuth } = require('../middleware/auth');
+const { requireAuth, optionalAuth } = require('../middleware/auth');
 const { uploadMiddleware, validateMagicBytes } = require('../middleware/upload');
 
 const validarEspacio = [
@@ -20,15 +20,15 @@ const validarEspacio = [
 
 // Public routes
 router.get('/',                    optionalAuth, ctrl.listar);
-router.get('/mis-espacios',        requireAuth, requireOferente, ctrl.misEspacios);
+router.get('/mis-espacios',        requireAuth, ctrl.misEspacios);
 router.get('/:id/fechas-ocupadas', ctrl.fechasOcupadas);
 router.get('/:id',                 optionalAuth, ctrl.obtener);
 
 // Protected routes
-router.post('/',              requireAuth, requireOferente, validarEspacio, ctrl.crear);
-router.put('/:id',            requireAuth, requireOferente, validarEspacio, ctrl.actualizar);
+router.post('/',              requireAuth, validarEspacio, ctrl.crear);
+router.put('/:id',            requireAuth, validarEspacio, ctrl.actualizar);
 router.post('/:id/reactivar',  requireAuth, ctrl.reactivar);
-router.patch('/:id/cupo',      requireAuth, requireOferente, ctrl.toggleCupo);
+router.patch('/:id/cupo',      requireAuth, ctrl.toggleCupo);
 router.delete('/:id',          requireAuth, ctrl.eliminar);
 
 // Fotos

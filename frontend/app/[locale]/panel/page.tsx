@@ -117,7 +117,7 @@ const CATEGORIAS = [
 export default function PanelPage() {
   const router = useRouter();
   const { user, token, loading: authLoading, refreshUser } = useAuth();
-  const isOferente = user?.tipo === 'oferente' || user?.tipo === 'admin';
+  const isOferente = !!user && user.tipo !== 'admin';
   const isAdmin = user?.tipo === 'admin';
 
   // Reservas propias (as demandante — for all users)
