@@ -1022,9 +1022,9 @@
     <pre id="resumen-texto"></pre>
     <button class="copy-btn" id="copyBtn" onclick="copiar()">📋 Copiar resumen</button>
 
-    <button class="copy-btn" id="emailBtn" onclick="enviarEmail()" style="margin-top:.5rem; background:#0c1a2e; border-color:#1d4ed8; color:#93c5fd;">
-      ✉️ Enviar por email a contacto@todasmiscosas.com
-    </button>
+    <div style="margin-top:1rem; background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:1rem; font-size:.85rem; color:var(--text2); line-height:1.6;">
+      📬 Copiá el resumen y enviáselo a quien te compartió esta encuesta.
+    </div>
   </div>
 
 </div><!-- /container -->
@@ -1170,14 +1170,6 @@ ${ahora}
     }
     document.getElementById('resultado').classList.add('visible');
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function enviarEmail() {
-    const texto = document.getElementById('resumen-texto').textContent;
-    const nombre = document.getElementById('nombre').value.trim() || 'Tester';
-    const subject = encodeURIComponent('Feedback de Testing TMC — ' + nombre);
-    const body = encodeURIComponent(texto);
-    window.location.href = `mailto:contacto@todasmiscosas.com?subject=${subject}&body=${body}`;
   }
 
   function copiar() {
