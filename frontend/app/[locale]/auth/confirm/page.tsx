@@ -10,30 +10,49 @@ export default function ConfirmPage() {
   const [status, setStatus] = useState<'loading' | 'error'>('loading');
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
+    let done = false;
 
-    if (code) {
-      // PKCE: intercambiamos el code por una sesión real
-      supabase.auth.exchangeCodeForSession(code)
-        .then(({ data, error }) => {
-          if (error || !data.session) {
-            setStatus('error');
-            return;
-          }
-          router.replace('/panel');
-        });
-      return;
+    function redirect() {
+      if (done) return;
+      done = true;
+      router.replace('/panel');
     }
 
-    // Fallback: el SDK ya procesó el token (legacy/implicit flow)
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) {
-        router.replace('/panel');
-      } else {
-        setStatus('error');
+    // Caso 1: detectSessionInUrl procesa el ?code= y dispara SIGNED_IN
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'USER_UPDATED') && session) {
+        redirect();
       }
     });
+
+    // Caso 2: exchange manual del code (si detectSessionInUrl no corrió todavía)
+    const code = new URLSearchParams(window.location.search).get('code');
+    if (code) {
+      supabase.auth.exchangeCodeForSession(code).then(({ data, error }) => {
+        if (!error && data.session) {
+          redirect();
+        } else {
+          // El code ya fue consumido por detectSessionInUrl — verificar sesión existente
+          supabase.auth.getSession().then(({ data: sd }) => {
+            if (sd.session) redirect();
+          });
+        }
+      });
+    } else {
+      // Sin ?code= — puede ser implicit flow (hash) o ya procesado
+      supabase.auth.getSession().then(({ data }) => {
+        if (data.session) redirect();
+      });
+    }
+
+    const timeout = setTimeout(() => {
+      if (!done) setStatus('error');
+    }, 8000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
   }, [router]);
 
   return (

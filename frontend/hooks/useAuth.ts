@@ -89,28 +89,7 @@ export function useAuth() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (otpFlowRef.current) return;
       if (session?.access_token) {
-        if (localStorage.getItem(OTP_FLAG) === '1') {
-          const token = session.access_token;
-          const refreshToken = session.refresh_token;
-          otpFlowRef.current = true;
-          fetch(`${API}/api/auth/solicitar-otp`, {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${token}` },
-          }).then(r => r.json()).then(body => {
-            setState(s => ({
-              ...s, loading: false,
-              otpPending: true, otpToken: token, otpRefreshToken: refreshToken || null,
-              otpEmailHint: body.email_hint || '',
-              otpCanales: body.canales || { email: true, sms: false, whatsapp: false },
-            }));
-          }).catch(() => {
-            localStorage.removeItem(OTP_FLAG);
-            otpFlowRef.current = false;
-            loadUser(token);
-          });
-        } else {
-          loadUser(session.access_token);
-        }
+        loadUser(session.access_token);
       } else {
         setState({ ...INITIAL, loading: false });
       }
