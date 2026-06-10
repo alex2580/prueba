@@ -127,6 +127,7 @@ async function sinResponder(req, res, next) {
        FROM consultas_espacio c
        JOIN espacios e ON c.espacio_id = e.id
        WHERE e.oferente_id = ? AND c.respuesta IS NULL
+       GROUP BY c.id, c.espacio_id, e.nombre, c.autor_nombre, c.pregunta, c.created_at
        ORDER BY c.created_at ASC`,
       [req.user.id]
     );

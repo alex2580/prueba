@@ -155,7 +155,7 @@ export default function PanelPage() {
   const [openConsultasRespondidas, setOpenConsultasRespondidas] = useState(false);
   const [openCalendario, setOpenCalendario] = useState(false);
   const [errorConsultas, setErrorConsultas] = useState('');
-  const [respuestasMap, setRespuestasMap] = useState<Record<number, string>>({});
+  const [respuestasMap, setRespuestasMap] = useState<Record<string, string>>({});
   const [respondiendo, setRespondiendo] = useState<number | null>(null);
 
   const cargarConsultasPendientes = useCallback(async () => {
@@ -238,8 +238,8 @@ export default function PanelPage() {
   const [reviewError, setReviewError] = useState('');
   const [reviewOk, setReviewOk] = useState(false);
 
-  async function handleResponderConsulta(consultaId: number) {
-    const texto = respuestasMap[consultaId]?.trim();
+  async function handleResponderConsulta(consultaId: number, espacioId: string) {
+    const texto = respuestasMap[espacioId]?.trim();
     if (!texto || !token) return;
     setRespondiendo(consultaId);
     try {
@@ -249,7 +249,7 @@ export default function PanelPage() {
         body: JSON.stringify({ respuesta: texto }),
       });
       if (res.ok) {
-        setRespuestasMap(m => { const n = { ...m }; delete n[consultaId]; return n; });
+        setRespuestasMap(m => { const n = { ...m }; delete n[espacioId]; return n; });
         await Promise.all([cargarConsultasPendientes(), cargarConsultasRespondidas()]);
         setOpenConsultasRespondidas(true);
         alert('✅ Respuesta enviada. El cliente recibirá una notificación por email.');
@@ -1223,7 +1223,7 @@ export default function PanelPage() {
                   ) : (
                     <div style={{ display: 'grid', gap: '.85rem' }}>
                       {consultasPendientes.map(c => (
-                        <div key={c.id} style={{ background: 'var(--surface)', borderRadius: 'var(--r2)', padding: '1rem', border: '1px solid var(--border)' }}>
+                        <div key={c.espacio_id} style={{ background: 'var(--surface)', borderRadius: 'var(--r2)', padding: '1rem', border: '1px solid var(--border)' }}>
                           <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginBottom: '.35rem' }}>
                             📦 {c.espacio_nombre}
                           </div>
@@ -1234,12 +1234,12 @@ export default function PanelPage() {
                             <p style={{ margin: 0, fontSize: '.9rem', color: 'var(--text)', lineHeight: 1.5 }}>{c.pregunta}</p>
                           </div>
                           <textarea
-                            value={respuestasMap[c.id] || ''}
+                            value={respuestasMap[c.espacio_id] || ''}
                             onChange={e => {
                               const val = e.target.value;
                               const v = detectViolation(val);
                               if (v) { alert(getViolationMessage(v)); return; }
-                              setRespuestasMap(m => ({ ...m, [c.id]: val }));
+                              setRespuestasMap(m => ({ ...m, [c.espacio_id]: val }));
                             }}
                             placeholder="Escribí tu respuesta…"
                             rows={2}
@@ -1248,9 +1248,9 @@ export default function PanelPage() {
                           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <Button
                               size="sm"
-                              onClick={() => handleResponderConsulta(c.id)}
+                              onClick={() => handleResponderConsulta(c.id, c.espacio_id)}
                               loading={respondiendo === c.id}
-                              disabled={!respuestasMap[c.id]?.trim()}
+                              disabled={!respuestasMap[c.espacio_id]?.trim()}
                             >
                               Responder →
                             </Button>
