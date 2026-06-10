@@ -1239,7 +1239,111 @@ export default function PanelPage() {
             </div>
           </section>
 
+          {/* ── SECTION: Consultas pendientes ── */}
+          {isOferente && (
+            <section style={{ marginBottom: '1.5rem' }}>
+              <button onClick={() => setOpenConsultas(v => !v)} className="seccion-toggle">
+                <span style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                  <span>❓ Consultas pendientes</span>
+                  {consultasPendientes.length > 0 && (
+                    <span className="pill pill--gray" style={{ fontSize: '.7rem', padding: '.1rem .45rem', background: 'var(--orange)', color: '#fff' }}>
+                      {consultasPendientes.length}
+                    </span>
+                  )}
+                </span>
+                <span className={`seccion-chevron${openConsultas ? ' open' : ''}`}>▾</span>
+              </button>
+              <div className={`seccion-body${openConsultas ? ' open' : ''}`}>
+                <div style={{ paddingTop: '.75rem' }}>
+                  {errorConsultas ? (
+                    <div style={{ padding: '1rem', color: 'var(--red)', background: 'rgba(239,68,68,.08)', borderRadius: 'var(--r2)', border: '1px solid rgba(239,68,68,.25)', fontSize: '.83rem' }}>
+                      ⚠️ {errorConsultas}
+                    </div>
+                  ) : consultasPendientes.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--text3)', background: 'var(--surface)', borderRadius: 'var(--r2)', border: '1px solid var(--border)', fontSize: '.85rem' }}>
+                      ✅ No hay consultas pendientes de respuesta
+                    </div>
+                  ) : (
+                    <div style={{ display: 'grid', gap: '.85rem' }}>
+                      {consultasPendientes.map(c => (
+                        <div key={c.id} style={{ background: 'var(--surface)', borderRadius: 'var(--r2)', padding: '1rem', border: '1px solid var(--border)' }}>
+                          <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginBottom: '.35rem' }}>
+                            📦 {c.espacio_nombre}
+                          </div>
+                          <div style={{ display: 'flex', gap: '.5rem', alignItems: 'flex-start', marginBottom: '.75rem' }}>
+                            <span style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--orange)', background: 'rgba(232,98,42,.1)', borderRadius: '99px', padding: '.15rem .55rem', whiteSpace: 'nowrap' }}>
+                              {c.autor_nombre}
+                            </span>
+                            <p style={{ margin: 0, fontSize: '.9rem', color: 'var(--text)', lineHeight: 1.5 }}>{c.pregunta}</p>
+                          </div>
+                          <textarea
+                            value={respuestasMap[c.id] || ''}
+                            onChange={e => {
+                              const val = e.target.value;
+                              const v = detectViolation(val);
+                              if (v) { alert(getViolationMessage(v)); return; }
+                              setRespuestasMap(m => ({ ...m, [c.id]: val }));
+                            }}
+                            placeholder="Escribí tu respuesta…"
+                            rows={2}
+                            style={{ width: '100%', resize: 'vertical', fontSize: '.85rem', padding: '.5rem .7rem', borderRadius: 'var(--r2)', background: 'var(--surface2)', border: '1.5px solid var(--border)', boxSizing: 'border-box', marginBottom: '.5rem' }}
+                          />
+                          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <Button
+                              size="sm"
+                              onClick={() => handleResponderConsulta(c.id)}
+                              loading={respondiendo === c.id}
+                              disabled={!respuestasMap[c.id]?.trim()}
+                            >
+                              Responder →
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
+          )}
 
+          {/* ── SECTION: Historial de consultas respondidas ── */}
+          {isOferente && consultasRespondidas.length > 0 && (
+            <section style={{ marginBottom: '1.5rem' }}>
+              <button onClick={() => setOpenConsultasRespondidas(v => !v)} className="seccion-toggle">
+                <span style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                  <span>💬 Consultas respondidas</span>
+                  <span className="pill pill--gray" style={{ fontSize: '.7rem', padding: '.1rem .45rem' }}>
+                    {consultasRespondidas.length}
+                  </span>
+                </span>
+                <span className={`seccion-chevron${openConsultasRespondidas ? ' open' : ''}`}>▾</span>
+              </button>
+              <div className={`seccion-body${openConsultasRespondidas ? ' open' : ''}`}>
+                <div style={{ paddingTop: '.75rem', display: 'grid', gap: '.85rem' }}>
+                  {consultasRespondidas.map(c => (
+                    <div key={c.id} style={{ background: 'var(--surface)', borderRadius: 'var(--r2)', border: '1px solid var(--border)', overflow: 'hidden' }}>
+                      <div style={{ padding: '.6rem 1rem', fontSize: '.72rem', color: 'var(--text3)', borderBottom: '1px solid var(--border)' }}>
+                        📦 {c.espacio_nombre}
+                      </div>
+                      <div style={{ padding: '1rem' }}>
+                        <div style={{ display: 'flex', gap: '.5rem', alignItems: 'flex-start', marginBottom: '.75rem' }}>
+                          <span style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--orange)', background: 'rgba(232,98,42,.1)', borderRadius: '99px', padding: '.15rem .55rem', whiteSpace: 'nowrap' }}>
+                            {c.autor_nombre}
+                          </span>
+                          <p style={{ margin: 0, fontSize: '.88rem', color: 'var(--text)', lineHeight: 1.5 }}>{c.pregunta}</p>
+                        </div>
+                        <div style={{ background: 'var(--surface2)', borderRadius: 'var(--r2)', padding: '.75rem 1rem', borderLeft: '3px solid var(--orange)' }}>
+                          <div style={{ fontSize: '.68rem', color: 'var(--orange)', fontWeight: 700, marginBottom: '.3rem' }}>Tu respuesta</div>
+                          <p style={{ margin: 0, fontSize: '.88rem', color: 'var(--text)', lineHeight: 1.5 }}>{c.respuesta}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
 
         </div>
       </div>
