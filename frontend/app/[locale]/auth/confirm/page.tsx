@@ -1,40 +1,48 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { useRouter } from '@/navigation';
 import { supabase } from '@/lib/supabase';
 import { SiteLogo } from '@/components/ui/SiteLogo';
 
 export default function ConfirmPage() {
-  const searchParams = useSearchParams();
   const router = useRouter();
   const [status, setStatus] = useState<'loading' | 'error'>('loading');
-  const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
-    const token_hash = searchParams.get('token_hash');
-    const type = searchParams.get('type');
+    let redirected = false;
 
-    if (!token_hash || !type) {
-      setErrorMsg('Link de confirmación inválido o incompleto.');
-      setStatus('error');
-      return;
+    function handleConfirmed() {
+      if (redirected) return;
+      redirected = true;
+      // Marcar OTP pendiente y redirigir — useAuth lo detectará y pedirá el código
+      localStorage.setItem('tmc_otp_pending', '1');
+      router.replace('/auth/register');
     }
 
-    supabase.auth.verifyOtp({ token_hash, type: type as 'signup' })
-      .then(({ error }) => {
-        if (error) {
-          setErrorMsg('El link expiró o ya fue usado. Registrate nuevamente.');
-          setStatus('error');
-          return;
-        }
-        // Email confirmado → activar flag OTP y redirigir al registro
-        // useAuth detectará la sesión + el flag y solicitará el OTP automáticamente
-        localStorage.setItem('tmc_otp_pending', '1');
-        router.replace('/auth/register');
-      });
-  }, [searchParams, router]);
+    // Supabase con detectSessionInUrl:true procesa automáticamente los tokens
+    // del hash/query de la URL y dispara SIGNED_IN antes de que montemos
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'USER_UPDATED') && session) {
+        handleConfirmed();
+      }
+    });
+
+    // Por si el evento ya disparó antes de que montáramos el listener
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) handleConfirmed();
+    });
+
+    // Timeout: si en 8 segundos no hubo sesión, mostrar error
+    const timeout = setTimeout(() => {
+      if (!redirected) setStatus('error');
+    }, 8000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
+  }, [router]);
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
@@ -62,7 +70,7 @@ export default function ConfirmPage() {
                 No pudimos confirmar tu email
               </p>
               <p style={{ color: 'var(--text2)', fontSize: '.85rem', marginBottom: '1.5rem' }}>
-                {errorMsg}
+                El link expiró o ya fue usado. Intentá registrarte nuevamente.
               </p>
               <button
                 onClick={() => router.push('/auth/register')}
