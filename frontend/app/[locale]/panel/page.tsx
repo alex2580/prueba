@@ -957,49 +957,6 @@ export default function PanelPage() {
                           </div>
                         </div>
 
-                        {/* Consultas pendientes de este espacio */}
-                        {consultasPendientes.filter(c => c.espacio_id === esp.id).length > 0 && (
-                          <div style={{ borderTop: '1px solid var(--border)', padding: '.6rem 1rem .8rem' }}>
-                            <div style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: '.6rem' }}>
-                              ❓ Consultas pendientes ({consultasPendientes.filter(c => c.espacio_id === esp.id).length})
-                            </div>
-                            <div style={{ display: 'grid', gap: '.6rem' }}>
-                              {consultasPendientes.filter(c => c.espacio_id === esp.id).map(c => (
-                                <div key={c.id} style={{ background: 'var(--surface2)', borderRadius: 'var(--r1)', padding: '.75rem' }}>
-                                  <div style={{ display: 'flex', gap: '.5rem', alignItems: 'flex-start', marginBottom: '.5rem' }}>
-                                    <span style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--orange)', background: 'rgba(232,98,42,.1)', borderRadius: '99px', padding: '.15rem .55rem', whiteSpace: 'nowrap' }}>
-                                      {c.autor_nombre}
-                                    </span>
-                                    <p style={{ margin: 0, fontSize: '.85rem', color: 'var(--text)', lineHeight: 1.5 }}>{c.pregunta}</p>
-                                  </div>
-                                  <textarea
-                                    value={respuestasMap[c.id] || ''}
-                                    onChange={e => {
-                                      const val = e.target.value;
-                                      const v = detectViolation(val);
-                                      if (v) { alert(getViolationMessage(v)); return; }
-                                      setRespuestasMap(m => ({ ...m, [c.id]: val }));
-                                    }}
-                                    placeholder="Escribí tu respuesta…"
-                                    rows={2}
-                                    style={{ width: '100%', resize: 'vertical', fontSize: '.82rem', padding: '.5rem .7rem', borderRadius: 'var(--r2)', background: 'var(--surface)', border: '1.5px solid var(--border)', boxSizing: 'border-box', marginBottom: '.5rem' }}
-                                  />
-                                  <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                    <Button
-                                      size="sm"
-                                      onClick={() => handleResponderConsulta(c.id)}
-                                      loading={respondiendo === c.id}
-                                      disabled={!respuestasMap[c.id]?.trim()}
-                                    >
-                                      Responder →
-                                    </Button>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
                         {/* Reservations received for this space */}
                         {reservasEsp.length > 0 && (
                           <div style={{ borderTop: '1px solid var(--border)', padding: '.6rem 1rem .8rem' }}>
