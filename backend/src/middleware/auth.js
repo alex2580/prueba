@@ -48,7 +48,7 @@ async function requireAuth(req, res, next) {
     if (!usuario) {
       const adminEmails = (process.env.ADMIN_EMAILS || '')
         .split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
-      const tipo = adminEmails.includes(data.user.email.toLowerCase()) ? 'admin' : 'demandante';
+      const tipo = adminEmails.includes(data.user.email.toLowerCase()) ? 'admin' : 'usuario';
       const nombre = data.user.user_metadata?.nombre || data.user.email.split('@')[0];
 
       await query(

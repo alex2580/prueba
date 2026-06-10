@@ -43,9 +43,7 @@ async function initTables() {
 
 // ── Helpers ────────────────────────────────────────────────────
 function recipientsWhere(dest) {
-  if (dest === 'oferentes')   return `activo = 1 AND tipo = 'oferente'`;
-  if (dest === 'demandantes') return `activo = 1 AND tipo = 'demandante'`;
-  return `activo = 1 AND tipo IN ('oferente','demandante')`;
+  return `activo = 1 AND tipo = 'usuario'`;
 }
 
 async function sendCampana(campana) {

@@ -627,7 +627,6 @@ export default function HomePage() {
             onSwitch={() => setAuthTab('login')}
             error={authError}
             loading={authLoading}
-            tipoForzado="demandante"
           />
         )}
       </Modal>

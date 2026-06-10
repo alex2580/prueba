@@ -427,8 +427,8 @@ export default function PublicarPage() {
     return ok;
   }
 
-  async function handleRegister(nombre: string, email: string, password: string, tipo: 'oferente' | 'demandante', tel?: string) {
-    const ok = await register(nombre, email, password, tipo, tel);
+  async function handleRegister(nombre: string, email: string, password: string, _tipo: 'usuario', tel?: string) {
+    const ok = await register(nombre, email, password, 'usuario', tel);
     if (ok && ok !== 'email-confirm') {
       setAuthModal(false);
       setPublicarPendiente(true);
@@ -884,7 +884,6 @@ export default function PublicarPage() {
                       onSwitch={() => setAuthTab('login')}
                       error={authError}
                       loading={authLoading}
-                      tipoForzado="oferente"
                     />
                   ) : (
                     <LoginForm

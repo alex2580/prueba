@@ -974,7 +974,7 @@ interface UsuarioAdmin {
   nombre: string;
   email: string;
   tel: string;
-  tipo: 'oferente' | 'demandante' | 'admin';
+  tipo: 'usuario' | 'admin';
   verificado: number;
   activo: number;
   bloqueado_motivo: string | null;
@@ -1055,9 +1055,8 @@ function TabUsuarios({ token }: { token: string }) {
   }
 
   const tipoColor: Record<string, string> = {
-    oferente:   'var(--mint)',
-    demandante: 'var(--blue)',
-    admin:      'var(--orange)',
+    usuario: 'var(--blue)',
+    admin:   'var(--orange)',
   };
 
   const MOTIVOS_RAPIDOS = [
@@ -1088,8 +1087,7 @@ function TabUsuarios({ token }: { token: string }) {
           style={{ padding: '.5rem .85rem', borderRadius: 'var(--r2)', border: '1.5px solid var(--border)', background: 'var(--surface2)', color: 'var(--text)', fontSize: '.82rem' }}
         >
           <option value="">Todos los tipos</option>
-          <option value="oferente">Oferentes</option>
-          <option value="demandante">Demandantes</option>
+          <option value="usuario">Usuarios</option>
           <option value="admin">Admins</option>
         </select>
         <select
@@ -1155,7 +1153,7 @@ function TabUsuarios({ token }: { token: string }) {
                   </div>
                 )}
                 <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginTop: '.2rem', display: 'flex', gap: '.75rem', flexWrap: 'wrap' }}>
-                  {u.tipo === 'oferente' && <span>📦 {u.espacios_count} espacio{u.espacios_count !== 1 ? 's' : ''}</span>}
+                  {u.tipo === 'usuario' && <span>📦 {u.espacios_count} espacio{u.espacios_count !== 1 ? 's' : ''}</span>}
                   <span>📅 {u.reservas_count} reserva{u.reservas_count !== 1 ? 's' : ''}</span>
                   <span>📆 Alta: {formatFechaCorta(u.created_at)}</span>
                 </div>

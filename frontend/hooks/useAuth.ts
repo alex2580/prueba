@@ -206,7 +206,7 @@ export function useAuth() {
     nombre: string,
     email: string,
     password: string,
-    tipo: 'oferente' | 'demandante' = 'demandante',
+    tipo: 'usuario' = 'usuario',
     tel?: string
   ) => {
     setState(s => ({ ...s, loading: true, error: null }));

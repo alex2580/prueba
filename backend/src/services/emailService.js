@@ -107,9 +107,7 @@ async function sendPagoConfirmado(toEmail, nombre, { espacioNombre, monto, reser
 
 async function sendBienvenida(toEmail, nombre, tipo) {
   if (!await emailConfig.isEnabled('bienvenida')) return;
-  const accionPrincipal = tipo === 'oferente'
-    ? '<p>Desde tu panel podés publicar tus espacios y empezar a recibir reservas.</p>'
-    : '<p>Desde tu panel podés buscar espacios y realizar reservas en toda la ciudad.</p>';
+  const accionPrincipal = '<p>Desde tu panel podés publicar espacios y realizar reservas en toda la ciudad.</p>';
 
   const html = baseTemplate('Bienvenido/a a TodasMisCosas', `
     <h2>👋 Bienvenido/a a TodasMisCosas</h2>

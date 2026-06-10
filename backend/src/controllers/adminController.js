@@ -285,7 +285,7 @@ async function getUsuarios(req, res, next) {
       sql += ' AND (u.nombre LIKE ? OR u.email LIKE ?)';
       params.push(`%${q}%`, `%${q}%`);
     }
-    if (tipo && ['oferente','demandante','admin'].includes(tipo)) {
+    if (tipo && ['usuario','admin'].includes(tipo)) {
       sql += ' AND u.tipo = ?';
       params.push(tipo);
     }

@@ -2,7 +2,7 @@
 //  TodasMisCosas.com — TypeScript Types
 // ============================================================
 
-export type UsuarioTipo = 'oferente' | 'demandante' | 'admin';
+export type UsuarioTipo = 'usuario' | 'admin';
 
 export interface Usuario {
   id: string;

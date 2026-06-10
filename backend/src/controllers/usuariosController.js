@@ -167,7 +167,7 @@ async function sync(req, res, next) {
     // Auto-promote admin emails
     const adminEmails = (process.env.ADMIN_EMAILS || '')
       .split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
-    const tipoFinal = adminEmails.includes(email.toLowerCase()) ? 'admin' : (tipo || 'demandante');
+    const tipoFinal = adminEmails.includes(email.toLowerCase()) ? 'admin' : 'usuario';
 
     await query(
       'INSERT INTO usuarios (supabase_id, nombre, email, tipo, tel) VALUES (?, ?, ?, ?, ?)',
@@ -228,7 +228,7 @@ async function listar(req, res, next) {
 async function cambiarTipo(req, res, next) {
   try {
     const { tipo } = req.body;
-    if (!['oferente', 'demandante', 'admin'].includes(tipo)) {
+    if (!['usuario', 'admin'].includes(tipo)) {
       return res.status(400).json({ error: 'Tipo inválido' });
     }
     await query('UPDATE usuarios SET tipo = ? WHERE id = ?', [tipo, req.params.id]);
