@@ -10,36 +10,30 @@ export default function ConfirmPage() {
   const [status, setStatus] = useState<'loading' | 'error'>('loading');
 
   useEffect(() => {
-    let redirected = false;
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
 
-    function handleConfirmed() {
-      if (redirected) return;
-      redirected = true;
-      router.replace('/panel');
+    if (code) {
+      // PKCE: intercambiamos el code por una sesión real
+      supabase.auth.exchangeCodeForSession(code)
+        .then(({ data, error }) => {
+          if (error || !data.session) {
+            setStatus('error');
+            return;
+          }
+          router.replace('/panel');
+        });
+      return;
     }
 
-    // Supabase con detectSessionInUrl:true procesa automáticamente los tokens
-    // del hash/query de la URL y dispara SIGNED_IN antes de que montemos
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if ((event === 'SIGNED_IN' || event === 'USER_UPDATED') && session) {
-        handleConfirmed();
+    // Fallback: el SDK ya procesó el token (legacy/implicit flow)
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        router.replace('/panel');
+      } else {
+        setStatus('error');
       }
     });
-
-    // Por si el evento ya disparó antes de que montáramos el listener
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) handleConfirmed();
-    });
-
-    // Timeout: si en 8 segundos no hubo sesión, mostrar error
-    const timeout = setTimeout(() => {
-      if (!redirected) setStatus('error');
-    }, 8000);
-
-    return () => {
-      subscription.unsubscribe();
-      clearTimeout(timeout);
-    };
   }, [router]);
 
   return (
