@@ -252,8 +252,7 @@ export function useAuth() {
 
     const token = data.session?.access_token;
     if (!token) {
-      // Supabase tiene confirmación de email activa — marcar flag y mostrar aviso
-      localStorage.setItem('tmc_otp_pending', '1');
+      // Supabase tiene confirmación de email activa — solo mostrar aviso, sin OTP
       otpFlowRef.current = false;
       setState(s => ({ ...s, loading: false, emailConfirmPending: true, emailConfirmEmail: email }));
       return 'email-confirm' as const;

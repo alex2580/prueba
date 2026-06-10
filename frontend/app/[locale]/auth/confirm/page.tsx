@@ -15,9 +15,7 @@ export default function ConfirmPage() {
     function handleConfirmed() {
       if (redirected) return;
       redirected = true;
-      // Marcar OTP pendiente y redirigir — useAuth lo detectará y pedirá el código
-      localStorage.setItem('tmc_otp_pending', '1');
-      router.replace('/auth/register');
+      router.replace('/panel');
     }
 
     // Supabase con detectSessionInUrl:true procesa automáticamente los tokens
