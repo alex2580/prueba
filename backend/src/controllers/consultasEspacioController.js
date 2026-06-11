@@ -62,16 +62,18 @@ async function responder(req, res) {
     const { respuesta } = req.body;
     if (!respuesta?.trim()) return res.status(400).json({ error: 'La respuesta no puede estar vacía' });
 
-    // Dos queries separadas — evita JOIN entre tablas con distinto collation
     const [consulta] = await query(
       'SELECT id, autor_id, pregunta, espacio_id FROM consultas_espacio WHERE id = ?',
       [id]
     );
     if (!consulta) return res.status(404).json({ error: 'Consulta no encontrada' });
 
-    const [espacio] = await query('SELECT id, nombre, oferente_id FROM espacios WHERE id = ?', [consulta.espacio_id]);
-    if (!espacio) return res.status(404).json({ error: 'Espacio no encontrado' });
-    if (espacio.oferente_id !== req.user.id) return res.status(403).json({ error: 'No autorizado' });
+    // Verificación de ownership en la misma query — evita comparación JS con posibles diferencias de tipo
+    const [espacio] = await query(
+      'SELECT id, nombre FROM espacios WHERE id = ? AND oferente_id = ?',
+      [consulta.espacio_id, req.user.id]
+    );
+    if (!espacio) return res.status(403).json({ error: 'No autorizado' });
 
     await query(
       'UPDATE consultas_espacio SET respuesta = ?, respuesta_at = NOW() WHERE id = ?',
