@@ -3,6 +3,7 @@ const router = express.Router();
 const { body, validationResult } = require('express-validator');
 
 const ctrl = require('../controllers/adminController');
+const consultasCtrl = require('../controllers/consultasEspacioController');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { contactLimiter } = require('../middleware/rateLimits');
 
@@ -70,5 +71,9 @@ router.post('/sincronizar-pendientes',                     ctrl.sincronizarPendi
 
 // Auditoría de cambios de perfil
 router.get('/auditoria-perfil',                            ctrl.getAuditoriaPerfil);
+
+// Consultas públicas (consultas_espacio)
+router.get('/consultas-publicas',                          consultasCtrl.listarAdmin);
+router.delete('/consultas-publicas/:id',                   consultasCtrl.eliminarAdmin);
 
 module.exports = router;

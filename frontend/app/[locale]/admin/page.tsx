@@ -2352,6 +2352,134 @@ function TabPublicaciones({ token }: { token: string }) {
 
 // ── Main page ──────────────────────────────────────────────────
 
+// ── Tab: Consultas públicas (consultas_espacio) ────────────────
+
+interface ConsultaPublicaAdmin {
+  id: number;
+  espacio_id: string;
+  autor_id: string;
+  autor_nombre: string;
+  pregunta: string;
+  respuesta: string | null;
+  respuesta_at: string | null;
+  created_at: string;
+  espacio_nombre: string;
+}
+
+function TabConsultasPublicas({ token }: { token: string }) {
+  const [items, setItems] = useState<ConsultaPublicaAdmin[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [filtro, setFiltro] = useState<'todas' | 'pendientes' | 'respondidas'>('todas');
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/consultas-publicas', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error('Error al cargar consultas públicas');
+      setItems(await res.json());
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Error desconocido');
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => { load(); }, [load]);
+
+  async function borrar(id: number) {
+    if (!confirm('¿Eliminar esta consulta? No se puede deshacer.')) return;
+    await fetch(`/api/admin/consultas-publicas/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setItems(prev => prev.filter(c => c.id !== id));
+  }
+
+  const filtered = items.filter(c => {
+    if (filtro === 'pendientes')  return !c.respuesta;
+    if (filtro === 'respondidas') return !!c.respuesta;
+    return true;
+  });
+
+  if (loading) return <p style={{ color: 'var(--text3)' }}>Cargando…</p>;
+  if (error)   return <p className="alert alert--error">{error}</p>;
+
+  return (
+    <>
+      <div style={{ display: 'flex', gap: '.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+        {(['todas', 'pendientes', 'respondidas'] as const).map(f => (
+          <button
+            key={f}
+            onClick={() => setFiltro(f)}
+            style={{
+              padding: '.3rem .85rem', borderRadius: '99px',
+              fontSize: '.8rem', fontWeight: 600, border: 'none', cursor: 'pointer',
+              background: filtro === f ? 'var(--orange)' : 'var(--surface2)',
+              color: filtro === f ? '#fff' : 'var(--text2)',
+            }}
+          >
+            {f.charAt(0).toUpperCase() + f.slice(1)}
+            {f === 'pendientes'  && ` (${items.filter(c => !c.respuesta).length})`}
+            {f === 'respondidas' && ` (${items.filter(c => !!c.respuesta).length})`}
+            {f === 'todas'       && ` (${items.length})`}
+          </button>
+        ))}
+      </div>
+
+      {filtered.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text3)' }}>
+          <div style={{ fontSize: '2rem', marginBottom: '.5rem' }}>❓</div>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>Sin consultas</div>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gap: '.75rem' }}>
+          {filtered.map(c => (
+            <div key={c.id} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', overflow: 'hidden' }}>
+              <div style={{ padding: '.5rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', fontSize: '.72rem', color: 'var(--text3)' }}>
+                <span>📦 <strong style={{ color: 'var(--text2)' }}>{c.espacio_nombre}</strong></span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem' }}>
+                  <span
+                    style={{
+                      background: c.respuesta ? 'rgba(52,211,153,.15)' : 'rgba(232,98,42,.12)',
+                      color: c.respuesta ? 'var(--mint)' : 'var(--orange)',
+                      borderRadius: '99px', padding: '.1rem .55rem', fontWeight: 700,
+                    }}
+                  >
+                    {c.respuesta ? 'Respondida' : 'Pendiente'}
+                  </span>
+                  <button
+                    onClick={() => borrar(c.id)}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--red)', fontSize: '.75rem', padding: '.2rem .5rem' }}
+                  >
+                    🗑️ Eliminar
+                  </button>
+                </div>
+              </div>
+              <div style={{ padding: '1rem' }}>
+                <div style={{ display: 'flex', gap: '.5rem', alignItems: 'flex-start', marginBottom: c.respuesta ? '.75rem' : 0 }}>
+                  <span style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--orange)', background: 'rgba(232,98,42,.1)', borderRadius: '99px', padding: '.15rem .55rem', whiteSpace: 'nowrap' }}>
+                    {c.autor_nombre}
+                  </span>
+                  <p style={{ margin: 0, fontSize: '.88rem', color: 'var(--text)', lineHeight: 1.5 }}>{c.pregunta}</p>
+                </div>
+                {c.respuesta && (
+                  <div style={{ background: 'var(--surface2)', borderLeft: '3px solid var(--orange)', borderRadius: '0 var(--r2) var(--r2) 0', padding: '.75rem 1rem' }}>
+                    <div style={{ fontSize: '.68rem', color: 'var(--orange)', fontWeight: 700, marginBottom: '.3rem' }}>Respuesta del proveedor</div>
+                    <p style={{ margin: 0, fontSize: '.88rem', color: 'var(--text)', lineHeight: 1.5 }}>{c.respuesta}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
 export default function AdminPage() {
   const router = useRouter();
   const { user, token, loading: authLoading, isAdmin } = useAuth();
@@ -2395,6 +2523,7 @@ export default function AdminPage() {
     { key: 'notificaciones',       label: '🔔 Notificaciones', badge: notifUnread || undefined },
     { key: 'operaciones',          label: '💼 Operaciones' },
     { key: 'consultas',            label: '📬 Consultas' },
+    { key: 'consultas-publicas',   label: '❓ Consultas públicas' },
     { key: 'solicitudes-puntaje',  label: '🛡️ Servicios adicionales', badge: solicitudesPendientes || undefined },
     { key: 'campanas',             label: '📣 Campañas' },
     { key: 'marketing',            label: '📨 Marketing & Difusión' },
@@ -2422,6 +2551,7 @@ export default function AdminPage() {
           {tab === 'notificaciones'      && token && <TabNotificaciones token={token} />}
           {tab === 'operaciones'         && token && <TabOperaciones token={token} />}
           {tab === 'consultas'           && token && <TabConsultas token={token} />}
+          {tab === 'consultas-publicas'  && token && <TabConsultasPublicas token={token} />}
           {tab === 'solicitudes-puntaje' && token && <TabServiciosAdicionales token={token} />}
           {tab === 'campanas'            && token && <TabCampanas token={token} />}
           {tab === 'marketing'           && token && <TabMarketing token={token} />}

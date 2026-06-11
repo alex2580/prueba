@@ -145,8 +145,22 @@ export default function PanelPage() {
   const [openFavoritos, setOpenFavoritos] = useState(false);
   const [openMensajes, setOpenMensajes] = useState(false);
   const [openEspacios, setOpenEspacios] = useState(false);
+  const [openConsultas, setOpenConsultas] = useState(false);
+  const [openConsultasRespondidas, setOpenConsultasRespondidas] = useState(false);
+  const [openMisConsultas, setOpenMisConsultas] = useState(false);
 
   const [openCalendario, setOpenCalendario] = useState(false);
+
+  // Consultas públicas
+  interface ConsultaPendiente { id: number; espacio_id: string; espacio_nombre: string; autor_nombre: string; pregunta: string; created_at: string; }
+  interface ConsultaRespondidaOferente { id: number; espacio_nombre: string; autor_nombre: string; pregunta: string; respuesta: string; respuesta_at: string; }
+  interface MiConsultaCliente { id: number; espacio_id: string; espacio_nombre: string; pregunta: string; respuesta: string | null; respuesta_at: string | null; created_at: string; }
+  const [consultasPendientes, setConsultasPendientes] = useState<ConsultaPendiente[]>([]);
+  const [consultasRespondidas, setConsultasRespondidas] = useState<ConsultaRespondidaOferente[]>([]);
+  const [misConsultasCliente, setMisConsultasCliente] = useState<MiConsultaCliente[]>([]);
+  const [errorConsultas, setErrorConsultas] = useState('');
+  const [respuestasMap, setRespuestasMap] = useState<Record<number, string>>({});
+  const [respondiendo, setRespondiendo] = useState<number | null>(null);
 
   // Edit modal
   const [editando, setEditando] = useState<Espacio | null>(null);
@@ -197,6 +211,31 @@ export default function PanelPage() {
   const [reviewLoading, setReviewLoading] = useState(false);
   const [reviewError, setReviewError] = useState('');
   const [reviewOk, setReviewOk] = useState(false);
+
+  async function handleResponderConsulta(consultaId: number) {
+    const texto = respuestasMap[consultaId]?.trim();
+    if (!texto || !token) return;
+    setRespondiendo(consultaId);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/consultas/${consultaId}/responder`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ respuesta: texto }),
+      });
+      if (res.ok) {
+        setRespuestasMap(m => { const n = { ...m }; delete n[consultaId]; return n; });
+        await Promise.all([cargarConsultasPendientes(), cargarConsultasRespondidas()]);
+        setOpenConsultasRespondidas(true);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(`❌ No se pudo enviar la respuesta: ${data.error || `Error ${res.status}`}`);
+      }
+    } catch {
+      alert('❌ Error de conexión al enviar la respuesta.');
+    } finally {
+      setRespondiendo(null);
+    }
+  }
 
   async function handleAbrirChat(espacioId: string) {
     if (!token) return;
@@ -256,6 +295,45 @@ export default function PanelPage() {
   }, [isOferente, token]);
 
   useEffect(() => { cargarDatosOferente(); }, [cargarDatosOferente, refreshKey]);
+
+  const cargarConsultasPendientes = useCallback(async () => {
+    if (!token || !isOferente) return;
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/consultas/mis-espacios`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (!res.ok) { setErrorConsultas(data?.error || `Error ${res.status}`); setConsultasPendientes([]); return; }
+      setErrorConsultas('');
+      setConsultasPendientes(Array.isArray(data) ? data : []);
+    } catch { setErrorConsultas('Error de conexión al cargar consultas'); }
+  }, [token, isOferente]);
+
+  const cargarConsultasRespondidas = useCallback(async () => {
+    if (!token || !isOferente) return;
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/consultas/mis-espacios/respondidas`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setConsultasRespondidas(Array.isArray(data) ? data : []);
+    } catch { /* silencioso */ }
+  }, [token, isOferente]);
+
+  const cargarMisConsultasCliente = useCallback(async () => {
+    if (!token) return;
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/consultas/mis-consultas`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setMisConsultasCliente(Array.isArray(data) ? data : []);
+    } catch { /* silencioso */ }
+  }, [token]);
+
+  useEffect(() => { cargarConsultasPendientes(); }, [cargarConsultasPendientes]);
+  useEffect(() => { cargarConsultasRespondidas(); }, [cargarConsultasRespondidas]);
+  useEffect(() => { cargarMisConsultasCliente(); }, [cargarMisConsultasCliente]);
 
   const cargarFavoritos = useCallback(async () => {
     if (!token) return;
@@ -1127,6 +1205,151 @@ export default function PanelPage() {
               </div>
             </div>
           </section>
+
+          {/* ── SECTION: Consultas pendientes (proveedor) ── */}
+          {isOferente && (
+            <section style={{ marginBottom: '1.5rem' }}>
+              <button onClick={() => setOpenConsultas(v => !v)} className="seccion-toggle">
+                <span style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                  <span>❓ Consultas pendientes</span>
+                  {consultasPendientes.length > 0 && (
+                    <span className="pill pill--gray" style={{ fontSize: '.7rem', padding: '.1rem .45rem', background: 'var(--orange)', color: '#fff' }}>
+                      {consultasPendientes.length}
+                    </span>
+                  )}
+                </span>
+                <span className={`seccion-chevron${openConsultas ? ' open' : ''}`}>▾</span>
+              </button>
+              <div className={`seccion-body${openConsultas ? ' open' : ''}`}>
+                <div style={{ paddingTop: '.75rem' }}>
+                  {errorConsultas ? (
+                    <div style={{ padding: '1rem', color: 'var(--red)', background: 'rgba(239,68,68,.08)', borderRadius: 'var(--r2)', border: '1px solid rgba(239,68,68,.25)', fontSize: '.83rem' }}>
+                      ⚠️ {errorConsultas}
+                    </div>
+                  ) : consultasPendientes.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--text3)', background: 'var(--surface)', borderRadius: 'var(--r2)', border: '1px solid var(--border)', fontSize: '.85rem' }}>
+                      ✅ No hay consultas pendientes de respuesta
+                    </div>
+                  ) : (
+                    <div style={{ display: 'grid', gap: '.85rem' }}>
+                      {consultasPendientes.map(c => (
+                        <div key={c.id} style={{ background: 'var(--surface)', borderRadius: 'var(--r2)', padding: '1rem', border: '1px solid var(--border)' }}>
+                          <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginBottom: '.35rem' }}>
+                            📦 {c.espacio_nombre}
+                          </div>
+                          <div style={{ display: 'flex', gap: '.5rem', alignItems: 'flex-start', marginBottom: '.75rem' }}>
+                            <span style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--orange)', background: 'rgba(232,98,42,.1)', borderRadius: '99px', padding: '.15rem .55rem', whiteSpace: 'nowrap' }}>
+                              {c.autor_nombre}
+                            </span>
+                            <p style={{ margin: 0, fontSize: '.9rem', color: 'var(--text)', lineHeight: 1.5 }}>{c.pregunta}</p>
+                          </div>
+                          <textarea
+                            value={respuestasMap[c.id] || ''}
+                            onChange={e => {
+                              const val = e.target.value;
+                              const v = detectViolation(val);
+                              if (v) { alert(getViolationMessage(v)); return; }
+                              setRespuestasMap(m => ({ ...m, [c.id]: val }));
+                            }}
+                            placeholder="Escribí tu respuesta…"
+                            rows={2}
+                            style={{ width: '100%', resize: 'vertical', fontSize: '.85rem', padding: '.5rem .7rem', borderRadius: 'var(--r2)', background: 'var(--surface2)', border: '1.5px solid var(--border)', boxSizing: 'border-box', marginBottom: '.5rem' }}
+                          />
+                          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <Button
+                              size="sm"
+                              onClick={() => handleResponderConsulta(c.id)}
+                              loading={respondiendo === c.id}
+                              disabled={!respuestasMap[c.id]?.trim()}
+                            >
+                              Responder →
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* ── SECTION: Historial consultas respondidas (proveedor) ── */}
+          {isOferente && consultasRespondidas.length > 0 && (
+            <section style={{ marginBottom: '1.5rem' }}>
+              <button onClick={() => setOpenConsultasRespondidas(v => !v)} className="seccion-toggle">
+                <span style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                  <span>💬 Consultas respondidas</span>
+                  <span className="pill pill--gray" style={{ fontSize: '.7rem', padding: '.1rem .45rem' }}>
+                    {consultasRespondidas.length}
+                  </span>
+                </span>
+                <span className={`seccion-chevron${openConsultasRespondidas ? ' open' : ''}`}>▾</span>
+              </button>
+              <div className={`seccion-body${openConsultasRespondidas ? ' open' : ''}`}>
+                <div style={{ paddingTop: '.75rem', display: 'grid', gap: '.85rem' }}>
+                  {consultasRespondidas.map(c => (
+                    <div key={c.id} style={{ background: 'var(--surface)', borderRadius: 'var(--r2)', border: '1px solid var(--border)', overflow: 'hidden' }}>
+                      <div style={{ padding: '.6rem 1rem', fontSize: '.72rem', color: 'var(--text3)', borderBottom: '1px solid var(--border)' }}>
+                        📦 {c.espacio_nombre}
+                      </div>
+                      <div style={{ padding: '1rem' }}>
+                        <div style={{ display: 'flex', gap: '.5rem', alignItems: 'flex-start', marginBottom: '.75rem' }}>
+                          <span style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--orange)', background: 'rgba(232,98,42,.1)', borderRadius: '99px', padding: '.15rem .55rem', whiteSpace: 'nowrap' }}>
+                            {c.autor_nombre}
+                          </span>
+                          <p style={{ margin: 0, fontSize: '.88rem', color: 'var(--text)', lineHeight: 1.5 }}>{c.pregunta}</p>
+                        </div>
+                        <div style={{ background: 'var(--surface2)', borderRadius: 'var(--r2)', padding: '.75rem 1rem', borderLeft: '3px solid var(--orange)' }}>
+                          <div style={{ fontSize: '.68rem', color: 'var(--orange)', fontWeight: 700, marginBottom: '.3rem' }}>Tu respuesta</div>
+                          <p style={{ margin: 0, fontSize: '.88rem', color: 'var(--text)', lineHeight: 1.5 }}>{c.respuesta}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* ── SECTION: Mis consultas (cliente) ── */}
+          {misConsultasCliente.length > 0 && (
+            <section style={{ marginBottom: '1.5rem' }}>
+              <button onClick={() => setOpenMisConsultas(v => !v)} className="seccion-toggle">
+                <span style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                  <span>🙋 Mis consultas</span>
+                  {misConsultasCliente.filter(c => c.respuesta && !c.respuesta_at).length === 0 && misConsultasCliente.some(c => c.respuesta) && (
+                    <span className="pill pill--gray" style={{ fontSize: '.7rem', padding: '.1rem .45rem', background: 'var(--mint)', color: '#fff' }}>
+                      {misConsultasCliente.filter(c => c.respuesta).length} respondidas
+                    </span>
+                  )}
+                </span>
+                <span className={`seccion-chevron${openMisConsultas ? ' open' : ''}`}>▾</span>
+              </button>
+              <div className={`seccion-body${openMisConsultas ? ' open' : ''}`}>
+                <div style={{ paddingTop: '.75rem', display: 'grid', gap: '.85rem' }}>
+                  {misConsultasCliente.map(c => (
+                    <div key={c.id} style={{ background: 'var(--surface)', borderRadius: 'var(--r2)', border: '1px solid var(--border)', overflow: 'hidden' }}>
+                      <div style={{ padding: '.6rem 1rem', fontSize: '.72rem', color: 'var(--text3)', borderBottom: '1px solid var(--border)' }}>
+                        📦 <a href={`/es/espacio/${c.espacio_id}`} style={{ color: 'var(--orange)', textDecoration: 'none' }}>{c.espacio_nombre}</a>
+                      </div>
+                      <div style={{ padding: '1rem' }}>
+                        <p style={{ margin: '0 0 .6rem', fontSize: '.88rem', color: 'var(--text)', lineHeight: 1.5, fontStyle: 'italic' }}>"{c.pregunta}"</p>
+                        {c.respuesta ? (
+                          <div style={{ background: 'var(--surface2)', borderRadius: 'var(--r2)', padding: '.75rem 1rem', borderLeft: '3px solid var(--orange)' }}>
+                            <div style={{ fontSize: '.68rem', color: 'var(--orange)', fontWeight: 700, marginBottom: '.3rem' }}>Respuesta del proveedor</div>
+                            <p style={{ margin: 0, fontSize: '.88rem', color: 'var(--text)', lineHeight: 1.5 }}>{c.respuesta}</p>
+                          </div>
+                        ) : (
+                          <p style={{ margin: 0, fontSize: '.78rem', color: 'var(--text3)' }}>⏳ Esperando respuesta del proveedor…</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
 
         </div>
       </div>
