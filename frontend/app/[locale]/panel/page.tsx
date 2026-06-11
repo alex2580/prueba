@@ -1239,7 +1239,7 @@ export default function PanelPage() {
                           </div>
                           <div style={{ display: 'flex', gap: '.5rem', alignItems: 'flex-start', marginBottom: '.75rem' }}>
                             <span style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--orange)', background: 'rgba(232,98,42,.1)', borderRadius: '99px', padding: '.15rem .55rem', whiteSpace: 'nowrap' }}>
-                              {c.autor_nombre}
+                              {c.autor_nombre.split(' ')[0]}
                             </span>
                             <p style={{ margin: 0, fontSize: '.9rem', color: 'var(--text)', lineHeight: 1.5 }}>{c.pregunta}</p>
                           </div>
@@ -1296,7 +1296,7 @@ export default function PanelPage() {
                       <div style={{ padding: '1rem' }}>
                         <div style={{ display: 'flex', gap: '.5rem', alignItems: 'flex-start', marginBottom: '.75rem' }}>
                           <span style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--orange)', background: 'rgba(232,98,42,.1)', borderRadius: '99px', padding: '.15rem .55rem', whiteSpace: 'nowrap' }}>
-                            {c.autor_nombre}
+                            {c.autor_nombre.split(' ')[0]}
                           </span>
                           <p style={{ margin: 0, fontSize: '.88rem', color: 'var(--text)', lineHeight: 1.5 }}>{c.pregunta}</p>
                         </div>
