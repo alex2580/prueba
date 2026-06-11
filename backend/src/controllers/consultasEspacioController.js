@@ -125,7 +125,7 @@ async function sinResponder(req, res, next) {
       `SELECT DISTINCT c.id, c.espacio_id, e.nombre AS espacio_nombre,
               c.autor_nombre, c.pregunta, c.created_at
        FROM consultas_espacio c
-       INNER JOIN espacios e ON e.id = CONVERT(c.espacio_id USING utf8mb4)
+       JOIN espacios e ON c.espacio_id = e.id
        WHERE e.oferente_id = ? AND c.respuesta IS NULL
        ORDER BY c.created_at ASC`,
       [req.user.id]
@@ -143,7 +143,7 @@ async function consultasRespondidas(req, res, next) {
       `SELECT DISTINCT c.id, e.nombre AS espacio_nombre,
               c.autor_nombre, c.pregunta, c.respuesta, c.respuesta_at, c.created_at
        FROM consultas_espacio c
-       INNER JOIN espacios e ON e.id = CONVERT(c.espacio_id USING utf8mb4)
+       JOIN espacios e ON c.espacio_id = e.id
        WHERE e.oferente_id = ? AND c.respuesta IS NOT NULL
        ORDER BY c.respuesta_at DESC
        LIMIT 50`,
