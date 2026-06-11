@@ -774,6 +774,70 @@ Solo funciona si `inactiva_auto = 1`. Si alguien intenta reactivar un espacio qu
 
 ---
 
+## 11 de Junio 2026 — v1.11.0
+
+### Consultas públicas — reconstrucción completa
+
+El módulo de consultas públicas fue eliminado y reescrito desde cero para resolver bugs históricos irresolubles: triplicación de mensajes en el panel y 0 resultados tras cada intento de fix.
+
+#### Causa raíz definitiva identificada
+
+La tabla `consultas_espacio` tiene collation `utf8mb4_unicode_ci` (resultado de la migración `fix-consultas-charset.js` del 7 jun). La tabla `espacios` tiene `utf8mb4_0900_ai_ci` (default MySQL 8). Cualquier JOIN entre ambas tablas — incluso con `COLLATE utf8mb4_0900_ai_ci` explícito — devuelve 0 filas silenciosamente. Esta incompatibilidad no puede resolverse con COLLATE en el JOIN.
+
+**Solución definitiva:** el controller nunca hace JOIN. Usa dos queries separadas con merge en JS.
+
+```javascript
+// Patrón definitivo en consultasEspacioController.js
+const espacios = await query('SELECT id, nombre FROM espacios WHERE oferente_id = ?', [userId]);
+const consultas = await query(`SELECT ... FROM consultas_espacio WHERE espacio_id IN (${placeholders})`, ids);
+return consultas.map(c => ({ ...c, espacio_nombre: nombrePorId[c.espacio_id] }));
+```
+
+#### Funcionalidades del módulo reconstruido
+
+| Dónde | Qué muestra |
+|-------|------------|
+| Publicaciones | Formulario para hacer pregunta + historial últimas 5 Q&As |
+| Panel proveedor | Consultas pendientes de respuesta (con textarea individual por consulta) |
+| Panel proveedor | Historial de consultas respondidas |
+| Panel cliente | Mis consultas con estado de respuesta del proveedor |
+| Panel admin | Tab ❓ "Consultas públicas" con listado completo y eliminación |
+
+#### Privacidad aplicada
+
+- En publicaciones y paneles: se muestra solo el **primer nombre** del cliente (no el apellido)
+- La respuesta siempre se identifica como "Respuesta del proveedor"
+
+#### Emails automáticos
+
+| Evento | Destinatario | Template |
+|--------|-------------|---------|
+| Nueva consulta recibida | Proveedor | `sendNuevaConsultaPublica` |
+| Consulta respondida | Cliente | `sendRespuestaConsultaPublica` |
+
+#### Bugs corregidos durante la reconstrucción
+
+| Bug | Fix |
+|-----|-----|
+| 0 resultados en panel proveedor | Eliminación total de JOINs entre `consultas_espacio` y `espacios` |
+| Error 403 al responder | Verificación de ownership movida a SQL: `WHERE id = ? AND oferente_id = ?` |
+
+**Commits:** `5912783`, `6e86944`, `c27062c`, `bc0a5ee`, `fd09634`, `42549d0`, `b6bd971`, `ab86adf`, `c8d13c6`
+
+---
+
+### CI/CD — Self-hosted runner
+
+Se reemplazó el deploy por SSH (que sufría timeouts intermitentes de Hostinger) por un GitHub Actions self-hosted runner instalado directamente en el VPS.
+
+- Runner en `/opt/github-runner`, usuario `github-runner`
+- Se conecta OUT a GitHub — no requiere puertos inbound abiertos
+- Cada push a `master` dispara TypeScript check → build en el VPS → pm2 restart
+
+**Commit:** `0f655da`
+
+---
+
 ## 6 de Junio 2026 — v1.10.0
 
 ### Control de cupo para espacios compartidos

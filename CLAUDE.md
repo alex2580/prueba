@@ -81,7 +81,7 @@ frontend/
 
 ## Migraciones DB pendientes (Guille debe correr en VPS)
 
-> Sin migraciones pendientes al 8 jun 2026.
+> Sin migraciones pendientes al 11 jun 2026.
 
 > Corridas en prod: `add-consultas-espacio.js`, `fix-consultas-charset.js` (7 jun), `add-movimientos-ledger.js`, `add-eliminado-por-oferente.js` (8 jun).
 
@@ -100,3 +100,5 @@ frontend/
 - **Filtro de contenido**: regex puro (no AI), 4 categorías, aplicado frontend + backend
 - **Soft delete de espacios**: `activo = FALSE` + `eliminado_por_oferente` para trazabilidad
 - **Comisión**: 15% TMC, 85% oferente (`netoOferente()` en utils.ts)
+- **Consultas públicas**: `consultas_espacio` tiene collation `utf8mb4_unicode_ci` distinto a `espacios` (`utf8mb4_0900_ai_ci`). NUNCA usar JOIN entre ellas — siempre dos queries separadas y merge en JS. Ver `consultasEspacioController.js`.
+- **CI/CD deploy**: self-hosted runner instalado en VPS (`/opt/github-runner`). El runner conecta OUT a GitHub. Ver `.github/workflows/deploy.yml`.
