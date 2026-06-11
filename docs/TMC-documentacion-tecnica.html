@@ -199,7 +199,7 @@
   <div class="cover-sub">Documentación Técnica Completa</div>
   <div style="font-size:10pt;color:#888;margin-bottom:28px;">Marketplace de almacenamiento urbano — Buenos Aires</div>
   <div class="cover-meta">
-    <b>Versión:</b> 1.9.2 — 7 de Junio 2026<br>
+    <b>Versión:</b> 1.11.0 — 11 de Junio 2026<br>
     <b>URL producción:</b> https://todasmiscosas.com<br>
     <b>Repositorio:</b> github.com/alex2580/prueba (privado)<br>
     <b>Autores:</b> Alejandro Laporte · Guillermo Domínguez<br>
@@ -438,7 +438,12 @@ Browser
 │   ├── pagosController.js        ← Crear preferencia MP, webhook, estado
 │   ├── chatController.js         ← Conversaciones y mensajes
 │   ├── usuariosController.js     ← Perfil, sync Supabase, cambio de tel
-│   └── adminController.js        ← Dashboard admin, gestión global
+│   ├── adminController.js        ← Dashboard admin, gestión global
+│   └── consultasEspacioController.js ← Q&A público: listar, crear, responder, sinResponder, consultasRespondidas, misConsultasCliente, listarAdmin, eliminarAdmin
+│
+├── routes/
+│   ├── ...
+│   └── consultasEspacio.js       ← 6 endpoints públicos y protegidos de Q&A
 │
 ├── services/
 │   ├── emailService.js           ← Todos los templates de email
@@ -497,7 +502,8 @@ Browser
 │   │   ├── CardEspacio.tsx       ← Tarjeta de espacio en el grid de resultados
 │   │   ├── DetalleEspacio.tsx    ← Vista detallada de un espacio individual
 │   │   ├── FiltrosEspacios.tsx   ← Panel de filtros (tipo, precio, período, seguridad)
-│   │   └── GaleriaFotos.tsx      ← Galería de fotos con fallback automático
+│   │   ├── GaleriaFotos.tsx      ← Galería de fotos con fallback automático
+│   └── ConsultasEspacio.tsx  ← Q&A público con prop showHistorial (form solo / form + historial)
 │   └── mapa/
 │       ├── MapaEspacios.tsx      ← Google Maps: marcadores adaptativos, tooltips, hover
 │       └── MarkerEspacio.tsx     ← Tarjeta popup al hacer click en un marcador
@@ -542,7 +548,20 @@ Browser
   <tr><td><code>servicios_adicionales</code></td><td>reserva_id, tipo, precio</td><td>Transporte / seguro / embalaje adjuntos a reservas</td></tr>
   <tr><td><code>auth_otp</code></td><td>usuario_id, codigo, expires_at, usado, intentos, tipo, tel_nuevo</td><td>Códigos OTP para 2FA y cambio de teléfono</td></tr>
   <tr><td><code>auth_sesiones</code></td><td>usuario_id, ip, user_agent, created_at</td><td>Log de accesos exitosos</td></tr>
+  <tr><td><code>consultas_espacio</code></td><td>id, espacio_id, autor_id, autor_nombre, pregunta, respuesta, respuesta_at, created_at</td><td>Q&amp;A público en páginas de espacios. <strong>Charset: utf8mb4_unicode_ci</strong> (distinto a otras tablas — ver nota collation)</td></tr>
+  <tr><td><code>movimientos_ledger</code></td><td>id, reserva_id, tipo, monto, descripcion, created_at</td><td>Registro contable de pagos, liberaciones escrow y comisiones</td></tr>
 </table>
+
+<div class="alert alert-red">
+  <b>⚠️ REGLA CRÍTICA — Collation de consultas_espacio</b>
+  La tabla <code>consultas_espacio</code> tiene collation <code>utf8mb4_unicode_ci</code> (migración <code>fix-consultas-charset.js</code> del 7 jun 2026), mientras que <code>espacios</code> y <code>usuarios</code> tienen <code>utf8mb4_0900_ai_ci</code> (default MySQL 8). Cualquier JOIN entre estas tablas devuelve 0 filas silenciosamente, incluso con COLLATE explícito.<br><br>
+  <strong>Patrón obligatorio:</strong> siempre dos queries separadas + merge en JS. El <code>WHERE espacio_id IN (?)</code> sí funciona (columna vs parámetro, no columna vs columna).
+  <pre style="margin:8px 0 0;background:#fff0ef;">// ✅ CORRECTO
+const espacios = await query('SELECT id FROM espacios WHERE oferente_id = ?', [userId]);
+const consultas = await query('SELECT * FROM consultas_espacio WHERE espacio_id IN (?)', [ids]);
+// ❌ INCORRECTO — JOIN directo devuelve 0 filas
+JOIN espacios e ON e.id = c.espacio_id</pre>
+</div>
 
 <h2>Estados de una reserva</h2>
 <div class="flow">
@@ -967,6 +986,20 @@ POST /api/reservas/:id/extender { nueva_fecha_hasta }
     <td>📋 Confirmación legal — {espacio} ({fechas})</td>
     <td>Datos de la reserva + 4 obligaciones del oferente + recordatorio comisión 15% + link a /legal</td>
   </tr>
+  <tr>
+    <td>19</td>
+    <td>Cliente hace una consulta pública en un espacio</td>
+    <td>Proveedor</td>
+    <td>❓ Nueva consulta en tu publicación</td>
+    <td>Nombre del cliente, nombre del espacio, texto de la pregunta, link al panel proveedor</td>
+  </tr>
+  <tr>
+    <td>20</td>
+    <td>Proveedor responde una consulta pública</td>
+    <td>Cliente</td>
+    <td>💬 Recibiste una respuesta a tu consulta</td>
+    <td>Nombre del espacio, pregunta original, respuesta del proveedor, link a la publicación</td>
+  </tr>
 </table>
 
 <h2>Cron jobs de recordatorios</h2>
@@ -1092,6 +1125,19 @@ POST /api/reservas (crear)
   <tr><td>POST</td><td>/chat/conversaciones/:id/mensajes</td><td>✅</td><td>Enviar mensaje</td></tr>
 </table>
 
+<h2>Consultas públicas (Q&A)</h2>
+<table>
+  <tr><th>Método</th><th>Ruta</th><th>Auth</th><th>Descripción</th></tr>
+  <tr><td>GET</td><td>/espacios/:id/consultas</td><td>—</td><td>Últimas 5 consultas públicas del espacio (pregunta + respuesta)</td></tr>
+  <tr><td>POST</td><td>/espacios/:id/consultas</td><td>✅</td><td>Crear nueva consulta. Activa contactLimiter + rejectContactInfo</td></tr>
+  <tr><td>POST</td><td>/consultas/:id/responder</td><td>✅ Proveedor</td><td>Responder consulta. Verifica ownership en SQL (<code>WHERE id=? AND oferente_id=?</code>)</td></tr>
+  <tr><td>GET</td><td>/consultas/mis-espacios</td><td>✅ Proveedor</td><td>Consultas sin responder del proveedor (dos queries, no JOIN)</td></tr>
+  <tr><td>GET</td><td>/consultas/mis-espacios/respondidas</td><td>✅ Proveedor</td><td>Historial de consultas respondidas (últimas 50)</td></tr>
+  <tr><td>GET</td><td>/consultas/mis-consultas</td><td>✅ Cliente</td><td>Preguntas hechas por el cliente logueado con estado de respuesta</td></tr>
+  <tr><td>GET</td><td>/admin/consultas-publicas</td><td>✅ Admin</td><td>Todas las consultas del sistema (últimas 200)</td></tr>
+  <tr><td>DELETE</td><td>/admin/consultas-publicas/:id</td><td>✅ Admin</td><td>Eliminar una consulta desde panel admin</td></tr>
+</table>
+
 <h2>Admin</h2>
 <table>
   <tr><th>Método</th><th>Ruta</th><th>Auth</th><th>Descripción</th></tr>
@@ -1112,43 +1158,37 @@ POST /api/reservas (crear)
 <h1 id="s12">12. Deploy y CI/CD</h1>
 
 <h2>Flujo de deploy automático</h2>
+
+<div class="alert alert-blue">
+  <b>CI/CD — Self-hosted runner (desde junio 2026)</b>
+  El deploy ya no usa SSH externo hacia el VPS. En su lugar, hay un runner de GitHub Actions instalado directamente en el VPS (<code>/opt/github-runner</code>, usuario <code>github-runner</code>). El runner conecta hacia afuera (HTTPS a GitHub), eliminando la necesidad de abrir puertos SSH o mantener secrets de contraseña.
+</div>
+
 <div class="flow">
 Desarrollador hace push a la rama master en GitHub
          ↓
 GitHub Actions detecta el push → dispara el workflow
          ↓
-Job: deploy (ubuntu-latest)
-  → Usa appleboy/ssh-action para conectarse al VPS por SSH
-  → Ejecuta en el VPS:
-      cd /var/www/todasmiscosas
-      git reset --hard HEAD       ← descarta cambios locales
-      ./deploy.sh                 ← script de build y restart
-         ↓
-deploy.sh en el VPS hace (aprox):
-  → git pull origin master
-  → cd frontend && npm install && npm run build
-  → cd backend && npm install
-  → pm2 restart tmc-backend
-         ↓
-Migraciones de DB (en el mismo workflow):
-  → node src/db/add-disponibilidad.js
-  → node src/db/add-categoria-seguridad.js
-  → node src/db/add-moneda-perfil.js
-  → node src/db/add-recordatorios-extensiones.js
-  → node src/db/add-bloqueo-usuarios.js
-  → node src/db/add-auth-otp.js
-  → node src/db/add-perfil-inactividad.js
-  (cada script es idempotente: ignora si la columna ya existe)
+Job: deploy (runs-on: self-hosted)
+  → El runner instalado en el VPS ejecuta directamente:
+      git pull origin master
+      cd frontend && npm ci --prefer-offline && npm run build
+      cd ../backend && npm ci --prefer-offline
+      pm2 restart tmc-backend
          ↓
 App actualizada en producción ✅  (~2-3 minutos desde el push)
 </div>
 
 <h2>Secrets de GitHub (configurados en el repo)</h2>
+<div class="alert alert-green">
+  <b>Con self-hosted runner ya NO se necesitan VPS_HOST / VPS_USER / VPS_PASS.</b>
+  Los secrets de SSH son solo necesarios si se vuelve a un deploy por SSH externo.
+</div>
 <table>
-  <tr><th>Secret</th><th>Qué contiene</th></tr>
-  <tr><td>VPS_HOST</td><td>IP o hostname del VPS de Hostinger</td></tr>
-  <tr><td>VPS_USER</td><td>Usuario SSH del VPS</td></tr>
-  <tr><td>VPS_PASS</td><td>Contraseña SSH del VPS</td></tr>
+  <tr><th>Secret</th><th>Qué contiene</th><th>Estado</th></tr>
+  <tr><td>VPS_HOST</td><td>IP o hostname del VPS</td><td>Legado (no se usa con self-hosted runner)</td></tr>
+  <tr><td>VPS_USER</td><td>Usuario SSH del VPS</td><td>Legado</td></tr>
+  <tr><td>VPS_PASS</td><td>Contraseña SSH del VPS</td><td>Legado</td></tr>
 </table>
 
 <h2>Proceso PM2</h2>
@@ -1253,10 +1293,61 @@ curl http://localhost:4000/health</pre>
   Compresión de fotos en cliente · Botón Cancelar en flujo de reserva · Precios día/mes en panel ·
   Favoritos · campos <code>activo</code> y <code>disponible</code> gestionados correctamente en admin y panel oferente ·
   Rate limiting · validación magic bytes en uploads · CSP · webhook MP con firma · <code>/sync</code> autenticado ·
-  Branch protection en master · Dependabot activo · deploy via SSH key ·
+  Branch protection en master · Dependabot activo · Self-hosted runner en VPS ·
   Restricción 90 días en reservas · cron syncPagos cada 5 min · chat oferente corregido ·
-  vencimiento publicaciones auto-startup · retry SSH en CI/CD
+  vencimiento publicaciones auto-startup · Consultas públicas Q&amp;A completo ·
+  Panel admin con tab Consultas públicas · Emails sendNuevaConsultaPublica y sendRespuestaConsultaPublica
 </div>
+
+<h2>Cambios v1.11.0 — 11 junio 2026</h2>
+<table>
+  <tr><th>Área</th><th>Cambio</th><th>Commits</th></tr>
+  <tr>
+    <td>Consultas públicas — reconstrucción completa</td>
+    <td>El módulo entero fue eliminado y reescrito desde cero para resolver bugs históricos (triplicación de mensajes, 0 resultados en panel proveedor, error 403 al responder). Nuevo controlador <code>consultasEspacioController.js</code> con 8 funciones. Nunca usa JOIN entre <code>consultas_espacio</code> y <code>espacios</code> — siempre dos queries separadas + merge en JS.</td>
+    <td><code>5912783</code>→<code>c8d13c6</code></td>
+  </tr>
+  <tr>
+    <td>Fix crítico — collation mismatch</td>
+    <td><code>consultas_espacio</code> (utf8mb4_unicode_ci) vs <code>espacios</code> (utf8mb4_0900_ai_ci): cualquier JOIN devuelve 0 filas silenciosamente incluso con COLLATE explícito. Solución definitiva: query <code>espacios</code> primero, luego <code>WHERE espacio_id IN (?)</code> en <code>consultas_espacio</code>, merge en JS con <code>nombrePorId</code> map.</td>
+    <td><code>42549d0</code></td>
+  </tr>
+  <tr>
+    <td>Fix — Error 403 al responder</td>
+    <td>Verificación de ownership movida de JS a SQL: <code>SELECT id FROM espacios WHERE id = ? AND oferente_id = ?</code>. Evita discrepancia de tipo entre valor retornado por MySQL2 y JWT-decoded UUID.</td>
+    <td><code>c8d13c6</code></td>
+  </tr>
+  <tr>
+    <td>Publicaciones — Q&amp;A público</td>
+    <td>Cada página de espacio muestra formulario de pregunta + historial de últimas 5 Q&amp;As. Solo nombre (no apellido) del cliente que pregunta. Label "Respuesta del proveedor" en respuestas. Solo usuarios logueados y no dueños pueden preguntar.</td>
+    <td><code>bc0a5ee</code>, <code>fd09634</code>, <code>b6bd971</code></td>
+  </tr>
+  <tr>
+    <td>Panel proveedor — Consultas</td>
+    <td>Nueva sección "❓ Consultas pendientes" con respuesta directa. Nueva sección "📋 Consultas respondidas" (historial). Solo muestra el nombre (no apellido) del cliente en ambas secciones.</td>
+    <td><code>6e86944</code>, <code>ab86adf</code></td>
+  </tr>
+  <tr>
+    <td>Panel cliente — Mis consultas</td>
+    <td>Nueva sección "❓ Mis consultas" en el panel del cliente con estado de respuesta (pendiente / respondida) de cada pregunta realizada.</td>
+    <td><code>6e86944</code></td>
+  </tr>
+  <tr>
+    <td>Panel admin — Tab Consultas públicas</td>
+    <td>Nuevo tab "❓ Consultas públicas" con listado de todas las Q&amp;As del sistema, filtros (todas/pendientes/respondidas) y botón de eliminación por ítem.</td>
+    <td><code>6e86944</code></td>
+  </tr>
+  <tr>
+    <td>Emails</td>
+    <td>Dos nuevas plantillas: <code>sendNuevaConsultaPublica</code> (al proveedor cuando llega pregunta) y <code>sendRespuestaConsultaPublica</code> (al cliente cuando el proveedor responde). Links siempre con prefijo <code>/es/</code>.</td>
+    <td><code>6e86944</code></td>
+  </tr>
+  <tr>
+    <td>CI/CD — Self-hosted runner</td>
+    <td>GitHub Actions runner instalado en el VPS (<code>/opt/github-runner</code>, usuario <code>github-runner</code>). Reemplaza deploy por SSH externo. El runner conecta hacia afuera a GitHub, sin puertos inbound. <code>runs-on: self-hosted</code> en <code>deploy.yml</code>.</td>
+    <td>sesión 11 jun</td>
+  </tr>
+</table>
 
 <h2>Cambios v1.9.2 — 7 junio 2026 (noche)</h2>
 <table>
@@ -1588,7 +1679,7 @@ curl http://localhost:4000/health</pre>
      FOOTER
 ══════════════════════════════════════════════════════════════ -->
 <div class="footer">
-  TodasMisCosas.com — Documentación técnica interna · Versión 1.9.2 · 7 Junio 2026<br>
+  TodasMisCosas.com — Documentación técnica interna · Versión 1.11.0 · 11 Junio 2026<br>
   Alejandro Laporte · Guillermo Domínguez<br>
   <em>Este documento es confidencial. No distribuir.</em>
 </div>
