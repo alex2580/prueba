@@ -81,12 +81,9 @@ frontend/
 
 ## Migraciones DB pendientes (Guille debe correr en VPS)
 
-```bash
-cd /var/www/todasmiscosas/backend
-node src/db/add-eliminado-por-oferente.js
-```
+> Sin migraciones pendientes al 8 jun 2026.
 
-> `add-consultas-espacio.js` y `fix-consultas-charset.js` ya corrieron en prod (Guille, 7 jun 2026).
+> Corridas en prod: `add-consultas-espacio.js`, `fix-consultas-charset.js` (7 jun), `add-movimientos-ledger.js`, `add-eliminado-por-oferente.js` (8 jun).
 
 ## Variables de entorno críticas (backend .env en VPS)
 
