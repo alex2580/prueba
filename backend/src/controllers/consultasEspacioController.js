@@ -6,7 +6,7 @@ async function listar(req, res) {
   try {
     const rows = await query(
       `SELECT id, autor_nombre, pregunta, respuesta, respuesta_at, created_at
-       FROM consultas_espacio WHERE espacio_id = ? ORDER BY created_at DESC`,
+       FROM consultas_espacio WHERE espacio_id = ? ORDER BY created_at DESC LIMIT 5`,
       [req.params.id]
     );
     res.json(rows);
