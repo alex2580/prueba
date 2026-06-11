@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { formatARS, formatFecha } from '@/lib/utils';
 import { SEGURIDAD_OPCIONES } from '@/components/publicar/SeguridadChecklist';
+import { ConsultasEspacio } from './ConsultasEspacio';
 
 interface DetalleEspacioProps {
   espacio: Espacio;
@@ -238,6 +239,16 @@ export function DetalleEspacio({ espacio, onReservar, token, userId }: DetalleEs
         </div>
       </div>
 
+      {/* Consultas públicas — solo formulario, sin historial */}
+      <div style={{ maxWidth: 860, margin: '0 auto', padding: '0 1rem 2rem' }}>
+        <ConsultasEspacio
+          espacioId={espacio.id}
+          token={token}
+          userId={userId}
+          oferenteId={espacio.oferente_id}
+          showHistorial={false}
+        />
+      </div>
     </div>
   );
 }

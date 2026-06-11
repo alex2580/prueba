@@ -20,9 +20,10 @@ interface ConsultasEspacioProps {
   token?: string | null;
   userId?: string | null;
   oferenteId?: string | null;
+  showHistorial?: boolean;
 }
 
-export function ConsultasEspacio({ espacioId, token, userId, oferenteId }: ConsultasEspacioProps) {
+export function ConsultasEspacio({ espacioId, token, userId, oferenteId, showHistorial = true }: ConsultasEspacioProps) {
   const [consultas, setConsultas] = useState<ConsultaPublica[]>([]);
   const [loading, setLoading] = useState(true);
   const [pregunta, setPregunta] = useState('');
@@ -31,6 +32,7 @@ export function ConsultasEspacio({ espacioId, token, userId, oferenteId }: Consu
   const [ok, setOk] = useState(false);
 
   const cargar = useCallback(async () => {
+    if (!showHistorial) return;
     setLoading(true);
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/espacios/${espacioId}/consultas`);
@@ -41,7 +43,7 @@ export function ConsultasEspacio({ espacioId, token, userId, oferenteId }: Consu
     } finally {
       setLoading(false);
     }
-  }, [espacioId]);
+  }, [espacioId, showHistorial]);
 
   useEffect(() => { cargar(); }, [cargar]);
 
@@ -125,7 +127,7 @@ export function ConsultasEspacio({ espacioId, token, userId, oferenteId }: Consu
       )}
 
       {/* Listado de consultas */}
-      {loading ? (
+      {showHistorial && (loading ? (
         <p style={{ color: 'var(--text3)', fontSize: '.85rem' }}>Cargando consultas…</p>
       ) : consultas.length === 0 ? (
         <p style={{ color: 'var(--text3)', fontSize: '.85rem' }}>
@@ -172,7 +174,7 @@ export function ConsultasEspacio({ espacioId, token, userId, oferenteId }: Consu
             </div>
           ))}
         </div>
-      )}
+      ))}
     </div>
   );
 }
