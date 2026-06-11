@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TodasMisCosas — Plan de Marketing 2026–2027</title>
+<style>
+:root{
+  --orange:#e8622a;--orange-l:#fff3ed;
+  --navy:#1a1a2e;--navy2:#2d2d4e;
+  --p1:#dbeafe;--p1b:#1d4ed8;--p1bg:#eff6ff;
+  --p2:#d1fae5;--p2b:#065f46;--p2bg:#ecfdf5;
+  --p3:#ffe4c4;--p3b:#92400e;--p3bg:#fffbeb;
+  --p4:#e9d5ff;--p4b:#581c87;--p4bg:#faf5ff;
+  --red-l:#fee2e2;--red:#dc2626;
+  --yel-l:#fef9c3;--yel:#ca8a04;
+  --grn-l:#dcfce7;--grn:#16a34a;
+  --gray:#f8f7f6;--border:#e5e7eb;
+  --text:#1f2937;--text2:#4b5563;--text3:#9ca3af;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;font-size:10.5pt;color:var(--text);background:#fafaf9;line-height:1.6}
+.wrapper{max-width:980px;margin:0 auto;padding:36px 40px 80px}
+
+/* ── HEADER ── */
+.hdr{background:linear-gradient(135deg,var(--navy) 0%,#2d2d5e 100%);border-radius:16px;padding:44px 48px 36px;margin-bottom:32px;position:relative;overflow:hidden}
+.hdr::after{content:'📦';position:absolute;right:40px;top:20px;font-size:72pt;opacity:.08}
+.hdr-logo{font-size:26pt;font-weight:900;color:var(--orange);letter-spacing:-1px}
+.hdr-title{font-size:18pt;font-weight:700;color:#fff;margin:4px 0 8px}
+.hdr-sub{color:rgba(255,255,255,.6);font-size:10pt}
+.hdr-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.hdr-pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:4px 14px;font-size:8.5pt;color:rgba(255,255,255,.85);font-weight:600}
+.hdr-pill.o{background:rgba(232,98,42,.25);border-color:var(--orange);color:#ffa07a}
+
+/* ── TABS ── */
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:28px}
+.tab{padding:8px 14px;border-radius:99px;font-size:9pt;font-weight:700;cursor:pointer;border:2px solid transparent;transition:.15s;white-space:nowrap;user-select:none}
+.tab:hover{filter:brightness(.95)}
+.tab.active{border-color:var(--orange);background:var(--orange-l);color:var(--orange)}
+.tab:not(.active){background:#fff;border-color:var(--border);color:var(--text2)}
+.panel{display:none}.panel.active{display:block}
+
+/* ── COMMON ── */
+h2{font-size:13pt;font-weight:800;color:var(--navy);margin:28px 0 12px;display:flex;align-items:center;gap:8px}
+h3{font-size:11pt;font-weight:700;color:var(--navy2);margin:20px 0 8px}
+p{margin-bottom:10px;color:var(--text2)}
+ul,ol{padding-left:20px;margin-bottom:12px}
+li{margin-bottom:5px;color:var(--text2)}
+strong{color:var(--text)}
+.divider{border:none;border-top:1px solid var(--border);margin:24px 0}
+
+/* ── CARDS GRID ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.card{background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:18px 16px}
+.card-icon{font-size:22pt;margin-bottom:8px}
+.card-title{font-size:10pt;font-weight:800;color:var(--navy);margin-bottom:5px}
+.card-body{font-size:9pt;color:var(--text2);line-height:1.45}
+
+/* ── PHASE CARDS ── */
+.phase{border-radius:14px;overflow:hidden;margin-bottom:20px;border:1.5px solid}
+.phase-hdr{padding:16px 20px;display:flex;align-items:center;gap:14px}
+.phase-num{width:40px;height:40px;border-radius:50%;font-size:14pt;font-weight:900;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
+.phase-meta{flex:1}
+.phase-name{font-size:12pt;font-weight:800}
+.phase-period{font-size:8.5pt;opacity:.75;font-weight:600}
+.phase-body{background:#fff;padding:16px 20px}
+.phase-steps{list-style:none;padding:0}
+.phase-steps li{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.step-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8pt;font-weight:800;color:#fff;flex-shrink:0;margin-top:2px}
+.step-txt strong{display:block;font-size:10pt;margin-bottom:2px}
+.step-txt span{font-size:8.5pt;color:var(--text2)}
+.phase.p1{border-color:#93c5fd} .phase.p1 .phase-hdr{background:var(--p1bg)} .phase.p1 .phase-name{color:var(--p1b)} .phase.p1 .phase-num,.phase.p1 .step-dot{background:var(--p1b)}
+.phase.p2{border-color:#6ee7b7} .phase.p2 .phase-hdr{background:var(--p2bg)} .phase.p2 .phase-name{color:var(--p2b)} .phase.p2 .phase-num,.phase.p2 .step-dot{background:var(--p2b)}
+.phase.p3{border-color:#fcd34d} .phase.p3 .phase-hdr{background:var(--p3bg)} .phase.p3 .phase-name{color:var(--p3b)} .phase.p3 .phase-num,.phase.p3 .step-dot{background:var(--p3b)}
+.phase.p4{border-color:#c4b5fd} .phase.p4 .phase-hdr{background:var(--p4bg)} .phase.p4 .phase-name{color:var(--p4b)} .phase.p4 .phase-num,.phase.p4 .step-dot{background:var(--p4b)}
+
+/* ── SEMÁFORO ── */
+.semaforo{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.sem{border-radius:12px;padding:16px;border:1.5px solid;text-align:center}
+.sem.r{background:var(--red-l);border-color:#fca5a5} .sem.r .sem-dot{background:var(--red)}
+.sem.y{background:var(--yel-l);border-color:#fde68a} .sem.y .sem-dot{background:var(--yel)}
+.sem.g{background:var(--grn-l);border-color:#86efac} .sem.g .sem-dot{background:var(--grn)}
+.sem-dot{width:18px;height:18px;border-radius:50%;margin:0 auto 8px}
+.sem-label{font-size:9.5pt;font-weight:700;margin-bottom:4px}
+.sem.r .sem-label{color:var(--red)} .sem.y .sem-label{color:var(--yel)} .sem.g .sem-label{color:var(--grn)}
+.sem-desc{font-size:8pt;color:var(--text2)}
+
+/* ── BADGES ── */
+.badge{display:inline-block;border-radius:99px;padding:2px 10px;font-size:8pt;font-weight:700}
+.b-green{background:var(--grn-l);color:var(--grn)}
+.b-red{background:var(--red-l);color:var(--red)}
+.b-yel{background:var(--yel-l);color:var(--yel)}
+.b-blue{background:#dbeafe;color:#1e40af}
+.b-purple{background:#ede9fe;color:#5b21b6}
+.b-orange{background:var(--orange-l);color:var(--orange)}
+
+/* ── PROS/CONS ── */
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pros{background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;padding:16px 18px}
+.cons{background:#fef2f2;border:1.5px solid #fca5a5;border-radius:12px;padding:16px 18px}
+.pros h3{color:#16a34a} .cons h3{color:#dc2626}
+.pros li::marker,.pros li{color:#15803d} .cons li::marker,.cons li{color:#b91c1c}
+
+/* ── COMPETITION ── */
+.comp-card{background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.comp-name{font-size:10.5pt;font-weight:800;color:var(--navy);margin-bottom:4px}
+.comp-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
+.comp-body{font-size:8.5pt;color:var(--text2)}
+.tmc-win{background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:10px 14px;margin-top:8px;font-size:8.5pt;color:#15803d}
+
+/* ── NICHES ── */
+.niche{background:#fff;border-radius:12px;border:1.5px solid var(--border);padding:14px 16px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start}
+.niche-icon{font-size:24pt;line-height:1;flex-shrink:0}
+.niche-name{font-size:10.5pt;font-weight:800;color:var(--navy);margin-bottom:3px}
+.niche-vol{font-size:8pt;font-weight:700;margin-bottom:4px}
+.niche-desc{font-size:8.5pt;color:var(--text2)}
+.niche-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+
+/* ── CALENDAR ── */
+.month-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:16px}
+.month{border-radius:10px;padding:10px 8px;text-align:center;border:1.5px solid}
+.month .m-name{font-size:9pt;font-weight:800;margin-bottom:3px}
+.month .m-icon{font-size:14pt;margin-bottom:3px}
+.month .m-label{font-size:7.5pt;font-weight:600}
+.month.hot{background:#fff3ed;border-color:#fdba74} .month.hot .m-name,.month.hot .m-label{color:#9a3412}
+.month.warm{background:#fefce8;border-color:#fde68a} .month.warm .m-name,.month.warm .m-label{color:#854d0e}
+.month.cold{background:#f1f5f9;border-color:#cbd5e1} .month.cold .m-name,.month.cold .m-label{color:#475569}
+.month.ok{background:#f0fdf4;border-color:#86efac} .month.ok .m-name,.month.ok .m-label{color:#166534}
+
+/* ── EVENTS TABLE ── */
+.evt-table{width:100%;border-collapse:collapse;margin-bottom:16px}
+.evt-table th{background:var(--gray);padding:9px 12px;text-align:left;font-size:9pt;font-weight:700;color:var(--text);border-bottom:2px solid var(--border)}
+.evt-table td{padding:8px 12px;border-bottom:1px solid var(--border);font-size:9pt;vertical-align:top}
+.evt-table tr:hover td{background:#fafafa}
+
+/* ── SPONSORS ── */
+.sponsor{background:#fff;border-radius:12px;border:1.5px solid var(--border);padding:14px 16px;margin-bottom:10px}
+.sponsor-name{font-size:10.5pt;font-weight:800;color:var(--navy);margin-bottom:3px}
+.sponsor-cat{font-size:8pt;font-weight:700;margin-bottom:6px}
+.sponsor-desc{font-size:8.5pt;color:var(--text2)}
+.sponsor-action{font-size:8pt;margin-top:6px;color:var(--orange);font-weight:600}
+
+/* ── SOCIAL ── */
+.social{background:#fff;border-radius:12px;border:1.5px solid var(--border);padding:16px 18px;margin-bottom:12px}
+.social-hdr{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.social-icon{font-size:22pt;line-height:1}
+.social-name{font-size:11pt;font-weight:800;color:var(--navy)}
+.social-freq{font-size:8pt;color:var(--text3)}
+.social-kpis{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+
+/* ── INFO BOX ── */
+.info{background:var(--orange-l);border-left:4px solid var(--orange);border-radius:0 8px 8px 0;padding:12px 14px;margin:14px 0;font-size:9pt;color:var(--navy2)}
+.info-tip{background:#eff6ff;border-left:4px solid #3b82f6;border-radius:0 8px 8px 0;padding:12px 14px;margin:14px 0;font-size:9pt;color:#1e40af}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-logo">TodasMisCosas</div>
+  <div class="hdr-title">Plan de Marketing &amp; Crecimiento 2026–2027</div>
+  <div class="hdr-sub">Marketplace P2P de almacenamiento urbano · Buenos Aires · v1.9.2 en producción</div>
+  <div class="hdr-pills">
+    <span class="hdr-pill o">📦 Producto listo ✅</span>
+    <span class="hdr-pill">📍 CABA + AMBA</span>
+    <span class="hdr-pill">4 Fases de lanzamiento</span>
+    <span class="hdr-pill">8 Nichos target</span>
+    <span class="hdr-pill">Roadmap Jul 2026 → Jun 2027</span>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="showTab('semaforo')">🚦 Semáforo</div>
+  <div class="tab" onclick="showTab('fases')">📅 Fases</div>
+  <div class="tab" onclick="showTab('redes')">📱 Redes Sociales</div>
+  <div class="tab" onclick="showTab('nichos')">🎯 Nichos</div>
+  <div class="tab" onclick="showTab('competencia')">🏆 Competencia</div>
+  <div class="tab" onclick="showTab('calendario')">🗓️ Calendario y Eventos</div>
+  <div class="tab" onclick="showTab('sponsors')">🤝 Sponsors</div>
+  <div class="tab" onclick="showTab('proscons')">✅ Pros &amp; Contras</div>
+</div>
+
+<!-- ═══════════════════════ SEMÁFORO ═══════════════════════ -->
+<div id="tab-semaforo" class="panel active">
+
+  <h2>🚦 Semáforo de Preparación para el Lanzamiento</h2>
+  <p>Estado actual de cada dimensión clave antes de salir a buscar usuarios de manera activa.</p>
+
+  <h3>🟢 Verde — Listo para operar</h3>
+  <div class="semaforo">
+    <div class="sem g"><div class="sem-dot"></div><div class="sem-label">💻 Producto Web</div><div class="sem-desc">v1.9.2 en producción. Flujo completo: publicar → reservar → pagar → acceder.</div></div>
+    <div class="sem g"><div class="sem-dot"></div><div class="sem-label">💳 Pagos</div><div class="sem-desc">MercadoPago Checkout Pro + QR integrados. Depósito de garantía automático.</div></div>
+    <div class="sem g"><div class="sem-dot"></div><div class="sem-label">🔒 Seguridad</div><div class="sem-desc">18 controles implementados. Rate limiting, HMAC, 2FA por email, HTTPS.</div></div>
+    <div class="sem g"><div class="sem-dot"></div><div class="sem-label">💬 Chat</div><div class="sem-desc">Chat en tiempo real (Socket.io) entre proveedor y cliente durante la reserva.</div></div>
+    <div class="sem g"><div class="sem-dot"></div><div class="sem-label">📧 Emails automáticos</div><div class="sem-desc">18+ plantillas. Confirmaciones, alertas, escrow, recordatorios.</div></div>
+    <div class="sem g"><div class="sem-dot"></div><div class="sem-label">🗺️ Mapa interactivo</div><div class="sem-desc">Google Maps con filtros por barrio, tipo y precio. Marcadores con precio.</div></div>
+    <div class="sem g"><div class="sem-dot"></div><div class="sem-label">📜 Legales</div><div class="sem-desc">T&C, política de privacidad, T&C operación — aceptados automáticamente al pagar.</div></div>
+    <div class="sem g"><div class="sem-dot"></div><div class="sem-label">🖥️ Panel admin</div><div class="sem-desc">Gestión completa: usuarios, espacios, reservas, servicios adicionales, movimientos.</div></div>
+    <div class="sem g"><div class="sem-dot"></div><div class="sem-label">📋 Q&A público</div><div class="sem-desc">Clientes hacen preguntas en publicaciones. Respuestas visibles para todos.</div></div>
+  </div>
+
+  <h3>🟡 Amarillo — Funciona pero necesita atención</h3>
+  <div class="semaforo">
+    <div class="sem y"><div class="sem-dot"></div><div class="sem-label">📱 Mobile experience</div><div class="sem-desc">Responsive web, pero no hay app nativa. El 70%+ del tráfico esperable es mobile.</div></div>
+    <div class="sem y"><div class="sem-dot"></div><div class="sem-label">📲 2FA SMS/WhatsApp</div><div class="sem-desc">Implementado en código pero Twilio sin configurar en VPS. OTP por email sí funciona.</div></div>
+    <div class="sem y"><div class="sem-dot"></div><div class="sem-label">🛡️ Seguro de contenido</div><div class="sem-desc">Servicios adicionales existen como opción, pero sin partnership formal con aseguradora.</div></div>
+    <div class="sem y"><div class="sem-dot"></div><div class="sem-label">⭐ Reviews</div><div class="sem-desc">Sistema implementado. Sin reviews reales aún (plataforma nueva).</div></div>
+    <div class="sem y"><div class="sem-dot"></div><div class="sem-label">🔍 SEO</div><div class="sem-desc">Estructura Next.js permite buen SEO. Sin contenido ni backlinks todavía.</div></div>
+    <div class="sem y"><div class="sem-dot"></div><div class="sem-label">📸 Contenido visual</div><div class="sem-desc">El sitio existe pero necesita fotos de calidad de espacios reales para generar confianza.</div></div>
+  </div>
+
+  <h3>🔴 Rojo — Pendiente antes de escalar</h3>
+  <div class="semaforo">
+    <div class="sem r"><div class="sem-dot"></div><div class="sem-label">🏠 Oferta de espacios</div><div class="sem-desc">Sin proveedores cargados el sitio está vacío. Prioridad #1 antes de invertir en ads.</div></div>
+    <div class="sem r"><div class="sem-dot"></div><div class="sem-label">📣 Presencia en redes</div><div class="sem-desc">Sin Instagram, TikTok ni comunidad activa todavía.</div></div>
+    <div class="sem r"><div class="sem-dot"></div><div class="sem-label">💰 Presupuesto marketing</div><div class="sem-desc">No definido aún. Mínimo sugerido: $100.000 ARS/mes en Fase I.</div></div>
+    <div class="sem r"><div class="sem-dot"></div><div class="sem-label">🪪 KYC / Verificación</div><div class="sem-desc">Sin verificación de identidad. Bloquea confianza para reservas de alto valor.</div></div>
+    <div class="sem r"><div class="sem-dot"></div><div class="sem-label">📊 Analytics de negocio</div><div class="sem-desc">Sin Google Analytics, Meta Pixel ni datos de comportamiento de usuarios.</div></div>
+  </div>
+
+  <div class="info">
+    💡 <strong>Recomendación estratégica:</strong> No invertir en publicidad paga hasta tener al menos <strong>20–30 espacios publicados</strong> en CABA. Sin oferta, los clicks son dinero perdido. La prioridad N°1 del Mes 1 es carga manual de proveedores.
+  </div>
+
+</div>
+
+<!-- ═══════════════════════ FASES ═══════════════════════════ -->
+<div id="tab-fases" class="panel">
+
+  <h2>📅 Plan de Marketing por Fases</h2>
+  <p>Cuatro fases progresivas. Cada fase se activa cuando la anterior cumple sus KPIs mínimos.</p>
+
+  <!-- FASE I -->
+  <div class="phase p1">
+    <div class="phase-hdr">
+      <div class="phase-num">I</div>
+      <div class="phase-meta">
+        <div class="phase-name">🌱 Fase I — Preparación y Siembra</div>
+        <div class="phase-period">Julio – Agosto 2026 · 8 semanas · Presupuesto: $0–$50.000 ARS</div>
+      </div>
+      <span class="badge b-blue">Pre-lanzamiento</span>
+    </div>
+    <div class="phase-body">
+      <p><strong>Objetivo:</strong> Construir los cimientos antes de invertir. Sin bases sólidas, el dinero en ads es un pozo.</p>
+      <ul class="phase-steps">
+        <li><div class="step-dot">1</div><div class="step-txt"><strong>🏠 Captación manual de primeros 30 proveedores</strong><span>Salir a la calle: hablar con vecinos, grupos de WhatsApp de barrio (Palermo, Belgrano, Villa Crespo, Caballito). Ofrecer 0% de comisión por los primeros 3 meses. Fotografiar espacios si no tienen fotos propias. Meta: 30 espacios publicados con foto, precio y descripción completa.</span></div></li>
+        <li><div class="step-dot">2</div><div class="step-txt"><strong>📸 Crear cuenta Instagram @todasmiscosas</strong><span>Perfil con bio clara, link a todasmiscosas.com. Primeras 9 fotos: 3 de espacios reales, 3 de "¿sabías que?" con datos del mercado, 3 de behind the scenes del proyecto. Sin comprar seguidores.</span></div></li>
+        <li><div class="step-dot">3</div><div class="step-txt"><strong>🎨 Identidad visual consistente</strong><span>Armar 5–10 templates de Canva con los colores TMC (naranja + marino). Para stories, posts cuadrados y reels. Que todo post se vea "de la misma familia" desde el día uno.</span></div></li>
+        <li><div class="step-dot">4</div><div class="step-txt"><strong>📊 Instalar Google Analytics 4 + Meta Pixel</strong><span>GA4 en Next.js con eventos custom: ver espacio, iniciar reserva, completar pago. Meta Pixel para retargeting futuro. Sin datos, no se puede optimizar.</span></div></li>
+        <li><div class="step-dot">5</div><div class="step-txt"><strong>🔍 SEO inicial: Google Business Profile</strong><span>Crear perfil en Google My Business como servicio local. Categoría: "Servicio de almacenamiento". Fotos, descripción, URL. Aparecer en búsquedas locales de "guardar cosas Buenos Aires".</span></div></li>
+        <li><div class="step-dot">6</div><div class="step-txt"><strong>💬 Grupos y comunidades digitales</strong><span>Unirse (sin spam) a grupos de Facebook de: mudanzas en CABA, ex-pats en Buenos Aires, estudiantes universitarios, grupos de barrio. Comenzar a aportar valor antes de promocionar.</span></div></li>
+        <li><div class="step-dot">7</div><div class="step-txt"><strong>📰 Nota de prensa a medios tech y emprendimiento</strong><span>Enviar one-pager a: Clarín Emprendedores, La Nación + E, Infobae Economía, Chequeado, Startups de LATAM, PulsoSocial. Ángulo: "El Airbnb del almacenamiento llega a Argentina".</span></div></li>
+        <li><div class="step-dot">8</div><div class="step-txt"><strong>🧪 Beta cerrada con 50 primeros usuarios</strong><span>Invitar a amigos, familia, conocidos a usar la plataforma con descuento. Recolectar feedback activo. Arreglar fricción del flujo antes de apertura masiva.</span></div></li>
+      </ul>
+      <div class="info-tip">📌 <strong>KPI de salida Fase I:</strong> 30 espacios publicados · 50 usuarios registrados · Instagram con 200+ seguidores · GA4 instalado y reportando</div>
+    </div>
+  </div>
+
+  <!-- FASE II -->
+  <div class="phase p2">
+    <div class="phase-hdr">
+      <div class="phase-num">II</div>
+      <div class="phase-meta">
+        <div class="phase-name">🚀 Fase II — Lanzamiento Público CABA</div>
+        <div class="phase-period">Septiembre – Noviembre 2026 · 12 semanas · Presupuesto: $150.000–$300.000 ARS/mes</div>
+      </div>
+      <span class="badge b-green">Lanzamiento activo</span>
+    </div>
+    <div class="phase-body">
+      <p><strong>Objetivo:</strong> Primeras 100 reservas completadas. Generar confianza pública y prueba social.</p>
+      <ul class="phase-steps">
+        <li><div class="step-dot">1</div><div class="step-txt"><strong>💰 Meta Ads — Campaña de awareness CABA</strong><span>Audiencia: 25–45 años CABA, intereses: mudanzas, real estate, organización del hogar, Airbnb, MercadoLibre. Formato: video 15" mostrando el flujo completo (publicar → reservar → cobrar). Presupuesto diario: $3.000–$5.000 ARS.</span></div></li>
+        <li><div class="step-dot">2</div><div class="step-txt"><strong>🔍 Google Ads — Keywords de intención</strong><span>Palabras clave: "guardar muebles buenos aires", "depósito económico CABA", "lugar para guardar cosas alquiler", "cochera storage porteño". CPC estimado: $150–$400 ARS. Budget: $50.000 ARS/mes.</span></div></li>
+        <li><div class="step-dot">3</div><div class="step-txt"><strong>🤝 Alianza con empresas de mudanzas</strong><span>Hablar con las 10 principales mudanzas de CABA (Transportes González, Mudanzas Express, etc.). Propuesta: "Cuando tu cliente no tiene dónde dejar las cosas temporariamente, nosotros lo resolvemos". Comisión del 5% por cada derivación que pague.</span></div></li>
+        <li><div class="step-dot">4</div><div class="step-txt"><strong>📱 TikTok: "Mostrar el espacio" challenge</strong><span>Crear contenido viral: "Mostrate el espacio más insólito de CABA" con videos de 30–60". Colaborar con 3–5 micro-influencers (5K–50K seguidores) del nicho lifestyle porteño. Costo estimado: canje + $20.000 ARS por creator.</span></div></li>
+        <li><div class="step-dot">5</div><div class="step-txt"><strong>🎁 Programa de referidos manual</strong><span>Código único por usuario. Primer mes gratis para el referido, $2.000 ARS de crédito para el referente. Promocionar en redes y email a la base existente.</span></div></li>
+        <li><div class="step-dot">6</div><div class="step-txt"><strong>📝 Blog de contenido SEO</strong><span>5 artículos: "Cómo guardar muebles al mudarte en CABA", "Las mejores cocheras en Palermo para guardar cosas", "Cuánto cuesta alquilar un depósito en Buenos Aires 2026", "TodasMisCosas vs guardamuebles: comparativa", "Guía para publicar tu espacio libre y ganar dinero".</span></div></li>
+        <li><div class="step-dot">7</div><div class="step-txt"><strong>📺 PR: Aparición en medios</strong><span>Con las primeras 100 reservas como prueba social, buscar aparición en: Infobae, Clarín, La Nación, El Cronista, Radio La Red (segmento emprendedores). Ángulo: "Emprendedor porteño crea plataforma que monetiza espacios vacíos".</span></div></li>
+        <li><div class="step-dot">8</div><div class="step-txt"><strong>⭐ Recolección de primeras reviews</strong><span>Contactar activamente a los primeros 50 clientes y pedirles una reseña en Google y en la plataforma. Ofrecer $500 ARS de crédito a cambio. Las primeras reviews son oro.</span></div></li>
+      </ul>
+      <div class="info-tip">📌 <strong>KPI de salida Fase II:</strong> 100 reservas completadas · 150 espacios publicados · CAC (costo adquisición cliente) &lt; $5.000 ARS · 1 aparición en medios masivos · 4.0⭐ promedio</div>
+    </div>
+  </div>
+
+  <!-- FASE III -->
+  <div class="phase p3">
+    <div class="phase-hdr">
+      <div class="phase-num">III</div>
+      <div class="phase-meta">
+        <div class="phase-name">📈 Fase III — Crecimiento y Retención CABA</div>
+        <div class="phase-period">Diciembre 2026 – Febrero 2027 · 12 semanas · Presupuesto: $400.000–$600.000 ARS/mes</div>
+      </div>
+      <span class="badge b-orange">Escala orgánica</span>
+    </div>
+    <div class="phase-body">
+      <p><strong>Objetivo:</strong> 500 reservas acumuladas. Motor de crecimiento orgánico activo. Retención &gt; 40%.</p>
+      <ul class="phase-steps">
+        <li><div class="step-dot">1</div><div class="step-txt"><strong>🔄 Retargeting a abandonos</strong><span>Usuarios que vieron un espacio pero no reservaron → remarketing de Meta Ads con el espacio específico. "¡Todavía está disponible!" con foto + precio + CTA. Conversión esperada: 8–15%.</span></div></li>
+        <li><div class="step-dot">2</div><div class="step-txt"><strong>📧 Email marketing segmentado</strong><span>Segmentar la base: clientes que reservaron 1 vez (reactivar), proveedores sin reservas (tips para mejorar publicación), usuarios registrados sin reserva (nurturing). Usar Resend (ya integrado). Frecuencia: 1 email/semana máximo.</span></div></li>
+        <li><div class="step-dot">3</div><div class="step-txt"><strong>🤝 Partnership con inmobiliarias</strong><span>Acuerdos con inmobiliarias de CABA (RE/MAX, Toribio Achával, Bullrich). Propuesta: "Cuando tu cliente espera la escritura y necesita guardar cosas, TMC lo resuelve en 24h". Comisión por derivación.</span></div></li>
+        <li><div class="step-dot">4</div><div class="step-txt"><strong>🎓 Campaña universidades</strong><span>Flyering físico en facultades de UBA (Filosofía, Exactas, Económicas), UCA, UADE, UTDT. Descuento "Estudiante 20%" con validación de mail universitario. Épocas clave: inicio de clases (marzo, agosto).</span></div></li>
+        <li><div class="step-dot">5</div><div class="step-txt"><strong>📱 WhatsApp Business + comunidades</strong><span>Canal de WhatsApp Business para novedades. Crear 1–2 comunidades por barrio ("TMC Palermo", "TMC Belgrano") donde proveedores anuncian disponibilidad y clientes buscan. Moderadas por el equipo.</span></div></li>
+        <li><div class="step-dot">6</div><div class="step-txt"><strong>🏆 Caso de estudio del primer proveedor exitoso</strong><span>Identificar al proveedor con más reservas y hacer un mini-documental de 2–3 minutos: "Cómo [nombre] gana $200.000/mes alquilando su cochera libre". Publicar en todas las redes. Este contenido convierte más que cualquier ad.</span></div></li>
+        <li><div class="step-dot">7</div><div class="step-txt"><strong>🎟️ Participación en eventos locales</strong><span>Stand o presencia en: ExpoVivienda, feria de barrio, Masticar, Feria del Libro. Ver tab "Calendario y Eventos" para el detalle completo.</span></div></li>
+        <li><div class="step-dot">8</div><div class="step-txt"><strong>📊 Optimización basada en datos</strong><span>Con 3 meses de datos en GA4: identificar el barrio con mejor conversión, el tipo de espacio más buscado, el dispositivo dominante, el paso del funnel con más abandono. Doblar la apuesta en lo que funciona, cortar lo que no.</span></div></li>
+      </ul>
+      <div class="info-tip">📌 <strong>KPI de salida Fase III:</strong> 500 reservas · Retención &gt;40% (cliente repite) · NPS &gt;50 · 3 partners formales (mudanzas / inmobiliaria) · GMV mensual &gt; $2.000.000 ARS</div>
+    </div>
+  </div>
+
+  <!-- FASE IV -->
+  <div class="phase p4">
+    <div class="phase-hdr">
+      <div class="phase-num">IV</div>
+      <div class="phase-meta">
+        <div class="phase-name">🗺️ Fase IV — Expansión AMBA</div>
+        <div class="phase-period">Marzo – Junio 2027 · 16 semanas · Presupuesto: $800.000–$1.200.000 ARS/mes</div>
+      </div>
+      <span class="badge b-purple">Expansión geográfica</span>
+    </div>
+    <div class="phase-body">
+      <p><strong>Objetivo:</strong> Presencia activa en GBA Norte, Sur y Oeste. 50+ espacios por zona antes de activar publicidad en cada una.</p>
+      <ul class="phase-steps">
+        <li><div class="step-dot">1</div><div class="step-txt"><strong>🏘️ GBA Norte — Zona Olivos, San Isidro, Tigre</strong><span>Primera expansión por perfil socioeconómico y densidad de mudanzas. Contactar admin de countries y edificios con cocheras vacías. Publicidad geo-segmentada a Vicente López, San Isidro, Tigre únicamente.</span></div></li>
+        <li><div class="step-dot">2</div><div class="step-txt"><strong>🏭 GBA Oeste — Morón, Tres de Febrero, Ituzaingó</strong><span>Foco en galpones y garajes más grandes (precios de CABA por m² son el doble de GBA Oeste → atractivo para proveedores). Alianza con parques industriales pequeños con espacio ocioso.</span></div></li>
+        <li><div class="step-dot">3</div><div class="step-txt"><strong>🏙️ GBA Sur — Lanús, Lomas de Zamora, Quilmes</strong><span>Zona con alta densidad y mucha rotación de alquileres. Campaña en grupos de Facebook hiperlocales (cada municipio tiene grupos de 10K–50K miembros). Precio competitivo vs CABA.</span></div></li>
+        <li><div class="step-dot">4</div><div class="step-txt"><strong>📱 Lanzar app React Native</strong><span>Con la base de usuarios de CABA validada, lanzar en App Store y Google Play. Campaña "Descargá TMC y encontrá dónde guardar en minutos". Push notifications activas desde el día uno.</span></div></li>
+        <li><div class="step-dot">5</div><div class="step-txt"><strong>🏢 Canal B2B — Empresas</strong><span>Empresas de logística, mudanzas y e-commerce en AMBA que necesitan storage flexible. Visitas comerciales. Contrato marco de servicio. Tarifa corporativa con factura.</span></div></li>
+        <li><div class="step-dot">6</div><div class="step-txt"><strong>🎯 Interior del país — Exploración</strong><span>Con app lanzada y sistema escalado, evaluar Córdoba y Rosario. Modelo: buscar 1 "embajador local" por ciudad que haga la captación inicial de proveedores a cambio de comisión extra.</span></div></li>
+      </ul>
+      <div class="info-tip">📌 <strong>KPI de salida Fase IV:</strong> 1.000+ reservas acumuladas · 500+ espacios en plataforma · Presencia en 4 zonas (CABA + 3 GBA) · App con 4.0⭐ en stores · GMV mensual &gt; $10.000.000 ARS</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════ REDES SOCIALES ══════════════════ -->
+<div id="tab-redes" class="panel">
+
+  <h2>📱 Estrategia de Redes Sociales</h2>
+  <p>Cada plataforma tiene un rol diferente. No intentar estar en todas al mismo tiempo — ir de a una hasta dominarla.</p>
+
+  <div class="social">
+    <div class="social-hdr">
+      <div class="social-icon">📸</div>
+      <div><div class="social-name">Instagram — Canal Principal</div><div class="social-freq">5–7 posts/semana · Prioridad 🔴 Alta · Arrancar: Julio 2026</div></div>
+    </div>
+    <div class="social-kpis">
+      <span class="badge b-orange">@todasmiscosas</span>
+      <span class="badge b-blue">Reels · Stories · Carruseles</span>
+      <span class="badge b-green">Meta: 2.000 seguidores en 3 meses</span>
+    </div>
+    <ul>
+      <li>🏠 <strong>Lunes "Espacio de la semana":</strong> Foto profesional de un espacio publicado con precio y barrio. Story con "¿Cuánto creés que vale este espacio?"</li>
+      <li>💡 <strong>Miércoles "Sabías que":</strong> Dato de mercado. "El 30% de los porteños tiene espacio libre sin usar. ¿Y vos?" Fondo naranja con tipografía grande.</li>
+      <li>🎬 <strong>Viernes Reels:</strong> Video de 30–60" mostrando un espacio real, o el flujo de reserva en pantalla, o testimonio de proveedor. Es el contenido con mayor alcance.</li>
+      <li>📊 <strong>Stories diarias:</strong> Encuestas ("¿Dónde guardarías tus muebles?"), preguntas, countdown a nuevos espacios, behind the scenes del equipo.</li>
+      <li>🔁 <strong>Reposts de clientes:</strong> Pedir a proveedores que tageen @todasmiscosas cuando suban su espacio. Re-postear con crédito. Prueba social gratuita.</li>
+    </ul>
+    <div style="background:var(--orange-l);border-radius:8px;padding:10px 12px;font-size:8.5pt;color:var(--navy2)">
+      💡 <strong>Truco para el algoritmo:</strong> Los primeros 30 minutos post-publicación son cruciales. Publicar cuando la audiencia está activa: Martes–Jueves 12–14hs o 20–22hs (horario argentina).
+    </div>
+  </div>
+
+  <div class="social">
+    <div class="social-hdr">
+      <div class="social-icon">🎵</div>
+      <div><div class="social-name">TikTok — Crecimiento Orgánico Viral</div><div class="social-freq">3–5 videos/semana · Prioridad 🟡 Media · Arrancar: Septiembre 2026</div></div>
+    </div>
+    <div class="social-kpis">
+      <span class="badge b-orange">@todasmiscosas</span>
+      <span class="badge b-blue">Videos 30–90"</span>
+      <span class="badge b-green">Meta: 5.000 seguidores en 6 meses</span>
+    </div>
+    <ul>
+      <li>🏚️ <strong>"Tour por el espacio más insólito de CABA":</strong> Videos de espacios raros (sótanos, terrazas, cuartos de servicio convertidos). La rareza es viral.</li>
+      <li>💰 <strong>"¿Cuánto gana este porteño por alquilar su cochera?":</strong> Formato: foto del espacio → precio por día → ingreso mensual estimado. Shock de "no sabía que se podía".</li>
+      <li>📱 <strong>"Publiqué mi espacio en 5 minutos":</strong> Screen recording del flujo de publicación. Prueba de facilidad.</li>
+      <li>😅 <strong>"El caos de guardar cosas al mudarte":</strong> Contenido relatable. Situación problemática → solución TMC. Humor porteño.</li>
+      <li>🎯 <strong>Duet y Stitch con contenido de mudanzas:</strong> Reaccionar a videos populares de "organización del hogar" o "vida en CABA". Bajo costo, alto alcance.</li>
+    </ul>
+  </div>
+
+  <div class="social">
+    <div class="social-hdr">
+      <div class="social-icon">👥</div>
+      <div><div class="social-name">Facebook — Comunidades y Grupos</div><div class="social-freq">2–3 posts/semana · Prioridad 🟡 Media · Arrancar: Agosto 2026</div></div>
+    </div>
+    <div class="social-kpis">
+      <span class="badge b-blue">Página + Grupos</span>
+      <span class="badge b-purple">Audiencia 35–55 años</span>
+    </div>
+    <ul>
+      <li>📢 <strong>Página oficial:</strong> Compartir contenido de Instagram. El algoritmo de Facebook favorece videos y eventos.</li>
+      <li>🔍 <strong>Participación en grupos:</strong> "Mudanzas en Buenos Aires" (180K miembros), "Venta y alquiler CABA" (95K), "Expats en Buenos Aires", grupos de barrio. Agregar valor antes de promocionar.</li>
+      <li>🎯 <strong>Facebook Marketplace:</strong> Publicar los espacios disponibles como listado en Marketplace. Muchos usuarios buscan ahí directamente.</li>
+      <li>📅 <strong>Eventos:</strong> Crear evento "Lanzamiento TodasMisCosas" y sumarlo a grupos de emprendedores.</li>
+    </ul>
+  </div>
+
+  <div class="social">
+    <div class="social-hdr">
+      <div class="social-icon">💼</div>
+      <div><div class="social-name">LinkedIn — B2B e Inversores</div><div class="social-freq">2–3 posts/semana · Prioridad 🟢 Alta (B2B) · Arrancar: Septiembre 2026</div></div>
+    </div>
+    <div class="social-kpis">
+      <span class="badge b-blue">Founders + Empresa</span>
+      <span class="badge b-purple">B2B · Inversores · PR</span>
+    </div>
+    <ul>
+      <li>📊 <strong>Métricas de crecimiento:</strong> "Esta semana procesamos X reservas por $X en transacciones." Transparencia que atrae inversores y atención de medios.</li>
+      <li>🧠 <strong>Thought leadership:</strong> Artículos de Alejandro sobre el mercado de almacenamiento urbano en Argentina. Posicionarse como experto del sector.</li>
+      <li>🤝 <strong>Alianzas B2B:</strong> Contactar directores de empresas de mudanzas, real estate y logística. LinkedIn es el canal correcto para esto.</li>
+      <li>📰 <strong>Compartir menciones en medios:</strong> Cada vez que TMC aparece en prensa, publicar el link con contexto.</li>
+    </ul>
+  </div>
+
+  <div class="social">
+    <div class="social-hdr">
+      <div class="social-icon">💬</div>
+      <div><div class="social-name">WhatsApp Business — Atención y Comunidad</div><div class="social-freq">Respuesta &lt;2hs · Prioridad 🔴 Alta · Arrancar: Julio 2026</div></div>
+    </div>
+    <div class="social-kpis">
+      <span class="badge b-green">+54 11 XXXX-XXXX</span>
+      <span class="badge b-orange">Canal de difusión</span>
+    </div>
+    <ul>
+      <li>📲 <strong>Número dedicado en el sitio:</strong> Botón "Consultar por WhatsApp" en home y en cada espacio. Respuesta máxima 2 horas hábiles.</li>
+      <li>📢 <strong>Canal de difusión:</strong> Lista de difusión separada para proveedores (novedades, tips para mejorar publicación) y para clientes (espacios nuevos en su zona, promociones).</li>
+      <li>🏘️ <strong>Grupos por barrio (Fase II+):</strong> "TMC Palermo", "TMC Belgrano". Moderados por el equipo. Proveedores anuncian disponibilidad, clientes hacen consultas.</li>
+    </ul>
+  </div>
+
+  <h3>📅 Calendario de Contenido — Semana Tipo</h3>
+  <table class="evt-table">
+    <tr><th>Día</th><th>Instagram</th><th>TikTok</th><th>Facebook/LinkedIn</th></tr>
+    <tr><td>Lunes</td><td>📸 Espacio de la semana (post cuadrado)</td><td>—</td><td>Compartir post IG</td></tr>
+    <tr><td>Martes</td><td>📊 Story: encuesta o pregunta</td><td>🎬 Video "Tour espacio"</td><td>—</td></tr>
+    <tr><td>Miércoles</td><td>💡 Post educativo "Sabías que"</td><td>—</td><td>LinkedIn: artículo o métrica</td></tr>
+    <tr><td>Jueves</td><td>📊 Story: behind the scenes</td><td>💰 Video "¿Cuánto gana X?"</td><td>—</td></tr>
+    <tr><td>Viernes</td><td>🎬 Reel (mayor alcance orgánico)</td><td>🎭 Video relatable / humor</td><td>Facebook: evento o novedad</td></tr>
+    <tr><td>Sábado</td><td>⭐ Repost/testimonio de usuario</td><td>—</td><td>—</td></tr>
+    <tr><td>Domingo</td><td>📊 Story: "espacios disponibles esta semana"</td><td>—</td><td>—</td></tr>
+  </table>
+
+</div>
+
+<!-- ═══════════════════════ NICHOS ════════════════════════════ -->
+<div id="tab-nichos" class="panel">
+
+  <h2>🎯 Nichos Target — A quién apuntamos</h2>
+  <p>Concentrarse en 2–3 nichos por fase. Intentar hablarle a todos es no hablarle a nadie.</p>
+
+  <div class="niche">
+    <div class="niche-icon">📦</div>
+    <div>
+      <div class="niche-name">1 · Personas en proceso de mudanza</div>
+      <div class="niche-vol" style="color:var(--red)">🔴 Volumen: MUY ALTO · Urgencia: ALTA</div>
+      <div class="niche-desc">El momento de la mudanza es el disparador N°1 para necesitar guardar cosas. La ventana entre dejar un departamento y entrar al nuevo (o esperar obra, o esperar escritura) puede ser de días a meses. <strong>Necesitan storage temporal seguro sin comprometerse con un guardamuebles tradicional caro.</strong></div>
+      <div class="niche-tags">
+        <span class="badge b-orange">Canal: mudanzas.com.ar</span>
+        <span class="badge b-blue">Canal: grupos FB mudanzas CABA</span>
+        <span class="badge b-green">Canal: Google Ads "guardar muebles"</span>
+        <span class="badge b-purple">Estacionalidad: todo el año</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="niche">
+    <div class="niche-icon">🎓</div>
+    <div>
+      <div class="niche-name">2 · Estudiantes universitarios que viajan</div>
+      <div class="niche-vol" style="color:var(--red)">🔴 Volumen: ALTO · Urgencia: ALTA (época)</div>
+      <div class="niche-desc">Estudiantes del interior o extranjero que alquilan cuarto en CABA y necesitan guardar cosas cuando se van de vacaciones o se muda la pensión. También estudiantes locales que se van de intercambio. Precio muy sensible → ofrecer opciones de pocos días a bajo costo.</div>
+      <div class="niche-tags">
+        <span class="badge b-orange">Canal: UBA, UCA, UADE, UTDT</span>
+        <span class="badge b-blue">Canal: Instagram/TikTok</span>
+        <span class="badge b-green">Descuento estudiante 20%</span>
+        <span class="badge b-purple">Pico: diciembre-febrero, julio</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="niche">
+    <div class="niche-icon">✈️</div>
+    <div>
+      <div class="niche-name">3 · Extranjeros y nómades digitales</div>
+      <div class="niche-vol" style="color:var(--yel)">🟡 Volumen: MEDIO · Ticket promedio: MUY ALTO</div>
+      <div class="niche-desc">La comunidad de expats en Buenos Aires es grande y creciente (venezolanos, españoles, norteamericanos). Nómades digitales que llegan 3–6 meses y necesitan guardar algo mientras viajan por el interior. Hablan inglés → considerar traducción de la plataforma a inglés para Fase III.</div>
+      <div class="niche-tags">
+        <span class="badge b-orange">Canal: grupos FB Expats Buenos Aires</span>
+        <span class="badge b-blue">Canal: Reddit r/buenosaires</span>
+        <span class="badge b-green">Canal: InterNations BA</span>
+        <span class="badge b-purple">Idioma: inglés en Fase III</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="niche">
+    <div class="niche-icon">🛒</div>
+    <div>
+      <div class="niche-name">4 · Vendedores de e-commerce / emprendedores</div>
+      <div class="niche-vol" style="color:var(--yel)">🟡 Volumen: MEDIO · Recurrencia: MUY ALTA</div>
+      <div class="niche-desc">Personas que venden en MercadoLibre, Tienda Nube, Instagram y necesitan guardar stock en un espacio que no sea su living. Buscan algo más económico que un local comercial y más flexible que un depósito industrial. <strong>Alta recurrencia → clientes de largo plazo.</strong></div>
+      <div class="niche-tags">
+        <span class="badge b-orange">Canal: grupos de vendedores ML</span>
+        <span class="badge b-blue">Canal: LinkedIn</span>
+        <span class="badge b-green">Propuesta: cochera/habitación por mes</span>
+        <span class="badge b-purple">Factura: necesitan para deducir</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="niche">
+    <div class="niche-icon">🚲</div>
+    <div>
+      <div class="niche-name">5 · Deportistas y hobbyistas con equipamiento grande</div>
+      <div class="niche-vol" style="color:var(--yel)">🟡 Volumen: MEDIO · Ticket: ALTO</div>
+      <div class="niche-desc">Ciclistas (bikes de $500K+), kayakistas, kitesurfers, coleccionistas de autos, músicos con instrumentos. No caben en el departamento pero no quieren pagar un guardamuebles de 20m². Buscan un garage o cuarto cerca de su casa.</div>
+      <div class="niche-tags">
+        <span class="badge b-orange">Canal: grupos ciclismo CABA</span>
+        <span class="badge b-blue">Canal: clubes náuticos</span>
+        <span class="badge b-green">Canal: Instagram deportivo</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="niche">
+    <div class="niche-icon">🏗️</div>
+    <div>
+      <div class="niche-name">6 · Personas en refacción o obra en casa</div>
+      <div class="niche-vol" style="color:var(--grn)">🟢 Volumen: ALTO · Estacionalidad: TODO EL AÑO</div>
+      <div class="niche-desc">Cuando se refacciona un departamento, los muebles y pertenencias tienen que ir a algún lado durante semanas o meses. Necesidad muy concreta, timing predecible. Alianza clave: estudios de arquitectura y constructoras que trabajan en CABA.</div>
+      <div class="niche-tags">
+        <span class="badge b-orange">Canal: arquitectos y constructoras</span>
+        <span class="badge b-blue">Canal: grupos de renovación hogar FB</span>
+        <span class="badge b-green">Duración media: 1–3 meses</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="niche">
+    <div class="niche-icon">👴</div>
+    <div>
+      <div class="niche-name">7 · Adultos mayores que achican su casa</div>
+      <div class="niche-vol" style="color:var(--yel)">🟡 Volumen: MEDIO · Sensibilidad: ALTA</div>
+      <div class="niche-desc">Hijos que se van, padres que pasan a departamento más chico después de años en casa grande. Tienen muchas cosas con valor sentimental que no quieren tirar pero no caben en el nuevo lugar. Necesitan solución de largo plazo, confiable y cercana.</div>
+      <div class="niche-tags">
+        <span class="badge b-orange">Canal: Facebook (audiencia adulta)</span>
+        <span class="badge b-blue">Canal: radio local</span>
+        <span class="badge b-green">Mensaje: "Cuidamos lo que más querés"</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="niche">
+    <div class="niche-icon">🏢</div>
+    <div>
+      <div class="niche-name">8 · Empresas con stock o material de trabajo</div>
+      <div class="niche-vol" style="color:var(--yel)">🟡 Volumen: BAJO · Ticket: MUY ALTO</div>
+      <div class="niche-desc">Empresas de eventos que necesitan guardar equipamiento, startups con prototipos, fotógrafos con equipo. Una sola empresa puede representar lo que 10 clientes individuales. Requieren factura y contrato formal — implementar en Fase III cuando el sistema esté estable.</div>
+      <div class="niche-tags">
+        <span class="badge b-orange">Canal: LinkedIn</span>
+        <span class="badge b-blue">Canal: visita comercial</span>
+        <span class="badge b-green">Requiere: factura A</span>
+        <span class="badge b-purple">Fase III+</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════ COMPETENCIA ══════════════════════ -->
+<div id="tab-competencia" class="panel">
+
+  <h2>🏆 Análisis de Competencia — CABA y AMBA</h2>
+  <p>El mercado tiene competencia indirecta (nadie hace exactamente lo mismo que TMC), pero hay que conocerlos y diferenciarse.</p>
+
+  <h3>🏭 Competencia Directa — Guardamuebles Tradicionales</h3>
+
+  <div class="comp-card">
+    <div class="comp-name">🏪 Guarda Total / Baulera / StoreCenter</div>
+    <div class="comp-tags"><span class="badge b-red">Competidor</span><span class="badge b-blue">Empresas establecidas</span><span class="badge b-purple">CABA + AMBA</span></div>
+    <div class="comp-body">Depósitos físicos propios. Precios desde $15.000–$80.000 ARS/mes según tamaño. Contratos mínimos de 1 mes. Ubicaciones fijas (no siempre cerca del cliente). Sin opción de storage por días. Sin P2P.</div>
+    <div class="tmc-win">✅ <strong>Ventaja TMC:</strong> Precio 30–50% más bajo · Cerca del barrio del cliente · Reserva por días · Sin contrato mínimo · P2P con confianza (depósito de garantía)</div>
+  </div>
+
+  <div class="comp-card">
+    <div class="comp-name">📦 Box Storage / MiniStorage Argentina</div>
+    <div class="comp-tags"><span class="badge b-red">Competidor directo</span><span class="badge b-blue">Cajas individuales</span></div>
+    <div class="comp-body">Módulos individuales de 1–10m² en depósitos. Más flexible que guardamuebles clásico. Acceso 24/7 en algunos casos. Precio medio: $8.000–$25.000 ARS/mes por módulo pequeño. Sin componente social/P2P.</div>
+    <div class="tmc-win">✅ <strong>Ventaja TMC:</strong> Sin contrato · Por días · Mayor variedad de espacios · Chat directo con proveedor · Precio variable por zona</div>
+  </div>
+
+  <h3>🔄 Competencia Indirecta — Plataformas Digitales</h3>
+
+  <div class="comp-card">
+    <div class="comp-name">🛒 MercadoLibre Servicios</div>
+    <div class="comp-tags"><span class="badge b-yel">Competidor indirecto</span><span class="badge b-blue">Plataforma masiva</span></div>
+    <div class="comp-body">Algunas personas publican cocheras o cuartos en alquiler como "servicio" en ML. Informal, sin protección, sin sistema de pagos específico para storage. Alta fricción: el usuario tiene que buscar en categorías que no son storage.</div>
+    <div class="tmc-win">✅ <strong>Ventaja TMC:</strong> Categoría específica · Flujo de pago integrado · Depósito de garantía · Chat dedicado · Mayor confianza y profesionalismo</div>
+  </div>
+
+  <div class="comp-card">
+    <div class="comp-name">🌍 Neighbor.com (USA) / Stashbee (UK)</div>
+    <div class="comp-tags"><span class="badge b-blue">Referente internacional</span><span class="badge b-green">No operan en ARG</span></div>
+    <div class="comp-body">Neighbor.com en USA y Stashbee en UK son el modelo de negocio exacto de TMC. Neighbor levantó $53M USD, Stashbee opera en toda Gran Bretaña. Son la prueba de que el modelo funciona. No operan en Argentina: TMC tiene la ventaja del primer movedor local.</div>
+    <div class="tmc-win">✅ <strong>Ventaja TMC:</strong> Primer movedor en Argentina · Adaptado a contexto local (MercadoPago, depósito de garantía, WhatsApp) · Conocimiento del mercado porteño</div>
+  </div>
+
+  <div class="comp-card">
+    <div class="comp-name">🏠 ZonaProp / Argenprop — Alquiler temporario</div>
+    <div class="comp-tags"><span class="badge b-yel">Competidor indirecto</span><span class="badge b-blue">Real estate portals</span></div>
+    <div class="comp-body">Publicaciones de cocheras o cuartos en alquiler que a veces se usan informalmente para storage. Sin sistema de gestión específico, sin pago integrado, sin protección al usuario. El cliente tiene que negociar y pagar por fuera.</div>
+    <div class="tmc-win">✅ <strong>Ventaja TMC:</strong> Plataforma especializada · Pagos seguros · Contrato implícito · No requiere negociación manual · Review del espacio</div>
+  </div>
+
+  <div class="comp-card">
+    <div class="comp-name">💬 Grupos de Facebook / WhatsApp de barrio</div>
+    <div class="comp-tags"><span class="badge b-yel">Competidor indirecto</span><span class="badge b-red">Mayor riesgo usuario</span></div>
+    <div class="comp-body">Muchas personas ya resuelven esto de manera informal en grupos de barrio. Sin seguridad, sin pago protegido, sin contrato, sin reviews. La oferta existe pero el mercado está fragmentado e inseguro.</div>
+    <div class="tmc-win">✅ <strong>Ventaja TMC:</strong> Seguridad (depósito de garantía) · Pago protegido (MercadoPago) · Reviews · Chat en plataforma · Formalidad sin burocracia</div>
+  </div>
+
+  <h3>📊 Matriz de Posicionamiento</h3>
+  <table class="evt-table">
+    <tr><th>Atributo</th><th>TMC</th><th>Guardamuebles</th><th>ML/ZonaProp</th><th>Grupos FB</th></tr>
+    <tr><td>Precio (menor = mejor)</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐⭐⭐⭐</td></tr>
+    <tr><td>Seguridad del pago</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td><td>⭐⭐</td><td>⭐</td></tr>
+    <tr><td>Flexibilidad (por días)</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐⭐⭐</td></tr>
+    <tr><td>Cercanía al usuario</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐⭐⭐</td></tr>
+    <tr><td>Confianza / reputación</td><td>⭐⭐⭐ (creciendo)</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐</td><td>⭐</td></tr>
+    <tr><td>Facilidad de uso</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐</td></tr>
+  </table>
+
+</div>
+
+<!-- ═══════════════════════ CALENDARIO ═══════════════════════ -->
+<div id="tab-calendario" class="panel">
+
+  <h2>🗓️ Mejores Meses para Lanzar y Escalar</h2>
+  <p>El negocio de almacenamiento tiene estacionalidad fuerte. Conocerla es ventaja competitiva.</p>
+
+  <div class="month-grid">
+    <div class="month hot"><div class="m-icon">🔥</div><div class="m-name">Enero</div><div class="m-label">Pico de mudanzas</div></div>
+    <div class="month hot"><div class="m-icon">🔥</div><div class="m-name">Febrero</div><div class="m-label">Fin contratos alquiler</div></div>
+    <div class="month warm"><div class="m-icon">🌱</div><div class="m-name">Marzo</div><div class="m-label">Inicio ciclo escolar</div></div>
+    <div class="month ok"><div class="m-icon">📚</div><div class="m-name">Abril</div><div class="m-label">Feria del Libro</div></div>
+    <div class="month ok"><div class="m-icon">✅</div><div class="m-name">Mayo</div><div class="m-label">Estable</div></div>
+    <div class="month warm"><div class="m-icon">❄️</div><div class="m-name">Junio</div><div class="m-label">Mudanzas invernales</div></div>
+    <div class="month hot"><div class="m-icon">🔥</div><div class="m-name">Julio</div><div class="m-label">Vacaciones escolares</div></div>
+    <div class="month warm"><div class="m-icon">📦</div><div class="m-name">Agosto</div><div class="m-label">Pre-primavera</div></div>
+    <div class="month hot"><div class="m-icon">🚀</div><div class="m-name">Septiembre</div><div class="m-label">Lanzamiento ideal</div></div>
+    <div class="month hot"><div class="m-icon">🔥</div><div class="m-name">Octubre</div><div class="m-label">Pico primavera</div></div>
+    <div class="month warm"><div class="m-icon">📅</div><div class="m-name">Noviembre</div><div class="m-label">Expo Real Estate</div></div>
+    <div class="month cold"><div class="m-icon">🎄</div><div class="m-name">Diciembre</div><div class="m-label">Baja (fiestas)</div></div>
+  </div>
+
+  <div class="info">
+    🏆 <strong>Ventana de oro:</strong> Septiembre–Noviembre 2026 es el momento ideal para el lanzamiento masivo. Primavera + post-vacaciones invernales + antes de las fiestas = mayor movilidad de personas y mudanzas en CABA.
+  </div>
+
+  <h2>📌 Grilla de Eventos — Participación y Presencia</h2>
+
+  <h3>🏙️ Ciudad de Buenos Aires</h3>
+  <table class="evt-table">
+    <tr><th>Evento</th><th>Mes</th><th>Perfil audiencia</th><th>Formato TMC</th><th>Potencial</th></tr>
+    <tr><td>🎸 <strong>Lollapalooza Argentina</strong></td><td>Marzo</td><td>18–35 años, tech-savvy, mobile-first</td><td>Activación / Sponsorship banner</td><td>⭐⭐⭐</td></tr>
+    <tr><td>📚 <strong>Feria Internacional del Libro</strong></td><td>Abril–Mayo</td><td>Amplio, 35–65 años, alta cultura</td><td>Stand o folleto en área emprendedores</td><td>⭐⭐</td></tr>
+    <tr><td>🍔 <strong>Masticar</strong></td><td>Mayo y Nov</td><td>25–45, gastronomía, lifestyle urbano</td><td>Stand con degustación + folletería</td><td>⭐⭐⭐⭐</td></tr>
+    <tr><td>🏠 <strong>ExpoVivienda</strong></td><td>Agosto–Sep</td><td>Compradores y vendedores de propiedades</td><td>Stand + alianza con inmobiliarias</td><td>⭐⭐⭐⭐⭐</td></tr>
+    <tr><td>🏗️ <strong>Expo Real Estate</strong></td><td>Noviembre</td><td>Inversores, desarrolladoras, brokers</td><td>Stand + networking + charla</td><td>⭐⭐⭐⭐⭐</td></tr>
+    <tr><td>🎵 <strong>Creamfields BsAs</strong></td><td>Noviembre</td><td>18–30, música electrónica, digital</td><td>Activación digital en redes del evento</td><td>⭐⭐</td></tr>
+    <tr><td>🎨 <strong>arteBA</strong></td><td>Mayo</td><td>35–60, coleccionistas, alto poder adquisitivo</td><td>Folleto "Guardá tu arte con seguridad"</td><td>⭐⭐⭐</td></tr>
+    <tr><td>🚀 <strong>Palermo Valley / StartupWeek</strong></td><td>Octubre</td><td>Emprendedores, inversores, tech</td><td>Pitch · Networking · Sponsorship</td><td>⭐⭐⭐⭐</td></tr>
+    <tr><td>🧳 <strong>FIT (Feria Internacional de Turismo)</strong></td><td>Octubre</td><td>Turismo, viajeros, nómades</td><td>Alianza con operadoras de turismo</td><td>⭐⭐⭐</td></tr>
+    <tr><td>🎓 <strong>EAFIT / Foro Emprendedores UBA</strong></td><td>Sep–Oct</td><td>Estudiantes, jóvenes profesionales</td><td>Charla + stand · Descuento estudiantil</td><td>⭐⭐⭐</td></tr>
+  </table>
+
+  <h3>🏘️ GBA y Provincia de Buenos Aires</h3>
+  <table class="evt-table">
+    <tr><th>Evento</th><th>Mes</th><th>Zona</th><th>Oportunidad</th></tr>
+    <tr><td>🏠 Expo Inmobiliaria GBA</td><td>Octubre</td><td>La Plata / GBA Sur</td><td>Alianza inmobiliarias del conurbano</td></tr>
+    <tr><td>🛒 Feria de la Economía Popular</td><td>Mayo</td><td>GBA Oeste (Morón)</td><td>Proveedores de galpones pequeños</td></tr>
+    <tr><td>🎪 Feria de las Colectividades</td><td>Nov</td><td>Parque Saavedra</td><td>Comunidades de expatriados</td></tr>
+    <tr><td>🏭 Expo Logística</td><td>Junio</td><td>Ezeiza / GBA Sur</td><td>Canal B2B — empresas logística</td></tr>
+    <tr><td>🎓 Expo Universidades PBA</td><td>Marzo</td><td>La Plata</td><td>Estudiantes en búsqueda de cuarto</td></tr>
+  </table>
+
+  <h3>🗓️ Calendario Editorial Mensual — Plan Acciones</h3>
+  <table class="evt-table">
+    <tr><th>Mes</th><th>Acción clave</th><th>Fase</th></tr>
+    <tr><td>Julio 2026</td><td>🌱 Alta de primeros 30 proveedores · Crear Instagram · Instalar Analytics</td><td>I</td></tr>
+    <tr><td>Agosto 2026</td><td>📸 Primeras fotos profesionales · Beta con 50 usuarios · Google Business Profile</td><td>I</td></tr>
+    <tr><td>Septiembre 2026</td><td>🚀 Lanzamiento público · Meta Ads encendido · Nota de prensa</td><td>II</td></tr>
+    <tr><td>Octubre 2026</td><td>📊 Optimizar ads · Palermo Valley · 100 primeras reservas target</td><td>II</td></tr>
+    <tr><td>Noviembre 2026</td><td>🏠 ExpoVivienda + Expo Real Estate · Email campaign · Retargeting</td><td>II</td></tr>
+    <tr><td>Diciembre 2026</td><td>🎄 Pausa ads (fiestas) · Análisis datos Q4 · Preparar Fase III</td><td>III</td></tr>
+    <tr><td>Enero 2027</td><td>🔥 Reactivar campaña mudanzas verano · Pico estacional</td><td>III</td></tr>
+    <tr><td>Febrero 2027</td><td>🎓 Campaña universidades inicio año · Alianzas inmobiliarias</td><td>III</td></tr>
+    <tr><td>Marzo 2027</td><td>🗺️ Inicio expansión GBA Norte · Lanzamiento app</td><td>IV</td></tr>
+    <tr><td>Abril–Jun 2027</td><td>🏘️ Expansión GBA completa · Canal B2B activo</td><td>IV</td></tr>
+  </table>
+
+</div>
+
+<!-- ═══════════════════════ SPONSORS ════════════════════════ -->
+<div id="tab-sponsors" class="panel">
+
+  <h2>🤝 Sponsors y Partners Potenciales</h2>
+  <p>Un sponsor aporta dinero, visibilidad o clientes. Un partner aporta acceso a su audiencia a cambio de algo de valor. Ambos son esenciales para escalar sin depender solo de publicidad paga.</p>
+
+  <h3>💰 Sponsors Financieros (aportan budget o integración)</h3>
+
+  <div class="sponsor">
+    <div class="sponsor-name">🔵 MercadoPago / MercadoLibre</div>
+    <div class="sponsor-cat" style="color:#009ee3">Categoría: Pagos · Probabilidad: Alta (ya integrados)</div>
+    <div class="sponsor-desc">Ya usan MP como procesador de pagos. MP tiene programas de apoyo a startups y casos de uso innovadores. Candidatos para: case study oficial de MP, aparición en su blog de desarrolladores, potencial subsidio de fees de procesamiento en los primeros 6 meses.</div>
+    <div class="sponsor-action">→ Acción: Contactar equipo de Partners MP en Argentina. Presentar TMC como caso de uso destacado de "economía de plataformas".</div>
+  </div>
+
+  <div class="sponsor">
+    <div class="sponsor-name">🛡️ Sancor Seguros / Federación Patronal / La Caja</div>
+    <div class="sponsor-cat" style="color:#c62828">Categoría: Seguros · Probabilidad: Media</div>
+    <div class="sponsor-desc">TMC necesita un partner asegurador para el seguro de contenido integrado (roadmap v2.0). A cambio, la aseguradora accede a un canal digital nuevo con clientes pre-calificados que guardan cosas de valor. Modelo: prima por reserva, split de revenue.</div>
+    <div class="sponsor-action">→ Acción: Contactar área de Productos Digitales de Sancor y Federación Patronal. Presentar TMC como canal de distribución digital de seguro de contenido.</div>
+  </div>
+
+  <div class="sponsor">
+    <div class="sponsor-name">💳 Naranja X / Ualá / Brubank</div>
+    <div class="sponsor-cat" style="color:#f97316">Categoría: Fintech · Probabilidad: Media</div>
+    <div class="sponsor-desc">Fintechs argentinas que buscan casos de uso para sus cards y billeteras. Potencial: "Pagar con Naranja X en TMC te da 3 meses sin interés" o "Reservá en TMC con Ualá y obtené cashback". Ellos aportan presupuesto de marketing co-brand.</div>
+    <div class="sponsor-action">→ Acción: LinkedIn outreach al equipo de Partnership de Naranja X y Ualá. Proponer campaña co-branded.</div>
+  </div>
+
+  <div class="sponsor">
+    <div class="sponsor-name">🏠 IKEA Argentina / Easy / Sodimac</div>
+    <div class="sponsor-cat" style="color:#0058a3">Categoría: Home & Living · Probabilidad: Media-Alta</div>
+    <div class="sponsor-desc">Empresas de hogar tienen audiencia perfecta: personas que compran muebles = personas que se mudan = personas que necesitan guardar cosas. Propuesta: banner en su tienda online, folletería en local, descuento cruzado ("Comprá en IKEA y guardá tus muebles viejos con TMC mientras esperás la entrega").</div>
+    <div class="sponsor-action">→ Acción: Propuesta a equipo de marketing de Easy o Sodimac. Bajo costo para ellos, alta visibilidad para TMC.</div>
+  </div>
+
+  <h3>🤝 Partners de Derivación (aportan clientes, reciben comisión)</h3>
+
+  <div class="sponsor">
+    <div class="sponsor-name">🚛 Empresas de Mudanzas</div>
+    <div class="sponsor-cat" style="color:#16a34a">Categoría: Alianza operativa · Probabilidad: Muy Alta</div>
+    <div class="sponsor-desc">Las mudanzas son el momento exacto en que los clientes de TMC aparecen. Las 20 principales empresas de mudanzas de CABA son partners naturales. Modelo: ellos recomiendan TMC cuando el cliente no sabe dónde dejar las cosas temporariamente. TMC paga 5% por cada reserva derivada. Todos ganan.</div>
+    <div class="sponsor-action">→ Acción: Mapear las 20 principales mudanzas de CABA. Visita o llamado directo. Propuesta de 5% por derivación pagada.</div>
+  </div>
+
+  <div class="sponsor">
+    <div class="sponsor-name">🏢 Inmobiliarias — RE/MAX, Toribio Achával, Bullrich</div>
+    <div class="sponsor-cat" style="color:#7c3aed">Categoría: Alianza sectorial · Probabilidad: Alta</div>
+    <div class="sponsor-desc">Cuando un cliente espera la escritura o tiene gap entre salida y entrada, necesita guardar cosas. Las inmobiliarias tienen ese cliente en exactamente ese momento. Propuesta: capacitar al asesor inmobiliario sobre TMC. Cuando surge la necesidad, ellos recomiendan.</div>
+    <div class="sponsor-action">→ Acción: Contactar Gerente Comercial de RE/MAX Argentina. Proponer programa de referidos con landing page dedicada.</div>
+  </div>
+
+  <div class="sponsor">
+    <div class="sponsor-name">📐 Estudios de Arquitectura y Constructoras</div>
+    <div class="sponsor-cat" style="color:#0369a1">Categoría: Alianza de nicho · Probabilidad: Alta</div>
+    <div class="sponsor-desc">Clientes que hacen obra necesitan guardar sus muebles 1–3 meses mientras dura la refacción. Los estudios de arquitectura tienen esos clientes. Proponer que el arquitecto incluya TMC en su recomendación estándar: "Mientras dure la obra, guardá tus muebles acá".</div>
+    <div class="sponsor-action">→ Acción: Asistir a eventos CPAU (Consejo Profesional de Arquitectos). Folleto para estudios de arquitectura con QR a una landing page dedicada.</div>
+  </div>
+
+  <div class="sponsor">
+    <div class="sponsor-name">🎓 Universidades — UBA, UCA, UADE, UTDT</div>
+    <div class="sponsor-cat" style="color:#dc2626">Categoría: Acuerdo institucional · Probabilidad: Media</div>
+    <div class="sponsor-desc">Acuerdo con la oficina de bienestar estudiantil. TMC da descuento a estudiantes (20%). La universidad incluye TMC en su guía de servicios para ingresantes del interior. A cambio: visibilidad en comunicaciones institucionales y campus.</div>
+    <div class="sponsor-action">→ Acción: Contactar Secretaría de Extensión UBA y oficina de Bienestar Estudiantil UCA. Acuerdo de divulgación mutua.</div>
+  </div>
+
+  <div class="sponsor">
+    <div class="sponsor-name">🌐 Plataformas de Turismo — Airbnb, Despegar, Booking</div>
+    <div class="sponsor-cat" style="color:#ff5a5f">Categoría: Integración digital · Probabilidad: Media-Baja</div>
+    <div class="sponsor-desc">Turistas y nómades que arriban a CABA pueden necesitar guardar equipaje o cosas mientras hacen checkout de un Airbnb y el próximo no está listo. Integración: "Guardar equipaje cerca de vos" como servicio adicional en apps de turismo. Largo plazo (Fase III+).</div>
+    <div class="sponsor-action">→ Acción: Registrarse en el programa de Partners de Airbnb. Lanzar primero con Despegar (empresa argentina con programa de partners más accesible).</div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════ PROS Y CONTRAS ════════════════════ -->
+<div id="tab-proscons" class="panel">
+
+  <h2>✅ Pros &amp; Contras del Plan de Marketing</h2>
+
+  <h3>🏢 Del negocio en general</h3>
+  <div class="pc-grid">
+    <div class="pros">
+      <h3>✅ Fortalezas y Oportunidades</h3>
+      <ul>
+        <li><strong>Primer movedor en Argentina.</strong> Neighbor.com en USA y Stashbee en UK demuestran que el modelo escala masivamente. Nadie lo está haciendo bien en ARG.</li>
+        <li><strong>Producto 100% funcional en producción.</strong> v1.9.2 live, sin deuda técnica crítica. Se puede vender desde ya.</li>
+        <li><strong>Mercado enorme y desatendido.</strong> CABA tiene ~3 millones de apartamentos. El 20% tiene espacio ocioso. El 15% de la población se muda cada año.</li>
+        <li><strong>MercadoPago ya integrado.</strong> El 80% de los argentinos confía en MP. La barrera de confianza en pagos ya está resuelta.</li>
+        <li><strong>Modelo de negocio sin inventario.</strong> TMC no compra ni alquila espacios. La escala es casi ilimitada sin inversión de capital.</li>
+        <li><strong>Barreras de entrada altas.</strong> Una plataforma P2P con depósito de garantía, chat y calendario requiere meses de desarrollo. TMC ya lo tiene.</li>
+        <li><strong>Contexto económico argentino favorece.</strong> En un contexto de inflación, los proveedores buscan ingresos extra y los clientes buscan alternativas más económicas que guardamuebles.</li>
+        <li><strong>Depósito de garantía = diferenciador único.</strong> El sistema de escrow da confianza real a ambas partes. Ningún competidor local lo tiene.</li>
+      </ul>
+    </div>
+    <div class="cons">
+      <h3>⚠️ Debilidades y Amenazas</h3>
+      <ul>
+        <li><strong>Problema del huevo y la gallina.</strong> Sin espacios publicados los clientes no vienen. Sin clientes los proveedores no publican. Resolver esto es la tarea #1.</li>
+        <li><strong>Confianza es la barrera principal.</strong> Guardar objetos personales con desconocidos genera fricción real. KYC y seguro son urgentes.</li>
+        <li><strong>Sin app nativa todavía.</strong> El 70%+ del tráfico será mobile. La experiencia web responsive es buena pero una app convierte mejor.</li>
+        <li><strong>Equipo pequeño.</strong> Alejandro + Guille hacen todo. Marketing, soporte, desarrollo, operaciones. La escala requerirá sumar personas o herramientas de automatización.</li>
+        <li><strong>Presupuesto limitado al inicio.</strong> Las campañas pagas requieren inversión constante. Si se corta el presupuesto, el tráfico se corta.</li>
+        <li><strong>Contexto económico cambiante.</strong> La inflación en Argentina puede afectar tanto precios como confianza del consumidor en plataformas digitales.</li>
+        <li><strong>Sin reviews al inicio.</strong> La plataforma arranca sin prueba social. Generar las primeras 50 reviews es crítico.</li>
+        <li><strong>Regulaciones inciertas.</strong> No hay ley específica sobre P2P storage en Argentina. Un cambio regulatorio podría requerir adaptaciones.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>📣 Del plan de marketing en particular</h3>
+  <div class="pc-grid">
+    <div class="pros">
+      <h3>✅ Pros del Plan</h3>
+      <ul>
+        <li><strong>Faseado y medible.</strong> Cada fase tiene KPIs claros de salida. No se pasa a la siguiente sin validar la anterior.</li>
+        <li><strong>Bajo costo inicial.</strong> Fase I es casi $0. La captación manual de proveedores es trabajo, no dinero.</li>
+        <li><strong>Multi-canal integrado.</strong> Instagram + Google Ads + PR + alianzas + eventos se refuerzan mutuamente.</li>
+        <li><strong>Aprovecha estacionalidad.</strong> El lanzamiento en septiembre coincide con el peak de primavera en mudanzas.</li>
+        <li><strong>Alianzas como canal escalable.</strong> Mudanzas e inmobiliarias pueden traer clientes de manera orgánica y sostenida sin costo de ads.</li>
+        <li><strong>Nichos específicos en cada fase.</strong> No se intenta hablarle a todos al mismo tiempo. Foco claro por segmento.</li>
+      </ul>
+    </div>
+    <div class="cons">
+      <h3>⚠️ Contras y Riesgos</h3>
+      <ul>
+        <li><strong>Requiere ejecución consistente.</strong> Un plan de 4 fases no funciona si se ejecuta de manera intermitente. Necesita dedicación semanal.</li>
+        <li><strong>Los eventos tienen costo de presencia.</strong> Stand en ExpoVivienda o Expo Real Estate puede costar entre $50.000 y $300.000 ARS. Hay que priorizar.</li>
+        <li><strong>El contenido de redes requiere producción.</strong> Fotos profesionales, videos, copy. Sin calidad visual, Instagram no funciona.</li>
+        <li><strong>Google Ads en ARG es competitivo.</strong> CPC puede subir con inflación. Requiere optimización constante para no desperdiciar presupuesto.</li>
+        <li><strong>Tiempo de maduración.</strong> SEO tarda 3–6 meses en dar resultados. PR no garantiza resultados. La consistencia es clave.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>📊 Resumen de Inversión Sugerida por Fase</h3>
+  <table class="evt-table">
+    <tr><th>Fase</th><th>Período</th><th>Presupuesto mensual</th><th>Foco de gasto</th></tr>
+    <tr><td><span class="badge b-blue">Fase I</span></td><td>Jul–Ago 2026</td><td>$0–$50.000 ARS</td><td>Producción fotográfica, Google Business, primeras herramientas de redes</td></tr>
+    <tr><td><span class="badge b-green">Fase II</span></td><td>Sep–Nov 2026</td><td>$150.000–$300.000 ARS</td><td>Meta Ads (60%), Google Ads (20%), eventos (10%), contenido (10%)</td></tr>
+    <tr><td><span class="badge b-orange">Fase III</span></td><td>Dic 2026–Feb 2027</td><td>$400.000–$600.000 ARS</td><td>Retargeting (40%), email marketing, alianzas, WhatsApp communities</td></tr>
+    <tr><td><span class="badge b-purple">Fase IV</span></td><td>Mar–Jun 2027</td><td>$800.000–$1.200.000 ARS</td><td>Expansión AMBA, app launch, B2B outreach</td></tr>
+  </table>
+
+  <div class="info">
+    💡 <strong>Nota importante sobre presupuesto:</strong> Todos los valores están en ARS y son estimaciones a junio 2026. Ajustar según inflación. El criterio es: no gastar en publicidad paga hasta tener <strong>producto funcionando + 30 espacios + capacidad de respuesta al cliente</strong>.
+  </div>
+
+</div>
+
+</div><!-- /wrapper -->
+
+<script>
+function showTab(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
