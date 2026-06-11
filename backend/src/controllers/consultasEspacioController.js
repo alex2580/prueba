@@ -122,12 +122,11 @@ async function responder(req, res, next) {
 async function sinResponder(req, res, next) {
   try {
     const rows = await query(
-      `SELECT c.id, c.espacio_id,
-              (SELECT nombre FROM espacios WHERE id = c.espacio_id) AS espacio_nombre,
+      `SELECT DISTINCT c.id, c.espacio_id, e.nombre AS espacio_nombre,
               c.autor_nombre, c.pregunta, c.created_at
        FROM consultas_espacio c
-       WHERE c.respuesta IS NULL
-         AND c.espacio_id IN (SELECT id FROM espacios WHERE oferente_id = ?)
+       INNER JOIN espacios e ON e.id = CONVERT(c.espacio_id USING utf8mb4)
+       WHERE e.oferente_id = ? AND c.respuesta IS NULL
        ORDER BY c.created_at ASC`,
       [req.user.id]
     );
@@ -141,12 +140,11 @@ async function sinResponder(req, res, next) {
 async function consultasRespondidas(req, res, next) {
   try {
     const rows = await query(
-      `SELECT c.id,
-              (SELECT nombre FROM espacios WHERE id = c.espacio_id) AS espacio_nombre,
+      `SELECT DISTINCT c.id, e.nombre AS espacio_nombre,
               c.autor_nombre, c.pregunta, c.respuesta, c.respuesta_at, c.created_at
        FROM consultas_espacio c
-       WHERE c.respuesta IS NOT NULL
-         AND c.espacio_id IN (SELECT id FROM espacios WHERE oferente_id = ?)
+       INNER JOIN espacios e ON e.id = CONVERT(c.espacio_id USING utf8mb4)
+       WHERE e.oferente_id = ? AND c.respuesta IS NOT NULL
        ORDER BY c.respuesta_at DESC
        LIMIT 50`,
       [req.user.id]
