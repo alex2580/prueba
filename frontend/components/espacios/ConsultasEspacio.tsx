@@ -143,7 +143,7 @@ export function ConsultasEspacio({ espacioId, token, userId, oferenteId, showHis
                   <Avatar nombre={c.autor_nombre} size={32} />
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '.3rem' }}>
-                      <span style={{ fontSize: '.8rem', fontWeight: 700 }}>{c.autor_nombre}</span>
+                      <span style={{ fontSize: '.8rem', fontWeight: 700 }}>{c.autor_nombre.split(' ')[0]}</span>
                       <span style={{ fontSize: '.72rem', color: 'var(--text3)' }}>{formatFecha(c.created_at)}</span>
                     </div>
                     <p style={{ margin: 0, fontSize: '.88rem', color: 'var(--text)', lineHeight: 1.6 }}>{c.pregunta}</p>

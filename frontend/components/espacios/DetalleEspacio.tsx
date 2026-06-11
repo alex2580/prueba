@@ -246,7 +246,7 @@ export function DetalleEspacio({ espacio, onReservar, token, userId }: DetalleEs
           token={token}
           userId={userId}
           oferenteId={espacio.oferente_id}
-          showHistorial={false}
+          showHistorial={true}
         />
       </div>
     </div>
