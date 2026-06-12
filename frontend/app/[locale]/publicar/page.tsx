@@ -726,8 +726,11 @@ export default function PublicarPage() {
                 <label className="form-label" style={{ marginBottom: '.6rem', display: 'block' }}>
                   📷 Fotos del espacio <span style={{ color: 'var(--text3)', fontWeight: 400, fontSize: '.75rem' }}>— máx. 5</span>
                 </label>
-                <p style={{ fontSize: '.8rem', color: 'var(--text3)', marginBottom: '.8rem' }}>
+                <p style={{ fontSize: '.8rem', color: 'var(--text3)', marginBottom: '.4rem' }}>
                   Subí fotos claras del espacio. Hacé click en una foto para marcarla como principal.
+                </p>
+                <p style={{ fontSize: '.78rem', color: 'var(--orange)', marginBottom: '.8rem' }}>
+                  ⚠️ Seleccioná todas tus fotos juntas (hasta 5) de una sola vez. Si las elegís de a una, solo se sube la última.
                 </p>
                 {/* Inputs ocultos */}
                 <input ref={galeriaRef} type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={handleFotoChange}
