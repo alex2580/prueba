@@ -51,14 +51,14 @@ async function listarConversaciones(req, res, next) {
        JOIN espacios e   ON c.espacio_id    = e.id
        JOIN usuarios ud  ON c.demandante_id = ud.id
        JOIN usuarios uo  ON c.oferente_id   = uo.id
-       WHERE c.demandante_id = ?
-          OR (c.oferente_id = ? AND EXISTS (
+       WHERE (c.demandante_id = ? OR c.oferente_id = ?)
+         AND EXISTS (
                SELECT 1 FROM reservas r
                WHERE r.espacio_id = c.espacio_id
                  AND r.usuario_id = c.demandante_id
                  AND r.estado IN ('confirmada', 'pagada')
                  AND r.escrow_liberado = 0
-             ))
+             )
        ORDER BY c.ultimo_msg_at DESC, c.created_at DESC`,
       [userId, userId, userId]
     );
