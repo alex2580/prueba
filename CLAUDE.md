@@ -96,7 +96,7 @@ frontend/
 ## Decisiones de arquitectura
 
 - **Fotos → Supabase Storage** (no filesystem local): multer usa `memoryStorage`
-- **Chat restringido**: habilitado desde `confirmada` hasta que se libera el depósito de garantía (`escrow_liberado = 1`). Ver [[feedback-chat-reservas]].
+- **Chat restringido**: habilitado desde `confirmada` hasta que se libera el depósito de garantía (`escrow_liberado = 1`). El cierre es simétrico: desaparece para cliente Y proveedor al mismo tiempo. Ver [[feedback-chat-reservas]].
 - **Filtro de contenido**: regex puro (no AI), 4 categorías, aplicado frontend + backend
 - **Soft delete de espacios**: `activo = FALSE` + `eliminado_por_oferente` para trazabilidad
 - **Comisión**: 15% TMC, 85% oferente (`netoOferente()` en utils.ts)

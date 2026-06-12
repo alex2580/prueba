@@ -199,7 +199,7 @@
   <div class="cover-sub">Documentación Técnica Completa</div>
   <div style="font-size:10pt;color:#888;margin-bottom:28px;">Marketplace de almacenamiento urbano — Buenos Aires</div>
   <div class="cover-meta">
-    <b>Versión:</b> 1.11.0 — 11 de Junio 2026<br>
+    <b>Versión:</b> 1.11.1 — 12 de Junio 2026<br>
     <b>URL producción:</b> https://todasmiscosas.com<br>
     <b>Repositorio:</b> github.com/alex2580/prueba (privado)<br>
     <b>Autores:</b> Alejandro Laporte · Guillermo Domínguez<br>
@@ -1349,11 +1349,34 @@ curl http://localhost:4000/health</pre>
   </tr>
 </table>
 
+<h2>🏆 Hito — Pruebas E2E completas en producción (11–12 jun 2026)</h2>
+<p>Durante los días 11 y 12 de junio de 2026, el equipo (Alejandro + Guillermo) realizó las primeras pruebas end-to-end exhaustivas del producto completo en producción. <strong>Todo el flujo funcionó a la perfección.</strong></p>
+<table>
+  <tr><th>Área probada</th><th>Resultado</th></tr>
+  <tr><td>Reservas exclusivas (calendario, bloqueo de fechas)</td><td>✅</td></tr>
+  <tr><td>Reservas compartidas (cupo, múltiples clientes simultáneos)</td><td>✅</td></tr>
+  <tr><td>Emails en todos los estados del flujo de reserva</td><td>✅</td></tr>
+  <tr><td>Sistema escrow (retención → confirmación → liberación)</td><td>✅</td></tr>
+  <tr><td>Chat entre proveedor y cliente (apertura y cierre automático)</td><td>✅</td></tr>
+  <tr><td>Consultas públicas Q&amp;A (emails al proveedor y al cliente)</td><td>✅</td></tr>
+  <tr><td>Panel proveedor completo</td><td>✅</td></tr>
+  <tr><td>Panel cliente completo</td><td>✅</td></tr>
+  <tr><td>Panel admin con todas sus tabs</td><td>✅</td></tr>
+</table>
+<p><strong>El MVP está validado en producción. Listo para lanzamiento comercial.</strong></p>
+
+<h2>Cambios v1.11.1 — 12 junio 2026</h2>
+<table>
+  <tr><th>Área</th><th>Cambio</th><th>Archivo</th></tr>
+  <tr><td>Chat — cierre simétrico</td><td>Al confirmar acceso y liberar el escrow, el chat ahora desaparece para <strong>ambos roles</strong> simultáneamente. Antes solo se cerraba para el proveedor; el cliente seguía viendo el historial. Fix: WHERE unificado con EXISTS + escrow_liberado=0 para cliente y proveedor.</td><td><code>chatController.js</code></td></tr>
+  <tr><td>UX — fotos en /publicar</td><td>Aviso en naranja advierte que hay que seleccionar todas las fotos juntas (hasta 5) de una sola vez. El input nativo reemplaza la selección anterior si se elige de a una.</td><td><code>[locale]/publicar/page.tsx</code></td></tr>
+</table>
+
 <h2>Cambios v1.9.2 — 7 junio 2026 (noche)</h2>
 <table>
   <tr><th>Área</th><th>Cambio</th><th>Archivo</th></tr>
   <tr><td>Chat — ciclo de vida</td><td>Botón Chat habilitado desde estado <code>confirmada</code> (antes solo <code>pagada</code>). Se deshabilita al liberar el depósito de garantía (<code>escrow_liberado = 1</code>). Banner verde avisa: "Al confirmar, el chat se cerrará"</td><td><code>EstadoReserva.tsx</code>, <code>panel/page.tsx</code></td></tr>
-  <tr><td>Chat — filtro proveedor (backend)</td><td><code>chatController.listarConversaciones</code>: el proveedor solo ve conversaciones donde existe una reserva activa (<code>estado IN ('confirmada','pagada') AND escrow_liberado=0</code>). Conversaciones históricas ocultas</td><td><code>chatController.js</code></td></tr>
+  <tr><td>Chat — filtro ambos roles (backend)</td><td><code>chatController.listarConversaciones</code>: tanto el proveedor como el cliente dejan de ver el chat al liberar el escrow (<code>escrow_liberado=0</code> aplica a ambos roles con WHERE unificado). Conversaciones históricas ocultas para los dos.</td><td><code>chatController.js</code></td></tr>
   <tr><td>Chat — apertura automática</td><td>Al clic en botón Chat desde panel, <code>setOpenMensajes(true)</code> + scroll automático a la sección Mensajes</td><td><code>panel/page.tsx</code></td></tr>
   <tr><td>MP — back_urls con /es/</td><td>Todas las <code>back_urls</code> de MercadoPago incluyen prefijo <code>/es/</code> para compatibilidad con next-intl v4. Sin esto, MP redirigía pero el usuario quedaba en la pantalla de MP</td><td><code>mercadopagoService.js</code></td></tr>
   <tr><td>UI — terminología</td><td>Banners de reserva: "escrow" → "depósito de garantía" en todos los textos visibles. "Respuesta del oferente" → "Respuesta del proveedor" en Q&amp;A público</td><td><code>EstadoReserva.tsx</code>, <code>ConsultasEspacio.tsx</code></td></tr>

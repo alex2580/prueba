@@ -774,6 +774,64 @@ Solo funciona si `inactiva_auto = 1`. Si alguien intenta reactivar un espacio qu
 
 ---
 
+## 12 de Junio 2026 — v1.11.1
+
+### 🏆 Hito: pruebas end-to-end completas en producción
+
+Durante los días 11 y 12 de junio de 2026, Alejandro y Guillermo realizaron pruebas end-to-end completas del producto en producción. **Todo funcionó a la perfección.**
+
+| Área probada | Resultado |
+|---|---|
+| Flujo de reservas exclusivas (calendario, bloqueo de fechas) | ✅ |
+| Flujo de reservas compartidas (cupo disponible, múltiples clientes) | ✅ |
+| Todas las notificaciones por email en cada estado del flujo | ✅ |
+| Sistema de escrow (retención → confirmación de acceso → liberación) | ✅ |
+| Chat entre proveedor y cliente (apertura y cierre automático) | ✅ |
+| Consultas públicas Q&A (emails al proveedor y al cliente) | ✅ |
+| Panel de proveedor completo | ✅ |
+| Panel de cliente completo | ✅ |
+| Panel de admin con todas sus tabs | ✅ |
+
+**El MVP está validado en producción y listo para lanzamiento comercial.**
+
+---
+
+### Fix: chat del cliente no se cerraba al confirmar acceso (escrow)
+
+Al liberar el depósito de garantía, el historial del chat desaparecía del panel del proveedor pero **seguía visible para el cliente**. Ambos roles deben perder acceso al chat en el mismo momento.
+
+**Causa:** en `chatController.listarConversaciones`, la condición `escrow_liberado = 0` solo se aplicaba al lado del proveedor (`oferente_id`). El cliente (`demandante_id`) no tenía ningún filtro y veía todas sus conversaciones sin restricción.
+
+**Fix:** se unificó la condición `WHERE` para que ambos roles queden sujetos al mismo `EXISTS` con `escrow_liberado = 0`.
+
+```javascript
+// Antes:
+WHERE c.demandante_id = ?
+   OR (c.oferente_id = ? AND EXISTS (... AND r.escrow_liberado = 0))
+
+// Ahora:
+WHERE (c.demandante_id = ? OR c.oferente_id = ?)
+  AND EXISTS (... AND r.escrow_liberado = 0)
+```
+
+**Archivo:** `backend/src/controllers/chatController.js`
+**Commit:** `2af83a3`
+
+---
+
+### Feat: aviso UX en selector de fotos de /publicar
+
+El input de fotos (`<input type="file" multiple>`) reemplaza la selección previa cada vez que el usuario abre el selector de archivos. Si el usuario elige fotos de a una, solo se sube la última seleccionada.
+
+Se agregó un aviso en naranja debajo del texto descriptivo existente:
+
+> ⚠️ Seleccioná todas tus fotos juntas (hasta 5) de una sola vez. Si las elegís de a una, solo se sube la última.
+
+**Archivo:** `frontend/app/[locale]/publicar/page.tsx`
+**Commit:** `63fde33`
+
+---
+
 ## 11 de Junio 2026 — v1.11.0
 
 ### Consultas públicas — reconstrucción completa
