@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TodasMisCosas — Análisis de Mejoras · Junio 2026</title>
+<style>
+  :root {
+    --orange:  #e8622a;
+    --orange2: #f07a44;
+    --navy:    #0f172a;
+    --navy2:   #1e293b;
+    --navy3:   #334155;
+    --mint:    #06d6a0;
+    --blue:    #38bdf8;
+    --purple:  #a78bfa;
+    --yellow:  #fbbf24;
+    --red:     #f87171;
+    --text:    #e2e8f0;
+    --text2:   #94a3b8;
+    --text3:   #64748b;
+    --border:  #334155;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sora', 'Segoe UI', Arial, sans-serif;
+    background: var(--navy);
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.65;
+  }
+
+  .page {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+  }
+
+  /* ── PORTADA ─────────────────────────── */
+  .cover {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 60%, #162032 100%);
+    border-radius: 20px;
+    padding: 52px 56px 44px;
+    margin-bottom: 48px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute; right: -80px; top: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: rgba(232,98,42,.10);
+  }
+  .cover::after {
+    content: '';
+    position: absolute; right: 80px; bottom: -100px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: rgba(56,189,248,.07);
+  }
+  .cover-logo {
+    font-size: 2rem; font-weight: 900; color: var(--orange);
+    letter-spacing: -0.5px; margin-bottom: 4px;
+  }
+  .cover-logo span { color: var(--blue); }
+  .cover-title {
+    font-size: 1.6rem; font-weight: 800; color: var(--text);
+    margin-bottom: 8px; line-height: 1.2;
+  }
+  .cover-sub {
+    font-size: .85rem; color: var(--text2); margin-bottom: 20px;
+  }
+  .cover-meta {
+    display: flex; gap: 28px; flex-wrap: wrap; margin-top: 28px;
+  }
+  .meta-chip {
+    background: rgba(255,255,255,.05); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 16px;
+    font-size: .8rem; color: var(--text2);
+  }
+  .meta-chip strong { color: var(--text); display: block; font-size: .9rem; }
+
+  /* ── RESUMEN EJECUTIVO ──────────────── */
+  .exec-summary {
+    background: var(--navy2); border-radius: 16px;
+    padding: 32px 36px; margin-bottom: 40px;
+    border: 1px solid var(--border);
+  }
+  .exec-summary p {
+    color: var(--text2); font-size: .9rem; margin-top: 8px; line-height: 1.8;
+  }
+  .exec-summary strong { color: var(--text); }
+
+  /* ── SCORE CARDS ────────────────────── */
+  .score-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px; margin-bottom: 40px;
+  }
+  .score-card {
+    background: var(--navy2); border-radius: 14px;
+    border: 1px solid var(--border);
+    padding: 20px 24px; text-align: center;
+  }
+  .score-card .score-num {
+    font-size: 2.8rem; font-weight: 900; line-height: 1;
+    margin-bottom: 4px;
+  }
+  .score-card .score-label {
+    font-size: .75rem; color: var(--text3); text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+  .score-card .score-sub {
+    font-size: .7rem; color: var(--text3); margin-top: 4px;
+  }
+
+  /* ── SECTION HEADER ─────────────────── */
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    margin: 44px 0 20px; padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+  }
+  .section-title {
+    font-size: 1.1rem; font-weight: 800; color: var(--text);
+  }
+  .section-subtitle {
+    font-size: .8rem; color: var(--text3); margin-top: 1px;
+  }
+
+  /* ── HALLAZGO CARD ──────────────────── */
+  .findings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px; margin-bottom: 8px;
+  }
+  .finding {
+    background: var(--navy2); border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 18px 20px;
+    border-left: 3px solid var(--border);
+  }
+  .finding.critical  { border-left-color: var(--red); }
+  .finding.high      { border-left-color: var(--orange); }
+  .finding.medium    { border-left-color: var(--yellow); }
+  .finding.low       { border-left-color: var(--blue); }
+  .finding.positive  { border-left-color: var(--mint); }
+
+  .finding-header {
+    display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px;
+  }
+  .badge {
+    padding: 2px 8px; border-radius: 5px; font-size: .68rem;
+    font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .badge.critical  { background: rgba(248,113,113,.15); color: var(--red); }
+  .badge.high      { background: rgba(232,98,42,.15); color: var(--orange); }
+  .badge.medium    { background: rgba(251,191,36,.15); color: var(--yellow); }
+  .badge.low       { background: rgba(56,189,248,.15); color: var(--blue); }
+  .badge.positive  { background: rgba(6,214,160,.15); color: var(--mint); }
+
+  .finding-title {
+    font-weight: 700; font-size: .9rem; color: var(--text);
+    line-height: 1.3;
+  }
+  .finding-body {
+    font-size: .8rem; color: var(--text2); line-height: 1.7;
+  }
+  .finding-body code {
+    font-family: 'Courier New', monospace; font-size: .75rem;
+    background: rgba(255,255,255,.06); padding: 1px 5px;
+    border-radius: 4px; color: var(--blue);
+  }
+  .finding-action {
+    margin-top: 10px; padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,.05);
+    font-size: .78rem; color: var(--text3);
+  }
+  .finding-action strong { color: var(--text2); }
+
+  /* ── FULL-WIDTH FINDING ─────────────── */
+  .finding-full {
+    grid-column: 1 / -1;
+  }
+
+  /* ── ROADMAP TABLE ──────────────────── */
+  .roadmap-table {
+    width: 100%; border-collapse: collapse; margin: 12px 0 24px;
+  }
+  .roadmap-table th {
+    background: rgba(255,255,255,.04); color: var(--text3);
+    font-size: .72rem; text-transform: uppercase; letter-spacing: .08em;
+    padding: 8px 14px; text-align: left; border-bottom: 1px solid var(--border);
+  }
+  .roadmap-table td {
+    padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.04);
+    font-size: .82rem; color: var(--text2); vertical-align: top;
+  }
+  .roadmap-table tr:last-child td { border-bottom: none; }
+  .roadmap-table td:first-child { color: var(--text); font-weight: 600; }
+  .roadmap-table td code {
+    font-family: 'Courier New', monospace; font-size: .75rem;
+    background: rgba(255,255,255,.06); padding: 1px 5px;
+    border-radius: 4px; color: var(--blue);
+  }
+  .effort { padding: 2px 8px; border-radius: 5px; font-size: .7rem; font-weight: 700; white-space: nowrap; }
+  .effort.small  { background: rgba(6,214,160,.12); color: var(--mint); }
+  .effort.medium { background: rgba(251,191,36,.12); color: var(--yellow); }
+  .effort.large  { background: rgba(248,113,113,.12); color: var(--red); }
+
+  /* ── POSITIVE GRID ──────────────────── */
+  .positive-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 12px; margin-bottom: 8px;
+  }
+  .positive-card {
+    background: rgba(6,214,160,.05); border: 1px solid rgba(6,214,160,.2);
+    border-radius: 12px; padding: 16px 18px;
+  }
+  .positive-card .p-title {
+    font-weight: 700; font-size: .85rem; color: var(--mint);
+    margin-bottom: 4px;
+  }
+  .positive-card .p-body {
+    font-size: .78rem; color: var(--text2); line-height: 1.6;
+  }
+
+  /* ── ARQUITECTURA SNAPSHOT ─────────── */
+  .arch-row {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 12px; margin-bottom: 8px;
+  }
+  .arch-card {
+    background: var(--navy2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px 18px;
+  }
+  .arch-card .arch-title {
+    font-size: .7rem; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--text3); margin-bottom: 6px;
+  }
+  .arch-card .arch-val {
+    font-size: .85rem; font-weight: 600; color: var(--text);
+  }
+  .arch-card .arch-note {
+    font-size: .75rem; color: var(--text3); margin-top: 3px;
+  }
+
+  /* ── FOOTER ─────────────────────────── */
+  .footer {
+    margin-top: 60px; padding-top: 24px;
+    border-top: 1px solid var(--border);
+    text-align: center; color: var(--text3); font-size: .78rem;
+  }
+  .footer strong { color: var(--text2); }
+
+  /* ── PRIORIDAD MATRIX ───────────────── */
+  .matrix-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 14px; margin-bottom: 8px;
+  }
+  .matrix-quadrant {
+    background: var(--navy2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 20px;
+  }
+  .mq-title {
+    font-size: .8rem; font-weight: 700; margin-bottom: 10px;
+  }
+  .mq-item {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: .78rem; color: var(--text2); margin-bottom: 6px;
+  }
+  .mq-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    flex-shrink: 0; margin-top: 5px;
+  }
+
+  /* ── INLINE ALERT ────────────────────── */
+  .alert {
+    background: rgba(248,113,113,.08); border: 1px solid rgba(248,113,113,.25);
+    border-radius: 10px; padding: 12px 16px; margin: 12px 0;
+    font-size: .82rem; color: var(--text2);
+  }
+  .alert strong { color: var(--red); }
+
+  /* PRINT */
+  @media print {
+    body { background: #fff; color: #111; }
+    .page { padding: 20px 24px; }
+    .cover { background: #1e293b; }
+    .cover-logo { color: #e8622a; }
+    .cover-title { color: #fff; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══ PORTADA ══════════════════════════════════════════════════ -->
+  <div class="cover">
+    <div class="cover-logo">📦 TodasMisCosas<span>.com</span></div>
+    <div class="cover-title">Análisis Técnico — Oportunidades de Mejora</div>
+    <div class="cover-sub">Revisión integral del MVP · Stack, seguridad, performance, arquitectura y producto</div>
+
+    <div class="cover-meta">
+      <div class="meta-chip"><strong>Junio 2026</strong>Fecha de análisis</div>
+      <div class="meta-chip"><strong>v1.11.1</strong>Versión analizada</div>
+      <div class="meta-chip"><strong>MVP validado ✅</strong>E2E completo 11-12 jun</div>
+      <div class="meta-chip"><strong>Preparado para Guille</strong>Uso interno</div>
+    </div>
+  </div>
+
+  <!-- ══ RESUMEN EJECUTIVO ═════════════════════════════════════════ -->
+  <div class="exec-summary">
+    <div class="section-title" style="font-size:1rem;margin-bottom:6px;">📋 Resumen ejecutivo</div>
+    <p>
+      El MVP de TodasMisCosas está <strong>bien construido para su etapa</strong>: el flujo completo reserva → pago → escrow → chat → acceso → liberación fue validado en producción el 11 y 12 de junio de 2026 sin errores.
+      El stack es sólido (Next.js 14 + Express + MySQL + Supabase Auth + MercadoPago), los emails funcionan, los cron jobs están activos y el deploy vía GitHub Actions es confiable.
+    </p>
+    <p style="margin-top:10px;">
+      Este documento identifica <strong>26 oportunidades de mejora</strong> ordenadas por impacto — desde gaps de seguridad puntuales hasta mejoras de arquitectura que serán necesarias en la etapa de escala.
+      Ninguno de los ítems rompe el producto hoy; todos son inversiones para el crecimiento.
+    </p>
+  </div>
+
+  <!-- ══ SCORE CARDS ═══════════════════════════════════════════════ -->
+  <div class="score-grid">
+    <div class="score-card">
+      <div class="score-num" style="color:var(--red);">3</div>
+      <div class="score-label">Seguridad</div>
+      <div class="score-sub">ítems a atender</div>
+    </div>
+    <div class="score-card">
+      <div class="score-num" style="color:var(--orange);">7</div>
+      <div class="score-label">Performance</div>
+      <div class="score-sub">puntos de optimización</div>
+    </div>
+    <div class="score-card">
+      <div class="score-num" style="color:var(--yellow);">8</div>
+      <div class="score-label">Arquitectura</div>
+      <div class="score-sub">refactors de impacto</div>
+    </div>
+    <div class="score-card">
+      <div class="score-num" style="color:var(--blue);">8</div>
+      <div class="score-label">Producto / UX</div>
+      <div class="score-sub">mejoras de experiencia</div>
+    </div>
+  </div>
+
+  <!-- ══ SECCIÓN 1: SEGURIDAD ══════════════════════════════════════ -->
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(248,113,113,.12);">🔒</div>
+    <div>
+      <div class="section-title">Seguridad</div>
+      <div class="section-subtitle">Gaps puntuales — ninguno compromete el MVP pero deben resolverse antes de escalar</div>
+    </div>
+  </div>
+
+  <div class="findings-grid">
+
+    <div class="finding critical">
+      <div class="finding-header">
+        <div class="badge critical">Crítico</div>
+        <div class="finding-title">API Key de Google Maps expuesta al navegador</div>
+      </div>
+      <div class="finding-body">
+        <code>NEXT_PUBLIC_GOOGLE_MAPS_KEY</code> es visible en el bundle del cliente. Si la key no tiene restricciones de dominio configuradas en Google Cloud Console, cualquiera puede usarla y generar costos inesperados.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> En Google Cloud Console → "Restricciones de aplicación" → HTTP referrers → <code>*.todasmiscosas.com/*</code>. También limitar APIs habilitadas solo a Maps JS API.
+      </div>
+    </div>
+
+    <div class="finding critical">
+      <div class="finding-header">
+        <div class="badge critical">Crítico</div>
+        <div class="finding-title">Sin protección CSRF explícita</div>
+      </div>
+      <div class="finding-body">
+        El middleware de Express no incluye protección CSRF. Las rutas de escritura (POST/PUT/DELETE) que aceptan cookies de sesión son vulnerables a ataques CSRF desde otros dominios.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Agregar <code>csurf</code> o implementar el patrón Double Submit Cookie. Helmet está configurado pero no cubre CSRF por defecto.
+      </div>
+    </div>
+
+    <div class="finding high">
+      <div class="finding-header">
+        <div class="badge high">Alto</div>
+        <div class="finding-title">Sin Content Security Policy estricta</div>
+      </div>
+      <div class="finding-body">
+        Helmet agrega headers de seguridad base pero no configura un CSP estricto. Sin CSP, inyecciones XSS pueden cargar scripts externos. El frontend usa Google Maps y Supabase — la lista de dominios permitidos es acotada y manejable.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Configurar <code>helmet.contentSecurityPolicy()</code> con directivas explícitas en <code>app.js</code>. Prioridad media ya que no hay inputs de HTML libre.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ SECCIÓN 2: PERFORMANCE ════════════════════════════════════ -->
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(251,191,36,.10);">⚡</div>
+    <div>
+      <div class="section-title">Performance</div>
+      <div class="section-subtitle">Mejoras que impactan directamente en velocidad percibida y escalabilidad</div>
+    </div>
+  </div>
+
+  <div class="findings-grid">
+
+    <div class="finding high">
+      <div class="finding-header">
+        <div class="badge high">Alto</div>
+        <div class="finding-title">Auth middleware: 2 requests externos por API call</div>
+      </div>
+      <div class="finding-body">
+        Cada endpoint autenticado llama a <code>supabase.auth.getUser()</code> + una query MySQL a <code>usuarios</code>. Sin caché de token. A 50 usuarios concurrentes eso son 100 requests externos por tick.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Cachear el resultado en memoria (Map + TTL de 60s) usando el JWT como key. Reduce latencia ~40-80ms por request autenticado.
+      </div>
+    </div>
+
+    <div class="finding high">
+      <div class="finding-header">
+        <div class="badge high">Alto</div>
+        <div class="finding-title">Listado de espacios sin paginación real</div>
+      </div>
+      <div class="finding-body">
+        <code>espaciosController.js:138</code> tiene un <code>LIMIT 20</code> hardcodeado. No hay parámetros <code>page</code> ni <code>offset</code>. A medida que crezca el catálogo, usuarios no podrán ver más de 20 espacios.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Agregar <code>?page=1&limit=20</code> al endpoint. Estimar 1-2h de implementación en controller + frontend.
+      </div>
+    </div>
+
+    <div class="finding medium">
+      <div class="finding-header">
+        <div class="badge medium">Medio</div>
+        <div class="finding-title">Migraciones ALTER TABLE en cada arranque de PM2</div>
+      </div>
+      <div class="finding-body">
+        <code>server.js</code> ejecuta docenas de <code>ALTER TABLE IF NOT EXISTS</code> en cada reinicio. En producción estas operaciones son no-ops, pero agregan ~1-2s de boot y generan queries innecesarias en MySQL.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Mover a un archivo de migración versionado que Guille corre una sola vez. El runner de migraciones ya existe en <code>backend/src/db/migrate.js</code>.
+      </div>
+    </div>
+
+    <div class="finding medium">
+      <div class="finding-header">
+        <div class="badge medium">Medio</div>
+        <div class="finding-title">panel/page.tsx: 1.895 líneas, un solo componente</div>
+      </div>
+      <div class="finding-body">
+        El panel completo del usuario es un único componente cliente de 1895 líneas que carga todas las tabs, hooks y estados al mismo tiempo. La carga inicial es pesada aunque el usuario solo vea la tab activa.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Lazy load de tabs con <code>next/dynamic</code>. Cada tab (calendario, movimientos, mis espacios, chat) puede ser un chunk separado.
+      </div>
+    </div>
+
+    <div class="finding medium">
+      <div class="finding-header">
+        <div class="badge medium">Medio</div>
+        <div class="finding-title">Sin SSR en páginas de listado (SEO bloqueado)</div>
+      </div>
+      <div class="finding-body">
+        El listado de espacios es <code>'use client'</code> puro — Google indexa una página vacía. Para un marketplace, el SEO de las fichas de espacio es crítico para la adquisición orgánica.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Convertir <code>/espacios</code> y cada ficha <code>/espacio/[id]</code> a Server Components con <code>generateMetadata()</code> para título, descripción y OG tags.
+      </div>
+    </div>
+
+    <div class="finding low">
+      <div class="finding-header">
+        <div class="badge low">Bajo</div>
+        <div class="finding-title">Health check devuelve versión hardcodeada "1.0.0"</div>
+      </div>
+      <div class="finding-body">
+        <code>app.js</code> responde <code>version: "1.0.0"</code> en el health check sin importar la versión real del <code>package.json</code>. Hace inútil el monitoreo de versión en producción.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> <code>const { version } = require('../package.json'); res.json(&#123; status: 'ok', version &#125;)</code> — cambio de 1 línea.
+      </div>
+    </div>
+
+    <div class="finding low">
+      <div class="finding-header">
+        <div class="badge low">Bajo</div>
+        <div class="finding-title">adminController: initTables() en cada require del módulo</div>
+      </div>
+      <div class="finding-body">
+        <code>adminController.js</code> llama a <code>initTables()</code> al momento de cargar el módulo, creando 4 tablas con <code>CREATE TABLE IF NOT EXISTS</code> en cada arranque. Menor overhead pero poco elegante.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Mover al mismo sistema de migraciones del punto anterior. Una sola ejecución, no en runtime.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ SECCIÓN 3: ARQUITECTURA / CALIDAD ════════════════════════ -->
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(167,139,250,.10);">🏗️</div>
+    <div>
+      <div class="section-title">Arquitectura &amp; Calidad de código</div>
+      <div class="section-subtitle">Deuda técnica acumulada — manejable hoy, prioritaria antes de sumar features</div>
+    </div>
+  </div>
+
+  <div class="findings-grid">
+
+    <div class="finding high">
+      <div class="finding-header">
+        <div class="badge high">Alto</div>
+        <div class="finding-title">Cero tests automatizados en todo el proyecto</div>
+      </div>
+      <div class="finding-body">
+        No existe ningún archivo de test (<code>.test.js</code>, <code>.spec.ts</code>) ni en frontend ni en backend. El único chequeo de CI es TypeScript. El flujo de escrow, el ledger y los cron jobs corren sin ninguna red de seguridad.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Al menos 5 tests de integración para el flujo crítico: reserva → pago → confirmarAcceso → liberación. Framework: <code>vitest</code> + supertest para el backend.
+      </div>
+    </div>
+
+    <div class="finding high">
+      <div class="finding-header">
+        <div class="badge high">Alto</div>
+        <div class="finding-title">emailService.js: 997 líneas, templates HTML inline</div>
+      </div>
+      <div class="finding-body">
+        Todos los templates de email (27 tipos) están escritos como string literals dentro de un mismo archivo de 997 líneas. Cada cambio de diseño requiere editar código. No hay preview fácil sin enviar un mail real.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Mover templates a archivos <code>.html</code> en <code>services/templates/</code> cargados con <code>fs.readFileSync</code> en boot. Permite editar HTML sin tocar JS.
+      </div>
+    </div>
+
+    <div class="finding medium">
+      <div class="finding-header">
+        <div class="badge medium">Medio</div>
+        <div class="finding-title">UsuarioTipo TypeScript: falta 'oferente'</div>
+      </div>
+      <div class="finding-body">
+        <code>types/index.ts</code> define <code>UsuarioTipo = 'usuario' | 'admin'</code>. El tipo <code>'oferente'</code> nunca está en el union, aunque el sistema distingue claramente entre clientes y proveedores en la DB y en la lógica.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Agregar <code>'oferente'</code> al union type y remplazar los checks <code>typeof</code> ad-hoc. Ayuda al compilador a detectar ramas no cubiertas.
+      </div>
+    </div>
+
+    <div class="finding medium">
+      <div class="finding-header">
+        <div class="badge medium">Medio</div>
+        <div class="finding-title">SERVICIOS_ADICIONALES: precios todos en cero</div>
+      </div>
+      <div class="finding-body">
+        <code>types/index.ts</code> define los servicios adicionales (seguro, embalaje, transporte) con <code>precio: 0</code>. En el panel admin se muestran y se pueden asignar, pero nunca se cobran porque el precio no se resuelve en ningún cálculo de checkout.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Definir los precios reales o cargarlos desde la DB (tabla <code>servicios_adicionales_config</code>). Completar el cálculo en <code>reservasController.js</code>.
+      </div>
+    </div>
+
+    <div class="finding medium">
+      <div class="finding-header">
+        <div class="badge medium">Medio</div>
+        <div class="finding-title">BACKLOG.md referenciado en CLAUDE.md pero no existe</div>
+      </div>
+      <div class="finding-body">
+        <code>CLAUDE.md</code> instruye al agente a leer <code>docs/BACKLOG.md</code> antes de tocar código, pero el archivo no existe en el repositorio. Cualquier agente que siga esa instrucción fallará silenciosamente.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Crear <code>docs/BACKLOG.md</code> con los ítems pendientes actuales, o actualizar <code>CLAUDE.md</code> para quitar la referencia.
+      </div>
+    </div>
+
+    <div class="finding medium">
+      <div class="finding-header">
+        <div class="badge medium">Medio</div>
+        <div class="finding-title">'use client' declarado dos veces en panel/page.tsx</div>
+      </div>
+      <div class="finding-body">
+        Las líneas 1 y 3 de <code>panel/page.tsx</code> repiten <code>'use client';</code>. No genera error (Next.js lo ignora) pero indica que el archivo fue editado sin orden en varias sesiones y es una señal de deuda de mantenibilidad.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Eliminar el duplicado. 30 segundos de trabajo.
+      </div>
+    </div>
+
+    <div class="finding low">
+      <div class="finding-header">
+        <div class="badge low">Bajo</div>
+        <div class="finding-title">Twilio configurado en modo "demo" — nunca activado</div>
+      </div>
+      <div class="finding-body">
+        <code>twilioService.js</code> implementa SMS y WhatsApp pero la env var <code>TWILIO_ACCOUNT_SID</code> tiene el valor placeholder <code>"TWILIO_PENDIENTE"</code>. Todos los envíos se loguean en consola sin llegar al usuario.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Activar con credenciales reales de Twilio, o documentar explícitamente que esta feature está en beta. Es un canal valioso para recordatorios de acceso.
+      </div>
+    </div>
+
+    <div class="finding low">
+      <div class="finding-header">
+        <div class="badge low">Bajo</div>
+        <div class="finding-title">MercadoPago siempre usa ARS aunque hay 19 monedas</div>
+      </div>
+      <div class="finding-body">
+        <code>mercadopagoService.js</code> hardcodea <code>currency_id: 'ARS'</code> en todas las preferencias. Los espacios tienen un campo <code>moneda</code> y el tipo <code>MONEDAS</code> define 19 divisas — el dato está, pero se ignora al cobrar.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Pasar la moneda del espacio al <code>crearPreferencia()</code> y usarla en la preferencia de MP. Habilita espacios en USD para clientes internacionales.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ SECCIÓN 4: DEVOPS E INFRAESTRUCTURA ══════════════════════ -->
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(56,189,248,.10);">🚀</div>
+    <div>
+      <div class="section-title">DevOps e Infraestructura</div>
+      <div class="section-subtitle">Riesgos operacionales — se vuelven críticos con más usuarios</div>
+    </div>
+  </div>
+
+  <div class="findings-grid">
+
+    <div class="finding high">
+      <div class="finding-header">
+        <div class="badge high">Alto</div>
+        <div class="finding-title">Sin ambiente de staging — todo va directo a producción</div>
+      </div>
+      <div class="finding-body">
+        Cada push a <code>master</code> impacta inmediatamente en <code>todasmiscosas.com</code>. No existe un ambiente de prueba con datos reales o similares. Un bug en auth o escrow afecta usuarios reales en segundos.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Branch <code>staging</code> + subdominio <code>staging.todasmiscosas.com</code> con su propia DB. Con el self-hosted runner esto es relativamente sencillo.
+      </div>
+    </div>
+
+    <div class="finding high">
+      <div class="finding-header">
+        <div class="badge high">Alto</div>
+        <div class="finding-title">Sin backup automático de la base de datos</div>
+      </div>
+      <div class="finding-body">
+        El plan de backup documentado cubre snapshots de markdown y documentación, pero no hay un <code>mysqldump</code> automatizado de la DB de producción. Si el VPS falla, se pierden todos los datos de reservas, usuarios y ledger.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Cron diario en el VPS: <code>mysqldump → compresión → upload a Supabase Storage o S3</code>. Retención de 30 días. Costo: prácticamente cero.
+      </div>
+    </div>
+
+    <div class="finding medium">
+      <div class="finding-header">
+        <div class="badge medium">Medio</div>
+        <div class="finding-title">Runner de CI/CD: punto único de falla</div>
+      </div>
+      <div class="finding-body">
+        El self-hosted runner corre en el mismo VPS que la app. Si el VPS está caído, el deploy falla Y la app está caída — imposible hacer un deploy de emergencia para restaurar el servicio.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Agregar un segundo runner en un VPS secundario barato, o migrar el deploy job a un runner de GitHub (ubuntu-latest) con SSH + rsync al VPS.
+      </div>
+    </div>
+
+    <div class="finding medium">
+      <div class="finding-header">
+        <div class="badge medium">Medio</div>
+        <div class="finding-title">Deploy sin rollback: git reset --hard a master</div>
+      </div>
+      <div class="finding-body">
+        El workflow hace <code>git reset --hard origin/master</code>. Si el build falla a mitad, la app queda en estado inconsistente. No hay blue-green ni la posibilidad de volver al commit anterior sin intervención manual de Guille.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Agregar un paso de smoke test post-deploy (<code>curl /api/health</code>) con rollback automático al commit previo si falla. ~15 líneas en el YAML.
+      </div>
+    </div>
+
+    <div class="finding low">
+      <div class="finding-header">
+        <div class="badge low">Bajo</div>
+        <div class="finding-title">Sin CDN para assets estáticos</div>
+      </div>
+      <div class="finding-body">
+        Imágenes, JS y CSS del frontend se sirven directamente desde el VPS en Buenos Aires. Usuarios desde el interior o el exterior experimentan mayor latencia. Las fotos de espacios ya van a Supabase CDN; los assets de la app, no.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Cloudflare gratuito como proxy. Agrega CDN, caché de assets, protección DDoS y HTTPS automático sin cambiar el servidor de origen.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ SECCIÓN 5: PRODUCTO / UX ══════════════════════════════════ -->
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(6,214,160,.10);">🎯</div>
+    <div>
+      <div class="section-title">Producto &amp; UX</div>
+      <div class="section-subtitle">Gaps que afectan la experiencia del usuario final y la confianza en la plataforma</div>
+    </div>
+  </div>
+
+  <div class="findings-grid">
+
+    <div class="finding high">
+      <div class="finding-header">
+        <div class="badge high">Alto</div>
+        <div class="finding-title">Auto-release escrow: el cliente no recibe email</div>
+      </div>
+      <div class="finding-body">
+        El cron de <code>escrow.js</code> libera automáticamente el pago a las 48h si el cliente no confirmó el acceso. Notifica al admin y al proveedor, pero el cliente no sabe que el escrow se liberó de forma automática — puede generar reclamos.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Agregar <code>sendAccesoConfirmadoDemandante()</code> en el bloque de auto-release del cron. Email ya existe — solo falta conectarlo. Cambio de 3 líneas en <code>escrow.js</code>.
+      </div>
+    </div>
+
+    <div class="finding high">
+      <div class="finding-header">
+        <div class="badge high">Alto</div>
+        <div class="finding-title">Historial de chat inaccesible tras liberar escrow</div>
+      </div>
+      <div class="finding-body">
+        Cuando se libera el escrow, el chat desaparece para ambas partes (fix de v1.11.1). Correcto como regla de negocio, pero el historial previo se pierde permanentemente. Usuarios no pueden revisar acuerdos escritos en el chat.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Ofrecer descarga del historial en PDF al momento del cierre, o mostrar el chat en modo "solo lectura" (sin input) después del cierre. Ambas opciones son viables con el schema actual.
+      </div>
+    </div>
+
+    <div class="finding medium">
+      <div class="finding-header">
+        <div class="badge medium">Medio</div>
+        <div class="finding-title">Consultas de contacto sin loop de respuesta por email</div>
+      </div>
+      <div class="finding-body">
+        Cuando alguien envía un formulario de contacto al admin, el admin puede responder desde el panel pero <strong>esa respuesta nunca se envía por email</strong> a quien hizo la consulta. El flujo está roto a medias.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> En <code>adminController.responderConsulta()</code>, después del UPDATE, enviar email con la respuesta al <code>email</code> del row de la consulta. Requiere un template nuevo en emailService.
+      </div>
+    </div>
+
+    <div class="finding medium">
+      <div class="finding-header">
+        <div class="badge medium">Medio</div>
+        <div class="finding-title">Sin error boundaries en el árbol de componentes</div>
+      </div>
+      <div class="finding-body">
+        El frontend no tiene ningún <code>ErrorBoundary</code>. Un error de render en cualquier componente del panel — por ejemplo, un dato inesperado de la API — desmonta toda la pantalla y muestra una página en blanco sin mensaje útil al usuario.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Agregar <code>error.tsx</code> en las rutas de App Router de Next.js. Cubre el caso automáticamente sin necesidad de componentes ad-hoc.
+      </div>
+    </div>
+
+    <div class="finding medium">
+      <div class="finding-header">
+        <div class="badge medium">Medio</div>
+        <div class="finding-title">Sin loading skeletons en el panel (data jumps)</div>
+      </div>
+      <div class="finding-body">
+        El panel carga datos asincrónicamente (reservas, espacios, movimientos, chat). Durante la carga, la UI muestra secciones vacías que luego se rellenan bruscamente. Afecta la percepción de velocidad y profesionalismo.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Skeletons CSS para las secciones principales. Compatibles con el diseño dark actual. Next.js 14 tiene <code>loading.tsx</code> que simplifica esto.
+      </div>
+    </div>
+
+    <div class="finding medium">
+      <div class="finding-header">
+        <div class="badge medium">Medio</div>
+        <div class="finding-title">Twilio SMS/WhatsApp sin activar — canal de alto valor</div>
+      </div>
+      <div class="finding-body">
+        La infraestructura de SMS y WhatsApp está lista en <code>authController.js</code> (ya dispara en el flujo de auth). Activarla con credenciales reales de Twilio desbloquea recordatorios de fecha de ingreso, confirmación de PIN y alertas de liberación de escrow por WhatsApp — canal preferido en Argentina.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Contratar plan Twilio básico (~$15/mes), configurar las 3 env vars en el VPS y cambiar <code>TWILIO_PENDIENTE</code> por el SID real. 30 minutos de trabajo de Guille.
+      </div>
+    </div>
+
+    <div class="finding low">
+      <div class="finding-header">
+        <div class="badge low">Bajo</div>
+        <div class="finding-title">Foto de perfil: ningún usuario puede cambiarla desde el panel</div>
+      </div>
+      <div class="finding-body">
+        El componente <code>Avatar</code> muestra la foto de perfil del usuario, pero no existe ningún flujo para subir o cambiar esa foto desde el panel. Los avatares aparecen como iniciales o imagen por defecto permanentemente.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Un input file en la tab "Mi perfil" del panel, con upload a Supabase Storage bucket <code>avatars/</code>. El pattern de upload ya existe en <code>subirFotos</code>.
+      </div>
+    </div>
+
+    <div class="finding low">
+      <div class="finding-header">
+        <div class="badge low">Bajo</div>
+        <div class="finding-title">Sin página de FAQ / ayuda para usuarios</div>
+      </div>
+      <div class="finding-body">
+        No existe una sección de preguntas frecuentes pública. Las dudas sobre escrow, PIN, cancelaciones y comisiones llegan al formulario de contacto, generando trabajo manual de soporte que podría evitarse.
+      </div>
+      <div class="finding-action">
+        <strong>Fix:</strong> Página estática <code>/es/ayuda</code> con acordeón de FAQs. Contenido gestionable por Alejandro, zero backend. Alta palanca/esfuerzo.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ SECCIÓN 6: LO QUE ESTÁ MUY BIEN ══════════════════════════ -->
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(6,214,160,.10);">✅</div>
+    <div>
+      <div class="section-title">Lo que está muy bien hecho</div>
+      <div class="section-subtitle">Decisiones de arquitectura que demuestran madurez — mantener en v2.0</div>
+    </div>
+  </div>
+
+  <div class="positive-grid">
+    <div class="positive-card">
+      <div class="p-title">📒 Ledger de doble entrada</div>
+      <div class="p-body">El sistema contable en <code>movimientos_ledger</code> registra cada peso que entra y sale con debito/crédito balanceado. Nivel bancario. Invaluable para auditorías y futuros reportes fiscales.</div>
+    </div>
+    <div class="positive-card">
+      <div class="p-title">🎛️ Feature flags de email</div>
+      <div class="p-body">La tabla <code>email_config</code> permite habilitar/deshabilitar cualquier tipo de email sin redeploy. Con caché de 1 minuto. Diseño elegante que evita reinicios por configuración.</div>
+    </div>
+    <div class="positive-card">
+      <div class="p-title">🛡️ Filtro de contenido bicapa</div>
+      <div class="p-body">El <code>contactFilter</code> corre en frontend (UX) y en backend (seguridad). 4 categorías. Protege contra contacto directo, lenguaje inapropiado y desvío de transacciones.</div>
+    </div>
+    <div class="positive-card">
+      <div class="p-title">🗑️ Soft delete con trazabilidad</div>
+      <div class="p-body">Los espacios eliminados quedan con <code>activo = FALSE</code> + <code>eliminado_por_oferente</code>. Las reservas históricas siguen siendo consultables. Cero pérdida de datos.</div>
+    </div>
+    <div class="positive-card">
+      <div class="p-title">🔤 Charset collision prevention</div>
+      <div class="p-body">La regla de nunca hacer JOIN entre <code>consultas_espacio</code> y <code>espacios</code> (collations distintas) está documentada en CLAUDE.md y el código la cumple con dos queries + merge en JS.</div>
+    </div>
+    <div class="positive-card">
+      <div class="p-title">🔐 Sistema PIN + QR</div>
+      <div class="p-body">El PIN de acceso al espacio se genera al confirmar la reserva, se muestra en el email y el QR está listo en el panel. Flujo de entrega de llaves digital bien pensado.</div>
+    </div>
+    <div class="positive-card">
+      <div class="p-title">⏱️ Rate limiting multicapa</div>
+      <div class="p-body">200 req/min general, 10/15min en auth, 5/hr en contacto. Bien granular. Evita tanto abuso de API como fuerza bruta en login sin afectar UX normal.</div>
+    </div>
+    <div class="positive-card">
+      <div class="p-title">📸 Fotos en Supabase Storage</div>
+      <div class="p-body">No hay dependencia de filesystem local del VPS. Las fotos sobreviven redeploys, son servidas por CDN de Supabase y el patrón <code>multer memoryStorage</code> es correcto para este deploy.</div>
+    </div>
+    <div class="positive-card">
+      <div class="p-title">🤖 CI TypeScript check</div>
+      <div class="p-body">El primer job del workflow valida TypeScript antes de desplegar. Impide que errores de tipos rompan el build de producción. Simple y efectivo.</div>
+    </div>
+  </div>
+
+  <!-- ══ MATRIZ DE PRIORIDAD ════════════════════════════════════════ -->
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(232,98,42,.10);">📊</div>
+    <div>
+      <div class="section-title">Matriz de prioridad — Plan de acción sugerido</div>
+      <div class="section-subtitle">Ordenado por impacto vs. esfuerzo estimado</div>
+    </div>
+  </div>
+
+  <div class="matrix-grid">
+    <div class="matrix-quadrant">
+      <div class="mq-title" style="color:var(--red);">🚨 Hacer ya (alto impacto, bajo esfuerzo)</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--red)"></div>Restricción de dominio en API Key de Google Maps</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--red)"></div>Email al cliente en auto-release de escrow (3 líneas)</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--red)"></div>Paginación en listado de espacios (LIMIT hardcodeado)</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--red)"></div>Versión real en health check (1 línea)</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--red)"></div>Crear docs/BACKLOG.md</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--red)"></div>Eliminar 'use client' duplicado en panel</div>
+    </div>
+
+    <div class="matrix-quadrant">
+      <div class="mq-title" style="color:var(--orange);">📅 Próximo sprint (alto impacto, esfuerzo medio)</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--orange)"></div>Caché en auth middleware (Map + TTL 60s)</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--orange)"></div>SSR para listado y fichas de espacios (SEO)</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--orange)"></div>Backup automático diario de MySQL</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--orange)"></div>Email de respuesta en consultas de contacto admin</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--orange)"></div>error.tsx + loading.tsx en rutas del panel</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--orange)"></div>Activar Twilio (WhatsApp recordatorios)</div>
+    </div>
+
+    <div class="matrix-quadrant">
+      <div class="mq-title" style="color:var(--yellow);">🗺️ Mediano plazo (impacto medio-alto, esfuerzo mayor)</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--yellow)"></div>Tests de integración del flujo de escrow</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--yellow)"></div>Split de panel/page.tsx en sub-componentes lazy</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--yellow)"></div>Staging environment (branch + subdominio)</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--yellow)"></div>Historial de chat: modo lectura post-cierre o PDF</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--yellow)"></div>Servicios adicionales: precios reales + checkout</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--yellow)"></div>Página FAQ pública</div>
+    </div>
+
+    <div class="matrix-quadrant">
+      <div class="mq-title" style="color:var(--blue);">🔮 Escala / v2.0 (de cara al crecimiento)</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--blue)"></div>Migración DB a PlanetScale o Supabase Postgres</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--blue)"></div>Cloudflare CDN + proxy</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--blue)"></div>Templates email externos (archivos .html)</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--blue)"></div>CSP estricto + CSRF protection</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--blue)"></div>Monedas multi-divisa en MercadoPago</div>
+      <div class="mq-item"><div class="mq-dot" style="background:var(--blue)"></div>Runner de CI redundante o SSH-based deploy</div>
+    </div>
+  </div>
+
+  <!-- ══ ESFUERZO ESTIMADO ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(56,189,248,.10);">⏱️</div>
+    <div>
+      <div class="section-title">Estimación de esfuerzo</div>
+      <div class="section-subtitle">Referencia aproximada — depende de la familiaridad con el código</div>
+    </div>
+  </div>
+
+  <table class="roadmap-table">
+    <thead>
+      <tr>
+        <th>Ítem</th>
+        <th>Archivo(s) clave</th>
+        <th>Esfuerzo</th>
+        <th>Quién</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Restricción Google Maps API Key</td>
+        <td>Google Cloud Console (GUI)</td>
+        <td><span class="effort small">15 min</span></td>
+        <td>Guille</td>
+      </tr>
+      <tr>
+        <td>Health check versión real</td>
+        <td><code>backend/src/app.js</code></td>
+        <td><span class="effort small">5 min</span></td>
+        <td>Dev</td>
+      </tr>
+      <tr>
+        <td>Email cliente en auto-release escrow</td>
+        <td><code>backend/src/jobs/escrow.js</code></td>
+        <td><span class="effort small">30 min</span></td>
+        <td>Dev</td>
+      </tr>
+      <tr>
+        <td>Eliminar 'use client' duplicado</td>
+        <td><code>frontend/app/[locale]/panel/page.tsx</code></td>
+        <td><span class="effort small">5 min</span></td>
+        <td>Dev</td>
+      </tr>
+      <tr>
+        <td>Paginación en listado de espacios</td>
+        <td><code>espaciosController.js</code> + <code>api.ts</code></td>
+        <td><span class="effort small">2h</span></td>
+        <td>Dev</td>
+      </tr>
+      <tr>
+        <td>Caché en auth middleware</td>
+        <td><code>backend/src/middleware/auth.js</code></td>
+        <td><span class="effort small">1h</span></td>
+        <td>Dev</td>
+      </tr>
+      <tr>
+        <td>Activar Twilio con credenciales reales</td>
+        <td><code>.env</code> en VPS</td>
+        <td><span class="effort small">30 min</span></td>
+        <td>Guille</td>
+      </tr>
+      <tr>
+        <td>Backup automático MySQL</td>
+        <td>Cron en VPS + script bash</td>
+        <td><span class="effort small">1h</span></td>
+        <td>Guille</td>
+      </tr>
+      <tr>
+        <td>Email respuesta consultas de contacto</td>
+        <td><code>adminController.js</code> + nuevo template</td>
+        <td><span class="effort medium">2h</span></td>
+        <td>Dev</td>
+      </tr>
+      <tr>
+        <td>error.tsx + loading.tsx</td>
+        <td><code>frontend/app/[locale]/panel/</code></td>
+        <td><span class="effort medium">2h</span></td>
+        <td>Dev</td>
+      </tr>
+      <tr>
+        <td>SSR en listado y fichas de espacios</td>
+        <td><code>frontend/app/[locale]/espacios/</code></td>
+        <td><span class="effort medium">1 día</span></td>
+        <td>Dev</td>
+      </tr>
+      <tr>
+        <td>Tests de integración (escrow flow)</td>
+        <td><code>backend/tests/</code> (crear)</td>
+        <td><span class="effort medium">2 días</span></td>
+        <td>Dev</td>
+      </tr>
+      <tr>
+        <td>Historial de chat post-cierre</td>
+        <td><code>chatController.js</code> + frontend</td>
+        <td><span class="effort medium">1 día</span></td>
+        <td>Dev</td>
+      </tr>
+      <tr>
+        <td>Staging environment</td>
+        <td>GitHub Actions + VPS + DNS</td>
+        <td><span class="effort large">2 días</span></td>
+        <td>Guille + Dev</td>
+      </tr>
+      <tr>
+        <td>Split panel/page.tsx + lazy loading</td>
+        <td><code>frontend/app/[locale]/panel/</code></td>
+        <td><span class="effort large">2 días</span></td>
+        <td>Dev</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ══ STACK SNAPSHOT ════════════════════════════════════════════ -->
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(167,139,250,.10);">📦</div>
+    <div>
+      <div class="section-title">Estado del stack al 12 jun 2026</div>
+      <div class="section-subtitle">Versiones actuales — sin dependencias desactualizadas críticas</div>
+    </div>
+  </div>
+
+  <div class="arch-row">
+    <div class="arch-card">
+      <div class="arch-title">Frontend</div>
+      <div class="arch-val">Next.js 14.2.5</div>
+      <div class="arch-note">App Router · TypeScript 5 · next-intl 4.13</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-title">Backend</div>
+      <div class="arch-val">Express 4.19 · Node 20</div>
+      <div class="arch-note">mysql2 3.10 · socket.io 4.7 · helmet 7.1</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-title">Base de datos</div>
+      <div class="arch-val">MySQL en VPS Hostinger</div>
+      <div class="arch-note">Sin branching · Sin backup automático · SPOF</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-title">Auth</div>
+      <div class="arch-val">Supabase JWT</div>
+      <div class="arch-note">supabase-js 2.44 · Sin caché de token</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-title">Pagos</div>
+      <div class="arch-val">MercadoPago SDK v2.0.15</div>
+      <div class="arch-note">Solo ARS · Webhooks activos · sdk-react 0.0.18</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-title">Emails</div>
+      <div class="arch-val">Resend via nodemailer 6.9</div>
+      <div class="arch-note">27 tipos · Feature flags activos · 997 líneas inline</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-title">Fotos</div>
+      <div class="arch-val">Supabase Storage</div>
+      <div class="arch-note">multer memoryStorage · sharp 0.33 · URL pública por CDN</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-title">SMS / WhatsApp</div>
+      <div class="arch-val">Twilio 6.0 (demo mode)</div>
+      <div class="arch-note">Infraestructura lista · Credenciales pendientes de activar</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-title">Deploy</div>
+      <div class="arch-val">GitHub Actions → PM2</div>
+      <div class="arch-note">Self-hosted runner en VPS · Sin staging · Sin rollback</div>
+    </div>
+  </div>
+
+  <!-- ══ FOOTER ══════════════════════════════════════════════════ -->
+  <div class="footer">
+    <strong>TodasMisCosas.com</strong> — Análisis Técnico Interno · Junio 2026<br>
+    Generado por Claude Sonnet 4.6 · Para uso interno del equipo · Documento confidencial<br>
+    <span style="color:var(--text3);font-size:.7rem;margin-top:6px;display:block;">
+      El análisis se realizó sobre el código fuente completo del repositorio: backend Express + frontend Next.js 14 + documentación interna.
+      Ningún archivo fue modificado durante el proceso.
+    </span>
+  </div>
+
+</div>
+</body>
+</html>
