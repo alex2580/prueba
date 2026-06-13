@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC — Plan Anual Instagram · Manual desde Cero · CABA/AMBA</title>
+<style>
+  :root {
+    --mint:#a8e6cf;--mint2:#d4f5e9;--mint3:#f0fdf4;
+    --lav:#c4b5fd;--lav2:#ede9fe;--lav3:#f5f3ff;
+    --peach:#fed7aa;--peach2:#fff3e8;
+    --sky:#bae6fd;--sky2:#e8f7ff;--sky3:#f0f9ff;
+    --van:#fef3c7;--van2:#fffbeb;
+    --rose:#fecdd3;--rose2:#fff1f3;
+    --sage:#bbf7d0;--sage2:#f0fdf4;
+    --orange:#e8622a;--navy:#1e293b;
+    --text:#1e293b;--text2:#475569;--text3:#94a3b8;
+    --border:#e2e8f0;--bg:#f8fafc;--white:#fff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:13.5px;line-height:1.65;}
+
+  .header{background:linear-gradient(135deg,#1e1b4b 0%,#4c1d95 60%,#6d28d9 100%);padding:36px 48px 28px;}
+  .header-logo{font-size:1.4rem;font-weight:900;color:#c4b5fd;letter-spacing:-0.5px;}
+  .header-logo span{color:#fed7aa;}
+  .header-title{font-size:1.5rem;font-weight:800;color:#f1f5f9;margin:6px 0 4px;line-height:1.2;}
+  .header-sub{color:#a78bfa;font-size:.85rem;}
+  .header-chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;}
+  .chip{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 14px;font-size:.75rem;color:#ddd6fe;}
+  .chip strong{color:#fff;}
+
+  .tab-bar{background:var(--white);border-bottom:2px solid var(--border);display:flex;overflow-x:auto;padding:0 48px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+  .tab-bar::-webkit-scrollbar{height:4px;}
+  .tab-btn{padding:14px 18px;border:none;background:none;cursor:pointer;font-size:.8rem;font-weight:600;color:var(--text3);white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;}
+  .tab-btn:hover{color:var(--text2);}
+  .tab-btn.active{color:#7c3aed;border-bottom-color:#7c3aed;}
+
+  .tc{display:none;padding:40px 48px 64px;max-width:1100px;margin:0 auto;}
+  .tc.active{display:block;}
+
+  .sec{font-size:1.05rem;font-weight:800;color:var(--text);margin:34px 0 14px;display:flex;align-items:center;gap:10px;}
+  .sec:first-child{margin-top:0;}
+  .ssub{font-size:.8rem;color:var(--text3);margin:-10px 0 16px;}
+
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+  .g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;}
+
+  .card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px 20px;border-top:4px solid var(--border);}
+  .card .icon{font-size:1.5rem;margin-bottom:8px;}
+  .card .ct{font-weight:800;font-size:.9rem;color:var(--text);margin-bottom:5px;}
+  .card .cb{font-size:.79rem;color:var(--text2);line-height:1.65;}
+  .card .cb strong{color:var(--text);}
+
+  .pill{display:inline-block;border-radius:20px;padding:3px 10px;font-size:.7rem;font-weight:700;}
+  .p-purple{background:var(--lav2);color:#5b21b6;}
+  .p-green{background:var(--sage);color:#166534;}
+  .p-orange{background:var(--peach);color:#9a3412;}
+  .p-blue{background:var(--sky2);color:#075985;}
+  .p-rose{background:var(--rose2);color:#9f1239;}
+
+  table{width:100%;border-collapse:collapse;background:var(--white);border-radius:14px;overflow:hidden;border:1px solid var(--border);margin-bottom:16px;}
+  th{background:#f1f5f9;padding:10px 14px;text-align:left;font-size:.76rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;}
+  td{padding:10px 14px;font-size:.79rem;color:var(--text2);border-top:1px solid var(--border);vertical-align:top;line-height:1.6;}
+  td strong{color:var(--text);}
+
+  .step{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+  .snum{width:32px;height:32px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;color:white;margin-top:2px;}
+  .scont .st{font-weight:800;font-size:.9rem;color:var(--text);margin-bottom:3px;}
+  .scont .sd{font-size:.79rem;color:var(--text2);line-height:1.65;}
+  .scont .sd strong{color:var(--text);}
+  .skpi{display:inline-block;margin-top:6px;font-size:.68rem;background:var(--van);color:#92400e;padding:2px 8px;border-radius:5px;font-weight:600;}
+
+  .mes{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px;}
+  .mes-h{padding:14px 20px;display:flex;align-items:center;gap:14px;}
+  .mes-num{width:40px;height:40px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:900;color:white;}
+  .mes-info .mi-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);}
+  .mes-info .mi-title{font-size:.92rem;font-weight:800;color:var(--text);}
+  .mes-info .mi-sub{font-size:.76rem;color:var(--text2);}
+  .mes-body{padding:4px 20px 16px;}
+  .mes-list{list-style:none;}
+  .mes-list li{padding:5px 0;border-bottom:1px solid var(--border);font-size:.79rem;color:var(--text2);display:flex;gap:8px;}
+  .mes-list li:last-child{border-bottom:none;}
+  .mes-list li::before{content:'→';color:var(--text3);flex-shrink:0;}
+
+  .formato{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:12px;border-left:5px solid;}
+  .formato .f-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .formato .f-icon{font-size:1.5rem;}
+  .formato .f-title{font-size:.92rem;font-weight:800;color:var(--text);}
+  .formato .f-sub{font-size:.73rem;color:var(--text3);}
+  .formato .f-body{font-size:.79rem;color:var(--text2);line-height:1.7;}
+  .formato .f-body strong{color:var(--text);}
+  .ejemplo{background:var(--bg);border-radius:8px;padding:10px 12px;margin-top:10px;font-size:.76rem;color:var(--text2);font-style:italic;border-left:3px solid var(--border);}
+
+  .herr{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start;}
+  .herr .h-icon{font-size:1.3rem;flex-shrink:0;margin-top:2px;}
+  .herr .h-name{font-weight:800;font-size:.88rem;color:var(--text);}
+  .herr .h-desc{font-size:.77rem;color:var(--text2);line-height:1.6;}
+  .herr .h-price{font-size:.7rem;font-weight:700;margin-top:4px;}
+
+  .alert{border-radius:12px;padding:14px 18px;margin:14px 0;font-size:.81rem;line-height:1.7;display:flex;gap:10px;align-items:flex-start;}
+  .alert-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px;}
+  .a-purple{background:var(--lav3);border:1px solid var(--lav);color:#4c1d95;}
+  .a-green{background:var(--mint3);border:1px solid var(--mint);color:#065f46;}
+  .a-orange{background:var(--peach2);border:1px solid var(--peach);color:#9a3412;}
+
+  .quote{background:var(--van2);border-left:4px solid #f59e0b;border-radius:0 12px 12px 0;padding:14px 18px;margin:14px 0;font-size:.83rem;font-style:italic;color:#78350f;line-height:1.7;}
+
+  .rutina{background:linear-gradient(135deg,#1e1b4b,#4c1d95);border-radius:16px;padding:24px 28px;margin:14px 0;}
+  .rutina-title{font-size:.95rem;font-weight:800;color:#e9d5ff;margin-bottom:14px;}
+  .rutina-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+  .rutina-item{background:rgba(255,255,255,.08);border-radius:10px;padding:12px 10px;text-align:center;border:1px solid rgba(255,255,255,.12);}
+  .rutina-time{font-size:1.1rem;font-weight:900;color:#f59e0b;margin-bottom:4px;}
+  .rutina-label{font-size:.7rem;color:#c4b5fd;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
+  .rutina-desc{font-size:.68rem;color:#a78bfa;line-height:1.5;}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+  .stat{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;}
+  .stat .n{font-size:1.7rem;font-weight:900;line-height:1;margin-bottom:4px;}
+  .stat .l{font-size:.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;}
+
+  hr{border:none;border-top:1px solid var(--border);margin:26px 0;}
+
+  .page-footer{background:var(--navy);color:#94a3b8;text-align:center;padding:22px;font-size:.77rem;}
+
+  @media(max-width:768px){
+    .tab-bar{padding:0 12px;}
+    .tc{padding:24px 16px 48px;}
+    .g2,.g3,.g4,.stats,.rutina-grid{grid-template-columns:1fr;}
+    .header{padding:24px 16px 20px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">📦 TodasMisCosas<span>.com</span></div>
+  <div class="header-title">Manual de Instagram — Plan Anual desde Cero</div>
+  <div class="header-sub">Para alguien que nunca usó Instagram profesionalmente · CABA &amp; AMBA · 2026</div>
+  <div class="header-chips">
+    <div class="chip"><strong>Paso a paso</strong> desde crear el perfil</div>
+    <div class="chip"><strong>Plan 12 meses</strong> mes a mes</div>
+    <div class="chip"><strong>Herramientas</strong> gratuitas</div>
+    <div class="chip"><strong>Rutina diaria</strong> de 20 minutos</div>
+    <div class="chip"><strong>CABA / AMBA</strong> adaptado</div>
+  </div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="showTab('inicio')">🚀 Empezar desde Cero</button>
+  <button class="tab-btn" onclick="showTab('logo')">🎨 Logo &amp; Identidad</button>
+  <button class="tab-btn" onclick="showTab('contenido')">📝 Contenido &amp; Formatos</button>
+  <button class="tab-btn" onclick="showTab('plan')">📅 Plan Anual 12M</button>
+  <button class="tab-btn" onclick="showTab('algoritmo')">📈 Crecer en IG</button>
+  <button class="tab-btn" onclick="showTab('rutina')">⏰ Rutina Diaria</button>
+  <button class="tab-btn" onclick="showTab('herramientas')">🛠️ Herramientas</button>
+</div>
+
+<!-- TAB 1: EMPEZAR DESDE CERO -->
+<div id="tab-inicio" class="tc active">
+
+  <div class="sec">🚀 Esto es Instagram — lo que necesitás saber antes de empezar</div>
+
+  <div class="stats">
+    <div class="stat"><div class="n" style="color:#c4b5fd;">2B+</div><div class="l">Usuarios activos mensuales</div></div>
+    <div class="stat"><div class="n" style="color:#a8e6cf;">70%</div><div class="l">De argentinos 18-45 años lo usan</div></div>
+    <div class="stat"><div class="n" style="color:#fed7aa;">Reels</div><div class="l">Formato con mayor alcance orgánico</div></div>
+    <div class="stat"><div class="n" style="color:#bae6fd;">3-6M</div><div class="l">Target AMBA en Instagram</div></div>
+  </div>
+
+  <div class="alert a-purple">
+    <div class="alert-icon">💡</div>
+    <div><strong>¿Para qué sirve Instagram para TMC?</strong> Para atraer proveedores (personas con espacio libre), captar clientes (personas que necesitan guardar), construir la marca TMC como referente del almacenamiento urbano porteño, y posicionar a Alejandro como experto del sector. No es para venta directa — es para generar confianza y tráfico hacia la plataforma.</div>
+  </div>
+
+  <div class="sec">📱 Paso 1 — Crear la cuenta correctamente</div>
+
+  <div class="step">
+    <div class="snum" style="background:#c4b5fd;color:#4c1d95;">1</div>
+    <div class="scont">
+      <div class="st">Descargar Instagram y crear cuenta</div>
+      <div class="sd">Descargar la app en el celular (iOS o Android). Crear cuenta nueva con el <strong>email de TMC</strong> (no el personal). Usar un número de teléfono real para verificación.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum" style="background:#c4b5fd;color:#4c1d95;">2</div>
+    <div class="scont">
+      <div class="st">Elegir el nombre de usuario (@handle)</div>
+      <div class="sd">El @ es permanente y crítico. Opciones recomendadas para TMC:<br>
+      <strong>@todasmiscosas</strong> (ideal si está disponible)<br>
+      <strong>@todasmiscosas.bsas</strong><br>
+      <strong>@tmcespacio</strong><br>
+      <strong>@todasmiscosasok</strong><br>
+      Importante: sin caracteres raros, fácil de escribir, fácil de recordar. Buscá en IG que no esté tomado.</div>
+      <span class="skpi">Verificar disponibilidad en la app antes de decidir</span>
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum" style="background:#a8e6cf;color:#065f46;">3</div>
+    <div class="scont">
+      <div class="st">Convertir a cuenta de empresa (Cuenta Profesional)</div>
+      <div class="sd">Una vez creada: ir a <strong>Configuración → Cuenta → Cambiar a cuenta profesional → Empresa</strong>. Esto habilita estadísticas, botón de contacto, link en bio con botones, y acceso a Meta Business Suite. Es GRATIS.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum" style="background:#a8e6cf;color:#065f46;">4</div>
+    <div class="scont">
+      <div class="st">Completar el perfil al 100%</div>
+      <div class="sd">
+        <strong>Foto de perfil:</strong> el logo de TMC sobre fondo blanco. Cuadrado 1080x1080px. Simple y que se reconozca en 40px de tamaño.<br>
+        <strong>Nombre:</strong> "TodasMisCosas" (aparece en búsquedas — usar keywords)<br>
+        <strong>Categoría:</strong> Servicio de almacenamiento / Marketplace<br>
+        <strong>Bio (150 caracteres máx):</strong> ver ejemplo abajo<br>
+        <strong>Link en bio:</strong> https://todasmiscosas.com<br>
+        <strong>Botón de contacto:</strong> email de TMC
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="border-top-color:#c4b5fd;margin:16px 0;">
+    <div class="icon">✍️</div>
+    <div class="ct">Ejemplo de Bio — copiar y adaptar</div>
+    <div class="cb">
+      <div style="background:#f8fafc;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:.82rem;margin-top:8px;border:1px solid var(--border);">
+        📦 El marketplace de almacenamiento urbano de BsAs<br>
+        🔑 Alquilá espacios · Monetizá tu cochera o baulera<br>
+        🔒 Con escrow y chat integrado<br>
+        📍 CABA &amp; AMBA<br>
+        👇 Publicá o buscá espacio
+      </div>
+      <p style="margin-top:8px;font-size:.75rem;color:var(--text3);">Total: 140 caracteres. El emoji ayuda a que el ojo lo lea rápido. El call to action final es clave.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="snum" style="background:#fed7aa;color:#9a3412;">5</div>
+    <div class="scont">
+      <div class="st">Crear las Highlights (Historias Destacadas)</div>
+      <div class="sd">Las Highlights son los círculos que aparecen debajo de la bio. Son tu "menú visual". Crear 5 categorías desde el primer día (pueden estar vacías hasta tener contenido):
+      <br>📦 <strong>¿Qué es TMC?</strong> — explicación de la plataforma
+      <br>🔑 <strong>Proveedores</strong> — cómo publicar tu espacio
+      <br>🛍️ <strong>Clientes</strong> — cómo buscar y reservar
+      <br>⭐ <strong>Casos reales</strong> — testimoniales
+      <br>📰 <strong>Novedades</strong> — nuevas zonas y features</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="snum" style="background:#fed7aa;color:#9a3412;">6</div>
+    <div class="scont">
+      <div class="st">Las primeras 9 publicaciones — el "grid inicial"</div>
+      <div class="sd">Antes de hacer cualquier campaña o difusión, el perfil necesita tener al menos <strong>9 publicaciones</strong> (3 filas de 3). Un perfil vacío no convierte. Estas 9 publicaciones son tu carta de presentación. Ver plan de contenido en el tab siguiente.</div>
+      <span class="skpi">Regla de oro: nunca difundir la cuenta antes de tener 9 posts</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- TAB 2: LOGO E IDENTIDAD -->
+<div id="tab-logo" class="tc">
+
+  <div class="sec">🎨 Identidad Visual — Logo, Colores, Tipografía</div>
+  <p class="ssub">Sin identidad visual consistente no hay marca. La buena noticia: se puede hacer gratis en 2 horas.</p>
+
+  <div class="alert a-purple">
+    <div class="alert-icon">💡</div>
+    <div><strong>Primero lo primero:</strong> TMC ya tiene una paleta de color definida por la plataforma (naranja #e8622a + azul navy #1e293b). El logo de Instagram debe ser consistente con la web. Si ya tienen un logo en la web, ese mismo va en Instagram. Si no hay logo formal, este tab te explica cómo crearlo.</div>
+  </div>
+
+  <div class="g3" style="margin-bottom:20px;">
+    <div class="card" style="border-top-color:#fed7aa;">
+      <div class="icon">🟠</div>
+      <div class="ct">Color principal — Naranja TMC</div>
+      <div class="cb"><strong>#E8622A</strong> — El color de acción. Botones, íconos, acentos. Transmite energía, acción, confianza. Usar en todos los posts para que el feed sea reconocible al instante.</div>
+    </div>
+    <div class="card" style="border-top-color:#bae6fd;">
+      <div class="icon">🔵</div>
+      <div class="ct">Color secundario — Navy TMC</div>
+      <div class="cb"><strong>#1E293B</strong> — El color de autoridad. Fondos oscuros, textos principales, headers. Da seriedad y contrasta perfectamente con el naranja.</div>
+    </div>
+    <div class="card" style="border-top-color:#a8e6cf;">
+      <div class="icon">⚪</div>
+      <div class="ct">Color neutro — Blanco y gris claro</div>
+      <div class="cb"><strong>#FFFFFF / #F8FAFC</strong> — El 60% de todos los diseños. Fondo limpio, espacio en blanco. Los posts más lindos son los más simples.</div>
+    </div>
+  </div>
+
+  <div class="sec">🛠️ Cómo crear el logo en Canva (gratis, 30 minutos)</div>
+
+  <div class="step">
+    <div class="snum" style="background:#c4b5fd;color:#4c1d95;">1</div>
+    <div class="scont">
+      <div class="st">Ir a Canva.com y crear cuenta gratuita</div>
+      <div class="sd">Canva es la herramienta de diseño más usada del mundo para no-diseñadores. La versión gratuita es más que suficiente para empezar. Crear cuenta con el email de TMC.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum" style="background:#c4b5fd;color:#4c1d95;">2</div>
+    <div class="scont">
+      <div class="st">Buscar "Logo" en la barra de búsqueda de Canva</div>
+      <div class="sd">Aparecen cientos de templates gratuitos. Filtrar por "Tecnología", "Negocios" o "Minimalista". Elegir uno simple — menos es más. El logo tiene que funcionar en 40px de tamaño (foto de perfil IG).</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum" style="background:#a8e6cf;color:#065f46;">3</div>
+    <div class="scont">
+      <div class="st">Personalizar el template elegido</div>
+      <div class="sd">
+        <strong>Cambiar colores</strong> → usar #E8622A y #1E293B únicamente<br>
+        <strong>Cambiar texto</strong> → "TodasMisCosas" o "TMC" (versión corta)<br>
+        <strong>Cambiar ícono</strong> → buscar "box", "storage", "urban", "warehouse" en los íconos de Canva<br>
+        <strong>Fondo</strong> → blanco (#FFFFFF) para que funcione sobre cualquier superficie
+      </div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum" style="background:#a8e6cf;color:#065f46;">4</div>
+    <div class="scont">
+      <div class="st">Exportar en 3 versiones</div>
+      <div class="sd">
+        <strong>Versión 1:</strong> PNG fondo blanco (para Instagram, web, documentos)<br>
+        <strong>Versión 2:</strong> PNG fondo transparente (para superponer en fotos)<br>
+        <strong>Versión 3:</strong> SVG (vectorial, para escalar sin perder calidad — requiere Canva Pro o pedir al diseñador)
+      </div>
+    </div>
+  </div>
+
+  <div class="g2" style="margin-top:16px;">
+    <div class="card" style="border-top-color:#a8e6cf;">
+      <div class="icon">✅</div>
+      <div class="ct">Un buen logo para Instagram debe...</div>
+      <div class="cb">
+        <ul style="list-style:none;margin-top:4px;">
+          <li style="padding:4px 0;border-bottom:1px solid var(--border);">✓ Verse bien en 40px de diámetro (foto de perfil)</li>
+          <li style="padding:4px 0;border-bottom:1px solid var(--border);">✓ Funcionar en blanco y negro</li>
+          <li style="padding:4px 0;border-bottom:1px solid var(--border);">✓ Tener máximo 2 colores</li>
+          <li style="padding:4px 0;border-bottom:1px solid var(--border);">✓ No tener texto pequeño ilegible</li>
+          <li style="padding:4px 0;">✓ Representar el concepto en 1 segundo</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="border-top-color:#fecdd3;">
+      <div class="icon">❌</div>
+      <div class="ct">Errores frecuentes de logos en Instagram</div>
+      <div class="cb">
+        <ul style="list-style:none;margin-top:4px;">
+          <li style="padding:4px 0;border-bottom:1px solid var(--border);">✗ Logo con demasiados detalles (no se ve en miniatura)</li>
+          <li style="padding:4px 0;border-bottom:1px solid var(--border);">✗ Más de 3 colores</li>
+          <li style="padding:4px 0;border-bottom:1px solid var(--border);">✗ Fondo transparente oscuro (queda mal en modo claro)</li>
+          <li style="padding:4px 0;border-bottom:1px solid var(--border);">✗ Texto muy largo o nombre completo</li>
+          <li style="padding:4px 0;">✗ Usar el mismo logo que el de WhatsApp — adaptar al formato circular</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+  <div class="sec">📐 Templates de Posts — El sistema visual de TMC</div>
+  <p class="ssub">Crear UNA VEZ en Canva y reutilizar siempre. Así el feed se ve consistente sin trabajar doble.</p>
+
+  <table>
+    <thead><tr><th>Template</th><th>Tamaño en pixels</th><th>Cuándo usar</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Post cuadrado</strong></td><td>1080 × 1080 px</td><td>Publicaciones normales del feed</td></tr>
+      <tr><td><strong>Reel / Story vertical</strong></td><td>1080 × 1920 px</td><td>Videos cortos y Historias</td></tr>
+      <tr><td><strong>Carousel slide</strong></td><td>1080 × 1080 px</td><td>Carruseles (múltiples imágenes)</td></tr>
+      <tr><td><strong>Cover de Highlight</strong></td><td>1080 × 1080 px (círculo central)</td><td>Íconos de historias destacadas</td></tr>
+      <tr><td><strong>Banner de perfil</strong></td><td>No aplica en IG</td><td>En IG el banner no existe — el foco es la foto de perfil</td></tr>
+    </tbody>
+  </table>
+
+  <div class="alert a-orange">
+    <div class="alert-icon">⚡</div>
+    <div><strong>Tip de productividad:</strong> En Canva, cuando terminés el primer template, hacé "Duplicar página" y cambiá solo el texto y la foto. Así todos los posts tienen el mismo estilo visual y tardás 5 minutos en crear cada uno en lugar de 30.</div>
+  </div>
+
+</div>
+
+<!-- TAB 3: CONTENIDO -->
+<div id="tab-contenido" class="tc">
+
+  <div class="sec">📝 Los 4 pilares de contenido de TMC en Instagram</div>
+  <p class="ssub">Toda publicación de TMC debe pertenecer a uno de estos 4 pilares. Esto da coherencia y evita el "no sé qué postear".</p>
+
+  <div class="g4" style="margin-bottom:20px;">
+    <div class="card" style="border-top-color:#a8e6cf;text-align:center;">
+      <div class="icon">🎓</div>
+      <div class="ct">Educativo</div>
+      <div class="cb" style="text-align:left;">Tips de almacenamiento, guías de cómo publicar un espacio, consejos para clientes. <span class="pill p-green">40% del contenido</span></div>
+    </div>
+    <div class="card" style="border-top-color:#c4b5fd;text-align:center;">
+      <div class="icon">⭐</div>
+      <div class="ct">Social Proof</div>
+      <div class="cb" style="text-align:left;">Casos de éxito reales, fotos de espacios disponibles, reseñas de proveedores y clientes. <span class="pill p-purple">25% del contenido</span></div>
+    </div>
+    <div class="card" style="border-top-color:#fed7aa;text-align:center;">
+      <div class="icon">🎬</div>
+      <div class="ct">Behind the scenes</div>
+      <div class="cb" style="text-align:left;">Construcción del startup, el equipo, decisiones, errores y aprendizajes. Humaniza la marca. <span class="pill p-orange">20% del contenido</span></div>
+    </div>
+    <div class="card" style="border-top-color:#bae6fd;text-align:center;">
+      <div class="icon">📣</div>
+      <div class="ct">Promocional</div>
+      <div class="cb" style="text-align:left;">Nuevas zonas disponibles, features lanzadas, ofertas de lanzamiento, CTAs directos. <span class="pill p-blue">15% del contenido</span></div>
+    </div>
+  </div>
+
+  <div class="sec">🎬 Los 5 formatos de Instagram y cuándo usar cada uno</div>
+
+  <div class="formato" style="border-left-color:#c4b5fd;">
+    <div class="f-head">
+      <div class="f-icon">🎥</div>
+      <div><div class="f-title">REELS — El formato rey del alcance orgánico</div><div class="f-sub">Video de 15 seg a 3 min · Es lo que más muestra el algoritmo a personas que no te siguen</div></div>
+    </div>
+    <div class="f-body">
+      <strong>Por qué es el #1:</strong> Instagram prioriza Reels porque compite con TikTok. Un Reel de una cuenta con 100 seguidores puede llegar a 50.000 personas si engancha los primeros 3 segundos.<br><br>
+      <strong>Ideas de Reels para TMC:</strong><br>
+      • "Cuánto gana esta cochera en Palermo por mes" (hook de dinero = alto CTR)<br>
+      • "Antes y después: transformamos esta baulera en $60.000/mes"<br>
+      • "5 espacios en tu departamento que podés monetizar HOY"<br>
+      • "Cómo publicás tu espacio en TMC en 3 minutos" (tutorial)<br>
+      • "¿Sabías que en CABA hay 80.000 cocheras vacías?" (dato impactante)
+    </div>
+    <div class="ejemplo">🎬 Estructura de un Reel que funciona: Hook potente (0-3seg) → Desarrollo rápido con texto en pantalla → Conclusión o dato sorpresa → CTA: "Seguinos para más tips"</div>
+  </div>
+
+  <div class="formato" style="border-left-color:#a8e6cf;">
+    <div class="f-head">
+      <div class="f-icon">🗂️</div>
+      <div><div class="f-title">CARRUSELES — El formato que genera más guardados y compartidos</div><div class="f-sub">2 a 20 imágenes/slides · La gente guarda los carruseles para "leer después"</div></div>
+    </div>
+    <div class="f-body">
+      <strong>Por qué funcionan:</strong> Cada vez que alguien desliza el carrusel, el algoritmo lo cuenta como tiempo de interacción. Más tiempo = más alcance.<br><br>
+      <strong>Ideas de Carruseles para TMC:</strong><br>
+      • "Guía completa: cómo fotografiar tu espacio para que rente más" (8 slides)<br>
+      • "Los 7 errores que cometen los nuevos proveedores de TMC" (7 slides)<br>
+      • "Cuánto cobrar por tu espacio según tu barrio: precios de referencia CABA" (slide por barrio)<br>
+      • "Cómo funciona el escrow de TMC: tu dinero siempre protegido" (5 slides)
+    </div>
+    <div class="ejemplo">📐 Estructura de carrusel: Slide 1 = título con hook ("Los 7 errores...") · Slides 2-7 = un error por slide · Slide final = CTA</div>
+  </div>
+
+  <div class="formato" style="border-left-color:#fed7aa;">
+    <div class="f-head">
+      <div class="f-icon">🔴</div>
+      <div><div class="f-title">STORIES — El formato del engagement diario</div><div class="f-sub">Desaparecen en 24hs · Formato vertical · Ideal para conversación con la audiencia existente</div></div>
+    </div>
+    <div class="f-body">
+      <strong>Para qué sirven:</strong> Las Stories no dan alcance nuevo pero mantienen el vínculo con quienes ya te siguen. Son el canal de conversación más directo.<br><br>
+      <strong>Ideas de Stories para TMC:</strong><br>
+      • Encuestas: "¿Tenés algún espacio libre en tu casa?" (Sí / No)<br>
+      • Preguntas: "¿Cuánto cobrarías por tu cochera en Belgrano?"<br>
+      • Detrás de escena: foto del equipo trabajando en la plataforma<br>
+      • Cuenta regresiva: "En 3 días abrimos inscripciones en Belgrano"<br>
+      • Compartir posts propios para que los followers los vean si se los perdieron
+    </div>
+    <div class="ejemplo">⏱️ Publicar mínimo 3-5 Stories por día para mantenerse visible en el feed de Stories de los seguidores. Las primeras 3 historias son las más vistas.</div>
+  </div>
+
+  <div class="formato" style="border-left-color:#bae6fd;">
+    <div class="f-head">
+      <div class="f-icon">🖼️</div>
+      <div><div class="f-title">POSTS ESTÁTICOS — Para el feed permanente</div><div class="f-sub">Foto o imagen fija · Menos alcance que Reels pero quedan en el perfil para siempre</div></div>
+    </div>
+    <div class="f-body">
+      <strong>Cuándo usarlos:</strong> Para publicaciones importantes que quieran que queden en el perfil: presentación de un espacio nuevo, lanzamiento de zona, cita o dato importante.<br><br>
+      <strong>Ideas de Posts estáticos para TMC:</strong><br>
+      • Foto de un espacio disponible con datos (precio, barrio, m²)<br>
+      • Infografía de precios por zona CABA<br>
+      • Dato del sector: "El self-storage en Argentina crece al 20% anual"<br>
+      • Cita de un proveedor satisfecho (testimonial en texto visual)
+    </div>
+  </div>
+
+  <div class="formato" style="border-left-color:#fecdd3;">
+    <div class="f-head">
+      <div class="f-icon">📡</div>
+      <div><div class="f-title">LIVES (Instagram Live) — Para eventos y Q&amp;A</div><div class="f-sub">Transmisión en vivo · Notifica a seguidores · Ideal para eventos y preguntas</div></div>
+    </div>
+    <div class="f-body">
+      <strong>Cuándo hacer Lives:</strong> Al principio no hace falta. Una vez que tengan 500+ seguidores, hacer un Live mensual: "Cómo monetizás tu espacio", invitar a un proveedor, o hacer Q&amp;A de TMC. Los Lives quedan guardados 30 días en el perfil.
+    </div>
+  </div>
+
+  <hr>
+  <div class="sec">📅 Frecuencia semanal recomendada</div>
+  <table>
+    <thead><tr><th>Formato</th><th>Frecuencia</th><th>Por qué esta cantidad</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Reels</strong></td><td>3-5 por semana</td><td>Es lo que más crece la cuenta. Sin Reels no hay crecimiento.</td></tr>
+      <tr><td><strong>Stories</strong></td><td>5-7 por día (sí, cada día)</td><td>Mantiene la cuenta "viva" ante el algoritmo y visible para los seguidores.</td></tr>
+      <tr><td><strong>Carruseles</strong></td><td>2-3 por semana</td><td>Alto engagement, muchos guardados = señal positiva al algoritmo.</td></tr>
+      <tr><td><strong>Posts estáticos</strong></td><td>1-2 por semana</td><td>Para llenar el feed pero no son el motor de crecimiento.</td></tr>
+      <tr><td><strong>Lives</strong></td><td>1 por mes (cuando tenés 500+ seguidores)</td><td>Genera notificaciones y engagement real en tiempo real.</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- TAB 4: PLAN ANUAL -->
+<div id="tab-plan" class="tc">
+
+  <div class="sec">📅 Plan Anual Instagram TMC — 12 meses, mes a mes</div>
+  <p class="ssub">Ordenado por fases: setup → crecimiento → tracción → consolidación. Cada mes tiene un objetivo claro.</p>
+
+  <!-- MES 1-2 -->
+  <div class="mes">
+    <div class="mes-h" style="background:#f5f3ff;">
+      <div class="mes-num" style="background:#c4b5fd;color:#4c1d95;">1-2</div>
+      <div class="mes-info">
+        <div class="mi-label">Meses 1-2 · FASE SETUP</div>
+        <div class="mi-title">Construir los cimientos del perfil</div>
+        <div class="mi-sub">Objetivo: Perfil completo · 9 primeros posts · 100 seguidores orgánicos</div>
+      </div>
+    </div>
+    <div class="mes-body">
+      <ul class="mes-list">
+        <li>Crear cuenta, pasar a Profesional, completar bio al 100%</li>
+        <li>Crear logo en Canva (ver tab Identidad Visual)</li>
+        <li>Crear 5 templates de posts en Canva (1 por tipo de contenido)</li>
+        <li>Crear 5 Highlights con covers visuales consistentes</li>
+        <li>Publicar las <strong>9 primeras publicaciones del grid inicial</strong> (ver abajo)</li>
+        <li>Seguir 50 cuentas relevantes: administradores de edificios, agencias inmobiliarias CABA, proptech, entrepreneurs porteños</li>
+        <li>Invitar a todos los contactos del celular a seguir la cuenta</li>
+        <li>Publicar en el grupo de WhatsApp de proveedores el Instagram</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="border-top-color:#c4b5fd;margin-bottom:20px;">
+    <div class="icon">🗓️</div>
+    <div class="ct">Las 9 primeras publicaciones del feed — el orden importa</div>
+    <div class="cb">
+      <table style="margin-top:8px;">
+        <thead><tr><th>#</th><th>Contenido</th><th>Formato</th><th>Objetivo</th></tr></thead>
+        <tbody>
+          <tr><td><strong>1</strong></td><td>"Somos TodasMisCosas — el primer marketplace P2P de almacenamiento de BsAs"</td><td>Post estático</td><td>Presentación de la marca</td></tr>
+          <tr><td><strong>2</strong></td><td>"¿Sabías que en CABA hay 80.000 cocheras vacías que no generan nada?" (dato)</td><td>Carrusel 3 slides</td><td>Educativo / hook</td></tr>
+          <tr><td><strong>3</strong></td><td>Primer espacio disponible: foto real + precio + barrio</td><td>Post estático</td><td>Social proof de oferta</td></tr>
+          <tr><td><strong>4</strong></td><td>"Cómo monetizás tu cochera en 3 pasos" (guía rápida)</td><td>Carrusel 4 slides</td><td>Educativo proveedor</td></tr>
+          <tr><td><strong>5</strong></td><td>Behind the scenes: "Así construimos TMC desde Buenos Aires"</td><td>Reel 30-60 seg</td><td>Humanizar la marca</td></tr>
+          <tr><td><strong>6</strong></td><td>"¿Necesitás guardar algo? Así funciona reservar en TMC" (tutorial)</td><td>Reel 60 seg</td><td>Educativo cliente</td></tr>
+          <tr><td><strong>7</strong></td><td>Segundo espacio disponible: cochera en Belgrano</td><td>Post estático</td><td>Social proof de oferta</td></tr>
+          <tr><td><strong>8</strong></td><td>"Los precios de almacenamiento por barrio en CABA" (comparativa)</td><td>Carrusel 6 slides</td><td>Educativo / shareable</td></tr>
+          <tr><td><strong>9</strong></td><td>Presentación del equipo: Alejandro y Guille, la historia de TMC</td><td>Post estático o Reel</td><td>Behind the scenes / confianza</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- MES 3-4 -->
+  <div class="mes">
+    <div class="mes-h" style="background:var(--mint3);">
+      <div class="mes-num" style="background:var(--mint);color:#065f46;">3-4</div>
+      <div class="mes-info">
+        <div class="mi-label">Meses 3-4 · FASE CRECIMIENTO</div>
+        <div class="mi-title">Contenido educativo como motor de alcance</div>
+        <div class="mi-sub">Objetivo: 500 seguidores · Primeros Reels virales · Primeros proveedores llegados desde IG</div>
+      </div>
+    </div>
+    <div class="mes-body">
+      <ul class="mes-list">
+        <li>Publicar 3-4 Reels por semana: foco en "¿cuánto gana?" y "cómo funciona?"</li>
+        <li>Lanzar serie de carruseles: "Barrio por barrio — precios de almacenamiento en CABA" (12 carruseles, uno por barrio)</li>
+        <li>Empezar Stories diarias: encuestas sobre espacios y almacenamiento</li>
+        <li>Hacer engagement activo: comentar en cuentas de arquitectura/deco/inmobiliarias de CABA</li>
+        <li>Compartir el IG en grupos de Facebook de barrios (Vecinos de Palermo, Belgrano Comunidad, etc.)</li>
+        <li>Primer concurso sencillo: "Seguinos y etiquetá a alguien con espacio libre — sorteamos 1 mes de comisión 0%"</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- MES 5-6 -->
+  <div class="mes">
+    <div class="mes-h" style="background:var(--peach2);">
+      <div class="mes-num" style="background:var(--peach);color:#9a3412;">5-6</div>
+      <div class="mes-info">
+        <div class="mi-label">Meses 5-6 · FASE SOCIAL PROOF</div>
+        <div class="mi-title">Mostrar resultados reales de proveedores y clientes</div>
+        <div class="mi-sub">Objetivo: 1.500 seguidores · 3 testimoniales en video · Primer proveedor estrella</div>
+      </div>
+    </div>
+    <div class="mes-body">
+      <ul class="mes-list">
+        <li>Entrevistar (por teléfono o en persona) a los primeros 3 proveedores con buenas reservas</li>
+        <li>Crear Reels de "Historia de éxito": "Cómo [nombre] convirtió su baulera en $80.000/mes"</li>
+        <li>Publicar capturas de reviews reales (con permiso del usuario)</li>
+        <li>Lanzar contenido "Antes y después": foto del espacio vacío vs con reservas activas</li>
+        <li>Empezar a etiquetar barrios en las publicaciones para aparecer en búsquedas locales</li>
+        <li>Primer Live: "Q&amp;A — Preguntas sobre cómo monetizar tu espacio" (30 minutos)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- MES 7-8 -->
+  <div class="mes">
+    <div class="mes-h" style="background:var(--sky3);">
+      <div class="mes-num" style="background:var(--sky);color:#075985;">7-8</div>
+      <div class="mes-info">
+        <div class="mi-label">Meses 7-8 · FASE COLABORACIONES</div>
+        <div class="mi-title">Colaborar con otras cuentas para multiplicar el alcance</div>
+        <div class="mi-sub">Objetivo: 3.000 seguidores · 2 colaboraciones activas · Primeros mensajes de prensa</div>
+      </div>
+    </div>
+    <div class="mes-body">
+      <ul class="mes-list">
+        <li>Contactar 3-5 cuentas de arquitectura/interiorismo/deco de CABA para colaboraciones</li>
+        <li>Función "Collab" de Instagram: un post que aparece en dos feeds a la vez</li>
+        <li>Contactar agencias inmobiliarias para hacer Reels juntos: "Espacios subutilizados en el mercado inmobiliario porteño"</li>
+        <li>Invitar a un proveedor real al Instagram Live mensual como "invitado"</li>
+        <li>Serie "El espacio del mes": destacar el mejor espacio publicado con contenido especial</li>
+        <li>Empezar a usar Instagram Shopping si aplica (vincular con la web para que los espacios aparezcan)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- MES 9-10 -->
+  <div class="mes">
+    <div class="mes-h" style="background:var(--lav3);">
+      <div class="mes-num" style="background:var(--lav);color:#5b21b6;">9-10</div>
+      <div class="mes-info">
+        <div class="mi-label">Meses 9-10 · FASE TEMPORADAS</div>
+        <div class="mi-title">Campañas estacionales y contenido de temporada</div>
+        <div class="mi-sub">Objetivo: 5.000 seguidores · Primera campaña paga de $5.000 ARS · Pipeline de proveedores desde IG</div>
+      </div>
+    </div>
+    <div class="mes-body">
+      <ul class="mes-list">
+        <li>Campaña "Vacaciones de verano": "¿A dónde van tus muebles cuando te vas?" (guardado estacional)</li>
+        <li>Primer boost pago de Reel exitoso: $5.000 ARS para ampliar alcance a Palermo/Belgrano/Recoleta</li>
+        <li>Serie "Tips de orden y organización para el verano porteño" (contenido shareable)</li>
+        <li>Crear lista de difusión en WhatsApp para proveedores que vienen de IG</li>
+        <li>Medir: cuántos proveedores llegaron de Instagram este mes vs meses anteriores</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- MES 11-12 -->
+  <div class="mes">
+    <div class="mes-h" style="background:var(--sage2);">
+      <div class="mes-num" style="background:var(--sage);color:#166534;">11-12</div>
+      <div class="mes-info">
+        <div class="mi-label">Meses 11-12 · FASE CONSOLIDACIÓN</div>
+        <div class="mi-title">Review anual, métricas y plan año 2</div>
+        <div class="mi-sub">Objetivo: 8.000-10.000 seguidores · Cuenta reconocida en CABA como referente del sector</div>
+      </div>
+    </div>
+    <div class="mes-body">
+      <ul class="mes-list">
+        <li>Post de "Un año de TMC en Instagram": recap de métricas, hitos, momentos</li>
+        <li>Serie "Lo que aprendimos en 2026 construyendo TMC" (muy sharable entre emprendedores)</li>
+        <li>Lanzar sorteo de fin de año: 1 mes gratis para proveedor + 1 mes gratis para cliente</li>
+        <li>Analizar los 5 Reels con más alcance del año → replicar esos formatos en el año 2</li>
+        <li>Hacer encuesta a seguidores sobre qué contenido quieren ver más</li>
+        <li>Comenzar a pensar en el Podcast (ver documento aparte) como siguiente canal</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- TAB 5: ALGORITMO -->
+<div id="tab-algoritmo" class="tc">
+
+  <div class="sec">📈 Cómo funciona el algoritmo de Instagram (sin tecnicismos)</div>
+
+  <div class="alert a-purple">
+    <div class="alert-icon">🧠</div>
+    <div><strong>El algoritmo de Instagram tiene un objetivo simple:</strong> mantener a la gente el mayor tiempo posible en la app. Por eso prioriza el contenido que genera interacción: views, likes, comentarios, guardados, compartidos. Cuanto más interacción genera tu contenido en las primeras horas, más lo muestra el algoritmo a personas nuevas.</div>
+  </div>
+
+  <div class="g3" style="margin-bottom:20px;">
+    <div class="card" style="border-top-color:#a8e6cf;">
+      <div class="icon">⏱️</div>
+      <div class="ct">Las primeras 3 horas son críticas</div>
+      <div class="cb">El algoritmo prueba cada post mostrándolo a un grupo pequeño. Si ese grupo interactúa mucho en las primeras 3hs, lo amplifica. Si no, lo "archiva" y nadie más lo ve. <strong>Por eso: publicar y quedarse activo esos 60 minutos respondiendo comentarios.</strong></div>
+    </div>
+    <div class="card" style="border-top-color:#c4b5fd;">
+      <div class="icon">💾</div>
+      <div class="ct">Los "Guardados" son la señal más poderosa</div>
+      <div class="cb">Cuando alguien guarda tu post es porque lo considera valioso para después. Esa señal pesa más que un like. Por eso los carruseles educativos funcionan tan bien — la gente los guarda para releer.</div>
+    </div>
+    <div class="card" style="border-top-color:#fed7aa;">
+      <div class="icon">💬</div>
+      <div class="ct">Los comentarios de más de 4 palabras valen más</div>
+      <div class="cb">Un comentario "Qué bueno!" vale muy poco. Un comentario genuino de 10+ palabras es oro para el algoritmo. Por eso crear contenido que genere opiniones o preguntas reales.</div>
+    </div>
+  </div>
+
+  <div class="sec">🏷️ Hashtags — Cómo usarlos bien en 2026</div>
+
+  <div class="alert a-orange">
+    <div class="alert-icon">⚠️</div>
+    <div><strong>El mito de los hashtags:</strong> Instagram en 2024-2026 confirmó que los hashtags YA NO son el motor de alcance que eran antes. Ahora el alcance viene de las keywords en el caption y el audio/texto en los Reels. Igual usarlos — pero no esperes milagros solo por tener 30 hashtags.</div>
+  </div>
+
+  <div class="card" style="border-top-color:#a8e6cf;margin-bottom:20px;">
+    <div class="icon">🏷️</div>
+    <div class="ct">Estrategia de hashtags para TMC — 15 hashtags mixtos por post</div>
+    <div class="cb">
+      <table style="margin-top:10px;">
+        <thead><tr><th>Categoría</th><th>Cantidad</th><th>Hashtags recomendados</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Locales CABA/AMBA</strong> (pequeños, muy específicos)</td><td>5</td><td>#palermo #belgrano #recoleta #villacañitas #buenosairesciudad</td></tr>
+          <tr><td><strong>Sector/industria</strong> (medianos)</td><td>5</td><td>#almacenamiento #guardamuebles #espaciosurbanos #proptech #marketplace</td></tr>
+          <tr><td><strong>Emprendimiento AR</strong> (medianos)</td><td>3</td><td>#emprendimientoargentino #startupargentina #emprendedor</td></tr>
+          <tr><td><strong>Grandes</strong> (millones de posts — menor impacto)</td><td>2</td><td>#buenosaires #startup</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:10px;font-size:.76rem;color:var(--text3);">Cambiar el mix de hashtags en cada post. No usar siempre los mismos — Instagram penaliza los hashtags repetidos.</p>
+    </div>
+  </div>
+
+  <div class="sec">🕐 Horarios óptimos para publicar en Argentina</div>
+  <table>
+    <thead><tr><th>Franja horaria</th><th>Engagement esperado</th><th>Por qué</th></tr></thead>
+    <tbody>
+      <tr><td><strong>12:00 — 13:30</strong></td><td>⭐⭐⭐⭐⭐ Muy alto</td><td>Almuerzo, la gente entra al celular mientras come</td></tr>
+      <tr><td><strong>19:00 — 21:00</strong></td><td>⭐⭐⭐⭐⭐ Muy alto</td><td>Después del trabajo, prime time de redes en Argentina</td></tr>
+      <tr><td><strong>07:30 — 09:00</strong></td><td>⭐⭐⭐ Moderado</td><td>Transporte en CABA, mucha gente en subte/colectivo</td></tr>
+      <tr><td><strong>21:00 — 23:00</strong></td><td>⭐⭐⭐⭐ Alto</td><td>Post-cena, especialmente jueves a sábado</td></tr>
+      <tr><td><strong>Sábado 10:00-12:00</strong></td><td>⭐⭐⭐⭐ Alto</td><td>Fin de semana, más tiempo libre con el celular</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec">🤝 Engagement activo — lo que ningún manual te dice</div>
+
+  <div class="step">
+    <div class="snum" style="background:#c4b5fd;color:#4c1d95;">1</div>
+    <div class="scont">
+      <div class="st">Comentar en cuentas grandes de tu sector (antes de publicar)</div>
+      <div class="sd">30 minutos antes de publicar tu Reel, ir a los 5 posts más recientes de 3-5 cuentas grandes del sector (inmobiliarias, arquitectura CABA, proptech) y dejar comentarios genuinos de 10+ palabras. Los seguidores de esas cuentas van a ver tu comentario y visitar tu perfil.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum" style="background:#a8e6cf;color:#065f46;">2</div>
+    <div class="scont">
+      <div class="st">Responder TODOS los comentarios en las primeras 2 horas</div>
+      <div class="sd">Cada respuesta duplica el engagement del post. Si alguien comenta "Qué bueno", respondé con una pregunta para continuar la conversación: "¿Tenés algún espacio libre en tu barrio?".</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum" style="background:#fed7aa;color:#9a3412;">3</div>
+    <div class="scont">
+      <div class="st">DMs a nuevos seguidores</div>
+      <div class="sd">Cuando alguien te sigue, mandarle un DM en las primeras 24hs: "¡Gracias por seguirnos! ¿Tenés algún espacio libre o estás buscando dónde guardar algo?" — Simple, directo, sin spam. Convierte muchos seguidores en leads.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TAB 6: RUTINA -->
+<div id="tab-rutina" class="tc">
+
+  <div class="sec">⏰ La rutina diaria de Instagram — 25 minutos</div>
+  <p class="ssub">El secreto de crecer en Instagram no es publicar mucho, es ser consistente. Esta rutina de 25 minutos al día es todo lo que se necesita para los primeros 6 meses.</p>
+
+  <div class="rutina">
+    <div class="rutina-title">⏰ Rutina diaria recomendada — 25 min/día</div>
+    <div class="rutina-grid">
+      <div class="rutina-item">
+        <div class="rutina-time">5 min</div>
+        <div class="rutina-label">🌅 Mañana</div>
+        <div class="rutina-desc">Responder DMs y comentarios de las últimas 12hs. Nunca dejar mensajes sin responder.</div>
+      </div>
+      <div class="rutina-item">
+        <div class="rutina-time">5 min</div>
+        <div class="rutina-label">💬 Engagement</div>
+        <div class="rutina-desc">Comentar en 5 posts de cuentas del sector (inmobiliarias, proptech, CABA emprendimiento).</div>
+      </div>
+      <div class="rutina-item">
+        <div class="rutina-time">5 min</div>
+        <div class="rutina-label">📸 Story diaria</div>
+        <div class="rutina-desc">Publicar 2-3 Stories: una encuesta o pregunta + un "detrás de escena" simple con el celular.</div>
+      </div>
+      <div class="rutina-item">
+        <div class="rutina-time">5 min</div>
+        <div class="rutina-label">📊 Métricas</div>
+        <div class="rutina-desc">Revisar qué post tuvo más alcance ayer. ¿Por qué funcionó? Replicar ese formato.</div>
+      </div>
+      <div class="rutina-item">
+        <div class="rutina-time">5 min</div>
+        <div class="rutina-label">📅 Preparar</div>
+        <div class="rutina-desc">Dejar listo el contenido de mañana (Reel grabado, texto del caption, hashtags copiados).</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">📆 Rutina semanal — 3 horas por semana total</div>
+
+  <table>
+    <thead><tr><th>Día</th><th>Publicación</th><th>Acción extra</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Lunes</strong></td><td>Reel educativo: tip de la semana</td><td>Revisar métricas del fin de semana</td></tr>
+      <tr><td><strong>Martes</strong></td><td>Story: encuesta sobre almacenamiento</td><td>Responder DMs de nuevos seguidores</td></tr>
+      <tr><td><strong>Miércoles</strong></td><td>Carrusel: guía o dato del sector</td><td>Comentar en 10 cuentas grandes del sector</td></tr>
+      <tr><td><strong>Jueves</strong></td><td>Reel: caso de éxito o behind the scenes</td><td>Compartir el carrusel del miércoles en Stories</td></tr>
+      <tr><td><strong>Viernes</strong></td><td>Post estático: espacio disponible de la semana</td><td>Story interactiva: pregunta de fin de semana</td></tr>
+      <tr><td><strong>Sábado</strong></td><td>Reel viral attempt: tip cortito o dato sorpresa</td><td>Engagement activo: responder todo lo acumulado</td></tr>
+      <tr><td><strong>Domingo</strong></td><td>Story: "tip del domingo" o motivación</td><td>Preparar el contenido de la semana siguiente</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec">📊 Métricas que importan (y las que no)</div>
+  <div class="g2">
+    <div class="card" style="border-top-color:#a8e6cf;">
+      <div class="icon">✅</div>
+      <div class="ct">Métricas que SÍ importan para TMC</div>
+      <div class="cb">
+        <ul style="list-style:none;margin-top:6px;">
+          <li style="padding:5px 0;border-bottom:1px solid var(--border);"><strong>Alcance de Reels</strong> — cuántas personas únicas vieron el video</li>
+          <li style="padding:5px 0;border-bottom:1px solid var(--border);"><strong>Guardados</strong> — señal de contenido valioso</li>
+          <li style="padding:5px 0;border-bottom:1px solid var(--border);"><strong>Clics en el link de bio</strong> — cuántos van a todasmiscosas.com</li>
+          <li style="padding:5px 0;border-bottom:1px solid var(--border);"><strong>Nuevos seguidores por semana</strong> — ritmo de crecimiento</li>
+          <li style="padding:5px 0;"><strong>DMs recibidos con consultas</strong> — leads reales de IG</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="border-top-color:#fecdd3;">
+      <div class="icon">❌</div>
+      <div class="ct">Métricas que NO importan (al principio)</div>
+      <div class="cb">
+        <ul style="list-style:none;margin-top:6px;">
+          <li style="padding:5px 0;border-bottom:1px solid var(--border);"><strong>Likes</strong> — son vanity metrics, no convierten</li>
+          <li style="padding:5px 0;border-bottom:1px solid var(--border);"><strong>Seguidores totales</strong> — 500 seguidores correctos > 10.000 incorrectos</li>
+          <li style="padding:5px 0;border-bottom:1px solid var(--border);"><strong>Impresiones</strong> — el alcance importa más que las impresiones</li>
+          <li style="padding:5px 0;"><strong>Visitas al perfil sin acción</strong> — si no siguen o no hacen clic, fue ruido</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TAB 7: HERRAMIENTAS -->
+<div id="tab-herramientas" class="tc">
+
+  <div class="sec">🛠️ Stack de herramientas gratuitas para Instagram</div>
+  <p class="ssub">Todo lo que necesitás para los primeros 12 meses sin pagar nada. Cuando el IG genere clientes, reinvertir.</p>
+
+  <div class="herr">
+    <div class="h-icon">🎨</div>
+    <div>
+      <div class="h-name">Canva — Diseño de posts, carruseles y Stories</div>
+      <div class="h-desc">El mejor tool de diseño para no-diseñadores. Tiene templates específicos para Instagram (posts 1080×1080, Stories 1080×1920, Reels). La versión gratuita es más que suficiente. Tener todos los templates de TMC guardados y reutilizarlos.</div>
+      <div class="h-price" style="color:#16a34a;">✅ 100% gratuito · canva.com</div>
+    </div>
+  </div>
+
+  <div class="herr">
+    <div class="h-icon">✂️</div>
+    <div>
+      <div class="h-name">CapCut — Edición de Reels y videos cortos</div>
+      <div class="h-desc">La app de edición de video más popular del mundo (misma empresa que TikTok). Tiene templates de Reels pre-armados, subtítulos automáticos, música libre de derechos y efectos. Disponible en iOS y Android. Gratuito. Todo el mundo que crea Reels usa CapCut o algo similar.</div>
+      <div class="h-price" style="color:#16a34a;">✅ Gratuito · App iOS y Android</div>
+    </div>
+  </div>
+
+  <div class="herr">
+    <div class="h-icon">📅</div>
+    <div>
+      <div class="h-name">Meta Business Suite — Programar posts</div>
+      <div class="h-desc">La app oficial de Meta (dueña de Instagram) para programar publicaciones con anticipación. Podés crear todos los posts del lunes a lunes y programarlos para que salgan solos en el horario óptimo. Gratis y oficial.</div>
+      <div class="h-price" style="color:#16a34a;">✅ Gratuito · business.facebook.com</div>
+    </div>
+  </div>
+
+  <div class="herr">
+    <div class="h-icon">📊</div>
+    <div>
+      <div class="h-name">Metricool — Analytics avanzados</div>
+      <div class="h-desc">Dashboard de métricas más completo que el de la propia app de Instagram. Muestra mejores horarios de publicación, evolución de seguidores, posts con más alcance, y permite programar contenido. La versión gratuita incluye 1 cuenta de cada red social.</div>
+      <div class="h-price" style="color:#16a34a;">✅ Gratuito (plan básico) · metricool.com</div>
+    </div>
+  </div>
+
+  <div class="herr">
+    <div class="h-icon">🖼️</div>
+    <div>
+      <div class="h-name">Remove.bg — Quitar el fondo de imágenes</div>
+      <div class="h-desc">Para poner el logo de TMC sobre fotos de espacios, o poner a Alejandro sobre un fondo de color. Quita el fondo en 2 segundos automáticamente. Gratis para uso básico.</div>
+      <div class="h-price" style="color:#16a34a;">✅ Gratuito (5 fotos/mes) · remove.bg</div>
+    </div>
+  </div>
+
+  <div class="herr">
+    <div class="h-icon">🔗</div>
+    <div>
+      <div class="h-name">Linktree — Link en bio con múltiples destinos</div>
+      <div class="h-desc">Instagram solo permite 1 link en la bio. Con Linktree, ese link lleva a una mini-página con todos los destinos: "Publicá tu espacio", "Buscá espacio", "Contactanos", "¿Qué es TMC?". Gratis en plan básico.</div>
+      <div class="h-price" style="color:#16a34a;">✅ Gratuito · linktr.ee</div>
+    </div>
+  </div>
+
+  <div class="herr">
+    <div class="h-icon">🎵</div>
+    <div>
+      <div class="h-name">Epidemic Sound / Pixabay Music — Música para Reels</div>
+      <div class="h-desc">Para Reels con música, usar tracks libres de derechos para no tener problemas de copyright en Instagram. Epidemic Sound es de pago ($13/mes) pero hay opción gratuita en Pixabay Music. Instagram también tiene su propia librería de música gratuita integrada.</div>
+      <div class="h-price" style="color:#075985;">💡 Música gratuita de Instagram integrada en la app es suficiente para empezar</div>
+    </div>
+  </div>
+
+  <div class="herr">
+    <div class="h-icon">📸</div>
+    <div>
+      <div class="h-name">Unsplash / Pexels — Fotos gratuitas de alta calidad</div>
+      <div class="h-desc">Para posts donde no tenés foto propia del espacio: usar fotos de cocheras, depósitos, bauleras de Unsplash o Pexels (100% gratuitas, sin derechos). Siempre preferir fotos reales de espacios de TMC cuando existan.</div>
+      <div class="h-price" style="color:#16a34a;">✅ Gratuito · unsplash.com / pexels.com</div>
+    </div>
+  </div>
+
+  <div class="quote" style="margin-top:24px;">
+    "No necesitás una cámara profesional para Instagram. Los Reels más virales del mundo se graban con un iPhone en modo retrato con buena luz natural. El contenido vale más que la producción." — Regla de oro del contenido para emprendedores
+  </div>
+
+</div>
+
+<div class="page-footer">
+  <strong style="color:#e2e8f0;">TodasMisCosas.com</strong> — Manual Instagram · Plan Anual · CABA &amp; AMBA · 2026<br>
+  <span style="color:#64748b;font-size:.7rem;margin-top:4px;display:block;">Generado por Claude Sonnet 4.6 · Documento interno · Para uso del equipo TMC</span>
+</div>
+
+<script>
+function showTab(id){
+  document.querySelectorAll('.tc').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

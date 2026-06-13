@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan de Podcast — Desde Cero · YouTube · Emprendimiento · Alejandro Laporte</title>
+<style>
+  :root {
+    --mint:#a8e6cf;--mint2:#d4f5e9;--mint3:#f0fdf4;
+    --lav:#c4b5fd;--lav2:#ede9fe;--lav3:#f5f3ff;
+    --peach:#fed7aa;--peach2:#fff3e8;
+    --sky:#bae6fd;--sky2:#e8f7ff;--sky3:#f0f9ff;
+    --van:#fef3c7;--van2:#fffbeb;
+    --rose:#fecdd3;--rose2:#fff1f3;
+    --sage:#bbf7d0;--sage2:#f0fdf4;
+    --teal:#99f6e4;--teal2:#f0fdfa;
+    --orange:#e8622a;--navy:#1e293b;
+    --text:#1e293b;--text2:#475569;--text3:#94a3b8;
+    --border:#e2e8f0;--bg:#f8fafc;--white:#fff;
+    --red:#dc2626;--green:#16a34a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:13.5px;line-height:1.65;}
+
+  .header{background:linear-gradient(135deg,#0c0a09 0%,#1c1917 40%,#292524 100%);padding:36px 48px 28px;}
+  .header-logo{font-size:1.3rem;font-weight:900;color:#fbbf24;letter-spacing:-0.5px;}
+  .header-logo span{color:#a8e6cf;}
+  .header-title{font-size:1.5rem;font-weight:800;color:#f5f5f4;margin:6px 0 4px;line-height:1.2;}
+  .header-sub{color:#a8a29e;font-size:.85rem;}
+  .header-chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;}
+  .chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:4px 14px;font-size:.75rem;color:#d6d3d1;}
+  .chip strong{color:#fff;}
+
+  .tab-bar{background:var(--white);border-bottom:2px solid var(--border);display:flex;overflow-x:auto;padding:0 48px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+  .tab-bar::-webkit-scrollbar{height:4px;}
+  .tab-btn{padding:14px 18px;border:none;background:none;cursor:pointer;font-size:.8rem;font-weight:600;color:var(--text3);white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;}
+  .tab-btn:hover{color:var(--text2);}
+  .tab-btn.active{color:#d97706;border-bottom-color:#d97706;}
+
+  .tc{display:none;padding:40px 48px 64px;max-width:1100px;margin:0 auto;}
+  .tc.active{display:block;}
+
+  .sec{font-size:1.05rem;font-weight:800;color:var(--text);margin:34px 0 14px;display:flex;align-items:center;gap:10px;}
+  .sec:first-child{margin-top:0;}
+  .ssub{font-size:.8rem;color:var(--text3);margin:-10px 0 16px;}
+
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+  .g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;}
+
+  .card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px 20px;border-top:4px solid var(--border);}
+  .card .icon{font-size:1.5rem;margin-bottom:8px;}
+  .card .ct{font-weight:800;font-size:.9rem;color:var(--text);margin-bottom:5px;}
+  .card .cb{font-size:.79rem;color:var(--text2);line-height:1.65;}
+  .card .cb strong{color:var(--text);}
+
+  .pill{display:inline-block;border-radius:20px;padding:3px 10px;font-size:.7rem;font-weight:700;}
+  .p-yellow{background:var(--van);color:#92400e;}
+  .p-green{background:var(--sage);color:#166534;}
+  .p-orange{background:var(--peach);color:#9a3412;}
+  .p-blue{background:var(--sky2);color:#075985;}
+  .p-teal{background:var(--teal2);color:#0f766e;}
+
+  table{width:100%;border-collapse:collapse;background:var(--white);border-radius:14px;overflow:hidden;border:1px solid var(--border);margin-bottom:16px;}
+  th{background:#f1f5f9;padding:10px 14px;text-align:left;font-size:.76rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;}
+  td{padding:10px 14px;font-size:.79rem;color:var(--text2);border-top:1px solid var(--border);vertical-align:top;line-height:1.6;}
+  td strong{color:var(--text);}
+  td.good{color:var(--green);font-weight:700;}
+  td.mid{color:#d97706;font-weight:700;}
+  td.bad{color:var(--red);font-weight:700;}
+
+  .step{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+  .snum{width:32px;height:32px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;color:white;margin-top:2px;}
+  .scont .st{font-weight:800;font-size:.9rem;color:var(--text);margin-bottom:3px;}
+  .scont .sd{font-size:.79rem;color:var(--text2);line-height:1.65;}
+  .scont .sd strong{color:var(--text);}
+  .skpi{display:inline-block;margin-top:6px;font-size:.68rem;background:var(--van);color:#92400e;padding:2px 8px;border-radius:5px;font-weight:600;}
+
+  .fase{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px;}
+  .fase-h{padding:16px 22px;display:flex;align-items:center;gap:14px;}
+  .fase-num{width:44px;height:44px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:900;color:white;}
+  .fase-info .fi-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);}
+  .fase-info .fi-title{font-size:.95rem;font-weight:800;color:var(--text);}
+  .fase-info .fi-sub{font-size:.76rem;color:var(--text2);margin-top:2px;}
+  .fase-body{padding:4px 22px 18px;}
+  .fase-list{list-style:none;}
+  .fase-list li{padding:6px 0;border-bottom:1px solid var(--border);font-size:.79rem;color:var(--text2);display:flex;gap:8px;}
+  .fase-list li:last-child{border-bottom:none;}
+  .fase-list li::before{content:'→';color:var(--text3);flex-shrink:0;}
+  .fase-list li strong{color:var(--text);}
+
+  .equipo-item{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start;}
+  .equipo-icon{font-size:1.8rem;flex-shrink:0;}
+  .equipo-name{font-weight:800;font-size:.9rem;color:var(--text);}
+  .equipo-price{font-size:.72rem;font-weight:700;margin:3px 0;}
+  .equipo-desc{font-size:.78rem;color:var(--text2);line-height:1.6;}
+  .equipo-rec{display:inline-block;margin-top:4px;font-size:.68rem;padding:2px 8px;border-radius:5px;font-weight:700;}
+
+  .estructura{background:linear-gradient(135deg,#0c0a09,#292524);border-radius:16px;padding:24px 28px;margin:14px 0;}
+  .estructura-title{font-size:.95rem;font-weight:800;color:#fbbf24;margin-bottom:14px;}
+  .estructura-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;}
+  .est-item{background:rgba(255,255,255,.07);border-radius:10px;padding:10px 8px;text-align:center;border:1px solid rgba(255,255,255,.1);}
+  .est-time{font-size:.9rem;font-weight:900;color:#fbbf24;margin-bottom:3px;}
+  .est-label{font-size:.65rem;color:#a8a29e;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;}
+  .est-desc{font-size:.67rem;color:#78716c;line-height:1.4;}
+
+  .yt-box{background:linear-gradient(135deg,#7f1d1d,#991b1b);border-radius:16px;padding:24px 28px;color:#fef2f2;margin:14px 0;}
+  .yt-title{font-size:.95rem;font-weight:800;color:#fca5a5;margin-bottom:12px;}
+  .yt-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .yt-item{background:rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;border:1px solid rgba(255,255,255,.1);}
+  .yt-item-title{font-size:.8rem;font-weight:800;color:#fee2e2;margin-bottom:4px;}
+  .yt-item-desc{font-size:.74rem;color:#fca5a5;line-height:1.6;}
+
+  .alert{border-radius:12px;padding:14px 18px;margin:14px 0;font-size:.81rem;line-height:1.7;display:flex;gap:10px;align-items:flex-start;}
+  .alert-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px;}
+  .a-yellow{background:var(--van2);border:1px solid var(--van);color:#92400e;}
+  .a-green{background:var(--mint3);border:1px solid var(--mint);color:#065f46;}
+  .a-blue{background:var(--sky3);border:1px solid var(--sky);color:#075985;}
+  .a-teal{background:var(--teal2);border:1px solid var(--teal);color:#0f766e;}
+
+  .quote{background:var(--van2);border-left:4px solid #f59e0b;border-radius:0 12px 12px 0;padding:14px 18px;margin:14px 0;font-size:.83rem;font-style:italic;color:#78350f;line-height:1.7;}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+  .stat{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;}
+  .stat .n{font-size:1.7rem;font-weight:900;line-height:1;margin-bottom:4px;}
+  .stat .l{font-size:.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;}
+
+  .nombre-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:8px;display:flex;gap:14px;align-items:center;}
+  .nombre-emoji{font-size:1.4rem;flex-shrink:0;}
+  .nombre-title{font-weight:800;font-size:.9rem;color:var(--text);}
+  .nombre-why{font-size:.77rem;color:var(--text2);}
+  .nombre-rec{font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:5px;}
+
+  hr{border:none;border-top:1px solid var(--border);margin:26px 0;}
+
+  .page-footer{background:var(--navy);color:#94a3b8;text-align:center;padding:22px;font-size:.77rem;}
+
+  @media(max-width:768px){
+    .tab-bar{padding:0 12px;}
+    .tc{padding:24px 16px 48px;}
+    .g2,.g3,.g4,.stats,.estructura-grid,.yt-grid{grid-template-columns:1fr;}
+    .header{padding:24px 16px 20px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">🎙️ Podcast<span> · Plan desde Cero</span></div>
+  <div class="header-title">Cómo crear tu podcast de emprendimiento · YouTube &amp; más</div>
+  <div class="header-sub">Para Alejandro Laporte · Emprendimiento, proyectos y construcción de startups desde Buenos Aires · 2026</div>
+  <div class="header-chips">
+    <div class="chip"><strong>Fase 0 a 5</strong> paso a paso</div>
+    <div class="chip"><strong>Equipo gratuito</strong> para empezar</div>
+    <div class="chip"><strong>YouTube</strong> como canal principal</div>
+    <div class="chip"><strong>Spotify + Apple</strong> distribución</div>
+    <div class="chip"><strong>Crecimiento orgánico</strong> sin publicidad paga</div>
+  </div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="showTab('concepto')">🧠 Concepto</button>
+  <button class="tab-btn" onclick="showTab('equipo')">🎙️ Equipo</button>
+  <button class="tab-btn" onclick="showTab('produccion')">🎬 Producción</button>
+  <button class="tab-btn" onclick="showTab('youtube')">▶️ YouTube</button>
+  <button class="tab-btn" onclick="showTab('distribucion')">📡 Distribución</button>
+  <button class="tab-btn" onclick="showTab('fases')">🗺️ Fases 0→5</button>
+  <button class="tab-btn" onclick="showTab('crecimiento')">📈 Crecimiento</button>
+</div>
+
+<!-- TAB 1: CONCEPTO -->
+<div id="tab-concepto" class="tc active">
+
+  <div class="sec">🧠 Antes de grabar: definir el concepto del podcast</div>
+  <p class="ssub">Las 5 preguntas que hay que responder antes de comprar un micrófono. Sin esto, el podcast no tiene dirección.</p>
+
+  <div class="alert a-yellow">
+    <div class="alert-icon">💡</div>
+    <div><strong>El error #1 de los podcasts que mueren en el episodio 4:</strong> empezar a grabar sin tener claro para quién es y por qué alguien lo escucharía. Un podcast no es un diario personal — es un servicio para una audiencia específica. Cuanto más específico el nicho, más fiel la audiencia.</div>
+  </div>
+
+  <div class="sec">🎯 Las 5 preguntas fundacionales</div>
+
+  <div class="g2" style="margin-bottom:20px;">
+    <div class="card" style="border-top-color:#fbbf24;">
+      <div class="icon">👤</div>
+      <div class="ct">¿Para quién es?</div>
+      <div class="cb">
+        <strong>Respuesta para este podcast:</strong> Emprendedores argentinos entre 25-45 años que están construyendo o queriendo construir algo propio. Personas que quieren aprender del proceso real (no el instagram-success-story). Especialmente en CABA y AMBA, pero con potencial para toda la región hispanohablante.<br><br>
+        <strong>NO es para:</strong> todo el mundo. Cuanto más específico, mejor.
+      </div>
+    </div>
+    <div class="card" style="border-top-color:#a8e6cf;">
+      <div class="icon">❓</div>
+      <div class="ct">¿Qué problema resuelve?</div>
+      <div class="cb">
+        <strong>El problema:</strong> Hay demasiado contenido de "cómo hacerse millonario en 30 días" y muy poco sobre la realidad de construir un negocio en Argentina: la inflación, las regulaciones, los errores reales, los meses sin ingresos, las decisiones difíciles.<br><br>
+        <strong>Este podcast llena ese gap:</strong> honestidad radical sobre el proceso de emprender en Argentina.
+      </div>
+    </div>
+    <div class="card" style="border-top-color:#c4b5fd;">
+      <div class="icon">🗣️</div>
+      <div class="ct">¿Cuál es el formato?</div>
+      <div class="cb">
+        <strong>Recomendado para empezar:</strong> Episodios de 20-40 minutos. Combinación de:<br>
+        — Episodios solo (Alejandro habla del proceso de TMC, decisiones, aprendizajes)<br>
+        — Episodios con invitado (emprendedores, inversores, founders del ecosistema AR)<br><br>
+        Empezar solo es más fácil logísticamente. Incorporar invitados desde el episodio 5.
+      </div>
+    </div>
+    <div class="card" style="border-top-color:#bae6fd;">
+      <div class="icon">📅</div>
+      <div class="ct">¿Cada cuánto?</div>
+      <div class="cb">
+        <strong>Regla de oro:</strong> es mejor un episodio por semana durante 2 años que 3 episodios por semana durante 2 meses.<br><br>
+        <strong>Frecuencia recomendada:</strong><br>
+        — Fase 0-1 (meses 1-2): quincenal (1 cada 2 semanas)<br>
+        — Fase 2+ (mes 3 en adelante): semanal (1 por semana)<br>
+        La consistencia es el activo más importante de un podcast.
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">💡 Nombre del podcast — Opciones recomendadas</div>
+  <p class="ssub">El nombre es el primer gancho. Tiene que ser fácil de recordar, fácil de buscar y decir de qué va sin leer la descripción.</p>
+
+  <div class="nombre-card">
+    <div class="nombre-emoji">🏙️</div>
+    <div>
+      <div class="nombre-title">Desde BsAs</div>
+      <div class="nombre-why">Simple, local, memorable. "Desde Buenos Aires" habla de origen geográfico y perspectiva. Ideal para una marca personal latinoamericana. El punto de vista porteño sobre el emprendimiento.</div>
+      <div class="nombre-rec" style="background:var(--sage);color:#166534;margin-top:4px;">⭐ Favorito — fácil de buscar en YouTube</div>
+    </div>
+  </div>
+  <div class="nombre-card">
+    <div class="nombre-emoji">🔨</div>
+    <div>
+      <div class="nombre-title">Builders Porteños</div>
+      <div class="nombre-why">Para quienes construyen cosas (startups, proyectos, negocios) desde Buenos Aires. La palabra "Builders" es reconocible en el ecosistema tech y emprendedor. Tiene fuerza.</div>
+      <div class="nombre-rec" style="background:var(--sky2);color:#075985;margin-top:4px;">💡 Buena opción — nicho tech/startup</div>
+    </div>
+  </div>
+  <div class="nombre-card">
+    <div class="nombre-emoji">📦</div>
+    <div>
+      <div class="nombre-title">El Camino de TMC</div>
+      <div class="nombre-why">Formato "building in public" — documenta el proceso de construir TodasMisCosas en tiempo real. Muy honesto, muy seguido por emprendedores. Pero limita el alcance solo a quien conoce TMC.</div>
+      <div class="nombre-rec" style="background:var(--peach);color:#9a3412;margin-top:4px;">⚡ Nicho pero muy auténtico</div>
+    </div>
+  </div>
+  <div class="nombre-card">
+    <div class="nombre-emoji">🧠</div>
+    <div>
+      <div class="nombre-title">El Problema y la Solución</div>
+      <div class="nombre-why">Cada episodio presenta un problema real del emprendimiento y la solución que encontraron. Formato muy claro y replicable. Fácil de indexar en Google y YouTube.</div>
+      <div class="nombre-rec" style="background:var(--lav2);color:#5b21b6;margin-top:4px;">📊 Muy buscable en SEO</div>
+    </div>
+  </div>
+
+  <hr>
+  <div class="sec">📝 Descripción del podcast — El texto que aparece en YouTube y Spotify</div>
+  <div class="card" style="border-top-color:#fbbf24;">
+    <div class="icon">✍️</div>
+    <div class="ct">Ejemplo de descripción para "Desde BsAs"</div>
+    <div class="cb">
+      <div style="background:#f8fafc;border-radius:10px;padding:14px 16px;font-size:.82rem;margin-top:8px;border:1px solid var(--border);line-height:1.8;">
+        <strong>Desde BsAs</strong> es el podcast sobre emprendimiento, tecnología y construcción de proyectos desde Buenos Aires, Argentina.<br><br>
+        Conducido por Alejandro Laporte, fundador de TodasMisCosas.com — el primer marketplace P2P de almacenamiento urbano de CABA.<br><br>
+        Acá no hay fórmulas mágicas ni historias de éxito perfectas. Hay decisiones reales, errores honestos, y el proceso de construir algo que valga la pena desde el contexto argentino.<br><br>
+        Nuevo episodio cada semana. Gratis en YouTube, Spotify y Apple Podcasts.<br><br>
+        🎙️ Instagram: @desdebs_as | 🌐 todasmiscosas.com
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TAB 2: EQUIPO -->
+<div id="tab-equipo" class="tc">
+
+  <div class="sec">🎙️ El equipo de grabación — desde gratis hasta profesional</div>
+  <p class="ssub">Empezar con lo que tenés. Mejorar cuando el podcast tenga audiencia. No esperar el setup perfecto para lanzar.</p>
+
+  <div class="alert a-green">
+    <div class="alert-icon">✅</div>
+    <div><strong>La verdad sobre el equipo:</strong> El audio importa más que el video. La gente abandona un podcast por audio malo mucho antes que por video malo. Pero "audio bueno" no significa "equipo caro" — significa habitación silenciosa + micrófono básico + boca cerca del micrófono.</div>
+  </div>
+
+  <div class="sec">📦 Setup Nivel 0 — Con lo que ya tenés (Costo: $0)</div>
+
+  <div class="equipo-item">
+    <div class="equipo-icon">📱</div>
+    <div>
+      <div class="equipo-name">Auriculares con micrófono del celular</div>
+      <div class="equipo-price" style="color:var(--green);">Costo: $0 — ya los tenés</div>
+      <div class="equipo-desc">Los auriculares que vienen con el iPhone o cualquier Android tienen micrófono integrado que graba audio decente si la habitación está en silencio. El secreto: tener el micrófono (el cilindro del cable) a 10-15 cm de la boca. Grabar en una habitación con ropa (los muebles absorben el eco).</div>
+      <div class="equipo-rec" style="background:var(--sage);color:#166534;">Para los primeros 3-5 episodios de prueba</div>
+    </div>
+  </div>
+
+  <div class="equipo-item">
+    <div class="equipo-icon">📲</div>
+    <div>
+      <div class="equipo-name">App de grabación del celular</div>
+      <div class="equipo-price" style="color:var(--green);">Costo: $0 — ya viene en el celular</div>
+      <div class="equipo-desc">iOS: app "Dictáfono" o "Voice Memos". Android: "Grabadora de voz". Grabar en WAV o sin compresión si la app lo permite. Evitar grabaciones en MP3 para luego editar — el WAV tiene mejor calidad de edición.</div>
+      <div class="equipo-rec" style="background:var(--sage);color:#166534;">Suficiente para empezar</div>
+    </div>
+  </div>
+
+  <div class="sec">📦 Setup Nivel 1 — Primera inversión (Costo: $20-80 USD)</div>
+
+  <div class="equipo-item">
+    <div class="equipo-icon">🎤</div>
+    <div>
+      <div class="equipo-name">Micrófono USB — Fifine K669 / Maono AU-A04</div>
+      <div class="equipo-price" style="color:#d97706;">Costo: $25-50 USD · Se consigue en MercadoLibre Argentina</div>
+      <div class="equipo-desc">Micrófonos USB de escritorio que se conectan directo a la PC o Mac sin interfaz adicional. La diferencia vs los auriculares del celular es enorme. Estos modelos son los más recomendados para podcast principiante en todo el mundo. Buscarlos en ML como "micrófono USB podcast".</div>
+      <div class="equipo-rec" style="background:var(--van);color:#92400e;">Recomendado para el episodio 1 "oficial"</div>
+    </div>
+  </div>
+
+  <div class="equipo-item">
+    <div class="equipo-icon">🦺</div>
+    <div>
+      <div class="equipo-name">Pop filter o esponja anti-pop</div>
+      <div class="equipo-price" style="color:var(--green);">Costo: $3-8 USD o hacer uno casero con media de nylon</div>
+      <div class="equipo-desc">Elimina el "pum" de las letras P y B que arruinan el audio. Viene incluido en muchos micros o se compra separado. Alternativa 100% gratuita: un calcetín limpio sobre el micrófono o poner un lápiz horizontalmente frente a la boca del micro.</div>
+      <div class="equipo-rec" style="background:var(--sage);color:#166534;">Imprescindible · Muy barato</div>
+    </div>
+  </div>
+
+  <div class="sec">📦 Setup Nivel 2 — Calidad semiprofesional (Costo: $150-400 USD)</div>
+
+  <div class="equipo-item">
+    <div class="equipo-icon">🎙️</div>
+    <div>
+      <div class="equipo-name">Shure MV7 o Rode PodMic</div>
+      <div class="equipo-price" style="color:#d97706;">Costo: $150-250 USD · Importado o MercadoLibre</div>
+      <div class="equipo-desc">El estándar de la industria de podcasting. Ambos son dinámicos (rechazan el ruido de fondo mejor que los condensadores). El Shure MV7 conecta por USB o XLR (más flexible). El Rode PodMic es XLR solamente. Estos son los micros que usan la mayoría de los podcasters que ven en YouTube.</div>
+      <div class="equipo-rec" style="background:var(--lav2);color:#5b21b6;">Para cuando el podcast tenga 500+ suscriptores</div>
+    </div>
+  </div>
+
+  <div class="equipo-item">
+    <div class="equipo-icon">🔊</div>
+    <div>
+      <div class="equipo-name">Interfaz de audio — Focusrite Scarlett Solo</div>
+      <div class="equipo-price" style="color:#d97706;">Costo: $120-180 USD · Solo si usás micrófono XLR</div>
+      <div class="equipo-desc">Si el micrófono es XLR (como el Rode PodMic), necesitás una interfaz para conectarlo a la PC. El Focusrite Scarlett Solo es el estándar mundial para podcast y grabación casera. Convierte la señal analógica del micrófono en digital para la computadora.</div>
+      <div class="equipo-rec" style="background:var(--lav2);color:#5b21b6;">Solo si el micro elegido es XLR</div>
+    </div>
+  </div>
+
+  <div class="equipo-item">
+    <div class="equipo-icon">🎧</div>
+    <div>
+      <div class="equipo-name">Auriculares cerrados para monitoreo</div>
+      <div class="equipo-price" style="color:#d97706;">Costo: $30-80 USD</div>
+      <div class="equipo-desc">Para editar el audio y escuchar lo que grabaste con precisión. No se necesita nada caro: Audio-Technica ATH-M20x o Sony MDR-7506. No usar auriculares Bluetooth para edición — el delay en audio Bluetooth arruina la experiencia de edición.</div>
+      <div class="equipo-rec" style="background:var(--peach);color:#9a3412;">Cuando empezás a editar seriamente</div>
+    </div>
+  </div>
+
+  <hr>
+  <div class="sec">🖥️ Software de grabación y edición (todo gratuito)</div>
+
+  <table>
+    <thead><tr><th>Software</th><th>Para qué</th><th>Plataforma</th><th>Precio</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Audacity</strong></td><td>Grabar y editar audio. El más popular del mundo para podcast. Tiene todo lo necesario: cortar, amplificar, reducir ruido, exportar MP3/WAV.</td><td>Windows / Mac / Linux</td><td class="good">Gratis</td></tr>
+      <tr><td><strong>GarageBand</strong></td><td>Alternativa a Audacity en Mac. Más fácil de usar visualmente. Viene preinstalado en todos los Mac.</td><td>Solo Mac / iOS</td><td class="good">Gratis (viene con Mac)</td></tr>
+      <tr><td><strong>Riverside.fm</strong></td><td>Para grabar entrevistas remotas con invitados. Graba cada participante por separado en su computadora (mejor calidad que Zoom). Plan gratuito: 2hs/mes.</td><td>Web (Chrome)</td><td class="mid">Gratis hasta 2hs/mes</td></tr>
+      <tr><td><strong>Zencastr</strong></td><td>Alternativa a Riverside para entrevistas remotas. Similar funcionalidad. Plan gratuito más generoso.</td><td>Web (Chrome)</td><td class="good">Gratis hasta 8hs/mes</td></tr>
+      <tr><td><strong>OBS Studio</strong></td><td>Para grabar el video del podcast (la cámara mientras grabás). También sirve para livestream en YouTube. Muy completo y gratis.</td><td>Windows / Mac / Linux</td><td class="good">Gratis</td></tr>
+      <tr><td><strong>DaVinci Resolve</strong></td><td>Para editar el video del episodio antes de subir a YouTube. La versión gratuita es mejor que muchos softwares pagos. Curva de aprendizaje media.</td><td>Windows / Mac</td><td class="good">Gratis</td></tr>
+      <tr><td><strong>Adobe Podcast (Enhance)</strong></td><td>IA que mejora automáticamente el audio en 1 clic. Elimina ruido de fondo, mejora la voz. Usar antes de publicar. Hasta 1hs/mes gratis.</td><td>Web</td><td class="good">Gratis (1hs/mes)</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- TAB 3: PRODUCCIÓN -->
+<div id="tab-produccion" class="tc">
+
+  <div class="sec">🎬 El proceso de producción de un episodio</div>
+  <p class="ssub">Desde la idea hasta el archivo listo para subir. Hacerlo siempre igual crea un sistema que ahorra tiempo.</p>
+
+  <div class="estructura">
+    <div class="estructura-title">⏱️ Estructura recomendada de un episodio de 30-35 minutos</div>
+    <div class="estructura-grid">
+      <div class="est-item">
+        <div class="est-time">0:00-0:30</div>
+        <div class="est-label">🎵 Intro</div>
+        <div class="est-desc">Música de apertura (5-10 seg) + "Bienvenidos a Desde BsAs, soy Alejandro"</div>
+      </div>
+      <div class="est-item">
+        <div class="est-time">0:30-2:00</div>
+        <div class="est-label">📌 Hook</div>
+        <div class="est-desc">El gancho del episodio: qué vas a aprender hoy. Spoiler del mejor momento.</div>
+      </div>
+      <div class="est-item">
+        <div class="est-time">2:00-5:00</div>
+        <div class="est-label">🌐 Contexto</div>
+        <div class="est-desc">Por qué este tema hoy. Qué pasó esta semana en TMC o en el ecosistema.</div>
+      </div>
+      <div class="est-item">
+        <div class="est-time">5:00-28:00</div>
+        <div class="est-label">💡 Contenido</div>
+        <div class="est-desc">El cuerpo principal. 3-5 puntos claros. No más de 5 ideas por episodio.</div>
+      </div>
+      <div class="est-item">
+        <div class="est-time">28:00-32:00</div>
+        <div class="est-label">📝 Resumen</div>
+        <div class="est-desc">Recap de los 3 puntos más importantes. Lo que el oyente se lleva.</div>
+      </div>
+      <div class="est-item">
+        <div class="est-time">32:00-35:00</div>
+        <div class="est-label">📣 CTA</div>
+        <div class="est-desc">"Suscribite, dejá tu comentario, seguinos en Instagram. Nos escuchamos la semana que viene."</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">✍️ Cómo preparar el episodio (sin leer un guión)</div>
+
+  <div class="step">
+    <div class="snum" style="background:var(--van);color:#92400e;">1</div>
+    <div class="scont">
+      <div class="st">Elegir UN solo tema por episodio</div>
+      <div class="sd">El error más común es querer hablar de todo en un episodio. Un tema, desarrollado bien, en 30 minutos es mucho mejor que 5 temas rozados superficialmente. Ejemplo: "Cómo elegimos el stack tecnológico de TMC" — solo eso, durante 30 minutos.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum" style="background:var(--van);color:#92400e;">2</div>
+    <div class="scont">
+      <div class="st">Crear un outline de 5-7 puntos (no un guión)</div>
+      <div class="sd">No escribir el episodio completo — se nota cuando alguien lee. En cambio, escribir los puntos principales con 2-3 bullets de apoyo cada uno. Ejemplo:<br>
+      <strong>Punto 1:</strong> Por qué elegimos Next.js → simplicidad, SSR, comunidad<br>
+      <strong>Punto 2:</strong> El problema con Express inicial → escalabilidad<br>
+      <strong>Punto 3:</strong> Qué haríamos diferente hoy → GraphQL, no REST<br>
+      Eso es todo. Hablar naturalmente sobre cada punto usando el outline como guía.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum" style="background:#a8e6cf;color:#065f46;">3</div>
+    <div class="scont">
+      <div class="st">Preparar el espacio de grabación</div>
+      <div class="sd">
+        <strong>Habitación con más "objetos blandos" posibles:</strong> ropa en placard, sillones, cortinas, alfombra — todo absorbe el eco.<br>
+        <strong>Evitar:</strong> habitaciones vacías, baños, cocinas (mucho eco), habitaciones con ventilador o aire acondicionado (ruido constante).<br>
+        <strong>Truco profesional:</strong> grabar dentro de un placard lleno de ropa — el sonido queda increíble y es gratis.
+      </div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum" style="background:#a8e6cf;color:#065f46;">4</div>
+    <div class="scont">
+      <div class="st">Grabar sin parar — editar después</div>
+      <div class="sd">No pausar ni volver a grabar cuando te equivocás. Seguir adelante, dar un golpe en la mesa (para ver en la forma de onda dónde está el error), y continuar. Editar los errores después es mucho más eficiente que grabar 20 veces el mismo segmento. La voz suena mejor cuando no hay tensión de "grabar perfecto".</div>
+      <span class="skpi">Grabar siempre 5 minutos más de lo necesario — siempre hay algo para cortar</span>
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum" style="background:#c4b5fd;color:#5b21b6;">5</div>
+    <div class="scont">
+      <div class="st">Edición mínima viable</div>
+      <div class="sd">
+        <strong>Lo que SÍ hay que editar:</strong> errores grandes, silencio de más de 3 segundos, tos, "eh/mmm" excesivos, ruidos accidentales.<br>
+        <strong>Lo que NO hay que editar:</strong> cada pequeño titubeo, respiraciones normales, pequeñas pausas. La conversación natural es parte del encanto del podcast.<br>
+        <strong>Tiempo estimado:</strong> para un episodio de 30 min, la edición debería llevar 20-40 min máximo si se usa Audacity con práctica.
+      </div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum" style="background:#c4b5fd;color:#5b21b6;">6</div>
+    <div class="scont">
+      <div class="st">Mejorar el audio con Adobe Podcast Enhance</div>
+      <div class="sd">Ir a podcast.adobe.com/enhance, subir el archivo de audio grabado. En menos de 2 minutos, la IA mejora automáticamente la calidad del audio: reduce el ruido de fondo, mejora la claridad de la voz, normaliza el volumen. Es gratis hasta 1 hora por mes. El resultado es notablemente mejor sin edición manual.</div>
+      <span class="skpi">Usar siempre antes de exportar el episodio final</span>
+    </div>
+  </div>
+
+  <hr>
+  <div class="sec">🎨 La portada del podcast — el "logo" que aparece en Spotify y YouTube</div>
+
+  <div class="g3">
+    <div class="card" style="border-top-color:#fbbf24;">
+      <div class="icon">📐</div>
+      <div class="ct">Requisitos técnicos</div>
+      <div class="cb">
+        <strong>Tamaño:</strong> 3000 × 3000 px (cuadrado obligatorio)<br>
+        <strong>Formato:</strong> JPG o PNG<br>
+        <strong>Peso máximo:</strong> 500 KB<br>
+        <strong>Resolución:</strong> 72 dpi para web<br><br>
+        Spotify, Apple Podcasts y YouTube usan esta imagen como identidad visual del podcast. Se ve en tamaño miniatura — que se lea bien en 50px.
+      </div>
+    </div>
+    <div class="card" style="border-top-color:#a8e6cf;">
+      <div class="icon">✅</div>
+      <div class="ct">Qué debe tener</div>
+      <div class="cb">
+        <strong>Nombre del podcast</strong> grande y legible<br>
+        <strong>Foto de Alejandro</strong> (cara visible — genera confianza)<br>
+        <strong>Máximo 2 colores</strong> de fondo<br>
+        <strong>Sin texto pequeño</strong> que no se lea en miniatura<br>
+        <strong>Consistente</strong> con los colores de TMC o con una paleta nueva solo para el podcast
+      </div>
+    </div>
+    <div class="card" style="border-top-color:#c4b5fd;">
+      <div class="icon">🛠️</div>
+      <div class="ct">Cómo crearla</div>
+      <div class="cb">
+        Canva tiene templates específicos de portada de podcast (buscar "podcast cover" en Canva). Elegir uno oscuro/serio, cambiar el nombre y la foto.<br><br>
+        <strong>Alternativa:</strong> contratar en Fiverr por $15-30 USD a un diseñador con portafolio de podcast covers.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TAB 4: YOUTUBE -->
+<div id="tab-youtube" class="tc">
+
+  <div class="sec">▶️ YouTube como canal principal del podcast</div>
+  <p class="ssub">YouTube es el segundo buscador más grande del mundo después de Google. Un podcast en YouTube aparece en búsquedas — el audio solo en Spotify no.</p>
+
+  <div class="yt-box">
+    <div class="yt-title">▶️ Por qué YouTube primero (y no Spotify)</div>
+    <div class="yt-grid">
+      <div class="yt-item">
+        <div class="yt-item-title">SEO: el podcast se indexa en Google</div>
+        <div class="yt-item-desc">Un episodio de YouTube sobre "cómo emprender en Argentina" aparece en Google. Un episodio en Spotify solo se busca desde adentro de Spotify. La diferencia de alcance orgánico es enorme.</div>
+      </div>
+      <div class="yt-item">
+        <div class="yt-item-title">YouTube Podcasts está creciendo</div>
+        <div class="yt-item-desc">Google lanzó "YouTube Podcasts" en 2023-2024. Muchos que antes solo escuchaban en Spotify ahora consumen podcasts en YouTube con la pantalla en negro (audio).</div>
+      </div>
+      <div class="yt-item">
+        <div class="yt-item-title">Los clips de YouTube se vuelven Reels</div>
+        <div class="yt-item-desc">Cada episodio de 30 min genera 3-5 clips de 60-90 seg para Instagram y TikTok. Una sola grabación produce semanas de contenido para todas las redes.</div>
+      </div>
+      <div class="yt-item">
+        <div class="yt-item-title">Monetización futura</div>
+        <div class="yt-item-desc">Con 1.000 suscriptores + 4.000hs de watch time, YouTube habilita monetización (ads). Spotify no monetiza directamente hasta volúmenes muy altos.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">🚀 Crear el canal de YouTube paso a paso</div>
+
+  <div class="step">
+    <div class="snum" style="background:#dc2626;color:white;">1</div>
+    <div class="scont">
+      <div class="st">Crear cuenta de Google / usar la de TMC</div>
+      <div class="sd">Ir a youtube.com → crear cuenta → usar el email de TMC o crear uno nuevo tipo podcast@todasmiscosas.com. No usar cuenta personal de Gmail para el canal del podcast.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum" style="background:#dc2626;color:white;">2</div>
+    <div class="scont">
+      <div class="st">Crear el canal y configurar el nombre</div>
+      <div class="sd">YouTube → click en foto de perfil → "Crear un canal" → escribir el nombre del podcast (ej: "Desde BsAs"). El nombre del canal puede diferir del nombre del usuario de Google. Elegir el nombre definitivo — cambiarlo después confunde a los suscriptores.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum" style="background:#dc2626;color:white;">3</div>
+    <div class="scont">
+      <div class="st">Personalizar el canal</div>
+      <div class="sd">
+        <strong>Foto de perfil:</strong> la portada del podcast (cuadrado 800×800px)<br>
+        <strong>Banner del canal:</strong> imagen horizontal 2560×1440px — diseñar en Canva con el nombre del podcast, foto de Alejandro y la frase de qué trata<br>
+        <strong>Descripción del canal:</strong> el texto de descripción del podcast (ver Tab Concepto) + links a Instagram y web<br>
+        <strong>URL personalizada:</strong> una vez que tenga 100 suscriptores, habilitar URL como youtube.com/@desdebs_as
+      </div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum" style="background:#dc2626;color:white;">4</div>
+    <div class="scont">
+      <div class="st">Subir el primer episodio</div>
+      <div class="sd">
+        <strong>Formato del video:</strong> MP4, 1080p (Full HD), 16:9. Si el podcast es solo audio, igual subir un video — puede ser la portada del podcast como imagen estática durante toda la duración (con el audio), o grabar la cámara del celular mientras grabás.<br>
+        <strong>Para episodios solo de audio:</strong> en DaVinci Resolve o iMovie, poner la portada del podcast como imagen fija y añadir el audio → exportar como MP4. YouTube acepta esto perfectamente.
+      </div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum" style="background:#dc2626;color:white;">5</div>
+    <div class="scont">
+      <div class="st">Completar los metadatos del episodio (CRÍTICO para SEO)</div>
+      <div class="sd">
+        <strong>Título:</strong> incluir keywords buscables. Ej: "Cómo abrimos una startup en Argentina con $0 de inversión | Desde BsAs EP01"<br>
+        <strong>Descripción:</strong> primeras 3 líneas son clave (aparecen sin expandir). Incluir: de qué trata el episodio, timestamps, links, hashtags al final<br>
+        <strong>Etiquetas (tags):</strong> emprendimiento argentina, startup buenosaires, podcast emprendedores, etc.<br>
+        <strong>Categoría:</strong> Educación o Empresas y Finanzas<br>
+        <strong>Thumbnail:</strong> NO usar el que YouTube genera automáticamente — diseñar uno propio (ver siguiente paso)
+      </div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum" style="background:#dc2626;color:white;">6</div>
+    <div class="scont">
+      <div class="st">El thumbnail — la imagen más importante del canal</div>
+      <div class="sd">
+        El thumbnail (miniatura) es lo que hace que alguien haga click o no. El 90% de los clicks en YouTube dependen del thumbnail + el título.<br><br>
+        <strong>Fórmula que funciona:</strong> foto de Alejandro con expresión real (no sonrisa forzada) + texto grande de 3-5 palabras en colores contrastantes + fondo de color sólido.<br>
+        <strong>Tamaño:</strong> 1280×720px, JPG<br>
+        <strong>Herramienta:</strong> Canva tiene templates de thumbnail de YouTube<br>
+        <strong>Crear 1 template base y variarlo en cada episodio</strong> — coherencia visual del canal
+      </div>
+      <span class="skpi">El thumbnail y el título son el 80% del éxito en YouTube</span>
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum" style="background:#dc2626;color:white;">7</div>
+    <div class="scont">
+      <div class="st">Timestamps en la descripción</div>
+      <div class="sd">
+        Los timestamps permiten que la gente salte a la parte que le interesa y que YouTube muestre "capítulos" en el video. También mejoran el SEO.<br>
+        Ejemplo:<br>
+        00:00 — Intro<br>
+        02:15 — Por qué creamos TMC<br>
+        08:40 — El primer error que cometimos<br>
+        18:00 — Cómo conseguimos los primeros proveedores<br>
+        27:30 — Qué viene para TMC en 2026<br>
+        31:00 — Cierre y próximo episodio
+      </div>
+    </div>
+  </div>
+
+  <div class="alert a-yellow" style="margin-top:16px;">
+    <div class="alert-icon">⚡</div>
+    <div><strong>Truco de lanzamiento:</strong> Grabar y tener listos 3 episodios antes de lanzar el canal. Publicarlos el mismo día con 1-2 horas de diferencia entre cada uno. Esto da al nuevo oyente contenido para seguir escuchando sin esperar una semana. Es la diferencia entre 0 suscriptores y 50 el día 1.</div>
+  </div>
+
+</div>
+
+<!-- TAB 5: DISTRIBUCIÓN -->
+<div id="tab-distribucion" class="tc">
+
+  <div class="sec">📡 Distribuir el podcast a todas las plataformas</div>
+  <p class="ssub">Un episodio → múltiples plataformas. El objetivo es estar donde está la audiencia, sin trabajo extra por plataforma.</p>
+
+  <div class="alert a-blue">
+    <div class="alert-icon">💡</div>
+    <div><strong>El sistema:</strong> El episodio se sube UNA SOLA VEZ a un RSS host (Spotify for Podcasters o Buzzsprout). Desde ahí se distribuye automáticamente a Spotify, Apple Podcasts, Amazon Music, Google Podcasts y más. YouTube es aparte — se sube manualmente.</div>
+  </div>
+
+  <div class="sec">🔴 Spotify for Podcasters — El distribuidor gratuito</div>
+
+  <div class="step">
+    <div class="snum" style="background:#1db954;color:white;">1</div>
+    <div class="scont">
+      <div class="st">Crear cuenta en Spotify for Podcasters</div>
+      <div class="sd">Ir a podcasters.spotify.com → crear cuenta con el email de TMC → completar: nombre del podcast, descripción, idioma (Español), país (Argentina), categoría (Emprendimiento / Negocios).</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum" style="background:#1db954;color:white;">2</div>
+    <div class="scont">
+      <div class="st">Subir la portada y configurar el perfil</div>
+      <div class="sd">Subir la portada 3000×3000px. Completar la descripción larga del podcast. Elegir el idioma del contenido y la categoría principal.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum" style="background:#1db954;color:white;">3</div>
+    <div class="scont">
+      <div class="st">Subir el primer episodio</div>
+      <div class="sd">Formato de audio: MP3 (calidad 128kbps mínimo, 192kbps recomendado). Completar título, descripción (mismo texto de YouTube) y fecha de publicación. Spotify for Podcasters distribuye automáticamente a Apple Podcasts cuando el podcast lleva más de 2 episodios.</div>
+      <span class="skpi">100% gratuito · Sin límite de episodios · Sin comisión</span>
+    </div>
+  </div>
+
+  <div class="sec">🍎 Apple Podcasts</div>
+  <div class="alert a-green">
+    <div class="alert-icon">✅</div>
+    <div>Si usás Spotify for Podcasters como host, Apple Podcasts se configura automáticamente. Para verificar: ir a podcastsconnect.apple.com e ingresar el RSS feed que te da Spotify for Podcasters. Apple lo revisa en 24-72hs y lo publica en su directorio. Sin costo.</div>
+  </div>
+
+  <table>
+    <thead><tr><th>Plataforma</th><th>Proceso</th><th>Costo</th><th>Audiencia en AR</th></tr></thead>
+    <tbody>
+      <tr><td><strong>YouTube</strong></td><td>Subir manualmente cada episodio como video</td><td class="good">Gratis</td><td class="good">Muy alta — es el #1</td></tr>
+      <tr><td><strong>Spotify</strong></td><td>Vía Spotify for Podcasters (host gratuito)</td><td class="good">Gratis</td><td class="good">Alta</td></tr>
+      <tr><td><strong>Apple Podcasts</strong></td><td>Automático desde Spotify for Podcasters</td><td class="good">Gratis</td><td class="mid">Media (más usuarios iOS)</td></tr>
+      <tr><td><strong>Amazon Music</strong></td><td>Solicitar distribución desde Spotify for Podcasters</td><td class="good">Gratis</td><td class="mid">Creciendo en AR</td></tr>
+      <tr><td><strong>Instagram / TikTok</strong></td><td>Clips cortos del episodio (60-90 seg) subidos manualmente</td><td class="good">Gratis</td><td class="good">Muy alta — amplificación</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec">✂️ Reutilizar el contenido — 1 episodio = 8 piezas de contenido</div>
+  <div class="card" style="border-top-color:#fbbf24;">
+    <div class="icon">♻️</div>
+    <div class="ct">Cómo multiplicar el alcance de cada episodio sin trabajo extra</div>
+    <div class="cb">
+      <table style="margin-top:10px;">
+        <thead><tr><th>#</th><th>Pieza</th><th>Dónde</th><th>Tiempo extra</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Episodio completo (video 30-40 min)</td><td>YouTube</td><td>—</td></tr>
+          <tr><td>2</td><td>Episodio completo (audio MP3)</td><td>Spotify / Apple</td><td>5 min (exportar MP3)</td></tr>
+          <tr><td>3</td><td>Clip #1: el mejor momento (60-90 seg)</td><td>Instagram Reel / TikTok</td><td>10 min (cortar en CapCut)</td></tr>
+          <tr><td>4</td><td>Clip #2: segundo momento destacado</td><td>YouTube Shorts / TikTok</td><td>10 min</td></tr>
+          <tr><td>5</td><td>Clip #3: dato o cita sorpresiva</td><td>Instagram Reel</td><td>5 min</td></tr>
+          <tr><td>6</td><td>Carrusel de LinkedIn con los 5 puntos del episodio</td><td>LinkedIn de Alejandro</td><td>15 min</td></tr>
+          <tr><td>7</td><td>Story de Instagram anunciando el episodio</td><td>Instagram Stories</td><td>3 min</td></tr>
+          <tr><td>8</td><td>Post en WhatsApp grupo de proveedores TMC</td><td>WhatsApp</td><td>2 min</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- TAB 6: FASES -->
+<div id="tab-fases" class="tc">
+
+  <div class="sec">🗺️ Plan por fases — De 0 a podcast establecido</div>
+  <p class="ssub">Cada fase tiene un objetivo claro, entregables concretos y un criterio para pasar a la siguiente.</p>
+
+  <!-- FASE 0 -->
+  <div class="fase">
+    <div class="fase-h" style="background:#fffbeb;">
+      <div class="fase-num" style="background:#f59e0b;">0</div>
+      <div class="fase-info">
+        <div class="fi-label">Fase 0 · Semanas 1-2 · SETUP</div>
+        <div class="fi-title">Decisiones fundacionales — antes de grabar un segundo</div>
+        <div class="fi-sub">Objetivo: tener el concepto, el nombre, el equipo mínimo y el canal creado</div>
+      </div>
+    </div>
+    <div class="fase-body">
+      <ul class="fase-list">
+        <li>Responder las 5 preguntas fundacionales del Tab Concepto</li>
+        <li>Elegir el nombre del podcast (de las 4 opciones sugeridas u otro)</li>
+        <li>Crear el canal de YouTube y configurar perfil completo</li>
+        <li>Crear cuenta en Spotify for Podcasters</li>
+        <li>Conseguir el micrófono mínimo (auriculares del celular o Fifine USB)</li>
+        <li>Instalar Audacity o GarageBand</li>
+        <li>Diseñar la portada del podcast en Canva (3000×3000px)</li>
+        <li><strong>Grabar un episodio de prueba de 5 minutos solo para practicar — no publicar</strong></li>
+        <li>Escuchar el episodio de prueba y identificar los 2 problemas principales a mejorar</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- FASE 1 -->
+  <div class="fase">
+    <div class="fase-h" style="background:var(--mint3);">
+      <div class="fase-num" style="background:var(--mint);color:#065f46;">1</div>
+      <div class="fase-info">
+        <div class="fi-label">Fase 1 · Semanas 3-6 · PRE-LANZAMIENTO</div>
+        <div class="fi-title">Grabar los primeros 3 episodios antes de publicar nada</div>
+        <div class="fi-sub">Objetivo: tener un "colchón" de contenido y no lanzar con 1 solo episodio</div>
+      </div>
+    </div>
+    <div class="fase-body">
+      <ul class="fase-list">
+        <li><strong>Episodio 1:</strong> "Quién soy y por qué empecé este podcast" — la historia de Alejandro y TMC</li>
+        <li><strong>Episodio 2:</strong> "Cómo se construye un marketplace desde cero en Argentina" — proceso técnico y de negocio de TMC</li>
+        <li><strong>Episodio 3:</strong> "El error más caro que cometimos al lanzar TMC" — honestidad que genera confianza</li>
+        <li>Editar los 3 episodios, pasar por Adobe Enhance</li>
+        <li>Crear los 3 thumbnails de YouTube con template unificado</li>
+        <li>Escribir las descripciones con timestamps y keywords SEO</li>
+        <li>Programar los 3 episodios para publicar el mismo día de lanzamiento</li>
+        <li>Crear la portada y subir a Spotify for Podcasters</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- FASE 2 -->
+  <div class="fase">
+    <div class="fase-h" style="background:var(--lav3);">
+      <div class="fase-num" style="background:var(--lav);color:#5b21b6;">2</div>
+      <div class="fase-info">
+        <div class="fi-label">Fase 2 · Mes 2 · LANZAMIENTO</div>
+        <div class="fi-title">Publicar los 3 episodios y hacer ruido</div>
+        <div class="fi-sub">Objetivo: 50 suscriptores en YouTube + 100 oyentes en Spotify en los primeros 7 días</div>
+      </div>
+    </div>
+    <div class="fase-body">
+      <ul class="fase-list">
+        <li>Publicar los 3 episodios en YouTube con 2 horas de diferencia entre cada uno</li>
+        <li>Simultáneamente: episodio 1 en Spotify for Podcasters</li>
+        <li>Post de lanzamiento en Instagram (@todasmiscosas) anunciando el podcast</li>
+        <li>Story de lanzamiento con link al canal de YouTube</li>
+        <li>Mensaje en el grupo WhatsApp de proveedores TMC</li>
+        <li>Post personal de Alejandro en LinkedIn anunciando el lanzamiento</li>
+        <li>Pedir a Guille y los primeros proveedores que compartan el link</li>
+        <li>Responder TODOS los comentarios del primer episodio en las primeras 24hs</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- FASE 3 -->
+  <div class="fase">
+    <div class="fase-h" style="background:var(--peach2);">
+      <div class="fase-num" style="background:var(--peach);color:#9a3412;">3</div>
+      <div class="fase-info">
+        <div class="fi-label">Fase 3 · Meses 2-6 · CONSISTENCIA</div>
+        <div class="fi-title">1 episodio por semana, sin parar — el ritmo es el activo</div>
+        <div class="fi-sub">Objetivo: 200 suscriptores YouTube · 500 oyentes Spotify · Primer invitado externo</div>
+      </div>
+    </div>
+    <div class="fase-body">
+      <ul class="fase-list">
+        <li>Publicar 1 episodio por semana, siempre el mismo día y hora (ej: martes a las 10am)</li>
+        <li>Crear 3 clips de IG/TikTok por episodio con CapCut</li>
+        <li>Desde el episodio 5: incorporar primer invitado — un proveedor de TMC con una historia interesante</li>
+        <li>Usar Zencastr para grabar el invitado de forma remota (gratis)</li>
+        <li>Publicar un carrusel de LinkedIn por episodio resumiendo los 5 puntos clave</li>
+        <li>Revisar las métricas de YouTube cada lunes: cuál episodio tuvo más retención</li>
+        <li>En mes 3: primer episodio con invitado del ecosistema startup AR (emprendedor conocido)</li>
+        <li>Hacer un "episodio especial" al mes 3: "Los 3 meses del podcast — qué aprendimos"</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- FASE 4 -->
+  <div class="fase">
+    <div class="fase-h" style="background:var(--sky3);">
+      <div class="fase-num" style="background:var(--sky);color:#075985;">4</div>
+      <div class="fase-info">
+        <div class="fi-label">Fase 4 · Meses 6-12 · INVITADOS &amp; COMUNIDAD</div>
+        <div class="fi-title">Construir la red a través del podcast</div>
+        <div class="fi-sub">Objetivo: 1.000 suscriptores YouTube · Canal reconocido en ecosistema emprendedor AR</div>
+      </div>
+    </div>
+    <div class="fase-body">
+      <ul class="fase-list">
+        <li>Contactar 1 invitado "aspiracional" por mes: founders conocidos del ecosistema AR (Kaszek, Cometa, Properati, Globant alumni)</li>
+        <li>El podcast se convierte en la herramienta de networking más efectiva: la gente acepta hablar en podcasts con más facilidad que en reuniones</li>
+        <li>Crear una comunidad de oyentes: grupo de WhatsApp "Listeners de [nombre del podcast]"</li>
+        <li>Episodio especial de "6 meses del podcast": recap, métricas, agradecimientos</li>
+        <li>Habilitar la monetización de YouTube cuando llegue a 1.000 suscriptores + 4.000hs de watch time</li>
+        <li>Evaluar patrocinadores locales: servicios para emprendedores, software, contadores, etc.</li>
+        <li>Empezar a planear "temporadas" con temáticas específicas para el año 2</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- FASE 5 -->
+  <div class="fase">
+    <div class="fase-h" style="background:var(--sage2);">
+      <div class="fase-num" style="background:var(--sage);color:#166534;">5</div>
+      <div class="fase-info">
+        <div class="fi-label">Fase 5 · Año 2 · MONETIZACIÓN &amp; ESCALA</div>
+        <div class="fi-title">El podcast genera valor económico y se consolida</div>
+        <div class="fi-sub">Objetivo: 5.000 suscriptores · Primer sponsor · Comunidad activa</div>
+      </div>
+    </div>
+    <div class="fase-body">
+      <ul class="fase-list">
+        <li><strong>Sponsorships locales:</strong> contactar empresas de servicios para emprendedores. Un sponsor por episodio = $200-500 USD/episodio cuando el podcast tenga 2.000+ oyentes</li>
+        <li><strong>Cursos o workshops:</strong> "El proceso de lanzar un marketplace en Argentina" — monetización del conocimiento acumulado</li>
+        <li><strong>Comunidad premium:</strong> grupo privado de emprendedores con acceso a Alejandro por $X/mes</li>
+        <li><strong>Eventos presenciales:</strong> meetup anual de oyentes del podcast en BsAs</li>
+        <li><strong>Cross-promotion:</strong> aparecer como invitado en otros podcasts de emprendimiento AR para ganar audiencia nueva</li>
+        <li><strong>LinkedIn newsletter:</strong> resumen escrito de cada episodio como artículo de LinkedIn</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- TAB 7: CRECIMIENTO -->
+<div id="tab-crecimiento" class="tc">
+
+  <div class="sec">📈 Cómo crecer en YouTube y Spotify sin publicidad paga</div>
+
+  <div class="stats">
+    <div class="stat"><div class="n" style="color:#fbbf24;">70%</div><div class="l">Del consumo de YouTube viene de recomendaciones</div></div>
+    <div class="stat"><div class="n" style="color:#a8e6cf;">40%</div><div class="l">De los oyentes de un podcast llegaron por recomendación boca a boca</div></div>
+    <div class="stat"><div class="n" style="color:#c4b5fd;">3-6</div><div class="l">Meses para ver crecimiento orgánico real en YouTube</div></div>
+    <div class="stat"><div class="n" style="color:#bae6fd;">1.000</div><div class="l">Suscriptores para monetizar YouTube</div></div>
+  </div>
+
+  <div class="sec">🔑 Las 5 palancas de crecimiento orgánico</div>
+
+  <div class="card" style="border-top-color:#fbbf24;margin-bottom:12px;">
+    <div class="icon">📌</div>
+    <div class="ct">1. El título + thumbnail = el 80% del éxito en YouTube</div>
+    <div class="cb">
+      YouTube es un motor de búsqueda. La gente busca "cómo emprender en Argentina", "startup buenosaires", "como lanzar un marketplace". Usar esas keywords en el título.<br><br>
+      <strong>Fórmula de título que funciona:</strong> [Resultado deseable] + [Contexto específico] + [Credibilidad]<br>
+      Ejemplo: "Cómo conseguimos los primeros 100 usuarios de nuestro startup en BsAs (sin publicidad)"
+    </div>
+  </div>
+
+  <div class="card" style="border-top-color:#a8e6cf;margin-bottom:12px;">
+    <div class="icon">⏱️</div>
+    <div class="ct">2. La retención del video (cuánto tiempo la gente lo ve)</div>
+    <div class="cb">
+      YouTube mide qué porcentaje del video ve la gente. Si el 60% ve el 80% del episodio, YouTube lo recomienda más. Si el 80% se va en el primer minuto, lo "archiva".<br><br>
+      <strong>Para mejorar la retención:</strong><br>
+      — Hook potente en los primeros 30 segundos: "Hoy te cuento cómo perdimos $50.000 ARS en 1 decisión"<br>
+      — Spoiler del mejor momento al principio: "Al minuto 22 voy a revelar el número que nunca imaginé"<br>
+      — Cortar silencios y partes lentas en la edición
+    </div>
+  </div>
+
+  <div class="card" style="border-top-color:#c4b5fd;margin-bottom:12px;">
+    <div class="icon">🔗</div>
+    <div class="ct">3. Los clips cortos llevan a los episodios largos</div>
+    <div class="cb">
+      Los Reels de Instagram y los YouTube Shorts de 60-90 segundos son el trailer del episodio completo. Una persona ve el clip, le gusta, busca el canal de YouTube, suscribe.<br><br>
+      <strong>Qué cortar para el clip:</strong> el momento más sorprendente, la stat más impactante, o el error más honesto del episodio. No el resumen — el momento que genera emoción.
+    </div>
+  </div>
+
+  <div class="card" style="border-top-color:#bae6fd;margin-bottom:12px;">
+    <div class="icon">🤝</div>
+    <div class="ct">4. Los invitados traen su audiencia</div>
+    <div class="cb">
+      Cuando Alejandro entrevista a un founder con 5.000 seguidores en Instagram, ese founder va a compartir el episodio con su audiencia. Es la forma más efectiva de crecer: cada invitado es una puerta a una audiencia nueva.<br><br>
+      <strong>Cómo conseguir invitados:</strong> DM en LinkedIn o Instagram — "Hola [nombre], soy Alejandro, fundador de TMC y conduzco un podcast sobre emprendimiento en BsAs. Me encantaría entrevistarte 30 min sobre [tema específico]. ¿Tenés disponibilidad?"<br>
+      La mayoría acepta — la gente quiere hablar de su historia.
+    </div>
+  </div>
+
+  <div class="card" style="border-top-color:#fed7aa;margin-bottom:20px;">
+    <div class="icon">📧</div>
+    <div class="ct">5. Pedir la suscripción explícitamente en cada episodio</div>
+    <div class="cb">
+      En YouTube, la gente no suscribe si no se le pide. En cada episodio, en el minuto 2 y en el cierre, decir literalmente: "Si esto te sirve, suscribite al canal — es gratis y me ayuda mucho".<br><br>
+      Es incómodo al principio, pero es la táctica más efectiva y más ignorada. Los podcasts que crecen rápido piden la suscripción en cada episodio, siempre.
+    </div>
+  </div>
+
+  <hr>
+  <div class="sec">🎤 Ideas de episodios para los primeros 6 meses</div>
+
+  <table>
+    <thead><tr><th>Ep.</th><th>Título sugerido</th><th>Tipo</th><th>Por qué funciona</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1</strong></td><td>"Quién soy y por qué lancé TodasMisCosas"</td><td>Solo</td><td>Presentación — la gente quiere saber de quién viene el podcast</td></tr>
+      <tr><td><strong>2</strong></td><td>"Cómo funciona un marketplace P2P — lo que nadie te explica"</td><td>Solo</td><td>Educativo, buscable, demuestra expertise</td></tr>
+      <tr><td><strong>3</strong></td><td>"El error más caro que cometimos al lanzar TMC"</td><td>Solo</td><td>La honestidad genera suscriptores — nadie habla de errores</td></tr>
+      <tr><td><strong>4</strong></td><td>"Cómo validamos una idea de negocio sin gastar un peso"</td><td>Solo</td><td>Alta búsqueda en YouTube — keyword poderosa</td></tr>
+      <tr><td><strong>5</strong></td><td>"Entrevista: [Proveedor de TMC] — cómo generó $80.000/mes con su cochera"</td><td>Invitado</td><td>Primer invitado — historia concreta y cercana</td></tr>
+      <tr><td><strong>6</strong></td><td>"SAS vs LLC: qué estructura legal elegimos para TMC y por qué"</td><td>Solo</td><td>Muy buscado por emprendedores AR — expertise directo</td></tr>
+      <tr><td><strong>7</strong></td><td>"¿Cuánto cuesta construir un startup en Argentina hoy?"</td><td>Solo</td><td>El dinero siempre engancha — datos concretos</td></tr>
+      <tr><td><strong>8</strong></td><td>"Entrevista: [Fundador conocido del ecosistema AR]"</td><td>Invitado</td><td>Primer invitado aspiracional — su audiencia llega al canal</td></tr>
+      <tr><td><strong>9</strong></td><td>"Cómo construir la cultura de trabajo en un equipo de 2 personas"</td><td>Solo</td><td>Tema universal para cualquier founder pequeño</td></tr>
+      <tr><td><strong>10</strong></td><td>"10 episodios del podcast — qué aprendí sobre crear contenido"</td><td>Solo</td><td>Meta-episodio — genera engagement de la comunidad existente</td></tr>
+    </tbody>
+  </table>
+
+  <div class="quote">
+    "Los mejores podcasters no son los que tienen el mejor micrófono. Son los que se sentaron a grabar el episodio 47 cuando nadie los escuchaba todavía. La consistencia no es sexy, pero es el único camino." — Lección universal del podcasting
+  </div>
+
+</div>
+
+<div class="page-footer">
+  <strong style="color:#e2e8f0;">Plan de Podcast</strong> — Desde Cero hasta YouTube · Alejandro Laporte · 2026<br>
+  Emprendimiento, tecnología y construcción de proyectos desde Buenos Aires<br>
+  <span style="color:#64748b;font-size:.7rem;margin-top:4px;display:block;">Generado por Claude Sonnet 4.6 · Documento personal · Para uso de Alejandro Laporte</span>
+</div>
+
+<script>
+function showTab(id){
+  document.querySelectorAll('.tc').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
