@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC — Estrategia de Crecimiento · Daniel Priestley · Jun 2026</title>
+<style>
+  :root {
+    --mint:     #a8e6cf;
+    --mint2:    #d4f5e9;
+    --lavender: #c4b5fd;
+    --lav2:     #ede9fe;
+    --peach:    #fed7aa;
+    --peach2:   #fff3e8;
+    --sky:      #bae6fd;
+    --sky2:     #e8f7ff;
+    --vanilla:  #fef3c7;
+    --van2:     #fffbeb;
+    --rose:     #fecdd3;
+    --rose2:    #fff1f3;
+    --sage:     #bbf7d0;
+    --sage2:    #f0fdf4;
+    --orange:   #e8622a;
+    --navy:     #1e293b;
+    --text:     #1e293b;
+    --text2:    #475569;
+    --text3:    #94a3b8;
+    --border:   #e2e8f0;
+    --bg:       #f8fafc;
+    --white:    #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 13.5px;
+    line-height: 1.65;
+  }
+
+  /* ── HEADER ──────────────────────────────── */
+  .header {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    padding: 36px 48px 28px;
+  }
+  .header-logo {
+    font-size: 1.4rem; font-weight: 900; color: var(--orange);
+    letter-spacing: -0.5px;
+  }
+  .header-logo span { color: #bae6fd; }
+  .header-title {
+    font-size: 1.5rem; font-weight: 800; color: #f1f5f9;
+    margin: 6px 0 4px; line-height: 1.2;
+  }
+  .header-sub { color: #94a3b8; font-size: .85rem; }
+  .header-chips {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px;
+  }
+  .chip {
+    background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15);
+    border-radius: 20px; padding: 4px 14px; font-size: .75rem; color: #cbd5e1;
+  }
+  .chip strong { color: #f1f5f9; }
+
+  /* ── TABS ────────────────────────────────── */
+  .tab-bar {
+    background: var(--white);
+    border-bottom: 2px solid var(--border);
+    display: flex; overflow-x: auto; gap: 0;
+    padding: 0 48px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  }
+  .tab-bar::-webkit-scrollbar { height: 4px; }
+  .tab-btn {
+    padding: 14px 20px; border: none; background: none; cursor: pointer;
+    font-size: .82rem; font-weight: 600; color: var(--text3);
+    white-space: nowrap; border-bottom: 3px solid transparent;
+    margin-bottom: -2px; transition: all .2s;
+  }
+  .tab-btn:hover { color: var(--text2); }
+  .tab-btn.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+  /* ── CONTENT ─────────────────────────────── */
+  .tab-content { display: none; padding: 40px 48px 64px; max-width: 1100px; margin: 0 auto; }
+  .tab-content.active { display: block; }
+
+  /* ── SECTION ─────────────────────────────── */
+  .section-title {
+    font-size: 1.1rem; font-weight: 800; color: var(--text);
+    margin: 36px 0 16px; display: flex; align-items: center; gap: 10px;
+  }
+  .section-title:first-child { margin-top: 0; }
+  .section-sub { font-size: .82rem; color: var(--text3); margin-top: -12px; margin-bottom: 16px; }
+
+  /* ── CARDS GRID ──────────────────────────── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 8px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 8px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; margin-bottom: 8px; }
+
+  /* ── PILAR CARD ──────────────────────────── */
+  .pilar {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    border-top: 4px solid var(--border);
+  }
+  .pilar .icon { font-size: 1.5rem; margin-bottom: 8px; }
+  .pilar .p-title { font-weight: 800; font-size: .9rem; color: var(--text); margin-bottom: 4px; }
+  .pilar .p-quote {
+    font-style: italic; font-size: .78rem; color: var(--text3);
+    border-left: 3px solid var(--border); padding-left: 10px;
+    margin: 8px 0; line-height: 1.5;
+  }
+  .pilar .p-tmc { font-size: .78rem; color: var(--text2); margin-top: 6px; }
+  .pilar .p-tmc strong { color: var(--orange); }
+
+  /* ── NIVEL CARD ──────────────────────────── */
+  .nivel {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 16px; margin-bottom: 24px; overflow: hidden;
+  }
+  .nivel-header {
+    padding: 18px 24px; display: flex; align-items: center; gap: 16px;
+  }
+  .nivel-num {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; font-weight: 900; flex-shrink: 0;
+  }
+  .nivel-info .nivel-label { font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--text3); }
+  .nivel-info .nivel-title { font-size: 1rem; font-weight: 800; color: var(--text); }
+  .nivel-info .nivel-meta { font-size: .78rem; color: var(--text2); margin-top: 2px; }
+  .nivel-body { padding: 0 24px 20px; }
+
+  .paso {
+    display: flex; gap: 14px; margin-bottom: 12px; align-items: flex-start;
+  }
+  .paso-num {
+    width: 26px; height: 26px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .75rem; font-weight: 800; margin-top: 2px;
+  }
+  .paso-content .paso-title { font-weight: 700; font-size: .88rem; color: var(--text); margin-bottom: 2px; }
+  .paso-content .paso-desc { font-size: .78rem; color: var(--text2); line-height: 1.6; }
+  .paso-content .paso-kpi {
+    display: inline-block; margin-top: 5px;
+    font-size: .7rem; background: var(--vanilla); color: #92400e;
+    padding: 2px 8px; border-radius: 5px; font-weight: 600;
+  }
+
+  /* ── HERRAMIENTA CARD ────────────────────── */
+  .herra {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px 22px; margin-bottom: 16px;
+    border-left: 5px solid var(--border);
+  }
+  .herra-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .herra-icon { font-size: 1.6rem; }
+  .herra-title { font-size: .95rem; font-weight: 800; color: var(--text); }
+  .herra-sub { font-size: .75rem; color: var(--text3); }
+  .herra-body { font-size: .82rem; color: var(--text2); line-height: 1.7; }
+  .herra-body strong { color: var(--text); }
+  .mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .mini-item {
+    background: var(--bg); border-radius: 8px; padding: 10px 12px;
+    font-size: .78rem; color: var(--text2);
+  }
+  .mini-item strong { color: var(--text); display: block; margin-bottom: 2px; font-size: .8rem; }
+
+  /* ── SEMÁFORO ─────────────────────────────── */
+  .semaforo-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 8px; }
+  .semaforo-col {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 14px; overflow: hidden;
+  }
+  .semaforo-header {
+    padding: 14px 18px; display: flex; align-items: center; gap: 10px;
+    font-weight: 800; font-size: .9rem;
+  }
+  .sem-dot { width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0; }
+  .semaforo-body { padding: 6px 18px 16px; }
+  .sem-item {
+    padding: 9px 0; border-bottom: 1px solid var(--border);
+    font-size: .8rem; color: var(--text2); display: flex; gap: 8px; align-items: flex-start;
+  }
+  .sem-item:last-child { border-bottom: none; }
+  .sem-item::before { content: '→'; flex-shrink: 0; color: var(--text3); margin-top: 1px; }
+  .sem-item strong { color: var(--text); display: block; font-size: .82rem; }
+
+  /* ── PROS CONS ────────────────────────────── */
+  .pc-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 14px; overflow: hidden; margin-bottom: 16px;
+  }
+  .pc-title {
+    padding: 14px 20px; font-weight: 800; font-size: .9rem;
+    border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px;
+  }
+  .pc-body { display: grid; grid-template-columns: 1fr 1fr; }
+  .pc-pro { padding: 14px 18px; border-right: 1px solid var(--border); background: var(--sage2); }
+  .pc-con { padding: 14px 18px; background: var(--rose2); }
+  .pc-label { font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+  .pc-list { list-style: none; }
+  .pc-list li { font-size: .78rem; color: var(--text2); padding: 3px 0; display: flex; gap: 6px; }
+  .pc-list li::before { flex-shrink: 0; margin-top: 1px; }
+  .pc-pro .pc-list li::before { content: '✓'; color: #16a34a; }
+  .pc-con .pc-list li::before { content: '✗'; color: #dc2626; }
+
+  /* ── BS AS CARD ───────────────────────────── */
+  .bsas-section {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px 24px; margin-bottom: 16px;
+  }
+  .bsas-title { font-weight: 800; font-size: .95rem; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .barrio-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .barrio-chip {
+    background: var(--sky2); border: 1px solid var(--sky);
+    border-radius: 20px; padding: 4px 12px; font-size: .75rem; color: #0369a1; font-weight: 600;
+  }
+  .oportu-list { list-style: none; }
+  .oportu-list li {
+    padding: 7px 0; border-bottom: 1px solid var(--border);
+    font-size: .8rem; color: var(--text2); display: flex; gap: 10px; align-items: flex-start;
+  }
+  .oportu-list li:last-child { border-bottom: none; }
+  .oportu-list li .tag {
+    background: var(--peach); color: #c2410c; border-radius: 5px;
+    font-size: .68rem; font-weight: 700; padding: 2px 7px; flex-shrink: 0; margin-top: 1px;
+    text-transform: uppercase; letter-spacing: .05em;
+  }
+
+  /* ── CAPSTONE BOX ────────────────────────── */
+  .capstone {
+    background: linear-gradient(135deg, #1e293b, #334155);
+    border-radius: 16px; padding: 28px 32px; color: #f1f5f9;
+    margin-bottom: 16px;
+  }
+  .capstone-title { font-size: 1rem; font-weight: 800; color: var(--orange); margin-bottom: 16px; }
+  .cap-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .cap-item {
+    background: rgba(255,255,255,.06); border-radius: 10px; padding: 12px 14px;
+    border: 1px solid rgba(255,255,255,.1);
+  }
+  .cap-letter { font-size: 1.4rem; font-weight: 900; color: var(--orange); margin-bottom: 4px; }
+  .cap-name { font-size: .75rem; font-weight: 700; color: #cbd5e1; margin-bottom: 4px; }
+  .cap-tmc { font-size: .72rem; color: #94a3b8; line-height: 1.5; }
+
+  /* ── QUOTE BOX ────────────────────────────── */
+  .quote-box {
+    background: var(--vanilla); border-left: 4px solid #f59e0b;
+    border-radius: 0 12px 12px 0; padding: 16px 20px; margin: 16px 0;
+    font-size: .85rem; font-style: italic; color: #78350f; line-height: 1.7;
+  }
+
+  /* ── DIVIDER ─────────────────────────────── */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+
+  /* ── STAT ROW ─────────────────────────────── */
+  .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  .stat-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px 18px; text-align: center;
+  }
+  .stat-num { font-size: 1.8rem; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+  .stat-label { font-size: .72rem; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; }
+
+  /* ── BADGE ────────────────────────────────── */
+  .badge {
+    display: inline-block; border-radius: 5px; padding: 2px 8px;
+    font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+  }
+  .badge-mint   { background: var(--mint2); color: #065f46; }
+  .badge-orange { background: var(--peach);  color: #9a3412; }
+  .badge-blue   { background: var(--sky2);   color: #075985; }
+  .badge-lav    { background: var(--lav2);   color: #5b21b6; }
+
+  /* ── FOOTER ───────────────────────────────── */
+  .page-footer {
+    background: var(--navy); color: #94a3b8;
+    text-align: center; padding: 24px; font-size: .78rem;
+  }
+
+  @media (max-width: 768px) {
+    .tab-bar { padding: 0 12px; }
+    .tab-content { padding: 24px 16px 48px; }
+    .grid-2, .grid-3, .grid-4, .cap-grid, .semaforo-row, .stat-row { grid-template-columns: 1fr; }
+    .pc-body { grid-template-columns: 1fr; }
+    .pc-con { border-top: 1px solid var(--border); }
+    .header { padding: 24px 16px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ═════════════════════════════════════════════════════ -->
+<div class="header">
+  <div class="header-logo">📦 TodasMisCosas<span>.com</span></div>
+  <div class="header-title">Estrategia de Crecimiento — Framework Daniel Priestley</div>
+  <div class="header-sub">Aplicado al contexto de Buenos Aires, CABA y Argentina · Junio 2026</div>
+  <div class="header-chips">
+    <div class="chip"><strong>The Money Expert</strong> · Podcast Diary of a CEO</div>
+    <div class="chip"><strong>4 niveles</strong> de acción paso a paso</div>
+    <div class="chip"><strong>Adaptado</strong> a CABA / AMBA</div>
+    <div class="chip"><strong>Semáforo</strong> · Pros &amp; Cons incluidos</div>
+    <div class="chip">Preparado para Guille 🤝</div>
+  </div>
+</div>
+
+<!-- ══ TABS ═══════════════════════════════════════════════════════ -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="showTab('vision')">🗺️ Visión General</button>
+  <button class="tab-btn" onclick="showTab('niveles')">📈 Niveles 1→4</button>
+  <button class="tab-btn" onclick="showTab('herramientas')">🛠️ Herramientas</button>
+  <button class="tab-btn" onclick="showTab('semaforo')">🚦 Semáforo</button>
+  <button class="tab-btn" onclick="showTab('proscons')">⚖️ Pros &amp; Cons</button>
+  <button class="tab-btn" onclick="showTab('bsas')">🇦🇷 Buenos Aires</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- TAB 1: VISIÓN GENERAL                                          -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div id="tab-vision" class="tab-content active">
+
+  <div class="section-title">💡 ¿Qué dice Priestley que aplica directamente a TMC?</div>
+  <p class="section-sub">7 principios del framework del libro, traducidos al lenguaje de TodasMisCosas</p>
+
+  <div class="grid-2">
+
+    <div class="pilar" style="border-top-color: #a8e6cf;">
+      <div class="icon">🧪</div>
+      <div class="p-title">Testear en el mercado, no en la mente</div>
+      <div class="p-quote">"We need to sharpen our ideas in the market, not in our minds. Conduct tests where you fail fast and fail cheap."</div>
+      <div class="p-tmc"><strong>En TMC:</strong> El MVP ya fue validado en prod (E2E, jun 2026). Ahora el test es de mercado: ¿cuántos proveedores podemos incorporar en 30 días con outreach activo?</div>
+    </div>
+
+    <div class="pilar" style="border-top-color: #c4b5fd;">
+      <div class="icon">⏳</div>
+      <div class="p-title">Waiting Lists — La herramienta más poderosa</div>
+      <div class="p-quote">"Rolex stopped selling Rolexes and started selling the waiting list. That cycle of 'join the waiting list → sale' is brilliant."</div>
+      <div class="p-tmc"><strong>En TMC:</strong> No decir "publicá tu espacio". Decir <strong>"Anotate en la lista de los primeros 100 proveedores de CABA"</strong>. Cambia toda la psicología del alta.</div>
+    </div>
+
+    <div class="pilar" style="border-top-color: #fed7aa;">
+      <div class="icon">⚡</div>
+      <div class="p-title">"With or Without You" Energy</div>
+      <div class="p-quote">"The best ask has With or Without You energy — this is happening, you can be the company that gets the logo or not."</div>
+      <div class="p-tmc"><strong>En TMC:</strong> Todas las comunicaciones deben transmitir que el marketplace está creciendo <strong>con o sin ese proveedor</strong>. "Ya tenemos X usuarios. Sumá tu espacio."</div>
+    </div>
+
+    <div class="pilar" style="border-top-color: #bae6fd;">
+      <div class="icon">🎤</div>
+      <div class="p-title">Pitch CAPSTONE — 8 pasos memorables</div>
+      <div class="p-quote">"Clarity, Authority, Problem, Solution, The Why, Opportunity, Next Steps, Essence — and it spells CAPSTONE."</div>
+      <div class="p-tmc"><strong>En TMC:</strong> Alejandro necesita un pitch de 90 segundos listo para cualquier situación: admin de edificio, inversor, nota periodística. Ver tab <em>Herramientas</em>.</div>
+    </div>
+
+    <div class="pilar" style="border-top-color: #fef3c7;">
+      <div class="icon">👑</div>
+      <div class="p-title">Key Person of Influence (KPI)</div>
+      <div class="p-quote">"It's not about self-promotion. It's idea promotion — not look at me, but look at this."</div>
+      <div class="p-tmc"><strong>En TMC:</strong> Alejandro = <strong>el referente del almacenamiento urbano en Buenos Aires</strong>. LinkedIn + contenido = atrae proveedores, medios y socios sin publicidad paga.</div>
+    </div>
+
+    <div class="pilar" style="border-top-color: #bbf7d0;">
+      <div class="icon">👥</div>
+      <div class="p-title">Modelo 2-4-8-30 de equipo</div>
+      <div class="p-quote">"Two person scout team, four person fire team, eight person section, thirty person platoon. I use this in every scaleup."</div>
+      <div class="p-tmc"><strong>En TMC ahora:</strong> Scout team (Alejandro + Guille). Próximo paso: agregar 2 más (ops/ventas + community) para pasar al <strong>fire team de 4</strong>.</div>
+    </div>
+
+    <div class="pilar" style="border-top-color: #fecdd3;">
+      <div class="icon">💰</div>
+      <div class="p-title">Income Follows Assets</div>
+      <div class="p-quote">"The more assets you have, the more income you'll earn. Brand, database, culture — all are assets now."</div>
+      <div class="p-tmc"><strong>En TMC:</strong> Los activos a construir son: <strong>base de proveedores</strong> (DB), <strong>brand Alejandro</strong>, <strong>reviews y reputación</strong>, <strong>contenido SEO</strong>. Cada uno genera revenue pasivo.</div>
+    </div>
+
+    <div class="pilar" style="border-top-color: #e2e8f0;">
+      <div class="icon">🌍</div>
+      <div class="p-title">El ambiente dicta el rendimiento</div>
+      <div class="p-quote">"Environment dictates performance. You can't do entrepreneurship outside the entrepreneurial environment."</div>
+      <div class="p-tmc"><strong>En TMC:</strong> Alejandro debe estar en los <strong>ambientes correctos</strong>: grupos de administradores de edificios, cámaras inmobiliarias, eventos de proptech de CABA. Eso trae proveedores naturalmente.</div>
+    </div>
+
+  </div>
+
+  <hr class="divider">
+
+  <div class="section-title">📊 Concepto → Audiencia → Oferta → Ventas</div>
+  <p class="section-sub">Los 4 primeros pasos que llevan al primer millón — Priestley dice que solo esto alcanza para llegar a 6 cifras de revenue</p>
+
+  <div class="grid-4">
+    <div class="pilar" style="border-top-color: #a8e6cf; text-align:center;">
+      <div class="icon">💡</div>
+      <div class="p-title">1. Concepto</div>
+      <div class="p-tmc" style="text-align:left;">Validado ✅ — E2E completo jun 2026. MVP funcionando en prod. Idea testeada con usuarios reales.</div>
+    </div>
+    <div class="pilar" style="border-top-color: #c4b5fd; text-align:center;">
+      <div class="icon">👥</div>
+      <div class="p-title">2. Audiencia</div>
+      <div class="p-tmc" style="text-align:left;"><strong>Acción inmediata</strong> — Waiting list, grupo WhatsApp, scorecard, outreach a admins de edificios.</div>
+    </div>
+    <div class="pilar" style="border-top-color: #fed7aa; text-align:center;">
+      <div class="icon">📦</div>
+      <div class="p-title">3. Oferta</div>
+      <div class="p-tmc" style="text-align:left;">Paquetes claros — espacio exclusivo vs compartido, precio por m2, servicios adicionales. Simplificar el onboarding.</div>
+    </div>
+    <div class="pilar" style="border-top-color: #bae6fd; text-align:center;">
+      <div class="icon">💸</div>
+      <div class="p-title">4. Ventas</div>
+      <div class="p-tmc" style="text-align:left;">Ritmo LAPS semanal — Leads → Appointments → Presentations → Sales. Medir pipeline todos los lunes.</div>
+    </div>
+  </div>
+
+  <div class="quote-box">
+    "Stop calling yourself an entrepreneur and start calling yourself a salesperson. In the early days, you ARE the chief salesperson. If you can't sell it, nobody's going to sell it." — Daniel Priestley
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- TAB 2: NIVELES                                                  -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div id="tab-niveles" class="tab-content">
+
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-num" style="color:#a8e6cf;">N1</div>
+      <div class="stat-label">Validación</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:#c4b5fd;">N2</div>
+      <div class="stat-label">Marca</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:#fed7aa;">N3</div>
+      <div class="stat-label">Escala</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:#bae6fd;">N4</div>
+      <div class="stat-label">Comunidad</div>
+    </div>
+  </div>
+
+  <!-- NIVEL 1 -->
+  <div class="nivel">
+    <div class="nivel-header" style="background: #f0fdf4;">
+      <div class="nivel-num" style="background: var(--mint); color: #065f46;">1</div>
+      <div class="nivel-info">
+        <div class="nivel-label">Nivel 1 · Inmediato (0-60 días)</div>
+        <div class="nivel-title">Validación de Demanda &amp; Primeros Proveedores</div>
+        <div class="nivel-meta">Objetivo: 20 espacios activos publicados en CABA · Herramienta principal: Waiting List + Outreach</div>
+      </div>
+    </div>
+    <div class="nivel-body">
+      <div class="paso">
+        <div class="paso-num" style="background: var(--mint); color: #065f46;">1</div>
+        <div class="paso-content">
+          <div class="paso-title">Lanzar la lista de espera para proveedores</div>
+          <div class="paso-desc">Crear una landing mínima con el mensaje: <em>"Anotate entre los primeros 100 proveedores de TMC y recibí acceso prioritario + comisión reducida el primer mes."</em> Agregar 5 preguntas: tipo de espacio, barrio, m², precio esperado, mayor miedo. Esto reemplaza el flujo actual de "publicar directo".</div>
+          <div class="paso-kpi">KPI: 150+ inscriptos = señal verde para lanzar campaña de activación</div>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num" style="background: var(--mint); color: #065f46;">2</div>
+        <div class="paso-content">
+          <div class="paso-title">Crear grupo de WhatsApp "Proveedores TMC CABA"</div>
+          <div class="paso-desc">No lanzar el producto todavía — lanzar la <strong>discusión</strong>. Invitar a los primeros 30-50 inscriptos. Postear contenido 3x por semana: encuestas de precio, tips de fotografía, casos de éxito de otros marketplaces. El grupo educa, filtra y genera datos antes de que publiquen.</div>
+          <div class="paso-kpi">KPI: 100 miembros activos con 50%+ de participación en encuestas</div>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num" style="background: var(--mint); color: #065f46;">3</div>
+        <div class="paso-content">
+          <div class="paso-title">Lanzar scorecard: "¿Cuánto vale tu espacio libre?"</div>
+          <div class="paso-desc">Calculadora de 8 preguntas que devuelve un ingreso mensual estimado: tipo de espacio, barrio, m², disponibilidad, seguridad, acceso. El resultado es: <em>"Tu espacio podría generar $XX.000/mes en TMC."</em> CTA: "Publicalo ahora". Es el mejor lead gen porque captura intención sin pedir nada.</div>
+          <div class="paso-kpi">KPI: 300+ calculadoras completadas en el primer mes</div>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num" style="background: var(--mint); color: #065f46;">4</div>
+        <div class="paso-content">
+          <div class="paso-title">Outreach frío a 50 administradores de edificios por semana</div>
+          <div class="paso-desc">Los administradores de consorcios controlan docenas de edificios con bauleras, estacionamientos y salones sin usar. Un solo admin = potencialmente 10-20 espacios. Mensaje con "With or Without You" energy: <em>"Estamos incorporando espacios en Palermo y Belgrano. Ya tenemos X usuarios. ¿Tienen bauleras o cocheras disponibles?"</em></div>
+          <div class="paso-kpi">KPI: 5-8% reply rate = 2-4 reuniones por semana</div>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num" style="background: var(--mint); color: #065f46;">5</div>
+        <div class="paso-content">
+          <div class="paso-title">Primer evento presencial con proveedores potenciales</div>
+          <div class="paso-desc">Desayuno en café de Palermo o Recoleta con 15-20 personas: admins de edificios, agentes inmobiliarios, propietarios de estacionamientos. Alejandro hace el pitch CAPSTONE de 5 minutos. Al final, agenda reuniones 1:1 individuales con cada uno. Presupuesto: $50-80K ARS (café + medialunas).</div>
+          <div class="paso-kpi">KPI: 5 compromisos de publicación tras el evento</div>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num" style="background: var(--mint); color: #065f46;">6</div>
+        <div class="paso-content">
+          <div class="paso-title">Primera reserva pagada con proveedor externo (no de prueba)</div>
+          <div class="paso-desc">El verdadero hito de Nivel 1 es la primera reserva de un cliente que llegó orgánicamente a un espacio publicado por un proveedor que no es el equipo. Eso valida el ciclo completo del marketplace.</div>
+          <div class="paso-kpi">KPI: 1 reserva pagada orgánica = Nivel 1 completado</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NIVEL 2 -->
+  <div class="nivel">
+    <div class="nivel-header" style="background: var(--lav2);">
+      <div class="nivel-num" style="background: var(--lavender); color: #5b21b6;">2</div>
+      <div class="nivel-info">
+        <div class="nivel-label">Nivel 2 · Construcción de Marca (2-6 meses)</div>
+        <div class="nivel-title">Posicionamiento como La Plataforma de Almacenamiento Urbano BsAs</div>
+        <div class="nivel-meta">Objetivo: 100 espacios activos · Alejandro como KPI del sector · Primeros medios</div>
+      </div>
+    </div>
+    <div class="nivel-body">
+      <div class="paso">
+        <div class="paso-num" style="background: var(--lavender); color: #5b21b6;">1</div>
+        <div class="paso-content">
+          <div class="paso-title">Alejandro como Key Person of Influence del almacenamiento urbano</div>
+          <div class="paso-desc">LinkedIn + Instagram con contenido 3x por semana sobre almacenamiento urbano, proptech en Argentina, monetización de espacios. No hablar de TMC todo el tiempo — hablar del <strong>problema</strong>: "el 40% de los porteños tiene m² subutilizados". TMC es la solución que aparece naturalmente.</div>
+          <div class="paso-kpi">KPI: 1.000 seguidores LinkedIn + 500 Instagram en 90 días</div>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num" style="background: var(--lavender); color: #5b21b6;">2</div>
+        <div class="paso-content">
+          <div class="paso-title">Contenido viral orientado a proveedores</div>
+          <div class="paso-desc">Formato Reels/TikTok: <em>"Cuánto gana este departamento en Palermo por tener la cochera publicada en TMC"</em> · <em>"Transformé mi baulera en $60.000 por mes"</em> · <em>"5 espacios que podés monetizar HOY sin reformas"</em>. El storytelling de proveedores reales es el contenido con mayor conversión.</div>
+          <div class="paso-kpi">KPI: 1 video con +10K views = señal para replicar el formato</div>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num" style="background: var(--lavender); color: #5b21b6;">3</div>
+        <div class="paso-content">
+          <div class="paso-title">Partnerships con 3 inmobiliarias de CABA</div>
+          <div class="paso-desc">Contactar a administradoras de propiedades y agencias como L.J. Ramos, Tizado, Toribio Achával. Propuesta: sus clientes tienen espacios vacíos → TMC los monetiza → la inmobiliaria cobra una comisión por referido o se presenta como "inmobiliaria asociada a TMC". Win-win sin desarrollo adicional.</div>
+          <div class="paso-kpi">KPI: 1 acuerdo formal de partnership con inmobiliaria</div>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num" style="background: var(--lavender); color: #5b21b6;">4</div>
+        <div class="paso-content">
+          <div class="paso-title">Primera nota de prensa en medios digitales porteños</div>
+          <div class="paso-desc">Pitch a Infobae Propiedades, La Nación Inmuebles, Cronista o iProUP: <em>"Nació en CABA el primer marketplace P2P de almacenamiento urbano — el Airbnb de los depósitos"</em>. Una sola nota en Infobae puede traer 500-1.000 visitas en 48hs y docenas de proveedores nuevos.</div>
+          <div class="paso-kpi">KPI: 1 nota publicada en medio con +100K lectores mensuales</div>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num" style="background: var(--lavender); color: #5b21b6;">5</div>
+        <div class="paso-content">
+          <div class="paso-title">Programa de referidos activo (proveedor trae proveedor)</div>
+          <div class="paso-desc">Cada proveedor que recomienda a otro proveedor que publica y completa una reserva, recibe un beneficio: comisión reducida un mes, o crédito en la plataforma. El proveedor ya confía en TMC → su palabra vale más que cualquier anuncio pago.</div>
+          <div class="paso-kpi">KPI: 20% de nuevos proveedores por referido en el mes 4</div>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num" style="background: var(--lavender); color: #5b21b6;">6</div>
+        <div class="paso-content">
+          <div class="paso-title">Newsletter mensual para usuarios (clientes y proveedores)</div>
+          <div class="paso-desc">Una newsletter simple con: caso de éxito del mes, nuevo barrio disponible, tip de organización/almacenamiento, actualización de precios del mercado. Mantiene a TMC top-of-mind y genera retención orgánica sin publicidad.</div>
+          <div class="paso-kpi">KPI: 40%+ open rate en lista de 500 suscriptores</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NIVEL 3 -->
+  <div class="nivel">
+    <div class="nivel-header" style="background: var(--peach2);">
+      <div class="nivel-num" style="background: var(--peach); color: #9a3412;">3</div>
+      <div class="nivel-info">
+        <div class="nivel-label">Nivel 3 · Escalamiento (6-18 meses)</div>
+        <div class="nivel-title">Sistemas, Equipo &amp; Expansión AMBA</div>
+        <div class="nivel-meta">Objetivo: 500+ espacios · Equipo de 8 · Modelo replicable fuera de CABA</div>
+      </div>
+    </div>
+    <div class="nivel-body">
+      <div class="paso">
+        <div class="paso-num" style="background: var(--peach); color: #9a3412;">1</div>
+        <div class="paso-content">
+          <div class="paso-title">Construir el equipo de 8 (fire team → section)</div>
+          <div class="paso-desc">Siguiendo el modelo Priestley: CEO Alejandro · Tech Guille · Ops/atención al cliente · Community Manager (redes + WhatsApp) · Sales (proveedores) · Marketing/contenido · Finanzas · Partnerships. Los primeros 8 son "Swiss army knives" — versatilidad sobre especialización.</div>
+          <div class="paso-kpi">KPI: Equipo de 4 antes del mes 6, 8 antes del mes 12</div>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num" style="background: var(--peach); color: #9a3412;">2</div>
+        <div class="paso-content">
+          <div class="paso-title">Medir LAPS todas las semanas</div>
+          <div class="paso-desc">Ritmo de ventas semanal: cuántos <strong>Leads</strong> nuevos entraron → cuántos <strong>Appointments</strong> (reuniones o llamadas agendadas) → cuántas <strong>Presentations</strong> (demos del panel) → cuántos <strong>Sales</strong> (espacios publicados y activados). Sin este número, no hay escalamiento.</div>
+          <div class="paso-kpi">KPI: Dashboard LAPS semanal en Notion o Google Sheets</div>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num" style="background: var(--peach); color: #9a3412;">3</div>
+        <div class="paso-content">
+          <div class="paso-title">Digitizar el CRM de proveedores</div>
+          <div class="paso-desc">Priestley dice: "At 8 people, digitize absolutely everything of value." El CRM de proveedores es el activo más importante: historial de contacto, estado de onboarding, métricas de espacios, NPS. Herramienta: HubSpot gratuito o Airtable por ahora.</div>
+          <div class="paso-kpi">KPI: 100% de proveedores registrados en CRM antes del mes 8</div>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num" style="background: var(--peach); color: #9a3412;">4</div>
+        <div class="paso-content">
+          <div class="paso-title">Expansión a AMBA Zona Norte + Zona Oeste</div>
+          <div class="paso-desc">Zona Norte (San Isidro, Vicente López, Olivos): alta concentración de casas con cocheras y depósitos subutilizados. Zona Oeste (Morón, Ramos Mejía, Haedo): mercado de precios más bajos, alta demanda de clientes mudándose. Mismo modelo de waiting list + outreach + evento local.</div>
+          <div class="paso-kpi">KPI: 50 espacios nuevos fuera de CABA en el mes 9</div>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num" style="background: var(--peach); color: #9a3412;">5</div>
+        <div class="paso-content">
+          <div class="paso-title">Verticales específicas de alto valor</div>
+          <div class="paso-desc"><strong>Self-storage empresarial</strong>: pymes que necesitan archivo físico o stock de e-commerce. <strong>Guardado estacional</strong>: esquíes en verano, mobiliario de verano en invierno. <strong>Estudiantes universitarios</strong>: guardar muebles entre mudanzas. Cada vertical tiene un ticket promedio mayor y mayor retención.</div>
+          <div class="paso-kpi">KPI: 1 vertical con 10+ espacios especializados activos</div>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num" style="background: var(--peach); color: #9a3412;">6</div>
+        <div class="paso-content">
+          <div class="paso-title">Advisory Board: experto real estate + experto marketplace LATAM</div>
+          <div class="paso-desc">Siguiendo el ejemplo de Priestley con el Prof. de AI: no contratar, <strong>crear un advisory board</strong>. Buscar a 2-3 personas con experiencia en proptech o marketplaces en Argentina. Compensar con equity o fee mínimo. Su red + credibilidad acceleran el crecimiento sin costo de nómina.</div>
+          <div class="paso-kpi">KPI: 1 advisor firmado antes del mes 10</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NIVEL 4 -->
+  <div class="nivel">
+    <div class="nivel-header" style="background: var(--sky2);">
+      <div class="nivel-num" style="background: var(--sky); color: #075985;">4</div>
+      <div class="nivel-info">
+        <div class="nivel-label">Nivel 4 · Comunidad &amp; Activos (18+ meses)</div>
+        <div class="nivel-title">TMC como Plataforma, Marca y Comunidad de Almacenamiento Urbano</div>
+        <div class="nivel-meta">Objetivo: 2.000+ espacios · Expansión regional · Ingresos recurrentes · Activos digitales consolidados</div>
+      </div>
+    </div>
+    <div class="nivel-body">
+      <div class="paso">
+        <div class="paso-num" style="background: var(--sky); color: #075985;">1</div>
+        <div class="paso-content">
+          <div class="paso-title">TMC Pro — Plan de suscripción para proveedores</div>
+          <div class="paso-desc">Plan gratuito (1 espacio) vs Pro ($X/mes): hasta 5 espacios, badge "Proveedor Verificado", analytics de ocupación y revenue, soporte prioritario, comisión reducida del 10% vs 15% general. Genera ingresos recurrentes independientes de las reservas.</div>
+          <div class="paso-kpi">KPI: 100 suscriptores Pro en año 2</div>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num" style="background: var(--sky); color: #075985;">2</div>
+        <div class="paso-content">
+          <div class="paso-title">Contenido UGC — Historias de proveedores reales</div>
+          <div class="paso-desc">"Cómo gano $80.000/mes con mi cochera" · "Transformé mi terraza en depósito y dejé de trabajar los fines de semana" · Videos cortos, testimoniales escritos, entrevistas. El UGC tiene mayor credibilidad y costo cero. Crear un incentivo claro para que los proveedores compartan.</div>
+          <div class="paso-kpi">KPI: 20 testimoniales publicados en web + RRSS</div>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num" style="background: var(--sky); color: #075985;">3</div>
+        <div class="paso-content">
+          <div class="paso-title">API B2B para inmobiliarias y empresas de mudanzas</div>
+          <div class="paso-desc">Las 3 grandes inmobiliarias de BsAs podrían ofrecer TMC directamente a sus clientes al cerrar una operación de compra/alquiler. Empresas de mudanzas (Mudanzas Capital, MUDAFER) podrían recomendar guardar los bienes en TMC durante la transición. Canal B2B de alto volumen y bajo costo de adquisición.</div>
+          <div class="paso-kpi">KPI: 1 integración B2B activa antes del mes 24</div>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num" style="background: var(--sky); color: #075985;">4</div>
+        <div class="paso-content">
+          <div class="paso-title">Evento anual "Expo Almacenamiento Urbano BsAs"</div>
+          <div class="paso-desc">Una jornada presencial con proveedores, clientes, inversores y medios. Paneles sobre proptech, monetización de espacios, tendencias urbanas. TMC como organizador = posicionamiento de marca total, relaciones con medios, atracción de advisors e inversores. Modelo del "dinner party de Priestley" escalado.</div>
+          <div class="paso-kpi">KPI: 200 asistentes, 5 medios cubriendo el evento</div>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num" style="background: var(--sky); color: #075985;">5</div>
+        <div class="paso-content">
+          <div class="paso-title">Expansión regional: Uruguay, Chile, Colombia</div>
+          <div class="paso-desc">Mismo modelo: waiting list → comunidad → evento → outreach. La arquitectura técnica ya lo soporta (multi-moneda, multi-idioma). Uruguay (Montevideo) es la plaza más natural por proximidad cultural. Chile (Santiago) tiene mercado de almacenamiento urbano muy similar.</div>
+          <div class="paso-kpi">KPI: 50 espacios en Montevideo antes del fin del año 3</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- TAB 3: HERRAMIENTAS                                             -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div id="tab-herramientas" class="tab-content">
+
+  <div class="herra" style="border-left-color: #a8e6cf;">
+    <div class="herra-header">
+      <div class="herra-icon">⏳</div>
+      <div>
+        <div class="herra-title">1. Waiting List — La palanca #1 de Priestley</div>
+        <div class="herra-sub">Más poderosa que cualquier landing page de "registrate"</div>
+      </div>
+    </div>
+    <div class="herra-body">
+      <strong>Por qué funciona:</strong> "Para comprar algo necesitás estar 100% seguro. Para unirte a una lista de espera, solo necesitás estar un 5% interesado." La incertidumbre de si te van a aceptar crea deseo. La barrera de entrada baja trae más gente. El proceso de selección hace que valoren más el resultado.<br><br>
+      <strong>En TMC:</strong> Landing page simple con CTA "Quiero ser de los primeros 100 proveedores de CABA". Formulario con 5 preguntas. Email automático de confirmación con "te contactaremos cuando abramos tu zona". Mostrar contador: "87 de 100 lugares tomados".<br><br>
+      <strong>Preguntas recomendadas para el formulario:</strong>
+      <div class="mini-grid">
+        <div class="mini-item"><strong>¿Qué tipo de espacio tenés?</strong> Cochera / Baulera / Depósito / Habitación / Otro</div>
+        <div class="mini-item"><strong>¿En qué barrio está?</strong> Palermo / Belgrano / Recoleta / Otro (campo libre)</div>
+        <div class="mini-item"><strong>¿Cuántos m² aprox.?</strong> Menos de 5 / 5-15 / 15-30 / Más de 30</div>
+        <div class="mini-item"><strong>¿Qué ingreso mensual esperarías?</strong> Rango en ARS</div>
+        <div class="mini-item"><strong>¿Cuál es tu mayor miedo?</strong> Daños al espacio / No encontrar clientes / Trámites / Otro</div>
+        <div class="mini-item"><strong>¿Ya usás otro servicio similar?</strong> No / MercadoLibre / Guardamuebles / Otro</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="herra" style="border-left-color: #c4b5fd;">
+    <div class="herra-header">
+      <div class="herra-icon">💬</div>
+      <div>
+        <div class="herra-title">2. Grupo de Discusión WhatsApp — Comunidad antes que producto</div>
+        <div class="herra-sub">Priestley: "We don't launch the product — we launch the discussion group"</div>
+      </div>
+    </div>
+    <div class="herra-body">
+      <strong>En TMC:</strong> Crear "TMC Proveedores CABA" en WhatsApp. Invitar a los primeros 50 inscriptos de la waiting list. Moderar activamente los primeros 30 días.<br><br>
+      <strong>Plan de contenido semanal:</strong>
+      <div class="mini-grid">
+        <div class="mini-item"><strong>Lunes</strong> Encuesta de precio: "¿Cuánto cobrarías por este espacio en Belgrano?"</div>
+        <div class="mini-item"><strong>Miércoles</strong> Tip de fotografía o presentación del espacio</div>
+        <div class="mini-item"><strong>Viernes</strong> Caso de éxito de proveedor (anónimo o con permiso)</div>
+        <div class="mini-item"><strong>Eventual</strong> Acceso anticipado a nueva funcionalidad o zona</div>
+      </div>
+      <br><strong>Reglas del grupo:</strong> solo proveedores, no publicidad, moderación activa, Alejandro responde preguntas personalmente las primeras semanas (credibilidad del fundador).
+    </div>
+  </div>
+
+  <div class="herra" style="border-left-color: #fed7aa;">
+    <div class="herra-header">
+      <div class="herra-icon">🧮</div>
+      <div>
+        <div class="herra-title">3. Scorecard — "¿Cuánto vale tu espacio?"</div>
+        <div class="herra-sub">El mejor lead gen: da valor antes de pedir algo</div>
+      </div>
+    </div>
+    <div class="herra-body">
+      <strong>Cómo funciona:</strong> 8-10 preguntas simples → resultado personalizado con ingreso mensual estimado → CTA a publicar el espacio. Herramienta: Scoreapp.com (la empresa de Priestley), Typeform con lógica condicional, o build propio en TMC.<br><br>
+      <strong>Variables del cálculo:</strong> tipo de espacio (×), barrio premium (×), m² (×), acceso 24hs (+), seguridad (×), disponibilidad (×), fotos buenas (+), precio de mercado del barrio.<br><br>
+      <strong>Por qué convierte:</strong> El usuario obtiene un número concreto ("tu espacio puede generar $67.000/mes") antes de publicar. Eso elimina la pregunta "¿vale la pena?" y reemplaza por "¿cómo empiezo?".
+    </div>
+  </div>
+
+  <div class="herra" style="border-left-color: #bae6fd;">
+    <div class="herra-header">
+      <div class="herra-icon">📧</div>
+      <div>
+        <div class="herra-title">4. Outreach Frío Estructurado — El modelo de 50 por semana</div>
+        <div class="herra-sub">La táctica de Priestley: "3,000 DMs para lanzar un negocio en Londres"</div>
+      </div>
+    </div>
+    <div class="herra-body">
+      <strong>Targets principales en CABA:</strong>
+      <div class="mini-grid">
+        <div class="mini-item"><strong>Administradores de consorcios</strong> Manejan 10-50 edificios c/u. Un acuerdo = decenas de bauleras/cocheras.</div>
+        <div class="mini-item"><strong>Agencias de autos usados</strong> Cocheras subutilizadas entre ventas. Ingreso pasivo ideal.</div>
+        <div class="mini-item"><strong>Propietarios de PH con jardín</strong> Espacio de guardado de herramientas/muebles de jardín.</div>
+        <div class="mini-item"><strong>Locales comerciales vacíos</strong> Entre contratos de alquiler, el dueño puede monetizar el espacio.</div>
+      </div>
+      <br><strong>Template de mensaje (With or Without You energy):</strong><br>
+      <em>"Hola [nombre], somos TodasMisCosas.com, la primera plataforma P2P de almacenamiento urbano de CABA. Ya tenemos más de [X] usuarios registrados y estamos incorporando espacios en [barrio]. Vi que administrás edificios en la zona — ¿tienen bauleras o cocheras disponibles que podríamos activar? En 15 minutos te mostramos cómo funciona."</em>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- PITCH CAPSTONE -->
+  <div class="section-title">🎤 El Pitch CAPSTONE de TMC</div>
+  <p class="section-sub">El framework de Priestley aplicado a la presentación de TodasMisCosas — tenerlo memorizado para cualquier situación</p>
+
+  <div class="capstone">
+    <div class="capstone-title">CAPSTONE — El pitch de 90 segundos de TodasMisCosas</div>
+    <div class="cap-grid">
+      <div class="cap-item">
+        <div class="cap-letter">C</div>
+        <div class="cap-name">Clarity</div>
+        <div class="cap-tmc">"Somos el marketplace de almacenamiento urbano de Buenos Aires — el Airbnb de los depósitos y cocheras."</div>
+      </div>
+      <div class="cap-item">
+        <div class="cap-letter">A</div>
+        <div class="cap-name">Authority</div>
+        <div class="cap-tmc">"Lanzamos en junio 2026. Ya validamos el flujo completo con usuarios reales en producción."</div>
+      </div>
+      <div class="cap-item">
+        <div class="cap-letter">P</div>
+        <div class="cap-name">Problem</div>
+        <div class="cap-tmc">"El 40% de los porteños tiene metros cuadrados libres que no rinden nada. Al mismo tiempo, el self-storage en CABA cuesta hasta $400 USD/mes."</div>
+      </div>
+      <div class="cap-item">
+        <div class="cap-letter">S</div>
+        <div class="cap-name">Solution</div>
+        <div class="cap-tmc">"TMC conecta a quienes tienen espacio con quienes necesitan guardar — con escrow, chat y gestión completa desde el celular."</div>
+      </div>
+      <div class="cap-item">
+        <div class="cap-letter">T</div>
+        <div class="cap-name">The Why</div>
+        <div class="cap-tmc">"Creemos que en la ciudad del futuro, cada metro cuadrado debe trabajar. La ineficiencia del espacio urbano es un problema resuelto."</div>
+      </div>
+      <div class="cap-item">
+        <div class="cap-letter">O</div>
+        <div class="cap-name">Opportunity</div>
+        <div class="cap-tmc">"El mercado de self-storage en Argentina es de $800M anuales y crece al 20% interanual. Nuestro modelo captura el 15% de cada transacción."</div>
+      </div>
+      <div class="cap-item">
+        <div class="cap-letter">N</div>
+        <div class="cap-name">Next Steps</div>
+        <div class="cap-tmc">"Si tenés un espacio disponible, publicalo en 10 minutos. Si querés sumar espacios de tu edificio, agendamos una demo esta semana."</div>
+      </div>
+      <div class="cap-item">
+        <div class="cap-letter">E</div>
+        <div class="cap-name">Essence</div>
+        <div class="cap-tmc">"En Buenos Aires, cada metro cuadrado vale. Nosotros lo hacemos valer para todos."</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- TAB 4: SEMÁFORO                                                 -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div id="tab-semaforo" class="tab-content">
+
+  <p style="font-size:.85rem;color:var(--text2);margin-bottom:24px;">Estado de cada iniciativa para el lanzamiento comercial de TMC — basado en el estado actual del producto (v1.11.1) y el framework de Priestley.</p>
+
+  <div class="semaforo-row">
+
+    <div class="semaforo-col">
+      <div class="semaforo-header" style="background:#f0fdf4; color:#166534;">
+        <div class="sem-dot" style="background:#22c55e;"></div>
+        🟢 Hacer YA — Esta semana
+      </div>
+      <div class="semaforo-body">
+        <div class="sem-item">
+          <div><strong>Waiting list de proveedores</strong>Landing page con formulario de 5 preguntas. 1-2 días de trabajo.</div>
+        </div>
+        <div class="sem-item">
+          <div><strong>Grupo WhatsApp "TMC Proveedores"</strong>Crear el grupo e invitar a los primeros 20-30 contactos conocidos.</div>
+        </div>
+        <div class="sem-item">
+          <div><strong>Perfil LinkedIn de Alejandro activo</strong>Primera publicación sobre el problema del almacenamiento en CABA. Hoy.</div>
+        </div>
+        <div class="sem-item">
+          <div><strong>Lista de 50 admins de edificios</strong>Google Maps + Zonaprop + LinkedIn. Construir la lista esta semana.</div>
+        </div>
+        <div class="sem-item">
+          <div><strong>Pitch CAPSTONE memorizado</strong>Escribir el pitch de 90 segundos y practicarlo. Antes de hablar con cualquier externo.</div>
+        </div>
+        <div class="sem-item">
+          <div><strong>Scorecard "¿Cuánto vale tu espacio?"</strong>Versión mínima en Typeform. Sin diseño. Lanzar y mejorar después.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="semaforo-col">
+      <div class="semaforo-header" style="background:#fffbeb; color:#92400e;">
+        <div class="sem-dot" style="background:#f59e0b;"></div>
+        🟡 Próximo mes — Planificado
+      </div>
+      <div class="semaforo-body">
+        <div class="sem-item">
+          <div><strong>Primer evento presencial proveedores</strong>Desayuno o after-office en Palermo. 15-20 personas. Agendar con mínimo 2 semanas de anticipación.</div>
+        </div>
+        <div class="sem-item">
+          <div><strong>Primera nota de prensa</strong>Preparar el press kit y el pitch a Infobae Propiedades / La Nación Inmuebles. Necesita tener primeros casos de éxito.</div>
+        </div>
+        <div class="sem-item">
+          <div><strong>Programa de referidos activo</strong>Definir el beneficio y programarlo en TMC. Necesita la lógica de tracking en el backend.</div>
+        </div>
+        <div class="sem-item">
+          <div><strong>Primer partnership inmobiliario</strong>Contactar 3 agencias. Necesita propuesta formal y modelo de comisión.</div>
+        </div>
+        <div class="sem-item">
+          <div><strong>Newsletter mensual</strong>Primera edición del newsletter. Requiere base mínima de 200 suscriptores.</div>
+        </div>
+        <div class="sem-item">
+          <div><strong>Outreach frío activo (50/semana)</strong>Necesita lista de contactos construida (semáforo verde) y template probado.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="semaforo-col">
+      <div class="semaforo-header" style="background:#fff1f3; color:#9f1239;">
+        <div class="sem-dot" style="background:#ef4444;"></div>
+        🔴 No hacer todavía — Requiere base
+      </div>
+      <div class="semaforo-body">
+        <div class="sem-item">
+          <div><strong>Publicidad paga (Meta/Google Ads)</strong>Sin datos de conversión y sin unit economics validados, la publicidad paga quema presupuesto sin retorno.</div>
+        </div>
+        <div class="sem-item">
+          <div><strong>Expansión AMBA antes de consolidar CABA</strong>Dilución de foco. Primero 100 espacios activos en CABA, luego expandir.</div>
+        </div>
+        <div class="sem-item">
+          <div><strong>App móvil nativa</strong>La web funciona. La app agrega costo de desarrollo y mantenimiento sin beneficio claro en esta etapa.</div>
+        </div>
+        <div class="sem-item">
+          <div><strong>API B2B para inmobiliarias</strong>El desarrollo cuesta tiempo. Requiere tener 500+ espacios para que la propuesta sea atractiva para una inmobiliaria.</div>
+        </div>
+        <div class="sem-item">
+          <div><strong>Contratar equipo de 8</strong>Sin revenue recurrente demostrado, contratar es prematuro. Primero fire team de 4.</div>
+        </div>
+        <div class="sem-item">
+          <div><strong>Evento anual grande</strong>El "Expo Almacenamiento" tiene sentido cuando TMC ya es conocido. Antes es un esfuerzo sin audiencia.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <hr class="divider">
+
+  <div class="section-title">📍 Riesgos identificados</div>
+  <div class="grid-2">
+
+    <div class="pilar" style="border-top-color: #ef4444;">
+      <div class="icon">⚠️</div>
+      <div class="p-title">Riesgo: Foco dividido</div>
+      <div class="p-tmc">Atacar simultáneamente proveedores + clientes + AMBA + partnerships + contenido. <strong>Mitigación:</strong> Prioridad N1 exclusiva los primeros 60 días. Un solo objetivo: 20 espacios activos.</div>
+    </div>
+
+    <div class="pilar" style="border-top-color: #f59e0b;">
+      <div class="icon">⚠️</div>
+      <div class="p-title">Riesgo: Desconfianza del argentino</div>
+      <div class="p-tmc">Experiencias previas con plataformas que desaparecen o no pagan. <strong>Mitigación:</strong> Mostrar el escrow explícitamente en landing y onboarding. "Tu dinero está protegido hasta que vos confirmás el acceso."</div>
+    </div>
+
+    <div class="pilar" style="border-top-color: #f59e0b;">
+      <div class="icon">⚠️</div>
+      <div class="p-title">Riesgo: Inflación y precios desactualizados</div>
+      <div class="p-tmc">Los precios en ARS pueden quedar desfasados mensualmente. <strong>Mitigación:</strong> Política de actualización clara: "Los precios son libres y el proveedor puede actualizarlos cuando quiera." Mostrar precio en USD para espacios premium.</div>
+    </div>
+
+    <div class="pilar" style="border-top-color: #ef4444;">
+      <div class="icon">⚠️</div>
+      <div class="p-title">Riesgo: Proveedor + cliente se ponen de acuerdo por fuera</div>
+      <div class="p-tmc">Una vez que se conocen, podrían saltear la plataforma. <strong>Mitigación:</strong> El valor de TMC es el escrow, el seguro implícito y el historial. Asegurarse de que el filtro de contenido detecte intentos de contacto directo.</div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- TAB 5: PROS & CONS                                              -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div id="tab-proscons" class="tab-content">
+
+  <p style="font-size:.85rem;color:var(--text2);margin-bottom:24px;">Análisis honesto de cada estrategia para tomar decisiones informadas. Adaptado al contexto de TMC en Argentina.</p>
+
+  <div class="pc-card">
+    <div class="pc-title" style="background:var(--mint2);">⏳ Waiting List de proveedores</div>
+    <div class="pc-body">
+      <div class="pc-pro">
+        <div class="pc-label" style="color:#166534;">✓ Pros</div>
+        <ul class="pc-list">
+          <li>Costo casi cero — solo una landing page</li>
+          <li>Genera datos antes de invertir en onboarding</li>
+          <li>Crea expectativa y escasez percibida</li>
+          <li>Filtra a los más interesados (los que completan el form)</li>
+          <li>Permite segmentar por barrio, tipo de espacio y precio</li>
+          <li>Replicable por zona: CABA, Zona Norte, Zona Oeste</li>
+        </ul>
+      </div>
+      <div class="pc-con">
+        <div class="pc-label" style="color:#9f1239;">✗ Contras</div>
+        <ul class="pc-list">
+          <li>Requiere alcance inicial para que la lista sea grande</li>
+          <li>Si la espera es muy larga, el interés se enfría</li>
+          <li>Puede generar expectativas de "privilegios" que hay que cumplir</li>
+          <li>Necesita seguimiento activo para convertir inscriptos a activos</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="pc-card">
+    <div class="pc-title" style="background:var(--lav2);">💬 Grupos de Discusión WhatsApp</div>
+    <div class="pc-body">
+      <div class="pc-pro">
+        <div class="pc-label" style="color:#166534;">✓ Pros</div>
+        <ul class="pc-list">
+          <li>Feedback en tiempo real sin costo</li>
+          <li>Construye comunidad antes del producto</li>
+          <li>WhatsApp es el canal #1 en Argentina — no hay fricción</li>
+          <li>Los miembros se convierten en defensores naturales</li>
+          <li>Permite testear precios, features y mensajes antes de buildear</li>
+        </ul>
+      </div>
+      <div class="pc-con">
+        <div class="pc-label" style="color:#9f1239;">✗ Contras</div>
+        <ul class="pc-list">
+          <li>Consume tiempo de moderación diaria</li>
+          <li>Puede volverse caótico sin reglas claras</li>
+          <li>Los primeros 30 días son los más difíciles si hay poco contenido</li>
+          <li>Difícil de escalar más allá de 256 miembros (límite WhatsApp)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="pc-card">
+    <div class="pc-title" style="background:var(--peach2);">👤 Personal Brand — Alejandro como KPI del sector</div>
+    <div class="pc-body">
+      <div class="pc-pro">
+        <div class="pc-label" style="color:#166534;">✓ Pros</div>
+        <ul class="pc-list">
+          <li>Atrae proveedores, medios e inversores sin publicidad</li>
+          <li>Diferenciación fuerte — los competidores no pueden copiarlo</li>
+          <li>Genera confianza institucional para partnerships grandes</li>
+          <li>El contenido queda indexado en Google — SEO gratuito</li>
+          <li>Efecto compuesto: cuanto más crece, más crece</li>
+        </ul>
+      </div>
+      <div class="pc-con">
+        <div class="pc-label" style="color:#9f1239;">✗ Contras</div>
+        <ul class="pc-list">
+          <li>Requiere consistencia: mínimo 6 meses para ver resultados</li>
+          <li>Alejandro tiene que exponerse personalmente</li>
+          <li>Si Alejandro se va de TMC, la marca personal se va con él</li>
+          <li>Requiere tiempo de calidad semanalmente para crear contenido</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="pc-card">
+    <div class="pc-title" style="background:var(--sky2);">🏢 Partnerships con Inmobiliarias</div>
+    <div class="pc-body">
+      <div class="pc-pro">
+        <div class="pc-label" style="color:#166534;">✓ Pros</div>
+        <ul class="pc-list">
+          <li>Acceso a inventario masivo de espacios de golpe</li>
+          <li>Credibilidad instantánea del sector</li>
+          <li>La inmobiliaria hace el trabajo de captación por nosotros</li>
+          <li>Modelo de comisión por referido — costo variable, no fijo</li>
+          <li>Potencial de decenas de espacios por acuerdo</li>
+        </ul>
+      </div>
+      <div class="pc-con">
+        <div class="pc-label" style="color:#9f1239;">✗ Contras</div>
+        <ul class="pc-list">
+          <li>Ciclos de decisión largos (semanas o meses)</li>
+          <li>Dependencia de un tercero para el crecimiento</li>
+          <li>Puede requerir acuerdos comerciales complejos</li>
+          <li>Las inmobiliarias quieren ver tracción antes de comprometerse</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="pc-card">
+    <div class="pc-title" style="background:var(--vanilla);">📰 PR y Medios (Infobae, La Nación, Cronista)</div>
+    <div class="pc-body">
+      <div class="pc-pro">
+        <div class="pc-label" style="color:#166534;">✓ Pros</div>
+        <ul class="pc-list">
+          <li>Una nota en Infobae = 500-2.000 visitas en 48hs</li>
+          <li>Credibilidad masiva de forma gratuita</li>
+          <li>El artículo queda indexado y atrae tráfico orgánico por años</li>
+          <li>Puede disparar el interés de inversores y socios</li>
+        </ul>
+      </div>
+      <div class="pc-con">
+        <div class="pc-label" style="color:#9f1239;">✗ Contras</div>
+        <ul class="pc-list">
+          <li>Sin casos de éxito reales, la nota no tiene historia</li>
+          <li>Los periodistas reciben decenas de pitches por semana</li>
+          <li>El timing es crítico — necesitás un ángulo de novedad</li>
+          <li>Una mala nota puede ser peor que ninguna nota</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="pc-card">
+    <div class="pc-title" style="background:var(--rose2);">📲 Contenido en RRSS (Reels, TikTok, LinkedIn)</div>
+    <div class="pc-body">
+      <div class="pc-pro">
+        <div class="pc-label" style="color:#166534;">✓ Pros</div>
+        <ul class="pc-list">
+          <li>Costo casi cero si lo produce el equipo</li>
+          <li>Alcance orgánico altísimo si el formato es correcto</li>
+          <li>Genera confianza y prueba social</li>
+          <li>Los testimoniales de proveedores convierten mejor que cualquier ad</li>
+          <li>Acumula como activo digital (los videos siguen viralizando)</li>
+        </ul>
+      </div>
+      <div class="pc-con">
+        <div class="pc-label" style="color:#9f1239;">✗ Contras</div>
+        <ul class="pc-list">
+          <li>Requiere consistencia semanal — difícil de mantener</li>
+          <li>Los resultados son impredecibles (no todo video vira)</li>
+          <li>Necesita coordinación con proveedores reales para el contenido</li>
+          <li>El algoritmo cambia — lo que funciona hoy puede no funcionar mañana</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- TAB 6: BUENOS AIRES                                             -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div id="tab-bsas" class="tab-content">
+
+  <div class="bsas-section">
+    <div class="bsas-title">📍 Barrios target — Fase 1 CABA</div>
+    <div class="barrio-grid">
+      <span class="barrio-chip">Palermo</span>
+      <span class="barrio-chip">Belgrano</span>
+      <span class="barrio-chip">Recoleta</span>
+      <span class="barrio-chip">Villa Cañitas</span>
+      <span class="barrio-chip">Núñez</span>
+      <span class="barrio-chip">Almagro</span>
+      <span class="barrio-chip">Caballito</span>
+      <span class="barrio-chip">Villa Urquiza</span>
+      <span class="barrio-chip">Colegiales</span>
+      <span class="barrio-chip">Barracas</span>
+    </div>
+    <p style="font-size:.8rem;color:var(--text2);">Criterios: alta densidad de edificios con bauleras/cocheras, clase media-alta con capacidad de pago, acceso fácil en transporte público, comunidades activas en redes sociales barriales.</p>
+  </div>
+
+  <div class="bsas-section">
+    <div class="bsas-title">🎯 Oportunidades específicas del mercado argentino</div>
+    <ul class="oportu-list">
+      <li>
+        <span class="tag">Alta prio</span>
+        <div><strong>Vendedores de MercadoLibre que escalan</strong> — Miles de vendedores de e-commerce en CABA necesitan depósito para stock. TMC puede ser su primer "fulfillment center". Ticket alto, contratos largos.</div>
+      </li>
+      <li>
+        <span class="tag">Alta prio</span>
+        <div><strong>Consorcios con bauleras vacías</strong> — Los administradores de consorcios tienen bauleras asignadas sin usar en docenas de edificios. Un acuerdo con el consorcio libera inventario masivo de una sola vez.</div>
+      </li>
+      <li>
+        <span class="tag">Alta prio</span>
+        <div><strong>Propietarios de cocheras en edificios céntricos</strong> — Con el auge del auto eléctrico y el home office, muchos propietarios de cocheras no usan el espacio y buscan ingresos pasivos. Canal ideal: grupos de Facebook de edificios y towers.</div>
+      </li>
+      <li>
+        <span class="tag">Media prio</span>
+        <div><strong>Gap de mudanzas porteñas</strong> — En BsAs se dan decenas de miles de mudanzas por mes. Entre que se desocupa el inmueble anterior y se ocupa el nuevo, hay un gap de 1-4 semanas donde los muebles no tienen lugar. TMC como "guardado de transición".</div>
+      </li>
+      <li>
+        <span class="tag">Media prio</span>
+        <div><strong>Guardado estacional (ski, verano, invierno)</strong> — Esquíes en enero, muebles de jardín en julio, ropa de invierno en diciembre. El argentino de clase media ya tiene este comportamiento — TMC puede formalizarlo.</div>
+      </li>
+      <li>
+        <span class="tag">Media prio</span>
+        <div><strong>Estudiantes universitarios y Airbnb hosts</strong> — Estudiantes del interior que vuelven a casa en verano necesitan guardar muebles. Hosts de Airbnb que cambian de departamento entre temporadas. Segmento joven, digital nativo, alta probabilidad de recomendar.</div>
+      </li>
+      <li>
+        <span class="tag">Largo plazo</span>
+        <div><strong>Empresas con archivo físico</strong> — Pymes y estudios jurídicos/contables que tienen cajas de documentación pero no quieren pagar guardamuebles corporativos. Un segmento B2B de tickets altos y retención muy alta.</div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="grid-2">
+
+    <div class="bsas-section">
+      <div class="bsas-title">📣 Canales de comunicación argentinos</div>
+      <ul style="list-style:none;font-size:.82rem;color:var(--text2);">
+        <li style="padding:6px 0;border-bottom:1px solid var(--border);">🟢 <strong>WhatsApp</strong> — El canal rey. Grupos de edificios, de barrio, de vendedores de ML. Directo y sin costo.</li>
+        <li style="padding:6px 0;border-bottom:1px solid var(--border);">🟡 <strong>Facebook Groups</strong> — "Vecinos de Palermo", "Belgrano Comunidad". Enormes y muy activos. Post orgánico = 500 personas viendo.</li>
+        <li style="padding:6px 0;border-bottom:1px solid var(--border);">🟡 <strong>Instagram Reels</strong> — Formato corto de testimoniales. Si el proveedor es simpático, vira rápido en la comunidad barrial.</li>
+        <li style="padding:6px 0;border-bottom:1px solid var(--border);">🟡 <strong>Infobae / La Nación Propiedades</strong> — Los dos medios de proptech más leídos. Una nota = credibilidad masiva.</li>
+        <li style="padding:6px 0;">🔵 <strong>LinkedIn</strong> — Para partnerships corporativos, B2B, inversores y advisors. Alejandro como KPI del sector.</li>
+      </ul>
+    </div>
+
+    <div class="bsas-section">
+      <div class="bsas-title">⚡ Contexto local que nos favorece</div>
+      <ul style="list-style:none;font-size:.82rem;color:var(--text2);">
+        <li style="padding:6px 0;border-bottom:1px solid var(--border);">🏗️ <strong>CABA tiene 3M de habitantes</strong> con alta densidad y espacio por metro cuadrado muy caro — la propuesta de valor es obvia.</li>
+        <li style="padding:6px 0;border-bottom:1px solid var(--border);">💳 <strong>MercadoPago ya es familiar</strong> — El escrow de TMC no asusta porque los argentinos ya conocen la protección al comprador de ML.</li>
+        <li style="padding:6px 0;border-bottom:1px solid var(--border);">💰 <strong>La inflación juega a favor</strong> — "Monetizá tu espacio antes de que el dinero pierda valor" es un argumento muy potente en Argentina.</li>
+        <li style="padding:6px 0;border-bottom:1px solid var(--border);">🛒 <strong>Boom del e-commerce local</strong> — Más vendedores online = más necesidad de depósito. Segmento que crece año a año.</li>
+        <li style="padding:6px 0;">🏙️ <strong>Cultura del "rebusque"</strong> — El porteño ya monetiza su auto (Uber), su casa (Airbnb), sus horas libres (MercadoPago). TMC es la siguiente monetización natural.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="bsas-section">
+    <div class="bsas-title">🚧 Barreras específicas a superar</div>
+    <div class="grid-2" style="margin:0;">
+      <div>
+        <p style="font-size:.82rem;color:var(--text2);margin-bottom:8px;"><strong>Desconfianza histórica:</strong> El argentino fue quemado por plataformas que desaparecieron o no pagaron. Comunicar el escrow de forma prominente y mostrar que "tu dinero está seguro hasta que vos das la orden" en cada punto de contacto.</p>
+        <p style="font-size:.82rem;color:var(--text2);margin-bottom:8px;"><strong>Informalidad estructural:</strong> Muchos propietarios no quieren facturar o declarar el ingreso. Ofrecer claridad: TMC no obliga a facturar. El contrato entre privados es legal sin factura. Simplificar el mensaje.</p>
+      </div>
+      <div>
+        <p style="font-size:.82rem;color:var(--text2);margin-bottom:8px;"><strong>Competencia de guardamuebles establecidos:</strong> Bodegas Argentina, Tango Storage, The Box. Su ventaja: reconocimiento de marca. La de TMC: precio 60% más bajo, cercanía y acceso flexible. Comunicarlo claramente en la comparativa.</p>
+        <p style="font-size:.82rem;color:var(--text2);"><strong>El "primero" en el mercado:</strong> Educar al mercado sobre el concepto P2P de almacenamiento lleva tiempo. Por eso la estrategia de contenido y grupos de discusión es clave antes que cualquier inversión paga.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="quote-box">
+    "En CABA, los Baby Boomers tienen espacios enormes que sus hijos ya no van a usar. Los Millennials tienen el metro cuadrado más caro de Latinoamérica y necesitan guardar cosas. TMC es el puente entre esos dos mundos." — Adaptación del concepto Boring Boomer Business de Priestley al contexto porteño.
+  </div>
+
+</div>
+
+<!-- ══ FOOTER ═══════════════════════════════════════════════════ -->
+<div class="page-footer">
+  <strong style="color:#e2e8f0;">TodasMisCosas.com</strong> — Estrategia de Crecimiento · Junio 2026<br>
+  Basado en "The Money Expert" — Daniel Priestley · Diary of a CEO Podcast · Adaptado al contexto de CABA / Argentina<br>
+  <span style="color:#64748b;font-size:.7rem;margin-top:6px;display:block;">Generado por Claude Sonnet 4.6 · Documento interno · Para uso del equipo TMC</span>
+</div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.target.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
