@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC — Plan Institucional · Legal, Mercado, Roles · Jun 2026</title>
+<style>
+  :root {
+    --mint:     #a8e6cf;
+    --mint2:    #d4f5e9;
+    --mint3:    #f0fdf4;
+    --lavender: #c4b5fd;
+    --lav2:     #ede9fe;
+    --lav3:     #f5f3ff;
+    --peach:    #fed7aa;
+    --peach2:   #fff3e8;
+    --peach3:   #fffaf5;
+    --sky:      #bae6fd;
+    --sky2:     #e8f7ff;
+    --sky3:     #f0f9ff;
+    --vanilla:  #fef3c7;
+    --van2:     #fffbeb;
+    --rose:     #fecdd3;
+    --rose2:    #fff1f3;
+    --sage:     #bbf7d0;
+    --sage2:    #f0fdf4;
+    --teal:     #99f6e4;
+    --teal2:    #f0fdfa;
+    --orange:   #e8622a;
+    --navy:     #1e293b;
+    --text:     #1e293b;
+    --text2:    #475569;
+    --text3:    #94a3b8;
+    --border:   #e2e8f0;
+    --bg:       #f8fafc;
+    --white:    #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg); color: var(--text);
+    font-size: 13.5px; line-height: 1.65;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #1e293b 100%);
+    padding: 36px 48px 28px;
+  }
+  .header-logo { font-size:1.4rem; font-weight:900; color:var(--orange); letter-spacing:-0.5px; }
+  .header-logo span { color:#bae6fd; }
+  .header-title { font-size:1.55rem; font-weight:800; color:#f1f5f9; margin:6px 0 4px; line-height:1.2; }
+  .header-sub { color:#94a3b8; font-size:.85rem; }
+  .header-chips { display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; }
+  .chip {
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
+    border-radius:20px; padding:4px 14px; font-size:.75rem; color:#cbd5e1;
+  }
+  .chip strong { color:#f1f5f9; }
+
+  /* TABS */
+  .tab-bar {
+    background:var(--white); border-bottom:2px solid var(--border);
+    display:flex; overflow-x:auto; gap:0; padding:0 48px;
+    position:sticky; top:0; z-index:100;
+    box-shadow:0 2px 8px rgba(0,0,0,.06);
+  }
+  .tab-bar::-webkit-scrollbar { height:4px; }
+  .tab-btn {
+    padding:14px 20px; border:none; background:none; cursor:pointer;
+    font-size:.82rem; font-weight:600; color:var(--text3);
+    white-space:nowrap; border-bottom:3px solid transparent;
+    margin-bottom:-2px; transition:all .2s;
+  }
+  .tab-btn:hover { color:var(--text2); }
+  .tab-btn.active { color:var(--orange); border-bottom-color:var(--orange); }
+
+  /* CONTENT */
+  .tab-content { display:none; padding:40px 48px 64px; max-width:1120px; margin:0 auto; }
+  .tab-content.active { display:block; }
+
+  /* SECTION */
+  .sec { font-size:1.08rem; font-weight:800; color:var(--text); margin:36px 0 14px; display:flex; align-items:center; gap:10px; }
+  .sec:first-child { margin-top:0; }
+  .sec-sub { font-size:.8rem; color:var(--text3); margin:-10px 0 16px; }
+
+  /* GRIDS */
+  .g2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .g3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+  .g4 { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px; }
+
+  /* CARD */
+  .card {
+    background:var(--white); border:1px solid var(--border);
+    border-radius:14px; padding:18px 20px;
+    border-top:4px solid var(--border);
+  }
+  .card .icon { font-size:1.5rem; margin-bottom:8px; }
+  .card .ct { font-weight:800; font-size:.9rem; color:var(--text); margin-bottom:5px; }
+  .card .cb { font-size:.79rem; color:var(--text2); line-height:1.65; }
+  .card .cb strong { color:var(--text); }
+  .card .tag {
+    display:inline-block; margin-top:8px; border-radius:5px; padding:2px 8px;
+    font-size:.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em;
+  }
+
+  /* TABLE */
+  table { width:100%; border-collapse:collapse; background:var(--white); border-radius:14px; overflow:hidden; border:1px solid var(--border); }
+  th { background:#f1f5f9; padding:11px 14px; text-align:left; font-size:.78rem; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:.06em; }
+  td { padding:11px 14px; font-size:.8rem; color:var(--text2); border-top:1px solid var(--border); vertical-align:top; line-height:1.6; }
+  tr:hover td { background:#fafcff; }
+  td strong { color:var(--text); }
+  td.good { color:#16a34a; font-weight:700; }
+  td.bad  { color:#dc2626; font-weight:700; }
+  td.mid  { color:#d97706; font-weight:700; }
+  td.center { text-align:center; }
+
+  /* RECOMMEND BOX */
+  .rec {
+    background:linear-gradient(135deg,#0f172a,#1e3a5f);
+    border-radius:16px; padding:26px 30px; color:#f1f5f9;
+    margin:20px 0;
+  }
+  .rec-title { font-size:1rem; font-weight:800; color:var(--orange); margin-bottom:12px; }
+  .rec-body { font-size:.85rem; line-height:1.8; color:#cbd5e1; }
+  .rec-body strong { color:#f1f5f9; }
+  .rec-steps { margin-top:14px; display:flex; flex-direction:column; gap:8px; }
+  .rec-step {
+    display:flex; gap:12px; align-items:flex-start;
+    background:rgba(255,255,255,.06); border-radius:10px; padding:10px 14px;
+    font-size:.8rem; color:#94a3b8;
+  }
+  .rec-step .num {
+    background:var(--orange); color:white; border-radius:6px;
+    width:22px; height:22px; display:flex; align-items:center; justify-content:center;
+    font-size:.72rem; font-weight:900; flex-shrink:0;
+  }
+  .rec-step strong { color:#f1f5f9; display:block; }
+
+  /* STAT ROW */
+  .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
+  .stat {
+    background:var(--white); border:1px solid var(--border);
+    border-radius:12px; padding:16px 18px; text-align:center;
+  }
+  .stat .n { font-size:1.7rem; font-weight:900; line-height:1; margin-bottom:4px; }
+  .stat .l { font-size:.7rem; color:var(--text3); text-transform:uppercase; letter-spacing:.06em; }
+
+  /* UNICORN */
+  .uni {
+    background:var(--white); border:1px solid var(--border);
+    border-radius:14px; padding:14px 18px; margin-bottom:12px;
+    display:flex; gap:14px; align-items:flex-start;
+  }
+  .uni .badge {
+    min-width:48px; height:48px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.3rem; flex-shrink:0;
+  }
+  .uni .u-name { font-weight:800; font-size:.9rem; color:var(--text); }
+  .uni .u-cat {
+    display:inline-block; font-size:.68rem; font-weight:700;
+    text-transform:uppercase; letter-spacing:.05em;
+    padding:2px 7px; border-radius:5px; margin:2px 0 4px;
+  }
+  .uni .u-desc { font-size:.78rem; color:var(--text2); line-height:1.6; }
+  .uni .u-val { font-size:.75rem; color:#16a34a; font-weight:700; }
+
+  /* ROLE CARD */
+  .role {
+    background:var(--white); border:1px solid var(--border);
+    border-radius:16px; overflow:hidden; margin-bottom:20px;
+  }
+  .role-header { padding:18px 24px; display:flex; align-items:center; gap:14px; }
+  .role-icon {
+    width:48px; height:48px; border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.4rem; flex-shrink:0;
+  }
+  .role-title { font-size:1rem; font-weight:800; color:var(--text); }
+  .role-sub { font-size:.78rem; color:var(--text3); }
+  .role-body { padding:0 24px 20px; }
+  .role-section { margin-top:14px; }
+  .role-section-title { font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text3); margin-bottom:8px; }
+  .role-list { list-style:none; }
+  .role-list li { padding:5px 0; border-bottom:1px solid var(--border); font-size:.8rem; color:var(--text2); display:flex; gap:8px; }
+  .role-list li:last-child { border-bottom:none; }
+  .role-list li::before { content:'→'; color:var(--text3); flex-shrink:0; }
+  .salary-box {
+    background:var(--sage2); border:1px solid var(--sage);
+    border-radius:10px; padding:12px 16px; margin-top:12px;
+    font-size:.8rem; color:#065f46;
+  }
+  .salary-box strong { font-size:.9rem; }
+
+  /* TIMELINE */
+  .timeline { margin:8px 0 24px; }
+  .tl-item { display:flex; gap:16px; margin-bottom:20px; }
+  .tl-left { display:flex; flex-direction:column; align-items:center; gap:0; }
+  .tl-dot {
+    width:32px; height:32px; border-radius:10px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:.75rem; font-weight:900; color:white;
+  }
+  .tl-line { width:2px; background:var(--border); flex:1; min-height:20px; }
+  .tl-content { padding-top:4px; flex:1; }
+  .tl-title { font-weight:800; font-size:.9rem; color:var(--text); margin-bottom:4px; }
+  .tl-desc { font-size:.79rem; color:var(--text2); line-height:1.65; }
+  .tl-desc strong { color:var(--text); }
+  .tl-kpi {
+    display:inline-block; margin-top:6px;
+    font-size:.68rem; background:var(--vanilla); color:#92400e;
+    padding:2px 8px; border-radius:5px; font-weight:600;
+  }
+
+  /* QUOTE */
+  .quote {
+    background:var(--vanilla); border-left:4px solid #f59e0b;
+    border-radius:0 12px 12px 0; padding:14px 18px; margin:14px 0;
+    font-size:.84rem; font-style:italic; color:#78350f; line-height:1.7;
+  }
+
+  /* DIVIDER */
+  hr { border:none; border-top:1px solid var(--border); margin:26px 0; }
+
+  /* COMPETITOR */
+  .comp {
+    background:var(--white); border:1px solid var(--border);
+    border-radius:12px; padding:14px 18px; margin-bottom:10px;
+    display:flex; gap:14px; align-items:flex-start;
+  }
+  .comp .c-icon { font-size:1.4rem; flex-shrink:0; margin-top:2px; }
+  .comp .c-name { font-weight:800; font-size:.88rem; color:var(--text); }
+  .comp .c-desc { font-size:.78rem; color:var(--text2); line-height:1.6; }
+  .comp .c-raised { font-size:.72rem; color:#7c3aed; font-weight:700; margin-top:3px; }
+
+  /* ALERT */
+  .alert {
+    border-radius:12px; padding:14px 18px; margin:14px 0;
+    font-size:.82rem; line-height:1.7; display:flex; gap:12px; align-items:flex-start;
+  }
+  .alert-icon { font-size:1.2rem; flex-shrink:0; margin-top:1px; }
+  .alert-green { background:var(--mint3); border:1px solid var(--mint); color:#065f46; }
+  .alert-yellow { background:var(--van2); border:1px solid var(--vanilla); color:#92400e; }
+  .alert-red { background:var(--rose2); border:1px solid var(--rose); color:#9f1239; }
+  .alert-blue { background:var(--sky3); border:1px solid var(--sky); color:#075985; }
+
+  /* PILL */
+  .pill {
+    display:inline-block; border-radius:20px; padding:3px 12px;
+    font-size:.72rem; font-weight:700;
+  }
+  .pill-green { background:var(--sage); color:#166534; }
+  .pill-orange { background:var(--peach); color:#9a3412; }
+  .pill-blue { background:var(--sky2); color:#075985; }
+  .pill-purple { background:var(--lav2); color:#5b21b6; }
+  .pill-red { background:var(--rose); color:#9f1239; }
+
+  /* FOOTER */
+  .page-footer {
+    background:var(--navy); color:#94a3b8;
+    text-align:center; padding:24px; font-size:.78rem;
+  }
+
+  @media(max-width:768px){
+    .tab-bar { padding:0 12px; }
+    .tab-content { padding:24px 16px 48px; }
+    .g2,.g3,.g4,.stats { grid-template-columns:1fr; }
+    .header { padding:24px 16px 20px; }
+    table { font-size:.72rem; }
+    th,td { padding:8px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">📦 TodasMisCosas<span>.com</span></div>
+  <div class="header-title">Plan Institucional — Legal, Mercado &amp; Roles Técnicos</div>
+  <div class="header-sub">SAS vs LLC · Investigación de Mercado · Unicornios Argentina · CTO &amp; CIO · Primeros Pasos · Junio 2026</div>
+  <div class="header-chips">
+    <div class="chip"><strong>Estructura legal</strong> recomendada</div>
+    <div class="chip"><strong>Mercado</strong> self-storage BsAs/AMBA</div>
+    <div class="chip"><strong>Unicornios</strong> argentinos de referencia</div>
+    <div class="chip"><strong>CTO &amp; CIO</strong> perfil y salarios</div>
+    <div class="chip"><strong>Roadmap</strong> 90 días</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="showTab('legal')">⚖️ SAS vs LLC</button>
+  <button class="tab-btn" onclick="showTab('mercado')">🔬 Mercado</button>
+  <button class="tab-btn" onclick="showTab('unicornios')">🦄 Ecosistema AR</button>
+  <button class="tab-btn" onclick="showTab('roles')">👥 CTO &amp; CIO</button>
+  <button class="tab-btn" onclick="showTab('roadmap')">🗺️ Primeros Pasos</button>
+  <button class="tab-btn" onclick="showTab('resumen')">📊 Resumen Ejecutivo</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 1: LEGAL                                           -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-legal" class="tab-content active">
+
+  <div class="sec">⚖️ ¿SAS o LLC? La decisión legal de TMC</div>
+  <p class="sec-sub">Análisis honesto para un marketplace P2P operando en CABA/AMBA, bootstrapped, en fase de lanzamiento comercial</p>
+
+  <table style="margin-bottom:24px;">
+    <thead>
+      <tr>
+        <th>Criterio</th>
+        <th>SAS — Sociedad por Acciones Simplificada</th>
+        <th>LLC — Delaware (EE.UU.)</th>
+        <th>SA — Sociedad Anónima</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Velocidad de apertura</strong></td>
+        <td class="good">24-72 hs (digital, online IGJ)</td>
+        <td class="mid">1-2 semanas</td>
+        <td class="bad">60-120 días (escribano + IGJ)</td>
+      </tr>
+      <tr>
+        <td><strong>Costo de constitución</strong></td>
+        <td class="good">~$50-150 USD eq. ARS</td>
+        <td class="mid">$500 (Stripe Atlas) / $1.000-2.000 (abogado)</td>
+        <td class="bad">$500-2.000 USD eq. (escribano + tasas)</td>
+      </tr>
+      <tr>
+        <td><strong>Capital mínimo requerido</strong></td>
+        <td class="good">2 salarios mínimos (~$300 USD eq.)</td>
+        <td class="good">Sin mínimo</td>
+        <td class="bad">~$2.500 USD eq.</td>
+      </tr>
+      <tr>
+        <td><strong>Socios mínimos</strong></td>
+        <td class="good">1</td>
+        <td class="good">1</td>
+        <td class="mid">1 (desde 2022)</td>
+      </tr>
+      <tr>
+        <td><strong>Emitir acciones / equity</strong></td>
+        <td class="good">Sí, desde el inicio</td>
+        <td class="good">Sí (units / shares)</td>
+        <td class="good">Sí</td>
+      </tr>
+      <tr>
+        <td><strong>Operar en Argentina (CUIT)</strong></td>
+        <td class="good">Sí, CUIT propio inmediato</td>
+        <td class="bad">No directamente — necesita subsidiaria o rep. en AR</td>
+        <td class="good">Sí</td>
+      </tr>
+      <tr>
+        <td><strong>Cuenta bancaria en Argentina</strong></td>
+        <td class="good">Sí (Brubank, Banco Nación, BBVA, etc.)</td>
+        <td class="bad">No en AR — requiere cuenta US</td>
+        <td class="good">Sí</td>
+      </tr>
+      <tr>
+        <td><strong>MercadoPago / cobros en ARS</strong></td>
+        <td class="good">Sí — MP requiere CUIT argentino</td>
+        <td class="bad">No directamente</td>
+        <td class="good">Sí</td>
+      </tr>
+      <tr>
+        <td><strong>Stripe / cobros en USD</strong></td>
+        <td class="bad">No</td>
+        <td class="good">Sí (Stripe Atlas)</td>
+        <td class="bad">No</td>
+      </tr>
+      <tr>
+        <td><strong>Atractivo para inversores VC locales</strong></td>
+        <td class="good">Sí — Kaszek, NXTP, Cometa operan con SAS</td>
+        <td class="mid">Posible pero complica estructura</td>
+        <td class="good">Sí</td>
+      </tr>
+      <tr>
+        <td><strong>Atractivo para VC internacionales / YC</strong></td>
+        <td class="bad">No — requieren Delaware C-Corp</td>
+        <td class="good">Sí (si es C-Corp)</td>
+        <td class="bad">No</td>
+      </tr>
+      <tr>
+        <td><strong>Mantenimiento anual</strong></td>
+        <td class="good">Bajo — libro digital, sin escribano</td>
+        <td class="mid">$800/año Franchise Tax (DE) + contabilidad US</td>
+        <td class="bad">Alto — escribano, asambleas, IGJ</td>
+      </tr>
+      <tr>
+        <td><strong>Protección legal socios</strong></td>
+        <td class="good">Responsabilidad limitada plena</td>
+        <td class="good">Responsabilidad limitada plena</td>
+        <td class="good">Responsabilidad limitada plena</td>
+      </tr>
+      <tr>
+        <td><strong>Stock options para equipo</strong></td>
+        <td class="mid">Posible pero menos estructurado</td>
+        <td class="good">Muy estándar — ISO/NSO options</td>
+        <td class="mid">Posible, burocrático</td>
+      </tr>
+      <tr>
+        <td><strong>Ley aplicable</strong></td>
+        <td>Ley 27.349 Argentina (2017)</td>
+        <td>Delaware General Corporation Law</td>
+        <td>Ley 19.550 Argentina (1972)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="rec">
+    <div class="rec-title">✅ Recomendación para TMC — Junio 2026</div>
+    <div class="rec-body">
+      <strong>Fase actual (Lanzamiento CABA/AMBA):</strong> constituir una <strong>SAS en Argentina</strong> de inmediato.<br>
+      <strong>Fase futura (pre-seed internacional):</strong> hacer el "flip" a Delaware C-Corp como holdco con la SAS como subsidiaria operativa.<br><br>
+      La SAS fue diseñada específicamente para startups como TMC: ágil, barata, digital y 100% compatible con MercadoPago, bancos argentinos e inversores locales. La LLC solo tiene sentido cuando TMC necesite facturar en USD o reciba inversión de fondos extranjeros — lo cual no es el caso hoy.
+    </div>
+    <div class="rec-steps">
+      <div class="rec-step">
+        <div class="num">1</div>
+        <div><strong>Esta semana:</strong> iniciar constitución de TMC S.A.S. en IGJ digital (Ciudad de Buenos Aires). Tiempo: 24-72hs. Documentación: DNI socios, domicilio legal, objeto social.</div>
+      </div>
+      <div class="rec-step">
+        <div class="num">2</div>
+        <div><strong>Semana 2:</strong> obtener CUIT, abrir cuenta bancaria (Brubank Business o Banco Nación), vincular a MercadoPago como empresa.</div>
+      </div>
+      <div class="rec-step">
+        <div class="num">3</div>
+        <div><strong>Mes 1:</strong> definir distribución de acciones entre Alejandro y Guille (recomendado: 60/40 o 70/30 con vesting 4 años, cliff 1 año para ambos). Documentarlo en el estatuto o acuerdo de socios.</div>
+      </div>
+      <div class="rec-step">
+        <div class="num">4</div>
+        <div><strong>Cuando aplique (ronda seed internacional):</strong> contratar abogado LATAM/US para el "flip structure" — Delaware C-Corp holdco, SAS Argentina operativa. Costo: $3.000-8.000 USD one-time.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">📋 ¿Qué debe tener el estatuto de TMC S.A.S.?</div>
+  <div class="g2" style="margin-top:12px;">
+    <div class="card" style="border-top-color:#a8e6cf;">
+      <div class="icon">📜</div>
+      <div class="ct">Objeto Social amplio</div>
+      <div class="cb">Incluir: <strong>tecnología, marketplace, logística, servicios digitales, almacenamiento, real estate tech.</strong> Objeto amplio evita tener que reformar el estatuto al pivotar.</div>
+    </div>
+    <div class="card" style="border-top-color:#c4b5fd;">
+      <div class="icon">🔒</div>
+      <div class="ct">Cláusula de Vesting</div>
+      <div class="cb">Alejandro y Guille: <strong>4 años con cliff de 1 año</strong>. Protege a ambos si uno se va antes. Sin vesting, el que se va se lleva el equity sin haber aportado todo el trabajo prometido.</div>
+    </div>
+    <div class="card" style="border-top-color:#fed7aa;">
+      <div class="icon">🚀</div>
+      <div class="ct">Autorización para emitir nuevas acciones</div>
+      <div class="cb">Dejar abierta la posibilidad de incorporar socios o inversores con <strong>emisión de acciones Clase A y B</strong> (ordinarias y preferidas) sin reformar estatuto.</div>
+    </div>
+    <div class="card" style="border-top-color:#bae6fd;">
+      <div class="icon">🔗</div>
+      <div class="ct">Drag-along y Tag-along</div>
+      <div class="cb">Cláusulas estándar en startups: si uno vende, puede <strong>arrastrar</strong> al otro (drag) y el otro puede <strong>acompañar</strong> la venta (tag). Protegen en un exit futuro.</div>
+    </div>
+  </div>
+
+  <div class="alert alert-yellow" style="margin-top:20px;">
+    <div class="alert-icon">⚠️</div>
+    <div><strong>Error frecuente de founders argentinos:</strong> constituir la empresa en modo "50/50 amigos" sin vesting ni cláusulas de salida. Si Guille se va al año 1 sin acuerdo previo, conserva el 50% de la empresa sin trabajar más. El acuerdo de socios preventivo es tan importante como el código.</div>
+  </div>
+
+  <div class="alert alert-blue" style="margin-top:10px;">
+    <div class="alert-icon">💡</div>
+    <div><strong>¿Y la facturación de TMC?</strong> La comisión del 15% que cobra TMC a las transacciones debe facturarse. TMC S.A.S. puede ser monotributista o responsable inscripto según el volumen. Con primeras reservas: Monotributo (más simple). Con volumen: RI con IVA. Consultar contador desde el inicio — no es caro y evita problemas AFIP.</div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 2: MERCADO                                         -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-mercado" class="tab-content">
+
+  <div class="stats">
+    <div class="stat">
+      <div class="n" style="color:#a8e6cf;">$64B</div>
+      <div class="l">Self-storage global 2023</div>
+    </div>
+    <div class="stat">
+      <div class="n" style="color:#c4b5fd;">7.5%</div>
+      <div class="l">CAGR global del sector</div>
+    </div>
+    <div class="stat">
+      <div class="n" style="color:#fed7aa;">~150</div>
+      <div class="l">Instalaciones AR (vs 60K en USA)</div>
+    </div>
+    <div class="stat">
+      <div class="n" style="color:#bae6fd;">$400M</div>
+      <div class="l">TAM estimado AMBA</div>
+    </div>
+  </div>
+
+  <div class="sec">🎯 TAM · SAM · SOM de TodasMisCosas</div>
+  <div class="g3" style="margin-bottom:20px;">
+    <div class="card" style="border-top-color:#a8e6cf;">
+      <div class="icon">🌍</div>
+      <div class="ct">TAM — Mercado Total</div>
+      <div class="cb">
+        <strong>~$800M / año — Argentina</strong><br><br>
+        Gasto total en almacenamiento/self-storage en Argentina: guardamuebles, depósitos en alquiler, bauleras pagas, storage corporativo. Crece con el boom del e-commerce y la densificación urbana.<br><br>
+        <span class="pill pill-green">Referencia: IBISWorld, Statista 2024</span>
+      </div>
+    </div>
+    <div class="card" style="border-top-color:#c4b5fd;">
+      <div class="icon">🏙️</div>
+      <div class="ct">SAM — Mercado Direccionable</div>
+      <div class="cb">
+        <strong>~$400M / año — AMBA</strong><br><br>
+        CABA + GBA concentra el 50%+ del mercado argentino. Base de 15M de habitantes, alta densidad, mayor poder adquisitivo. Incluye residencial, pymes, e-commerce, mudanzas.<br><br>
+        <span class="pill pill-purple">Target primario TMC</span>
+      </div>
+    </div>
+    <div class="card" style="border-top-color:#fed7aa;">
+      <div class="icon">🎯</div>
+      <div class="ct">SOM — Captura Año 1-2</div>
+      <div class="cb">
+        <strong>$2M-$8M — CABA Fase 1</strong><br><br>
+        0.5% a 2% del SAM en AMBA, enfocado en CABA. Con 500 espacios activos a $600 USD/mes promedio y 15% comisión = $540K en comisiones año 1. Escala rápido con más espacios.<br><br>
+        <span class="pill pill-orange">Meta alcanzable 18-24 meses</span>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+  <div class="sec">🏢 Competidores Directos — Guardamuebles Tradicionales Argentina</div>
+  <p class="sec-sub">Son el benchmark de precio: TMC puede ofrecer 40-60% más barato por ser P2P sin infraestructura propia</p>
+
+  <div class="comp">
+    <div class="c-icon">🏭</div>
+    <div>
+      <div class="c-name">Bodegas Argentina</div>
+      <div class="c-desc">Líder nacional de self-storage. Ubicaciones en CABA, GBA Norte y Sur. Precios: $120-400 USD/mes para 5-20m². Instalaciones propias, 24/7, sistema de seguridad. <strong>Ventaja sobre TMC:</strong> marca establecida. <strong>Desventaja:</strong> precio alto, localización fija, sin modelo digital.</div>
+      <div class="c-raised">🔵 Market leader · sin ronda conocida · operación tradicional</div>
+    </div>
+  </div>
+  <div class="comp">
+    <div class="c-icon">📦</div>
+    <div>
+      <div class="c-name">Tango Storage</div>
+      <div class="c-desc">Storage modular en CABA y GBA. Propone módulos desde 1m². Precios: $80-250 USD/mes. Modelo más flexible que Bodegas. Tienen app pero no es marketplace.</div>
+      <div class="c-raised">🔵 Empresa local · modelo B2C · sin P2P</div>
+    </div>
+  </div>
+  <div class="comp">
+    <div class="c-icon">🗂️</div>
+    <div>
+      <div class="c-name">The Box Argentina</div>
+      <div class="c-desc">Empresa de guardamuebles con retiro a domicilio y entrega. Fuerte en mudanzas y guardado temporal. Servicio más logístico que espacial. Precios: $150-500 USD/mes.</div>
+      <div class="c-raised">🔵 B2C · sin tech core · fuerte en operaciones</div>
+    </div>
+  </div>
+  <div class="comp">
+    <div class="c-icon">🏢</div>
+    <div>
+      <div class="c-name">Iron Mountain Argentina</div>
+      <div class="c-desc">Líder global de gestión de información y archivos. Target exclusivamente corporativo/enterprise. No compite directamente con TMC en el segmento residencial/pyme.</div>
+      <div class="c-raised">💰 NYSE: IRM · $21B market cap · enterprise only</div>
+    </div>
+  </div>
+
+  <hr>
+  <div class="sec">🌍 Competidores Internacionales P2P (el modelo que TMC replica)</div>
+  <p class="sec-sub">Prueba de que el modelo P2P de almacenamiento funciona y escala</p>
+
+  <div class="comp">
+    <div class="c-icon">🇺🇸</div>
+    <div>
+      <div class="c-name">Neighbor.com — Estados Unidos</div>
+      <div class="c-desc">El referente mundial del P2P storage. Conecta hosts con espacio libre (garage, sótano, cochera) con personas que necesitan guardar. Modelo casi idéntico a TMC. Operan en 50 estados.</div>
+      <div class="c-raised">💰 Rondas: $53M total · Series B 2022 · Valoración ~$1B · Inversores: Andreessen Horowitz, Peak Ventures</div>
+    </div>
+  </div>
+  <div class="comp">
+    <div class="c-icon">🇬🇧</div>
+    <div>
+      <div class="c-name">Stashbee — Reino Unido</div>
+      <div class="c-desc">P2P storage marketplace UK. Hosts alquilan garajes, sótanos, cocheras. Target: Londoners sin espacio. Modelo de confianza con seguro incluido. Lanzó 2017.</div>
+      <div class="c-raised">💰 Rondas: £7M total · Seedcamp, Hambro Perks, Force Over Mass</div>
+    </div>
+  </div>
+  <div class="comp">
+    <div class="c-icon">🇫🇷</div>
+    <div>
+      <div class="c-name">Costockage — Francia / Europa</div>
+      <div class="c-desc">P2P storage en Francia, Bélgica, España. Fuerte en garajes y bodegas. 100K+ anuncios activos. Expansión europea sistémica. Modelo más maduro.</div>
+      <div class="c-raised">💰 Rondas: €3M · Expansión a 8 países europeos</div>
+    </div>
+  </div>
+  <div class="comp">
+    <div class="c-icon">🇦🇺</div>
+    <div>
+      <div class="c-name">Spacer — Australia</div>
+      <div class="c-desc">P2P storage + parking en Australia. 50K+ listings. Perfil similar a TMC: cocheras, sótanos, depósitos residenciales. Expansión a Singapore, UK.</div>
+      <div class="c-raised">💰 Rondas: $5M AUD · respaldo de Westfield, JLL Spark</div>
+    </div>
+  </div>
+
+  <div class="alert alert-green" style="margin-top:20px;">
+    <div class="alert-icon">🚀</div>
+    <div><strong>Oportunidad de primer mover:</strong> No existe ningún competidor P2P de almacenamiento en Argentina ni en LATAM. TMC tiene la oportunidad de ser el Neighbor.com de la región. Neighbor tardó 6 años en levantar $53M — TMC puede aprender de su modelo y moverse más rápido con contexto local.</div>
+  </div>
+
+  <hr>
+  <div class="sec">📊 Segmentos de demanda en CABA/AMBA</div>
+  <div class="g2">
+    <div>
+      <table>
+        <thead><tr><th>Segmento</th><th>Tamaño estimado</th><th>Ticket promedio</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Mudanzas/transición</strong></td><td>15.000+ ops/mes AMBA</td><td>$60-150 USD/mes</td></tr>
+          <tr><td><strong>E-commerce / vendedores ML</strong></td><td>400K+ vendedores activos AR</td><td>$80-300 USD/mes</td></tr>
+          <tr><td><strong>Guardado estacional</strong></td><td>Alta demanda 2x/año</td><td>$40-120 USD/mes</td></tr>
+          <tr><td><strong>Estudiantes universitarios</strong></td><td>120K estudiantes CABA</td><td>$30-80 USD/mes</td></tr>
+          <tr><td><strong>Pymes / archivo físico</strong></td><td>300K+ pymes AMBA</td><td>$100-400 USD/mes</td></tr>
+          <tr><td><strong>Airbnb hosts</strong></td><td>25K+ hosts CABA</td><td>$50-150 USD/mes</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <table>
+        <thead><tr><th>Tipo de espacio (oferta)</th><th>Cantidad estimada CABA</th><th>Potencial TMC</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Cocheras subutilizadas</strong></td><td>80.000+</td><td class="good">Alto</td></tr>
+          <tr><td><strong>Bauleras de edificios</strong></td><td>120.000+</td><td class="good">Alto</td></tr>
+          <tr><td><strong>Depósitos en PHs</strong></td><td>30.000+</td><td class="mid">Medio</td></tr>
+          <tr><td><strong>Habitaciones sin uso</strong></td><td>50.000+</td><td class="mid">Medio</td></tr>
+          <tr><td><strong>Locales vaciados</strong></td><td>8.000+</td><td class="mid">Medio</td></tr>
+          <tr><td><strong>Galpones / tinglados</strong></td><td>15.000+ GBA</td><td class="mid">Futuro</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 3: ECOSISTEMA AR                                   -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-unicornios" class="tab-content">
+
+  <div class="sec">🦄 Unicornios y casos de éxito de Argentina</div>
+  <p class="sec-sub">Referentes que prueban que se puede escalar desde CABA al mundo — y qué aprendizajes aplican a TMC</p>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="n" style="color:#a8e6cf;">6+</div>
+      <div class="l">Unicornios argentinos</div>
+    </div>
+    <div class="stat">
+      <div class="n" style="color:#c4b5fd;">#3</div>
+      <div class="l">LATAM en ecosistema startup</div>
+    </div>
+    <div class="stat">
+      <div class="n" style="color:#fed7aa;">$8B+</div>
+      <div class="l">Raised por startups AR</div>
+    </div>
+    <div class="stat">
+      <div class="n" style="color:#bae6fd;">70+</div>
+      <div class="l">Fondos activos en AR</div>
+    </div>
+  </div>
+
+  <div class="g2">
+
+    <div>
+      <div class="uni">
+        <div class="badge" style="background:#fff3e8;">🛒</div>
+        <div>
+          <div class="u-name">MercadoLibre</div>
+          <div class="u-cat" style="background:#fff3e8;color:#c2410c;">Marketplace · Fintech</div>
+          <div class="u-desc">El caso de éxito más grande de Argentina. Marketplace C2C + MercadoPago + Logística. Fundado en Buenos Aires 1999. Hoy tiene más market cap que muchos bancos europeos.</div>
+          <div class="u-val">💰 Market cap: ~$70B · NASDAQ: MELI</div>
+        </div>
+      </div>
+
+      <div class="uni">
+        <div class="badge" style="background:#ede9fe;">👤</div>
+        <div>
+          <div class="u-name">Auth0</div>
+          <div class="u-cat" style="background:#ede9fe;color:#5b21b6;">SaaS · Identity</div>
+          <div class="u-desc">Fundado en Mendoza por Matías Woloski y Eugenio Pace. Identity-as-a-Service para desarrolladores. Escaló sin una línea de publicidad paga, puramente product-led growth.</div>
+          <div class="u-val">💰 Adquirida por Okta en 2021 · $6.5B · El exit más grande de una startup argentina</div>
+        </div>
+      </div>
+
+      <div class="uni">
+        <div class="badge" style="background:#f0fdf4;">💳</div>
+        <div>
+          <div class="u-name">Uala</div>
+          <div class="u-cat" style="background:#f0fdf4;color:#166534;">Fintech · Neobank</div>
+          <div class="u-desc">Neobank argentino fundado por Pierpaolo Barbieri. App financiera que llegó al millón de usuarios en 18 meses. Expandió a México y Colombia. Inversores: Tencent, Goldman Sachs, SoftBank.</div>
+          <div class="u-val">💰 Unicornio: $2.4B valuación · Rondas: $350M+</div>
+        </div>
+      </div>
+
+      <div class="uni">
+        <div class="badge" style="background:#e8f7ff;">☁️</div>
+        <div>
+          <div class="u-name">TiendaNube (NuvemShop)</div>
+          <div class="u-cat" style="background:#e8f7ff;color:#075985;">E-commerce · SaaS</div>
+          <div class="u-desc">Plataforma de e-commerce para pymes latinoamericanas. Fundada en Buenos Aires 2011. 130.000+ tiendas activas. Principal alternativa regional a Shopify. Respaldo de Kaszek y Tiger Global.</div>
+          <div class="u-val">💰 Unicornio: $3.1B valuación · $500M raised</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="uni">
+        <div class="badge" style="background:#f5f3ff;">💻</div>
+        <div>
+          <div class="u-name">Globant</div>
+          <div class="u-cat" style="background:#f5f3ff;color:#5b21b6;">IT Services · Tech</div>
+          <div class="u-desc">Empresa de software y transformación digital fundada en BsAs. Cotiza en NYSE desde 2014. Tiene 27.000+ empleados en 25 países. Referente global de IT services con ADN porteño.</div>
+          <div class="u-val">💰 Market cap: ~$3B · NYSE: GLOB</div>
+        </div>
+      </div>
+
+      <div class="uni">
+        <div class="badge" style="background:#fff1f3;">✈️</div>
+        <div>
+          <div class="u-name">Despegar</div>
+          <div class="u-cat" style="background:#fff1f3;color:#9f1239;">Marketplace · Travel</div>
+          <div class="u-desc">Plataforma de viajes LATAM. Fundada en Buenos Aires 1999, misma época que MercadoLibre. Marketplace B2C de hoteles, vuelos, paquetes. Modelo de comisión P2P en turismo.</div>
+          <div class="u-val">💰 NASDAQ: DESP · Market cap: ~$450M</div>
+        </div>
+      </div>
+
+      <div class="uni">
+        <div class="badge" style="background:#fef3c7;">🏠</div>
+        <div>
+          <div class="u-name">Properati / OLX Propiedades</div>
+          <div class="u-cat" style="background:#fef3c7;color:#92400e;">Proptech · Marketplace</div>
+          <div class="u-desc">Marketplace de propiedades fundado en BsAs. Adquirido por OLX Group en 2021. Referente proptech LATAM. Demuestra que el modelo de marketplace de bienes raíces funciona en Argentina y puede escalar regionalmente.</div>
+          <div class="u-val">💰 Adquirida por OLX Group (Naspers) — valuación no divulgada</div>
+        </div>
+      </div>
+
+      <div class="uni">
+        <div class="badge" style="background:#f0fdfa;">🛺</div>
+        <div>
+          <div class="u-name">Mudafy</div>
+          <div class="u-cat" style="background:#f0fdfa;color:#0f766e;">Proptech · iBuyer</div>
+          <div class="u-desc">Proptech iBuyer argentino. Usa datos y ML para hacer ofertas de compra de propiedades en 72hs. Referente de la intersección entre real estate y tecnología en Argentina. Inversores top de LATAM.</div>
+          <div class="u-val">💰 Raised: $10M · Inversores: SoftBank LATAM Fund, Y Combinator</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <hr>
+  <div class="sec">💼 Inversores y aceleradoras activas en Argentina</div>
+  <p class="sec-sub">A quiénes buscar cuando TMC esté listo para levantar una ronda seed</p>
+
+  <table>
+    <thead>
+      <tr><th>Fondo / Programa</th><th>Tipo</th><th>Etapa</th><th>Ticket típico</th><th>Por qué es relevante para TMC</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Kaszek Ventures</strong></td>
+        <td>VC Tier 1 LATAM</td>
+        <td>Series A+</td>
+        <td>$3M-50M</td>
+        <td>Invirtió en MercadoLibre, Nubank, TiendaNube. El VC más reputado de LATAM. Para TMC: objetivo a 3+ años.</td>
+      </tr>
+      <tr>
+        <td><strong>NXTP Ventures</strong></td>
+        <td>VC early stage LATAM</td>
+        <td>Pre-seed / Seed</td>
+        <td>$100K-$1M</td>
+        <td>Especialistas en early stage LATAM. Portafolio en marketplace, SaaS, proptech. Ideal para TMC en próximos 12 meses.</td>
+      </tr>
+      <tr>
+        <td><strong>Cometa</strong></td>
+        <td>VC argentino</td>
+        <td>Seed</td>
+        <td>$200K-$1.5M</td>
+        <td>Fondo argentino enfocado en founders locales. Tienen track record en marketplaces B2C y proptech en AR.</td>
+      </tr>
+      <tr>
+        <td><strong>Wayra (Telefónica)</strong></td>
+        <td>CVC / Aceleradora</td>
+        <td>Pre-seed / Seed</td>
+        <td>$50K-$200K</td>
+        <td>Wayra Argentina acelera startups de tecnología con ticket + mentoría + red Telefónica. Sin dilución excesiva.</td>
+      </tr>
+      <tr>
+        <td><strong>Endeavor Argentina</strong></td>
+        <td>Scale-up program</td>
+        <td>Series A+</td>
+        <td>No invierte directo</td>
+        <td>No da plata, da red. Los entrepreneurs seleccionados tienen acceso a los mejores mentores del ecosistema LATAM.</td>
+      </tr>
+      <tr>
+        <td><strong>Y Combinator</strong></td>
+        <td>Top accelerator global</td>
+        <td>Pre-seed</td>
+        <td>$500K (7%)</td>
+        <td>4 startups argentinas en YC históricamente. Si TMC demuestra tracción y tiene Delaware C-Corp = aplicar es viable.</td>
+      </tr>
+      <tr>
+        <td><strong>Andreessen Horowitz (a16z)</strong></td>
+        <td>VC Tier 1 global</td>
+        <td>Seed+</td>
+        <td>$1M+</td>
+        <td>Invirtió en Neighbor.com (competidor US de TMC). Conocen el modelo. Referencia para pitch cuando TMC tenga tracción LATAM.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="quote">
+    "El mejor ecosistema startup de LATAM fuera de Brasil es Argentina. Buenos Aires tiene la mayor concentración de desarrolladores per cápita de la región y una cultura de bootstrap muy fuerte — los founders argentinos saben hacer mucho con poco." — Matías de Tezanos, NXTP Ventures
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 4: ROLES CTO & CIO                                -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-roles" class="tab-content">
+
+  <div class="alert alert-blue" style="margin-bottom:20px;">
+    <div class="alert-icon">💡</div>
+    <div><strong>Contexto TMC hoy:</strong> Alejandro (CEO/Visionary) + Guille (CTO de facto/Implementor). El equipo de 2 está en la etapa scout de Priestley. Este documento define qué debería hacer el CTO formal y qué función nueva necesita TMC para crecer. En el corto plazo el CIO puede ser el mismo CTO o un hire futuro.</div>
+  </div>
+
+  <!-- CTO -->
+  <div class="role">
+    <div class="role-header" style="background:#f0fdf4;">
+      <div class="role-icon" style="background:var(--mint);">⚙️</div>
+      <div>
+        <div class="role-title">CTO — Chief Technology Officer</div>
+        <div class="role-sub">El dueño de la visión técnica y la arquitectura. En TMC = Guille + definición formal del rol a escalar.</div>
+      </div>
+    </div>
+    <div class="role-body">
+      <div class="g2">
+        <div>
+          <div class="role-section">
+            <div class="role-section-title">Responsabilidades core</div>
+            <ul class="role-list">
+              <li>Arquitectura de la plataforma (Next.js + Express + MySQL) y evolución hacia escala</li>
+              <li>Decisiones de stack: cuándo migrar DB, cuándo agregar CDN, cuándo introducir microservicios</li>
+              <li>Seguridad: OWASP, HTTPS/TLS, secrets management, protección de datos de usuarios</li>
+              <li>Uptime y performance: 99.9%+ SLA, monitoreo con PM2 + alertas</li>
+              <li>Hiring técnico: contratar y onboardear devs cuando el equipo escale a 4+</li>
+              <li>Technical roadmap alineado con el roadmap de producto (Alejandro)</li>
+              <li>Code reviews y standards de calidad del equipo</li>
+              <li>Integración de APIs externas: MercadoPago, Supabase, Socket.io, Twilio</li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <div class="role-section">
+            <div class="role-section-title">Perfil buscado para TMC (si se contrata externamente)</div>
+            <ul class="role-list">
+              <li>Full-stack senior: Node.js / Express + React / Next.js (exactamente el stack de TMC)</li>
+              <li>Experiencia en marketplaces P2P o plataformas con transacciones reales</li>
+              <li>Conocimiento de MySQL/PostgreSQL y migración de schemas sin downtime</li>
+              <li>Cómodo con deploy en Linux (VPS, SSH, PM2, nginx)</li>
+              <li>Experiencia o interés en integraciones de pago (MercadoPago, Stripe)</li>
+              <li>Actitud de cofounder: no busca solo sueldo, quiere construir algo</li>
+              <li>Puede mentorear juniors cuando el equipo crezca</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="role-section">
+        <div class="role-section-title">Hitos CTO en los próximos 12 meses</div>
+        <table>
+          <thead><tr><th>Mes</th><th>Hito técnico</th><th>Por qué importa</th></tr></thead>
+          <tbody>
+            <tr><td><strong>1-2</strong></td><td>Caché de auth + paginación real en API</td><td>Performance bajo carga real con primeros 100 usuarios</td></tr>
+            <tr><td><strong>1-3</strong></td><td>SSR en páginas de espacios (SEO)</td><td>Indexación Google = tráfico orgánico gratuito</td></tr>
+            <tr><td><strong>2-4</strong></td><td>Staging environment funcional</td><td>Poder probar antes de deploy sin riesgo en prod</td></tr>
+            <tr><td><strong>3-6</strong></td><td>Split del panel.tsx + lazy loading</td><td>Eliminar 1.895 líneas en un componente = mantenibilidad</td></tr>
+            <tr><td><strong>4-8</strong></td><td>Analytics básicos (Metabase o Plausible)</td><td>Ver conversión, funnel, retención sin depender de Google Analytics</td></tr>
+            <tr><td><strong>6-12</strong></td><td>Migración DB a managed service</td><td>Reducir ops burden y aumentar reliability</td></tr>
+            <tr><td><strong>8-12</strong></td><td>API keys con restricción de dominio + CSP</td><td>Hardening de seguridad antes de escalar usuarios</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="salary-box">
+        <strong>💰 Compensación de mercado — CTO startup early stage Buenos Aires (2025-2026)</strong><br><br>
+        <strong>Sueldo:</strong> $2.000-4.500 USD/mes (modalidad dolarizada, factura monotributo o relación de dependencia)<br>
+        <strong>Equity:</strong> 3-8% con vesting 4 años si es cofundador o primer hire técnico. 0.5-2% si es contratado en etapa seed<br>
+        <strong>Referencia local:</strong> seniors de Node/Next en Workana/Toptal cobran $40-80 USD/hr; un CTO comprometido con equity vale menos cash + más equity<br>
+        <strong>⚠️ En el caso de TMC:</strong> Guille ya ocupa este rol. El foco es formalizar el rol, definir equity y alinear el roadmap técnico con el negocio.
+      </div>
+    </div>
+  </div>
+
+  <!-- CIO -->
+  <div class="role">
+    <div class="role-header" style="background:var(--lav3);">
+      <div class="role-icon" style="background:var(--lavender);">📊</div>
+      <div>
+        <div class="role-title">CIO — Chief Information Officer</div>
+        <div class="role-sub">El dueño de los datos, el CRM y la inteligencia de negocio. En TMC hoy: función a cubrir o combinar con el CTO/COO.</div>
+      </div>
+    </div>
+    <div class="role-body">
+      <div class="alert alert-yellow" style="margin-bottom:14px;">
+        <div class="alert-icon">⚠️</div>
+        <div><strong>¿TMC necesita un CIO ahora?</strong> No como contratación separada. Pero sí necesita que alguien dueño las funciones de CIO: analytics, CRM de proveedores, información de negocio. En el equipo de 4 (Priestley Nivel 2), este rol puede recaer en el primer hire de operaciones/growth que tenga perfil data-driven.</div>
+      </div>
+      <div class="g2">
+        <div>
+          <div class="role-section">
+            <div class="role-section-title">Qué hace un CIO (funciones para TMC)</div>
+            <ul class="role-list">
+              <li>CRM de proveedores: historial, estado de onboarding, NPS, pipeline</li>
+              <li>Dashboard de KPIs del negocio: reservas, comisiones, espacios activos, churn</li>
+              <li>Data governance: quién accede a qué datos, política de privacidad, cumplimiento PDPA Argentina</li>
+              <li>Analytics de producto: funnel de conversión, tiempo medio de reserva, retención</li>
+              <li>Sistemas internos: Notion/Jira para ops, Google Workspace, contabilidad</li>
+              <li>Reportes para inversores: MRR, ARR, Unit Economics, CAC, LTV</li>
+              <li>Estrategia de datos a largo plazo: ML para pricing recomendado, score de proveedores</li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <div class="role-section">
+            <div class="role-section-title">Stack CIO recomendado para TMC (etapa actual)</div>
+            <ul class="role-list">
+              <li><strong>CRM:</strong> HubSpot gratuito (hasta 1M contactos) o Airtable (más flexible)</li>
+              <li><strong>Analytics:</strong> Plausible.io ($9/mes) para web o Metabase (self-hosted, gratis)</li>
+              <li><strong>BI / Reportes:</strong> Google Sheets + Looker Studio (gratuito)</li>
+              <li><strong>Ops:</strong> Notion para documentación + Trello/Linear para tareas</li>
+              <li><strong>Email analytics:</strong> Resend tiene dashboard — aprovechar para open/click rates</li>
+              <li><strong>Contabilidad:</strong> Colppy o Xubio (herramientas AR nativas)</li>
+              <li><strong>Comunicación interna:</strong> Slack (gratuito hasta 10K msgs) o WhatsApp Business</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="salary-box">
+        <strong>💰 Compensación de mercado — CIO / Head of Data startup early stage Buenos Aires</strong><br><br>
+        <strong>Sueldo:</strong> $1.500-3.500 USD/mes<br>
+        <strong>Equity:</strong> 0.5-2% si es hire temprano con perfil de co-fundador<br>
+        <strong>Alternativa táctica para TMC:</strong> contratar un "Growth &amp; Data Analyst" freelance ($500-1.000 USD/mes, part-time) para montar el CRM y los dashboards antes de un hire CIO fulltime<br>
+        <strong>Timing recomendado:</strong> incorporar esta función cuando TMC supere los 50 espacios activos y haya tracción medible que requiera análisis sistemático.
+      </div>
+    </div>
+  </div>
+
+  <hr>
+  <div class="sec">🃏 Los 4 Trajes del Equipo TMC (framework Priestley)</div>
+  <p class="sec-sub">Priestley dice que un equipo ganador necesita los 4 perfiles. Identificar cuáles faltan es la clave para contratar bien.</p>
+
+  <div class="g4">
+    <div class="card" style="border-top-color:#c4b5fd;">
+      <div class="icon">☁️</div>
+      <div class="ct">Visionary (Nubes)</div>
+      <div class="cb">El que piensa en grande, conecta ideas, ve el futuro. En TMC: <strong style="color:var(--orange);">Alejandro</strong>. Rol: visión de producto, estrategia, fundraising, relaciones.</div>
+      <span class="tag" style="background:var(--lav2);color:#5b21b6;">Cubierto ✓</span>
+    </div>
+    <div class="card" style="border-top-color:#a8e6cf;">
+      <div class="icon">♠️</div>
+      <div class="ct">Implementor (Espadas)</div>
+      <div class="cb">El que ejecuta, construye sistemas, hace que las cosas pasen. En TMC: <strong style="color:var(--orange);">Guille</strong>. Rol: CTO, arquitectura, deploy, plataforma.</div>
+      <span class="tag" style="background:var(--mint2);color:#065f46;">Cubierto ✓</span>
+    </div>
+    <div class="card" style="border-top-color:#fecdd3;">
+      <div class="icon">♥️</div>
+      <div class="ct">Connector (Corazones)</div>
+      <div class="cb">El que construye relaciones, trae socios, proveedores, medios. <strong>Falta en TMC.</strong> Próximo hire: alguien que ame el networking y traiga deals.</div>
+      <span class="tag" style="background:var(--rose2);color:#9f1239;">Pendiente ⚠️</span>
+    </div>
+    <div class="card" style="border-top-color:#fed7aa;">
+      <div class="icon">♦️</div>
+      <div class="ct">Finance / Data (Diamantes)</div>
+      <div class="cb">El que maneja los números, el CRM, los reportes, la salud financiera. <strong>Falta en TMC.</strong> Función CIO = este rol. Puede ser el contador + un analytics tool.</div>
+      <span class="tag" style="background:var(--peach2);color:#9a3412;">Pendiente ⚠️</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 5: ROADMAP                                         -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-roadmap" class="tab-content">
+
+  <div class="sec">🗺️ Plan de primeros pasos — 90 días desde hoy</div>
+  <p class="sec-sub">Ordenado por prioridad real: primero legal, luego comercial, luego team, luego producto</p>
+
+  <div class="timeline">
+
+    <div class="tl-item">
+      <div class="tl-left">
+        <div class="tl-dot" style="background:#a8e6cf;color:#065f46;">1</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-content">
+        <div class="tl-title">Semana 1 — Constituir TMC S.A.S.</div>
+        <div class="tl-desc">
+          Iniciar proceso en IGJ digital. Documentación: DNI socios, domicilio legal (puede ser el de Alejandro), objeto social amplio.<br>
+          <strong>Acción paralela:</strong> redactar el acuerdo de socios con vesting 4 años / cliff 1 año entre Alejandro y Guille. No necesita escribano — puede ser digital con firma electrónica.<br>
+          <strong>Herramienta:</strong> Clerky.com tiene templates adaptables, o contratar abogado startup CABA ($300-500 USD one-time).
+        </div>
+        <span class="tl-kpi">KPI: CUIT de TMC S.A.S. obtenido</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left">
+        <div class="tl-dot" style="background:#a8e6cf;color:#065f46;">2</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-content">
+        <div class="tl-title">Semana 1-2 — Cuenta bancaria y MercadoPago empresa</div>
+        <div class="tl-desc">
+          Con el CUIT abrir cuenta en <strong>Brubank Business</strong> (proceso 100% digital, sin ir a sucursal) o Banco Nación (más robusto, más lento).<br>
+          Vincular cuenta a <strong>MercadoPago</strong> como empresa: permite recibir pagos de reservas en cuenta empresa, no personal. Crítico para el escrow.<br>
+          <strong>Monotributo o RI:</strong> al inicio Monotributo (Categoría D o E según volumen proyectado). Contador: $80-150 USD/mes.
+        </div>
+        <span class="tl-kpi">KPI: primera transacción recibida en cuenta empresa TMC</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left">
+        <div class="tl-dot" style="background:#c4b5fd;color:#5b21b6;">3</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-content">
+        <div class="tl-title">Semana 2-3 — Lanzar waiting list y grupo WhatsApp proveedores</div>
+        <div class="tl-desc">
+          Landing page de waiting list: "Anotate entre los primeros 100 proveedores de TMC".<br>
+          Crear grupo WhatsApp "TMC Proveedores CABA" e invitar a los primeros 20-30 contactos con espacios libres.<br>
+          Activar LinkedIn de Alejandro: primera publicación sobre almacenamiento urbano en CABA.
+        </div>
+        <span class="tl-kpi">KPI: 50+ inscriptos en waiting list, grupo WhatsApp con 30+ miembros</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left">
+        <div class="tl-dot" style="background:#c4b5fd;color:#5b21b6;">4</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-content">
+        <div class="tl-title">Semana 3-4 — Outreach frío a 50 administradores de edificios</div>
+        <div class="tl-desc">
+          Construir lista de admins de consorcios en Palermo, Belgrano y Recoleta (Google Maps + LinkedIn + Zonaprop).<br>
+          Enviar mensaje con "With or Without You" energy: <em>"Ya tenemos usuarios. ¿Tienen bauleras o cocheras disponibles?"</em><br>
+          Agendar reuniones 1:1 con los que respondan.
+        </div>
+        <span class="tl-kpi">KPI: 5-8 reuniones agendadas de los 50 contactados</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left">
+        <div class="tl-dot" style="background:#fed7aa;color:#9a3412;">5</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-content">
+        <div class="tl-title">Mes 1-2 — Primer evento presencial + primeros 10 espacios activos</div>
+        <div class="tl-desc">
+          Desayuno con 15-20 proveedores potenciales en café de Palermo/Recoleta. Alejandro hace el pitch CAPSTONE.<br>
+          Objetivo: 10 compromisos de publicación firmados.<br>
+          <strong>Paralelo (Guille):</strong> mejoras técnicas priorizadas — caché de auth, SSR para SEO, paginación real.
+        </div>
+        <span class="tl-kpi">KPI: 10 espacios activos publicados y verificados</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left">
+        <div class="tl-dot" style="background:#fed7aa;color:#9a3412;">6</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-content">
+        <div class="tl-title">Mes 2 — Primera reserva orgánica pagada</div>
+        <div class="tl-desc">
+          El hito real que valida el marketplace: un cliente que llegó solo (no de prueba) reservó un espacio publicado por un proveedor externo y pagó.<br>
+          Esto activa el ciclo completo de TMC y es la historia para contar a medios, inversores y partners.
+        </div>
+        <span class="tl-kpi">KPI: 1 reserva pagada orgánica = Milestone de validación comercial</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left">
+        <div class="tl-dot" style="background:#bae6fd;color:#075985;">7</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-content">
+        <div class="tl-title">Mes 2-3 — Primera nota de prensa + LinkedIn activo</div>
+        <div class="tl-desc">
+          Con 10+ espacios activos y 1 reserva real, hay historia para contar.<br>
+          Pitch a Infobae Propiedades / La Nación / iProUP: <em>"Nació en CABA el primer marketplace P2P de almacenamiento urbano"</em>.<br>
+          LinkedIn de Alejandro con contenido 3x/semana: problema, datos, historias de proveedores.
+        </div>
+        <span class="tl-kpi">KPI: 1 nota publicada en medio +100K lectores</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left">
+        <div class="tl-dot" style="background:#bae6fd;color:#075985;">8</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-content">
+        <div class="tl-title">Mes 3 — CRM de proveedores funcional + métricas de negocio</div>
+        <div class="tl-desc">
+          Montar HubSpot gratuito con todos los proveedores: estado (lead → contactado → publicado → activo → churn), historial de reservas, NPS.<br>
+          Dashboard semanal de LAPS: Leads → Appointments → Presentations → Sales.<br>
+          Primer reporte de unit economics: CAC, LTV, ratio de retención.
+        </div>
+        <span class="tl-kpi">KPI: Dashboard operativo corriendo. Reunión semanal de negocio con números reales.</span>
+      </div>
+    </div>
+
+  </div>
+
+  <hr>
+  <div class="sec">📏 KPIs clave para el primer año</div>
+  <table>
+    <thead><tr><th>KPI</th><th>Mes 1</th><th>Mes 3</th><th>Mes 6</th><th>Mes 12</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Espacios activos publicados</strong></td><td>10</td><td>50</td><td>150</td><td>500</td></tr>
+      <tr><td><strong>Reservas completadas (acumulado)</strong></td><td>5</td><td>50</td><td>200</td><td>800</td></tr>
+      <tr><td><strong>GMV mensual (ARS millones)</strong></td><td>$1M</td><td>$5M</td><td>$20M</td><td>$80M</td></tr>
+      <tr><td><strong>Revenue TMC (15% comisión)</strong></td><td>$150K</td><td>$750K</td><td>$3M</td><td>$12M</td></tr>
+      <tr><td><strong>Proveedores registrados</strong></td><td>20</td><td>100</td><td>300</td><td>1.000</td></tr>
+      <tr><td><strong>NPS proveedores</strong></td><td>—</td><td>medir</td><td>>40</td><td>>50</td></tr>
+      <tr><td><strong>Equipo (headcount)</strong></td><td>2</td><td>2-3</td><td>4</td><td>6-8</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 6: RESUMEN EJECUTIVO                               -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-resumen" class="tab-content">
+
+  <div class="sec">📊 Resumen ejecutivo — Una página para compartir con el equipo</div>
+
+  <div class="g2" style="margin-bottom:20px;">
+
+    <div>
+      <div class="rec" style="margin:0 0 16px;">
+        <div class="rec-title">⚖️ Decisión Legal</div>
+        <div class="rec-body">
+          <strong>Recomendación: SAS argentina AHORA.</strong><br>
+          Tiempo: 24-72hs · Costo: ~$100 USD eq.<br>
+          Razón: MercadoPago requiere CUIT argentino. Los inversores locales operan con SAS. No hay razón para LLC hasta tener inversión internacional o facturar en USD.<br><br>
+          <strong>Plan futuro:</strong> Delaware C-Corp holdco + SAS subsidiaria cuando venga ronda seed internacional (típicamente pre-YC o Series A).
+        </div>
+      </div>
+
+      <div class="rec" style="margin:0 0 16px;">
+        <div class="rec-title">🔬 Mercado</div>
+        <div class="rec-body">
+          <strong>Blue ocean real:</strong> No hay ningún competidor P2P de storage en Argentina ni LATAM.<br>
+          TAM: $800M · SAM (AMBA): $400M · SOM Year 1: $2-8M<br>
+          El modelo funciona: Neighbor.com ($53M raised), Stashbee (UK), Spacer (AU).<br><br>
+          <strong>Primer mover = ventaja crítica.</strong> La red de proveedores que construya TMC primero es la barrera de entrada más fuerte.
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="rec" style="margin:0 0 16px;">
+        <div class="rec-title">🦄 Ecosistema</div>
+        <div class="rec-body">
+          Argentina tiene el ecosistema startup más desarrollado de LATAM fuera de Brasil. 6+ unicornios. Inversores activos (NXTP, Kaszek, Cometa, Wayra).<br><br>
+          El modelo de TMC (marketplace P2P con escrow) es exactamente el que los VCs LATAM buscan: alto GMV, bajo capex, efecto de red.<br><br>
+          <strong>Ventana de oportunidad:</strong> levantar una ronda seed de $300K-1M en 12-18 meses cuando haya tracción medible.
+        </div>
+      </div>
+
+      <div class="rec" style="margin:0;">
+        <div class="rec-title">👥 Equipo</div>
+        <div class="rec-body">
+          Alejandro (CEO/Visionary ✓) + Guille (CTO/Implementor ✓).<br>
+          <strong>Falta:</strong> Connector (trae deals, admins, medios) + Finance/Data (CRM, analytics, reporting).<br><br>
+          Próximo hire: <strong>Sales/Community Manager</strong> que sea Connector. Puede ser part-time o equity-only al inicio.<br>
+          CIO formal: hire en mes 4-6 o cubrir con contractor de analytics.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <hr>
+  <div class="sec">✅ El checklist de los próximos 30 días</div>
+
+  <div class="g3">
+    <div class="card" style="border-top-color:#a8e6cf;">
+      <div class="icon">⚖️</div>
+      <div class="ct">Legal (Semana 1)</div>
+      <ul style="list-style:none;font-size:.79rem;color:var(--text2);margin-top:8px;">
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">☐ Constituir TMC S.A.S. en IGJ digital</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">☐ Obtener CUIT de la empresa</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">☐ Abrir cuenta Brubank Business</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">☐ Vincular MP a cuenta empresa</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">☐ Contratar contador ($80-150 USD/mes)</li>
+        <li style="padding:4px 0;">☐ Firmar acuerdo de socios con vesting</li>
+      </ul>
+    </div>
+    <div class="card" style="border-top-color:#c4b5fd;">
+      <div class="icon">📣</div>
+      <div class="ct">Comercial (Semana 2-3)</div>
+      <ul style="list-style:none;font-size:.79rem;color:var(--text2);margin-top:8px;">
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">☐ Pitch CAPSTONE escrito y memorizado</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">☐ Landing de waiting list lanzada</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">☐ Grupo WhatsApp proveedores activo</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">☐ Lista de 50 admins de edificios</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">☐ LinkedIn de Alejandro activo</li>
+        <li style="padding:4px 0;">☐ Scorecard "¿Cuánto vale tu espacio?"</li>
+      </ul>
+    </div>
+    <div class="card" style="border-top-color:#fed7aa;">
+      <div class="icon">⚙️</div>
+      <div class="ct">Técnico — Guille (Mes 1)</div>
+      <ul style="list-style:none;font-size:.79rem;color:var(--text2);margin-top:8px;">
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">☐ Caché de token en auth middleware</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">☐ SSR en páginas de espacios (SEO)</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">☐ Restricción dominio API Key Maps</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">☐ Activar Twilio (reemplazar PENDING)</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">☐ Backup diario MySQL en VPS</li>
+        <li style="padding:4px 0;">☐ Tag v1 + branch v2 en git</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="quote" style="margin-top:24px;">
+    "El negocio de marketplaces más poderoso de Argentina nació en una oficina de Buenos Aires en 1999 con 5 personas. La ventaja del primer mover, la confianza como activo central y el efecto de red como barrera de entrada — exactamente lo que TodasMisCosas está construyendo hoy." — Lección de MercadoLibre aplicada a TMC
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="page-footer">
+  <strong style="color:#e2e8f0;">TodasMisCosas.com</strong> — Plan Institucional · Junio 2026<br>
+  Legal · Investigación de Mercado · Unicornios Argentina · CTO &amp; CIO · Roadmap 90 días<br>
+  <span style="color:#64748b;font-size:.7rem;margin-top:6px;display:block;">Generado por Claude Sonnet 4.6 · Documento interno · Para uso del equipo TMC</span>
+</div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.target.classList.add('active');
+  }
+</script>
+</body>
+</html>
