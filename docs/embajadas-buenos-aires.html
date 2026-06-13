@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Embajadas en Buenos Aires · CABA 2025-2026</title>
+<style>
+:root{
+  --mint:#a8e6cf;--mint2:#d4f5e9;--mint3:#f0fdf4;
+  --lav:#c4b5fd;--lav2:#ede9fe;--lav3:#f5f3ff;
+  --peach:#fed7aa;--peach2:#fff3e8;--peach3:#fffaf5;
+  --sky:#bae6fd;--sky2:#e0f2fe;--sky3:#f0f9ff;
+  --van:#fef3c7;--van2:#fffbeb;
+  --rose:#fecdd3;--rose2:#fff1f3;
+  --sage:#bbf7d0;--sage2:#f0fdf4;
+  --teal:#99f6e4;--teal2:#f0fdfa;
+  --lilac:#e9d5ff;--lilac2:#faf5ff;
+  --sand:#fde68a;--sand2:#fefce8;
+  --coral:#fca5a5;--coral2:#fff5f5;
+  --orange:#e8622a;--navy:#1e293b;
+  --text:#1e293b;--text2:#475569;--text3:#94a3b8;
+  --border:#e2e8f0;--bg:#f8fafc;--white:#fff;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.6;}
+
+.header{background:linear-gradient(135deg,#0f172a 0%,#1a3a6b 55%,#1e293b 100%);padding:32px 44px 24px;}
+.hl{font-size:1.3rem;font-weight:900;color:#60a5fa;letter-spacing:-.5px;}
+.ht{font-size:1.45rem;font-weight:800;color:#f1f5f9;margin:6px 0 4px;}
+.hs{color:#94a3b8;font-size:.82rem;}
+.hchips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+.chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:3px 12px;font-size:.72rem;color:#cbd5e1;}
+.chip strong{color:#f1f5f9;}
+
+.disclaimer{background:#fefce8;border:1px solid #fde047;border-left:4px solid #eab308;padding:10px 16px;font-size:.75rem;color:#713f12;display:flex;gap:8px;align-items:flex-start;}
+
+.tab-bar{background:var(--white);border-bottom:2px solid var(--border);display:flex;overflow-x:auto;padding:0 44px;position:sticky;top:0;z-index:100;box-shadow:0 2px 6px rgba(0,0,0,.06);}
+.tab-bar::-webkit-scrollbar{height:3px;}
+.tb{padding:13px 16px;border:none;background:none;cursor:pointer;font-size:.78rem;font-weight:600;color:var(--text3);white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;}
+.tb:hover{color:var(--text2);}
+.tb.active{color:var(--orange);border-bottom-color:var(--orange);}
+
+.tc{display:none;padding:28px 44px 60px;}
+.tc.active{display:block;}
+
+.search-wrap{position:relative;margin-bottom:22px;max-width:480px;}
+.search-wrap input{width:100%;padding:10px 16px 10px 40px;border:2px solid var(--border);border-radius:12px;font-size:.85rem;color:var(--text);outline:none;background:var(--white);}
+.search-wrap input:focus{border-color:#60a5fa;}
+.search-wrap .si{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:1rem;}
+.count-badge{font-size:.72rem;color:var(--text3);margin-bottom:14px;}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;}
+
+.card{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;border-top:4px solid var(--border);transition:box-shadow .2s;}
+.card:hover{box-shadow:0 4px 18px rgba(0,0,0,.09);}
+.card-h{padding:14px 16px 10px;display:flex;align-items:center;gap:10px;}
+.flag{font-size:1.7rem;line-height:1;flex-shrink:0;}
+.card-meta .cm-country{font-size:.95rem;font-weight:800;color:var(--text);}
+.card-meta .cm-sub{font-size:.72rem;color:var(--text3);}
+.card-body{padding:0 16px 14px;}
+.row{display:flex;gap:7px;margin-bottom:6px;align-items:flex-start;}
+.row-icon{font-size:.85rem;flex-shrink:0;margin-top:1px;}
+.row-text{font-size:.76rem;color:var(--text2);line-height:1.5;}
+.row-text strong{color:var(--text);font-size:.77rem;}
+.row-text a{color:#2563eb;text-decoration:none;}
+.row-text a:hover{text-decoration:underline;}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+.tag{font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:6px;}
+.t-visa{background:#dbeafe;color:#1d4ed8;}
+.t-cons{background:#dcfce7;color:#166534;}
+.t-turno{background:#fef9c3;color:#854d0e;}
+.t-wa{background:#dcfce7;color:#15803d;}
+.t-emer{background:#fee2e2;color:#991b1b;}
+.no-results{text-align:center;color:var(--text3);padding:60px 20px;font-size:.9rem;}
+
+.sec-title{font-size:1rem;font-weight:800;color:var(--text);margin:0 0 16px;display:flex;align-items:center;gap:8px;}
+
+.page-footer{background:var(--navy);color:#64748b;text-align:center;padding:18px;font-size:.72rem;}
+.page-footer strong{color:#94a3b8;}
+
+@media(max-width:600px){
+  .header{padding:20px 14px 16px;}
+  .tab-bar{padding:0 10px;}
+  .tc{padding:18px 14px 48px;}
+  .grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="hl">🌐 Directorio Diplomático</div>
+  <div class="ht">Embajadas en Buenos Aires — CABA &amp; AMBA</div>
+  <div class="hs">Direcciones · Teléfonos · Sitios web · Horarios · Servicios consulares · 2025-2026</div>
+  <div class="hchips">
+    <div class="chip"><strong>+50</strong> representaciones</div>
+    <div class="chip">Organizado <strong>por región</strong></div>
+    <div class="chip"><strong>Buscador</strong> integrado</div>
+    <div class="chip">Actualizar datos en sitio oficial</div>
+  </div>
+</div>
+
+<div class="disclaimer">
+  <span>⚠️</span>
+  <span><strong>Importante:</strong> Este directorio fue compilado de fuentes públicas y puede contener información desactualizada. Verificar horarios, números y requisitos directamente en el sitio web oficial de cada embajada antes de concurrir. Las embajadas no tienen WhatsApp salvo indicación expresa.</span>
+</div>
+
+<div class="tab-bar">
+  <button class="tb active" onclick="showTab('americas')">🌎 Américas</button>
+  <button class="tb" onclick="showTab('europa-occ')">🇪🇺 Europa Occ.</button>
+  <button class="tb" onclick="showTab('europa-or')">🧭 Europa Or. &amp; Nórdica</button>
+  <button class="tb" onclick="showTab('asia')">🌏 Asia-Pacífico</button>
+  <button class="tb" onclick="showTab('moa')">🌍 Medio Oriente &amp; África</button>
+  <button class="tb" onclick="showTab('buscar')">🔍 Buscador Global</button>
+</div>
+
+<!-- ════════════════════ AMÉRICAS ════════════════════ -->
+<div id="tab-americas" class="tc active">
+<div class="sec-title">🌎 Américas — Embajadas en CABA</div>
+<div class="grid">
+
+<div class="card" style="border-top-color:#4ade80;">
+<div class="card-h" style="background:#f0fdf4;">
+  <div class="flag">🇺🇸</div>
+  <div class="card-meta"><div class="cm-country">Estados Unidos</div><div class="cm-sub">Palermo · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Av. Colombia 4300</strong>, Palermo, CABA (CP 1425)</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 5777-4533</span></div>
+  <div class="row"><span class="row-icon">🚨</span><span class="row-text">Emergencias americanos: +54 11 5777-4354</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 8:30–12:30 (visas con turno previo)</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text"><a href="https://ar.usembassy.gov" target="_blank">ar.usembassy.gov</a></span></div>
+  <div class="tags"><span class="tag t-visa">Visas B1/B2</span><span class="tag t-turno">Solo con turno</span><span class="tag t-emer">Línea emergencias</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#f59e0b;">
+<div class="card-h" style="background:#fffbeb;">
+  <div class="flag">🇨🇦</div>
+  <div class="card-meta"><div class="cm-country">Canadá</div><div class="cm-sub">Palermo · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Tagle 2828</strong>, Palermo, CABA (CP 1425)</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4808-1000</span></div>
+  <div class="row"><span class="row-icon">🚨</span><span class="row-text">Emergencias: +1 613 996-8885 (llamar a cobrar)</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 8:30–16:30</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text"><a href="https://www.argentina.gc.ca" target="_blank">argentina.gc.ca</a></span></div>
+  <div class="tags"><span class="tag t-visa">Visas ETA/Inmig.</span><span class="tag t-turno">Solo con turno</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#22c55e;">
+<div class="card-h" style="background:#f0fdf4;">
+  <div class="flag">🇧🇷</div>
+  <div class="card-meta"><div class="cm-country">Brasil</div><div class="cm-sub">Retiro · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Cerrito 1350</strong>, Retiro, CABA (CP 1010)</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4515-2400</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–13:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text"><a href="https://buenos-aires.itamaraty.gov.br" target="_blank">buenos-aires.itamaraty.gov.br</a></span></div>
+  <div class="tags"><span class="tag t-cons">Cédula brasileña</span><span class="tag t-visa">Visas</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#ef4444;">
+<div class="card-h" style="background:#fff5f5;">
+  <div class="flag">🇨🇱</div>
+  <div class="card-meta"><div class="cm-country">Chile</div><div class="cm-sub">Microcentro · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>San Martín 439</strong>, piso 9, Microcentro, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4394-6582</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–13:30</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">chilesabroad.gob.cl</span></div>
+  <div class="tags"><span class="tag t-cons">Pasaportes chilenos</span><span class="tag t-turno">Con turno</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#16a34a;">
+<div class="card-h" style="background:#f0fdf4;">
+  <div class="flag">🇲🇽</div>
+  <div class="card-meta"><div class="cm-country">México</div><div class="cm-sub">Recoleta · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Larrea 1230</strong>, Recoleta, CABA (CP 1117)</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4821-7172 / 4821-6040</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–14:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">embamex.sre.gob.mx/argentina</span></div>
+  <div class="tags"><span class="tag t-cons">Servicios consulares</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#fbbf24;">
+<div class="card-h" style="background:#fffbeb;">
+  <div class="flag">🇨🇴</div>
+  <div class="card-meta"><div class="cm-country">Colombia</div><div class="cm-sub">Recoleta · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Av. del Libertador 1336</strong>, piso 4, Recoleta, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4813-8658</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 8:30–16:30</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">argentina.embajada.gov.co</span></div>
+  <div class="tags"><span class="tag t-cons">Apostillas</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#dc2626;">
+<div class="card-h" style="background:#fff5f5;">
+  <div class="flag">🇵🇪</div>
+  <div class="card-meta"><div class="cm-country">Perú</div><div class="cm-sub">Recoleta · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Av. del Libertador 1720</strong>, Recoleta, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4802-2000</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–13:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">embajadaperu.org.ar</span></div>
+  <div class="tags"><span class="tag t-cons">Pasaportes</span><span class="tag t-visa">Visas</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#f97316;">
+<div class="card-h" style="background:#fff7ed;">
+  <div class="flag">🇧🇴</div>
+  <div class="card-meta"><div class="cm-country">Bolivia</div><div class="cm-sub">Microcentro · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Corrientes 545</strong>, piso 2, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4394-1463</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–15:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">embajadadebolivia.com.ar</span></div>
+  <div class="tags"><span class="tag t-cons">CEDULA/pasaporte</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#3b82f6;">
+<div class="card-h" style="background:#eff6ff;">
+  <div class="flag">🇺🇾</div>
+  <div class="card-meta"><div class="cm-country">Uruguay</div><div class="cm-sub">Palermo · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Las Heras 1907</strong>, Palermo, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4807-3040</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–13:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">embajadauruguay.org.ar</span></div>
+  <div class="tags"><span class="tag t-cons">Servicios consulares</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#dc2626;">
+<div class="card-h" style="background:#fff5f5;">
+  <div class="flag">🇵🇾</div>
+  <div class="card-meta"><div class="cm-country">Paraguay</div><div class="cm-sub">Palermo · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Maure 1932</strong>, Palermo, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4802-0740</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 8:30–13:30</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">mre.gov.py</span></div>
+  <div class="tags"><span class="tag t-cons">Cédulas/pasaportes</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#facc15;">
+<div class="card-h" style="background:#fefce8;">
+  <div class="flag">🇻🇪</div>
+  <div class="card-meta"><div class="cm-country">Venezuela</div><div class="cm-sub">Belgrano · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Virrey del Pino 2502</strong>, Belgrano, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4781-4152</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–13:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">mppre.gob.ve</span></div>
+  <div class="tags"><span class="tag t-cons">Consulares</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#1d4ed8;">
+<div class="card-h" style="background:#eff6ff;">
+  <div class="flag">🇨🇺</div>
+  <div class="card-meta"><div class="cm-country">Cuba</div><div class="cm-sub">Belgrano · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Virrey del Pino 1810</strong>, Belgrano, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4782-9049</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–12:30</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">cubadiplomatica.cu</span></div>
+  <div class="tags"><span class="tag t-visa">Tarjeta del Turista</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#f59e0b;">
+<div class="card-h" style="background:#fffbeb;">
+  <div class="flag">🇪🇨</div>
+  <div class="card-meta"><div class="cm-country">Ecuador</div><div class="cm-sub">Recoleta · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Pacheco de Melo 2860</strong>, Recoleta, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4804-9055</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–13:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">cancilleria.gob.ec</span></div>
+  <div class="tags"><span class="tag t-cons">Servicios consulares</span></div>
+</div>
+</div>
+
+</div><!-- /grid -->
+</div><!-- /tab -->
+
+<!-- ════════════════════ EUROPA OCC ════════════════════ -->
+<div id="tab-europa-occ" class="tc">
+<div class="sec-title">🇪🇺 Europa Occidental — Embajadas en CABA</div>
+<div class="grid">
+
+<div class="card" style="border-top-color:#1d4ed8;">
+<div class="card-h" style="background:#eff6ff;">
+  <div class="flag">🇩🇪</div>
+  <div class="card-meta"><div class="cm-country">Alemania</div><div class="cm-sub">Palermo · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Villanueva 1055</strong>, Palermo, CABA (CP 1426)</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4778-2500</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 8:30–12:30 (cons.) · L-J 13:30–15:30</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text"><a href="https://buenos-aires.diplo.de" target="_blank">buenos-aires.diplo.de</a></span></div>
+  <div class="tags"><span class="tag t-visa">Schengen</span><span class="tag t-turno">Turno BLS International</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#2563eb;">
+<div class="card-h" style="background:#eff6ff;">
+  <div class="flag">🇫🇷</div>
+  <div class="card-meta"><div class="cm-country">Francia</div><div class="cm-sub">Retiro · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Cerrito 1399</strong>, Retiro, CABA (CP 1010)</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4515-2930</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–13:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text"><a href="https://ar.ambafrance.org" target="_blank">ar.ambafrance.org</a></span></div>
+  <div class="tags"><span class="tag t-visa">Schengen</span><span class="tag t-turno">Via France-Visas</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#dc2626;">
+<div class="card-h" style="background:#fff5f5;">
+  <div class="flag">🇪🇸</div>
+  <div class="card-meta"><div class="cm-country">España</div><div class="cm-sub">Recoleta · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Guido 1760</strong>, Recoleta, CABA (CP 1016)</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4811-0097 / 4815-6500</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–13:00 (cons.) · Visas con turno</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">exteriores.gob.es · consuladodeespana-bsas.es</span></div>
+  <div class="tags"><span class="tag t-visa">Schengen / Nacionalidad</span><span class="tag t-cons">Registro Civil</span><span class="tag t-turno">Turno online</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#16a34a;">
+<div class="card-h" style="background:#f0fdf4;">
+  <div class="flag">🇮🇹</div>
+  <div class="card-meta"><div class="cm-country">Italia</div><div class="cm-sub">Palermo · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Billinghurst 2577</strong>, Palermo, CABA (CP 1425)</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4011-2100</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 8:30–12:30</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text"><a href="https://ambbuenosaires.esteri.it" target="_blank">ambbuenosaires.esteri.it</a></span></div>
+  <div class="tags"><span class="tag t-cons">Ciudadanía italiana</span><span class="tag t-visa">Schengen</span><span class="tag t-turno">Prenota online</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#1d4ed8;">
+<div class="card-h" style="background:#eff6ff;">
+  <div class="flag">🇬🇧</div>
+  <div class="card-meta"><div class="cm-country">Reino Unido</div><div class="cm-sub">Recoleta · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Dr. Luis Agote 2412</strong>, Recoleta, CABA (CP 1425)</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4808-2200</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-J 8:30–17:00 · V 8:30–13:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text"><a href="https://www.gov.uk/world/argentina" target="_blank">gov.uk/world/argentina</a></span></div>
+  <div class="tags"><span class="tag t-visa">UK Visas online</span><span class="tag t-emer">Emergencias cons.</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#f97316;">
+<div class="card-h" style="background:#fff7ed;">
+  <div class="flag">🇳🇱</div>
+  <div class="card-meta"><div class="cm-country">Países Bajos</div><div class="cm-sub">Puerto Madero · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Olga Cossettini 831</strong>, piso 3, Puerto Madero, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4338-0050</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–13:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">netherlandsworldwide.nl</span></div>
+  <div class="tags"><span class="tag t-visa">Schengen</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#dc2626;">
+<div class="card-h" style="background:#fff5f5;">
+  <div class="flag">🇨🇭</div>
+  <div class="card-meta"><div class="cm-country">Suiza</div><div class="cm-sub">Microcentro · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Av. Santa Fe 846</strong>, piso 12, Microcentro, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4311-6491</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–12:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">eda.admin.ch/buenosaires</span></div>
+  <div class="tags"><span class="tag t-visa">Schengen</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#1d4ed8;">
+<div class="card-h" style="background:#eff6ff;">
+  <div class="flag">🇧🇪</div>
+  <div class="card-meta"><div class="cm-country">Bélgica</div><div class="cm-sub">Microcentro · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Defensa 113</strong>, piso 8, San Telmo/Microcentro, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4331-0066</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–12:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">diplomatie.belgium.be/argentina</span></div>
+  <div class="tags"><span class="tag t-visa">Schengen</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#dc2626;">
+<div class="card-h" style="background:#fff5f5;">
+  <div class="flag">🇦🇹</div>
+  <div class="card-meta"><div class="cm-country">Austria</div><div class="cm-sub">Palermo · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>French 3671</strong>, Palermo, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4802-7195</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–12:30</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">bmeia.gv.at/buenosaires</span></div>
+  <div class="tags"><span class="tag t-visa">Schengen</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#16a34a;">
+<div class="card-h" style="background:#f0fdf4;">
+  <div class="flag">🇵🇹</div>
+  <div class="card-meta"><div class="cm-country">Portugal</div><div class="cm-sub">Microcentro · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Carlos Pellegrini 1363</strong>, piso 5, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4394-5130</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–13:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">buenosaires.embaixadaportugal.pt</span></div>
+  <div class="tags"><span class="tag t-cons">Ciudadanía</span><span class="tag t-visa">Schengen</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#facc15;">
+<div class="card-h" style="background:#fefce8;">
+  <div class="flag">🇻🇦</div>
+  <div class="card-meta"><div class="cm-country">Santa Sede (Vaticano)</div><div class="cm-sub">Recoleta · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Av. Alvear 1605</strong>, Recoleta, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4804-0202</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–13:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">nunziaturabsas.org</span></div>
+  <div class="tags"><span class="tag t-cons">Nunciatura Apostólica</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#2563eb;">
+<div class="card-h" style="background:#eff6ff;">
+  <div class="flag">🇬🇷</div>
+  <div class="card-meta"><div class="cm-country">Grecia</div><div class="cm-sub">Puerto Madero · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Av. Ricardo Rojas 401</strong>, piso 8, Puerto Madero, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4313-2662</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–13:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">mfa.gr/buenosaires</span></div>
+  <div class="tags"><span class="tag t-visa">Schengen</span><span class="tag t-cons">Comunidad griega</span></div>
+</div>
+</div>
+
+</div><!-- /grid -->
+</div><!-- /tab -->
+
+<!-- ════════════════════ EUROPA OR/NÓRDICA ════════════════════ -->
+<div id="tab-europa-or" class="tc">
+<div class="sec-title">🧭 Europa Oriental &amp; Nórdica — Embajadas en CABA</div>
+<div class="grid">
+
+<div class="card" style="border-top-color:#dc2626;">
+<div class="card-h" style="background:#fff5f5;">
+  <div class="flag">🇷🇺</div>
+  <div class="card-meta"><div class="cm-country">Rusia</div><div class="cm-sub">Recoleta · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Rodríguez Peña 1741</strong>, Recoleta, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4813-1552 / 4812-1681</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–13:00 / 15:00–18:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">argentina.mid.ru</span></div>
+  <div class="tags"><span class="tag t-visa">Visas con invitación</span><span class="tag t-cons">Consulares</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#ef4444;">
+<div class="card-h" style="background:#fff5f5;">
+  <div class="flag">🇵🇱</div>
+  <div class="card-meta"><div class="cm-country">Polonia</div><div class="cm-sub">Palermo · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Alejandro M. de Aguado 2870</strong>, Palermo, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4802-9681</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–13:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">buenosaires.msz.gov.pl</span></div>
+  <div class="tags"><span class="tag t-visa">Schengen</span><span class="tag t-cons">Ciudadanía polaca</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#3b82f6;">
+<div class="card-h" style="background:#eff6ff;">
+  <div class="flag">🇨🇿</div>
+  <div class="card-meta"><div class="cm-country">República Checa</div><div class="cm-sub">Recoleta · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Junín 1461</strong>, Recoleta, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4807-3107</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–12:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">mzv.cz/buenosaires</span></div>
+  <div class="tags"><span class="tag t-visa">Schengen</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#facc15;">
+<div class="card-h" style="background:#fefce8;">
+  <div class="flag">🇷🇴</div>
+  <div class="card-meta"><div class="cm-country">Rumania</div><div class="cm-sub">Retiro · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Arroyo 962</strong>, piso 2, Retiro, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4393-4094</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–12:30</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">buenosaires.mae.ro</span></div>
+  <div class="tags"><span class="tag t-visa">Schengen</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#3b82f6;">
+<div class="card-h" style="background:#eff6ff;">
+  <div class="flag">🇺🇦</div>
+  <div class="card-meta"><div class="cm-country">Ucrania</div><div class="cm-sub">Recoleta · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Av. Las Heras 2042</strong>, Recoleta, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4807-3791</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–13:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">argentina.mfa.gov.ua</span></div>
+  <div class="tags"><span class="tag t-cons">Consulares</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#16a34a;">
+<div class="card-h" style="background:#f0fdf4;">
+  <div class="flag">🇭🇺</div>
+  <div class="card-meta"><div class="cm-country">Hungría</div><div class="cm-sub">Palermo · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Olleros 1879</strong>, Palermo, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4772-3555</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–12:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">mfa.gov.hu/buenosaires</span></div>
+  <div class="tags"><span class="tag t-visa">Schengen</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#1d4ed8;">
+<div class="card-h" style="background:#eff6ff;">
+  <div class="flag">🇸🇪</div>
+  <div class="card-meta"><div class="cm-country">Suecia</div><div class="cm-sub">Microcentro · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Tacuarí 147</strong>, piso 6, Microcentro, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4329-1811</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–12:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">swedenabroad.se/buenosaires</span></div>
+  <div class="tags"><span class="tag t-visa">Schengen</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#ef4444;">
+<div class="card-h" style="background:#fff5f5;">
+  <div class="flag">🇳🇴</div>
+  <div class="card-meta"><div class="cm-country">Noruega</div><div class="cm-sub">Microcentro · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Esmeralda 909</strong>, piso 3, Microcentro, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4315-7223</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–12:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">norway.no/argentina</span></div>
+  <div class="tags"><span class="tag t-visa">Schengen</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#dc2626;">
+<div class="card-h" style="background:#fff5f5;">
+  <div class="flag">🇩🇰</div>
+  <div class="card-meta"><div class="cm-country">Dinamarca</div><div class="cm-sub">Microcentro · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Leandro N. Alem 1074</strong>, piso 9, Microcentro, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4312-6901</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–12:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">argentina.um.dk</span></div>
+  <div class="tags"><span class="tag t-visa">Schengen</span></div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ════════════════════ ASIA-PACÍFICO ════════════════════ -->
+<div id="tab-asia" class="tc">
+<div class="sec-title">🌏 Asia-Pacífico — Embajadas en CABA</div>
+<div class="grid">
+
+<div class="card" style="border-top-color:#dc2626;">
+<div class="card-h" style="background:#fff5f5;">
+  <div class="flag">🇯🇵</div>
+  <div class="card-meta"><div class="cm-country">Japón</div><div class="cm-sub">Puerto Madero · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Bouchard 547</strong>, piso 17, Puerto Madero, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4318-8200</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–12:30 / 13:30–17:30 (visas: 9:30–12:00)</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text"><a href="https://www.ar.emb-japan.go.jp" target="_blank">ar.emb-japan.go.jp</a></span></div>
+  <div class="tags"><span class="tag t-visa">Visa japonesa</span><span class="tag t-turno">Con turno previo</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#ef4444;">
+<div class="card-h" style="background:#fff5f5;">
+  <div class="flag">🇨🇳</div>
+  <div class="card-meta"><div class="cm-country">China (RPC)</div><div class="cm-sub">Belgrano · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Crisologo Larralde 5349</strong>, Belgrano, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4547-8862 / 4546-0961</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–12:00 (visas)</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">ar.china-embassy.gov.cn</span></div>
+  <div class="tags"><span class="tag t-visa">Visa China</span><span class="tag t-turno">Turno obligatorio</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#1d4ed8;">
+<div class="card-h" style="background:#eff6ff;">
+  <div class="flag">🇰🇷</div>
+  <div class="card-meta"><div class="cm-country">Corea del Sur</div><div class="cm-sub">Recoleta · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Av. del Libertador 2395</strong>, Recoleta, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4802-8865</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–12:00 / 14:00–17:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">overseas.mofa.go.kr/ar-es</span></div>
+  <div class="tags"><span class="tag t-visa">K-ETA / Visa</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#f97316;">
+<div class="card-h" style="background:#fff7ed;">
+  <div class="flag">🇮🇳</div>
+  <div class="card-meta"><div class="cm-country">India</div><div class="cm-sub">Microcentro · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Córdoba 950</strong>, piso 8, Microcentro, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 5280-0547 / 4393-4001</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:30–13:00 (visas: 9:30–12:00)</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">indianembassy.org.ar</span></div>
+  <div class="tags"><span class="tag t-visa">e-Visa India</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#16a34a;">
+<div class="card-h" style="background:#f0fdf4;">
+  <div class="flag">🇦🇺</div>
+  <div class="card-meta"><div class="cm-country">Australia</div><div class="cm-sub">Palermo · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Villanueva 1400</strong>, Palermo, CABA (CP 1426)</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4779-3500</span></div>
+  <div class="row"><span class="row-icon">🚨</span><span class="row-text">Emergencias australianos: +61 2 6261-3305</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-J 8:30–17:00 · V 8:30–13:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text"><a href="https://argentina.embassy.gov.au" target="_blank">argentina.embassy.gov.au</a></span></div>
+  <div class="tags"><span class="tag t-visa">ETA Australia</span><span class="tag t-emer">Emergencias 24h</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#dc2626;">
+<div class="card-h" style="background:#fff5f5;">
+  <div class="flag">🇮🇩</div>
+  <div class="card-meta"><div class="cm-country">Indonesia</div><div class="cm-sub">Belgrano · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Mcal. Ramón Castilla 2901</strong>, Belgrano, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4807-1066</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–13:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">kemlu.go.id/buenosaires</span></div>
+  <div class="tags"><span class="tag t-visa">Visa on arrival / e-Visa</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#1d4ed8;">
+<div class="card-h" style="background:#eff6ff;">
+  <div class="flag">🇹🇭</div>
+  <div class="card-meta"><div class="cm-country">Tailandia</div><div class="cm-sub">Belgrano · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Av. del Libertador 5913</strong>, Belgrano, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4703-4920</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–12:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">thaiembassy.org/argentina</span></div>
+  <div class="tags"><span class="tag t-visa">Visa Tailandia</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#16a34a;">
+<div class="card-h" style="background:#f0fdf4;">
+  <div class="flag">🇻🇳</div>
+  <div class="card-meta"><div class="cm-country">Vietnam</div><div class="cm-sub">CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Conesa 1831</strong>, Belgrano, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4784-7802</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 8:30–12:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">mofa.gov.vn</span></div>
+  <div class="tags"><span class="tag t-visa">Visa electrónica disponible</span></div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ════════════════════ MEDIO ORIENTE & ÁFRICA ════════════════════ -->
+<div id="tab-moa" class="tc">
+<div class="sec-title">🌍 Medio Oriente &amp; África — Embajadas en CABA</div>
+<div class="grid">
+
+<div class="card" style="border-top-color:#1d4ed8;">
+<div class="card-h" style="background:#eff6ff;">
+  <div class="flag">🇮🇱</div>
+  <div class="card-meta"><div class="cm-country">Israel</div><div class="cm-sub">Microcentro · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Av. de Mayo 701</strong>, piso 10, Microcentro, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4338-2500</span></div>
+  <div class="row"><span class="row-icon">💬</span><span class="row-text">WhatsApp emergencias: consultar en sitio oficial</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–12:30 (visas con turno)</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">embassies.gov.il/buenos-aires</span></div>
+  <div class="tags"><span class="tag t-visa">Visas israelíes</span><span class="tag t-cons">Servicios consulares</span><span class="tag t-emer">Alta seguridad</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#ef4444;">
+<div class="card-h" style="background:#fff5f5;">
+  <div class="flag">🇹🇷</div>
+  <div class="card-meta"><div class="cm-country">Turquía</div><div class="cm-sub">Palermo · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Lambaré 1289</strong>, Palermo, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4824-0048</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–13:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">buenosaires.be.mfa.gov.tr</span></div>
+  <div class="tags"><span class="tag t-visa">Visa electrónica E-Visa</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#16a34a;">
+<div class="card-h" style="background:#f0fdf4;">
+  <div class="flag">🇮🇷</div>
+  <div class="card-meta"><div class="cm-country">Irán</div><div class="cm-sub">Palermo · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Figueroa Alcorta 3229</strong>, Palermo, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4802-1470</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–13:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">argentina.mfa.gov.ir</span></div>
+  <div class="tags"><span class="tag t-visa">Visa iraní</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#16a34a;">
+<div class="card-h" style="background:#f0fdf4;">
+  <div class="flag">🇸🇦</div>
+  <div class="card-meta"><div class="cm-country">Arabia Saudita</div><div class="cm-sub">Palermo · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Alejandro M. Aguado 2881</strong>, Palermo, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4802-3700</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–13:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">mofa.gov.sa</span></div>
+  <div class="tags"><span class="tag t-visa">Visa Umra/Turismo</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#dc2626;">
+<div class="card-h" style="background:#fff5f5;">
+  <div class="flag">🇱🇧</div>
+  <div class="card-meta"><div class="cm-country">Líbano</div><div class="cm-sub">Retiro · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Arroyo 1288</strong>, Retiro, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4393-7213</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–13:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">embajada-libano.com.ar</span></div>
+  <div class="tags"><span class="tag t-cons">Comunidad libanesa</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#1d4ed8;">
+<div class="card-h" style="background:#eff6ff;">
+  <div class="flag">🇯🇴</div>
+  <div class="card-meta"><div class="cm-country">Jordania</div><div class="cm-sub">Palermo · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Guayaquil 1769</strong>, Palermo, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4771-7700</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–14:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">foreign.gov.jo</span></div>
+  <div class="tags"><span class="tag t-visa">Visa Jordan Pass</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#f59e0b;">
+<div class="card-h" style="background:#fffbeb;">
+  <div class="flag">🇪🇬</div>
+  <div class="card-meta"><div class="cm-country">Egipto</div><div class="cm-sub">Belgrano · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Av. del Libertador 2536</strong>, Belgrano, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4806-0745</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 10:00–14:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">mfa.gov.eg/buenosaires</span></div>
+  <div class="tags"><span class="tag t-visa">e-Visa Egipto disponible</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#16a34a;">
+<div class="card-h" style="background:#f0fdf4;">
+  <div class="flag">🇲🇦</div>
+  <div class="card-meta"><div class="cm-country">Marruecos</div><div class="cm-sub">Palermo · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Ombú 2932</strong>, Palermo, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4773-9700</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 9:00–13:00</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">maec.gov.ma</span></div>
+  <div class="tags"><span class="tag t-cons">Comunidad marroquí</span></div>
+</div>
+</div>
+
+<div class="card" style="border-top-color:#22c55e;">
+<div class="card-h" style="background:#f0fdf4;">
+  <div class="flag">🇿🇦</div>
+  <div class="card-meta"><div class="cm-country">Sudáfrica</div><div class="cm-sub">Microcentro · CABA</div></div>
+</div>
+<div class="card-body">
+  <div class="row"><span class="row-icon">📍</span><span class="row-text"><strong>Marcelo T. de Alvear 590</strong>, piso 8, CABA</span></div>
+  <div class="row"><span class="row-icon">📞</span><span class="row-text">+54 11 4317-2900</span></div>
+  <div class="row"><span class="row-icon">🕐</span><span class="row-text">L-V 8:30–12:30</span></div>
+  <div class="row"><span class="row-icon">🌐</span><span class="row-text">dirco.gov.za</span></div>
+  <div class="tags"><span class="tag t-visa">Visas SA</span></div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ════════════════════ BUSCADOR GLOBAL ════════════════════ -->
+<div id="tab-buscar" class="tc">
+<div class="sec-title">🔍 Buscador Global de Embajadas</div>
+<div class="search-wrap">
+  <span class="si">🔍</span>
+  <input type="text" id="global-search" placeholder="País, barrio, dirección, teléfono..." oninput="filterAll()">
+</div>
+<div class="count-badge" id="search-count">Escribí para buscar entre todas las embajadas</div>
+<div class="grid" id="search-results"></div>
+<div class="no-results" id="no-results" style="display:none;">No se encontraron resultados para esa búsqueda.</div>
+</div>
+
+<div class="page-footer">
+  <strong>Embajadas en Buenos Aires · CABA · 2025-2026</strong><br>
+  Compilado de fuentes públicas oficiales. Verificar siempre en el sitio web de cada embajada antes de concurrir.<br>
+  <span style="font-size:.68rem;color:#475569;margin-top:3px;display:block;">La mayoría de los trámites consulares requieren turno previo. WhatsApp no disponible salvo indicación expresa.</span>
+</div>
+
+<script>
+function showTab(id){
+  document.querySelectorAll('.tc').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+  if(id==='buscar'){
+    document.getElementById('global-search').focus();
+  }
+}
+
+// Build master data from all cards
+var allCards = [];
+function buildIndex(){
+  document.querySelectorAll('.tc:not(#tab-buscar) .card').forEach(function(card){
+    allCards.push({
+      html: card.outerHTML,
+      text: card.textContent.toLowerCase()
+    });
+  });
+}
+
+function filterAll(){
+  var q = document.getElementById('global-search').value.toLowerCase().trim();
+  var results = document.getElementById('search-results');
+  var noRes = document.getElementById('no-results');
+  var count = document.getElementById('search-count');
+  if(!q){
+    results.innerHTML='';
+    noRes.style.display='none';
+    count.textContent='Escribí para buscar entre todas las embajadas';
+    return;
+  }
+  var matched = allCards.filter(function(c){ return c.text.indexOf(q)>-1; });
+  count.textContent = matched.length + ' resultado(s) para "'+q+'"';
+  if(matched.length===0){
+    results.innerHTML='';
+    noRes.style.display='block';
+  } else {
+    noRes.style.display='none';
+    results.innerHTML = matched.map(function(c){ return c.html; }).join('');
+  }
+}
+
+window.onload = function(){ buildIndex(); };
+</script>
+</body>
+</html>
