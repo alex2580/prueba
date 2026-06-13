@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC — Roles y Equipo para Escalar · Plan 2→4→8→30</title>
+<style>
+  :root {
+    --mint:#a8e6cf;--mint2:#d4f5e9;--mint3:#f0fdf4;
+    --lav:#c4b5fd;--lav2:#ede9fe;--lav3:#f5f3ff;
+    --peach:#fed7aa;--peach2:#fff3e8;--peach3:#fffaf5;
+    --sky:#bae6fd;--sky2:#e8f7ff;--sky3:#f0f9ff;
+    --van:#fef3c7;--van2:#fffbeb;
+    --rose:#fecdd3;--rose2:#fff1f3;
+    --sage:#bbf7d0;--sage2:#f0fdf4;
+    --teal:#99f6e4;--teal2:#f0fdfa;
+    --orange:#e8622a;--navy:#1e293b;
+    --text:#1e293b;--text2:#475569;--text3:#94a3b8;
+    --border:#e2e8f0;--bg:#f8fafc;--white:#fff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:13.5px;line-height:1.65;}
+
+  /* HEADER */
+  .header{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 55%,#1e293b 100%);padding:36px 48px 28px;}
+  .hl{font-size:1.4rem;font-weight:900;color:var(--orange);letter-spacing:-.5px;}
+  .hl span{color:var(--sky);}
+  .ht{font-size:1.5rem;font-weight:800;color:#f1f5f9;margin:6px 0 4px;line-height:1.2;}
+  .hs{color:#94a3b8;font-size:.85rem;}
+  .hc{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;}
+  .chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:4px 14px;font-size:.75rem;color:#cbd5e1;}
+  .chip strong{color:#fff;}
+
+  /* TABS */
+  .tab-bar{background:var(--white);border-bottom:2px solid var(--border);display:flex;overflow-x:auto;padding:0 48px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+  .tab-bar::-webkit-scrollbar{height:4px;}
+  .tb{padding:14px 18px;border:none;background:none;cursor:pointer;font-size:.8rem;font-weight:600;color:var(--text3);white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;}
+  .tb:hover{color:var(--text2);}
+  .tb.active{color:var(--orange);border-bottom-color:var(--orange);}
+
+  /* CONTENT */
+  .tc{display:none;padding:40px 48px 64px;max-width:1120px;margin:0 auto;}
+  .tc.active{display:block;}
+
+  /* SECTION */
+  .sec{font-size:1.05rem;font-weight:800;color:var(--text);margin:34px 0 14px;display:flex;align-items:center;gap:10px;}
+  .sec:first-child{margin-top:0;}
+  .ssub{font-size:.8rem;color:var(--text3);margin:-10px 0 16px;}
+
+  /* GRIDS */
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+  .g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;}
+
+  /* CARD BASE */
+  .card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px 20px;border-top:4px solid var(--border);}
+  .card .icon{font-size:1.5rem;margin-bottom:8px;}
+  .card .ct{font-weight:800;font-size:.9rem;color:var(--text);margin-bottom:5px;}
+  .card .cb{font-size:.79rem;color:var(--text2);line-height:1.65;}
+  .card .cb strong{color:var(--text);}
+
+  /* ROLE CARD */
+  .role{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px;}
+  .role-h{padding:18px 24px;display:flex;align-items:center;gap:16px;}
+  .role-ico{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;}
+  .role-meta .rm-tag{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);font-weight:700;}
+  .role-meta .rm-title{font-size:1rem;font-weight:800;color:var(--text);}
+  .role-meta .rm-sub{font-size:.77rem;color:var(--text2);margin-top:2px;}
+  .role-body{padding:0 24px 20px;}
+  .role-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px;}
+  .role-sec-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px;}
+  .role-list{list-style:none;}
+  .role-list li{padding:5px 0;border-bottom:1px solid var(--border);font-size:.79rem;color:var(--text2);display:flex;gap:8px;align-items:flex-start;}
+  .role-list li:last-child{border-bottom:none;}
+  .role-list li::before{content:'→';color:var(--text3);flex-shrink:0;margin-top:1px;}
+  .role-list li strong{color:var(--text);}
+  .salary{background:var(--sage2);border:1px solid var(--sage);border-radius:10px;padding:12px 16px;margin-top:14px;font-size:.79rem;color:#065f46;}
+  .salary strong{font-size:.85rem;}
+
+  /* FASE CARD */
+  .fase{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:18px;}
+  .fase-h{padding:16px 22px;display:flex;align-items:center;gap:14px;}
+  .fase-badge{padding:6px 16px;border-radius:20px;font-size:.82rem;font-weight:900;flex-shrink:0;}
+  .fase-info .fi-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);font-weight:700;}
+  .fase-info .fi-title{font-size:.95rem;font-weight:800;color:var(--text);}
+  .fase-info .fi-sub{font-size:.76rem;color:var(--text2);}
+  .fase-body{padding:4px 22px 18px;}
+  .fase-roles{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+  .fase-rol{border-radius:10px;padding:8px 14px;font-size:.78rem;font-weight:700;}
+  .fase-list{list-style:none;margin-top:10px;}
+  .fase-list li{padding:6px 0;border-bottom:1px solid var(--border);font-size:.79rem;color:var(--text2);display:flex;gap:8px;align-items:flex-start;}
+  .fase-list li:last-child{border-bottom:none;}
+  .fase-list li::before{content:'→';color:var(--text3);flex-shrink:0;margin-top:1px;}
+  .fase-list li strong{color:var(--text);}
+
+  /* TABLA */
+  table{width:100%;border-collapse:collapse;background:var(--white);border-radius:14px;overflow:hidden;border:1px solid var(--border);margin-bottom:16px;}
+  th{background:#f1f5f9;padding:10px 14px;text-align:left;font-size:.75rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;}
+  td{padding:10px 14px;font-size:.79rem;color:var(--text2);border-top:1px solid var(--border);vertical-align:top;line-height:1.6;}
+  td strong{color:var(--text);}
+  td.ok{color:#16a34a;font-weight:700;}
+  td.wait{color:#d97706;font-weight:700;}
+  td.later{color:#94a3b8;font-weight:600;}
+
+  /* TIMELINE */
+  .tl{margin:8px 0 24px;}
+  .tl-item{display:flex;gap:16px;margin-bottom:18px;}
+  .tl-l{display:flex;flex-direction:column;align-items:center;}
+  .tl-dot{width:34px;height:34px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:900;color:white;}
+  .tl-line{width:2px;background:var(--border);flex:1;min-height:16px;margin-top:4px;}
+  .tl-c{padding-top:4px;flex:1;}
+  .tl-t{font-weight:800;font-size:.9rem;color:var(--text);margin-bottom:3px;}
+  .tl-d{font-size:.79rem;color:var(--text2);line-height:1.65;}
+  .tl-d strong{color:var(--text);}
+  .tl-kpi{display:inline-block;margin-top:6px;font-size:.68rem;background:var(--van);color:#92400e;padding:2px 8px;border-radius:5px;font-weight:600;}
+
+  /* STATS */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+  .stat{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;}
+  .stat .n{font-size:1.8rem;font-weight:900;line-height:1;margin-bottom:4px;}
+  .stat .l{font-size:.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;}
+
+  /* ALERT */
+  .alert{border-radius:12px;padding:14px 18px;margin:14px 0;font-size:.81rem;line-height:1.7;display:flex;gap:10px;align-items:flex-start;}
+  .ai{font-size:1.1rem;flex-shrink:0;margin-top:1px;}
+  .a-blue{background:var(--sky3);border:1px solid var(--sky);color:#075985;}
+  .a-green{background:var(--mint3);border:1px solid var(--mint);color:#065f46;}
+  .a-orange{background:var(--peach2);border:1px solid var(--peach);color:#9a3412;}
+  .a-lav{background:var(--lav3);border:1px solid var(--lav);color:#4c1d95;}
+
+  /* PILL */
+  .pill{display:inline-block;border-radius:20px;padding:3px 10px;font-size:.7rem;font-weight:700;}
+  .p-green{background:var(--sage);color:#166534;}
+  .p-orange{background:var(--peach);color:#9a3412;}
+  .p-blue{background:var(--sky2);color:#075985;}
+  .p-lav{background:var(--lav2);color:#5b21b6;}
+  .p-rose{background:var(--rose2);color:#9f1239;}
+  .p-teal{background:var(--teal2);color:#0f766e;}
+
+  /* QUOTE */
+  .quote{background:var(--van2);border-left:4px solid #f59e0b;border-radius:0 12px 12px 0;padding:14px 18px;margin:14px 0;font-size:.83rem;font-style:italic;color:#78350f;line-height:1.7;}
+
+  /* SUITS */
+  .suits{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0;}
+  .suit{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center;border-top:4px solid;}
+  .suit .s-ico{font-size:1.8rem;margin-bottom:8px;}
+  .suit .s-name{font-weight:800;font-size:.85rem;color:var(--text);margin-bottom:4px;}
+  .suit .s-who{font-size:.75rem;color:var(--text2);margin-bottom:6px;}
+  .suit .s-status{font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:5px;}
+
+  /* REGLA BOX */
+  .regla{background:linear-gradient(135deg,#0f172a,#1e3a5f);border-radius:16px;padding:24px 30px;color:#f1f5f9;margin:14px 0;}
+  .regla-title{font-size:.95rem;font-weight:800;color:var(--orange);margin-bottom:12px;}
+  .regla-body{font-size:.84rem;line-height:1.8;color:#cbd5e1;}
+  .regla-body strong{color:#f1f5f9;}
+
+  hr{border:none;border-top:1px solid var(--border);margin:26px 0;}
+
+  .page-footer{background:var(--navy);color:#94a3b8;text-align:center;padding:22px;font-size:.77rem;}
+
+  @media(max-width:768px){
+    .tab-bar{padding:0 12px;}
+    .tc{padding:24px 16px 48px;}
+    .g2,.g3,.g4,.stats,.suits,.role-grid{grid-template-columns:1fr;}
+    .header{padding:24px 16px 20px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="hl">📦 TodasMisCosas<span>.com</span></div>
+  <div class="ht">Roles y Equipo para Escalar — Plan 2 → 4 → 8 → 30</div>
+  <div class="hs">Qué roles necesita TMC, en qué orden contratarlos y cuándo · CABA &amp; AMBA · 2026</div>
+  <div class="hc">
+    <div class="chip"><strong>Modelo Priestley</strong> 2→4→8→30</div>
+    <div class="chip"><strong>Cada rol</strong> explicado para TMC</div>
+    <div class="chip"><strong>Salarios</strong> de mercado AR</div>
+    <div class="chip"><strong>Orden de contratación</strong> recomendado</div>
+    <div class="chip"><strong>Reglas</strong> para no contratar de más</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tab-bar">
+  <button class="tb active" onclick="showTab('vision')">🗺️ Visión General</button>
+  <button class="tb" onclick="showTab('hoy')">👥 Equipo de 2 (Hoy)</button>
+  <button class="tb" onclick="showTab('cuatro')">🚀 Equipo de 4</button>
+  <button class="tb" onclick="showTab('ocho')">⚙️ Equipo de 8</button>
+  <button class="tb" onclick="showTab('treinta')">🏢 Equipo de 30</button>
+  <button class="tb" onclick="showTab('roadmap')">📅 Roadmap de Hires</button>
+  <button class="tb" onclick="showTab('reglas')">📏 Reglas de Oro</button>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB 1: VISIÓN GENERAL                       -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-vision" class="tc active">
+
+  <div class="sec">🗺️ El mapa completo de roles para escalar TMC</div>
+  <p class="ssub">Basado en el modelo militar de Priestley (scout → fire team → section → platoon) adaptado a un marketplace P2P en Argentina</p>
+
+  <div class="stats">
+    <div class="stat"><div class="n" style="color:var(--mint);">2</div><div class="l">Personas hoy (Ale + Guille)</div></div>
+    <div class="stat"><div class="n" style="color:var(--lav);">4</div><div class="l">Siguiente hito — meses 1-6</div></div>
+    <div class="stat"><div class="n" style="color:var(--peach);">8</div><div class="l">Equipo funcional — mes 12-18</div></div>
+    <div class="stat"><div class="n" style="color:var(--sky);">30</div><div class="l">Organización — año 3+</div></div>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>Rol</th><th>Función core</th><th>Fase</th><th>Urgencia para TMC</th><th>Puede ser part-time</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>CEO</strong> — Alejandro</td><td>Visión, estrategia, fundraising, relaciones</td><td><span class="pill p-green">Ya existe</span></td><td class="ok">Cubierto</td><td>—</td></tr>
+      <tr><td><strong>CTO</strong> — Guille</td><td>Plataforma, arquitectura, deploy, seguridad</td><td><span class="pill p-green">Ya existe</span></td><td class="ok">Cubierto</td><td>—</td></tr>
+      <tr><td><strong>Head of Supply</strong></td><td>Captar y retener proveedores de espacios</td><td><span class="pill p-lav">Equipo de 4</span></td><td class="ok">Crítico inmediato</td><td>No — full-time</td></tr>
+      <tr><td><strong>Community / Growth</strong></td><td>Redes sociales, contenido, difusión, demanda</td><td><span class="pill p-lav">Equipo de 4</span></td><td class="ok">Crítico inmediato</td><td>Sí — arrancar part-time</td></tr>
+      <tr><td><strong>CIO</strong></td><td>Datos, analytics, CRM, métricas de negocio</td><td><span class="pill p-lav">Equipo de 4</span></td><td class="wait">Urgente antes de inversores</td><td>Sí — contractor</td></tr>
+      <tr><td><strong>COO</strong></td><td>Operaciones diarias, disputas, procesos internos</td><td><span class="pill p-orange">Equipo de 8</span></td><td class="wait">Mes 6-8</td><td>No — full-time</td></tr>
+      <tr><td><strong>Dev Senior</strong></td><td>Segundo desarrollador para descomprimir a Guille</td><td><span class="pill p-orange">Equipo de 8</span></td><td class="wait">Mes 6-9</td><td>No — full-time</td></tr>
+      <tr><td><strong>Customer Success</strong></td><td>Retención, NPS, acompañamiento post-reserva</td><td><span class="pill p-orange">Equipo de 8</span></td><td class="wait">Mes 8-10</td><td>Sí — arrancar part-time</td></tr>
+      <tr><td><strong>CFO</strong></td><td>Finanzas estratégicas, ronda seed, unit economics</td><td><span class="pill p-orange">Equipo de 8</span></td><td class="wait">Antes de ronda</td><td>Sí — consultor</td></tr>
+      <tr><td><strong>CMO</strong></td><td>Estrategia de marketing completa, paid, brand</td><td><span class="pill p-blue">Equipo de 30</span></td><td class="later">Año 2</td><td>No</td></tr>
+      <tr><td><strong>Head of Demand</strong></td><td>Captación de clientes / lado demanda del marketplace</td><td><span class="pill p-blue">Equipo de 30</span></td><td class="later">Año 2</td><td>No</td></tr>
+      <tr><td><strong>Legal in-house</strong></td><td>Contratos, disputas, compliance, rondas</td><td><span class="pill p-blue">Equipo de 30</span></td><td class="later">Año 2-3</td><td>Sí hasta 15 personas</td></tr>
+      <tr><td><strong>Head of Data</strong></td><td>ML, pricing dinámico, score de proveedores</td><td><span class="pill p-blue">Equipo de 30</span></td><td class="later">Año 3</td><td>No</td></tr>
+      <tr><td><strong>HR / People</strong></td><td>Cultura, contratación, gestión del talento</td><td><span class="pill p-blue">Equipo de 30</span></td><td class="later">15+ personas</td><td>No</td></tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <div class="sec">🃏 Los 4 trajes del equipo — Dónde están los gaps de TMC hoy</div>
+  <p class="ssub">Priestley dice que todo equipo ganador necesita estos 4 perfiles. Identificar cuáles faltan es la clave para contratar bien.</p>
+
+  <div class="suits">
+    <div class="suit" style="border-top-color:var(--lav);">
+      <div class="s-ico">☁️</div>
+      <div class="s-name">Visionary</div>
+      <div class="s-who">Piensa en grande, ve el futuro, conecta ideas</div>
+      <div class="s-status" style="background:var(--sage);color:#166534;">Alejandro ✓</div>
+    </div>
+    <div class="suit" style="border-top-color:var(--mint);">
+      <div class="s-ico">♠️</div>
+      <div class="s-name">Implementor</div>
+      <div class="s-who">Ejecuta, construye sistemas, hace que las cosas pasen</div>
+      <div class="s-status" style="background:var(--sage);color:#166534;">Guille ✓</div>
+    </div>
+    <div class="suit" style="border-top-color:var(--rose);">
+      <div class="s-ico">♥️</div>
+      <div class="s-name">Connector</div>
+      <div class="s-who">Construye relaciones, trae socios, proveedores, medios</div>
+      <div class="s-status" style="background:var(--rose2);color:#9f1239;">FALTA ⚠️</div>
+    </div>
+    <div class="suit" style="border-top-color:var(--peach);">
+      <div class="s-ico">♦️</div>
+      <div class="s-name">Finance / Data</div>
+      <div class="s-who">Números, CRM, reportes, salud financiera del negocio</div>
+      <div class="s-status" style="background:var(--rose2);color:#9f1239;">FALTA ⚠️</div>
+    </div>
+  </div>
+
+  <div class="alert a-orange">
+    <div class="ai">⚠️</div>
+    <div><strong>El diagnóstico de TMC hoy:</strong> Dos trajes cubiertos (Visionary + Implementor) y dos vacantes (Connector + Finance/Data). El Head of Supply y el Community Manager cubren el traje Connector. El CIO cubre Finance/Data. Esos son los tres hires que desbloquean el siguiente nivel.</div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB 2: EQUIPO DE 2                          -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-hoy" class="tc">
+
+  <div class="sec">👥 Equipo de 2 — El scout team de hoy</div>
+  <p class="ssub">Alejandro + Guille. Dos personas que hacen todo. El objetivo de esta fase es validar el modelo, no escalar.</p>
+
+  <div class="alert a-lav">
+    <div class="ai">💡</div>
+    <div><strong>Priestley sobre el equipo de 2:</strong> "Two person scout team. Their job is to go out, gather intelligence, and come back alive." En el caso de TMC: la misión del scout team fue validar que el producto funciona de punta a punta. Eso está cumplido (E2E jun 2026). Ahora es el momento de pasar al fire team de 4.</div>
+  </div>
+
+  <div class="role">
+    <div class="role-h" style="background:var(--peach2);">
+      <div class="role-ico" style="background:var(--peach);">👤</div>
+      <div class="role-meta">
+        <div class="rm-tag">Co-fundador · CEO · Visionary</div>
+        <div class="rm-title">Alejandro Laporte</div>
+        <div class="rm-sub">Producto, estrategia, relaciones, difusión, fundraising futuro</div>
+      </div>
+    </div>
+    <div class="role-body">
+      <div class="role-grid">
+        <div>
+          <div class="role-sec-title">Qué hace hoy</div>
+          <ul class="role-list">
+            <li>Define qué se construye y en qué orden (product roadmap)</li>
+            <li>Sale a conseguir los primeros proveedores (ventas)</li>
+            <li>Maneja las relaciones con administradores de edificios</li>
+            <li>Toma las decisiones de negocio: precios, comisiones, zonas</li>
+            <li>Gestiona la comunicación externa: redes, medios, partners</li>
+            <li>Es la cara pública de TMC en todo contexto</li>
+          </ul>
+        </div>
+        <div>
+          <div class="role-sec-title">Su mayor riesgo en esta fase</div>
+          <ul class="role-list">
+            <li>Hacer todo — ventas + ops + marketing + estrategia solo</li>
+            <li>No delegar a tiempo cuando lleguen los primeros hires</li>
+            <li>Quedar atrapado en tareas operativas que impiden pensar en grande</li>
+            <li>No construir la marca personal como KPI del sector (ver plan Priestley)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="salary">
+        <strong>Foco inmediato para Alejandro:</strong> Conseguir los primeros 20 espacios activos, lanzar la waiting list, y comenzar a construir el pipeline de inversores para una ronda seed en 12-18 meses.
+      </div>
+    </div>
+  </div>
+
+  <div class="role">
+    <div class="role-h" style="background:var(--mint3);">
+      <div class="role-ico" style="background:var(--mint);">⚙️</div>
+      <div class="role-meta">
+        <div class="rm-tag">Co-fundador · CTO · Implementor</div>
+        <div class="rm-title">Guille</div>
+        <div class="rm-sub">Plataforma, arquitectura, deploy, integración web + mobile</div>
+      </div>
+    </div>
+    <div class="role-body">
+      <div class="role-grid">
+        <div>
+          <div class="role-sec-title">Qué hace hoy</div>
+          <ul class="role-list">
+            <li>Mantiene la plataforma en producción (Next.js + Express + MySQL)</li>
+            <li>Implementa nuevas features del roadmap</li>
+            <li>Gestiona el VPS, PM2, GitHub Actions, deploy</li>
+            <li>Maneja las integraciones: MercadoPago, Supabase, Socket.io, Twilio</li>
+            <li>Toma decisiones de stack para la futura app mobile</li>
+            <li>Es el único que puede resolver un bug crítico en producción</li>
+          </ul>
+        </div>
+        <div>
+          <div class="role-sec-title">Su mayor riesgo en esta fase</div>
+          <ul class="role-list">
+            <li>Bus factor 1 — si Guille no puede trabajar, la plataforma queda sin soporte</li>
+            <li>Acumular deuda técnica que frena el crecimiento (panel.tsx 1895 líneas)</li>
+            <li>No documentar para que un segundo dev pueda incorporarse rápido</li>
+            <li>No avanzar en la estrategia mobile (PWA primero, luego React Native)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="salary">
+        <strong>Foco inmediato para Guille:</strong> Caché de auth, SSR para SEO, staging environment, y definir la estrategia mobile (PWA en Next.js = el camino más rápido y con el mismo codebase).
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB 3: EQUIPO DE 4                          -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-cuatro" class="tc">
+
+  <div class="sec">🚀 Equipo de 4 — El fire team (meses 1-6)</div>
+  <p class="ssub">Los dos hires que desbloquean el crecimiento. Sin ellos, Alejandro y Guille están solos contra un mercado que no los conoce.</p>
+
+  <div class="alert a-green">
+    <div class="ai">✅</div>
+    <div><strong>La regla del fire team:</strong> Los cuatro del fire team son "Swiss army knives" — hacen muchas cosas, no son súper especializados. La especialización llega en el equipo de 8. Acá lo que importa es ganas, actitud y capacidad de aprender rápido.</div>
+  </div>
+
+  <!-- HEAD OF SUPPLY -->
+  <div class="role">
+    <div class="role-h" style="background:var(--mint3);">
+      <div class="role-ico" style="background:var(--mint);">🏠</div>
+      <div class="role-meta">
+        <div class="rm-tag">Hire #1 · Full-time · Crítico inmediato</div>
+        <div class="rm-title">Head of Supply — Captación de Proveedores</div>
+        <div class="rm-sub">El rol más crítico para un marketplace en fase temprana. Sin oferta no hay marketplace.</div>
+      </div>
+    </div>
+    <div class="role-body">
+      <div class="role-grid">
+        <div>
+          <div class="role-sec-title">Qué hace todos los días</div>
+          <ul class="role-list">
+            <li><strong>Outreach activo:</strong> llama, manda mails, agenda reuniones con admins de edificios, agencias inmobiliarias, propietarios de cocheras</li>
+            <li><strong>Demo de la plataforma:</strong> muestra cómo publicar un espacio, cuánto puede ganar, cómo funciona el escrow</li>
+            <li><strong>Onboarding:</strong> acompaña al proveedor hasta la primera reserva — fotos, precio, descripción</li>
+            <li><strong>Retención:</strong> llama a los proveedores activos cada 30 días. "¿Cómo va? ¿Necesitás algo?"</li>
+            <li><strong>Pipeline:</strong> mantiene actualizado el CRM de proveedores en HubSpot</li>
+          </ul>
+        </div>
+        <div>
+          <div class="role-sec-title">Perfil ideal</div>
+          <ul class="role-list">
+            <li>Experiencia en ventas o atención al cliente (no necesariamente tech)</li>
+            <li>Cómodo haciendo llamadas en frío — no le tiene miedo al "no"</li>
+            <li>Organizado: puede manejar 50+ contactos en simultáneo</li>
+            <li>Conoce CABA: sabe cuáles son los barrios premium, cómo funciona el mercado inmobiliario local</li>
+            <li>Empático: entiende las dudas y miedos del proveedor nuevo</li>
+          </ul>
+          <div class="role-sec-title" style="margin-top:14px;">KPIs que mide</div>
+          <ul class="role-list">
+            <li>Espacios activos publicados por semana</li>
+            <li>Tasa de conversión: contactado → publicado</li>
+            <li>Tiempo promedio hasta la primera reserva</li>
+            <li>Tasa de retención de proveedores a 90 días</li>
+          </ul>
+        </div>
+      </div>
+      <div class="salary">
+        <strong>💰 Compensación de mercado AR:</strong> $800-1.500 USD/mes + comisión por espacio activado ($X por cada espacio que pasa a "activo con reserva"). El esquema variable alinea incentivos — solo cobra bien si los espacios efectivamente se reservan.
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMUNITY / GROWTH -->
+  <div class="role">
+    <div class="role-h" style="background:var(--lav3);">
+      <div class="role-ico" style="background:var(--lav);">📣</div>
+      <div class="role-meta">
+        <div class="rm-tag">Hire #2 · Puede arrancar part-time · Crítico para demanda</div>
+        <div class="rm-title">Community Manager / Growth</div>
+        <div class="rm-sub">El que construye la audiencia, trae clientes y hace que TMC sea conocido en CABA.</div>
+      </div>
+    </div>
+    <div class="role-body">
+      <div class="role-grid">
+        <div>
+          <div class="role-sec-title">Qué hace todos los días</div>
+          <ul class="role-list">
+            <li><strong>Contenido:</strong> crea y publica 3-5 Reels por semana en Instagram</li>
+            <li><strong>Stories diarias:</strong> encuestas, behind the scenes, novedades de zonas</li>
+            <li><strong>WhatsApp:</strong> modera el grupo de proveedores, responde consultas</li>
+            <li><strong>Facebook grupos:</strong> publica en grupos de barrios, alquiler, trabajo</li>
+            <li><strong>DMs y comentarios:</strong> responde todo en menos de 2 horas</li>
+            <li><strong>Métricas semanales:</strong> alcance, clics al sitio, leads generados</li>
+          </ul>
+        </div>
+        <div>
+          <div class="role-sec-title">Perfil ideal</div>
+          <ul class="role-list">
+            <li>Nativo digital — usa Instagram, TikTok y WhatsApp como si fueran extensiones de su cuerpo</li>
+            <li>Crea contenido propio (aunque sea personal) — que tenga algo publicado</li>
+            <li>Entiende de Canva y CapCut o similar</li>
+            <li>Redacción clara y natural — no robótica</li>
+            <li>Apasionado por el emprendimiento o el real estate</li>
+            <li>Edad 22-30, basado en CABA</li>
+          </ul>
+          <div class="role-sec-title" style="margin-top:14px;">KPIs que mide</div>
+          <ul class="role-list">
+            <li>Seguidores nuevos por semana en Instagram</li>
+            <li>Clics al sitio desde redes sociales</li>
+            <li>Leads (consultas) generados desde Instagram/Facebook</li>
+            <li>Alcance de Reels (impressions únicas)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="salary">
+        <strong>💰 Compensación de mercado AR:</strong> $600-1.200 USD/mes (full-time) · $300-600 USD/mes (part-time, 20hs semanales). Arrancar part-time los primeros 2 meses y pasar a full-time cuando el canal genere tráfico medible.
+      </div>
+    </div>
+  </div>
+
+  <!-- CIO -->
+  <div class="role">
+    <div class="role-h" style="background:var(--van2);">
+      <div class="role-ico" style="background:var(--van);">📊</div>
+      <div class="role-meta">
+        <div class="rm-tag">Hire #3 · Contractor / Part-time · Urgente antes de inversores</div>
+        <div class="rm-title">CIO — Datos, Analytics y CRM</div>
+        <div class="rm-sub">El que hace que los números cuenten la historia del negocio. Sin esto, no hay reunión con inversores.</div>
+      </div>
+    </div>
+    <div class="role-body">
+      <div class="role-grid">
+        <div>
+          <div class="role-sec-title">Qué hace</div>
+          <ul class="role-list">
+            <li><strong>CRM:</strong> monta HubSpot con todos los proveedores y su estado</li>
+            <li><strong>Dashboard:</strong> reservas, GMV, comisiones, churn — en tiempo real</li>
+            <li><strong>Analytics:</strong> funnel de conversión, qué barrios tienen más demanda, qué tipo de espacio más reservas</li>
+            <li><strong>Reporte inversor:</strong> MRR, ARR, CAC, LTV, payback period</li>
+            <li><strong>Compliance de datos:</strong> Ley 25.326 Argentina — protección de datos personales</li>
+          </ul>
+        </div>
+        <div>
+          <div class="role-sec-title">Stack recomendado</div>
+          <ul class="role-list">
+            <li><strong>CRM:</strong> HubSpot (gratis hasta 1M contactos)</li>
+            <li><strong>Analytics web:</strong> Plausible.io ($9/mes) o Metabase self-hosted</li>
+            <li><strong>BI / Reportes:</strong> Google Looker Studio (gratis)</li>
+            <li><strong>Contabilidad:</strong> Colppy o Xubio (herramientas AR)</li>
+            <li><strong>Ops interno:</strong> Notion + Linear</li>
+          </ul>
+        </div>
+      </div>
+      <div class="salary">
+        <strong>💰 Compensación de mercado AR:</strong> $500-1.000 USD/mes como contractor part-time (2-3 días semanales). No necesita ser full-time hasta el equipo de 8. En la práctica: contratar a alguien con experiencia en BI/analytics que monte los dashboards en el primer mes y luego los mantenga.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB 4: EQUIPO DE 8                          -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-ocho" class="tc">
+
+  <div class="sec">⚙️ Equipo de 8 — La section (meses 6-18)</div>
+  <p class="ssub">Cuando el fire team de 4 está traccionando, estos cuatro roles especializados llevan TMC al siguiente nivel.</p>
+
+  <div class="alert a-blue">
+    <div class="ai">💡</div>
+    <div><strong>Regla de Priestley para el equipo de 8:</strong> "At eight people, digitize absolutely everything of value." Todos los procesos tienen que estar documentados y en sistemas digitales antes de llegar a 8. Si no, el conocimiento vive en la cabeza de Alejandro y Guille y no puede transferirse.</div>
+  </div>
+
+  <!-- COO -->
+  <div class="role">
+    <div class="role-h" style="background:var(--peach2);">
+      <div class="role-ico" style="background:var(--peach);">🔧</div>
+      <div class="role-meta">
+        <div class="rm-tag">Hire #4 · Full-time · Mes 6-8</div>
+        <div class="rm-title">COO — Chief Operating Officer</div>
+        <div class="rm-sub">El que hace que todo funcione sin que Alejandro tenga que estar en cada decisión operativa.</div>
+      </div>
+    </div>
+    <div class="role-body">
+      <div class="role-grid">
+        <div>
+          <div class="role-sec-title">Qué hace</div>
+          <ul class="role-list">
+            <li><strong>Gestiona disputas</strong> entre proveedores y clientes — primera línea de resolución de conflictos</li>
+            <li><strong>Supervisa el onboarding</strong> de espacios: fotos, verificación, precios</li>
+            <li><strong>Coordina el equipo</strong> de 4: Head of Supply, Community Manager, Customer Success</li>
+            <li><strong>Diseña y mejora procesos:</strong> si algo falla dos veces, crea un proceso para que no vuelva a fallar</li>
+            <li><strong>Es el puente</strong> entre Alejandro (visión) y Guille (tecnología) cuando hay prioridades en tensión</li>
+            <li><strong>Reuniones de equipo:</strong> lunes operativo semanal, métricas, blockers</li>
+          </ul>
+        </div>
+        <div>
+          <div class="role-sec-title">Perfil ideal</div>
+          <ul class="role-list">
+            <li>Experiencia operando algo: ex-gerente de operaciones, ex-COO de startup, logística</li>
+            <li>Obsesionado con los procesos — todo tiene que tener un sistema</li>
+            <li>Buena gestión de personas — el equipo lo tiene que respetar</li>
+            <li>Puede tomar decisiones sin escalar todo a Alejandro</li>
+            <li>Conoce el ecosistema de Buenos Aires</li>
+          </ul>
+        </div>
+      </div>
+      <div class="salary">
+        <strong>💰 Compensación:</strong> $1.500-3.000 USD/mes + 0.5-1.5% equity con vesting 4 años si se incorpora temprano. Es el hire más caro de los primeros 8 pero el que más libera a Alejandro para hacer lo que solo él puede hacer.
+      </div>
+    </div>
+  </div>
+
+  <!-- DEV SENIOR -->
+  <div class="role">
+    <div class="role-h" style="background:var(--sky3);">
+      <div class="role-ico" style="background:var(--sky);">💻</div>
+      <div class="role-meta">
+        <div class="rm-tag">Hire #5 · Full-time · Mes 6-9</div>
+        <div class="rm-title">Dev Senior Full-Stack</div>
+        <div class="rm-sub">El segundo desarrollador que multiplica a Guille. Sin esto, Guille es el único punto de falla técnica.</div>
+      </div>
+    </div>
+    <div class="role-body">
+      <div class="role-grid">
+        <div>
+          <div class="role-sec-title">Qué hace</div>
+          <ul class="role-list">
+            <li>Toma features del roadmap sin que Guille tenga que explicarle todo</li>
+            <li>Mantiene partes del código mientras Guille trabaja en otras</li>
+            <li>Puede dar soporte en producción cuando Guille no está disponible</li>
+            <li>Colabora en la estrategia mobile: implementa la PWA y más adelante React Native</li>
+            <li>Code reviews cruzados con Guille — mejora la calidad del código</li>
+          </ul>
+        </div>
+        <div>
+          <div class="role-sec-title">Perfil ideal</div>
+          <ul class="role-list">
+            <li><strong>Stack:</strong> Node.js + Express + React/Next.js + TypeScript (exactamente el stack de TMC)</li>
+            <li>Experiencia con MySQL y APIs REST</li>
+            <li>Cómodo con Linux, SSH, deploy en VPS</li>
+            <li>Conocimiento básico de Supabase o Firebase</li>
+            <li>No necesita ser el mejor dev del mundo — necesita ser confiable y comunicativo</li>
+          </ul>
+        </div>
+      </div>
+      <div class="salary">
+        <strong>💰 Compensación:</strong> $1.200-2.500 USD/mes según experiencia. Semi-senior: $1.200-1.800. Senior: $1.800-2.500. En Argentina hay mucho talento full-stack con el stack de TMC — buscar en LinkedIn, Workana, o comunidades de Next.js en AR.
+      </div>
+    </div>
+  </div>
+
+  <!-- CUSTOMER SUCCESS -->
+  <div class="role">
+    <div class="role-h" style="background:var(--mint3);">
+      <div class="role-ico" style="background:var(--mint);">⭐</div>
+      <div class="role-meta">
+        <div class="rm-tag">Hire #6 · Puede arrancar part-time · Mes 8-10</div>
+        <div class="rm-title">Customer Success Manager</div>
+        <div class="rm-sub">El que retiene a los usuarios existentes. Adquirir uno nuevo cuesta 5 veces más que retener uno.</div>
+      </div>
+    </div>
+    <div class="role-body">
+      <div class="role-grid">
+        <div>
+          <div class="role-sec-title">Qué hace</div>
+          <ul class="role-list">
+            <li>Llama a proveedores activos cada 30 días: "¿Cómo va? ¿Necesitás algo?"</li>
+            <li>Detecta problemas antes de que se conviertan en quejas o abandonos</li>
+            <li>Identifica proveedores felices → los convierte en casos de éxito para marketing</li>
+            <li>Mide NPS mensualmente: "¿Del 1 al 10 recomendarías TMC?"</li>
+            <li>Resuelve problemas operativos: foto borrosa, precio mal configurado, reserva con problemas</li>
+            <li>Es la primera persona en saber cuando algo de la plataforma no funciona bien</li>
+          </ul>
+        </div>
+        <div>
+          <div class="role-sec-title">KPIs que mide</div>
+          <ul class="role-list">
+            <li>NPS mensual de proveedores y clientes</li>
+            <li>Tasa de retención a 90 y 180 días</li>
+            <li>Tiempo promedio hasta segunda reserva</li>
+            <li>Tasa de churn (espacios que se dan de baja)</li>
+            <li>Casos de éxito documentados por mes</li>
+          </ul>
+        </div>
+      </div>
+      <div class="salary">
+        <strong>💰 Compensación:</strong> $700-1.200 USD/mes. Perfil: alguien con experiencia en atención al cliente o soporte, empático y muy organizado. No necesita ser técnico — necesita saber escuchar y resolver.
+      </div>
+    </div>
+  </div>
+
+  <!-- CFO -->
+  <div class="role">
+    <div class="role-h" style="background:var(--lav3);">
+      <div class="role-ico" style="background:var(--lav);">💰</div>
+      <div class="role-meta">
+        <div class="rm-tag">Hire #7 · Consultor part-time · Antes de ronda seed</div>
+        <div class="rm-title">CFO — Chief Financial Officer</div>
+        <div class="rm-sub">No es el contador. Es el estratega financiero. Su momento es cuando hay una ronda de inversión en conversación.</div>
+      </div>
+    </div>
+    <div class="role-body">
+      <div class="role-grid">
+        <div>
+          <div class="role-sec-title">Qué hace</div>
+          <ul class="role-list">
+            <li><strong>Unit economics:</strong> CAC, LTV, payback period, contribution margin por tipo de espacio</li>
+            <li><strong>Proyecciones:</strong> modelo financiero a 3 años para presentar a inversores</li>
+            <li><strong>Runway:</strong> cuántos meses de vida tiene TMC con el dinero actual</li>
+            <li><strong>Ronda seed:</strong> cuánto levantar, a qué valuación, con qué dilución, términos del term sheet</li>
+            <li><strong>Relación con el contador</strong> y con AFIP/ARCA</li>
+            <li><strong>Reporting mensual</strong> al equipo: cómo estamos vs el plan</li>
+          </ul>
+        </div>
+        <div>
+          <div class="role-sec-title">Diferencia con el contador</div>
+          <ul class="role-list">
+            <li>El <strong>contador</strong> hace la contabilidad legal: facturas, libros, AFIP, impuestos</li>
+            <li>El <strong>CFO</strong> hace la estrategia: cuánto vale TMC, cuándo levantar capital, cómo optimizar el modelo financiero</li>
+            <li>TMC necesita los dos — el contador desde ya, el CFO antes de la primera reunión con un VC</li>
+          </ul>
+        </div>
+      </div>
+      <div class="salary">
+        <strong>💰 Compensación:</strong> $500-1.500 USD/mes como consultor part-time (2 días semanales). Full-time solo si hay una ronda activa. Buscar en redes de inversores o aceleradoras (Endeavor, NXTP) — suelen tener CFOs freelance en su ecosistema.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB 5: EQUIPO DE 30                         -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-treinta" class="tc">
+
+  <div class="sec">🏢 Equipo de 30 — La platoon (año 2-3)</div>
+  <p class="ssub">Estos roles tienen sentido solo cuando TMC ya tiene revenue recurrente, múltiples zonas activas y el equipo de 8 funcionando bien.</p>
+
+  <div class="alert a-orange">
+    <div class="ai">⚠️</div>
+    <div><strong>Advertencia importante:</strong> Llegar al equipo de 30 sin tener el de 8 funcionando bien es el error más común en startups que levantan plata. Primero consolidar el fire team, luego la section, y recién ahí escalar a platoon. Más personas con procesos rotos = más caos, no menos.</div>
+  </div>
+
+  <div class="g2">
+
+    <div class="role" style="margin-bottom:14px;">
+      <div class="role-h" style="background:var(--rose2);">
+        <div class="role-ico" style="background:var(--rose);">📈</div>
+        <div class="role-meta">
+          <div class="rm-tag">Año 2 · Full-time</div>
+          <div class="rm-title">CMO — Chief Marketing Officer</div>
+          <div class="rm-sub">Cuando el Community Manager ya no alcanza para la escala que viene</div>
+        </div>
+      </div>
+      <div class="role-body">
+        <ul class="role-list">
+          <li>Diseña la estrategia de marketing completa: paid, orgánico, PR, partnerships, brand</li>
+          <li>Gestiona el presupuesto de publicidad (Meta Ads, Google Ads)</li>
+          <li>Coordina el equipo de contenido, diseño y paid media</li>
+          <li>Mide el CAC por canal y optimiza el presupuesto</li>
+          <li>Relación con medios y agencias de PR</li>
+        </ul>
+        <div class="salary"><strong>💰</strong> $2.000-4.500 USD/mes · Experiencia en marketplaces o proptech es diferencial</div>
+      </div>
+    </div>
+
+    <div class="role" style="margin-bottom:14px;">
+      <div class="role-h" style="background:var(--teal2);">
+        <div class="role-ico" style="background:var(--teal);">🛒</div>
+        <div class="role-meta">
+          <div class="rm-tag">Año 2 · Full-time</div>
+          <div class="rm-title">Head of Demand</div>
+          <div class="rm-sub">El espejo del Head of Supply — el lado cliente del marketplace</div>
+        </div>
+      </div>
+      <div class="role-body">
+        <ul class="role-list">
+          <li>Captación de clientes (quienes necesitan guardar cosas)</li>
+          <li>Partnerships con empresas de mudanzas, e-commerce, Airbnb hosts</li>
+          <li>Campañas de demanda: cuándo hay más necesidad de guardar (verano, mudanzas)</li>
+          <li>Mide: costo de adquisición por cliente, LTV, tasa de repetición</li>
+        </ul>
+        <div class="salary"><strong>💰</strong> $1.500-3.000 USD/mes · Perfil de ventas B2B y B2C combinado</div>
+      </div>
+    </div>
+
+    <div class="role" style="margin-bottom:14px;">
+      <div class="role-h" style="background:var(--lav3);">
+        <div class="role-ico" style="background:var(--lav);">⚖️</div>
+        <div class="role-meta">
+          <div class="rm-tag">Año 2-3 · Puede ser part-time hasta 15 personas</div>
+          <div class="rm-title">Legal In-house</div>
+          <div class="rm-sub">Cuando el estudio externo es más caro que tener alguien adentro</div>
+        </div>
+      </div>
+      <div class="role-body">
+        <ul class="role-list">
+          <li>Contratos con proveedores, clientes, partners e inversores</li>
+          <li>Términos y condiciones de la plataforma — actualizarlos ante cambios regulatorios</li>
+          <li>Disputas legales entre usuarios que escalan más allá del COO</li>
+          <li>Due diligence legal en rondas de inversión</li>
+          <li>Protección de marca y propiedad intelectual de TMC</li>
+        </ul>
+        <div class="salary"><strong>💰</strong> $1.000-2.500 USD/mes · Abogado con experiencia en startups o proptech AR</div>
+      </div>
+    </div>
+
+    <div class="role" style="margin-bottom:14px;">
+      <div class="role-h" style="background:var(--van2);">
+        <div class="role-ico" style="background:var(--van);">🧠</div>
+        <div class="role-meta">
+          <div class="rm-tag">Año 3 · Full-time</div>
+          <div class="rm-title">Head of Data / Data Scientist</div>
+          <div class="rm-sub">Cuando TMC tiene suficientes datos para sacarles valor estratégico real</div>
+        </div>
+      </div>
+      <div class="role-body">
+        <ul class="role-list">
+          <li><strong>Pricing dinámico:</strong> precio sugerido por barrio, estacionalidad, demanda en tiempo real</li>
+          <li><strong>Score de proveedores:</strong> predicción de cuáles van a tener mejor rendimiento</li>
+          <li><strong>Recomendación de espacios:</strong> algoritmo que muestra al cliente el espacio más relevante</li>
+          <li><strong>Detección de fraude:</strong> patrones de comportamiento anómalo en transacciones</li>
+          <li><strong>Predicción de churn:</strong> qué proveedores están en riesgo de irse antes de que se vayan</li>
+        </ul>
+        <div class="salary"><strong>💰</strong> $2.500-5.000 USD/mes · Python, SQL, ML básico, experiencia en marketplaces</div>
+      </div>
+    </div>
+
+    <div class="role" style="margin-bottom:14px;">
+      <div class="role-h" style="background:var(--sage2);">
+        <div class="role-ico" style="background:var(--sage);">👩‍👧</div>
+        <div class="role-meta">
+          <div class="rm-tag">15+ personas · Full-time</div>
+          <div class="rm-title">HR / People Manager</div>
+          <div class="rm-sub">Cuando la cultura y el talento se vuelven un trabajo de tiempo completo</div>
+        </div>
+      </div>
+      <div class="role-body">
+        <ul class="role-list">
+          <li>Proceso de contratación: JDs, entrevistas, onboarding</li>
+          <li>Cultura de la empresa: valores, rituales, cómo se toman decisiones</li>
+          <li>Performance reviews semestrales</li>
+          <li>Compensación y equity: tabla salarial actualizada, gestión de option pool</li>
+          <li>Retención: qué hacer para que los buenos no se vayan</li>
+        </ul>
+        <div class="salary"><strong>💰</strong> $1.500-3.000 USD/mes · Antes de 15 personas, Alejandro puede manejarlo directamente</div>
+      </div>
+    </div>
+
+    <div class="role" style="margin-bottom:14px;">
+      <div class="role-h" style="background:var(--sky3);">
+        <div class="role-ico" style="background:var(--sky);">📱</div>
+        <div class="role-meta">
+          <div class="rm-tag">Año 2 · Full-time o contractor</div>
+          <div class="rm-title">Mobile Dev (React Native)</div>
+          <div class="rm-sub">Cuando la PWA no alcanza y hay que ir a app nativa en App Store y Google Play</div>
+        </div>
+      </div>
+      <div class="role-body">
+        <ul class="role-list">
+          <li>Desarrolla y mantiene la app de TMC en React Native (iOS + Android, un solo codebase)</li>
+          <li>Integra con la API del backend existente (Express + MySQL)</li>
+          <li>Push notifications para alertas de reservas y mensajes del chat</li>
+          <li>Publica y gestiona las apps en App Store y Google Play</li>
+        </ul>
+        <div class="salary"><strong>💰</strong> $1.500-3.000 USD/mes · Antes: la PWA en Next.js es suficiente y no requiere este hire</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB 6: ROADMAP DE HIRES                     -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-roadmap" class="tc">
+
+  <div class="sec">📅 El orden exacto de contratación para TMC</div>
+  <p class="ssub">No contratar todos a la vez. Cada hire tiene que estar justificado por revenue o por un blocke específico de crecimiento.</p>
+
+  <div class="tl">
+
+    <div class="tl-item">
+      <div class="tl-l">
+        <div class="tl-dot" style="background:var(--mint);color:#065f46;">HOY</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-c">
+        <div class="tl-t">Estado actual — Alejandro + Guille</div>
+        <div class="tl-d">El scout team validó el producto (E2E jun 2026). La plataforma funciona en producción. El primer objetivo es conseguir los 20 primeros espacios activos y la primera reserva orgánica pagada. <strong>Todo el foco aquí antes de contratar a nadie.</strong></div>
+        <span class="tl-kpi">Hito para pasar al siguiente nivel: 1 reserva orgánica pagada + 10 espacios activos</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-l">
+        <div class="tl-dot" style="background:var(--lav);color:#5b21b6;">M1-2</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-c">
+        <div class="tl-t">Mes 1-2 — Contratar Head of Supply</div>
+        <div class="tl-d">El primer hire siempre tiene que resolver el bottleneck más grande. Para un marketplace, ese bottleneck es la oferta. <strong>Sin proveedores no hay marketplace.</strong> Este hire va a hacer exclusivamente lo que más duele: conseguir espacios.<br><br>
+        Dónde buscarlo: LinkedIn (perfil: "ejecutivo de cuentas", "account manager", "ventas B2B en inmobiliario"), Bumeran, ZonaJobs, o referidos del ecosistema inmobiliario de CABA.</div>
+        <span class="tl-kpi">Hito para confirmar que fue el hire correcto: 10 espacios nuevos en su primer mes</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-l">
+        <div class="tl-dot" style="background:var(--lav);color:#5b21b6;">M2-3</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-c">
+        <div class="tl-t">Mes 2-3 — Contratar Community Manager (part-time)</div>
+        <div class="tl-d">Una vez que hay oferta (espacios), necesitás demanda (clientes que busquen). El Community Manager construye la audiencia en Instagram, gestiona el WhatsApp de proveedores y genera tráfico al sitio.<br><br>
+        Arrancar <strong>part-time 20hs semanales</strong>. Si en 60 días el canal genera leads medibles, pasar a full-time. Si no, ajustar el perfil o la estrategia.</div>
+        <span class="tl-kpi">Hito: 300 seguidores en Instagram + 5 leads/semana desde redes sociales</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-l">
+        <div class="tl-dot" style="background:var(--lav);color:#5b21b6;">M3-4</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-c">
+        <div class="tl-t">Mes 3-4 — Contratar CIO (contractor)</div>
+        <div class="tl-d">Con proveedores y clientes entrando, es el momento de montar la infraestructura de datos. El CIO contractor monta HubSpot, el dashboard de métricas en Metabase y el primer reporte de unit economics.<br><br>
+        <strong>Por qué ahora y no antes:</strong> no tiene sentido medir si no hay nada que medir. Con 20+ espacios activos y reservas ocurriendo, los datos empiezan a ser útiles.</div>
+        <span class="tl-kpi">Hito: dashboard de KPIs funcionando, CRM con 100% de proveedores cargados</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-l">
+        <div class="tl-dot" style="background:var(--peach);color:#9a3412;">M6-8</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-c">
+        <div class="tl-t">Mes 6-8 — Contratar COO + Dev Senior</div>
+        <div class="tl-d">En el mes 6 Alejandro ya no puede ser CEO + Head of Supply + COO al mismo tiempo. Necesita delegar las operaciones diarias para poder hacer lo que solo él puede: estrategia, inversores, partnerships grandes.<br><br>
+        Simultáneamente, Guille necesita un segundo dev. Con el team de 4 generando tracción, habrá más features pedidas que las que Guille puede desarrollar solo.</div>
+        <span class="tl-kpi">Hito para este hire: 50 espacios activos + revenue mensual recurrente medible</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-l">
+        <div class="tl-dot" style="background:var(--peach);color:#9a3412;">M8-12</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-c">
+        <div class="tl-t">Mes 8-12 — Customer Success + CFO (consultor)</div>
+        <div class="tl-d">Customer Success entra cuando hay suficientes usuarios como para que la retención sea un problema real. CFO entra cuando hay una ronda seed en el horizonte — típicamente cuando Alejandro empieza a reunirse con inversores.<br><br>
+        El CFO como consultor part-time prepara el modelo financiero, el pitch financiero y la due diligence. Full-time solo si la ronda avanza.</div>
+        <span class="tl-kpi">Hito: 150 espacios activos + primera reunión formal con un fondo de inversión</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-l">
+        <div class="tl-dot" style="background:var(--sky);color:#075985;">AÑO 2</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-c">
+        <div class="tl-t">Año 2 — CMO + Head of Demand + Legal + Mobile Dev</div>
+        <div class="tl-d">Con el equipo de 8 funcionando bien y una ronda seed cerrada (o con revenue suficiente), estos roles de escala entran en juego. El CMO estructura el marketing que el Community Manager había estado haciendo de forma más artesanal. El Head of Demand se ocupa del lado cliente del marketplace a escala.</div>
+        <span class="tl-kpi">Hito: ronda seed cerrada o revenue mensual > $X que justifique el costo adicional</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-l">
+        <div class="tl-dot" style="background:var(--sky);color:#075985;">AÑO 3</div>
+      </div>
+      <div class="tl-c">
+        <div class="tl-t">Año 3 — Head of Data + HR + especialistas</div>
+        <div class="tl-d">Con cientos de miles de transacciones y múltiples zonas activas, los datos se vuelven el activo más valioso. El Head of Data extrae inteligencia de negocio que ningún humano puede hacer manualmente. HR entra cuando el equipo supera 15 personas y la cultura necesita ser gestionada formalmente.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <hr>
+
+  <div class="sec">📊 Resumen del plan de contratación</div>
+  <table>
+    <thead><tr><th>Cuándo</th><th>Hire</th><th>Tipo</th><th>Costo estimado (USD/mes)</th><th>Qué desbloquea</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Mes 1-2</strong></td><td>Head of Supply</td><td>Full-time</td><td>$800-1.500 + comisión</td><td>Oferta de espacios — el core del marketplace</td></tr>
+      <tr><td><strong>Mes 2-3</strong></td><td>Community Manager</td><td>Part-time → Full-time</td><td>$300-600 → $600-1.200</td><td>Demanda y audiencia en redes</td></tr>
+      <tr><td><strong>Mes 3-4</strong></td><td>CIO / Analytics</td><td>Contractor</td><td>$500-1.000</td><td>Datos para tomar decisiones y reuniones con inversores</td></tr>
+      <tr><td><strong>Mes 6-8</strong></td><td>COO</td><td>Full-time</td><td>$1.500-3.000</td><td>Operaciones sin Alejandro en cada detalle</td></tr>
+      <tr><td><strong>Mes 6-9</strong></td><td>Dev Senior</td><td>Full-time</td><td>$1.200-2.500</td><td>Velocidad de desarrollo · elimina bus factor 1</td></tr>
+      <tr><td><strong>Mes 8-12</strong></td><td>Customer Success</td><td>Part-time → Full-time</td><td>$400-800 → $700-1.200</td><td>Retención · NPS · casos de éxito para marketing</td></tr>
+      <tr><td><strong>Mes 10-12</strong></td><td>CFO</td><td>Consultor</td><td>$500-1.500</td><td>Modelo financiero · ronda seed · unit economics</td></tr>
+      <tr><td><strong>Año 2</strong></td><td>CMO + Head of Demand</td><td>Full-time</td><td>$2.000-4.500 c/u</td><td>Escala de marketing y demanda</td></tr>
+      <tr><td><strong>Año 2-3</strong></td><td>Legal + Mobile Dev</td><td>Full-time</td><td>$1.000-3.000 c/u</td><td>Protección legal + app nativa iOS/Android</td></tr>
+      <tr><td><strong>Año 3</strong></td><td>Head of Data + HR</td><td>Full-time</td><td>$1.500-5.000 c/u</td><td>ML/pricing dinámico + cultura y talento</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB 7: REGLAS DE ORO                        -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-reglas" class="tc">
+
+  <div class="sec">📏 Reglas de oro para contratar en una startup como TMC</div>
+  <p class="ssub">Errores que cometen casi todos los founders al contratar. Conocerlos de antemano vale más que cualquier framework de RRHH.</p>
+
+  <div class="regla">
+    <div class="regla-title">Regla #1 — No contratar para el negocio que querés tener. Contratar para el que tenés hoy.</div>
+    <div class="regla-body">El error más común: "necesitamos un CMO porque vamos a escalar". Si todavía no validaste el modelo, un CMO es un costo sin retorno. Cada hire nuevo tiene que responder la pregunta: <strong>¿este rol genera más revenue del que cuesta en los próximos 6 meses?</strong> Si la respuesta no es clara, el hire es prematuro.</div>
+  </div>
+
+  <div class="regla">
+    <div class="regla-title">Regla #2 — El vesting es obligatorio para todos, incluyendo los fundadores.</div>
+    <div class="regla-body">Si Alejandro y Guille no tienen vesting entre sí y uno se va al año 1, el que se va se lleva el 50% de la empresa sin haber estado en los años difíciles. <strong>Para cualquier hire con equity:</strong> 4 años de vesting, 1 año de cliff. Nadie trabaja gratis pero nadie recibe equity sin trabajar. Documentarlo antes de que alguien entre.</div>
+  </div>
+
+  <div class="regla">
+    <div class="regla-title">Regla #3 — Contratar actitud, entrenar habilidad.</div>
+    <div class="regla-body">En el equipo de 4, lo más importante no es el CV — es si la persona puede aprender rápido, tolerar la ambigüedad y trabajar sin que nadie le diga exactamente qué hacer cada día. El conocimiento técnico se adquiere. La actitud, la iniciativa y la confiabilidad son mucho más difíciles de enseñar. Un junior con ganas vale más que un senior cómodo en este stage.</div>
+  </div>
+
+  <div class="regla">
+    <div class="regla-title">Regla #4 — Medir el impacto de cada hire en los primeros 90 días.</div>
+    <div class="regla-body">Cada persona nueva tiene que tener <strong>una sola métrica</strong> que demuestre que está funcionando en los primeros 90 días. Head of Supply: espacios activos nuevos. Community Manager: leads desde redes. Dev Senior: features entregadas. Si esa métrica no se mueve, es una conversación difícil que hay que tener antes del mes 4 — no después del año 1.</div>
+  </div>
+
+  <div class="regla">
+    <div class="regla-title">Regla #5 — El bus factor de 1 es el riesgo técnico más subestimado.</div>
+    <div class="regla-body">Hoy si Guille no puede trabajar 2 semanas, TMC queda sin soporte técnico. Eso es inaceptable para un negocio que depende de que la plataforma esté disponible 24/7. La solución tiene dos partes: <strong>documentación</strong> (el segundo dev puede entender el codebase solo) y <strong>el segundo dev</strong> que entra en el equipo de 8. No esperar hasta que pase una crisis para resolverlo.</div>
+  </div>
+
+  <div class="regla">
+    <div class="regla-title">Regla #6 — Contratar despacio, despedir rápido.</div>
+    <div class="regla-body">La contratación apresurada es la causa #1 de los hires equivocados. Tomarse 3-4 semanas para evaluar bien a alguien es tiempo bien invertido. Pero cuando el hire claramente no funciona, no esperar 6 meses con la esperanza de que "mejore". La demora en actuar daña a todo el equipo y al negocio. En Argentina, documentar todo desde el primer día para cumplir con la ley laboral en caso de desvinculación.</div>
+  </div>
+
+  <hr>
+
+  <div class="sec">❓ La pregunta que hay que hacerse antes de cada hire</div>
+
+  <div class="g3">
+    <div class="card" style="border-top-color:var(--mint);">
+      <div class="icon">💰</div>
+      <div class="ct">¿Genera más de lo que cuesta?</div>
+      <div class="cb">Si el Head of Supply cuesta $1.000 USD/mes y activa 10 espacios nuevos que generan $500 USD de comisiones, todavía no cubre su costo. Pero si activa 20 espacios con $1.500 de comisiones, está justificado. <strong>Cada hire tiene que ser inversión, no gasto.</strong></div>
+    </div>
+    <div class="card" style="border-top-color:var(--lav);">
+      <div class="icon">🔓</div>
+      <div class="ct">¿Qué desbloquea que hoy no podemos hacer?</div>
+      <div class="cb">Si TMC puede crecer sin este hire haciendo un esfuerzo razonable, no es el momento. El hire correcto desbloquea algo que hoy es imposible o insostenible sin él. No contratar por comodidad — contratar por necesidad real.</div>
+    </div>
+    <div class="card" style="border-top-color:var(--peach);">
+      <div class="icon">📐</div>
+      <div class="ct">¿Podemos medirlo en 90 días?</div>
+      <div class="cb">Si no podés definir cómo vas a saber si este hire funcionó en 90 días, el rol no está bien definido. Antes de hacer la oferta, escribir la métrica de éxito: "Si en 90 días no vemos X, vamos a tener una conversación difícil".</div>
+    </div>
+  </div>
+
+  <div class="quote" style="margin-top:24px;">
+    "El equipo que construís en los primeros 18 meses define la cultura que va a tener la empresa por los próximos 10 años. Las primeras 8 personas ponen el tono: cómo se trabaja, cómo se decide, qué comportamientos se premian. Contratar bien en esta etapa no es un tema de RRHH — es estrategia de negocio." — Lección universal de founders que escalaron marketplaces
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="page-footer">
+  <strong style="color:#e2e8f0;">TodasMisCosas.com</strong> — Roles y Equipo para Escalar · Plan 2→4→8→30 · Junio 2026<br>
+  Basado en el modelo de Daniel Priestley y mejores prácticas de marketplaces en LATAM<br>
+  <span style="color:#64748b;font-size:.7rem;margin-top:4px;display:block;">Generado por Claude Sonnet 4.6 · Documento interno · Para uso del equipo TMC</span>
+</div>
+
+<script>
+function showTab(id){
+  document.querySelectorAll('.tc').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
