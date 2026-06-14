@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC — Action List de Lanzamiento</title>
+<style>
+:root{
+  --mint:#d1fae5;--mint-b:#6ee7b7;--mint-t:#065f46;
+  --lav:#ede9fe;--lav-b:#c4b5fd;--lav-t:#4c1d95;
+  --peach:#ffedd5;--peach-b:#fdba74;--peach-t:#9a3412;
+  --sky:#e0f2fe;--sky-b:#7dd3fc;--sky-t:#075985;
+  --rose:#ffe4e6;--rose-b:#fca5a5;--rose-t:#881337;
+  --van:#fef3c7;--van-b:#fcd34d;--van-t:#78350f;
+  --navy:#0f172a;--text:#1e293b;--text2:#475569;--text3:#94a3b8;
+  --border:#e2e8f0;--bg:#f8fafc;--white:#fff;
+  --done-bg:#f0fdf4;--done-text:#86efac;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:13.5px;line-height:1.6;}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#0f172a 0%,#1a3a2a 60%,#0f172a 100%);padding:30px 44px 22px;}
+.hl{font-size:1rem;font-weight:900;color:#4ade80;letter-spacing:-.2px;}
+.hl span{color:#475569;}
+.ht{font-size:1.45rem;font-weight:800;color:#f1f5f9;margin:4px 0 3px;}
+.hs{color:#64748b;font-size:.8rem;}
+.hrow{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
+.hchip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:3px 12px;font-size:.7rem;color:#94a3b8;}
+.hchip strong{color:#e2e8f0;}
+
+/* PROGRESS BAR */
+.progress-bar-wrap{background:var(--white);border-bottom:1px solid var(--border);padding:12px 44px;display:flex;align-items:center;gap:14px;}
+.pb-label{font-size:.73rem;color:var(--text3);white-space:nowrap;font-weight:600;}
+.pb-track{flex:1;height:8px;background:var(--border);border-radius:10px;overflow:hidden;}
+.pb-fill{height:100%;background:linear-gradient(90deg,#4ade80,#22d3ee);border-radius:10px;width:0%;transition:width .5s;}
+.pb-count{font-size:.73rem;font-weight:700;color:var(--text2);white-space:nowrap;}
+
+/* TABS */
+.tab-bar{background:var(--white);border-bottom:2px solid var(--border);display:flex;overflow-x:auto;padding:0 44px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.tab-bar::-webkit-scrollbar{height:3px;}
+.tb{padding:12px 16px;border:none;background:none;cursor:pointer;font-size:.76rem;font-weight:700;color:var(--text3);white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;display:flex;align-items:center;gap:6px;}
+.tb:hover{color:var(--text2);}
+.tb.active{color:#e8622a;border-bottom-color:#e8622a;}
+.tb .count{font-size:.65rem;background:var(--border);border-radius:10px;padding:1px 6px;color:var(--text3);font-weight:700;}
+.tb.active .count{background:#fef3c7;color:#92400e;}
+
+/* CONTENT */
+.tc{display:none;padding:28px 44px 64px;max-width:980px;margin:0 auto;}
+.tc.active{display:block;}
+
+/* PHASE HEADER */
+.phase-h{margin-bottom:20px;}
+.ph-tag{display:inline-block;border-radius:6px;padding:3px 11px;font-size:.67rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.ph-title{font-size:1.2rem;font-weight:900;color:var(--text);}
+.ph-sub{font-size:.79rem;color:var(--text2);margin-top:3px;}
+.ph-rule{border:none;border-top:1px solid var(--border);margin:16px 0 22px;}
+
+/* ACTION ITEM */
+.action{display:flex;gap:13px;padding:14px 16px;background:var(--white);border:1px solid var(--border);border-radius:14px;margin-bottom:9px;cursor:pointer;transition:all .18s;align-items:flex-start;position:relative;}
+.action:hover{border-color:var(--border);box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.action.done{background:var(--done-bg);opacity:.6;}
+.action.done .a-title{text-decoration:line-through;color:var(--text3);}
+.action.done .a-desc{color:var(--text3);}
+
+/* CHECKBOX */
+.a-cb{width:22px;height:22px;border:2px solid var(--border);border-radius:7px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:900;transition:all .15s;color:transparent;}
+.action.done .a-cb{background:#22c55e;border-color:#22c55e;color:white;}
+
+/* NUM */
+.a-num{width:26px;height:26px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:900;color:white;margin-top:0;}
+
+/* BODY */
+.a-body{flex:1;min-width:0;}
+.a-top{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap;margin-bottom:3px;}
+.a-title{font-weight:800;font-size:.9rem;color:var(--text);flex:1;}
+.a-pills{display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap;}
+.pill{display:inline-block;border-radius:5px;padding:2px 8px;font-size:.65rem;font-weight:700;}
+.p-time{background:var(--van);color:var(--van-t);}
+.p-who{background:var(--sky);color:var(--sky-t);}
+.p-impact{background:var(--mint);color:var(--mint-t);}
+.p-cost{background:var(--rose);color:var(--rose-t);}
+.p-free{background:var(--mint);color:var(--mint-t);}
+.a-desc{font-size:.78rem;color:var(--text2);line-height:1.65;margin-top:2px;}
+.a-desc strong{color:var(--text);}
+.a-note{margin-top:7px;background:var(--van);border-radius:8px;padding:7px 11px;font-size:.74rem;color:var(--van-t);line-height:1.6;}
+.a-note strong{color:#92400e;}
+
+/* SECTION DIVIDER */
+.sdiv{display:flex;align-items:center;gap:10px;margin:24px 0 14px;}
+.sdiv-line{flex:1;border:none;border-top:1px solid var(--border);}
+.sdiv-label{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:var(--text3);white-space:nowrap;}
+
+/* ALERT */
+.alert{border-radius:11px;padding:12px 16px;margin:0 0 20px;font-size:.79rem;line-height:1.7;display:flex;gap:9px;align-items:flex-start;}
+.a-green{background:var(--mint);border:1px solid var(--mint-b);color:var(--mint-t);}
+.a-orange{background:var(--peach);border:1px solid var(--peach-b);color:var(--peach-t);}
+.a-blue{background:var(--sky);border:1px solid var(--sky-b);color:var(--sky-t);}
+.a-van{background:var(--van);border:1px solid var(--van-b);color:var(--van-t);}
+
+/* STATS ROW */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px;}
+.stat{background:var(--white);border:1px solid var(--border);border-radius:11px;padding:14px;text-align:center;border-top:3px solid;}
+.stat .n{font-size:1.6rem;font-weight:900;line-height:1;}
+.stat .l{font-size:.67rem;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-top:4px;line-height:1.4;}
+
+/* TIMELINE MINI */
+.tl-mini{display:flex;gap:0;margin-bottom:22px;overflow-x:auto;padding-bottom:4px;}
+.tl-mini::-webkit-scrollbar{height:3px;}
+.tl-step{flex:1;min-width:100px;text-align:center;position:relative;}
+.tl-step::before{content:'';position:absolute;top:16px;left:50%;right:-50%;height:2px;background:var(--border);}
+.tl-step:last-child::before{display:none;}
+.tl-dot{width:32px;height:32px;border-radius:10px;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;color:white;position:relative;z-index:1;}
+.tl-step-label{font-size:.67rem;font-weight:700;color:var(--text3);}
+.tl-step-sub{font-size:.63rem;color:var(--text3);margin-top:1px;}
+
+hr{border:none;border-top:1px solid var(--border);margin:22px 0;}
+.footer{background:var(--navy);color:#334155;text-align:center;padding:16px;font-size:.7rem;}
+.footer strong{color:#475569;}
+
+@media(max-width:768px){
+  .header,.progress-bar-wrap,.tab-bar,.tc{padding-left:14px;padding-right:14px;}
+  .stats{grid-template-columns:1fr 1fr;}
+  .tl-mini{flex-direction:column;gap:6px;}
+  .tl-step::before{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="hl">📦 TodasMisCosas<span>.com</span></div>
+  <div class="ht">Action List — Lanzamiento Post Testing</div>
+  <div class="hs">Acciones ordenadas por semana y prioridad · Junio 2026</div>
+  <div class="hrow">
+    <div class="hchip"><strong>36 acciones</strong> totales</div>
+    <div class="hchip"><strong>Hoy → Mes 2</strong></div>
+    <div class="hchip">Oferta <strong>primero</strong>, demanda <strong>después</strong></div>
+    <div class="hchip">Marcar al completar</div>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-bar-wrap">
+  <span class="pb-label">Progreso total</span>
+  <div class="pb-track"><div class="pb-fill" id="pb"></div></div>
+  <span class="pb-count" id="pbcount">0 / 36 completados</span>
+</div>
+
+<!-- TABS -->
+<div class="tab-bar">
+  <button class="tb active" onclick="showTab('hoy')">⚡ Hoy mismo <span class="count" id="c0">4</span></button>
+  <button class="tb" onclick="showTab('semana0')">📋 Esta semana <span class="count" id="c1">7</span></button>
+  <button class="tb" onclick="showTab('semana1')">🏠 Semana 1 <span class="count" id="c2">9</span></button>
+  <button class="tb" onclick="showTab('semana2')">🔓 Semana 2 <span class="count" id="c3">7</span></button>
+  <button class="tb" onclick="showTab('semana34')">📈 Semanas 3-4 <span class="count" id="c4">6</span></button>
+  <button class="tb" onclick="showTab('mes2')">🚀 Mes 2 <span class="count" id="c5">3</span></button>
+</div>
+
+<!-- ═══════ HOY MISMO ═══════ -->
+<div id="tab-hoy" class="tc active">
+  <div class="phase-h">
+    <div class="ph-tag" style="background:var(--rose);color:var(--rose-t);">⚡ Hoy mismo — Antes de terminar el día</div>
+    <div class="ph-title">4 acciones que desbloquean todo lo demás</div>
+    <div class="ph-sub">Sin estos 4 entregables no se puede arrancar el outreach de proveedores.</div>
+  </div>
+  <hr class="ph-rule">
+
+  <div class="action" onclick="toggle(this)" data-tab="0">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#f43f5e;">1</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Crear la waiting list de proveedores</div>
+        <div class="a-pills">
+          <span class="pill p-time">30 min</span>
+          <span class="pill p-free">Gratis</span>
+          <span class="pill p-who">Alejandro</span>
+        </div>
+      </div>
+      <div class="a-desc">Abrir <strong>Tally.so</strong> y crear formulario: nombre, email, WhatsApp, tipo de espacio (cochera/baulera/cuarto/depósito), barrio, tamaño, disponibilidad. Publicar en la home de TMC.</div>
+      <div class="a-note">💡 URL del formulario tiene que ser corta para poner en el kit y en los posts de Facebook. Ejemplo: <strong>tally.so/r/xxxxx</strong></div>
+    </div>
+  </div>
+
+  <div class="action" onclick="toggle(this)" data-tab="0">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#f43f5e;">2</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Crear la waiting list de clientes</div>
+        <div class="a-pills">
+          <span class="pill p-time">20 min</span>
+          <span class="pill p-free">Gratis</span>
+          <span class="pill p-who">Alejandro</span>
+        </div>
+      </div>
+      <div class="a-desc">Segundo formulario en Tally.so: nombre, email, WhatsApp, qué necesita guardar, por cuánto tiempo, barrio preferido, presupuesto aproximado. Mismo lugar en la home.</div>
+    </div>
+  </div>
+
+  <div class="action" onclick="toggle(this)" data-tab="0">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#f43f5e;">3</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Redactar el Kit del Proveedor</div>
+        <div class="a-pills">
+          <span class="pill p-time">1-2 hs</span>
+          <span class="pill p-free">Gratis</span>
+          <span class="pill p-who">Alejandro</span>
+        </div>
+      </div>
+      <div class="a-desc">Una sola página (PDF o link) con: qué es TMC, cuánto gana por tipo de espacio (actualizar con precios reales de mercado), por qué es seguro (escrow/depósito de garantía), 3 pasos para publicar. <strong>Es la herramienta principal de ventas para proveedores.</strong></div>
+      <div class="a-note">💡 El kit responde una sola pregunta: <strong>"¿Cuánto gano yo?"</strong> Todo lo demás es secundario.</div>
+    </div>
+  </div>
+
+  <div class="action" onclick="toggle(this)" data-tab="0">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#f43f5e;">4</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Optimizar el perfil de Instagram</div>
+        <div class="a-pills">
+          <span class="pill p-time">30 min</span>
+          <span class="pill p-free">Gratis</span>
+          <span class="pill p-who">Alejandro</span>
+        </div>
+      </div>
+      <div class="a-desc">Bio: <em>"📦 Guardá tus cosas cerca y seguro | CABA & AMBA | 🔒 Pago garantizado | 👇 Registrate gratis"</em>. Link en bio → Linktree con dos destinos: proveedor y cliente. Crear 3 Destacados: Cómo funciona / Para proveedores / Para clientes.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ ESTA SEMANA ═══════ -->
+<div id="tab-semana0" class="tc">
+  <div class="phase-h">
+    <div class="ph-tag" style="background:var(--van);color:var(--van-t);">📋 Esta semana — Preparación completa</div>
+    <div class="ph-title">7 acciones para estar listos al 100% antes del outreach</div>
+    <div class="ph-sub">Terminar el testing y dejar todo preparado para la Semana 1.</div>
+  </div>
+  <hr class="ph-rule">
+
+  <div class="sdiv"><div class="sdiv-line"></div><div class="sdiv-label">Infraestructura</div><div class="sdiv-line"></div></div>
+
+  <div class="action" onclick="toggle(this)" data-tab="1">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#d97706;">5</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Crear perfil en Google My Business</div>
+        <div class="a-pills">
+          <span class="pill p-time">30 min</span>
+          <span class="pill p-free">Gratis</span>
+          <span class="pill p-who">Alejandro</span>
+        </div>
+      </div>
+      <div class="a-desc">Categoría "Empresa de almacenamiento". Dirección de Villa Ballester o coworking en CABA. Fotos de espacios disponibles, descripción del servicio, link al sitio. <strong>Verificación Google: llega carta postal en 5-7 días hábiles.</strong></div>
+    </div>
+  </div>
+
+  <div class="action" onclick="toggle(this)" data-tab="1">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#d97706;">6</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Armar un CRM básico en HubSpot Free</div>
+        <div class="a-pills">
+          <span class="pill p-time">1 hs</span>
+          <span class="pill p-free">Gratis</span>
+          <span class="pill p-who">Alejandro</span>
+        </div>
+      </div>
+      <div class="a-desc">Pipeline con etapas: Contactado → Interesado → Kit enviado → Publicado. Cargar todos los leads de proveedores desde el día 1. Sin CRM es imposible hacer seguimiento cuando llegan 20+ contactos al mismo tiempo.</div>
+    </div>
+  </div>
+
+  <div class="sdiv"><div class="sdiv-line"></div><div class="sdiv-label">Investigación de campo</div><div class="sdiv-line"></div></div>
+
+  <div class="action" onclick="toggle(this)" data-tab="1">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#d97706;">7</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Listar 20 admins de consorcio con WhatsApp</div>
+        <div class="a-pills">
+          <span class="pill p-time">2-3 hs</span>
+          <span class="pill p-free">Gratis</span>
+          <span class="pill p-who">Alejandro</span>
+        </div>
+      </div>
+      <div class="a-desc">Palermo: 8 admins / Belgrano: 7 admins / Villa Crespo: 5 admins. Fuentes: cartelito de cada edificio, Google Maps "administración de consorcio + barrio", grupo Facebook "Administradores de Consorcio Argentina". Cargar en HubSpot.</div>
+    </div>
+  </div>
+
+  <div class="action" onclick="toggle(this)" data-tab="1">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#d97706;">8</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Mapear grupos de Facebook relevantes</div>
+        <div class="a-pills">
+          <span class="pill p-time">1 hs</span>
+          <span class="pill p-free">Gratis</span>
+          <span class="pill p-who">Alejandro</span>
+        </div>
+      </div>
+      <div class="a-desc"><strong>Para proveedores:</strong> Vecinos Palermo CABA, Vecinos Belgrano, Vecinos Villa Crespo, Propietarios Buenos Aires, Cocheras en alquiler CABA, Admins de Consorcio Argentina. <strong>Para clientes:</strong> Mudanzas Buenos Aires, Expats CABA, Airbnb Buenos Aires. Anotar cantidad de miembros y moderación.</div>
+    </div>
+  </div>
+
+  <div class="action" onclick="toggle(this)" data-tab="1">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#d97706;">9</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Identificar 10 inmobiliarias en los 3 barrios target</div>
+        <div class="a-pills">
+          <span class="pill p-time">1 hs</span>
+          <span class="pill p-free">Gratis</span>
+          <span class="pill p-who">Alejandro</span>
+        </div>
+      </div>
+      <div class="a-desc">Google Maps "inmobiliaria Palermo/Belgrano/Villa Crespo". Buscar el responsable de alquileres (LinkedIn o llamada directa). Cargar en HubSpot con email + WhatsApp.</div>
+    </div>
+  </div>
+
+  <div class="sdiv"><div class="sdiv-line"></div><div class="sdiv-label">Contenido</div><div class="sdiv-line"></div></div>
+
+  <div class="action" onclick="toggle(this)" data-tab="1">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#d97706;">10</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Redactar mensajes modelo para cada canal</div>
+        <div class="a-pills">
+          <span class="pill p-time">1 hs</span>
+          <span class="pill p-free">Gratis</span>
+          <span class="pill p-who">Alejandro</span>
+        </div>
+      </div>
+      <div class="a-desc">4 mensajes listos para copiar-pegar: (1) Broadcast WhatsApp red personal, (2) Admin de consorcio, (3) Post de Facebook grupo vecinos, (4) Inmobiliaria. Tener todos en un Google Doc para el lunes de Semana 1.</div>
+    </div>
+  </div>
+
+  <div class="action" onclick="toggle(this)" data-tab="1">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#d97706;">11</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Filmar el primer Reel de Instagram</div>
+        <div class="a-pills">
+          <span class="pill p-time">1-2 hs</span>
+          <span class="pill p-free">Gratis</span>
+          <span class="pill p-who">Alejandro</span>
+        </div>
+      </div>
+      <div class="a-desc">Tema: <em>"¿Tenés una cochera vacía en Palermo? Te mostramos cuánto podría generarte por mes."</em> 20-30 segundos, texto en pantalla, sin locución necesaria. Filmar en una cochera real si es posible. <strong>No esperar que sea perfecto — publicar.</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ SEMANA 1 ═══════ -->
+<div id="tab-semana1" class="tc">
+  <div class="phase-h">
+    <div class="ph-tag" style="background:var(--mint);color:var(--mint-t);">🏠 Semana 1 — Captación masiva de proveedores</div>
+    <div class="ph-title">9 acciones de outreach — Esta semana Alejandro es Head of Supply</div>
+    <div class="ph-sub">Meta: 30+ contactos de proveedores interesados. Cero dinero gastado en publicidad todavía.</div>
+  </div>
+  <hr class="ph-rule">
+
+  <div class="alert a-green">
+    <span>💡</span>
+    <div><strong>Prioridad de la semana:</strong> Una reunión con un admin de consorcio vale más que 10 posts en Instagram. Cada hora libre va a conseguir espacios.</div>
+  </div>
+
+  <div class="sdiv"><div class="sdiv-line"></div><div class="sdiv-label">Red personal — Día 1</div><div class="sdiv-line"></div></div>
+
+  <div class="action" onclick="toggle(this)" data-tab="2">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#22c55e;">12</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Broadcast WhatsApp a toda la agenda de Alejandro</div>
+        <div class="a-pills">
+          <span class="pill p-time">30 min</span>
+          <span class="pill p-impact">🔥 Alto impacto</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">No pedir que se registren — pedir que <strong>recomienden a alguien con espacio disponible</strong>. Adjuntar el kit del proveedor como PDF. El mensaje arranca: <em>"Hola, estamos lanzando TodasMisCosas — la primera plataforma para que cocheras y bauleras vacías en CABA generen plata..."</em></div>
+    </div>
+  </div>
+
+  <div class="action" onclick="toggle(this)" data-tab="2">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#22c55e;">13</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Seguimiento personal a los que respondan</div>
+        <div class="a-pills">
+          <span class="pill p-time">Continuo</span>
+          <span class="pill p-impact">🔥 Alto impacto</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">Llamada o mensaje personalizado en menos de 24hs a cada persona que responda. Cargar en HubSpot. Meta realista: 5-10 proveedores de la red personal en la semana.</div>
+    </div>
+  </div>
+
+  <div class="sdiv"><div class="sdiv-line"></div><div class="sdiv-label">Admins de consorcio — El canal más valioso</div><div class="sdiv-line"></div></div>
+
+  <div class="action" onclick="toggle(this)" data-tab="2">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#22c55e;">14</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Contactar los 20 admins de consorcio por WhatsApp</div>
+        <div class="a-pills">
+          <span class="pill p-time">2 hs</span>
+          <span class="pill p-impact">🔥 Alto impacto</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">Usar el mensaje modelo preparado. Objetivo: conseguir 10 minutos de su tiempo para mostrar el kit. Un admin = 5-15 edificios = decenas de espacios potenciales.</div>
+      <div class="a-note">💡 <strong>El argumento clave:</strong> "Muchos propietarios del consorcio tienen cocheras vacías que no les generan nada. TMC les permite ganar $X/mes. Vos les das una herramienta útil — eso mejora tu relación con ellos."</div>
+    </div>
+  </div>
+
+  <div class="action" onclick="toggle(this)" data-tab="2">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#22c55e;">15</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Visitas presenciales a los 5 admins más prometedores</div>
+        <div class="a-pills">
+          <span class="pill p-time">1 día</span>
+          <span class="pill p-impact">🔥 Alto impacto</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">Llevar el kit del proveedor impreso. Proponer un acuerdo formal: el admin recomienda TMC a sus propietarios a cambio de comisión por referido o visibilidad. <strong>La confianza en persona no tiene sustituto.</strong></div>
+    </div>
+  </div>
+
+  <div class="sdiv"><div class="sdiv-line"></div><div class="sdiv-label">Canales digitales — Escala sin costo</div><div class="sdiv-line"></div></div>
+
+  <div class="action" onclick="toggle(this)" data-tab="2">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#22c55e;">16</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Publicar en 6 grupos de Facebook (proveedores)</div>
+        <div class="a-pills">
+          <span class="pill p-time">1 hs</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">Vecinos Palermo, Vecinos Belgrano, Vecinos Villa Crespo, Propietarios Buenos Aires, Cocheras en alquiler CABA, Admins de Consorcio Argentina. Foto atractiva + texto corto + link al formulario proveedor. <strong>Máximo 1 post por grupo cada 7-10 días.</strong></div>
+    </div>
+  </div>
+
+  <div class="action" onclick="toggle(this)" data-tab="2">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#22c55e;">17</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Publicar aviso en MercadoLibre buscando espacios</div>
+        <div class="a-pills">
+          <span class="pill p-time">30 min</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">Categoría Inmuebles → Cocheras. Título: "Buscamos cocheras y depósitos en CABA para alquilar". Descripción: TMC, pago garantizado, sin exclusividad, publicar es gratis. + Responder a los que ya tienen cocheras publicadas en ML y proponer que también la suban a TMC.</div>
+    </div>
+  </div>
+
+  <div class="action" onclick="toggle(this)" data-tab="2">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#22c55e;">18</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Contactar 10 inmobiliarias de los barrios target</div>
+        <div class="a-pills">
+          <span class="pill p-time">2 hs</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">Buscar al responsable de alquileres. Propuesta: "Muchos propietarios tienen cocheras o depósitos que no entran en el contrato de alquiler. TMC les permite rentabilizarlos. ¿Podemos armar algo juntos?" Ofrecerles comisión por referido.</div>
+      <div class="a-note">💡 <strong>Desmitificar la competencia:</strong> TMC es para guardar cosas, no para vivir. Públicos completamente distintos. Las inmobiliarias no pierden clientes.</div>
+    </div>
+  </div>
+
+  <div class="action" onclick="toggle(this)" data-tab="2">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#22c55e;">19</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Publicar el primer Reel en Instagram</div>
+        <div class="a-pills">
+          <span class="pill p-time">15 min</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">El filmado en Esta Semana. Publicar al inicio de la Semana 1 (martes/miércoles tienen mejor alcance orgánico). Caption con call to action al link en bio. Meta: 1.000 reproducciones en la primera semana.</div>
+    </div>
+  </div>
+
+  <div class="action" onclick="toggle(this)" data-tab="2">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#22c55e;">20</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Unirse y presentarse en grupos de admins de consorcio online</div>
+        <div class="a-pills">
+          <span class="pill p-time">1 hs</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">LinkedIn grupo "Administradores de Consorcio Argentina", Facebook grupo "Propietarios y Administradores PH". Presentar TMC como solución para valorizar espacios del consorcio. No vender directamente — primero aportar valor, después proponer.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ SEMANA 2 ═══════ -->
+<div id="tab-semana2" class="tc">
+  <div class="phase-h">
+    <div class="ph-tag" style="background:var(--lav);color:var(--lav-t);">🔓 Semana 2 — Primeros espacios publicados</div>
+    <div class="ph-title">7 acciones para encender la plataforma con espacios reales</div>
+    <div class="ph-sub">Meta: 20 espacios activos en la plataforma. A partir de acá se puede hablar de demanda.</div>
+  </div>
+  <hr class="ph-rule">
+
+  <div class="alert a-blue">
+    <span>🚦</span>
+    <div><strong>Semáforo:</strong> No activar demanda (Google Ads, partnerships) hasta tener 20+ espacios. Con menos de 10 espacios los clientes llegan y no encuentran nada — destruye la reputación antes de construirla.</div>
+  </div>
+
+  <div class="sdiv"><div class="sdiv-line"></div><div class="sdiv-label">Hito central de la semana</div><div class="sdiv-line"></div></div>
+
+  <div class="action" onclick="toggle(this)" data-tab="3">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#a78bfa;">21</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Onboarding de los primeros 20 proveedores</div>
+        <div class="a-pills">
+          <span class="pill p-time">Toda la semana</span>
+          <span class="pill p-impact">🎯 Hito clave</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">Acompañar a cada proveedor: fotos del espacio, descripción, precio sugerido. Idealmente hacer el onboarding con ellos presencialmente o por videollamada la primera vez. <strong>Este hito desbloquea toda la demanda.</strong></div>
+    </div>
+  </div>
+
+  <div class="sdiv"><div class="sdiv-line"></div><div class="sdiv-label">SEO — Invertir ahora para rankear en 60 días</div><div class="sdiv-line"></div></div>
+
+  <div class="action" onclick="toggle(this)" data-tab="3">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#a78bfa;">22</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Escribir artículo SEO #1 — Mudanzas</div>
+        <div class="a-pills">
+          <span class="pill p-time">3-4 hs</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">Título: <strong>"Dónde guardar muebles durante una mudanza en Buenos Aires"</strong>. 600+ palabras. Keyword principal en título, primer párrafo y subtítulos. Interno: link a la home y a la búsqueda por barrio. Publicar en el blog de TMC.</div>
+    </div>
+  </div>
+
+  <div class="action" onclick="toggle(this)" data-tab="3">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#a78bfa;">23</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Escribir artículo SEO #2 — Comparativa self-storage</div>
+        <div class="a-pills">
+          <span class="pill p-time">3 hs</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">Título: <strong>"Cuánto cuesta un self-storage en CABA y cuándo conviene una alternativa"</strong>. Comparar precios de Guarda Todo / Metrominuto vs. TMC. TMC siempre gana en precio. Posiciona a TMC como la opción inteligente.</div>
+    </div>
+  </div>
+
+  <div class="sdiv"><div class="sdiv-line"></div><div class="sdiv-label">Partnerships — Canales con mayor conversión</div><div class="sdiv-line"></div></div>
+
+  <div class="action" onclick="toggle(this)" data-tab="3">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#a78bfa;">24</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Contactar 10 empresas de mudanzas</div>
+        <div class="a-pills">
+          <span class="pill p-time">2 hs</span>
+          <span class="pill p-impact">🔥 Alto impacto</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">Instagram con hashtag #fletesba, grupos Facebook "Fletes y mudanzas Buenos Aires", Google Maps. Propuesta: 10% de comisión por la primera reserva de cada cliente referido. Darles un código de referido único para trackear.</div>
+      <div class="a-note">💡 Las mudanzas tienen clientes que necesitan guardar cosas mientras esperan el nuevo departamento — es exactamente el caso de uso de TMC.</div>
+    </div>
+  </div>
+
+  <div class="action" onclick="toggle(this)" data-tab="3">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#a78bfa;">25</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Publicar en grupos de Airbnb hosts</div>
+        <div class="a-pills">
+          <span class="pill p-time">1 hs</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">Grupos: "Anfitriones Airbnb Buenos Aires", "Airbnb hosts Argentina". Mensaje específico: <em>"Si sos Airbnb host, TMC te permite guardar tus muebles personales cuando alquilás tu depto."</em> Nicho perfecto — demanda estacional predecible.</div>
+    </div>
+  </div>
+
+  <div class="sdiv"><div class="sdiv-line"></div><div class="sdiv-label">Instagram — Mantener la frecuencia</div><div class="sdiv-line"></div></div>
+
+  <div class="action" onclick="toggle(this)" data-tab="3">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#a78bfa;">26</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Publicar 3 Reels — uno por barrio</div>
+        <div class="a-pills">
+          <span class="pill p-time">3 hs (total)</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">Reel Palermo + Reel Belgrano + Reel Villa Crespo. Mostrar espacios reales de los primeros proveedores. Cada Reel usa el barrio en el hashtag y en el texto. <strong>El contenido con espacios reales convierte mucho mejor que el genérico.</strong></div>
+    </div>
+  </div>
+
+  <div class="action" onclick="toggle(this)" data-tab="3">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#a78bfa;">27</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Seguir el outreach de proveedores (segunda tanda)</div>
+        <div class="a-pills">
+          <span class="pill p-time">2 hs</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">Segunda publicación en los grupos de Facebook (7-10 días del post anterior). Segundo mensaje a los admins de consorcio que no respondieron. Seguimiento a los leads en HubSpot que quedaron en "Interesado".</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ SEMANAS 3-4 ═══════ -->
+<div id="tab-semana34" class="tc">
+  <div class="phase-h">
+    <div class="ph-tag" style="background:var(--sky);color:var(--sky-t);">📈 Semanas 3-4 — Encender la demanda</div>
+    <div class="ph-title">6 acciones para traer los primeros clientes pagadores</div>
+    <div class="ph-sub">Con 20+ espacios activos, estos canales traen las primeras reservas reales.</div>
+  </div>
+  <hr class="ph-rule">
+
+  <div class="sdiv"><div class="sdiv-line"></div><div class="sdiv-label">Publicidad paga — Pequeña y medible</div><div class="sdiv-line"></div></div>
+
+  <div class="action" onclick="toggle(this)" data-tab="4">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#38bdf8;">28</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Lanzar primera campaña Google Ads</div>
+        <div class="a-pills">
+          <span class="pill p-time">2 hs setup</span>
+          <span class="pill p-cost">$50-100 USD</span>
+        </div>
+      </div>
+      <div class="a-desc">Keywords: "guardar cosas Buenos Aires", "alquiler depósito CABA", "self storage Palermo", "baulera en alquiler Buenos Aires". Destino: página de búsqueda de TMC con resultados en Palermo/Belgrano. <strong>Medir CPC objetivo &lt;$0.50 USD · CVR objetivo &gt;5% · CPL objetivo &lt;$3 USD.</strong></div>
+    </div>
+  </div>
+
+  <div class="sdiv"><div class="sdiv-line"></div><div class="sdiv-label">SEO — Continuar la cadencia</div><div class="sdiv-line"></div></div>
+
+  <div class="action" onclick="toggle(this)" data-tab="4">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#38bdf8;">29</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Escribir artículo SEO #3 — Barrio específico</div>
+        <div class="a-pills">
+          <span class="pill p-time">3 hs</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">Título: <strong>"Alquilar una cochera particular en Palermo — cómo funciona y es legal"</strong>. Keyword local de alta intención. Si TMC tiene espacios en Palermo, este artículo trae clientes que buscan exactamente eso.</div>
+    </div>
+  </div>
+
+  <div class="action" onclick="toggle(this)" data-tab="4">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#38bdf8;">30</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Escribir artículo SEO #4 — Modelo P2P educativo</div>
+        <div class="a-pills">
+          <span class="pill p-time">2-3 hs</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">Título: <strong>"Guardar cosas en casa de vecino en Buenos Aires — cómo funciona TMC"</strong>. Explicar el modelo P2P, la garantía, el escrow. Genera confianza y rankea fácil porque no hay competencia en este tema todavía.</div>
+    </div>
+  </div>
+
+  <div class="sdiv"><div class="sdiv-line"></div><div class="sdiv-label">Demanda directa en grupos</div><div class="sdiv-line"></div></div>
+
+  <div class="action" onclick="toggle(this)" data-tab="4">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#38bdf8;">31</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Publicar en grupos de demanda (mudanzas, expats, estudiantes)</div>
+        <div class="a-pills">
+          <span class="pill p-time">1 hs</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">Ahora con espacios reales para mostrar. Grupos: Mudanzas Buenos Aires, Expats en Buenos Aires, Estudiantes universitarios CABA, Busco alquiler CABA. Mensaje: <em>"¿Necesitás guardar tus cosas en CABA? Tenemos cocheras y bauleras disponibles en Palermo y Belgrano."</em></div>
+    </div>
+  </div>
+
+  <div class="sdiv"><div class="sdiv-line"></div><div class="sdiv-label">Marca personal y medios</div><div class="sdiv-line"></div></div>
+
+  <div class="action" onclick="toggle(this)" data-tab="4">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#38bdf8;">32</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Contactar periodistas de Infobae e iProfesional</div>
+        <div class="a-pills">
+          <span class="pill p-time">2 hs</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">LinkedIn directo al periodista de tech/startups de cada medio + email con one-pager del mercado. <strong>El ángulo ganador:</strong> "El self-storage en Argentina es un mercado de $800M sin un solo jugador P2P — TMC apuesta a resolver eso." Adjuntar los números de la waiting list.</div>
+      <div class="a-note">💡 <strong>Targets:</strong> Infobae Economía (sección startups activa), Clarín iEco (proptech), iProfesional (muy leído por propietarios e inversores), La Nación Economía.</div>
+    </div>
+  </div>
+
+  <div class="action" onclick="toggle(this)" data-tab="4">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#38bdf8;">33</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Grabar y publicar Episodio #1 del podcast</div>
+        <div class="a-pills">
+          <span class="pill p-time">4-5 hs</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">Tema: <strong>"Por qué creamos TMC en Buenos Aires"</strong>. La historia de origen, el problema descubierto, las primeras validaciones. Publicar en YouTube + Spotify. <strong>Construye la marca personal de Alejandro como founder y atrae inversores y prensa orgánica.</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MES 2 ═══════ -->
+<div id="tab-mes2" class="tc">
+  <div class="phase-h">
+    <div class="ph-tag" style="background:var(--rose);color:var(--rose-t);">🚀 Mes 2 — Escala y consolidación</div>
+    <div class="ph-title">3 acciones para pasar de validación a crecimiento sostenido</div>
+    <div class="ph-sub">Meta: 50+ espacios activos, primera nota en medios, programa de referidos activo.</div>
+  </div>
+  <hr class="ph-rule">
+
+  <div class="stats">
+    <div class="stat" style="border-top-color:var(--mint-b);">
+      <div class="n" style="color:#22c55e;">50+</div>
+      <div class="l">Espacios activos en la plataforma</div>
+    </div>
+    <div class="stat" style="border-top-color:var(--lav-b);">
+      <div class="n" style="color:#a78bfa;">1</div>
+      <div class="l">Primera nota publicada en medios</div>
+    </div>
+    <div class="stat" style="border-top-color:var(--peach-b);">
+      <div class="n" style="color:#fb923c;">5+</div>
+      <div class="l">Barrios con oferta disponible</div>
+    </div>
+    <div class="stat" style="border-top-color:var(--sky-b);">
+      <div class="n" style="color:#38bdf8;">10+</div>
+      <div class="l">Reservas pagadas completadas</div>
+    </div>
+  </div>
+
+  <div class="action" onclick="toggle(this)" data-tab="5">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#f43f5e;">34</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Lanzar programa de referidos para proveedores</div>
+        <div class="a-pills">
+          <span class="pill p-time">1-2 días setup</span>
+          <span class="pill p-cost">Costo variable</span>
+          <span class="pill p-impact">🔥 Alto impacto</span>
+        </div>
+      </div>
+      <div class="a-desc"><em>"Traé a un amigo con un espacio y ganás $X de bonus cuando publique."</em> Los primeros proveedores conocen a otros propietarios. El programa de referidos es el canal de menor costo para crecer de 20 a 100 espacios. Puede ser un bono en efectivo o % de la primera reserva del referido.</div>
+    </div>
+  </div>
+
+  <div class="action" onclick="toggle(this)" data-tab="5">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#f43f5e;">35</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Expansión a 2-3 barrios nuevos</div>
+        <div class="a-pills">
+          <span class="pill p-time">2 semanas</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">Con el modelo validado en Palermo/Belgrano/Villa Crespo, replicar el playbook de la Semana 1 en: Caballito, Almagro, Flores o Recoleta (según donde aparezcan los primeros leads espontáneos). Analizar la waiting list de proveedores — los barrios ya están votados por los datos.</div>
+    </div>
+  </div>
+
+  <div class="action" onclick="toggle(this)" data-tab="5">
+    <div class="a-cb">✓</div>
+    <div class="a-num" style="background:#f43f5e;">36</div>
+    <div class="a-body">
+      <div class="a-top">
+        <div class="a-title">Publicar análisis de métricas del primer mes</div>
+        <div class="a-pills">
+          <span class="pill p-time">2-3 hs</span>
+          <span class="pill p-free">Gratis</span>
+        </div>
+      </div>
+      <div class="a-desc">Revisar: qué canal trajo más proveedores, qué barrio tiene más demanda, qué tipo de espacio se reserva más, cuál es el ticket promedio. Ajustar el presupuesto de Google Ads en función del CPL real. <strong>El dato es el activo más valioso de este mes.</strong></div>
+      <div class="a-note">💡 Publicar un resumen del primer mes en LinkedIn y en el podcast — "Aprendizajes de nuestro primer mes con TMC" — es contenido que atrae inversores, prensa y futuros empleados.</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <strong>TMC — Action List de Lanzamiento · 36 acciones · Junio 2026</strong><br>
+  TodasMisCosas.com · CABA &amp; AMBA
+</div>
+
+<script>
+const TOTAL = 36;
+
+function toggle(el){
+  el.classList.toggle('done');
+  el.querySelector('.a-cb').textContent = el.classList.contains('done') ? '✓' : '';
+  updateProgress();
+}
+
+function updateProgress(){
+  const done = document.querySelectorAll('.action.done').length;
+  document.getElementById('pb').style.width = (done/TOTAL*100)+'%';
+  document.getElementById('pbcount').textContent = done+' / '+TOTAL+' completados';
+  // Update tab counts
+  const tabs = ['c0','c1','c2','c3','c4','c5'];
+  tabs.forEach((id,i)=>{
+    const actions = document.querySelectorAll(`.action[data-tab="${i}"]`);
+    const doneInTab = document.querySelectorAll(`.action[data-tab="${i}"].done`).length;
+    const total = actions.length;
+    const el = document.getElementById(id);
+    if(doneInTab===total && total>0){
+      el.style.background='var(--mint)';
+      el.style.color='var(--mint-t)';
+      el.textContent='✓';
+    } else {
+      el.style.background='';
+      el.style.color='';
+      el.textContent = (total-doneInTab)+' de '+total;
+    }
+  });
+}
+
+function showTab(id){
+  document.querySelectorAll('.tc').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// Init counts
+updateProgress();
+</script>
+</body>
+</html>
