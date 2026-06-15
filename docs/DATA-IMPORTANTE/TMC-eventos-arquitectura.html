@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC Eventos — Arquitectura & Modelo de Negocio · Jun 2026</title>
+<style>
+:root{
+  --mint:#d1fae5;--mint-b:#6ee7b7;--mint-t:#065f46;--mint-d:#a7f3d0;
+  --lav:#ede9fe;--lav-b:#c4b5fd;--lav-t:#4c1d95;
+  --peach:#ffedd5;--peach-b:#fdba74;--peach-t:#9a3412;
+  --sky:#e0f2fe;--sky-b:#7dd3fc;--sky-t:#075985;
+  --rose:#ffe4e6;--rose-b:#fca5a5;--rose-t:#881337;
+  --van:#fef3c7;--van-b:#fcd34d;--van-t:#78350f;
+  --sage:#bbf7d0;--teal:#99f6e4;--teal-b:#2dd4bf;--teal-t:#134e4a;
+  --navy:#0f172a;--text:#1e293b;--text2:#475569;--text3:#94a3b8;
+  --border:#e2e8f0;--bg:#f8fafc;--white:#fff;
+  --purple:#7c3aed;--orange:#e8622a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:13.5px;line-height:1.65;}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#0f172a 0%,#2d1b69 50%,#1e293b 100%);padding:34px 46px 24px;position:relative;overflow:hidden;}
+.header::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(124,58,237,.15);}
+.header::after{content:'';position:absolute;bottom:-30px;left:30%;width:150px;height:150px;border-radius:50%;background:rgba(99,102,241,.1);}
+.hl{font-size:.95rem;font-weight:900;color:#a78bfa;letter-spacing:.04em;position:relative;z-index:1;}
+.ht{font-size:1.5rem;font-weight:900;color:#f1f5f9;margin:5px 0 4px;letter-spacing:-.3px;position:relative;z-index:1;}
+.hs{color:#64748b;font-size:.8rem;position:relative;z-index:1;}
+.hchips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;position:relative;z-index:1;}
+.hchip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:3px 13px;font-size:.7rem;color:#94a3b8;}
+.hchip strong{color:#e2e8f0;}
+
+/* TABS */
+.tab-bar{background:var(--white);border-bottom:2px solid var(--border);display:flex;overflow-x:auto;padding:0 46px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.07);}
+.tab-bar::-webkit-scrollbar{height:3px;}
+.tb{padding:13px 16px;border:none;background:none;cursor:pointer;font-size:.75rem;font-weight:700;color:var(--text3);white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;}
+.tb:hover{color:var(--text2);}
+.tb.active{color:var(--purple);border-bottom-color:var(--purple);}
+
+/* CONTENT */
+.tc{display:none;padding:32px 46px 70px;max-width:1080px;margin:0 auto;}
+.tc.active{display:block;}
+
+/* SECTION */
+.sec{font-size:1rem;font-weight:900;color:var(--text);margin:32px 0 12px;display:flex;align-items:center;gap:9px;}
+.sec:first-child{margin-top:0;}
+.ssub{font-size:.78rem;color:var(--text3);margin:-8px 0 16px;line-height:1.6;}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;}
+
+/* CARD */
+.card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px 20px;border-top:4px solid var(--border);}
+.card .icon{font-size:1.3rem;margin-bottom:8px;}
+.card .ct{font-weight:800;font-size:.9rem;color:var(--text);margin-bottom:6px;}
+.card .cb{font-size:.78rem;color:var(--text2);line-height:1.7;}
+.card .cb strong{color:var(--text);}
+
+/* GAP CARD — big statement */
+.gap-card{background:linear-gradient(135deg,#2d1b69,#1e1b4b);border-radius:18px;padding:26px 30px;color:#f1f5f9;margin:14px 0;}
+.gap-title{font-size:.85rem;font-weight:800;color:#a78bfa;margin-bottom:10px;}
+.gap-body{font-size:.85rem;line-height:1.8;color:#cbd5e1;}
+.gap-body strong{color:#f1f5f9;}
+
+/* PRIVACY LEVELS */
+.priv-list{display:flex;flex-direction:column;gap:10px;margin:10px 0;}
+.priv-item{display:flex;gap:14px;align-items:flex-start;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:14px 18px;}
+.priv-num{width:32px;height:32px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;color:white;}
+.priv-body .pt{font-weight:800;font-size:.88rem;color:var(--text);margin-bottom:3px;}
+.priv-body .pd{font-size:.77rem;color:var(--text2);line-height:1.6;}
+.priv-body .pd strong{color:var(--text);}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:.77rem;margin:12px 0;}
+.tbl th{background:var(--navy);color:#94a3b8;padding:9px 13px;text-align:left;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;}
+.tbl th:first-child{border-radius:8px 0 0 0;}
+.tbl th:last-child{border-radius:0 8px 0 0;}
+.tbl td{padding:10px 13px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:#f8fafc;}
+.tbl td strong{color:var(--text);}
+.tbl .hl-row td{background:linear-gradient(90deg,#f5f3ff,var(--white));font-weight:700;}
+.tbl .hl-row td:first-child{color:var(--purple);font-weight:800;}
+
+/* PRICING CARDS */
+.pricing{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:14px 0;}
+.pc{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:20px;text-align:center;}
+.pc.featured{border:2px solid var(--lav-b);background:var(--lav);}
+.pc .pname{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px;}
+.pc .pprice{font-size:1.5rem;font-weight:900;color:var(--text);line-height:1;}
+.pc .psub{font-size:.7rem;color:var(--text3);margin:3px 0 12px;}
+.pc .pcom{font-size:.85rem;font-weight:800;color:var(--purple);margin-bottom:12px;}
+.pc .pfeats{list-style:none;text-align:left;}
+.pc .pfeats li{font-size:.75rem;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border);display:flex;gap:7px;align-items:flex-start;}
+.pc .pfeats li:last-child{border-bottom:none;}
+.pc .pfeats li::before{content:'✓';color:#22c55e;font-weight:900;flex-shrink:0;}
+
+/* NUMBERS */
+.numbers{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0;}
+.numcard{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:20px;border-left:4px solid;}
+.numcard .nt{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:8px;}
+.numcard .nb{font-size:1.4rem;font-weight:900;color:var(--text);line-height:1.2;margin-bottom:6px;}
+.numcard .nd{font-size:.76rem;color:var(--text2);line-height:1.65;}
+.numcard .nd strong{color:var(--text);}
+
+/* ARCH DIAGRAM */
+.arch{background:var(--navy);border-radius:16px;padding:22px 26px;font-family:'Courier New',monospace;font-size:.78rem;color:#94a3b8;line-height:1.8;overflow-x:auto;margin:14px 0;}
+.arch .new{color:#4ade80;}
+.arch .keep{color:#64748b;}
+.arch .sep{color:#334155;}
+.arch .title{color:#a78bfa;font-weight:700;}
+
+/* TIMELINE */
+.tl{margin:14px 0;}
+.tl-item{display:flex;gap:14px;margin-bottom:12px;align-items:flex-start;}
+.tl-l{display:flex;flex-direction:column;align-items:center;}
+.tl-dot{width:36px;height:36px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:white;position:relative;z-index:1;}
+.tl-line{width:2px;background:var(--border);flex:1;min-height:12px;margin-top:3px;}
+.tl-c{padding-top:4px;flex:1;}
+.tl-title{font-weight:800;font-size:.9rem;color:var(--text);}
+.tl-desc{font-size:.77rem;color:var(--text2);line-height:1.65;margin-top:3px;}
+.tl-desc strong{color:var(--text);}
+.tl-kpi{display:inline-flex;gap:5px;flex-wrap:wrap;margin-top:5px;}
+.kpi-tag{font-size:.66rem;font-weight:700;padding:2px 9px;border-radius:5px;}
+
+/* ESCROW FLOW */
+.flow{display:flex;flex-direction:column;gap:0;margin:14px 0;}
+.flow-step{display:flex;gap:14px;align-items:flex-start;position:relative;}
+.flow-step::before{content:'';position:absolute;left:19px;top:40px;bottom:-12px;width:2px;background:var(--border);}
+.flow-step:last-child::before{display:none;}
+.flow-ico{width:38px;height:38px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1rem;z-index:1;}
+.flow-body{padding:6px 0 20px;flex:1;}
+.flow-title{font-weight:800;font-size:.88rem;color:var(--text);margin-bottom:5px;}
+.flow-desc{font-size:.77rem;color:var(--text2);line-height:1.7;}
+.flow-desc strong{color:var(--text);}
+.flow-code{background:#1e293b;border-radius:10px;padding:11px 15px;font-family:'Courier New',monospace;font-size:.72rem;color:#94a3b8;line-height:1.8;margin-top:8px;}
+.flow-code .val{color:#4ade80;}
+.flow-code .key{color:#7dd3fc;}
+.flow-code .cmt{color:#475569;}
+
+/* SCENARIO CARDS */
+.scenarios{display:flex;flex-direction:column;gap:10px;margin:10px 0;}
+.sc{background:var(--white);border:1px solid var(--border);border-radius:13px;overflow:hidden;}
+.sc-h{padding:11px 16px;font-weight:800;font-size:.83rem;display:flex;align-items:center;gap:8px;}
+.sc-body{padding:10px 16px 14px;font-size:.77rem;color:var(--text2);line-height:1.75;border-top:1px solid var(--border);}
+.sc-body strong{color:var(--text);}
+.sc-body code{background:#f1f5f9;border-radius:4px;padding:1px 6px;font-size:.71rem;color:#7c3aed;font-family:'Courier New',monospace;}
+
+/* ALERT */
+.alert{border-radius:11px;padding:12px 16px;margin:12px 0;font-size:.78rem;line-height:1.7;display:flex;gap:9px;align-items:flex-start;}
+.a-green{background:var(--mint);border:1px solid var(--mint-b);color:var(--mint-t);}
+.a-orange{background:var(--peach);border:1px solid var(--peach-b);color:var(--peach-t);}
+.a-blue{background:var(--sky);border:1px solid var(--sky-b);color:var(--sky-t);}
+.a-van{background:var(--van);border:1px solid var(--van-b);color:var(--van-t);}
+.a-lav{background:var(--lav);border:1px solid var(--lav-b);color:var(--lav-t);}
+
+/* PILL */
+.pill{display:inline-block;border-radius:5px;padding:2px 8px;font-size:.66rem;font-weight:700;}
+.p-new{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;}
+.p-tmc{background:var(--sky);color:var(--sky-t);}
+.p-biz{background:var(--lav);color:var(--lav-t);}
+
+hr{border:none;border-top:1px solid var(--border);margin:22px 0;}
+
+.footer{background:var(--navy);color:#334155;text-align:center;padding:18px;font-size:.7rem;}
+.footer strong{color:#475569;}
+
+@media(max-width:768px){
+  .header,.tc{padding-left:14px;padding-right:14px;}
+  .tab-bar{padding:0 8px;}
+  .g2,.g3,.g4,.pricing,.numbers{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="hl">🎟️ TMC EVENTOS — Nuevo Proyecto</div>
+  <div class="ht">Marketplace de Eventos Públicos & Privados</div>
+  <div class="hs">Análisis de mercado · Modelo de negocio · Stack técnico · Arquitectura de escrow · Jun 2026</div>
+  <div class="hchips">
+    <div class="hchip"><strong>Gap real</strong> en Argentina</div>
+    <div class="hchip">Stack <strong>TMC reutilizado</strong></div>
+    <div class="hchip">Escrow <strong>1→N</strong> pagos</div>
+    <div class="hchip"><strong>4 niveles</strong> de privacidad</div>
+    <div class="hchip">MVP en <strong>8 semanas</strong></div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tab-bar">
+  <button class="tb active" onclick="showTab('concepto')">🎯 El Concepto</button>
+  <button class="tb" onclick="showTab('mercado')">📊 Mercado</button>
+  <button class="tb" onclick="showTab('negocio')">💰 Negocio</button>
+  <button class="tb" onclick="showTab('stack')">⚙️ Stack Técnico</button>
+  <button class="tb" onclick="showTab('escrow')">🔒 Escrow & Pagos</button>
+  <button class="tb" onclick="showTab('roadmap')">🗓️ Roadmap</button>
+</div>
+
+<!-- ══════════════════════════════
+     TAB 1: EL CONCEPTO
+══════════════════════════════ -->
+<div id="tab-concepto" class="tc active">
+
+  <div class="sec">🎯 El problema que resuelve</div>
+  <p class="ssub">Hoy organizar un evento privado y cobrar por él requiere 4 herramientas distintas que no hablan entre sí.</p>
+
+  <div class="gap-card">
+    <div class="gap-title">El perfil de host que nadie sirve bien hoy</div>
+    <div class="gap-body">Alguien que organiza una <strong>cata de vinos para 15 personas</strong>, un <strong>taller de cerámica en su casa</strong>, una <strong>clase de yoga privada</strong>, una <strong>cena club</strong>, una <strong>fiesta temática</strong> o una <strong>masterclass informal</strong> — y quiere cobrar $X por persona, manejar la lista y no usar Excel + MercadoPago + WhatsApp + Instagram por separado.<br><br>Su flujo actual: anuncia en Instagram → gestiona lista por DM → manda link de MP → controla quién pagó en Excel → el día del evento no sabe quién está confirmado.</div>
+  </div>
+
+  <div class="sec">🔐 Los 4 niveles de privacidad — El diferenciador real</div>
+  <p class="ssub">Ninguna plataforma en Argentina combina estos 4 niveles con cobro integrado y gestión de acceso.</p>
+
+  <div class="priv-list">
+    <div class="priv-item">
+      <div class="priv-num" style="background:#22c55e;">1</div>
+      <div class="priv-body">
+        <div class="pt">Público</div>
+        <div class="pd">Visible en el feed de descubrimiento. <strong>Cualquier usuario puede verlo y comprar su ticket.</strong> Ideal para talleres, clases, meetups, eventos culturales.</div>
+      </div>
+    </div>
+    <div class="priv-item">
+      <div class="priv-num" style="background:#38bdf8;">2</div>
+      <div class="priv-body">
+        <div class="pt">Solo con link</div>
+        <div class="pd">No aparece en el feed. <strong>Accesible únicamente con la URL directa</strong> que el host comparte. Cualquiera con el link puede comprar.</div>
+      </div>
+    </div>
+    <div class="priv-item">
+      <div class="priv-num" style="background:#a78bfa;">3</div>
+      <div class="priv-body">
+        <div class="pt">Privado con solicitud</div>
+        <div class="pd">El interesado solicita asistir. <strong>El host aprueba o rechaza cada solicitud</strong> antes de habilitar el pago. Control total sobre quién entra.</div>
+      </div>
+    </div>
+    <div class="priv-item">
+      <div class="priv-num" style="background:#f43f5e;">4</div>
+      <div class="priv-body">
+        <div class="pt">Lista cerrada</div>
+        <div class="pd"><strong>Solo pueden entrar los invitados cargados explícitamente</strong> por el host con nombre y email. Máxima exclusividad — nadie que no esté en la lista puede comprar.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">🧩 Qué incluye la plataforma</div>
+  <div class="g3">
+    <div class="card" style="border-top-color:#a78bfa;">
+      <div class="icon">📝</div>
+      <div class="ct">Crear eventos</div>
+      <div class="cb">Nombre, descripción, fecha, lugar o link, capacidad máxima, precio por persona, nivel de privacidad. <strong>En menos de 3 minutos.</strong></div>
+    </div>
+    <div class="card" style="border-top-color:#22c55e;">
+      <div class="icon">💳</div>
+      <div class="ct">Cobro integrado</div>
+      <div class="cb">El asistente paga con MercadoPago al comprar el ticket. <strong>El dinero queda retenido hasta que el evento ocurre.</strong> Sin riesgo para ninguna parte.</div>
+    </div>
+    <div class="card" style="border-top-color:#38bdf8;">
+      <div class="icon">📱</div>
+      <div class="ct">QR de entrada</div>
+      <div class="cb">Cada ticket genera un QR único. El día del evento el host <strong>escanea desde el celular</strong> — sin app nativa, funciona desde el navegador.</div>
+    </div>
+    <div class="card" style="border-top-color:#fb923c;">
+      <div class="icon">🗂️</div>
+      <div class="ct">Gestión de lista</div>
+      <div class="cb">Vista en tiempo real de quién pagó, quién confirmó asistencia y quién está en lista de espera. <strong>Sin Excel, sin WhatsApp.</strong></div>
+    </div>
+    <div class="card" style="border-top-color:#f43f5e;">
+      <div class="icon">⭐</div>
+      <div class="ct">Perfil del host</div>
+      <div class="cb">Historial de eventos, reseñas de asistentes y reputación acumulada. <strong>La reputación no se puede llevar a WhatsApp</strong> — ancla al host en la plataforma.</div>
+    </div>
+    <div class="card" style="border-top-color:#8b5cf6;">
+      <div class="icon">🔔</div>
+      <div class="ct">Recordatorios automáticos</div>
+      <div class="cb">Email automático a los asistentes 24hs y 2hs antes del evento. <strong>El host no tiene que acordarse de nada.</strong></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════
+     TAB 2: MERCADO
+══════════════════════════════ -->
+<div id="tab-mercado" class="tc">
+
+  <div class="sec">📡 Señales de demanda existente</div>
+  <p class="ssub">La demanda ya existe. Lo que no existe es la herramienta.</p>
+
+  <div class="g2" style="margin-bottom:20px;">
+    <div class="card" style="border-top-color:#22c55e;">
+      <div class="icon">👥</div>
+      <div class="ct">Facebook Groups</div>
+      <div class="cb">Grupos de "eventos privados BsAs" con decenas de miles de miembros. La gente organiza activamente — <strong>pero sin herramienta dedicada.</strong></div>
+    </div>
+    <div class="card" style="border-top-color:#38bdf8;">
+      <div class="icon">🔍</div>
+      <div class="ct">Búsquedas en Google</div>
+      <div class="cb">"Cómo cobrar entrada a una fiesta privada" — problema no resuelto, <strong>se busca la solución manualmente.</strong> Keyword sin producto que lo responda.</div>
+    </div>
+    <div class="card" style="border-top-color:#a78bfa;">
+      <div class="icon">📸</div>
+      <div class="ct">Instagram</div>
+      <div class="cb">Cuentas de "dinner clubs", "asados privados", "clases privadas" organizan vía DM + link de MP. <strong>El flujo existe pero es caótico</strong> y no escala.</div>
+    </div>
+    <div class="card" style="border-top-color:#fb923c;">
+      <div class="icon">✈️</div>
+      <div class="ct">Airbnb Experiences Argentina</div>
+      <div class="cb">Cientos de experiencias activas en CABA. Demanda de eventos pequeños pagos <strong>confirmada</strong> — pero atada al turismo. Locales no tienen dónde ir.</div>
+    </div>
+    <div class="card" style="border-top-color:#f43f5e;">
+      <div class="icon">🌍</div>
+      <div class="ct">Crecimiento de Luma en LATAM</div>
+      <div class="cb">El modelo de ticket digital simple tiene adopción creciente. <strong>El mercado aprende a pagar por eventos digitales</strong> — la infraestructura está lista.</div>
+    </div>
+    <div class="card" style="border-top-color:#8b5cf6;">
+      <div class="icon">💬</div>
+      <div class="ct">WhatsApp como coordinador</div>
+      <div class="cb">Grupos de WhatsApp son la herramienta de facto para gestionar eventos privados. <strong>Cada grupo de "¿quién va?" es un mercado sin producto.</strong></div>
+    </div>
+  </div>
+
+  <div class="sec">⚔️ Análisis competidor</div>
+  <p class="ssub">El mercado público está saturado. El privado+monetizado está vacío.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Plataforma</th>
+        <th>Modelo</th>
+        <th>Comisión</th>
+        <th>Privacidad</th>
+        <th>Check-in</th>
+        <th>Para quién</th>
+        <th>El gap</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Eventbrite</strong></td>
+        <td>Comisión + SaaS</td>
+        <td>6-8%</td>
+        <td>Limitada</td>
+        <td>Básico</td>
+        <td>Profesionales</td>
+        <td>UX para empresas, no para el usuario común</td>
+      </tr>
+      <tr>
+        <td><strong>Airbnb Experiences</strong></td>
+        <td>Comisión</td>
+        <td>20%</td>
+        <td>No</td>
+        <td>No</td>
+        <td>Turistas</td>
+        <td>Solo turismo, comisión altísima</td>
+      </tr>
+      <tr>
+        <td><strong>Luma</strong></td>
+        <td>Freemium</td>
+        <td>3%</td>
+        <td>No</td>
+        <td>Sí</td>
+        <td>Tech/startups</td>
+        <td>Sin privacidad granular, sin MP, enfocado en USA</td>
+      </tr>
+      <tr>
+        <td><strong>Meetup</strong></td>
+        <td>Suscripción host</td>
+        <td>$219/año</td>
+        <td>Grupos</td>
+        <td>No</td>
+        <td>Comunidades</td>
+        <td>Para grupos recurrentes, no eventos one-shot</td>
+      </tr>
+      <tr>
+        <td><strong>Partiful</strong> (USA)</td>
+        <td>Freemium</td>
+        <td>0%</td>
+        <td>Sí</td>
+        <td>No</td>
+        <td>Social/fiestas</td>
+        <td>Sin monetización — solo RSVPs gratis</td>
+      </tr>
+      <tr>
+        <td><strong>Facebook Events</strong></td>
+        <td>Gratis</td>
+        <td>0%</td>
+        <td>Básica</td>
+        <td>No</td>
+        <td>Todos</td>
+        <td>Sin cobro, sin control de acceso</td>
+      </tr>
+      <tr class="hl-row">
+        <td><strong>Este proyecto</strong></td>
+        <td>Comisión + SaaS</td>
+        <td>8% → 4%</td>
+        <td><strong>Granular (4 niveles)</strong></td>
+        <td><strong>Sí (QR)</strong></td>
+        <td><strong>Cualquier host</strong></td>
+        <td>—</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="alert a-lav">
+    <span>🎯</span>
+    <div><strong>El hueco real:</strong> ninguna plataforma en Argentina combina privacidad granular + cobro integrado + QR check-in + UX simple para el usuario común (no profesional de eventos). El competidor más cercano al concepto es Partiful — que no cobra nada a nadie porque no tiene monetización.</div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════
+     TAB 3: NEGOCIO
+══════════════════════════════ -->
+<div id="tab-negocio" class="tc">
+
+  <div class="sec">💰 Los 4 flujos de ingreso — ordenados por prioridad</div>
+
+  <div class="g2" style="margin-bottom:20px;">
+    <div class="card" style="border-top-color:#a78bfa;">
+      <div class="icon">🎫</div>
+      <div class="ct">1. Comisión por ticket <span style="font-size:.68rem;font-weight:700;background:var(--mint);color:var(--mint-t);padding:2px 7px;border-radius:5px;margin-left:4px;">Motor principal</span></div>
+      <div class="cb">8-10% de cada ticket vendido. Alineado con el host: si no vende, no paga. Sin fricción para arrancar. La única fuente de ingreso en los primeros 3 meses.</div>
+    </div>
+    <div class="card" style="border-top-color:#38bdf8;">
+      <div class="icon">📦</div>
+      <div class="ct">2. Suscripción del host <span style="font-size:.68rem;font-weight:700;background:var(--sky);color:var(--sky-t);padding:2px 7px;border-radius:5px;margin-left:4px;">Mes 4+</span></div>
+      <div class="cb">Plan Creator o Pro para hosts con +3 eventos/mes. El plan se paga solo porque la comisión reducida compensa la suscripción desde el primer evento del mes.</div>
+    </div>
+    <div class="card" style="border-top-color:#fb923c;">
+      <div class="icon">📣</div>
+      <div class="ct">3. Posicionamiento en el feed <span style="font-size:.68rem;font-weight:700;background:var(--peach);color:var(--peach-t);padding:2px 7px;border-radius:5px;margin-left:4px;">Mes 8+</span></div>
+      <div class="cb">Hosts pagan por destacar en el feed de descubrimiento. Ingreso predecible, bajo riesgo. Modelo idéntico al de MercadoLibre y Airbnb.</div>
+    </div>
+    <div class="card" style="border-top-color:#22c55e;">
+      <div class="icon">🏢</div>
+      <div class="ct">4. B2B — Empresas <span style="font-size:.68rem;font-weight:700;background:var(--mint);color:var(--mint-t);padding:2px 7px;border-radius:5px;margin-left:4px;">Año 2</span></div>
+      <div class="cb">Team buildings, lanzamientos internos, cenas de fin de año. Google Forms + transferencia bancaria es el estado actual. Versión Enterprise con factura A.</div>
+    </div>
+  </div>
+
+  <div class="sec">🎛️ Planes de suscripción</div>
+
+  <div class="pricing">
+    <div class="pc">
+      <div class="pname">Gratis</div>
+      <div class="pprice">$0</div>
+      <div class="psub">para siempre</div>
+      <div class="pcom">10% comisión</div>
+      <ul class="pfeats">
+        <li>2 eventos por mes</li>
+        <li>30 asistentes por evento</li>
+        <li>QR de entrada básico</li>
+        <li>Email de confirmación</li>
+        <li>Gestión de lista básica</li>
+      </ul>
+    </div>
+    <div class="pc featured">
+      <div class="pname">Creator ⭐</div>
+      <div class="pprice">$4.990</div>
+      <div class="psub">/mes ARS</div>
+      <div class="pcom">6% comisión</div>
+      <ul class="pfeats">
+        <li>Eventos ilimitados</li>
+        <li>150 asistentes por evento</li>
+        <li>Analytics de conversión</li>
+        <li>URL personalizada del evento</li>
+        <li>Recordatorios automáticos</li>
+        <li>Lista de espera</li>
+        <li>Mensajería con asistentes</li>
+      </ul>
+    </div>
+    <div class="pc">
+      <div class="pname">Pro</div>
+      <div class="pprice">$9.990</div>
+      <div class="psub">/mes ARS</div>
+      <div class="pcom">4% comisión</div>
+      <ul class="pfeats">
+        <li>Todo Creator</li>
+        <li>Sin límite de asistentes</li>
+        <li>Branding propio en el evento</li>
+        <li>Co-organización (equipo)</li>
+        <li>Acceso prioritario en el feed</li>
+        <li>API acceso</li>
+        <li>Soporte prioritario</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="alert a-van">
+    <span>💡</span>
+    <div>Un host que hace 4 eventos de $8.000 con 15 personas genera $480.000 en tickets/mes. Con plan Gratis paga <strong>$48.000 en comisión</strong>. Con Creator paga <strong>$4.990 + $28.800 = $33.790</strong>. El plan se paga solo a partir del primer evento del mes.</div>
+  </div>
+
+  <div class="sec">📈 Los números que validan el modelo</div>
+
+  <div class="numbers">
+    <div class="numcard" style="border-left-color:#22c55e;">
+      <div class="nt">Umbral mínimo de viabilidad</div>
+      <div class="nb">$1.200.000 ARS/mes</div>
+      <div class="nd"><strong>50 hosts</strong> × 2 eventos × $10.000 ticket × 15 asistentes = GMV $15M/mes · Comisión 8% = $1.2M (~USD 1.000). Alcanzable en 6 meses.</div>
+    </div>
+    <div class="numcard" style="border-left-color:#a78bfa;">
+      <div class="nt">Negocio real — 18-24 meses</div>
+      <div class="nb">$28.000.000 ARS/mes</div>
+      <div class="nd"><strong>500 hosts</strong> × 3 eventos × $12.000 × 15 asistentes = GMV $270M/mes. Comisión 8% + 30% en plan Creator = ~$28M/mes (~USD 23.000).</div>
+    </div>
+  </div>
+
+  <div class="sec">⚠️ El riesgo más grande — Desintermediación</div>
+  <p class="ssub">El host consigue asistentes en la plataforma y los mueve a WhatsApp. El clásico problema del marketplace de servicios.</p>
+
+  <div class="g2">
+    <div class="card" style="border-top-color:#f43f5e;">
+      <div class="icon">🚨</div>
+      <div class="ct">Por qué puede pasar</div>
+      <div class="cb">Una vez que el host tiene el WhatsApp de sus asistentes puede organizar el próximo evento por fuera, evitar la comisión y manejar el pago con un link de MP directo.</div>
+    </div>
+    <div class="card" style="border-top-color:#22c55e;">
+      <div class="icon">🛡️</div>
+      <div class="ct">Por qué es difícil acá</div>
+      <div class="cb">
+        <strong>1. El QR lo genera la plataforma</strong> — sin la app no puede controlar el acceso el día del evento.<br>
+        <strong>2. La reputación no se porta</strong> — sus reseñas y historial están acá. Empezar de cero es costoso.<br>
+        <strong>3. El descubrimiento es de la plataforma</strong> — los asistentes nuevos (no amigos) lo encuentran en el feed.<br>
+        <strong>4. El escrow genera confianza</strong> — un link de MP no protege al asistente si el host cancela.
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">🗓️ Estrategia de precios por fase</div>
+  <table class="tbl">
+    <thead><tr><th>Fase</th><th>Cuándo</th><th>Modelo</th><th>Objetivo</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Fase 0</strong></td><td>Meses 1-3</td><td>Comisión 0%</td><td>Llenar la plataforma de hosts y eventos reales. La comisión cero es el mejor argumento de venta.</td></tr>
+      <tr><td><strong>Fase 1</strong></td><td>Mes 4-6</td><td>Comisión 8%</td><td>"Antes perdías 3 horas en Excel. Ahora pagás el 8% y recuperás ese tiempo."</td></tr>
+      <tr><td><strong>Fase 2</strong></td><td>Mes 6-8</td><td>+ Suscripción Creator</td><td>Los hosts con 3+ eventos/mes lo adoptan solos porque el math cierra.</td></tr>
+      <tr><td><strong>Fase 3</strong></td><td>Mes 8+</td><td>+ Feed destacado</td><td>Ingreso predecible, sin riesgo. Modelo de visibilidad pago.</td></tr>
+      <tr><td><strong>Fase 4</strong></td><td>Año 2</td><td>+ B2B Enterprise</td><td>Con 200+ hosts activos, el segmento corporativo llega solo.</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- ══════════════════════════════
+     TAB 4: STACK TÉCNICO
+══════════════════════════════ -->
+<div id="tab-stack" class="tc">
+
+  <div class="alert a-green">
+    <span>⚡</span>
+    <div><strong>Principio rector:</strong> cero contacto con el código de producción de TMC. Repositorio nuevo, base de datos nueva, proceso PM2 separado. Lo que se reutiliza son los <em>patrones y el conocimiento</em>, no los archivos.</div>
+  </div>
+
+  <div class="sec">♻️ Qué se reutiliza de TMC (copy-adapt, no rewrite)</div>
+
+  <table class="tbl">
+    <thead><tr><th>Componente TMC</th><th>Cómo se reutiliza en Eventos</th><th>Esfuerzo</th></tr></thead>
+    <tbody>
+      <tr><td><strong>MercadoPago SDK</strong></td><td>Mismo flujo de cobro + webhook. El escrow del evento (retener hasta que ocurre) es análogo al depósito de garantía de TMC</td><td><span class="pill p-tmc">Bajo — copiar y adaptar</span></td></tr>
+      <tr><td><strong>Supabase JWT auth</strong></td><td>Mismo middleware de verificación. Mismo patrón <code style="background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:.7rem;">useAuth</code> en frontend</td><td><span class="pill p-tmc">Bajo — copiar middleware</span></td></tr>
+      <tr><td><strong>Supabase Storage</strong></td><td>Fotos de eventos, perfil del host. Mismo bucket, carpeta <code style="background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:.7rem;">/eventos/</code></td><td><span class="pill p-tmc">Cero — carpeta nueva</span></td></tr>
+      <tr><td><strong>Resend email</strong></td><td>Confirmación de ticket, recordatorio 24hs antes, notificación al host. Mismos patrones, nuevos templates</td><td><span class="pill p-tmc">Bajo — copiar emailService.js</span></td></tr>
+      <tr><td><strong>Express.js patterns</strong></td><td>Misma estructura controllers / routes / middleware</td><td><span class="pill p-tmc">Bajo — estructura idéntica</span></td></tr>
+      <tr><td><strong>Next.js 14 App Router</strong></td><td>Mismo framework, mismos patrones de páginas y componentes</td><td><span class="pill p-tmc">Bajo — estructura idéntica</span></td></tr>
+      <tr><td><strong>GitHub Actions CI/CD</strong></td><td>Copiar el <code style="background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:.7rem;">deploy.yml</code>, apuntar al nuevo repo y nuevo puerto</td><td><span class="pill p-tmc">Muy bajo — 10 minutos</span></td></tr>
+      <tr><td><strong>PM2</strong></td><td>Nueva app en el mismo PM2 del VPS, nombre diferente</td><td><span class="pill p-tmc">Muy bajo</span></td></tr>
+      <tr><td><strong>Socket.io</strong></td><td>Notificaciones real-time: nuevo asistente inscripto, lista de espera liberada, recordatorio del evento</td><td><span class="pill p-tmc">Bajo — mismo patrón del chat</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec">🏗️ Arquitectura de aislamiento en el VPS</div>
+  <p class="ssub">Un solo servidor, dos aplicaciones completamente independientes. Si cae Eventos, TMC sigue funcionando.</p>
+
+  <div class="arch">
+<span class="title">VPS Hostinger (misma máquina)</span>
+│
+├── <span class="title">nginx</span> (reverse proxy)
+│   ├── todasmiscosas.com     → :3000  <span class="keep">(TMC frontend    — NO TOCAR)</span>
+│   ├── api.todasmiscosas.com → :4000  <span class="keep">(TMC backend     — NO TOCAR)</span>
+│   ├── [nuevodomain].com     → :3001  <span class="new">(Eventos frontend — NUEVO)</span>
+│   └── api.[nuevodomain].com → :4001  <span class="new">(Eventos backend  — NUEVO)</span>
+│
+├── <span class="title">PM2</span>
+│   ├── tmc-frontend      (puerto 3000)  <span class="keep">← no tocar</span>
+│   ├── tmc-backend       (puerto 4000)  <span class="keep">← no tocar</span>
+│   ├── eventos-frontend  (puerto 3001)  <span class="new">← nuevo proceso</span>
+│   └── eventos-backend   (puerto 4001)  <span class="new">← nuevo proceso</span>
+│
+└── <span class="title">MySQL</span> (mismo servidor, usuarios separados)
+    ├── db_tmc        <span class="keep">← no tocar</span>
+    └── db_eventos    <span class="new">← DB nueva · usuario eventos_user</span>
+  </div>
+
+  <div class="sec">🆕 Lo nuevo que hay que construir (no existe en TMC)</div>
+
+  <div class="g2">
+    <div class="card" style="border-top-color:#a78bfa;">
+      <div class="icon">📱</div>
+      <div class="ct">QR de entrada + Scanner <span class="pill p-new">NUEVO</span></div>
+      <div class="cb">Generación de QR único por ticket. Scanner en el celular del host vía cámara del navegador — sin app nativa. Verifica el ticket en tiempo real.</div>
+    </div>
+    <div class="card" style="border-top-color:#38bdf8;">
+      <div class="icon">🔍</div>
+      <div class="ct">Feed de descubrimiento <span class="pill p-new">NUEVO</span></div>
+      <div class="cb">Explorar eventos públicos por barrio, categoría y fecha. Filtros de precio y tipo. El algoritmo de ranking (reciente, popular, cercano).</div>
+    </div>
+    <div class="card" style="border-top-color:#22c55e;">
+      <div class="icon">🔐</div>
+      <div class="ct">4 niveles de privacidad <span class="pill p-new">NUEVO</span></div>
+      <div class="cb">Lógica de acceso por nivel: público / link / aprobación / lista cerrada. Middleware que verifica el nivel antes de mostrar el evento.</div>
+    </div>
+    <div class="card" style="border-top-color:#fb923c;">
+      <div class="icon">⏳</div>
+      <div class="ct">Lista de espera <span class="pill p-new">NUEVO</span></div>
+      <div class="cb">Cuando el evento se llena, el siguiente interesado entra en lista de espera. Si alguien cancela, se notifica automáticamente al primero en la lista.</div>
+    </div>
+    <div class="card" style="border-top-color:#f43f5e;">
+      <div class="icon">⭐</div>
+      <div class="ct">Perfil del host con reviews <span class="pill p-new">NUEVO</span></div>
+      <div class="cb">Reputación, historial de eventos, reseñas de asistentes. La review solo se habilita después del check-in — no se puede reviewear sin haber asistido.</div>
+    </div>
+    <div class="card" style="border-top-color:#8b5cf6;">
+      <div class="icon">⚡</div>
+      <div class="ct">escrowService.js <span class="pill p-new">NUEVO</span></div>
+      <div class="cb">Servicio que orquesta la liberación de N pagos simultáneos. No existe en TMC donde el escrow es siempre 1 a 1. La pieza técnica más nueva del proyecto.</div>
+    </div>
+  </div>
+
+  <div class="sec">📁 Repositorio nuevo</div>
+  <div class="arch">
+<span class="title">GitHub</span>
+├── alex2580/prueba            <span class="keep">← TMC — NO TOCAR</span>
+└── <span class="new">alex2580/eventos-privados</span>  <span class="new">← REPO NUEVO</span>
+    ├── frontend/              <span class="new">(Next.js 14 — estructura copiada de TMC)</span>
+    │   ├── app/
+    │   ├── components/
+    │   ├── hooks/
+    │   └── lib/
+    ├── backend/               <span class="new">(Express — estructura copiada de TMC)</span>
+    │   └── src/
+    │       ├── controllers/   ticketController.js · eventoController.js · webhookController.js
+    │       ├── services/      <span class="new">escrowService.js (NUEVO)</span> · mercadopagoService.js · emailService.js
+    │       ├── routes/
+    │       ├── middleware/    auth (adaptado de TMC)
+    │       └── jobs/          <span class="new">escrowRelease.js (NUEVO — cron fallback)</span>
+    └── .github/workflows/
+        └── deploy.yml         <span class="new">(copiado de TMC, apunta a puerto 4001)</span>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════
+     TAB 5: ESCROW & PAGOS
+══════════════════════════════ -->
+<div id="tab-escrow" class="tc">
+
+  <div class="sec">🔄 TMC vs Eventos — La diferencia estructural</div>
+
+  <div class="g2" style="margin-bottom:20px;">
+    <div class="card" style="border-top-color:#38bdf8;">
+      <div class="icon">🏠</div>
+      <div class="ct">TMC — Escrow 1 a 1</div>
+      <div class="cb">
+        <strong>1 cliente</strong> → 1 pago → <strong>1 proveedor</strong><br>
+        Trigger: acción humana (confirmar acceso)<br>
+        Duración: semanas o meses<br>
+        Liberación: un solo pago
+      </div>
+    </div>
+    <div class="card" style="border-top-color:#a78bfa;">
+      <div class="icon">🎟️</div>
+      <div class="ct">Eventos — Escrow 1 a N</div>
+      <div class="cb">
+        <strong>N asistentes</strong> → N pagos → <strong>1 host</strong><br>
+        Trigger: evento completado (automático + manual)<br>
+        Duración: horas o días<br>
+        Liberación: todos los pagos simultáneos
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">💫 Los 3 momentos donde aplica el escrow</div>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-ico" style="background:#e0f2fe;">💳</div>
+      <div class="flow-body">
+        <div class="flow-title">Momento 1 — Compra del ticket</div>
+        <div class="flow-desc">El asistente paga. El dinero queda retenido en MercadoPago. <strong>No va al host todavía.</strong> El sistema genera el ticket con QR único y lo manda por email.</div>
+        <div class="flow-code">
+<span class="cmt">-- En este momento se define el split</span>
+<span class="key">Asistente paga</span>: <span class="val">$10.000</span>
+  └── <span class="key">Plataforma (8%)</span>: <span class="val">$800</span>   <span class="cmt">← retenido</span>
+  └── <span class="key">Host (92%)</span>:      <span class="val">$9.200</span>  <span class="cmt">← retenido hasta trigger</span>
+
+<span class="key">ticket.escrow_estado</span> = <span class="val">'retenido'</span>
+<span class="key">ticket.qr_token</span>      = <span class="val">uuid() único</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-ico" style="background:#ede9fe;">📱</div>
+      <div class="flow-body">
+        <div class="flow-title">Momento 2 — Check-in el día del evento</div>
+        <div class="flow-desc">El host escanea el QR. El sistema registra la asistencia <strong>pero el dinero sigue retenido.</strong> El check-in no libera — solo confirma que el asistente llegó.</div>
+        <div class="flow-code">
+<span class="key">Host escanea QR</span>
+  └── <span class="key">check_ins.verificado</span>  = <span class="val">TRUE</span>
+  └── <span class="key">ticket.asistio</span>       = <span class="val">TRUE</span>
+  └── <span class="key">ticket.checkin_at</span>    = <span class="val">NOW()</span>
+  └── <span class="key">dinero</span>               = <span class="val">sigue retenido ← importante</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-ico" style="background:#d1fae5;">🔓</div>
+      <div class="flow-body">
+        <div class="flow-title">Momento 3 — Cierre del evento (trigger de liberación)</div>
+        <div class="flow-desc">Acá se libera todo. Dos mecanismos combinados: el host cierra manualmente <strong>o</strong> el cron job lo hace automáticamente 3 horas después.</div>
+        <div class="flow-code">
+<span class="cmt">-- OPCIÓN A: Manual</span>
+<span class="key">POST /eventos/:id/cerrar</span>
+  └── escrowService.<span class="val">liberarEvento</span>(eventoId)
+      └── Para cada ticket WHERE <span class="key">escrow_estado</span> = <span class="val">'retenido'</span>:
+          └── MP API: release payment
+          └── <span class="key">ticket.escrow_estado</span> = <span class="val">'liberado'</span>
+          └── <span class="key">ticket.liberado_at</span>   = <span class="val">NOW()</span>
+
+<span class="cmt">-- OPCIÓN B: Automático (fallback si el host olvidó cerrar)</span>
+<span class="key">escrowRelease.js</span> (cron cada 30 min)
+  └── IF <span class="key">evento.fecha_fin</span> &lt; NOW() AND estado != <span class="val">'cancelado'</span>
+      └── liberar automáticamente a las 3hs post-evento
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">⚠️ Escenarios especiales</div>
+
+  <div class="scenarios">
+    <div class="sc">
+      <div class="sc-h" style="background:#fef2f2;color:#991b1b;">🚫 Host cancela el evento</div>
+      <div class="sc-body">Host presiona "Cancelar evento" → <code>escrowService.cancelarEvento(eventoId)</code> → Para cada ticket con <code>escrow_estado = 'retenido'</code>: MP API refund → <code>ticket.escrow_estado = 'reembolsado'</code> → Email al asistente: <strong>"El evento fue cancelado. Tu dinero fue devuelto en 3-5 días hábiles."</strong></div>
+    </div>
+    <div class="sc">
+      <div class="sc-h" style="background:#fff7ed;color:#9a3412;">👻 Host no aparece — posible fraude</div>
+      <div class="sc-body">Cron detecta que el evento terminó hace +3hs y el estado sigue activo. <strong>NO libera automáticamente</strong> — abre disputa: <code>evento.estado = 'en_disputa'</code>. Revisión manual del equipo TMC → reembolso total a todos los asistentes. Este caso es la diferencia clave con el cierre normal.</div>
+    </div>
+    <div class="sc">
+      <div class="sc-h" style="background:#eff6ff;color:#1d4ed8;">🔙 Asistente cancela su ticket</div>
+      <div class="sc-body">Política configurable por el host al crear el evento: <strong>&gt; 48hs antes → reembolso 100%</strong> · <strong>24-48hs → reembolso 50%</strong> · <strong>&lt; 24hs → sin reembolso</strong> (el host ya incurrió en costos de organización). El sistema calcula automáticamente el porcentaje.</div>
+    </div>
+    <div class="sc">
+      <div class="sc-h" style="background:#f0fdf4;color:#166534;">🪑 Asistente pagó pero no apareció (no-show)</div>
+      <div class="sc-body"><code>ticket.asistio = FALSE</code> al cierre del evento → dinero se libera igual al host. Compró el <em>derecho</em> a asistir, no la asistencia en sí. Igual que una aerolínea con un no-show. Sin reembolso automático — si quiere reclamar, debe abrir una disputa.</div>
+    </div>
+  </div>
+
+  <div class="sec">🗄️ Tabla tickets — Schema crítico</div>
+
+  <div class="arch">
+CREATE TABLE <span class="new">tickets</span> (
+  id               INT AUTO_INCREMENT PRIMARY KEY,
+  evento_id        INT NOT NULL,
+  usuario_id       INT NOT NULL,
+  mp_payment_id    VARCHAR(100),       <span class="cmt">-- ID del pago en MercadoPago</span>
+  mp_preference_id VARCHAR(100),
+  precio           DECIMAL(10,2),      <span class="cmt">-- precio total pagado</span>
+  comision         DECIMAL(10,2),      <span class="cmt">-- 8% calculado al momento de compra</span>
+  neto_host        DECIMAL(10,2),      <span class="cmt">-- 92% a transferir al host</span>
+  escrow_estado    ENUM(
+    <span class="val">'pendiente'</span>,             <span class="cmt">-- esperando confirmación de MP</span>
+    <span class="val">'retenido'</span>,              <span class="cmt">-- pago confirmado, dinero en escrow</span>
+    <span class="val">'liberado'</span>,              <span class="cmt">-- dinero transferido al host</span>
+    <span class="val">'reembolsado'</span>            <span class="cmt">-- devuelto al asistente</span>
+  ) DEFAULT <span class="val">'pendiente'</span>,
+  qr_token         VARCHAR(255) UNIQUE, <span class="cmt">-- genera el QR del ticket</span>
+  asistio          BOOLEAN DEFAULT FALSE,
+  checkin_at       DATETIME,
+  liberado_at      DATETIME,
+  created_at       DATETIME DEFAULT NOW()
+);
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════
+     TAB 6: ROADMAP
+══════════════════════════════ -->
+<div id="tab-roadmap" class="tc">
+
+  <div class="sec">🧪 Validaciones antes de escribir una línea de código</div>
+  <p class="ssub">Tres validaciones que dan certeza en 2 semanas sin invertir en desarrollo.</p>
+
+  <div class="g3" style="margin-bottom:24px;">
+    <div class="card" style="border-top-color:#22c55e;">
+      <div class="icon">📋</div>
+      <div class="ct">1. Waiting list segmentada</div>
+      <div class="cb">Landing simple con el concepto. Dos listas separadas: "quiero organizar eventos" y "quiero encontrar eventos privados". <strong>Si conseguís 200 registros de organizadores en 2 semanas, el mercado existe.</strong></div>
+    </div>
+    <div class="card" style="border-top-color:#a78bfa;">
+      <div class="icon">🤝</div>
+      <div class="ct">2. Manual antes de digital</div>
+      <div class="cb">Ayudar a 5 personas a organizar un evento con cobro usando Tally + MP + WhatsApp, <em>vendiendo la experiencia como si fuera la plataforma</em>. Si cobran, el concepto es válido.</div>
+    </div>
+    <div class="card" style="border-top-color:#38bdf8;">
+      <div class="icon">🎤</div>
+      <div class="ct">3. Entrevistar 10 hosts</div>
+      <div class="cb">Buscar en Instagram cuentas de "dinner club", "taller privado", "clase particular" en CABA. Cada respuesta <em>"uso Excel/WhatsApp/link de MP"</em> es un voto al problema.</div>
+    </div>
+  </div>
+
+  <div class="sec">🗓️ Plan de desarrollo — 8 semanas al MVP</div>
+  <p class="ssub">Sin tocar una sola línea de TMC en producción.</p>
+
+  <div class="tl">
+    <div class="tl-item">
+      <div class="tl-l">
+        <div class="tl-dot" style="background:#64748b;">SEM 1</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-c">
+        <div class="tl-title">Setup — Sin código de negocio todavía</div>
+        <div class="tl-desc">Crear repo <strong>alex2580/eventos-privados</strong> · Crear <strong>db_eventos</strong> en MySQL del VPS · Configurar el segundo runner en GitHub Actions · Levantar Express vacío en :4001 y Next.js vacío en :3001 · Configurar nginx con nuevo dominio · Verificar deploy automático con <code style="background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:.7rem;">GET /health</code></div>
+        <div class="tl-kpi"><span class="kpi-tag" style="background:var(--van);color:var(--van-t);">Entregable: deploy automático funcionando</span></div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-l">
+        <div class="tl-dot" style="background:#38bdf8;">SEM 2-3</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-c">
+        <div class="tl-title">Auth + Esqueleto</div>
+        <div class="tl-desc">Adaptar middleware Supabase JWT · Crear tablas base: <strong>usuarios, eventos, tickets</strong> · Registro/login funcional · Crear evento básico (sin privacidad ni pago todavía) · Panel del host vacío</div>
+        <div class="tl-kpi"><span class="kpi-tag" style="background:var(--sky);color:var(--sky-t);">Entregable: usuario puede registrarse y crear un evento</span></div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-l">
+        <div class="tl-dot" style="background:#a78bfa;">SEM 4</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-c">
+        <div class="tl-title">Pago + Tickets + QR</div>
+        <div class="tl-desc">Adaptar flujo MercadoPago de TMC para cobro de tickets · Webhook de confirmación de pago → generar ticket con QR único · Email de confirmación con QR adjunto (adaptar Resend de TMC) · Tabla <strong>tickets</strong> completa con estados de escrow</div>
+        <div class="tl-kpi"><span class="kpi-tag" style="background:var(--mint);color:var(--mint-t);">Entregable: asistente paga y recibe ticket con QR por email</span></div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-l">
+        <div class="tl-dot" style="background:#22c55e;">SEM 5-6</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-c">
+        <div class="tl-title">Privacidad + Check-in + Escrow</div>
+        <div class="tl-desc">Implementar los 4 niveles de privacidad · Scanner de QR en móvil para el host (página web con cámara — sin app nativa) · <strong>escrowService.js</strong>: liberarEvento() y cancelarEvento() · Cron job fallback automático (3hs post-evento)</div>
+        <div class="tl-kpi"><span class="kpi-tag" style="background:var(--mint);color:var(--mint-t);">Entregable: host hace check-in con QR y cierra el evento → dinero se libera</span></div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-l">
+        <div class="tl-dot" style="background:#fb923c;">SEM 7-8</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-c">
+        <div class="tl-title">Feed + Perfil de Host + Lista de Espera</div>
+        <div class="tl-desc">Feed de descubrimiento de eventos públicos filtrado por barrio/categoría/fecha · Perfil del host con historial y reviews · Lista de espera automática con notificación · Recordatorios automáticos 24hs y 2hs antes del evento</div>
+        <div class="tl-kpi"><span class="kpi-tag" style="background:var(--lav);color:var(--lav-t);">Entregable: MVP funcional completo listo para primeros hosts</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">⚠️ El riesgo operativo a vigilar — RAM del VPS</div>
+  <div class="alert a-orange">
+    <span>🔥</span>
+    <div>El único riesgo compartido con TMC es el VPS. Si el proceso de Eventos consume demasiada RAM y el servidor se queda sin memoria, PM2 puede afectar a TMC. <strong>Mitigación obligatoria:</strong> <code style="background:rgba(255,255,255,.5);padding:1px 5px;border-radius:3px;font-size:.72rem;">max_memory_restart: '300M'</code> en el ecosystem.config.js del nuevo proyecto. Monitorear el consumo de RAM antes de llevar tráfico real.</div>
+  </div>
+
+  <div class="sec">❓ La única decisión pendiente antes de arrancar</div>
+  <div class="card" style="border-top-color:#a78bfa;margin-top:4px;">
+    <div class="icon">🌐</div>
+    <div class="ct">El dominio del nuevo proyecto</div>
+    <div class="cb">Define la config de nginx, las URLs de MercadoPago (back_urls), el remitente de Resend y el nombre del proyecto desde el día 1. Decidir antes de la Semana 1 de desarrollo. Opciones posibles: <strong>eventospriv.ar</strong> · <strong>ticketprivado.com.ar</strong> · <strong>hostealo.com.ar</strong> · nombre propio del proyecto.</div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <strong>TMC Eventos — Arquitectura & Modelo de Negocio · Junio 2026</strong><br>
+  Nuevo proyecto · Arrancar semana del 21 jun 2026 · Stack reutilizado de TodasMisCosas.com<br>
+  <span style="font-size:.68rem;color:#1e293b;margin-top:3px;display:block;">Generado por Claude Sonnet 4.6</span>
+</div>
+
+<script>
+function showTab(id){
+  document.querySelectorAll('.tc').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
