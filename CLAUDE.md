@@ -22,8 +22,8 @@ Marketplace de alquiler de espacios (habitaciones, cocheras, galpones, depósito
 
 ## Roles del equipo
 
-- **Alejandro** — emprendedor, product owner, toma decisiones de negocio
-- **Guille** — administra el VPS, corre migraciones de DB, gestiona secretos en GitHub
+- **Alejandro (CTO)** — emprendedor, product owner, toma decisiones de negocio y tecnología
+- **Guille (CIO)** — administra el VPS, corre migraciones de DB, gestiona secretos en GitHub
 
 ## Reglas de código
 
