@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TMC Podcast — Guión Completo · Ale & Guille con Agustina</title>
+  <style>
+    :root {
+      --orange: #e8622a;
+      --orange-light: #fff4ee;
+      --navy: #0f172a;
+      --navy2: #1e293b;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --bg: #f8fafc;
+      --white: #fff;
+      --green: #16a34a;
+      --green-bg: #f0fdf4;
+      --purple: #7c3aed;
+      --purple-bg: #f5f3ff;
+      --blue: #1d4ed8;
+      --blue-bg: #eff6ff;
+      --yellow: #d97706;
+      --yellow-bg: #fffbeb;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.7; }
+
+    /* ── HEADER ── */
+    .header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #0f172a 100%);
+      padding: 48px 40px 36px;
+      text-align: center;
+    }
+    .header-logo { font-size: 2rem; font-weight: 900; color: var(--orange); letter-spacing: -1px; margin-bottom: 8px; }
+    .header-logo span { color: #fff; }
+    .header-title { font-size: 1.5rem; font-weight: 800; color: #f1f5f9; margin-bottom: 6px; }
+    .header-sub { color: #94a3b8; font-size: .9rem; margin-bottom: 20px; }
+    .header-cast { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .cast-chip { background: rgba(232,98,42,.15); border: 1px solid rgba(232,98,42,.35); border-radius: 20px; padding: 6px 18px; font-size: .78rem; color: #fdba74; }
+    .cast-chip strong { color: #fff; }
+
+    /* ── TABS ── */
+    .tab-bar { display: flex; background: var(--navy2); overflow-x: auto; border-bottom: 2px solid var(--orange); }
+    .tab-btn { flex-shrink: 0; padding: 14px 22px; background: none; border: none; color: #94a3b8; font-size: .82rem; font-weight: 600; cursor: pointer; transition: all .2s; white-space: nowrap; }
+    .tab-btn:hover { color: #f1f5f9; background: rgba(255,255,255,.05); }
+    .tab-btn.active { color: var(--orange); border-bottom: 3px solid var(--orange); background: rgba(232,98,42,.08); }
+
+    .tab-content { display: none; max-width: 960px; margin: 0 auto; padding: 40px 32px 80px; }
+    .tab-content.active { display: block; }
+
+    /* ── TIPOGRAFÍA ── */
+    .sec { font-size: 1.15rem; font-weight: 800; color: var(--text); margin: 36px 0 12px; display: flex; align-items: center; gap: 10px; }
+    .sec:first-child { margin-top: 0; }
+    .sec-sub { font-size: .8rem; color: var(--muted); margin: -8px 0 20px; }
+
+    /* ── CARDS ── */
+    .card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; }
+    .card.orange { border-left: 5px solid var(--orange); }
+    .card.green { border-left: 5px solid var(--green); }
+    .card.purple { border-left: 5px solid var(--purple); }
+    .card.blue { border-left: 5px solid var(--blue); }
+    .card.yellow { border-left: 5px solid var(--yellow); }
+    .card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 10px; }
+    .card p { color: var(--muted); font-size: .9rem; }
+
+    /* ── SPEECH ── */
+    .speech-box {
+      background: var(--navy);
+      border-radius: 16px;
+      padding: 40px 48px;
+      color: #f1f5f9;
+      font-size: 1rem;
+      line-height: 2;
+      margin-bottom: 28px;
+      position: relative;
+    }
+    .speech-box::before {
+      content: '"';
+      font-size: 8rem;
+      color: var(--orange);
+      opacity: .15;
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      font-family: Georgia, serif;
+      line-height: 1;
+    }
+    .speech-box .highlight { color: var(--orange); font-weight: 700; }
+    .speech-box .beat { display: block; height: 12px; }
+    .speech-note { background: var(--orange-light); border: 1px solid #fed7aa; border-radius: 10px; padding: 14px 18px; font-size: .82rem; color: #7c2d12; margin-bottom: 24px; }
+
+    /* ── SECUENCIA ── */
+    .phase {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .phase-header {
+      padding: 18px 24px;
+      font-weight: 800;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .phase-header .badge { font-size: .7rem; padding: 3px 10px; border-radius: 10px; font-weight: 700; }
+    .phase-body { padding: 20px 24px; }
+    .phase-body p { color: var(--muted); margin-bottom: 10px; font-size: .88rem; }
+    .phase-body ul { padding-left: 18px; }
+    .phase-body ul li { color: var(--muted); font-size: .88rem; margin-bottom: 6px; }
+    .phase-body ul li strong { color: var(--text); }
+
+    .phase.inicio .phase-header { background: #fff4ee; color: var(--orange); }
+    .phase.inicio .phase-header .badge { background: var(--orange); color: white; }
+    .phase.maduracion .phase-header { background: #f0fdf4; color: var(--green); }
+    .phase.maduracion .phase-header .badge { background: var(--green); color: white; }
+    .phase.cierre .phase-header { background: #f5f3ff; color: var(--purple); }
+    .phase.cierre .phase-header .badge { background: var(--purple); color: white; }
+
+    .beat-timeline {
+      display: flex;
+      gap: 0;
+      margin: 28px 0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .beat-seg {
+      flex: 1;
+      padding: 14px 10px;
+      text-align: center;
+      font-size: .72rem;
+      font-weight: 700;
+    }
+    .beat-seg .min { font-size: 1.1rem; font-weight: 900; display: block; margin-bottom: 2px; }
+
+    /* ── PREGUNTAS ── */
+    .q-block {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .q-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 20px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .q-header:hover { background: var(--bg); }
+    .q-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: .8rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .q-num.impact { background: var(--orange); color: white; }
+    .q-num.fill { background: #e2e8f0; color: var(--muted); }
+    .q-text { font-size: .9rem; font-weight: 600; color: var(--text); flex: 1; }
+    .q-tag { font-size: .65rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; flex-shrink: 0; margin-top: 4px; }
+    .q-tag.fundacion { background: #dbeafe; color: #1d4ed8; }
+    .q-tag.negocio { background: #dcfce7; color: #166534; }
+    .q-tag.tech { background: #f3e8fd; color: #6b21a8; }
+    .q-tag.mercado { background: #fff3cd; color: #92400e; }
+    .q-tag.personal { background: #fce7f3; color: #9d174d; }
+    .q-tag.futuro { background: #e0f2fe; color: #075985; }
+    .q-detail {
+      display: none;
+      padding: 0 20px 16px 66px;
+      font-size: .82rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+    }
+    .q-detail.open { display: block; }
+
+    .q-section-title {
+      font-size: .78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+      margin: 28px 0 12px;
+      padding-left: 4px;
+    }
+
+    /* ── SOFTWARE ── */
+    .sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 28px; }
+    .sw-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .sw-card h4 { font-size: .95rem; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+    .sw-card .plat { font-size: .68rem; color: var(--muted); margin-bottom: 10px; }
+    .sw-card p { font-size: .82rem; color: var(--muted); line-height: 1.6; }
+    .sw-card .pros { margin-top: 10px; }
+    .sw-card .pros li { font-size: .78rem; color: var(--muted); margin-bottom: 3px; }
+    .sw-tag { font-size: .62rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
+    .sw-tag.free { background: #dcfce7; color: #166534; }
+    .sw-tag.yt { background: #fee2e2; color: #991b1b; }
+    .sw-tag.os { background: #dbeafe; color: #1d4ed8; }
+
+    .tip-box { background: var(--yellow-bg); border: 1px solid #fde68a; border-radius: 10px; padding: 16px 20px; margin-bottom: 20px; font-size: .85rem; color: #78350f; }
+    .tip-box strong { color: #92400e; }
+
+    footer { text-align: center; padding: 32px; color: var(--muted); font-size: .75rem; border-top: 1px solid var(--border); margin-top: 40px; }
+
+    @media (max-width: 640px) {
+      .tab-content { padding: 24px 16px 60px; }
+      .speech-box { padding: 28px 24px; }
+      .sw-grid { grid-template-columns: 1fr; }
+      .beat-timeline { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ HEADER ══════════════════════════════════════════════════════ -->
+<div class="header">
+  <div class="header-logo">📦 TodasMisCosas<span>.com</span></div>
+  <div class="header-title">Podcast — Guión Completo & Kit de Producción</div>
+  <div class="header-sub">El marketplace de almacenamiento urbano que nació en un Chromebook · Junio 2026</div>
+  <div class="header-cast">
+    <div class="cast-chip"><strong>Ale</strong> · Fundador & Product Owner</div>
+    <div class="cast-chip"><strong>Guille</strong> · CIO & Arquitecto Técnico</div>
+    <div class="cast-chip"><strong>Agustina</strong> · Entrevistadora & Conductora</div>
+    <div class="cast-chip"><strong>Daniel</strong> · Producción & Post-producción</div>
+  </div>
+</div>
+
+<!-- ══ TABS ════════════════════════════════════════════════════════ -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="showTab('speech')">🎤 Speech de Apertura</button>
+  <button class="tab-btn" onclick="showTab('secuencia')">🎬 Secuencia del Podcast</button>
+  <button class="tab-btn" onclick="showTab('preguntas')">❓ 50 Preguntas</button>
+  <button class="tab-btn" onclick="showTab('software')">💻 Software Gratuito</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- TAB 1: SPEECH DE APERTURA                                      -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div id="tab-speech" class="tab-content active">
+
+  <div class="sec">🎤 Speech de apertura — Ale & Guille</div>
+  <p class="sec-sub">Para leer en voz alta, con pausa, mirando a cámara. Duración estimada: 90–120 segundos.</p>
+
+  <div class="speech-note">
+    📌 <strong>Dirección de producción (Daniel):</strong> Grabar con plano medio. Ale habla primero, Guille cierra. Música de fondo suave solo en post. Las pausas son intencionales — no las recorten.
+  </div>
+
+  <div class="speech-box">
+    <strong style="color:#94a3b8;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;">— ALE —</strong>
+    <span class="beat"></span>
+    Hubo un momento en que me di cuenta de algo muy simple:
+    <span class="beat"></span>
+    Buenos Aires está llena de espacio.
+    <span class="beat"></span>
+    Garages que no se usan. Habitaciones vacías. Galpones a medias.
+    <span class="beat"></span>
+    Y al mismo tiempo... está llena de gente que necesita guardar sus cosas
+    y no tiene adónde.
+    <span class="beat"></span>
+    Personas que se mudan. Que reducen. Que viajan.
+    Que acumulan más de lo que su departamento aguanta.
+    <span class="beat"></span>
+    Esa brecha —<span class="highlight">ese espacio entre el espacio que sobra y la necesidad que falta</span>—
+    es TodasMisCosas.
+    <span class="beat"></span><span class="beat"></span>
+
+    <strong style="color:#94a3b8;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;">— GUILLE —</strong>
+    <span class="beat"></span>
+    Lo que hicimos no fue inventar algo nuevo.
+    <span class="beat"></span>
+    Fue conectar dos lados de un mercado que ya existía,
+    pero que nadie había organizado todavía.
+    <span class="beat"></span>
+    Un proveedor publica su espacio. Un cliente lo reserva.
+    El pago es seguro. El acceso, acordado. Todo trazado.
+    <span class="beat"></span>
+    Sin intermediarios. Sin complicaciones.
+    <span class="beat"></span>
+    <span class="highlight">Un marketplace donde las cosas encuentran su lugar</span>,
+    y los espacios encuentran su valor.
+    <span class="beat"></span><span class="beat"></span>
+
+    <strong style="color:#94a3b8;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;">— ALE (cierra) —</strong>
+    <span class="beat"></span>
+    En este podcast te vamos a contar desde adentro
+    cómo se construye un marketplace desde cero en Argentina.
+    <span class="beat"></span>
+    Sin inversión externa. Sin equipo grande. Sin manual.
+    <span class="beat"></span>
+    Solo con una idea, muchas noches, y las ganas de probar.
+    <span class="beat"></span>
+    Bienvenidos a <span class="highlight">TodasMisCosas, el podcast</span>.
+  </div>
+
+  <div class="card orange">
+    <h3>🎯 Versión ultra-corta (30 segundos — para Reels/TikTok)</h3>
+    <p style="color:var(--text);font-style:italic;line-height:2;margin-top:8px;">
+      "Buenos Aires tiene espacio de sobra. Y tiene gente que necesita guardar sus cosas. TodasMisCosas es el marketplace que los conecta. Un proveedor, un cliente, y un acuerdo que funciona. Te contamos desde adentro cómo se construye esto en Argentina. Bienvenidos."
+    </p>
+  </div>
+
+  <div class="card green">
+    <h3>📱 Descripción para YouTube / Spotify (copy & paste)</h3>
+    <p style="color:var(--text);line-height:2;margin-top:8px;">
+      En este podcast, Ale y Guille —los fundadores de TodasMisCosas.com— cuentan desde adentro cómo construyeron el primer marketplace de almacenamiento urbano de Buenos Aires: sin inversión externa, con tecnología propia, y validando cada decisión en el mercado real.<br><br>
+      Hablamos de producto, de tech, de errores, de Argentina, y de lo que significa crear algo desde cero con ganas de que dure. Conducido por Agustina.
+    </p>
+  </div>
+
+  <div class="card blue">
+    <h3>🏷️ Hashtags sugeridos</h3>
+    <p style="color:var(--text);margin-top:8px;line-height:2.2;">
+      #TodasMisCosas #Marketplace #EmprendimientoArgentina #StartupBuenosAires #Tecnología #Podcast #AlmacenamientoUrbano #EmprendedoresArgentinos #ProductoDigital #NextJS #MercadoPago #StartupLife
+    </p>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- TAB 2: SECUENCIA DEL PODCAST                                   -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div id="tab-secuencia" class="tab-content">
+
+  <div class="sec">🎬 Estructura completa del episodio</div>
+  <p class="sec-sub">Episodio piloto — duración recomendada: 45 a 60 minutos</p>
+
+  <div class="beat-timeline">
+    <div class="beat-seg" style="background:#fff4ee;color:#c2410c;">
+      <span class="min">0–8'</span>GANCHO &<br>APERTURA
+    </div>
+    <div class="beat-seg" style="background:#fef9c3;color:#92400e;">
+      <span class="min">8–20'</span>ORIGEN &<br>FUNDACIÓN
+    </div>
+    <div class="beat-seg" style="background:#f0fdf4;color:#166534;">
+      <span class="min">20–35'</span>DENTRO<br>DEL PRODUCTO
+    </div>
+    <div class="beat-seg" style="background:#eff6ff;color:#1d4ed8;">
+      <span class="min">35–47'</span>MERCADO &<br>FUTURO
+    </div>
+    <div class="beat-seg" style="background:#f5f3ff;color:#6b21a8;">
+      <span class="min">47–55'</span>CIERRE<br>BOMBA
+    </div>
+  </div>
+
+  <!-- INICIO -->
+  <div class="phase inicio">
+    <div class="phase-header">
+      🔥 INICIO — El gancho que engancha
+      <span class="badge">0 a 20 minutos</span>
+    </div>
+    <div class="phase-body">
+      <p><strong>Objetivo:</strong> Capturar al oyente en los primeros 90 segundos. Si no engancha acá, no llega al minuto 5.</p>
+
+      <p><strong>Minuto 0–2 · Cold open (sin presentaciones)</strong></p>
+      <ul>
+        <li>Empieza directamente con el <strong>speech de apertura</strong> — sin música larga, sin "bienvenidos al episodio 1".</li>
+        <li>Corte abrupto después del speech → música de entrada 5 segundos.</li>
+      </ul>
+
+      <p><strong>Minuto 2–5 · Presentación de Agustina</strong></p>
+      <ul>
+        <li>Agustina toma el micrófono: "Soy Agustina. No soy técnica, no soy programadora. Soy la que va a hacerles las preguntas que le haría cualquier persona que se cruzara con esta app."</li>
+        <li>Eso la posiciona como voz del oyente — genera empatía inmediata.</li>
+        <li>Presentación breve de Ale y Guille: nombre, rol en una línea, nada más.</li>
+      </ul>
+
+      <p><strong>Minuto 5–8 · La pregunta bomba de entrada</strong></p>
+      <ul>
+        <li>Agustina lanza: <strong>"¿En qué momento dijeron: esto lo vamos a hacer de verdad?"</strong></li>
+        <li>Esta pregunta abre la historia desde la emoción, no desde el currículum.</li>
+        <li>Dejar que Ale responda. Guille complementa si quiere.</li>
+      </ul>
+
+      <p><strong>Minuto 8–20 · Origen y contexto</strong></p>
+      <ul>
+        <li><strong>El problema que vieron</strong> — espacio sobrante vs. necesidad insatisfecha en BsAs.</li>
+        <li><strong>La primera versión</strong> — cómo empezó, qué tenían y qué no tenían.</li>
+        <li><strong>La decisión de no buscar inversión</strong> — por qué bootstrapped.</li>
+        <li><strong>El primer usuario real</strong> — quién fue, qué pasó, qué sintieron.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- MADURACIÓN -->
+  <div class="phase maduracion">
+    <div class="phase-header">
+      📈 MADURACIÓN — El corazón del episodio
+      <span class="badge">20 a 47 minutos</span>
+    </div>
+    <div class="phase-body">
+      <p><strong>Objetivo:</strong> Profundizar en el producto, los desafíos técnicos, el mercado y los aprendizajes reales. Este bloque es el más denso pero también el más valioso.</p>
+
+      <p><strong>Minuto 20–35 · Dentro del producto</strong></p>
+      <ul>
+        <li><strong>¿Cómo funciona TMC?</strong> — Agustina pide que se lo expliquen como si tuviera un garage libre.</li>
+        <li><strong>El ciclo completo</strong> — publicar espacio → cliente reserva → pago seguro → acceso → cobro.</li>
+        <li><strong>MercadoPago como escrow</strong> — por qué el dinero no va directo al proveedor y cómo eso genera confianza.</li>
+        <li><strong>El chat dentro de la reserva</strong> — por qué es clave y cómo se diseñó.</li>
+        <li><strong>Decisiones técnicas no obvias</strong> — Guille explica por qué Next.js, por qué VPS y no cloud grande, por qué MySQL.</li>
+      </ul>
+
+      <p><strong>Minuto 35–47 · Mercado y desafíos reales</strong></p>
+      <ul>
+        <li><strong>Argentina como contexto</strong> — inflación, dolarización, cómo afecta a un marketplace local.</li>
+        <li><strong>El problema del dos lados</strong> — sin oferta no hay demanda, sin demanda no hay oferta. ¿Cómo rompieron eso?</li>
+        <li><strong>Los errores más caros</strong> — qué cambiarían si empezaran de nuevo.</li>
+        <li><strong>Competencia y diferenciación</strong> — ¿por qué TMC y no Airbnb, un grupo de WhatsApp, o un guardamuebles clásico?</li>
+        <li><strong>El equipo de dos</strong> — cómo se dividen el trabajo Ale y Guille, cómo toman decisiones cuando no están de acuerdo.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- CIERRE -->
+  <div class="phase cierre">
+    <div class="phase-header">
+      💥 CIERRE — La última impresión que dura
+      <span class="badge">47 a 55 minutos</span>
+    </div>
+    <div class="phase-body">
+      <p><strong>Objetivo:</strong> Dejar al oyente con ganas de buscar la app, compartir el episodio y volver al próximo. El cierre tiene que generar acción.</p>
+
+      <p><strong>Minuto 47–51 · La ronda final de Agustina (preguntas cortas, respuestas de una frase)</strong></p>
+      <ul>
+        <li>"Si TMC fuera un barrio de Buenos Aires, ¿cuál sería?" → respuesta instantánea, sin pensar.</li>
+        <li>"¿Qué app usás todos los días que ojalá ustedes hubieran construido?"</li>
+        <li>"¿Cuándo van a saber que TMC funcionó de verdad?"</li>
+        <li>"Una cosa que aprendiste de este proceso que no tiene nada que ver con tecnología."</li>
+      </ul>
+
+      <p><strong>Minuto 51–53 · El momento bomba — la cifra o la revelación</strong></p>
+      <ul>
+        <li>Agustina pregunta: <strong>"¿Cuántos espacios creen que Buenos Aires podría tener disponibles si TMC funcionara a escala?"</strong></li>
+        <li>Ale da el número. Guille lo contextualiza. <em>(Preparar este dato antes de grabar — ejemplo: "Estimamos entre 80.000 y 200.000 espacios subutilizados solo en CABA.")</em></li>
+        <li>Ese número es el clip que se corta para redes. Es la cita que se comparte.</li>
+      </ul>
+
+      <p><strong>Minuto 53–55 · CTA y despedida</strong></p>
+      <ul>
+        <li>Ale: <strong>"Si tenés un espacio libre, entrá a todasmiscosas.com y publicalo. Es gratis, es rápido, y hay gente esperando."</strong></li>
+        <li>Guille: <strong>"Y si querés ver el código, hablar de tech, o simplemente curiosear cómo lo hicimos — escribinos. Estamos abiertos a eso."</strong></li>
+        <li>Agustina cierra: <strong>"Gracias a los dos. Y gracias a vos por escuchar. Esto recién empieza."</strong></li>
+        <li>Música de salida — fundido a negro.</li>
+      </ul>
+
+      <p><strong>POST-PRODUCCIÓN — Clips para redes (Daniel)</strong></p>
+      <ul>
+        <li>🎬 Clip 1 (60 seg): El speech de apertura completo → Reels / TikTok.</li>
+        <li>🎬 Clip 2 (30 seg): La cifra del potencial de BsAs → Twitter/X, LinkedIn.</li>
+        <li>🎬 Clip 3 (90 seg): "¿En qué momento dijeron que lo harían de verdad?" → Historia emocional para Instagram.</li>
+        <li>🎬 Clip 4 (45 seg): Explicación del escrow para no técnicos → TikTok educativo.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- TAB 3: 50 PREGUNTAS                                            -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div id="tab-preguntas" class="tab-content">
+
+  <div class="sec">❓ 50 Preguntas para Agustina</div>
+  <p class="sec-sub">Hacé clic en cada pregunta para ver el contexto y enfoque sugerido. Las primeras 30 son de alto impacto narrativo.</p>
+
+  <div class="q-section-title">⭐ BLOQUE A — Las 30 preguntas de mayor impacto (orden recomendado para el episodio)</div>
+
+  <!-- Q1 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">1</div>
+      <div class="q-text">¿En qué momento exacto dijiste "esto lo vamos a hacer de verdad"? ¿Dónde estaban?</div>
+      <span class="q-tag personal">Personal</span>
+    </div>
+    <div class="q-detail">Esta pregunta abre la historia desde la emoción. No hay respuesta incorrecta — y cualquier respuesta auténtica es poderosa. Dejar silencio antes de que responda.</div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">2</div>
+      <div class="q-text">Explicame TodasMisCosas como si yo tuviera un garage vacío y no supiera nada de apps.</div>
+      <span class="q-tag negocio">Negocio</span>
+    </div>
+    <div class="q-detail">Fuerza a Ale a articular el pitch más simple posible. Si no lo puede decir en 60 segundos de forma comprensible, hay un problema de comunicación que vale la pena exponer.</div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">3</div>
+      <div class="q-text">¿Cuál fue el primer usuario real? ¿Qué pasó? ¿Cómo se sintieron cuando llegó la primera reserva?</div>
+      <span class="q-tag fundacion">Fundación</span>
+    </div>
+    <div class="q-detail">El primer usuario es siempre la mejor historia. Hay emoción genuina acá. Si hubo algo que salió mal, mejor — es más interesante.</div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">4</div>
+      <div class="q-text">Guille, ¿qué es lo más complicado que tuviste que construir y que desde afuera parece simple?</div>
+      <span class="q-tag tech">Tech</span>
+    </div>
+    <div class="q-detail">Revela la complejidad invisible detrás de los marketplaces. El escrow, los estados de reserva, los webhooks de MP — todo parece simple hasta que lo hacés.</div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">5</div>
+      <div class="q-text">¿Hubo un momento en que estuvieron a punto de abandonar? ¿Qué los hizo seguir?</div>
+      <span class="q-tag personal">Personal</span>
+    </div>
+    <div class="q-detail">Humaniza el proyecto. Todo emprendimiento tiene su punto de quiebre. Esta pregunta genera el clip más compartido del episodio.</div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">6</div>
+      <div class="q-text">¿Por qué no buscaron inversores? ¿Cuánto dinero pusieron de su bolsillo?</div>
+      <span class="q-tag negocio">Negocio</span>
+    </div>
+    <div class="q-detail">El bootstrapping en Argentina es un tema que resuena. La respuesta honest sobre el costo real del proyecto conecta con muchos emprendedores en situación similar.</div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">7</div>
+      <div class="q-text">¿Cómo resolvieron el problema del huevo y la gallina? Sin espacios no hay clientes. Sin clientes nadie publica espacios.</div>
+      <span class="q-tag mercado">Mercado</span>
+    </div>
+    <div class="q-detail">El problema clásico de todo marketplace. La estrategia de supply-first que adoptaron es un aprendizaje real para cualquiera que quiera hacer algo similar.</div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">8</div>
+      <div class="q-text">¿Qué hace TMC que un grupo de WhatsApp o un aviso en OLX no puede hacer?</div>
+      <span class="q-tag mercado">Mercado</span>
+    </div>
+    <div class="q-detail">Obliga a articular la propuesta de valor de forma contundente. La respuesta correcta es: confianza, pago seguro, escrow, trazabilidad, reputación acumulada.</div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">9</div>
+      <div class="q-text">¿Cómo funciona el sistema de pagos? ¿Por qué el dinero no va directo al dueño del espacio?</div>
+      <span class="q-tag negocio">Negocio</span>
+    </div>
+    <div class="q-detail">El escrow es el diferenciador clave. Explicarlo bien —sin jerga técnica— es lo que convierte a un oyente en usuario. Agustina puede actuar de sorprendida cuando lo entiende.</div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">10</div>
+      <div class="q-text">Guille, ¿cuánto tiempo tardaron en tener algo que se pudiera usar de verdad?</div>
+      <span class="q-tag tech">Tech</span>
+    </div>
+    <div class="q-detail">Timeline real del desarrollo. Anchea la percepción de lo que se necesita para lanzar un producto. No tiene que ser perfecto para ser real.</div>
+  </div>
+
+  <!-- Q11 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">11</div>
+      <div class="q-text">¿Cuál fue el error más caro que cometieron? No en plata — en tiempo o decisiones.</div>
+      <span class="q-tag fundacion">Fundación</span>
+    </div>
+    <div class="q-detail">La pregunta de los errores siempre genera contenido memorable. El oyente aprende más de los errores ajenos que de los éxitos. Crea confianza y autenticidad.</div>
+  </div>
+
+  <!-- Q12 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">12</div>
+      <div class="q-text">¿Cómo se dividen el trabajo entre los dos? ¿Hubo conflictos? ¿Cómo los resolvieron?</div>
+      <span class="q-tag personal">Personal</span>
+    </div>
+    <div class="q-detail">La dinámica de cofundadores es fascinante. El oyente quiere saber si se pelean, quién decide qué, y si la sociedad aguanta la presión.</div>
+  </div>
+
+  <!-- Q13 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">13</div>
+      <div class="q-text">¿Qué pasa si alguien guarda cosas ilegales en un espacio de TMC? ¿Pensaron en eso?</div>
+      <span class="q-tag negocio">Negocio</span>
+    </div>
+    <div class="q-detail">Pregunta incómoda que el oyente se hace pero nadie hace en público. La respuesta honesta sobre responsabilidad, términos y condiciones y diseño de la plataforma es muy interesante.</div>
+  </div>
+
+  <!-- Q14 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">14</div>
+      <div class="q-text">¿Cómo se protege quien alquila su espacio? ¿Qué pasa si el cliente no se va, o rompe algo?</div>
+      <span class="q-tag negocio">Negocio</span>
+    </div>
+    <div class="q-detail">El depósito de garantía, las reviews, el contrato implícito en la reserva. Esta pregunta revela la madurez del producto y genera confianza en proveedores potenciales que están escuchando.</div>
+  </div>
+
+  <!-- Q15 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">15</div>
+      <div class="q-text">¿Qué barrios de Buenos Aires tienen más potencial para TMC? ¿Dónde están poniendo el foco?</div>
+      <span class="q-tag mercado">Mercado</span>
+    </div>
+    <div class="q-detail">Localización y estrategia geográfica. Un oyente de Palermo o Villa Urquiza que tiene espacio libre se engancha inmediatamente si mencionan su barrio.</div>
+  </div>
+
+  <!-- Q16 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">16</div>
+      <div class="q-text">Ale, ¿cuánto gana hoy un proveedor típico en TMC? Dame un número real.</div>
+      <span class="q-tag negocio">Negocio</span>
+    </div>
+    <div class="q-detail">El número concreto es el momento en que la audiencia activa saca el teléfono. "Un garage en Palermo puede generar $X por mes" — eso es lo que convierte oyentes en usuarios.</div>
+  </div>
+
+  <!-- Q17 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">17</div>
+      <div class="q-text">¿Cómo afecta la inflación argentina a un marketplace que cobra en pesos? ¿Cómo resuelven eso?</div>
+      <span class="q-tag mercado">Mercado</span>
+    </div>
+    <div class="q-detail">El elefante en la habitación de todo negocio digital en Argentina. La respuesta —indexación, precios flexibles, actualización de tarifas— es un aprendizaje real para el mercado local.</div>
+  </div>
+
+  <!-- Q18 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">18</div>
+      <div class="q-text">Guille, ¿qué stack tecnológico usaron y por qué? Explicalo para alguien que no sabe nada de programación.</div>
+      <span class="q-tag tech">Tech</span>
+    </div>
+    <div class="q-detail">Analogías concretas: "Next.js es como el arquitecto de la casa", "MercadoPago es como el escribano del acuerdo". Hacer tech accesible para el oyente común.</div>
+  </div>
+
+  <!-- Q19 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">19</div>
+      <div class="q-text">¿Tienen pensado expandirse a otras ciudades? ¿A otros países? ¿Qué los frena?</div>
+      <span class="q-tag futuro">Futuro</span>
+    </div>
+    <div class="q-detail">El horizonte de escala. Córdoba, Rosario, LATAM. La respuesta revela el tamaño de la ambición y da pie a contar la estrategia de expansión sin sonar a folleto.</div>
+  </div>
+
+  <!-- Q20 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">20</div>
+      <div class="q-text">¿Cuántos espacios podría llegar a tener TMC en Buenos Aires si todo sale bien? Den un número.</div>
+      <span class="q-tag mercado">Mercado</span>
+    </div>
+    <div class="q-detail">LA PREGUNTA BOMBA del cierre. Preparar el dato antes: estimación de espacios subutilizados en CABA (garages, habitaciones libres, galpones parciales). Este número es el clip viral del episodio.</div>
+  </div>
+
+  <!-- Q21 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">21</div>
+      <div class="q-text">¿Cómo generan confianza entre dos extraños — el que tiene el espacio y el que necesita guardar?</div>
+      <span class="q-tag negocio">Negocio</span>
+    </div>
+    <div class="q-detail">Reviews, verificación de identidad, escrow, historial de reservas. El diseño de confianza es el corazón de cualquier marketplace.</div>
+  </div>
+
+  <!-- Q22 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">22</div>
+      <div class="q-text">¿Qué aprendieron de Airbnb, MercadoLibre o cualquier otro marketplace que aplicaron directamente a TMC?</div>
+      <span class="q-tag fundacion">Fundación</span>
+    </div>
+    <div class="q-detail">Referencias a plataformas conocidas hace que el modelo sea más comprensible. También revela qué benchmarks usan y cómo aprenden de la competencia global.</div>
+  </div>
+
+  <!-- Q23 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">23</div>
+      <div class="q-text">Si mañana Airbnb o MercadoLibre decidiera hacer lo mismo que TMC, ¿qué harían?</div>
+      <span class="q-tag mercado">Mercado</span>
+    </div>
+    <div class="q-detail">La pregunta del "¿y si el gigante los aplasta?". La respuesta debe mostrar ventajas de ser local, ágil, especializado. Es la pregunta que los inversores siempre hacen.</div>
+  </div>
+
+  <!-- Q24 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">24</div>
+      <div class="q-text">¿Cómo es un día normal de trabajo para cada uno de ustedes? ¿Trabajan full-time en esto?</div>
+      <span class="q-tag personal">Personal</span>
+    </div>
+    <div class="q-detail">La realidad del emprendimiento bootstrap: trabajo paralelo, sacrificios, management de tiempo. Honestidad acá genera mucha conexión con la audiencia.</div>
+  </div>
+
+  <!-- Q25 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">25</div>
+      <div class="q-text">¿Qué le dirían a alguien que tiene un espacio libre pero todavía no se animó a publicarlo?</div>
+      <span class="q-tag negocio">Negocio</span>
+    </div>
+    <div class="q-detail">CTA directo embebido en el contenido. La respuesta es el momento de venta más natural del episodio — sin que suene a publicidad.</div>
+  </div>
+
+  <!-- Q26 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">26</div>
+      <div class="q-text">¿Cuál es la historia más rara o inesperada que pasó en una reserva de TMC?</div>
+      <span class="q-tag personal">Personal</span>
+    </div>
+    <div class="q-detail">Anécdota concreta. No tiene que ser dramática — puede ser graciosa, tierna, o simplemente curiosa. Este tipo de historia es la que el oyente cuenta a otros.</div>
+  </div>
+
+  <!-- Q27 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">27</div>
+      <div class="q-text">¿Buscarían inversión si alguien les ofreciera plata mañana? ¿A qué precio?</div>
+      <span class="q-tag negocio">Negocio</span>
+    </div>
+    <div class="q-detail">Revela la mentalidad hacia el crecimiento y el control del negocio. La tensión entre escala rápida e independencia es muy interesante para el oyente emprendedor.</div>
+  </div>
+
+  <!-- Q28 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">28</div>
+      <div class="q-text">Guille, ¿qué es lo que más te orgullece haber construido técnicamente en TMC?</div>
+      <span class="q-tag tech">Tech</span>
+    </div>
+    <div class="q-detail">La pregunta del orgullo. Técnicamente puede ser el sistema de escrow, el chat, el flujo de reservas. Humaniza al desarrollador y muestra el work behind the curtain.</div>
+  </div>
+
+  <!-- Q29 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">29</div>
+      <div class="q-text">¿Qué hace falta para que TMC sea un negocio que se sostenga solo sin que ustedes estén presentes 24/7?</div>
+      <span class="q-tag futuro">Futuro</span>
+    </div>
+    <div class="q-detail">Automatización, equipo, volumen crítico. Revela la madurez del modelo y el camino de escala. También abre la conversación sobre qué viene después.</div>
+  </div>
+
+  <!-- Q30 -->
+  <div class="q-block">
+    <div class="q-header" onclick="toggleQ(this)">
+      <div class="q-num impact">30</div>
+      <div class="q-text">¿Cuándo van a saber que TMC funcionó de verdad? ¿Cuál es el número, la señal, el momento?</div>
+      <span class="q-tag futuro">Futuro</span>
+    </div>
+    <div class="q-detail">El KPI emocional del fundador. No es un número de analytics — es la señal subjetiva que les dice "lo logramos". Esta respuesta suele ser la cita más compartida del episodio.</div>
+  </div>
+
+  <!-- BLOQUE B: RELLENO -->
+  <div class="q-section-title">📌 BLOQUE B — 20 preguntas de relleno y complemento</div>
+
+  <div class="q-block"><div class="q-header" onclick="toggleQ(this)"><div class="q-num fill">31</div><div class="q-text">¿Qué apps del celular usan todos los días y no pueden vivir sin ellas?</div><span class="q-tag personal">Personal</span></div><div class="q-detail">Rompe el hielo entre bloques. Revela hábitos y referencias culturales de los fundadores.</div></div>
+
+  <div class="q-block"><div class="q-header" onclick="toggleQ(this)"><div class="q-num fill">32</div><div class="q-text">¿Trabajaron de noche, de madrugada, en fines de semana para construir esto?</div><span class="q-tag personal">Personal</span></div><div class="q-detail">La romanización del esfuerzo. Los oyentes quieren saber el sacrificio real detrás del producto.</div></div>
+
+  <div class="q-block"><div class="q-header" onclick="toggleQ(this)"><div class="q-num fill">33</div><div class="q-text">¿Qué libros, podcasts o personas los influyeron en este camino?</div><span class="q-tag personal">Personal</span></div><div class="q-detail">Genera recomendaciones para la audiencia. Puede mencionar a Priestley, a Paul Graham, a referencias locales.</div></div>
+
+  <div class="q-block"><div class="q-header" onclick="toggleQ(this)"><div class="q-num fill">34</div><div class="q-text">¿Tienen pensado hacer una app móvil nativa? ¿Para cuándo?</div><span class="q-tag tech">Tech</span></div><div class="q-detail">El roadmap de mobile es una pregunta natural después de entender la plataforma.</div></div>
+
+  <div class="q-block"><div class="q-header" onclick="toggleQ(this)"><div class="q-num fill">35</div><div class="q-text">¿Cómo le explicarían TMC a sus padres o abuelos?</div><span class="q-tag personal">Personal</span></div><div class="q-detail">Ejercicio de simplificación extrema. Siempre genera respuestas graciosas y auténticas.</div></div>
+
+  <div class="q-block"><div class="q-header" onclick="toggleQ(this)"><div class="q-num fill">36</div><div class="q-text">¿Qué es lo que más les sorprendió del comportamiento de los usuarios reales?</div><span class="q-tag mercado">Mercado</span></div><div class="q-detail">La diferencia entre lo que el fundador imagina y lo que el usuario real hace es siempre sorprendente e instructiva.</div></div>
+
+  <div class="q-block"><div class="q-header" onclick="toggleQ(this)"><div class="q-num fill">37</div><div class="q-text">¿Cómo manejan las reviews negativas o los clientes difíciles?</div><span class="q-tag negocio">Negocio</span></div><div class="q-detail">La gestión de conflictos en marketplaces es uno de los temas más complejos. La respuesta honesta genera credibilidad.</div></div>
+
+  <div class="q-block"><div class="q-header" onclick="toggleQ(this)"><div class="q-num fill">38</div><div class="q-text">¿Cuánto tiempo tardan en dar soporte a un usuario que tiene un problema?</div><span class="q-tag negocio">Negocio</span></div><div class="q-detail">Revela el estado actual del customer service y la escalabilidad del equipo de 2.</div></div>
+
+  <div class="q-block"><div class="q-header" onclick="toggleQ(this)"><div class="q-num fill">39</div><div class="q-text">¿Qué tipo de cosas guarda la gente en TMC? ¿Hay algo raro o inesperado?</div><span class="q-tag mercado">Mercado</span></div><div class="q-detail">Anécdotas concretas de los tipos de almacenamiento. Muebles, autos, motos, colecciones, instrumentos — humaniza el producto.</div></div>
+
+  <div class="q-block"><div class="q-header" onclick="toggleQ(this)"><div class="q-num fill">40</div><div class="q-text">¿Cómo se ponen de acuerdo cuando tienen opiniones distintas sobre una feature del producto?</div><span class="q-tag fundacion">Fundación</span></div><div class="q-detail">La toma de decisiones entre cofundadores. ¿Hay un voto decisivo? ¿Testing? ¿Intuitivo? Revela la cultura interna.</div></div>
+
+  <div class="q-block"><div class="q-header" onclick="toggleQ(this)"><div class="q-num fill">41</div><div class="q-text">¿Cuánto cuesta publicar un espacio en TMC? ¿Y reservar uno?</div><span class="q-tag negocio">Negocio</span></div><div class="q-detail">La pregunta más básica que cualquier usuario potencial tiene. Útil para aclarar el modelo de negocio de forma directa.</div></div>
+
+  <div class="q-block"><div class="q-header" onclick="toggleQ(this)"><div class="q-num fill">42</div><div class="q-text">¿Tienen competidores en Argentina? ¿Cómo se comparan?</div><span class="q-tag mercado">Mercado</span></div><div class="q-detail">Análisis competitivo desde adentro. No hablar mal de nadie — mostrar diferenciación positiva.</div></div>
+
+  <div class="q-block"><div class="q-header" onclick="toggleQ(this)"><div class="q-num fill">43</div><div class="q-text">¿Qué harían si mañana tuvieran $1 millón de dólares para invertir en TMC?</div><span class="q-tag futuro">Futuro</span></div><div class="q-detail">Revela las prioridades estratégicas y el roadmap mental del fundador. Equipo, marketing, expansión geográfica, tech.</div></div>
+
+  <div class="q-block"><div class="q-header" onclick="toggleQ(this)"><div class="q-num fill">44</div><div class="q-text">¿Qué pasa si el sistema se cae en el medio de una reserva activa? ¿Tienen plan B?</div><span class="q-tag tech">Tech</span></div><div class="q-detail">Resiliencia técnica y operativa. Muestra madurez de producto y genera confianza en proveedores y clientes.</div></div>
+
+  <div class="q-block"><div class="q-header" onclick="toggleQ(this)"><div class="q-num fill">45</div><div class="q-text">¿Piensan en TMC como su trabajo principal a largo plazo o como un proyecto entre otros?</div><span class="q-tag personal">Personal</span></div><div class="q-detail">Compromiso a largo plazo. Importante para inversores potenciales y para la audiencia que quiere saber si el proyecto tiene futuro.</div></div>
+
+  <div class="q-block"><div class="q-header" onclick="toggleQ(this)"><div class="q-num fill">46</div><div class="q-text">¿Qué es más difícil: encontrar al proveedor que tiene el espacio o al cliente que lo necesita?</div><span class="q-tag mercado">Mercado</span></div><div class="q-detail">La asimetría de los dos lados del mercado. La respuesta directa sobre dónde está el cuello de botella es muy valiosa.</div></div>
+
+  <div class="q-block"><div class="q-header" onclick="toggleQ(this)"><div class="q-num fill">47</div><div class="q-text">¿Cuánto tiempo lleva publicar un espacio desde que entro a la app hasta que está disponible?</div><span class="q-tag negocio">Negocio</span></div><div class="q-detail">UX del proveedor en detalle. Si es rápido, hay que decirlo. Baja la barrera de entrada para proveedores que están escuchando.</div></div>
+
+  <div class="q-block"><div class="q-header" onclick="toggleQ(this)"><div class="q-num fill">48</div><div class="q-text">Si TMC fuera un barrio de Buenos Aires, ¿cuál sería? ¿Por qué?</div><span class="q-tag personal">Personal</span></div><div class="q-detail">Pregunta lúdica para el cierre. Respuesta rápida, sin pensar. Revela cómo los fundadores perciben la identidad de su producto.</div></div>
+
+  <div class="q-block"><div class="q-header" onclick="toggleQ(this)"><div class="q-num fill">49</div><div class="q-text">¿Qué le dirían a alguien de 20 años que quiere hacer algo parecido en otro sector?</div><span class="q-tag personal">Personal</span></div><div class="q-detail">El consejo al joven emprendedor. Siempre genera momentos memorables — y es el tipo de contenido que se guarda para escuchar de nuevo.</div></div>
+
+  <div class="q-block"><div class="q-header" onclick="toggleQ(this)">
+    <div class="q-num fill">50</div>
+    <div class="q-text">¿Hay algo que nunca les preguntaron sobre TMC y que les gustaría contar?</div>
+    <span class="q-tag personal">Personal</span>
+  </div>
+  <div class="q-detail">La pregunta final que abre la puerta a la respuesta más inesperada y auténtica del episodio. Nunca cortarla — dejar que fluya.</div></div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- TAB 4: SOFTWARE GRATUITO                                       -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div id="tab-software" class="tab-content">
+
+  <div class="sec">💻 Software gratuito para grabar, editar y publicar</div>
+  <p class="sec-sub">Todo sin licencia paga. Todo apto para subir a YouTube sin restricciones.</p>
+
+  <div class="tip-box">
+    💡 <strong>Regla de oro:</strong> Primero grabá con buena calidad de audio — el video se puede mejorar en edición, el audio no. Un micrófono USB básico (~$15 USD) hace una diferencia enorme frente a cualquier software.
+  </div>
+
+  <!-- GRABACIÓN -->
+  <div class="sec">🎙️ Grabación de video y audio</div>
+  <div class="sw-grid">
+
+    <div class="sw-card">
+      <h4>OBS Studio <span class="sw-tag free">Gratis</span> <span class="sw-tag os">Open Source</span></h4>
+      <div class="plat">Windows · Mac · Linux</div>
+      <p>El estándar de la industria para grabación de pantalla y video simultáneo. Podés grabar cámara + pantalla + audio de micrófono en simultáneo con múltiples pistas.</p>
+      <ul class="pros">
+        <li>✅ Gratis, sin marca de agua, sin límite de tiempo</li>
+        <li>✅ Graba en MP4, MKV o MOV directamente</li>
+        <li>✅ Apto para streaming a YouTube en vivo</li>
+        <li>✅ Escenas configurables (plano cámara, plano pantalla, plano combinado)</li>
+        <li>⚠️ Curva de configuración inicial — 30 min de setup</li>
+      </ul>
+    </div>
+
+    <div class="sw-card">
+      <h4>Audacity <span class="sw-tag free">Gratis</span> <span class="sw-tag os">Open Source</span></h4>
+      <div class="plat">Windows · Mac · Linux</div>
+      <p>La herramienta de edición de audio más usada en podcasts del mundo. Podés grabar audio puro y editar con precisión quirúrgica.</p>
+      <ul class="pros">
+        <li>✅ Grabar con micrófono en alta calidad</li>
+        <li>✅ Reducción de ruido con un clic</li>
+        <li>✅ Exportar a MP3, WAV, FLAC, OGG</li>
+        <li>✅ Edición por pista: cortar, pegar, silenciar</li>
+        <li>💡 Usar junto a OBS: OBS graba video, Audacity captura audio limpio</li>
+      </ul>
+    </div>
+
+    <div class="sw-card">
+      <h4>Zoom (plan Free) <span class="sw-tag free">Gratis</span></h4>
+      <div class="plat">Windows · Mac · Linux · iOS · Android</div>
+      <p>Si Guille y Ale no están en el mismo lugar, Zoom graba la videollamada localmente. La versión gratuita graba reuniones de hasta 40 minutos — alcanza para segmentos.</p>
+      <ul class="pros">
+        <li>✅ Graba video + audio de todos los participantes</li>
+        <li>✅ Se guarda en la PC, no en la nube</li>
+        <li>✅ Calidad suficiente para YouTube</li>
+        <li>⚠️ Límite de 40 min en plan free — dividir en bloques</li>
+      </ul>
+    </div>
+
+    <div class="sw-card">
+      <h4>Riverside.fm (plan Free) <span class="sw-tag free">Freemium</span></h4>
+      <div class="plat">Navegador (sin instalar nada)</div>
+      <p>Diseñado específicamente para podcasts remotos. Graba video y audio de cada participante por separado — calidad local, no depende de la conexión.</p>
+      <ul class="pros">
+        <li>✅ Graba a 1080p por participante de forma independiente</li>
+        <li>✅ Sin instalación — solo navegador</li>
+        <li>✅ Plan free: 2 horas de grabación por mes</li>
+        <li>✅ Transcripción automática incluida</li>
+        <li>💡 Ideal si el episodio es remoto (Ale en un lugar, Guille en otro)</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- EDICIÓN VIDEO -->
+  <div class="sec">✂️ Edición de video</div>
+  <div class="sw-grid">
+
+    <div class="sw-card">
+      <h4>DaVinci Resolve (Free) <span class="sw-tag free">Gratis</span> <span class="sw-tag yt">YouTube Ready</span></h4>
+      <div class="plat">Windows · Mac · Linux</div>
+      <p>El editor de video más potente disponible de forma gratuita. Usado en producciones de Hollywood. La versión free no tiene marca de agua y exporta en cualquier formato.</p>
+      <ul class="pros">
+        <li>✅ Edición multicámara, multicapa, efectos de color</li>
+        <li>✅ Subtítulos automáticos (DaVinci 19+)</li>
+        <li>✅ Exportación directa en formato YouTube (H.264/H.265)</li>
+        <li>✅ Sin límite de duración ni marca de agua</li>
+        <li>⚠️ Pesado (requiere GPU decente) — 8GB RAM mínimo recomendado</li>
+      </ul>
+    </div>
+
+    <div class="sw-card">
+      <h4>CapCut Desktop <span class="sw-tag free">Gratis</span> <span class="sw-tag yt">YouTube Ready</span></h4>
+      <div class="plat">Windows · Mac · iOS · Android</div>
+      <p>Más simple que DaVinci, pensado para cortar clips rápidos para redes sociales. Ideal para que Daniel corte los clips de 30-60 segundos para Reels e Instagram.</p>
+      <ul class="pros">
+        <li>✅ Subtítulos automáticos con IA (muy preciso en español)</li>
+        <li>✅ Templates para Reels, TikTok, YouTube Shorts</li>
+        <li>✅ Sin marca de agua en la versión desktop</li>
+        <li>✅ Fácil de aprender — curva de aprendizaje baja</li>
+        <li>💡 Recomendado para los clips de redes (Agustina/Daniel pueden manejarlo sin experiencia previa)</li>
+      </ul>
+    </div>
+
+    <div class="sw-card">
+      <h4>OpenShot <span class="sw-tag free">Gratis</span> <span class="sw-tag os">Open Source</span></h4>
+      <div class="plat">Windows · Mac · Linux</div>
+      <p>Editor de video simple para quienes no tienen experiencia. Ideal para editar el episodio completo sin complicaciones.</p>
+      <ul class="pros">
+        <li>✅ Drag & drop de clips, transiciones, efectos básicos</li>
+        <li>✅ Exporta en MP4 apto para YouTube</li>
+        <li>✅ Sin marca de agua</li>
+        <li>✅ Interfaz muy intuitiva</li>
+        <li>⚠️ Menos potente que DaVinci — para proyectos simples</li>
+      </ul>
+    </div>
+
+    <div class="sw-card">
+      <h4>Kdenlive <span class="sw-tag free">Gratis</span> <span class="sw-tag os">Open Source</span></h4>
+      <div class="plat">Windows · Mac · Linux</div>
+      <p>Editor de video profesional open source. Buen punto medio entre OpenShot (simple) y DaVinci (complejo).</p>
+      <ul class="pros">
+        <li>✅ Edición multipista, efectos, transiciones</li>
+        <li>✅ Proxy editing para computadoras lentas</li>
+        <li>✅ Exportación en múltiples formatos</li>
+        <li>✅ Muy estable en Linux (ideal para el Chromebook con Linux)</li>
+        <li>💡 Puede correr en el Chromebook de desarrollo</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- AUDIO POST-PRO -->
+  <div class="sec">🎚️ Post-producción de audio para podcast</div>
+  <div class="sw-grid">
+
+    <div class="sw-card">
+      <h4>Auphonic (plan Free) <span class="sw-tag free">Freemium</span></h4>
+      <div class="plat">Web (sin instalar)</div>
+      <p>IA que automáticamente normaliza el volumen, reduce ruido, balancea voces y exporta listo para Spotify/YouTube. Plan gratuito: 2 horas de audio por mes.</p>
+      <ul class="pros">
+        <li>✅ Un clic = audio profesional</li>
+        <li>✅ Sube el MP3/WAV → descarga el resultado limpio</li>
+        <li>✅ Publicación directa a Spotify, SoundCloud, YouTube</li>
+        <li>💡 Daniel puede usarlo después de editar en Audacity para el resultado final</li>
+      </ul>
+    </div>
+
+    <div class="sw-card">
+      <h4>Descript (plan Free) <span class="sw-tag free">Freemium</span></h4>
+      <div class="plat">Windows · Mac</div>
+      <p>Edita el audio/video editando el texto de la transcripción. Borrás una palabra del texto y se borra del audio. Revolucionario para podcasts.</p>
+      <ul class="pros">
+        <li>✅ Transcripción automática en español</li>
+        <li>✅ Borrar "ehhh", "mmm", silencios con un clic</li>
+        <li>✅ Plan free: 1 hora de transcripción por mes</li>
+        <li>✅ Exporta video + audio listos para YouTube</li>
+        <li>💡 Si el presupuesto lo permite, la versión paga ($24/mes) cambia todo</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- PUBLICACIÓN -->
+  <div class="sec">📤 Distribución y publicación</div>
+  <div class="sw-grid">
+
+    <div class="sw-card">
+      <h4>Anchor / Spotify for Podcasters <span class="sw-tag free">100% Gratis</span></h4>
+      <div class="plat">Web · iOS · Android</div>
+      <p>Sube el episodio y se distribuye automáticamente a Spotify, Apple Podcasts, Google Podcasts, Amazon Music y más. Sin costo.</p>
+      <ul class="pros">
+        <li>✅ Distribución a todas las plataformas desde un solo lugar</li>
+        <li>✅ Analytics de escuchas</li>
+        <li>✅ RSS feed propio</li>
+        <li>✅ Grabación básica desde el celular si se necesita</li>
+      </ul>
+    </div>
+
+    <div class="sw-card">
+      <h4>YouTube Studio <span class="sw-tag free">100% Gratis</span> <span class="sw-tag yt">YouTube Ready</span></h4>
+      <div class="plat">Web · iOS · Android</div>
+      <p>Subir el video completo del episodio a YouTube. El algoritmo de YouTube favorece episodios de podcast con subtítulos y capítulos marcados.</p>
+      <ul class="pros">
+        <li>✅ Subtítulos automáticos (mejorar manualmente para precisión)</li>
+        <li>✅ Capítulos en descripción (poner timestamps)</li>
+        <li>✅ Analytics detallados de retención</li>
+        <li>💡 Subir también como YouTube Shorts los clips de 60 segundos</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- STACK RECOMENDADO -->
+  <div class="card orange" style="margin-top:8px;">
+    <h3>⭐ Stack recomendado para arrancar (todo gratis)</h3>
+    <ul style="padding-left:18px;margin-top:10px;">
+      <li style="margin-bottom:8px;"><strong>Grabación:</strong> OBS Studio (video) + Audacity (audio limpio en paralelo)</li>
+      <li style="margin-bottom:8px;"><strong>Si es remoto:</strong> Riverside.fm (graba local de cada participante, sin depender del WiFi)</li>
+      <li style="margin-bottom:8px;"><strong>Edición del episodio completo:</strong> DaVinci Resolve (Daniel) o Kdenlive (Chromebook)</li>
+      <li style="margin-bottom:8px;"><strong>Post-audio:</strong> Auphonic (sube el MP3, baja limpio en un clic)</li>
+      <li style="margin-bottom:8px;"><strong>Clips para redes:</strong> CapCut Desktop (subtítulos automáticos, templates de Reels)</li>
+      <li style="margin-bottom:8px;"><strong>Distribución:</strong> Anchor/Spotify for Podcasters + YouTube Studio</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ══ FOOTER ══════════════════════════════════════════════════════ -->
+<footer>
+  TodasMisCosas.com · Podcast Guión & Kit de Producción · Junio 2026<br>
+  Equipo: Ale · Guille · Agustina · Daniel
+</footer>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+  function toggleQ(el) {
+    const detail = el.nextElementSibling;
+    detail.classList.toggle('open');
+  }
+</script>
+</body>
+</html>
