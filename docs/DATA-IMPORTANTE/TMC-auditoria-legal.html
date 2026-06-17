@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TMC — Auditoría Legal & Riesgos · Junio 2026</title>
+  <style>
+    :root {
+      --red: #dc2626; --red-bg: #fef2f2; --red-border: #fecaca;
+      --orange: #ea580c; --orange-bg: #fff7ed; --orange-border: #fed7aa;
+      --yellow: #d97706; --yellow-bg: #fffbeb; --yellow-border: #fde68a;
+      --green: #16a34a; --green-bg: #f0fdf4; --green-border: #bbf7d0;
+      --blue: #1d4ed8; --blue-bg: #eff6ff; --blue-border: #bfdbfe;
+      --navy: #0f172a; --navy2: #1e293b;
+      --text: #1e293b; --muted: #64748b; --border: #e2e8f0; --bg: #f8fafc; --white: #fff;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.7; }
+
+    .header { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #0f172a 100%); padding: 44px 40px 32px; text-align: center; }
+    .header-badge { display: inline-block; background: rgba(220,38,38,.2); border: 1px solid rgba(220,38,38,.4); border-radius: 20px; padding: 4px 16px; font-size: .72rem; color: #fca5a5; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 14px; }
+    .header h1 { font-size: 1.8rem; font-weight: 900; color: #f1f5f9; margin-bottom: 6px; }
+    .header p { color: #94a3b8; font-size: .9rem; margin-bottom: 20px; }
+    .header-chips { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+    .hchip { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.13); border-radius: 20px; padding: 4px 14px; font-size: .72rem; color: #94a3b8; }
+    .hchip strong { color: #f1f5f9; }
+
+    .tab-bar { display: flex; background: var(--navy2); overflow-x: auto; border-bottom: 2px solid #dc2626; }
+    .tab-btn { flex-shrink: 0; padding: 13px 20px; background: none; border: none; color: #94a3b8; font-size: .8rem; font-weight: 600; cursor: pointer; transition: all .2s; white-space: nowrap; }
+    .tab-btn:hover { color: #f1f5f9; }
+    .tab-btn.active { color: #f87171; border-bottom: 3px solid #dc2626; background: rgba(220,38,38,.08); }
+
+    .tab-content { display: none; max-width: 980px; margin: 0 auto; padding: 36px 28px 80px; }
+    .tab-content.active { display: block; }
+
+    .sec { font-size: 1.1rem; font-weight: 800; color: var(--text); margin: 32px 0 12px; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+    .sec:first-child { margin-top: 0; }
+    .ssub { font-size: .8rem; color: var(--muted); margin: -8px 0 18px; }
+
+    /* RISK CARDS */
+    .risk-card { border-radius: var(--radius); overflow: hidden; margin-bottom: 16px; border: 1px solid var(--border); }
+    .risk-header { display: flex; align-items: center; gap: 14px; padding: 16px 20px; cursor: pointer; transition: filter .15s; }
+    .risk-header:hover { filter: brightness(.97); }
+    .risk-badge { font-size: .65rem; font-weight: 800; padding: 3px 10px; border-radius: 8px; text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; }
+    .risk-title { font-weight: 700; font-size: .95rem; flex: 1; }
+    .risk-body { padding: 16px 20px; border-top: 1px solid var(--border); background: var(--white); font-size: .87rem; line-height: 1.8; color: var(--muted); display: none; }
+    .risk-body.open { display: block; }
+    .risk-body ul { padding-left: 18px; }
+    .risk-body ul li { margin-bottom: 6px; }
+    .risk-body ul li strong { color: var(--text); }
+    .risk-body .recom { background: var(--blue-bg); border: 1px solid var(--blue-border); border-radius: 8px; padding: 12px 16px; margin-top: 12px; font-size: .83rem; color: #1e40af; }
+    .risk-body .recom strong { color: var(--blue); }
+
+    .rc-rojo .risk-header { background: var(--red-bg); }
+    .rc-rojo .risk-badge { background: var(--red); color: white; }
+    .rc-rojo .risk-title { color: var(--red); }
+
+    .rc-naranja .risk-header { background: var(--orange-bg); }
+    .rc-naranja .risk-badge { background: var(--orange); color: white; }
+    .rc-naranja .risk-title { color: var(--orange); }
+
+    .rc-amarillo .risk-header { background: var(--yellow-bg); }
+    .rc-amarillo .risk-badge { background: var(--yellow); color: white; }
+    .rc-amarillo .risk-title { color: var(--yellow); }
+
+    .rc-verde .risk-header { background: var(--green-bg); }
+    .rc-verde .risk-badge { background: var(--green); color: white; }
+    .rc-verde .risk-title { color: var(--green); }
+
+    /* VEREDICTO SAS */
+    .veredicto { border-radius: 16px; padding: 28px 32px; margin-bottom: 24px; }
+    .veredicto.riesgo { background: var(--red-bg); border: 2px solid var(--red-border); }
+    .veredicto.moderado { background: var(--orange-bg); border: 2px solid var(--orange-border); }
+    .veredicto.ok { background: var(--green-bg); border: 2px solid var(--green-border); }
+    .veredicto h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 10px; }
+    .veredicto.riesgo h3 { color: var(--red); }
+    .veredicto.moderado h3 { color: var(--orange); }
+    .veredicto.ok h3 { color: var(--green); }
+    .veredicto p { font-size: .88rem; line-height: 1.8; color: var(--text); }
+
+    /* TABLA */
+    .table-wrap { overflow-x: auto; margin-bottom: 24px; }
+    table { width: 100%; border-collapse: collapse; background: white; border-radius: var(--radius); overflow: hidden; font-size: .83rem; }
+    thead { background: var(--navy); color: white; }
+    th { padding: 11px 14px; text-align: left; font-weight: 600; }
+    td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--muted); vertical-align: top; }
+    td:first-child { color: var(--text); font-weight: 500; }
+    tr:last-child td { border-bottom: none; }
+    tr:nth-child(even) td { background: #f8fafc; }
+
+    /* SCORING */
+    .score-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px; }
+    .score-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; text-align: center; }
+    .score-card .num { font-size: 2.2rem; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+    .score-card .lbl { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+    .num.red { color: var(--red); }
+    .num.orange { color: var(--orange); }
+    .num.yellow { color: var(--yellow); }
+    .num.green { color: var(--green); }
+
+    .divider { height: 1px; background: var(--border); margin: 28px 0; }
+
+    .alert { border-radius: 10px; padding: 14px 18px; margin-bottom: 18px; font-size: .85rem; display: flex; gap: 12px; }
+    .alert-icon { font-size: 1.1rem; flex-shrink: 0; }
+    .alert.red { background: var(--red-bg); border: 1px solid var(--red-border); color: #7f1d1d; }
+    .alert.orange { background: var(--orange-bg); border: 1px solid var(--orange-border); color: #7c2d12; }
+    .alert.green { background: var(--green-bg); border: 1px solid var(--green-border); color: #14532d; }
+    .alert.blue { background: var(--blue-bg); border: 1px solid var(--blue-border); color: #1e3a8a; }
+
+    .pill { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: .68rem; font-weight: 700; }
+    .pill.ok { background: var(--green-bg); color: var(--green); }
+    .pill.warn { background: var(--yellow-bg); color: var(--yellow); }
+    .pill.danger { background: var(--red-bg); color: var(--red); }
+
+    .checklist { list-style: none; padding: 0; }
+    .checklist li { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: .87rem; }
+    .checklist li:last-child { border-bottom: none; }
+    .checklist .ci { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+    .timeline-sas { margin: 0; padding: 0; list-style: none; }
+    .tl-item { display: flex; gap: 16px; margin-bottom: 20px; }
+    .tl-dot { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: .8rem; flex-shrink: 0; color: white; }
+    .tl-dot.r { background: var(--red); }
+    .tl-dot.o { background: var(--orange); }
+    .tl-dot.g { background: var(--green); }
+    .tl-content { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; flex: 1; }
+    .tl-content h4 { font-size: .9rem; font-weight: 700; margin-bottom: 4px; }
+    .tl-content p { font-size: .82rem; color: var(--muted); }
+
+    footer { text-align: center; padding: 28px; color: var(--muted); font-size: .73rem; border-top: 1px solid var(--border); margin-top: 40px; }
+
+    @media (max-width: 640px) {
+      .tab-content { padding: 20px 14px 60px; }
+      .score-grid { grid-template-columns: 1fr 1fr; }
+      .header h1 { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">⚖️ Auditoría Legal · Confidencial</div>
+  <h1>TodasMisCosas.com — Revisión Legal Completa</h1>
+  <p>Análisis de riesgos legales, huecos normativos y recomendaciones · Basado en revisión exhaustiva del codebase</p>
+  <div class="header-chips">
+    <div class="hchip"><strong>5</strong> riesgos críticos</div>
+    <div class="hchip"><strong>7</strong> riesgos moderados</div>
+    <div class="hchip"><strong>6</strong> puntos ok</div>
+    <div class="hchip"><strong>Ley 24.240</strong> consumidor</div>
+    <div class="hchip"><strong>Ley 25.326</strong> datos personales</div>
+    <div class="hchip">Junio 2026</div>
+  </div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="showTab('resumen')">📊 Resumen Ejecutivo</button>
+  <button class="tab-btn" onclick="showTab('criticos')">🔴 Riesgos Críticos</button>
+  <button class="tab-btn" onclick="showTab('moderados')">🟠 Riesgos Moderados</button>
+  <button class="tab-btn" onclick="showTab('ok')">✅ Lo que está bien</button>
+  <button class="tab-btn" onclick="showTab('sas')">🏢 ¿Salir sin SAS?</button>
+  <button class="tab-btn" onclick="showTab('roadmap')">🗓️ Plan de Acción</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- TAB 1: RESUMEN EJECUTIVO                           -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="tab-resumen" class="tab-content active">
+
+  <div class="sec">📊 Diagnóstico general</div>
+  <p class="ssub">Revisión completa del codebase: rutas, controladores, DB schema, emails, legales y flujos de dinero.</p>
+
+  <div class="score-grid">
+    <div class="score-card">
+      <div class="num red">5</div>
+      <div class="lbl">Críticos — parar antes de lanzar</div>
+    </div>
+    <div class="score-card">
+      <div class="num orange">7</div>
+      <div class="lbl">Moderados — resolver en 30 días</div>
+    </div>
+    <div class="score-card">
+      <div class="num yellow">4</div>
+      <div class="lbl">Menores — mejoras recomendadas</div>
+    </div>
+    <div class="score-card">
+      <div class="num green">6</div>
+      <div class="lbl">Ok — bien implementados</div>
+    </div>
+  </div>
+
+  <div class="alert red">
+    <span class="alert-icon">🚨</span>
+    <div><strong>Veredicto general:</strong> TMC tiene una base legal razonablemente sólida para un MVP. Los términos de uso existen, el flujo de escrow está documentado, y hay disclaimers de responsabilidad. Pero hay 5 huecos críticos que pueden generar responsabilidad personal sobre Ale y Guille mientras no exista la SAS. Algunos de estos huecos son accionables (alguien puede demandar) en el corto plazo.</div>
+  </div>
+
+  <div class="sec">📋 Mapa de riesgos</div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>#</th><th>Área de riesgo</th><th>Nivel</th><th>Ley / Marco</th><th>Acción requerida</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>C1</td><td>Sin persona jurídica — responsabilidad personal ilimitada</td><td><span class="pill danger">CRÍTICO</span></td><td>Código Civil</td><td>Constituir SAS antes de operar con dinero real</td></tr>
+        <tr><td>C2</td><td>Escrow sin respaldo regulatorio (puede ser "actividad financiera")</td><td><span class="pill danger">CRÍTICO</span></td><td>BCRA / Ley 21.526</td><td>Opinión letrada sobre retención de fondos</td></tr>
+        <tr><td>C3</td><td>Seguros sin aseguradora real identificada ni contrato</td><td><span class="pill danger">CRÍTICO</span></td><td>Ley 17.418 / SSN</td><td>Sacar los seguros o contratar aseguradora real</td></tr>
+        <tr><td>C4</td><td>Sin política de privacidad ni derechos ARCO explícitos</td><td><span class="pill danger">CRÍTICO</span></td><td>Ley 25.326</td><td>Redactar y publicar política completa</td></tr>
+        <tr><td>C5</td><td>Sin facturación ni inscripción AFIP para cobrar comisión</td><td><span class="pill danger">CRÍTICO</span></td><td>AFIP / RG 3419</td><td>Monotributo o SAS + alta como intermediario digital</td></tr>
+        <tr><td>M1</td><td>Aceptación de T&C sin checkbox/timestamp registrado en DB</td><td><span class="pill warn">MODERADO</span></td><td>Ley 24.240</td><td>Guardar aceptación en tabla propia</td></tr>
+        <tr><td>M2</td><td>Sin mecanismo de derecho al olvido / eliminación de cuenta</td><td><span class="pill warn">MODERADO</span></td><td>Ley 25.326 art.6</td><td>Endpoint DELETE /usuarios/me + proceso de baja</td></tr>
+        <tr><td>M3</td><td>Auto-liberación de escrow en 48h sin confirmación real</td><td><span class="pill warn">MODERADO</span></td><td>CCyC art. 1356</td><td>Documentar el mecanismo en T&C explícitamente</td></tr>
+        <tr><td>M4</td><td>Sin verificación de habilitaciones municipales del espacio</td><td><span class="pill warn">MODERADO</span></td><td>Código de Edificación CABA</td><td>Declaración jurada del oferente en alta de espacio</td></tr>
+        <tr><td>M5</td><td>CBU/alias en DB sin encriptación</td><td><span class="pill warn">MODERADO</span></td><td>Ley 25.326 / PCI</td><td>Encriptar campos financieros en DB</td></tr>
+        <tr><td>M6</td><td>Sin verificación de identidad real del oferente (solo OTP)</td><td><span class="pill warn">MODERADO</span></td><td>Res. BCRA / prevención fraude</td><td>Validación DNI antes de recibir pagos</td></tr>
+        <tr><td>M7</td><td>Sin proceso formal de disputa entre partes</td><td><span class="pill warn">MODERADO</span></td><td>Ley 24.240 art.10 bis</td><td>Definir proceso de mediación en T&C</td></tr>
+        <tr><td>Me1</td><td>Sin verificación de mayoría de edad</td><td><span class="pill ok">MENOR</span></td><td>CCyC art. 25</td><td>Checkbox en registro: "Soy mayor de 18 años"</td></tr>
+        <tr><td>Me2</td><td>Sin cláusula de jurisdicción explícita en T&C visibles</td><td><span class="pill ok">MENOR</span></td><td>CPCCN</td><td>Agregar "Jurisdicción: Tribunales ordinarios CABA"</td></tr>
+        <tr><td>Me3</td><td>Mailing sin baja garantizada en 48h (Ley anti-spam)</td><td><span class="pill ok">MENOR</span></td><td>Ley 26.032</td><td>Implementar unsubscribe funcional</td></tr>
+        <tr><td>Me4</td><td>Sin retención de mensajes de chat (evidencia en disputas)</td><td><span class="pill ok">MENOR</span></td><td>CCyC / probatorio</td><td>Retención de mensajes 12 meses mínimo</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- TAB 2: RIESGOS CRÍTICOS                           -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="tab-criticos" class="tab-content">
+
+  <div class="sec">🔴 5 Riesgos Críticos — requieren acción antes de operar con dinero real</div>
+  <p class="ssub">Hacé clic en cada riesgo para ver el detalle y la recomendación.</p>
+
+  <!-- C1 -->
+  <div class="risk-card rc-rojo">
+    <div class="risk-header" onclick="toggleRisk(this)">
+      <span class="risk-badge">C1 · CRÍTICO</span>
+      <span class="risk-title">Sin persona jurídica — Ale y Guille tienen responsabilidad personal ilimitada</span>
+      <span>▼</span>
+    </div>
+    <div class="risk-body">
+      <p><strong>¿Qué significa esto en la práctica?</strong></p>
+      <ul>
+        <li>TMC opera como <strong>personas físicas</strong>, no como empresa. Si alguien demanda a "TodasMisCosas", en realidad está demandando a Ale y a Guille personalmente.</li>
+        <li>Si hay una sentencia en contra (por ejemplo: un usuario pierde bienes guardados y reclama daños), los bienes personales de ambos están expuestos: autos, cuentas bancarias, inmuebles.</li>
+        <li>No hay separación patrimonial entre la empresa y sus dueños mientras no exista la SAS.</li>
+        <li>Los contratos firmados con proveedores (Supabase, MercadoPago, Resend) también están a nombre de personas físicas.</li>
+      </ul>
+      <div class="recom">
+        <strong>Recomendación:</strong> Constituir la SAS antes de la primera transacción real con dinero de usuarios. El proceso en PBA (DPPJ) puede tomar 24-72 horas de forma digital. Ver el borrador de instrumento constitutivo ya preparado en los docs. El riesgo de operar sin SAS durante el MVP es aceptable solo si las primeras transacciones son con conocidos (beta cerrada) y los montos son bajos.
+      </div>
+    </div>
+  </div>
+
+  <!-- C2 -->
+  <div class="risk-card rc-rojo">
+    <div class="risk-header" onclick="toggleRisk(this)">
+      <span class="risk-badge">C2 · CRÍTICO</span>
+      <span class="risk-title">El escrow puede ser interpretado como "actividad financiera" no autorizada</span>
+      <span>▼</span>
+    </div>
+    <div class="risk-body">
+      <p><strong>¿Qué hace TMC con el dinero?</strong></p>
+      <ul>
+        <li>El flujo es: cliente paga → dinero va a MercadoPago → TMC retiene 100% → libera 85% al proveedor después.</li>
+        <li>Técnicamente, TMC no "tiene" el dinero (está en la cuenta de MP), pero sí <strong>controla cuándo se libera</strong>.</li>
+        <li>El BCRA regula quién puede "retener fondos de terceros" o actuar como intermediario financiero (Ley 21.526).</li>
+        <li><strong>El riesgo real:</strong> MercadoPago acepta este modelo para marketplaces y está dentro de sus términos. El problema legal surge si TMC retiene fondos en una cuenta bancaria propia en lugar de usar el split de MP.</li>
+      </ul>
+      <p style="margin-top:12px;"><strong>¿Cómo está implementado actualmente?</strong></p>
+      <ul>
+        <li>El dinero fluye a través de MercadoPago (cuenta propia de MP de TMC).</li>
+        <li>La "retención" es lógica en la plataforma (campo <code>escrow_liberado = 0</code>) y no una retención bancaria física.</li>
+        <li>Esto <strong>reduce significativamente el riesgo</strong> pero no lo elimina.</li>
+      </ul>
+      <div class="recom">
+        <strong>Recomendación:</strong> Obtener opinión legal de un abogado especialista en fintech/pagos digitales sobre el modelo de escrow via MP. En Argentina, Mercado Pago tiene un programa de marketplaces que permite split de pagos — evaluar si conviene migrar a ese modelo. Documentar en T&C que "los fondos se retienen en la plataforma de MercadoPago, no en cuentas de TMC".
+      </div>
+    </div>
+  </div>
+
+  <!-- C3 -->
+  <div class="risk-card rc-rojo">
+    <div class="risk-header" onclick="toggleRisk(this)">
+      <span class="risk-badge">C3 · CRÍTICO</span>
+      <span class="risk-title">Los seguros ofrecidos no tienen aseguradora real identificada ni contrato vigente</span>
+      <span>▼</span>
+    </div>
+    <div class="risk-body">
+      <p><strong>¿Qué dice el código?</strong></p>
+      <ul>
+        <li>El archivo <code>legal.json</code> describe 5 coberturas de seguro con precios (desde $150/mes hasta $980/mes), marcas como "supervisadas por SSN".</li>
+        <li><strong>No existe en el codebase ningún contrato, API, ni integración con ninguna aseguradora real.</strong></li>
+        <li>Los seguros se describen como un "servicio adicional" pero no hay evidencia de que estén operativos.</li>
+        <li><strong>Riesgo gravísimo:</strong> Si un usuario compra un seguro, paga, y luego sufre un siniestro → TMC no puede pagar la cobertura → demanda por fraude o estafa.</li>
+      </ul>
+      <ul>
+        <li>La Ley 17.418 (de seguros) y la SSN regulan estrictamente quién puede ofrecer seguros en Argentina.</li>
+        <li>Comercializar un seguro sin autorización de la SSN es una infracción administrativa con multas severas.</li>
+      </ul>
+      <div class="recom">
+        <strong>Recomendación inmediata:</strong> <span style="color:var(--red);font-weight:700;">Eliminar toda mención de seguros del sistema</span> hasta tener un contrato firmado con una aseguradora habilitada por SSN. Alternativa: integrar con un broker de seguros ya autorizado (ej. 123Seguro, Sancor Seguros API, Zurich). La mención actual de seguros sin respaldo real es el punto de mayor riesgo legal de toda la plataforma.
+      </div>
+    </div>
+  </div>
+
+  <!-- C4 -->
+  <div class="risk-card rc-rojo">
+    <div class="risk-header" onclick="toggleRisk(this)">
+      <span class="risk-badge">C4 · CRÍTICO</span>
+      <span class="risk-title">Sin política de privacidad completa ni derechos ARCO explícitos (Ley 25.326)</span>
+      <span>▼</span>
+    </div>
+    <div class="risk-body">
+      <p><strong>¿Qué datos se recopilan sin política explícita?</strong></p>
+      <ul>
+        <li>Nombre, email, teléfono, DNI, país, dirección, lat/lng, CBU/alias.</li>
+        <li>Historial completo de auditoría de perfil con IP del usuario.</li>
+        <li>Mensajes del chat.</li>
+        <li>Datos de ubicación del espacio (lat/lng).</li>
+      </ul>
+      <p style="margin-top:10px;"><strong>¿Qué exige la Ley 25.326?</strong></p>
+      <ul>
+        <li><strong>Acceso (A):</strong> El usuario puede pedir ver todos sus datos en cualquier momento.</li>
+        <li><strong>Rectificación (R):</strong> Puede corregir datos incorrectos.</li>
+        <li><strong>Cancelación/Supresión (C):</strong> Puede pedir que se eliminen sus datos (derecho al olvido).</li>
+        <li><strong>Oposición (O):</strong> Puede oponerse al uso de sus datos para marketing.</li>
+        <li>La política debe estar en el sitio antes de recopilar cualquier dato.</li>
+        <li>La DNPDPA (ex-DNPD) puede aplicar multas de hasta $10M ARS por incumplimiento.</li>
+      </ul>
+      <div class="recom">
+        <strong>Recomendación:</strong> Redactar Política de Privacidad completa que incluya: qué datos se recopilan, para qué, con qué terceros se comparten (Supabase, MercadoPago, Resend, Twilio), cómo ejercer derechos ARCO (email dedicado), y tiempo de retención. Publicar en <code>/privacidad</code> y linkear desde el footer y el registro. Es un documento que puede redactarse en 1 día con una plantilla y revisión de abogado.
+      </div>
+    </div>
+  </div>
+
+  <!-- C5 -->
+  <div class="risk-card rc-rojo">
+    <div class="risk-header" onclick="toggleRisk(this)">
+      <span class="risk-badge">C5 · CRÍTICO</span>
+      <span class="risk-title">Sin inscripción fiscal para cobrar la comisión del 15% (AFIP)</span>
+      <span>▼</span>
+    </div>
+    <div class="risk-body">
+      <p><strong>¿Qué pasa actualmente?</strong></p>
+      <ul>
+        <li>TMC cobra el 15% de cada transacción como comisión.</li>
+        <li>Ese ingreso <strong>ya es renta gravada</strong> (el propio legal.json lo reconoce para los oferentes, pero aplica igual a TMC).</li>
+        <li>Sin CUIT de empresa, sin inscripción en AFIP, sin factura emitida → TMC está cobrando sin declarar.</li>
+        <li>Si la AFIP detecta ingresos en la cuenta de MercadoPago sin declaración, puede intimar retroactivamente con intereses y multas.</li>
+        <li>MercadoPago reporta a AFIP todos los movimientos por encima de determinados umbrales (RG 4622/2019).</li>
+      </ul>
+      <div class="recom">
+        <strong>Recomendación:</strong> Inscribir a Ale (o la SAS una vez constituida) en AFIP antes de la primera comisión real cobrada. En fase temprana: Monotributo Categoría E o F cubre hasta ~$8M ARS/año de ingresos. La SAS tributa en ganancias con lo que efectivamente gane. No declarar ingresos de plataforma digital es uno de los primeros focos de AFIP desde 2021.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- TAB 3: RIESGOS MODERADOS                          -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="tab-moderados" class="tab-content">
+
+  <div class="sec">🟠 7 Riesgos Moderados — resolver en los primeros 30 días</div>
+  <p class="ssub">No impiden el lanzamiento pero generan exposición legal creciente con el tiempo.</p>
+
+  <!-- M1 -->
+  <div class="risk-card rc-naranja">
+    <div class="risk-header" onclick="toggleRisk(this)">
+      <span class="risk-badge">M1 · MODERADO</span>
+      <span class="risk-title">Aceptación de Términos y Condiciones sin registro formal en la base de datos</span>
+      <span>▼</span>
+    </div>
+    <div class="risk-body">
+      <ul>
+        <li>La app envía un email de bienvenida con resumen de T&C, pero <strong>no guarda en DB que el usuario aceptó, cuándo, y qué versión aceptó</strong>.</li>
+        <li>En una disputa legal, la defensa de TMC requiere probar que el usuario aceptó las condiciones antes de operar.</li>
+        <li>El email de bienvenida puede ser suficiente indicio, pero no es una aceptación formal.</li>
+      </ul>
+      <div class="recom">
+        <strong>Recomendación:</strong> Agregar en la tabla <code>usuarios</code> los campos <code>tyc_aceptado_at DATETIME</code> y <code>tyc_version VARCHAR</code>. Popularlo con timestamp al registrarse. Optionalmente: agregar checkbox en el registro "Acepto los Términos y Condiciones" antes del botón de crear cuenta.
+      </div>
+    </div>
+  </div>
+
+  <!-- M2 -->
+  <div class="risk-card rc-naranja">
+    <div class="risk-header" onclick="toggleRisk(this)">
+      <span class="risk-badge">M2 · MODERADO</span>
+      <span class="risk-title">Sin mecanismo de eliminación de cuenta ni derecho al olvido</span>
+      <span>▼</span>
+    </div>
+    <div class="risk-body">
+      <ul>
+        <li>La Ley 25.326 (art. 6 y 16) garantiza al usuario el derecho de solicitar la cancelación de sus datos.</li>
+        <li>No hay endpoint <code>DELETE /api/usuarios/me</code> ni proceso documentado para dar de baja una cuenta.</li>
+        <li>La tabla <code>auditoria_perfil</code> retiene historial completo de cambios indefinidamente.</li>
+        <li>Si un usuario reclama la eliminación de sus datos y TMC no puede responder en 5 días hábiles, puede presentar queja ante la DNPDPA.</li>
+      </ul>
+      <div class="recom">
+        <strong>Recomendación:</strong> Implementar un proceso de baja: (1) usuario solicita eliminación, (2) TMC tiene 5 días para confirmar, (3) datos personales se anonymizan (nombre → "Usuario eliminado", email → hash, tel/DNI/CBU se borran), (4) se mantiene el historial de transacciones por obligación contable (10 años) pero sin PII. Agregar email dedicado: bajas@todasmiscosas.com o formulario en /privacidad.
+      </div>
+    </div>
+  </div>
+
+  <!-- M3 -->
+  <div class="risk-card rc-naranja">
+    <div class="risk-header" onclick="toggleRisk(this)">
+      <span class="risk-badge">M3 · MODERADO</span>
+      <span class="risk-title">Liberación automática de escrow a las 48 horas sin confirmación real de acceso</span>
+      <span>▼</span>
+    </div>
+    <div class="risk-body">
+      <ul>
+        <li>El cron job libera el escrow automáticamente si el demandante no confirma acceso en 48 horas desde la fecha de inicio.</li>
+        <li><strong>Escenario de riesgo:</strong> El proveedor nunca dio acceso, el cliente no estaba al tanto de que tenía 48 horas para reclamar, y el dinero se libera al proveedor igualmente.</li>
+        <li>El cliente podría demandar a TMC por haber liberado fondos a quien no cumplió el servicio.</li>
+        <li>Este mecanismo es una práctica razonable en marketplaces, pero <strong>debe estar explícitamente documentado en los T&C</strong> con la ventana de tiempo.</li>
+      </ul>
+      <div class="recom">
+        <strong>Recomendación:</strong> Agregar en T&C: "Si el cliente no confirma el acceso dentro de las 48 horas de la fecha de inicio, el sistema liberará automáticamente los fondos al proveedor, entendiéndose que el acceso fue concedido." Además: enviar email recordatorio al cliente 24 horas antes de la auto-liberación.
+      </div>
+    </div>
+  </div>
+
+  <!-- M4 -->
+  <div class="risk-card rc-naranja">
+    <div class="risk-header" onclick="toggleRisk(this)">
+      <span class="risk-badge">M4 · MODERADO</span>
+      <span class="risk-title">Sin verificación de habilitaciones municipales del espacio</span>
+      <span>▼</span>
+    </div>
+    <div class="risk-body">
+      <ul>
+        <li>Los oferentes declaran que tienen habilitaciones, pero TMC no verifica nada.</li>
+        <li>Un galpón en zona residencial, una habitación sin condiciones edilicias mínimas, o un espacio sin permiso de uso comercial puede generar demandas si algo sale mal.</li>
+        <li>TMC actualmente solo pide que el oferente "declare que el espacio cumple la normativa local" — una declaración que nadie lee.</li>
+        <li>El Código de Edificación CABA y las normas de uso de suelo municipales son la responsabilidad del oferente, pero TMC puede ser co-responsable si habilitó el espacio a sabiendas.</li>
+      </ul>
+      <div class="recom">
+        <strong>Recomendación:</strong> Agregar en el formulario de alta de espacio una <strong>declaración jurada formal</strong> con checkbox: "Declaro bajo juramento que este espacio cumple con las normativas municipales y de uso de suelo vigentes, y que tengo las habilitaciones necesarias para ofrecer este servicio." Registrar en DB el timestamp de esa declaración.
+      </div>
+    </div>
+  </div>
+
+  <!-- M5 -->
+  <div class="risk-card rc-naranja">
+    <div class="risk-header" onclick="toggleRisk(this)">
+      <span class="risk-badge">M5 · MODERADO</span>
+      <span class="risk-title">CBU/alias y DNI guardados en base de datos sin encriptación</span>
+      <span>▼</span>
+    </div>
+    <div class="risk-body">
+      <ul>
+        <li>Los campos <code>cbu_alias</code>, <code>dni</code>, y <code>direccion</code> se guardan en MySQL en texto plano.</li>
+        <li>La tabla <code>auditoria_perfil</code> también guarda los valores anteriores en texto plano (incluyendo CBU y DNI anteriores).</li>
+        <li>Si hay un breach de la base de datos, toda esa información es inmediatamente usable para fraude financiero.</li>
+        <li>La Ley 25.326 exige medidas de seguridad "adecuadas" para datos sensibles — sin definir explícitamente encriptación, pero es el estándar de la industria.</li>
+      </ul>
+      <div class="recom">
+        <strong>Recomendación:</strong> Encriptar los campos <code>cbu_alias</code>, <code>dni</code> con AES-256 a nivel aplicación (no solo en tránsito). La key de encriptación debe vivir en variables de entorno, nunca en el código. También encriptar los <code>valor_anterior</code> y <code>valor_nuevo</code> en <code>auditoria_perfil</code> cuando el campo es sensible.
+      </div>
+    </div>
+  </div>
+
+  <!-- M6 -->
+  <div class="risk-card rc-naranja">
+    <div class="risk-header" onclick="toggleRisk(this)">
+      <span class="risk-badge">M6 · MODERADO</span>
+      <span class="risk-title">Sin verificación real de identidad del oferente antes de recibir pagos</span>
+      <span>▼</span>
+    </div>
+    <div class="risk-body">
+      <ul>
+        <li>El oferente puede publicar un espacio y recibir dinero con solo un email + OTP de teléfono. El DNI se guarda pero no se verifica contra ningún registro.</li>
+        <li><strong>Riesgo de estafa:</strong> un actor malicioso publica un espacio falso, cobra el escrow y desaparece. TMC libera los fondos a las 48 horas.</li>
+        <li>Sin identidad verificada, TMC no puede cumplir con regulaciones anti-lavado si los montos escalan.</li>
+      </ul>
+      <div class="recom">
+        <strong>Recomendación corto plazo:</strong> Validar que el CBU/alias del oferente coincide con el CUIT/CUIL registrado (se puede hacer via API de AFIP o validación manual). <strong>Mediano plazo:</strong> Integrar validación de identidad (ej. Renaper API, Nosis, o subir foto del DNI + selfie para revisión manual de admin antes de activar el espacio). Implementar un período de retención mayor en la primera reserva de un oferente nuevo.
+      </div>
+    </div>
+  </div>
+
+  <!-- M7 -->
+  <div class="risk-card rc-naranja">
+    <div class="risk-header" onclick="toggleRisk(this)">
+      <span class="risk-badge">M7 · MODERADO</span>
+      <span class="risk-title">Sin proceso formal de resolución de disputas entre las partes</span>
+      <span>▼</span>
+    </div>
+    <div class="risk-body">
+      <ul>
+        <li>Los T&C dicen que TMC "actúa como mediador" pero no hay ningún proceso definido: qué pasa, quién decide, en qué plazo, con qué criterios.</li>
+        <li>Si el cliente dice que el espacio no era lo que se publicaba y el proveedor dice que sí, TMC no tiene un protocolo de arbitraje.</li>
+        <li>La Ley 24.240 (Defensa del Consumidor) exige a las plataformas digitales un mecanismo accesible de resolución de conflictos.</li>
+        <li>SCCA (Sistema de Conciliación Previa Argentina) puede ser invocado por cualquier consumidor.</li>
+      </ul>
+      <div class="recom">
+        <strong>Recomendación:</strong> Agregar en T&C una sección "Resolución de Disputas" que defina: (1) plazo de reporte de incidente: 24 horas, (2) documentación requerida: fotos del estado del espacio al ingreso/egreso, (3) TMC puede retener el escrow hasta 5 días hábiles mientras investiga, (4) la decisión de TMC es definitiva para montos menores a X monto, (5) para montos mayores: mediación privada o SCCA. Crear email: disputas@todasmiscosas.com.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- TAB 4: LO QUE ESTÁ BIEN                           -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="tab-ok" class="tab-content">
+
+  <div class="sec">✅ Lo que está bien implementado</div>
+  <p class="ssub">Puntos que tienen cobertura legal razonable y están bien documentados o implementados en el código.</p>
+
+  <div class="risk-card rc-verde">
+    <div class="risk-header" onclick="toggleRisk(this)">
+      <span class="risk-badge">OK</span>
+      <span class="risk-title">Disclaimer de intermediario: TMC NO es depositario ni parte del contrato</span>
+      <span>▼</span>
+    </div>
+    <div class="risk-body">
+      <p>El <code>legal.json</code> establece con claridad que TMC actúa como intermediario y no asume responsabilidad por pérdidas, daños o ilegalidades. Esta distinción es clave para limitar la exposición de la plataforma. Está documentado en múltiples puntos del documento legal y en los emails de cada operación.</p>
+    </div>
+  </div>
+
+  <div class="risk-card rc-verde">
+    <div class="risk-header" onclick="toggleRisk(this)">
+      <span class="risk-badge">OK</span>
+      <span class="risk-title">Lista de bienes prohibidos explícita (8 categorías)</span>
+      <span>▼</span>
+    </div>
+    <div class="risk-body">
+      <p>Las prohibiciones cubren: armas, explosivos, drogas, materiales peligrosos, dinero en efectivo no declarado, animales vivos, bienes robados, y material bélico. Estas categorías están correctamente incluidas y el documento establece el derecho de TMC a denunciar ante autoridades competentes. Esto es una protección importante frente a usos ilegales de la plataforma.</p>
+    </div>
+  </div>
+
+  <div class="risk-card rc-verde">
+    <div class="risk-header" onclick="toggleRisk(this)">
+      <span class="risk-badge">OK</span>
+      <span class="risk-title">Auditoría completa de cambios de perfil con IP y timestamp</span>
+      <span>▼</span>
+    </div>
+    <div class="risk-body">
+      <p>La tabla <code>auditoria_perfil</code> registra cada cambio de nombre, teléfono, DNI, CBU, rol y dirección con el valor anterior, valor nuevo, IP del solicitante y timestamp. Esto es valiosa evidencia en caso de disputas o fraudes de identidad. Los cambios sensibles (teléfono, rol) requieren verificación OTP adicional.</p>
+    </div>
+  </div>
+
+  <div class="risk-card rc-verde">
+    <div class="risk-header" onclick="toggleRisk(this)">
+      <span class="risk-badge">OK</span>
+      <span class="risk-title">Verificación HMAC-SHA256 del webhook de MercadoPago</span>
+      <span>▼</span>
+    </div>
+    <div class="risk-body">
+      <p>El webhook de pagos verifica la firma criptográfica de MercadoPago antes de procesar cualquier cambio de estado. Esto protege contra ataques donde un actor malicioso intenta simular un pago aprobado. Es la implementación correcta según la documentación oficial de MP.</p>
+    </div>
+  </div>
+
+  <div class="risk-card rc-verde">
+    <div class="risk-header" onclick="toggleRisk(this)">
+      <span class="risk-badge">OK</span>
+      <span class="risk-title">Ledger contable con doble entrada para todos los movimientos de dinero</span>
+      <span>▼</span>
+    </div>
+    <div class="risk-body">
+      <p>Cada transacción genera entradas en <code>movimientos_ledger</code> con débito y crédito (contabilidad de doble entrada). Esto permite reconstruir el estado de cada reserva, auditar la comisión del 15%, y responder a cualquier consulta de AFIP sobre los ingresos de la plataforma. Es una implementación contable sólida para una startup.</p>
+    </div>
+  </div>
+
+  <div class="risk-card rc-verde">
+    <div class="risk-header" onclick="toggleRisk(this)">
+      <span class="risk-badge">OK</span>
+      <span class="risk-title">Email de aceptación de operación enviado a ambas partes en cada reserva</span>
+      <span>▼</span>
+    </div>
+    <div class="risk-body">
+      <p>El sistema envía <code>sendAceptacionOperacion</code> a cliente y proveedor con el detalle de cada reserva. Esto genera un registro documentado (en el email del usuario) de los términos acordados: fechas, precio, espacio, PIN de acceso. Es evidencia válida en caso de disputa sobre las condiciones pactadas.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- TAB 5: ¿SALIR SIN SAS?                            -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="tab-sas" class="tab-content">
+
+  <div class="sec">🏢 La pregunta: ¿es muy riesgoso salir al mercado sin SAS?</div>
+  <p class="ssub">Análisis honesto con contexto argentino, no respuesta genérica de abogado.</p>
+
+  <div class="veredicto moderado">
+    <h3>⚠️ Veredicto: Moderadamente riesgoso. Depende de cómo lancen.</h3>
+    <p>No es un "no hagas nada hasta tener la SAS". Pero tampoco es "total, nada va a pasar". El riesgo es real y concreto, y hay un escenario específico donde se vuelve grave. La buena noticia: la SAS tarda 24-72 horas y cuesta menos de $150 USD. No tiene sentido no tenerla.</p>
+  </div>
+
+  <div class="sec">📊 Los 3 escenarios posibles</div>
+
+  <ul class="timeline-sas">
+    <li class="tl-item">
+      <div class="tl-dot r">1</div>
+      <div class="tl-content">
+        <h4>Escenario ROJO — El que hay que evitar</h4>
+        <p>Lanzan sin SAS, escalan rápido, alguien pierde bienes por $500k ARS o más, demanda a "TodasMisCosas". El abogado del demandante busca a los responsables → encuentra a Ale y Guille como personas físicas → embarga cuentas personales. Sin SAS, <strong>no hay escudo patrimonial</strong>. Este escenario es posible desde el primer día de operación real.</p>
+      </div>
+    </li>
+    <li class="tl-item">
+      <div class="tl-dot o">2</div>
+      <div class="tl-content">
+        <h4>Escenario NARANJA — El más probable sin SAS</h4>
+        <p>Lanzan sin SAS con una beta cerrada (20-50 usuarios conocidos, montos bajos). Nadie demanda. AFIP no los ve. Pero en 60-90 días escalan, el dinero empieza a fluir, y están operando en un gris fiscal y legal. En algún momento una plataforma como MercadoPago les pide CUIT de empresa para continuar, o un socio/proveedor pide factura → todo para. Sería un <strong>freno operativo</strong>, no un desastre, pero evitable.</p>
+      </div>
+    </li>
+    <li class="tl-item">
+      <div class="tl-dot g">3</div>
+      <div class="tl-content">
+        <h4>Escenario VERDE — Cómo debería ser</h4>
+        <p>Constituyen la SAS esta semana (ya tienen el borrador). Ale se inscribe en Monotributo o la SAS en AFIP. Sacan los seguros del sistema hasta tener una aseguradora real. Publican la política de privacidad (1 día de trabajo). Lanzan. Todo lo demás puede ir mejorando iterativamente sin frenar el negocio.</p>
+      </div>
+    </li>
+  </ul>
+
+  <div class="sec">⚖️ ¿Por qué el riesgo es real y no solo "precaución de abogado"?</div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Situación</th><th>Sin SAS</th><th>Con SAS</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Usuario pierde $1M ARS en bienes y demanda</td>
+          <td style="color:var(--red);">Patrimonio personal de Ale y Guille expuesto</td>
+          <td style="color:var(--green);">La SAS responde con su patrimonio propio</td>
+        </tr>
+        <tr>
+          <td>AFIP detecta ingresos por comisiones en MP</td>
+          <td style="color:var(--red);">CUIT personal de Ale, multa + intereses retroactivos</td>
+          <td style="color:var(--green);">CUIT de la SAS, régimen empresarial más claro</td>
+        </tr>
+        <tr>
+          <td>Inversores interesados piden documentación</td>
+          <td style="color:var(--red);">No hay empresa que capitalizar ni equity que dar</td>
+          <td style="color:var(--green);">Acciones de la SAS, estructura lista para inversión</td>
+        </tr>
+        <tr>
+          <td>MercadoPago pide CUIT empresa para escalar límites</td>
+          <td style="color:var(--red);">Uso del CUIT personal con límites de persona física</td>
+          <td style="color:var(--green);">CUIT propio de la SAS, límites de empresa</td>
+        </tr>
+        <tr>
+          <td>Contrato con Supabase / proveedor de infraestructura</td>
+          <td style="color:var(--red);">A nombre personal de Ale o Guille</td>
+          <td style="color:var(--green);">A nombre de TodasMisCosas S.A.S.</td>
+        </tr>
+        <tr>
+          <td>Comunicado de prensa / nota en Infobae</td>
+          <td style="color:var(--red);">"Alejandro Laporte, persona física" — poca credibilidad</td>
+          <td style="color:var(--green);">"TodasMisCosas S.A.S., empresa argentina" — más serio</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert orange">
+    <span class="alert-icon">📌</span>
+    <div><strong>Punto clave:</strong> El costo de NO tener la SAS cuando algo sale mal es mucho más alto que el costo de tenerla (24-72 horas, ~$150 USD, sin escribano, 100% digital). La SAS no protege contra todos los riesgos listados en esta auditoría, pero sí protege el patrimonio personal de los fundadores — que es el riesgo más grave de todos.</div>
+  </div>
+
+  <div class="sec">🟢 ¿Qué pueden hacer HOY para lanzar con el menor riesgo posible?</div>
+
+  <ul class="checklist">
+    <li><span class="ci">1️⃣</span><div><strong>Esta semana:</strong> Iniciar trámite SAS en DPPJ PBA (ya tienen el borrador del instrumento constitutivo). 24-72 horas digitales.</div></li>
+    <li><span class="ci">2️⃣</span><div><strong>Esta semana:</strong> Inscribir a Ale en Monotributo (o la SAS en AFIP cuando esté lista) para declarar las comisiones.</div></li>
+    <li><span class="ci">3️⃣</span><div><strong>Esta semana:</strong> <span style="color:var(--red);font-weight:700;">Sacar o deshabilitar la sección de seguros</span> hasta tener una aseguradora real. Es el riesgo más inmediato.</div></li>
+    <li><span class="ci">4️⃣</span><div><strong>Esta semana:</strong> Publicar una Política de Privacidad básica (puede ser una página simple en /privacidad). Hay templates gratuitos en español.</div></li>
+    <li><span class="ci">5️⃣</span><div><strong>Mes 1:</strong> Agregar campo <code>tyc_aceptado_at</code> en tabla de usuarios para registrar aceptación formal.</div></li>
+    <li><span class="ci">6️⃣</span><div><strong>Mes 1:</strong> Agregar declaración jurada en alta de espacio (habilitaciones municipales).</div></li>
+    <li><span class="ci">7️⃣</span><div><strong>Mes 1:</strong> Documentar en T&C el mecanismo de auto-liberación de escrow a las 48 horas.</div></li>
+    <li><span class="ci">8️⃣</span><div><strong>Mes 2:</strong> Encriptar campos sensibles en DB (CBU, DNI).</div></li>
+    <li><span class="ci">9️⃣</span><div><strong>Mes 2:</strong> Implementar proceso de baja de cuenta + derecho al olvido.</div></li>
+    <li><span class="ci">🔟</span><div><strong>Mes 3:</strong> Consultar con abogado fintech sobre el modelo de escrow y la comisión del 15%.</div></li>
+  </ul>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- TAB 6: PLAN DE ACCIÓN                             -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="tab-roadmap" class="tab-content">
+
+  <div class="sec">🗓️ Roadmap legal — 90 días</div>
+  <p class="ssub">Ordenado por urgencia. Lo que no está acá no es urgente.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Plazo</th><th>Acción</th><th>Responsable</th><th>Costo estimado</th><th>Riesgo que mitiga</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Esta semana</td>
+          <td>Iniciar trámite SAS en DPPJ PBA (ya tienen borrador)</td>
+          <td>Ale</td>
+          <td>~$100-150 USD en tasas</td>
+          <td>C1 — responsabilidad personal</td>
+        </tr>
+        <tr>
+          <td>Esta semana</td>
+          <td>Deshabilitar sección de seguros en la plataforma</td>
+          <td>Guille</td>
+          <td>0 — 1 hora de código</td>
+          <td>C3 — seguros sin respaldo</td>
+        </tr>
+        <tr>
+          <td>Esta semana</td>
+          <td>Publicar Política de Privacidad en /privacidad</td>
+          <td>Ale + template</td>
+          <td>0 — template gratuito</td>
+          <td>C4 — Ley 25.326</td>
+        </tr>
+        <tr>
+          <td>Esta semana</td>
+          <td>Inscripción AFIP (Monotributo o esperar SAS)</td>
+          <td>Ale</td>
+          <td>0 — trámite online</td>
+          <td>C5 — fiscal</td>
+        </tr>
+        <tr>
+          <td>Semana 2</td>
+          <td>Agregar campo tyc_aceptado_at + checkbox en registro</td>
+          <td>Guille</td>
+          <td>0 — 2 horas de código</td>
+          <td>M1 — aceptación T&C</td>
+        </tr>
+        <tr>
+          <td>Semana 2</td>
+          <td>Agregar declaración jurada en alta de espacio</td>
+          <td>Guille</td>
+          <td>0 — 1 hora de código</td>
+          <td>M4 — habilitaciones</td>
+        </tr>
+        <tr>
+          <td>Semana 2</td>
+          <td>Documentar escrow 48h en T&C + email recordatorio</td>
+          <td>Ale + Guille</td>
+          <td>0</td>
+          <td>M3 — auto-liberación</td>
+        </tr>
+        <tr>
+          <td>Mes 1</td>
+          <td>Implementar proceso de baja de cuenta (anonimización)</td>
+          <td>Guille</td>
+          <td>0 — 4 horas de código</td>
+          <td>M2 — derecho al olvido</td>
+        </tr>
+        <tr>
+          <td>Mes 1</td>
+          <td>Agregar sección "Resolución de Disputas" en T&C</td>
+          <td>Ale</td>
+          <td>0</td>
+          <td>M7 — disputas</td>
+        </tr>
+        <tr>
+          <td>Mes 2</td>
+          <td>Encriptar CBU/alias y DNI en DB (AES-256)</td>
+          <td>Guille</td>
+          <td>0 — 1 día de código + migración</td>
+          <td>M5 — datos financieros</td>
+        </tr>
+        <tr>
+          <td>Mes 2</td>
+          <td>Implementar verificación básica de oferente (CBU vs CUIT)</td>
+          <td>Guille</td>
+          <td>0 o API ~$20 USD</td>
+          <td>M6 — fraude de identidad</td>
+        </tr>
+        <tr>
+          <td>Mes 3</td>
+          <td>Consulta con abogado fintech sobre modelo de escrow y comisiones</td>
+          <td>Ale</td>
+          <td>~$200-500 USD consulta</td>
+          <td>C2 — actividad financiera</td>
+        </tr>
+        <tr>
+          <td>Mes 3</td>
+          <td>Integrar aseguradora real (si deciden mantener seguros)</td>
+          <td>Ale</td>
+          <td>Variable — negociación</td>
+          <td>C3 — seguros</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert green">
+    <span class="alert-icon">✅</span>
+    <div><strong>Conclusión:</strong> TMC puede lanzar en beta cerrada esta semana con los 4 items de "Esta semana" resueltos. La SAS, la baja de seguros, la política de privacidad y la inscripción AFIP son la diferencia entre operar en riesgo alto y operar en riesgo manejable. Todo el resto puede iterarse sin frenar el negocio.</div>
+  </div>
+
+  <div class="alert blue">
+    <span class="alert-icon">⚖️</span>
+    <div><strong>Nota importante:</strong> Este reporte fue generado con revisión del codebase y conocimiento del marco normativo argentino, pero <strong>no reemplaza la consulta con un abogado</strong>. Para los temas de escrow (C2), seguros (C3) y estructura fiscal (C5), se recomienda fuertemente una consulta profesional antes de superar los primeros $1M ARS en transacciones totales.</div>
+  </div>
+
+</div>
+
+<footer>
+  TodasMisCosas.com · Auditoría Legal Interna · Junio 2026<br>
+  Ale (CTO) · Guille (CIO) · Generado con revisión exhaustiva del codebase
+</footer>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+  function toggleRisk(el) {
+    const body = el.nextElementSibling;
+    body.classList.toggle('open');
+    const arrow = el.querySelector('span:last-child');
+    arrow.textContent = body.classList.contains('open') ? '▲' : '▼';
+  }
+</script>
+</body>
+</html>
