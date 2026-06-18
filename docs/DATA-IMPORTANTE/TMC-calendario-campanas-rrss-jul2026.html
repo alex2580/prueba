@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC — Calendario Unificado RRSS · Julio 2026</title>
+<style>
+:root{
+  --li:#0a66c2;--li-bg:#e8f0fe;
+  --fb:#1877f2;--fb-bg:#e7f0fd;
+  --ig:#cc2366;--ig-bg:#fdf0f6;
+  --tt:#fe2c55;--tt-bg:#fff0f2;
+  --orange:#e8622a;--orange-bg:#fff4ee;
+  --navy:#0f172a;--text:#1e293b;--text2:#475569;--text3:#94a3b8;
+  --border:#e2e8f0;--bg:#f8f9fb;--white:#fff;
+  --green:#16a34a;--green-bg:#f0fdf4;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#0f172a 0%,#1e1035 55%,#0a1628 100%);padding:36px 48px 30px;}
+.hl{font-size:.8rem;font-weight:800;color:var(--orange);letter-spacing:.15em;text-transform:uppercase;margin-bottom:6px;}
+.ht{font-size:1.7rem;font-weight:900;color:#f1f5f9;line-height:1.2;margin-bottom:6px;}
+.hs{color:#64748b;font-size:.82rem;margin-bottom:18px;}
+.hchips{display:flex;gap:8px;flex-wrap:wrap;}
+.chip{padding:4px 14px;border-radius:20px;font-size:.71rem;font-weight:700;border:1px solid;}
+.chip-li{background:rgba(10,102,194,.2);border-color:rgba(10,102,194,.4);color:#93c5fd;}
+.chip-fb{background:rgba(24,119,242,.2);border-color:rgba(24,119,242,.4);color:#93c5fd;}
+.chip-ig{background:rgba(204,35,102,.2);border-color:rgba(204,35,102,.4);color:#f9a8d4;}
+.chip-tt{background:rgba(254,44,85,.2);border-color:rgba(254,44,85,.4);color:#fca5a5;}
+.chip-w{background:rgba(232,98,42,.15);border-color:rgba(232,98,42,.3);color:#fdba74;}
+
+/* NAV */
+.nav{background:var(--navy);border-bottom:2px solid rgba(232,98,42,.35);position:sticky;top:0;z-index:100;}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;overflow-x:auto;padding:0 16px;}
+.nl{display:block;padding:13px 17px;font-size:.74rem;font-weight:700;color:#64748b;text-decoration:none;white-space:nowrap;border-bottom:3px solid transparent;}
+.nl:hover{color:var(--orange);}
+
+/* CONTENT */
+.content{max-width:1100px;margin:0 auto;padding:40px 32px 100px;}
+
+/* STRATEGY BLOCK */
+.strategy{background:var(--white);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:40px;}
+.str-header{background:linear-gradient(90deg,#1e293b,#0f172a);padding:20px 28px;display:flex;align-items:center;gap:14px;}
+.str-header-icon{font-size:1.6rem;}
+.str-header-title{font-size:1rem;font-weight:900;color:#f1f5f9;}
+.str-header-sub{font-size:.76rem;color:#64748b;margin-top:2px;}
+.str-body{padding:24px 28px;}
+.rec-box{background:var(--orange-bg);border:2px solid var(--orange);border-radius:14px;padding:18px 22px;margin-bottom:22px;}
+.rec-label{font-size:.72rem;font-weight:800;color:var(--orange);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.rec-text{font-size:.9rem;color:#7c2d12;line-height:1.75;font-weight:600;}
+
+.phases-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:20px;}
+.phase-card{border-radius:12px;padding:16px 20px;border:1px solid;}
+.ph1{background:#f0fdf4;border-color:#86efac;}
+.ph2{background:#fdf0f6;border-color:#f9a8d4;}
+.ph3{background:#e8f0fe;border-color:#93c5fd;}
+.ph4{background:#fff7ed;border-color:#fdba74;}
+.ph-week{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;}
+.ph-title{font-size:.92rem;font-weight:800;color:var(--navy);margin-bottom:4px;}
+.ph-desc{font-size:.76rem;color:var(--text2);line-height:1.6;}
+.ph-platforms{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
+.pp{font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:6px;}
+.pp-li{background:var(--li-bg);color:var(--li);}
+.pp-fb{background:var(--fb-bg);color:var(--fb);}
+.pp-ig{background:var(--ig-bg);color:var(--ig);}
+.pp-tt{background:var(--tt-bg);color:var(--tt);}
+
+/* WHY SECTION */
+.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px;}
+.why-card{border-radius:12px;padding:14px 16px;border-top:4px solid;}
+.why-card.li{border-top-color:var(--li);background:var(--li-bg);}
+.why-card.fb{border-top-color:var(--fb);background:var(--fb-bg);}
+.why-card.ig{border-top-color:var(--ig);background:var(--ig-bg);}
+.why-card.tt{border-top-color:var(--tt);background:var(--tt-bg);}
+.why-plat{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+.why-role{font-size:.82rem;font-weight:800;color:var(--navy);margin-bottom:4px;}
+.why-desc{font-size:.73rem;color:var(--text2);line-height:1.55;}
+.why-when{font-size:.68rem;font-weight:700;margin-top:8px;padding:3px 8px;border-radius:6px;display:inline-block;}
+
+/* SECTION TITLES */
+.sec{font-size:1rem;font-weight:900;color:var(--text);margin:36px 0 14px;display:flex;align-items:center;gap:10px;}
+.ssub{font-size:.78rem;color:var(--text3);margin:-10px 0 18px;}
+
+/* CALENDAR */
+.cal-wrap{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:32px;}
+.cal-month-header{background:var(--navy);color:#f1f5f9;padding:14px 22px;display:flex;align-items:center;gap:10px;font-weight:900;font-size:.95rem;}
+.cal-month-header span{font-size:.8rem;color:#64748b;font-weight:400;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);border-left:1px solid var(--border);border-top:1px solid var(--border);}
+.cal-dow{background:#f8fafc;padding:8px 6px;text-align:center;font-size:.68rem;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-right:1px solid var(--border);border-bottom:1px solid var(--border);}
+.cal-day{border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:90px;vertical-align:top;position:relative;}
+.cal-day.empty{background:#fafafa;}
+.cal-day.weekend{background:#fcfcff;}
+.cal-day.today{background:#fffbeb;}
+.cal-dn{font-size:.78rem;font-weight:800;color:var(--text2);margin-bottom:5px;}
+.cal-dn.phase-1{color:var(--green);font-weight:900;}
+.cal-dn.phase-2{color:var(--li);font-weight:900;}
+.cal-dn.phase-3{color:var(--ig);font-weight:900;}
+.cal-dn.phase-4{color:var(--orange);font-weight:900;}
+.cal-events{display:flex;flex-direction:column;gap:3px;}
+.cal-ev{border-radius:5px;padding:2px 6px;font-size:.64rem;font-weight:700;line-height:1.4;}
+.ev-li{background:var(--li-bg);color:var(--li);border-left:3px solid var(--li);}
+.ev-fb{background:var(--fb-bg);color:var(--fb);border-left:3px solid var(--fb);}
+.ev-ig{background:var(--ig-bg);color:var(--ig);border-left:3px solid var(--ig);}
+.ev-tt{background:var(--tt-bg);color:var(--tt);border-left:3px solid var(--tt);}
+.ev-multi{background:#f3e8ff;color:#7c3aed;border-left:3px solid #7c3aed;}
+
+/* LEGEND */
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:18px;}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:.73rem;font-weight:700;}
+.leg-dot{width:12px;height:12px;border-radius:3px;}
+
+/* TRACKING TABLE */
+.track-table{width:100%;border-collapse:collapse;background:var(--white);border-radius:12px;overflow:hidden;border:1px solid var(--border);margin-bottom:28px;}
+.track-table th{background:var(--navy);color:#f1f5f9;padding:10px 14px;text-align:left;font-size:.75rem;font-weight:700;}
+.track-table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:.8rem;vertical-align:middle;}
+.track-table tr:last-child td{border-bottom:none;}
+.track-table tr:hover td{background:#f8fafc;}
+.plat-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:800;}
+.pb-li{background:var(--li-bg);color:var(--li);}
+.pb-fb{background:var(--fb-bg);color:var(--fb);}
+.pb-ig{background:var(--ig-bg);color:var(--ig);}
+.pb-tt{background:var(--tt-bg);color:var(--tt);}
+.status{display:inline-block;padding:2px 10px;border-radius:10px;font-size:.68rem;font-weight:700;}
+.st-pend{background:#f1f5f9;color:#64748b;}
+.st-ok{background:#d1fae5;color:#065f46;}
+.st-now{background:#fef9c3;color:#713f12;}
+.who-badge{font-size:.7rem;font-weight:700;color:var(--text2);}
+
+/* TIPS */
+.tips-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:10px;}
+.tip-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
+.tip-title{font-size:.8rem;font-weight:800;color:var(--navy);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.tip-list{list-style:none;display:flex;flex-direction:column;gap:5px;}
+.tip-list li{font-size:.76rem;color:var(--text2);display:flex;gap:6px;line-height:1.5;}
+.tip-list li::before{content:'→';color:var(--orange);flex-shrink:0;font-weight:700;}
+
+/* KPI BAR */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0;}
+.kpi-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;}
+.kpi-n{font-size:1.6rem;font-weight:900;color:var(--orange);line-height:1;}
+.kpi-l{font-size:.66rem;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-top:3px;}
+.kpi-sub{font-size:.72rem;color:var(--text2);margin-top:6px;line-height:1.4;}
+
+/* CHECKLIST */
+.checklist{display:flex;flex-direction:column;gap:8px;margin:14px 0;}
+.ci{display:flex;align-items:flex-start;gap:10px;background:var(--white);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:.8rem;color:var(--text2);}
+.ci-check{width:18px;height:18px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;margin-top:1px;}
+.ci strong{color:var(--text);}
+
+/* CALLOUT */
+.callout{border-radius:12px;padding:14px 18px;font-size:.82rem;margin:16px 0;line-height:1.7;}
+.co-orange{background:var(--orange-bg);border-left:4px solid var(--orange);color:#7c2d12;}
+.co-green{background:var(--green-bg);border-left:4px solid var(--green);color:#14532d;}
+.co-blue{background:var(--li-bg);border-left:4px solid var(--li);color:#1e3a8a;}
+.co-title{font-weight:800;font-size:.76rem;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;}
+
+footer{background:var(--navy);color:#334155;text-align:center;padding:20px;font-size:.72rem;}
+
+@media(max-width:700px){
+  .phases-grid,.why-grid,.tips-grid,.kpi-row{grid-template-columns:1fr;}
+  .content{padding:24px 14px 60px;}
+  .header{padding:28px 20px 22px;}
+  .cal-grid{font-size:.65rem;}
+  .cal-day{min-height:70px;padding:5px 4px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="hl">📅 Estrategia + Calendario</div>
+  <div class="ht">Campaña RRSS Unificada — Lanzamiento TMC</div>
+  <div class="hs">4 plataformas · 28 publicaciones · Julio 2026 · Inicio 1/7/26</div>
+  <div class="hchips">
+    <span class="chip chip-li">💼 LinkedIn</span>
+    <span class="chip chip-fb">👍 Facebook</span>
+    <span class="chip chip-ig">📸 Instagram</span>
+    <span class="chip chip-tt">🎵 TikTok</span>
+    <span class="chip chip-w">📆 4 semanas</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nl" href="#estrategia">Estrategia</a>
+    <a class="nl" href="#orden">Orden de plataformas</a>
+    <a class="nl" href="#calendario">Calendario julio</a>
+    <a class="nl" href="#tracking">Tracking detallado</a>
+    <a class="nl" href="#prelaunch">Pre-lanzamiento</a>
+    <a class="nl" href="#kpis">KPIs</a>
+  </div>
+</nav>
+
+<div class="content">
+
+<!-- ══════════════════════════════════════════════
+     ESTRATEGIA
+══════════════════════════════════════════════ -->
+<div id="estrategia">
+<div class="strategy">
+  <div class="str-header">
+    <div class="str-header-icon">🎯</div>
+    <div>
+      <div class="str-header-title">Recomendación estratégica — ¿Cómo arrancar?</div>
+      <div class="str-header-sub">Análisis de plataformas y orden óptimo para un marketplace P2P de almacenamiento en BsAs</div>
+    </div>
+  </div>
+  <div class="str-body">
+
+    <div class="rec-box">
+      <div class="rec-label">✅ Recomendación</div>
+      <div class="rec-text">
+        NO ejecutar las 4 plataformas juntas desde el día 1.<br>
+        Arrancar semana 1 con <strong>LinkedIn + Facebook</strong> para captar proveedores primero.<br>
+        Sumar <strong>Instagram + TikTok</strong> en semana 2 para generar demanda (clientes) cuando ya haya espacios publicados.<br><br>
+        <strong>Razón central:</strong> un marketplace necesita oferta antes de activar la demanda. Si los clientes llegan y no hay espacios disponibles, la oportunidad se pierde. LinkedIn y Facebook apuntan a propietarios (proveedores). Instagram y TikTok apuntan a quienes buscan guardar (clientes).
+      </div>
+    </div>
+
+    <div class="phases-grid">
+      <div class="phase-card ph1">
+        <div class="ph-week" style="color:#16a34a;">Semana 1 · 1–6 jul</div>
+        <div class="ph-title">Fase 1 — Oferta primero</div>
+        <div class="ph-desc">Activar LinkedIn y Facebook. Objetivo: conseguir los primeros 10–20 espacios publicados antes de abrir la demanda.</div>
+        <div class="ph-platforms"><span class="pp pp-li">LinkedIn</span><span class="pp pp-fb">Facebook</span></div>
+      </div>
+      <div class="phase-card ph2">
+        <div class="ph-week" style="color:#9d174d;">Semana 2 · 7–13 jul</div>
+        <div class="ph-title">Fase 2 — Lanzamiento total</div>
+        <div class="ph-desc">Sumar Instagram y TikTok. Ahora hay oferta para mostrar. El contenido visual tiene respaldo real. Se activa la demanda.</div>
+        <div class="ph-platforms"><span class="pp pp-li">LinkedIn</span><span class="pp pp-fb">Facebook</span><span class="pp pp-ig">Instagram</span><span class="pp pp-tt">TikTok</span></div>
+      </div>
+      <div class="phase-card ph3">
+        <div class="ph-week" style="color:#1d4ed8;">Semana 3 · 14–20 jul</div>
+        <div class="ph-title">Fase 3 — Para proveedores</div>
+        <div class="ph-desc">Foco en la propuesta de valor del proveedor (ganar plata con espacio vacío). Mantener las 4 plataformas con posts de conversión de oferta.</div>
+        <div class="ph-platforms"><span class="pp pp-li">LinkedIn</span><span class="pp pp-fb">Facebook</span><span class="pp pp-ig">Instagram</span><span class="pp pp-tt">TikTok</span></div>
+      </div>
+      <div class="phase-card ph4">
+        <div class="ph-week" style="color:#9a3412;">Semana 4 · 21–27 jul</div>
+        <div class="ph-title">Fase 4 — CTA + conversión</div>
+        <div class="ph-desc">Urgencia, testimonios tempranos, CTA directos. LinkedIn cierra la serie. Instagram Reels "Antes/Después". TikTok POV viral. Facebook Evento de lanzamiento.</div>
+        <div class="ph-platforms"><span class="pp pp-li">LinkedIn</span><span class="pp pp-fb">Facebook</span><span class="pp pp-ig">Instagram</span><span class="pp pp-tt">TikTok</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     ORDEN
+══════════════════════════════════════════════ -->
+<div id="orden">
+<div class="sec">🔢 ¿Por qué este orden?</div>
+<p class="ssub">El rol estratégico de cada plataforma en el lanzamiento</p>
+
+<div class="why-grid">
+  <div class="why-card li">
+    <div class="why-plat" style="color:var(--li);">💼 LinkedIn</div>
+    <div class="why-role">Semana 1 — Proveedores pro</div>
+    <div class="why-desc">Llega a profesionales con propiedades: administradores de consorcio, inmobiliarias, contadores, empresarios. Red propia de Ale y Guille. Posts sin links en el cuerpo, tráfico por comentarios.</div>
+    <div class="why-when" style="background:var(--li-bg);color:var(--li);">Objetivo: 1er bloque de proveedores</div>
+  </div>
+  <div class="why-card fb">
+    <div class="why-plat" style="color:var(--fb);">👍 Facebook</div>
+    <div class="why-role">Semana 1 — Grupos de alta intención</div>
+    <div class="why-desc">Los grupos de alquileres, consorcios y mudanzas de CABA tienen miles de miembros que ya buscan o ofrecen espacio. Alcance orgánico alto en grupos. Ideal para propietarios 35-60 años.</div>
+    <div class="why-when" style="background:var(--fb-bg);color:var(--fb);">Objetivo: proveedores + clientes early</div>
+  </div>
+  <div class="why-card ig">
+    <div class="why-plat" style="color:var(--ig);">📸 Instagram</div>
+    <div class="why-role">Semana 2 — Awareness visual</div>
+    <div class="why-desc">Carousels y Reels para mostrar el producto. Necesita espacio para demostrar (fotos reales de espacios). Funciona cuando hay oferta. Mejor horario 7PM. Stories para interacción directa.</div>
+    <div class="why-when" style="background:var(--ig-bg);color:var(--ig);">Objetivo: demanda + brand building</div>
+  </div>
+  <div class="why-card tt">
+    <div class="why-plat" style="color:var(--tt);">🎵 TikTok</div>
+    <div class="why-role">Semana 2 — Alcance orgánico masivo</div>
+    <div class="why-desc">Mayor potencial viral, menor intención de compra inmediata. El Video 3 POV Proveedor puede romper. Funciona como amplificador: si uno vuela, trae miles de visitas al resto. Empezar en semana 2 para no quemar sin oferta.</div>
+    <div class="why-when" style="background:var(--tt-bg);color:var(--tt);">Objetivo: alcance masivo + virality</div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PRE-LAUNCH
+══════════════════════════════════════════════ -->
+<div id="prelaunch">
+<div class="sec" style="margin-top:36px;">⚡ Antes del 1/7 — Checklist pre-lanzamiento</div>
+<p class="ssub">Completar esta semana · 23–30 jun 2026</p>
+
+<div class="checklist">
+  <div class="ci"><div class="ci-check"></div><div><strong>LinkedIn:</strong> Perfil de la empresa TMC actualizado con foto de portada, descripción del producto y link al sitio. Ale y Guille con perfil actualizado mencionando el proyecto.</div></div>
+  <div class="ci"><div class="ci-check"></div><div><strong>Instagram:</strong> Cuenta @todasmiscosas con bio, foto de perfil (logo), link a Linktree con el sitio. Al menos 3 posts en el feed antes de la campaña (no arrancar con 0).</div></div>
+  <div class="ci"><div class="ci-check"></div><div><strong>Facebook:</strong> Página creada con descripción completa, foto de portada, link al sitio. Identificar los 8 grupos donde se va a publicar (alquileres CABA, mudanzas, consorcio, emprendimiento).</div></div>
+  <div class="ci"><div class="ci-check"></div><div><strong>TikTok:</strong> Cuenta @todasmiscosas activa. Grabar los 4 videos con CapCut antes del 1/7. Solo publicar, no grabar en el momento.</div></div>
+  <div class="ci"><div class="ci-check"></div><div><strong>Plataforma:</strong> Al menos 5 espacios publicados y activos en todasmiscosas.com antes del 1/7. Sin oferta, la demanda no tiene adónde ir.</div></div>
+  <div class="ci"><div class="ci-check"></div><div><strong>Tracking:</strong> UTM parameters en todos los links (utm_source=linkedin, utm_source=facebook, etc.) para medir qué plataforma trae más conversión.</div></div>
+  <div class="ci"><div class="ci-check"></div><div><strong>Agustina:</strong> Confirmar disponibilidad semana 1 para publicar y responder DMs en Instagram. Acordar quién responde qué en cada plataforma.</div></div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     CALENDARIO
+══════════════════════════════════════════════ -->
+<div id="calendario">
+<div class="sec" style="margin-top:8px;">📅 Calendario Julio 2026</div>
+
+<div class="legend">
+  <div class="leg-item"><div class="leg-dot" style="background:var(--li);"></div>LinkedIn</div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--fb);"></div>Facebook</div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--ig);"></div>Instagram</div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--tt);"></div>TikTok</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#7c3aed;"></div>Multi-plataforma</div>
+</div>
+
+<div class="cal-wrap">
+  <div class="cal-month-header">
+    📆 Julio 2026 <span>· Inicio Semana 1: Proveedores · Semana 2: Lanzamiento Total</span>
+  </div>
+  <div class="cal-grid">
+    <!-- Day headers -->
+    <div class="cal-dow">Lun</div>
+    <div class="cal-dow">Mar</div>
+    <div class="cal-dow">Mié</div>
+    <div class="cal-dow">Jue</div>
+    <div class="cal-dow">Vie</div>
+    <div class="cal-dow">Sáb</div>
+    <div class="cal-dow">Dom</div>
+
+    <!-- Semana 1: 30 jun → 6 jul (con 30/jun como espacio vacío) -->
+    <!-- Lun 30 Jun -->
+    <div class="cal-day empty"><div class="cal-dn">30<br><small style="font-size:.6rem;color:#94a3b8;">Jun</small></div><div class="cal-events"><div class="cal-ev" style="background:#f1f5f9;color:#94a3b8;border-left:3px solid #e2e8f0;">Pre-lanzamiento</div></div></div>
+    <!-- Mar 1 Jul -->
+    <div class="cal-day today">
+      <div class="cal-dn phase-1">1 ⭐</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-li">LI Post 1 — El Gancho<br>10 AM · Ale</div>
+        <div class="cal-ev ev-fb">FB Post 1 — Página<br>10 AM · Guille</div>
+      </div>
+    </div>
+    <!-- Mié 2 -->
+    <div class="cal-day">
+      <div class="cal-dn">2</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-fb">FB Grupos<br>6 PM · Ale</div>
+      </div>
+    </div>
+    <!-- Jue 3 -->
+    <div class="cal-day">
+      <div class="cal-dn">3</div>
+      <div class="cal-events"><div class="cal-ev" style="background:#f8fafc;color:#94a3b8;font-size:.6rem;">— responder DMs LinkedIn —</div></div>
+    </div>
+    <!-- Vie 4 -->
+    <div class="cal-day">
+      <div class="cal-dn">4</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-li">LI Post 2 — Cómo Funciona<br>10 AM · Guille</div>
+      </div>
+    </div>
+    <!-- Sáb 5 -->
+    <div class="cal-day weekend">
+      <div class="cal-dn">5</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-fb">FB Post 2 grupos<br>11 AM · Ale</div>
+      </div>
+    </div>
+    <!-- Dom 6 -->
+    <div class="cal-day weekend">
+      <div class="cal-dn">6</div>
+      <div class="cal-events"><div class="cal-ev" style="background:#f8fafc;color:#94a3b8;font-size:.6rem;">— descanso —</div></div>
+    </div>
+
+    <!-- Semana 2: 7-13 jul — LANZAMIENTO TOTAL -->
+    <!-- Lun 7 -->
+    <div class="cal-day">
+      <div class="cal-dn phase-2">7 🚀</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-ig">IG Carousel 1<br>7 PM · Agustina</div>
+        <div class="cal-ev ev-tt">TT Video 1 — Problema<br>6 PM · Daniel</div>
+      </div>
+    </div>
+    <!-- Mar 8 -->
+    <div class="cal-day">
+      <div class="cal-dn">8</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-ig">IG Stories — Encuesta<br>10 AM · Agustina</div>
+      </div>
+    </div>
+    <!-- Mié 9 -->
+    <div class="cal-day">
+      <div class="cal-dn">9</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-fb">FB Post 3 (grupos Bs)<br>10 AM · Guille</div>
+        <div class="cal-ev ev-ig">IG Reel 1 — Gancho<br>7 PM · Agustina</div>
+      </div>
+    </div>
+    <!-- Jue 10 -->
+    <div class="cal-day">
+      <div class="cal-dn">10</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-tt">TT Video 2 — Cómo funciona<br>6 PM · Daniel</div>
+      </div>
+    </div>
+    <!-- Vie 11 -->
+    <div class="cal-day">
+      <div class="cal-dn">11</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-li">LI Post 3 — Para proveedores<br>10 AM · Ale</div>
+        <div class="cal-ev ev-ig">IG Carousel 2<br>7 PM · Agustina</div>
+      </div>
+    </div>
+    <!-- Sáb 12 -->
+    <div class="cal-day weekend">
+      <div class="cal-dn">12</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-fb">FB Grupos (mudanzas)<br>11 AM · Ale</div>
+      </div>
+    </div>
+    <!-- Dom 13 -->
+    <div class="cal-day weekend">
+      <div class="cal-dn">13</div>
+      <div class="cal-events"><div class="cal-ev" style="background:#f8fafc;color:#94a3b8;font-size:.6rem;">— responder DMs —</div></div>
+    </div>
+
+    <!-- Semana 3: 14-20 jul — PARA PROVEEDORES -->
+    <!-- Lun 14 -->
+    <div class="cal-day">
+      <div class="cal-dn phase-3">14 🏠</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-tt">TT Video 3 — POV Proveedor<br>6 PM · Daniel 🔥VIRAL</div>
+      </div>
+    </div>
+    <!-- Mar 15 -->
+    <div class="cal-day">
+      <div class="cal-dn">15</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-fb">FB Evento creado<br>10 AM · Guille</div>
+        <div class="cal-ev ev-ig">IG Stories — Link bio<br>7 PM · Agustina</div>
+      </div>
+    </div>
+    <!-- Mié 16 -->
+    <div class="cal-day">
+      <div class="cal-dn">16</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-fb">FB Post 4 — Urgencia<br>10 AM · Guille</div>
+        <div class="cal-ev ev-ig">IG Reel 2 — Antes/Después<br>7 PM · Agustina</div>
+      </div>
+    </div>
+    <!-- Jue 17 -->
+    <div class="cal-day">
+      <div class="cal-dn">17</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-tt">TT Video 4 — Urgencia<br>6 PM · Daniel</div>
+      </div>
+    </div>
+    <!-- Vie 18 -->
+    <div class="cal-day">
+      <div class="cal-dn">18</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-ig">IG Carousel 3 — Proceso<br>7 PM · Agustina</div>
+      </div>
+    </div>
+    <!-- Sáb 19 -->
+    <div class="cal-day weekend">
+      <div class="cal-dn">19</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-fb">FB Grupos (consorcios)<br>11 AM · Ale</div>
+      </div>
+    </div>
+    <!-- Dom 20 -->
+    <div class="cal-day weekend">
+      <div class="cal-dn">20</div>
+      <div class="cal-events"><div class="cal-ev" style="background:#f8fafc;color:#94a3b8;font-size:.6rem;">— revisar métricas semana —</div></div>
+    </div>
+
+    <!-- Semana 4: 21-27 jul — CTA FINAL -->
+    <!-- Lun 21 -->
+    <div class="cal-day">
+      <div class="cal-dn phase-4">21 🎯</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-ig">IG Reel 3 — POV Proveedor<br>7 PM · Agustina</div>
+      </div>
+    </div>
+    <!-- Mar 22 -->
+    <div class="cal-day">
+      <div class="cal-dn">22</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-li">LI Post 4 — CTA Final<br>10 AM · Ale + Guille</div>
+      </div>
+    </div>
+    <!-- Mié 23 -->
+    <div class="cal-day">
+      <div class="cal-dn">23</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-fb">FB Evento — recordatorio<br>10 AM</div>
+        <div class="cal-ev ev-ig">IG Stories — Urgencia DMs<br>7 PM · Agustina</div>
+      </div>
+    </div>
+    <!-- Jue 24 -->
+    <div class="cal-day">
+      <div class="cal-dn">24</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-tt">TT repost mejor video<br>6 PM · Daniel</div>
+      </div>
+    </div>
+    <!-- Vie 25 -->
+    <div class="cal-day">
+      <div class="cal-dn">25</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-ig">IG Carousel 4 — Social proof<br>7 PM · Agustina</div>
+      </div>
+    </div>
+    <!-- Sáb 26 -->
+    <div class="cal-day weekend">
+      <div class="cal-dn">26</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-fb">FB Grupos — CTA cierre<br>11 AM · Ale</div>
+      </div>
+    </div>
+    <!-- Dom 27 -->
+    <div class="cal-day weekend">
+      <div class="cal-dn">27</div>
+      <div class="cal-events"><div class="cal-ev ev-multi">Balance + reportes<br>Ale + Guille</div></div>
+    </div>
+
+    <!-- Semana 5: 28-31 jul — AMPLIFICACIÓN -->
+    <!-- Lun 28 -->
+    <div class="cal-day">
+      <div class="cal-dn">28</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-ig">IG Reel 4 — Urgencia<br>7 PM · Agustina</div>
+      </div>
+    </div>
+    <!-- Mar 29 -->
+    <div class="cal-day">
+      <div class="cal-dn">29</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-li">LI responder comentarios<br>+ compartir testimonios</div>
+      </div>
+    </div>
+    <!-- Mié 30 -->
+    <div class="cal-day">
+      <div class="cal-dn">30</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-fb">FB Evento — live Q&A<br>Ale responde en vivo</div>
+      </div>
+    </div>
+    <!-- Jue 31 -->
+    <div class="cal-day">
+      <div class="cal-dn">31</div>
+      <div class="cal-events">
+        <div class="cal-ev ev-multi">Cierre de mes<br>Reporte final julio</div>
+      </div>
+    </div>
+    <!-- Vie/Sáb/Dom vacíos para completar la grilla -->
+    <div class="cal-day empty"></div>
+    <div class="cal-day empty"></div>
+    <div class="cal-day empty"></div>
+
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TRACKING TABLE
+══════════════════════════════════════════════ -->
+<div id="tracking">
+<div class="sec">📋 Tracking detallado de publicaciones</div>
+<p class="ssub">28 publicaciones programadas · marcar cada una al publicar</p>
+
+<table class="track-table">
+<thead>
+<tr>
+  <th>#</th>
+  <th>Fecha</th>
+  <th>Hora</th>
+  <th>Plataforma</th>
+  <th>Publicación</th>
+  <th>Quién</th>
+  <th>Archivo fuente</th>
+  <th>Estado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td><td>Mar 1 jul</td><td>10 AM</td>
+  <td><span class="plat-badge pb-li">💼 LinkedIn</span></td>
+  <td><strong>Post 1 — El Gancho</strong><br><small style="color:#64748b;">Awareness: "¿Sabías que...?" · primera impresión del concepto</small></td>
+  <td><span class="who-badge">Ale</span></td>
+  <td><small>TMC-linkedin-posts-lanzamiento.html<br>Tab: Post 1</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>2</td><td>Mar 1 jul</td><td>10 AM</td>
+  <td><span class="plat-badge pb-fb">👍 Facebook</span></td>
+  <td><strong>Post 1 — Anuncio en Página</strong><br><small style="color:#64748b;">Presentación del marketplace, texto largo</small></td>
+  <td><span class="who-badge">Guille</span></td>
+  <td><small>TMC-facebook-posts-lanzamiento.html<br>Tab: Post 1</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>3</td><td>Mié 2 jul</td><td>6 PM</td>
+  <td><span class="plat-badge pb-fb">👍 Facebook</span></td>
+  <td><strong>FB Grupos — Ronda 1</strong><br><small style="color:#64748b;">Publicar versión corta en 3-4 grupos de alquileres CABA</small></td>
+  <td><span class="who-badge">Ale</span></td>
+  <td><small>TMC-facebook-posts-lanzamiento.html<br>Tab: Grupos</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>4</td><td>Vie 4 jul</td><td>10 AM</td>
+  <td><span class="plat-badge pb-li">💼 LinkedIn</span></td>
+  <td><strong>Post 2 — Cómo Funciona</strong><br><small style="color:#64748b;">Educación: paso a paso del proceso de reserva</small></td>
+  <td><span class="who-badge">Guille</span></td>
+  <td><small>TMC-linkedin-posts-lanzamiento.html<br>Tab: Post 2</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>5</td><td>Sáb 5 jul</td><td>11 AM</td>
+  <td><span class="plat-badge pb-fb">👍 Facebook</span></td>
+  <td><strong>FB Grupos — Ronda 2</strong><br><small style="color:#64748b;">Grupos de mudanzas y consorcios · versión adaptada</small></td>
+  <td><span class="who-badge">Ale</span></td>
+  <td><small>TMC-facebook-posts-lanzamiento.html<br>Tab: Grupos</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr style="background:#fafffe;">
+  <td colspan="8" style="padding:6px 14px;font-size:.72rem;font-weight:800;color:#16a34a;background:#f0fdf4;">🚀 SEMANA 2 — Lanzamiento total (7 jul en adelante)</td>
+</tr>
+<tr>
+  <td>6</td><td>Lun 7 jul</td><td>7 PM</td>
+  <td><span class="plat-badge pb-ig">📸 Instagram</span></td>
+  <td><strong>Carousel 1 — El Concepto</strong><br><small style="color:#64748b;">6-8 slides en Canva. El problema + la solución</small></td>
+  <td><span class="who-badge">Agustina</span></td>
+  <td><small>TMC-instagram-posts-lanzamiento.html<br>Tab: Posts de Feed</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>7</td><td>Lun 7 jul</td><td>6 PM</td>
+  <td><span class="plat-badge pb-tt">🎵 TikTok</span></td>
+  <td><strong>Video 1 — El Problema</strong><br><small style="color:#64748b;">Hook: "¿Tenés una habitación vacía...?" · 30-45 seg</small></td>
+  <td><span class="who-badge">Daniel</span></td>
+  <td><small>TMC-tiktok-posts-lanzamiento.html<br>Tab: Video 1</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>8</td><td>Mar 8 jul</td><td>10 AM</td>
+  <td><span class="plat-badge pb-ig">📸 Instagram</span></td>
+  <td><strong>Stories — Secuencia 7 stories</strong><br><small style="color:#64748b;">Encuesta + presentación + DM directo</small></td>
+  <td><span class="who-badge">Agustina</span></td>
+  <td><small>TMC-instagram-posts-lanzamiento.html<br>Tab: Stories</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>9</td><td>Mié 9 jul</td><td>10 AM</td>
+  <td><span class="plat-badge pb-fb">👍 Facebook</span></td>
+  <td><strong>FB Post 3 — Grupos BsAs</strong><br><small style="color:#64748b;">Grupos de emprendimiento y negocios de Buenos Aires</small></td>
+  <td><span class="who-badge">Guille</span></td>
+  <td><small>TMC-facebook-posts-lanzamiento.html<br>Tab: Grupos</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>10</td><td>Mié 9 jul</td><td>7 PM</td>
+  <td><span class="plat-badge pb-ig">📸 Instagram</span></td>
+  <td><strong>Reel 1 — El Gancho</strong><br><small style="color:#64748b;">15-25 seg · Hook visual · transición rápida</small></td>
+  <td><span class="who-badge">Agustina</span></td>
+  <td><small>TMC-instagram-posts-lanzamiento.html<br>Tab: Reels</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>11</td><td>Jue 10 jul</td><td>6 PM</td>
+  <td><span class="plat-badge pb-tt">🎵 TikTok</span></td>
+  <td><strong>Video 2 — Cómo Funciona</strong><br><small style="color:#64748b;">Paso a paso del proceso · narración directa</small></td>
+  <td><span class="who-badge">Daniel</span></td>
+  <td><small>TMC-tiktok-posts-lanzamiento.html<br>Tab: Video 2</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>12</td><td>Vie 11 jul</td><td>10 AM</td>
+  <td><span class="plat-badge pb-li">💼 LinkedIn</span></td>
+  <td><strong>Post 3 — Para Proveedores</strong><br><small style="color:#64748b;">50 lugares premium · oferta de lanzamiento</small></td>
+  <td><span class="who-badge">Ale</span></td>
+  <td><small>TMC-linkedin-posts-lanzamiento.html<br>Tab: Post 3</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>13</td><td>Vie 11 jul</td><td>7 PM</td>
+  <td><span class="plat-badge pb-ig">📸 Instagram</span></td>
+  <td><strong>Carousel 2 — Para Proveedores</strong><br><small style="color:#64748b;">Propuesta de valor para quien ofrece espacio</small></td>
+  <td><span class="who-badge">Agustina</span></td>
+  <td><small>TMC-instagram-posts-lanzamiento.html<br>Tab: Posts de Feed</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>14</td><td>Sáb 12 jul</td><td>11 AM</td>
+  <td><span class="plat-badge pb-fb">👍 Facebook</span></td>
+  <td><strong>FB Grupos — Mudanzas + inmobiliarias</strong><br><small style="color:#64748b;">Foco en propietarios con espacio libre</small></td>
+  <td><span class="who-badge">Ale</span></td>
+  <td><small>TMC-facebook-posts-lanzamiento.html<br>Tab: Grupos</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr style="background:#fafffe;">
+  <td colspan="8" style="padding:6px 14px;font-size:.72rem;font-weight:800;color:#9d174d;background:#fdf0f6;">🏠 SEMANA 3 — Para proveedores (14 jul en adelante)</td>
+</tr>
+<tr>
+  <td>15</td><td>Lun 14 jul</td><td>6 PM</td>
+  <td><span class="plat-badge pb-tt">🎵 TikTok</span></td>
+  <td><strong>Video 3 — POV Proveedor 🔥</strong><br><small style="color:#64748b;">Mayor potencial viral. "Me entraron $18.000 por guardar cajas"</small></td>
+  <td><span class="who-badge">Daniel</span></td>
+  <td><small>TMC-tiktok-posts-lanzamiento.html<br>Tab: Video 3</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>16</td><td>Mar 15 jul</td><td>10 AM</td>
+  <td><span class="plat-badge pb-fb">👍 Facebook</span></td>
+  <td><strong>FB Evento — Lanzamiento online</strong><br><small style="color:#64748b;">Crear evento público · 45 min · Q&A · invitar seguidores</small></td>
+  <td><span class="who-badge">Guille</span></td>
+  <td><small>TMC-facebook-posts-lanzamiento.html<br>Tab: Evento</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>17</td><td>Mié 16 jul</td><td>10 AM</td>
+  <td><span class="plat-badge pb-fb">👍 Facebook</span></td>
+  <td><strong>FB Post 4 — Urgencia</strong><br><small style="color:#64748b;">Cupos limitados · CTA urgente en página y grupos</small></td>
+  <td><span class="who-badge">Guille</span></td>
+  <td><small>TMC-facebook-posts-lanzamiento.html<br>Tab: Post 4</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>18</td><td>Mié 16 jul</td><td>7 PM</td>
+  <td><span class="plat-badge pb-ig">📸 Instagram</span></td>
+  <td><strong>Reel 2 — Antes/Después</strong><br><small style="color:#64748b;">Formato viral: espacio vacío → ingreso mensual</small></td>
+  <td><span class="who-badge">Agustina</span></td>
+  <td><small>TMC-instagram-posts-lanzamiento.html<br>Tab: Reels</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>19</td><td>Jue 17 jul</td><td>6 PM</td>
+  <td><span class="plat-badge pb-tt">🎵 TikTok</span></td>
+  <td><strong>Video 4 — Urgencia</strong><br><small style="color:#64748b;">CTA final · cupos limitados · inscripción</small></td>
+  <td><span class="who-badge">Daniel</span></td>
+  <td><small>TMC-tiktok-posts-lanzamiento.html<br>Tab: Video 4</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>20</td><td>Vie 18 jul</td><td>7 PM</td>
+  <td><span class="plat-badge pb-ig">📸 Instagram</span></td>
+  <td><strong>Carousel 3 — El Proceso</strong><br><small style="color:#64748b;">Paso a paso visual de cómo guardar en TMC</small></td>
+  <td><span class="who-badge">Agustina</span></td>
+  <td><small>TMC-instagram-posts-lanzamiento.html<br>Tab: Posts de Feed</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>21</td><td>Sáb 19 jul</td><td>11 AM</td>
+  <td><span class="plat-badge pb-fb">👍 Facebook</span></td>
+  <td><strong>FB Grupos — Consorcios</strong><br><small style="color:#64748b;">Grupos de administradores de edificios · prop especial</small></td>
+  <td><span class="who-badge">Ale</span></td>
+  <td><small>TMC-facebook-posts-lanzamiento.html<br>Tab: Grupos</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr style="background:#fafffe;">
+  <td colspan="8" style="padding:6px 14px;font-size:.72rem;font-weight:800;color:#9a3412;background:#fff7ed;">🎯 SEMANA 4 — CTA Final + conversión (21 jul en adelante)</td>
+</tr>
+<tr>
+  <td>22</td><td>Lun 21 jul</td><td>7 PM</td>
+  <td><span class="plat-badge pb-ig">📸 Instagram</span></td>
+  <td><strong>Reel 3 — POV Proveedor</strong><br><small style="color:#64748b;">Mismo ángulo viral que TikTok Video 3 · adaptado a IG</small></td>
+  <td><span class="who-badge">Agustina</span></td>
+  <td><small>TMC-instagram-posts-lanzamiento.html<br>Tab: Reels</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>23</td><td>Mar 22 jul</td><td>10 AM</td>
+  <td><span class="plat-badge pb-li">💼 LinkedIn</span></td>
+  <td><strong>Post 4 — CTA Final</strong><br><small style="color:#64748b;">Cierre de la serie · "el momento es ahora"</small></td>
+  <td><span class="who-badge">Ale + Guille</span></td>
+  <td><small>TMC-linkedin-posts-lanzamiento.html<br>Tab: Post 4</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>24</td><td>Mié 23 jul</td><td>7 PM</td>
+  <td><span class="plat-badge pb-ig">📸 Instagram</span></td>
+  <td><strong>Stories — Urgencia + DMs</strong><br><small style="color:#64748b;">Link sticker al sitio · responder DMs pendientes</small></td>
+  <td><span class="who-badge">Agustina</span></td>
+  <td><small>TMC-instagram-posts-lanzamiento.html<br>Tab: Stories</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>25</td><td>Vie 25 jul</td><td>7 PM</td>
+  <td><span class="plat-badge pb-ig">📸 Instagram</span></td>
+  <td><strong>Carousel 4 — Social Proof</strong><br><small style="color:#64748b;">Primeras reseñas / testimonios · si existen para este momento</small></td>
+  <td><span class="who-badge">Agustina</span></td>
+  <td><small>TMC-instagram-posts-lanzamiento.html<br>Tab: Posts de Feed</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>26</td><td>Sáb 26 jul</td><td>11 AM</td>
+  <td><span class="plat-badge pb-fb">👍 Facebook</span></td>
+  <td><strong>FB Grupos — CTA cierre</strong><br><small style="color:#64748b;">Última ronda de grupos · urgencia · cupos</small></td>
+  <td><span class="who-badge">Ale</span></td>
+  <td><small>TMC-facebook-posts-lanzamiento.html<br>Tab: Grupos</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>27</td><td>Lun 28 jul</td><td>7 PM</td>
+  <td><span class="plat-badge pb-ig">📸 Instagram</span></td>
+  <td><strong>Reel 4 — Urgencia final</strong><br><small style="color:#64748b;">Cierre de la campaña · CTA directo al sitio</small></td>
+  <td><span class="who-badge">Agustina</span></td>
+  <td><small>TMC-instagram-posts-lanzamiento.html<br>Tab: Reels</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+<tr>
+  <td>28</td><td>Mié 30 jul</td><td>6 PM</td>
+  <td><span class="plat-badge pb-fb">👍 Facebook</span></td>
+  <td><strong>FB Live — Q&A lanzamiento</strong><br><small style="color:#64748b;">Evento online: Ale responde preguntas en vivo 45 min</small></td>
+  <td><span class="who-badge">Ale</span></td>
+  <td><small>TMC-facebook-posts-lanzamiento.html<br>Tab: Evento</small></td>
+  <td><span class="status st-pend">Pendiente</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     KPIs
+══════════════════════════════════════════════ -->
+<div id="kpis">
+<div class="sec">📊 KPIs del mes — Julio 2026</div>
+<p class="ssub">Métricas a medir al cierre de cada semana</p>
+
+<div class="kpi-row">
+  <div class="kpi-card">
+    <div class="kpi-n">10</div>
+    <div class="kpi-l">Espacios publicados</div>
+    <div class="kpi-sub">Meta al 7 jul. Sin oferta, la demanda no tiene adónde ir.</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-n">50</div>
+    <div class="kpi-l">DMs / mensajes</div>
+    <div class="kpi-sub">Combinado entre todas las plataformas al cierre del mes.</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-n">3</div>
+    <div class="kpi-l">Reservas realizadas</div>
+    <div class="kpi-sub">Meta de conversión mínima para validar el funnel.</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-n">500+</div>
+    <div class="kpi-l">Seguidores nuevos</div>
+    <div class="kpi-sub">Sumando LinkedIn + Instagram + Facebook + TikTok.</div>
+  </div>
+</div>
+
+<div class="tips-grid">
+  <div class="tip-card">
+    <div class="tip-title">💼 Señales de éxito en LinkedIn</div>
+    <ul class="tip-list">
+      <li>Comentarios de propietarios preguntando cómo publicar</li>
+      <li>Conexiones nuevas de administradores / inmobiliarias</li>
+      <li>Posts compartidos por las redes de Ale y Guille</li>
+      <li>DMs de media: 1-5 por post es rango normal</li>
+    </ul>
+  </div>
+  <div class="tip-card">
+    <div class="tip-title">📸 Señales de éxito en Instagram</div>
+    <ul class="tip-list">
+      <li>Saves y shares en carousels (más valiosos que likes)</li>
+      <li>DMs con preguntas concretas sobre espacios</li>
+      <li>Respuestas a las Stories con encuestas</li>
+      <li>Si un Reel supera 1000 views, amplificarlo con pauta</li>
+    </ul>
+  </div>
+  <div class="tip-card">
+    <div class="tip-title">👍 Señales de éxito en Facebook</div>
+    <ul class="tip-list">
+      <li>Comentarios en los grupos con preguntas de precio</li>
+      <li>Compartidos del post de la Página a grupos privados</li>
+      <li>Inscriptos al Evento de lanzamiento (+50 = pauta)</li>
+      <li>Messenger sin responder más de 2 horas = mala señal</li>
+    </ul>
+  </div>
+  <div class="tip-card">
+    <div class="tip-title">🎵 Señales de éxito en TikTok</div>
+    <ul class="tip-list">
+      <li>Video 3 POV Proveedor: si supera 5K views → republicar</li>
+      <li>Ratio comments/likes alto = audiencia involucrada</li>
+      <li>Follows después de ver un video = contenido que engancha</li>
+      <li>No borrar videos con pocas vistas — el algoritmo los retoma</li>
+    </ul>
+  </div>
+</div>
+
+<div class="callout co-orange" style="margin-top:20px;">
+  <div class="co-title">⚡ Regla de oro de la campaña</div>
+  El objetivo del mes no es viralizarse. Es conseguir los primeros 10 proveedores activos y 3 reservas pagadas. Esos 3 casos son el testimonio, el social proof, y la prueba de que el modelo funciona. Todo lo demás escala a partir de ahí.
+</div>
+
+<div class="callout co-blue">
+  <div class="co-title">📌 Documentos fuente de cada plataforma</div>
+  Los textos, guiones y captions completos están en los archivos HTML de cada plataforma. Abrirlos en el navegador, copiar con los botones de copia directa.<br><br>
+  <strong>LinkedIn:</strong> TMC-linkedin-posts-lanzamiento.html &nbsp;·&nbsp;
+  <strong>TikTok:</strong> TMC-tiktok-posts-lanzamiento.html &nbsp;·&nbsp;
+  <strong>Instagram:</strong> TMC-instagram-posts-lanzamiento.html &nbsp;·&nbsp;
+  <strong>Facebook:</strong> TMC-facebook-posts-lanzamiento.html
+</div>
+</div>
+
+</div><!-- /content -->
+
+<footer>
+  <strong>TMC — Calendario Unificado RRSS · Julio 2026</strong><br>
+  TodasMisCosas.com · 28 publicaciones · 4 plataformas · inicio 1/7/26<br>
+  <span style="font-size:.65rem;color:#1e293b;">Generado por Claude Sonnet 4.6</span>
+</footer>
+
+</body>
+</html>
