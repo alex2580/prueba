@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC — Serie Instagram de Lanzamiento</title>
+<style>
+:root{
+  --ig1:#f09433;--ig2:#e6683c;--ig3:#dc2743;--ig4:#cc2366;--ig5:#bc1888;
+  --ig-grad:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
+  --gold:#f59e0b;--navy:#0f172a;--text:#1e293b;--text2:#475569;--text3:#94a3b8;
+  --border:#e2e8f0;--bg:#fdf2f8;--white:#fff;
+  --green:#16a34a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:13.5px;line-height:1.65;}
+
+.header{background:linear-gradient(135deg,#1a0533 0%,#2d0a4e 55%,#4a0080 100%);padding:36px 48px 28px;}
+.hl{font-size:1.1rem;font-weight:900;background:var(--ig-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:.06em;}
+.ht{font-size:1.65rem;font-weight:900;color:#f1f5f9;margin:6px 0 4px;}
+.hs{color:#64748b;font-size:.83rem;}
+.hchips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+.chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:4px 14px;font-size:.72rem;color:#94a3b8;}
+.chip strong{color:#f1f5f9;}
+
+.tabs-nav{display:flex;gap:0;background:var(--white);border-bottom:2px solid var(--border);padding:0 48px;overflow-x:auto;}
+.tab-btn{padding:14px 20px;font-size:.82rem;font-weight:700;color:var(--text3);border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color .2s;}
+.tab-btn.active{color:#cc2366;border-bottom-color:#cc2366;}
+.tab-btn:hover:not(.active){color:var(--text2);}
+
+.content{max-width:900px;margin:0 auto;padding:40px 32px 80px;}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+
+/* CAROUSEL MOCKUP */
+.carousel-wrap{display:flex;gap:6px;overflow-x:auto;padding:12px 0 16px;scroll-snap-type:x mandatory;}
+.slide{flex-shrink:0;width:180px;height:180px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff;text-align:center;padding:12px;scroll-snap-align:start;position:relative;}
+.slide-num{position:absolute;top:8px;right:10px;font-size:.65rem;background:rgba(0,0,0,.35);border-radius:10px;padding:2px 7px;}
+
+/* POST CARD */
+.post-card{background:var(--white);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.05);}
+.post-header{padding:16px 24px;display:flex;align-items:center;justify-content:space-between;}
+.post-label{font-weight:800;font-size:.88rem;}
+.post-meta{font-size:.72rem;color:var(--text3);}
+.post-badge{border-radius:20px;padding:3px 12px;font-size:.68rem;font-weight:700;}
+.post-body{padding:24px 28px;}
+
+.obj-box{border-left:4px solid;border-radius:8px;padding:10px 16px;font-size:.77rem;font-weight:600;margin-bottom:18px;}
+
+.segment{margin-bottom:16px;}
+.seg-label{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:4px 12px;border-radius:6px;margin-bottom:8px;}
+.seg-body{background:#fafbfc;border:1px solid var(--border);border-radius:10px;padding:16px;font-size:.86rem;line-height:1.85;white-space:pre-wrap;}
+
+.copy-btn{display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:10px 20px;border:none;border-radius:10px;font-size:.78rem;font-weight:700;cursor:pointer;color:#fff;transition:opacity .2s;}
+.copy-btn:hover{opacity:.88;}
+.copy-btn.copied{background:var(--green) !important;}
+
+.note-box{background:#fff0f8;border:1px solid #f0abce;border-left:4px solid #cc2366;border-radius:10px;padding:12px 16px;font-size:.77rem;color:#831843;margin-top:12px;}
+.note-box strong{color:#9d174d;}
+
+.sec-title{font-size:1rem;font-weight:800;color:var(--text);margin:28px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--border);}
+
+/* CAROUSEL SLIDES DESCRIPTION */
+.slides-list{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px;}
+.slide-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px;border-left:4px solid #cc2366;}
+.slide-card-num{font-size:.68rem;font-weight:800;color:#cc2366;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+.slide-card-title{font-weight:700;font-size:.85rem;margin-bottom:4px;}
+.slide-card-desc{font-size:.75rem;color:var(--text2);line-height:1.6;}
+
+/* TIPS */
+.tips-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.tip-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:20px;}
+.tip-icon{font-size:1.5rem;margin-bottom:8px;}
+.tip-title{font-weight:800;font-size:.88rem;margin-bottom:6px;}
+.tip-body{font-size:.77rem;color:var(--text2);line-height:1.7;}
+.tip-body ul{padding-left:14px;}
+.tip-body li{margin-bottom:4px;}
+
+/* STORIES */
+.story-flow{display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;}
+.story-card{flex-shrink:0;width:140px;background:linear-gradient(180deg,#cc2366,#bc1888);border-radius:14px;padding:14px 12px;color:#fff;font-size:.72rem;min-height:200px;position:relative;}
+.story-num{position:absolute;top:8px;left:10px;font-size:.6rem;background:rgba(255,255,255,.2);border-radius:8px;padding:2px 6px;}
+.story-title{font-weight:800;font-size:.78rem;margin-bottom:8px;}
+.story-desc{font-size:.68rem;opacity:.85;line-height:1.55;}
+.story-cta{position:absolute;bottom:10px;left:12px;right:12px;background:rgba(255,255,255,.2);border-radius:8px;padding:5px;text-align:center;font-size:.63rem;font-weight:700;}
+
+/* CALENDAR */
+.cal-row{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px 20px;display:grid;grid-template-columns:70px 1fr auto;gap:14px;align-items:center;margin-bottom:10px;}
+.cal-day-num{font-size:1.6rem;font-weight:900;color:#cc2366;line-height:1;}
+.cal-day-sub{font-size:.63rem;color:var(--text3);text-transform:uppercase;}
+.cal-time-badge{font-size:.73rem;font-weight:700;padding:5px 12px;border-radius:10px;background:#fdf2f8;color:#cc2366;white-space:nowrap;}
+
+footer{background:var(--navy);color:#334155;text-align:center;padding:20px;font-size:.72rem;}
+footer strong{color:#475569;}
+
+@media(max-width:640px){
+  .header{padding:22px 16px;}
+  .tabs-nav{padding:0 8px;}
+  .content{padding:20px 12px 48px;}
+  .tips-grid,.slides-list{grid-template-columns:1fr;}
+  .cal-row{grid-template-columns:55px 1fr;}
+  .cal-time-badge{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="hl">📸 INSTAGRAM · Serie de Lanzamiento</div>
+  <div class="ht">TodasMisCosas.com — Feed + Reels + Stories</div>
+  <div class="hs">4 Carousels · 4 Reels · Secuencia de Stories · 18 jun 2026</div>
+  <div class="hchips">
+    <div class="chip"><strong>4</strong> posts de feed (carousel)</div>
+    <div class="chip"><strong>4</strong> Reels scripts</div>
+    <div class="chip"><strong>7</strong> Stories en secuencia</div>
+    <div class="chip">Captions <strong>listas para copiar</strong></div>
+    <div class="chip">Oferta <strong>50 lugares</strong> premium</div>
+  </div>
+</div>
+
+<div class="tabs-nav">
+  <button class="tab-btn active" onclick="switchTab('p1')">📷 Post 1</button>
+  <button class="tab-btn" onclick="switchTab('p2')">📷 Post 2</button>
+  <button class="tab-btn" onclick="switchTab('p3')">📷 Post 3</button>
+  <button class="tab-btn" onclick="switchTab('p4')">📷 Post 4</button>
+  <button class="tab-btn" onclick="switchTab('reels')">🎬 Reels</button>
+  <button class="tab-btn" onclick="switchTab('stories')">⭕ Stories</button>
+  <button class="tab-btn" onclick="switchTab('tips')">💡 Tips</button>
+</div>
+
+<div class="content">
+
+<!-- ══ POST 1 ══ -->
+<div class="tab-pane active" id="p1">
+<div class="post-card">
+  <div class="post-header" style="background:linear-gradient(90deg,#f09433,#e6683c,#dc2743);">
+    <div>
+      <div class="post-label" style="color:#fff;">📷 Post 1 — El Gancho · Carousel</div>
+      <div class="post-meta" style="color:rgba(255,255,255,.75);">Día 1 · Lunes · 7 PM · 8 slides · Awareness</div>
+    </div>
+    <span class="post-badge" style="background:rgba(255,255,255,.15);color:#fff;">PUBLICAR PRIMERO</span>
+  </div>
+  <div class="post-body">
+    <div class="obj-box" style="background:#fff7f0;border-color:#f09433;color:#7c2d12;">🎯 Los carousels tienen el mayor alcance orgánico en Instagram. La portada (slide 1) debe parar el scroll. El texto de cada slide es corto y directo.</div>
+
+    <div class="carousel-wrap">
+      <div class="slide" style="background:linear-gradient(135deg,#0f172a,#1e3a5f);">
+        <span class="slide-num">1/8</span>
+        <div>📦<br><br><strong style="font-size:.85rem;">¿Sabías que tenés plata parada en tu casa?</strong></div>
+      </div>
+      <div class="slide" style="background:#1e293b;">
+        <span class="slide-num">2/8</span>
+        <div>Buenos Aires tiene <strong>millones de m²</strong> vacíos sin usar</div>
+      </div>
+      <div class="slide" style="background:#0f4c75;">
+        <span class="slide-num">3/8</span>
+        <div>Garages 🏠<br>Habitaciones 🛋️<br>Depósitos 🏭<br>Galpones 🔧</div>
+      </div>
+      <div class="slide" style="background:#1b4332;">
+        <span class="slide-num">4/8</span>
+        <div>Y al mismo tiempo... <strong>miles de personas</strong> que necesitan guardar sus cosas</div>
+      </div>
+      <div class="slide" style="background:linear-gradient(135deg,#dc2743,#bc1888);">
+        <span class="slide-num">5/8</span>
+        <div style="font-size:.85rem;font-weight:900;">Conectamos los dos lados.</div>
+      </div>
+      <div class="slide" style="background:#1e3a5f;">
+        <span class="slide-num">6/8</span>
+        <div>📦 <strong>TodasMisCosas.com</strong><br><br><em style="font-size:.65rem;">El primer marketplace de almacenamiento de Argentina</em></div>
+      </div>
+      <div class="slide" style="background:#3d1a6e;">
+        <span class="slide-num">7/8</span>
+        <div>Los <strong>primeros 50</strong> en sumarse tienen condiciones que no van a repetirse 👀</div>
+      </div>
+      <div class="slide" style="background:linear-gradient(135deg,#cc2366,#bc1888);">
+        <span class="slide-num">8/8</span>
+        <div>Seguinos para enterarte primero 👉 <strong>@todasmiscosas</strong></div>
+      </div>
+    </div>
+
+    <div class="slides-list">
+      <div class="slide-card"><div class="slide-card-num">Slide 1 — Portada</div><div class="slide-card-title">¿Sabías que tenés plata parada en tu casa?</div><div class="slide-card-desc">Fondo oscuro, icono de caja, texto grande. Debe parar el scroll.</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 2</div><div class="slide-card-title">El problema</div><div class="slide-card-desc">Millones de m² vacíos en BsAs. Dato de impacto.</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 3</div><div class="slide-card-title">Los tipos de espacio</div><div class="slide-card-desc">Garages · Habitaciones · Depósitos · Galpones con emojis.</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 4</div><div class="slide-card-title">El otro lado</div><div class="slide-card-desc">Miles de personas que necesitan guardar. La brecha existe.</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 5</div><div class="slide-card-title">La solución (impacto)</div><div class="slide-card-desc">Texto grande: "Conectamos los dos lados." Fondo degradé rosa-morado.</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 6</div><div class="slide-card-title">El producto</div><div class="slide-card-desc">Logo TMC, nombre y tagline: "El primer marketplace de almacenamiento de Argentina".</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 7</div><div class="slide-card-title">La promesa</div><div class="slide-card-desc">Los primeros 50 en sumarse tienen condiciones especiales. Genera expectativa.</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 8 — CTA</div><div class="slide-card-title">Seguinos</div><div class="slide-card-desc">@todasmiscosas. Fondo degradé Instagram. Flecha y llamada a la acción.</div></div>
+    </div>
+
+    <div class="segment" style="margin-top:20px;">
+      <div class="seg-label" style="background:#fdf2f8;color:#cc2366;">📝 CAPTION completo</div>
+      <div class="seg-body" id="ig-cap1">¿Sabías que tenés plata parada en tu casa? 💰
+
+Buenos Aires tiene millones de metros cuadrados vacíos. Garages, habitaciones, depósitos que no se usan.
+
+Al mismo tiempo: miles de personas que necesitan guardar sus cosas y no saben dónde.
+
+Esa brecha existe hace décadas. Nosotros la cerramos.
+
+📦 TodasMisCosas.com — el primer marketplace de almacenamiento urbano de Argentina.
+
+→ Deslizá para ver cómo funciona 👉
+
+Los primeros 50 en sumarse van a tener condiciones que no van a repetirse. Seguinos para enterarte. 👀
+
+.
+.
+.
+#TodasMisCosas #Almacenamiento #BuenosAires #CABA #AMBA #IngresoExtra #Startup #EmprendimientoArgentino #PropTech #Marketplace #GanarDinero #Argentina</div>
+    </div>
+    <button class="copy-btn" style="background:linear-gradient(90deg,#dc2743,#bc1888);" onclick="copyPost('ig-cap1',this)">📋 Copiar caption</button>
+
+    <div class="note-box"><strong>📐 Canva:</strong> Usar plantilla "Carousel Instagram" oscura. Tipografía: una sans-serif bold (Montserrat o similar). Paleta: azul marino / negro / degradé rosa-morado para el último slide. Tamaño: 1080x1080 px. Exportar JPG alta calidad.</div>
+  </div>
+</div>
+</div>
+
+<!-- ══ POST 2 ══ -->
+<div class="tab-pane" id="p2">
+<div class="post-card">
+  <div class="post-header" style="background:linear-gradient(90deg,#0ea5e9,#0284c7);">
+    <div>
+      <div class="post-label" style="color:#fff;">📷 Post 2 — Cómo Funciona · Carousel</div>
+      <div class="post-meta" style="color:rgba(255,255,255,.75);">Día 4 · Jueves · 7 PM · 6 slides · Educación</div>
+    </div>
+    <span class="post-badge" style="background:rgba(255,255,255,.15);color:#fff;">POST 2</span>
+  </div>
+  <div class="post-body">
+    <div class="obj-box" style="background:#e0f2fe;border-color:#0ea5e9;color:#0c4a6e;">🎯 Explicación visual del proceso. Cada slide = un paso. Simple y sin jerga técnica. Quienes vieron el Post 1 y tienen curiosidad, acá entienden exactamente cómo funciona.</div>
+
+    <div class="slides-list">
+      <div class="slide-card"><div class="slide-card-num">Slide 1 — Portada</div><div class="slide-card-title">¿Cómo funciona TodasMisCosas?</div><div class="slide-card-desc">Icono de engranaje o cajas. Subtítulo: "Te lo explicamos en 5 pasos".</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 2</div><div class="slide-card-title">Si tenés espacio</div><div class="slide-card-desc">Paso 1: Publicás tu espacio (garage, habitación, depósito). Ilustración simple.</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 3</div><div class="slide-card-title">Un cliente reserva</div><div class="slide-card-desc">Paso 2: Un cliente lo reserva y paga con Mercado Pago. Icono de candado 🔒.</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 4</div><div class="slide-card-title">El dinero llega a tu cuenta</div><div class="slide-card-desc">Paso 3: Cuando confirmás el acceso, te acreditamos el dinero. ✅</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 5</div><div class="slide-card-title">¿Por qué usar TMC?</div><div class="slide-card-desc">4 bullets: Pago seguro · Reviews · Acuerdo documentado · Soporte.</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 6 — CTA</div><div class="slide-card-title">Registrate antes del lanzamiento</div><div class="slide-card-desc">Link en bio. Primeros 50 con beneficios. @todasmiscosas.</div></div>
+    </div>
+
+    <div class="segment" style="margin-top:20px;">
+      <div class="seg-label" style="background:#e0f2fe;color:#0284c7;">📝 CAPTION completo</div>
+      <div class="seg-body" id="ig-cap2">Mucha gente nos pregunta: "¿Cómo funciona?" ⚙️
+
+Simple. En 3 pasos:
+
+1️⃣ Publicás tu espacio libre (garage, habitación, depósito) en todasmiscosas.com
+2️⃣ Un cliente lo reserva y paga con Mercado Pago de forma segura 🔒
+3️⃣ El dinero llega a tu cuenta cuando confirmás el acceso ✅
+
+→ Deslizá para ver el flujo completo 👉
+
+Lo que nos diferencia de un grupo de WhatsApp o un aviso en ML:
+✅ Pago protegido hasta que confirmás
+✅ Historial y reviews de cada proveedor
+✅ Acuerdo documentado con fechas
+✅ Soporte incluido
+
+¿Tenés dudas? Las respondemos en los comentarios 👇
+
+.
+.
+.
+#TodasMisCosas #ComoFunciona #Marketplace #BuenosAires #Almacenamiento #PropTech #CABA #IngresoExtra #Argentina #MercadoPago #Startup</div>
+    </div>
+    <button class="copy-btn" style="background:#0284c7;" onclick="copyPost('ig-cap2',this)">📋 Copiar caption</button>
+
+    <div class="note-box"><strong>📐 Canva:</strong> Fondo claro (blanco o gris muy claro) con íconos coloridos para cada paso. Usar flechas de progresión entre slides. Paleta: azul claro + blanco. Slide final con CTA en fondo oscuro para contraste.</div>
+  </div>
+</div>
+</div>
+
+<!-- ══ POST 3 ══ -->
+<div class="tab-pane" id="p3">
+<div class="post-card">
+  <div class="post-header" style="background:linear-gradient(90deg,#16a34a,#14532d);">
+    <div>
+      <div class="post-label" style="color:#fff;">📷 Post 3 — Para Proveedores ⭐ · Carousel</div>
+      <div class="post-meta" style="color:rgba(255,255,255,.75);">Día 8 · Lunes · 7 PM · 7 slides · Captación de oferta</div>
+    </div>
+    <span class="post-badge" style="background:rgba(255,255,255,.15);color:#fff;">EL MÁS IMPORTANTE</span>
+  </div>
+  <div class="post-body">
+    <div class="obj-box" style="background:#f0fdf4;border-color:#16a34a;color:#14532d;">🎯 Hablar directamente al proveedor potencial. Mostrar los números concretos de ganancia. Revelar los 50 lugares en el slide final como un premio.</div>
+
+    <div class="slides-list">
+      <div class="slide-card"><div class="slide-card-num">Slide 1 — Portada</div><div class="slide-card-title">¿Tenés un garage vacío en BsAs?</div><div class="slide-card-desc">Foto de un garage ordenado o imagen de espacio limpio. Texto superpuesto grande.</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 2</div><div class="slide-card-title">Cuánto puede generar</div><div class="slide-card-desc">$80.000 - $200.000 ARS / mes. Número grande en pantalla. Fondo verde oscuro.</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 3</div><div class="slide-card-title">Sin los problemas del alquiler</div><div class="slide-card-desc">Sin inquilinos · Sin contrato de alquiler · Sin AFIP · Sin inmobiliaria. Check verde en cada ítem.</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 4</div><div class="slide-card-title">Vos mandás</div><div class="slide-card-desc">Vos elegís el precio · Las fechas · Quién accede · El horario. Ícono de control/joystick.</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 5</div><div class="slide-card-title">TMC se ocupa del resto</div><div class="slide-card-desc">La plataforma · El cobro · La protección · El historial del cliente.</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 6 — La Oferta</div><div class="slide-card-title">👑 Solo 50 lugares</div><div class="slide-card-desc">1 año sin comisión · Sin membresía · Perfil destacado · Acceso prioritario. Fondo dorado/premium.</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 7 — CTA</div><div class="slide-card-title">DM o link en bio</div><div class="slide-card-desc">"QUIERO SER PROVEEDOR" por DM. Los lugares se están llenando ⏳.</div></div>
+    </div>
+
+    <div class="segment" style="margin-top:20px;">
+      <div class="seg-label" style="background:#f0fdf4;color:#16a34a;">📝 CAPTION completo</div>
+      <div class="seg-body" id="ig-cap3">¿Cuánto vale el espacio que tenés parado en tu casa? 🏠💰
+
+Un garage en Palermo puede generar entre $80.000 y $200.000 ARS por mes guardando cosas.
+
+Una habitación libre en Caballito, Villa Urquiza o Flores — lo mismo.
+
+Sin inquilinos. Sin contratos de alquiler. Sin AFIP ni inmobiliaria.
+
+→ Deslizá para ver cómo funciona 👉
+
+En TodasMisCosas.com vos decidís:
+📐 Qué espacio ofrecés
+💰 Cuánto cobrás
+📅 Qué fechas disponés
+🔐 Quién puede entrar
+
+Nosotros nos encargamos del cobro, la protección del pago y el historial del cliente.
+
+———
+
+👑 OFERTA DE LANZAMIENTO — Solo 50 lugares:
+✅ 1 año SIN COMISIÓN (normalmente cobramos 15%)
+✅ Sin costo de membresía
+✅ Perfil destacado en búsqueda
+
+Mandanos DM con "QUIERO SER PROVEEDOR" o entrá desde el link en bio 🔗
+
+.
+.
+.
+#TodasMisCosas #IngresoExtra #Proveedores #BuenosAires #CABA #GBA #GanarDinero #PropTech #Almacenamiento #EmprendimientoArgentino #Argentina #Startup #SinInquilinos</div>
+    </div>
+    <button class="copy-btn" style="background:#16a34a;" onclick="copyPost('ig-cap3',this)">📋 Copiar caption</button>
+
+    <div class="note-box"><strong>📐 Canva:</strong> Slide 1: foto real de un garage ordenado (Pexels/Unsplash gratis). Slide 6 (la oferta): fondo negro con detalles dorados, badge "👑 OFERTA EXCLUSIVA". Considerar promocionar este post con $5-10 USD en Instagram Ads segmentado a CABA+GBA, intereses: hogar, finanzas, emprendimiento.</div>
+  </div>
+</div>
+</div>
+
+<!-- ══ POST 4 ══ -->
+<div class="tab-pane" id="p4">
+<div class="post-card">
+  <div class="post-header" style="background:linear-gradient(90deg,#ea580c,#9a3412);">
+    <div>
+      <div class="post-label" style="color:#fff;">📷 Post 4 — CTA Final · Carousel</div>
+      <div class="post-meta" style="color:rgba(255,255,255,.75);">Día 12 · Jueves · 7 PM · 6 slides · Conversión</div>
+    </div>
+    <span class="post-badge" style="background:rgba(255,255,255,.15);color:#fff;">CIERRE</span>
+  </div>
+  <div class="post-body">
+    <div class="obj-box" style="background:#fff7ed;border-color:#ea580c;color:#7c2d12;">🎯 Urgencia real. Contador. 3 pasos simples para sumarse. Slide final con el resumen de los beneficios y el CTA más directo de toda la serie.</div>
+
+    <div class="slides-list">
+      <div class="slide-card"><div class="slide-card-num">Slide 1 — Portada</div><div class="slide-card-title">Los primeros 50 casi se completaron ⏳</div><div class="slide-card-desc">Barra de progreso visual "X / 50". Fondo oscuro con rojo de urgencia.</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 2</div><div class="slide-card-title">Por qué lo hacemos</div><div class="slide-card-desc">Queríamos conectar quien tiene espacio con quien lo necesita, de forma segura. Texto breve, personal.</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 3</div><div class="slide-card-title">Los beneficios de los 50</div><div class="slide-card-desc">1 año sin comisión · Sin membresía · Perfil destacado · Prioridad. Lista con iconos.</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 4</div><div class="slide-card-title">¿A quién le sirve?</div><div class="slide-card-desc">Garages · Habitaciones · Depósitos · Galpones · Empresas. Mapa CABA/AMBA de fondo.</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 5</div><div class="slide-card-title">3 pasos para sumarte</div><div class="slide-card-desc">1. Seguinos · 2. DM "QUIERO SER PROVEEDOR" · 3. Te contactamos. Diseño limpio con números grandes.</div></div>
+      <div class="slide-card"><div class="slide-card-num">Slide 6 — CTA Final</div><div class="slide-card-title">todasmiscosas.com</div><div class="slide-card-desc">Logo grande · Link en bio · "Buenos Aires tiene espacio de sobra. Falta organizarlo."</div></div>
+    </div>
+
+    <div class="segment" style="margin-top:20px;">
+      <div class="seg-label" style="background:#fff7ed;color:#ea580c;">📝 CAPTION completo</div>
+      <div class="seg-body" id="ig-cap4">Los primeros 50 casi se completaron. ⏳🔥
+
+Cuando empezamos a construir TodasMisCosas.com, el objetivo era simple: conectar a quien tiene espacio con quien lo necesita, de forma segura, transparente y sin fricción.
+
+Antes del lanzamiento oficial en CABA y AMBA, reservamos 50 lugares con beneficios permanentes:
+
+✅ 1 año SIN COMISIÓN
+✅ Sin costo de membresía
+✅ Perfil destacado desde el primer día
+
+→ Deslizá para ver los 3 pasos para sumarte 👉
+
+¿A quién le sirve?
+🏠 Dueños de departamentos con espacio libre
+🏢 Administradores de edificios
+🏭 Empresas con depósitos subutilizados
+🚗 Propietarios de garages en CABA o GBA
+
+Cómo sumarte:
+1. Seguinos: @todasmiscosas
+2. DM con "QUIERO SER PROVEEDOR"
+3. Te contactamos para el registro
+
+Eso es todo.
+
+———
+Buenos Aires tiene espacio de sobra.
+Falta organizarlo.
+Eso es lo que hacemos.
+
+🔗 Link en bio → todasmiscosas.com
+
+.
+.
+.
+#TodasMisCosas #Lanzamiento #BuenosAires #CABA #GBA #IngresoExtra #Proveedores #Marketplace #Startup #Argentina #PropTech #EmprendimientoArgentino #UltimaOportunidad</div>
+    </div>
+    <button class="copy-btn" style="background:#ea580c;" onclick="copyPost('ig-cap4',this)">📋 Copiar caption</button>
+    <div class="note-box"><strong>📐 Canva:</strong> Slide 1: diseñar una barra de progreso visual estilo "X / 50" con el número actualizable. Slide 6 final: el tagline "Buenos Aires tiene espacio de sobra. Falta organizarlo." en tipografía elegante sobre negro.</div>
+  </div>
+</div>
+</div>
+
+<!-- ══ REELS ══ -->
+<div class="tab-pane" id="reels">
+<div class="sec-title">🎬 Reels — Versiones cortas para el feed</div>
+<p style="font-size:.8rem;color:var(--text2);margin-bottom:20px;">Los Reels se distribuyen fuera de tus seguidores. Son el motor de crecimiento en Instagram. Usar los mismos videos de TikTok, sin el logo de TikTok (grabar en CapCut, no re-subir desde TikTok).</p>
+
+<div class="post-card">
+  <div class="post-header" style="background:linear-gradient(90deg,#7c3aed,#4c1d95);">
+    <div><div class="post-label" style="color:#fff;">Reel 1 — Versión 15 seg del Video 1</div><div class="post-meta" style="color:rgba(255,255,255,.7);">Lunes · 6 PM · Semana 1</div></div>
+  </div>
+  <div class="post-body">
+    <div class="segment">
+      <div class="seg-label" style="background:#ede9fe;color:#5b21b6;">🎙️ GUIÓN — 15 segundos exactos</div>
+      <div class="seg-body" id="reel1">¿Sabías que tu garage vacío puede darte $200.000 por mes? [texto en pantalla]
+
+En Buenos Aires hay millones de metros cuadrados sin usar.
+
+En TodasMisCosas conectamos ese espacio con quien lo necesita.
+
+De forma segura. Con Mercado Pago.
+
+Los primeros 50 proveedores entran sin comisión por un año. Link en bio. 🔗</div>
+    </div>
+    <button class="copy-btn" style="background:#7c3aed;" onclick="copyPost('reel1',this)">📋 Copiar guión</button>
+  </div>
+</div>
+
+<div class="post-card">
+  <div class="post-header" style="background:linear-gradient(90deg,#0ea5e9,#0369a1);">
+    <div><div class="post-label" style="color:#fff;">Reel 2 — Antes/Después (formato viral)</div><div class="post-meta" style="color:rgba(255,255,255,.7);">Jueves · 6 PM · Semana 1</div></div>
+  </div>
+  <div class="post-body">
+    <div class="segment">
+      <div class="seg-label" style="background:#e0f2fe;color:#0369a1;">🎙️ GUIÓN — 20 segundos</div>
+      <div class="seg-body" id="reel2">ANTES: [texto en pantalla] Tenés un garage vacío que no usás.
+
+DESPUÉS: [texto en pantalla] Ese mismo garage te genera $150.000 por mes.
+
+Qué cambió: lo publicaste en TodasMisCosas.com.
+
+Un cliente lo reserva. Mercado Pago protege el pago. Vos confirmás el acceso y el dinero va a tu cuenta.
+
+Sin inquilinos. Sin burocracia.
+
+DM "QUIERO SER PROVEEDOR" para los primeros 50 🔥</div>
+    </div>
+    <button class="copy-btn" style="background:#0369a1;" onclick="copyPost('reel2',this)">📋 Copiar guión</button>
+  </div>
+</div>
+
+<div class="post-card">
+  <div class="post-header" style="background:linear-gradient(90deg,#16a34a,#14532d);">
+    <div><div class="post-label" style="color:#fff;">Reel 3 — POV Proveedor (el más viral)</div><div class="post-meta" style="color:rgba(255,255,255,.7);">Lunes · 6 PM · Semana 2</div></div>
+  </div>
+  <div class="post-body">
+    <div class="segment">
+      <div class="seg-label" style="background:#f0fdf4;color:#16a34a;">🎙️ GUIÓN — 25 segundos</div>
+      <div class="seg-body" id="reel3">POV: [texto en pantalla] Tenés un garage en CABA que usás como depósito de cosas que nunca mirás.
+
+Publicás ese espacio en TodasMisCosas.com.
+
+Un cliente lo reserva por 3 meses.
+
+Mercado Pago retiene el pago hasta que vos confirmás el acceso.
+
+Te llegan $150.000 ARS ese mes.
+
+Sin contratos. Sin AFIP. Sin dramas.
+
+Primeros 50 proveedores: 1 año sin comisión. ¿Llegás? 👉 Link en bio.</div>
+    </div>
+    <button class="copy-btn" style="background:#16a34a;" onclick="copyPost('reel3',this)">📋 Copiar guión</button>
+  </div>
+</div>
+
+<div class="post-card">
+  <div class="post-header" style="background:linear-gradient(90deg,#dc2626,#991b1b);">
+    <div><div class="post-label" style="color:#fff;">Reel 4 — Urgencia final</div><div class="post-meta" style="color:rgba(255,255,255,.7);">Jueves · 6 PM · Semana 2</div></div>
+  </div>
+  <div class="post-body">
+    <div class="segment">
+      <div class="seg-label" style="background:#fef2f2;color:#991b1b;">🎙️ GUIÓN — 20 segundos</div>
+      <div class="seg-body" id="reel4">Los primeros 50 lugares casi se llenaron. [texto en pantalla con contador]
+
+Si tenés espacio libre en CABA o GBA, esto es para vos:
+
+Un año sin cobrarles comisión. Cero. El 15% que normalmente cobramos, no te lo cobramos.
+
+Tres pasos:
+Uno: mandanos DM con "QUIERO SER PROVEEDOR".
+Dos: te contactamos.
+Tres: publicás tu espacio.
+
+¿Llegás a tiempo? ⏳ Link en bio → todasmiscosas.com</div>
+    </div>
+    <button class="copy-btn" style="background:#dc2626;" onclick="copyPost('reel4',this)">📋 Copiar guión</button>
+  </div>
+</div>
+</div>
+
+<!-- ══ STORIES ══ -->
+<div class="tab-pane" id="stories">
+<div class="sec-title">⭕ Secuencia de Stories — 7 slides · Publicar el Día 1</div>
+<p style="font-size:.8rem;color:var(--text2);margin-bottom:16px;">Las Stories son para la audiencia que ya te sigue. Complementan el feed. Publicar la secuencia completa el mismo día que el Post 1 para maximizar el impacto. Agregar sticker de Link o DM en cada story donde corresponda.</p>
+
+<div class="story-flow">
+  <div class="story-card">
+    <div class="story-num">1/7</div>
+    <div class="story-title">El problema</div>
+    <div class="story-desc">Buenos Aires tiene MILLONES de m² vacíos 😱<br><br>Garages, habitaciones, depósitos...<br><br>¿Sabías que los tuyos pueden generar dinero?</div>
+    <div class="story-cta">👉 Deslizá</div>
+  </div>
+  <div class="story-card">
+    <div class="story-num">2/7</div>
+    <div class="story-title">La solución</div>
+    <div class="story-desc">Creamos el primer marketplace de almacenamiento de Argentina.<br><br>📦 TodasMisCosas.com<br><br>Proveedor publica → Cliente reserva → Pago seguro</div>
+    <div class="story-cta">👆 Ver más</div>
+  </div>
+  <div class="story-card">
+    <div class="story-num">3/7</div>
+    <div class="story-title">Para proveedores</div>
+    <div class="story-desc">Garage en Palermo:<br>💰 $200k/mes<br><br>Habitación en Caballito:<br>💰 $80k-$120k/mes<br><br>Sin AFIP.<br>Sin contrato.</div>
+    <div class="story-cta">¿Tenés espacio? 👇</div>
+  </div>
+  <div class="story-card" style="background:linear-gradient(180deg,#f59e0b,#ea580c);">
+    <div class="story-num">4/7</div>
+    <div class="story-title">🔥 LA OFERTA</div>
+    <div class="story-desc">Solo 50 lugares:<br><br>✅ 1 año SIN COMISIÓN<br>✅ Sin membresía<br>✅ Perfil destacado<br><br>Los primeros 50 únicamente.</div>
+    <div class="story-cta">👇 Ver cómo entrar</div>
+  </div>
+  <div class="story-card" style="background:linear-gradient(180deg,#0f172a,#1e3a5f);">
+    <div class="story-num">5/7</div>
+    <div class="story-title">3 pasos</div>
+    <div class="story-desc">1️⃣ Seguinos<br>@todasmiscosas<br><br>2️⃣ DM:<br>"QUIERO SER PROVEEDOR"<br><br>3️⃣ Te contactamos</div>
+    <div class="story-cta">DM acá 👆</div>
+  </div>
+  <div class="story-card">
+    <div class="story-num">6/7</div>
+    <div class="story-title">Encuesta</div>
+    <div class="story-desc">¿Tenés espacio libre en tu casa?<br><br>[STICKER ENCUESTA]<br>✅ Sí, tengo<br>❌ No tengo<br><br>Respondé 👇</div>
+    <div class="story-cta">Votar arriba ☝️</div>
+  </div>
+  <div class="story-card" style="background:linear-gradient(180deg,#cc2366,#7c3aed);">
+    <div class="story-num">7/7</div>
+    <div class="story-title">🔗 Link</div>
+    <div class="story-desc">todasmiscosas.com<br><br>O mandanos DM directamente 💬<br><br>Los 50 lugares se están llenando ⏳</div>
+    <div class="story-cta">🔗 Ir al sitio</div>
+  </div>
+</div>
+
+<div class="note-box" style="margin-top:20px;">
+  <strong>💡 Tips para Stories:</strong><br>
+  — Story 4 (La Oferta): agregar sticker de cuenta regresiva si se conoce la fecha de cierre.<br>
+  — Story 5: agregar sticker de "DM" directo para que la gente escriba sin salir de Stories.<br>
+  — Story 6: usar la encuesta de Instagram. Los que dicen "Sí tengo" → DM automático de bienvenida.<br>
+  — Guardar la serie completa como Highlight "🏠 Proveedores" en el perfil.
+</div>
+</div>
+
+<!-- ══ TIPS ══ -->
+<div class="tab-pane" id="tips">
+<div class="sec-title">💡 Estrategia Instagram para TMC</div>
+<div class="tips-grid">
+  <div class="tip-card">
+    <div class="tip-icon">📅</div>
+    <div class="tip-title">Horarios óptimos</div>
+    <div class="tip-body">Para Argentina en Instagram: publicar entre 18 y 21 hs. Los lunes y jueves tienen mayor tráfico. Los Reels funcionan bien también los sábados a la mañana (10 AM). Las Stories: publicarlas 1 hora antes que el post del feed.</div>
+  </div>
+  <div class="tip-card">
+    <div class="tip-icon">🔗</div>
+    <div class="tip-title">Link en bio (Linktree)</div>
+    <div class="tip-body">Crear un Linktree gratis con 3 opciones: 1) "Soy proveedor — tengo espacio" → todasmiscosas.com/registro 2) "Necesito guardar cosas" → todasmiscosas.com 3) "DM para los 50 lugares". Actualizar el link en bio con la URL de Linktree.</div>
+  </div>
+  <div class="tip-card">
+    <div class="tip-icon">💬</div>
+    <div class="tip-title">Responder DMs</div>
+    <div class="tip-body">Quien manda DM con "QUIERO SER PROVEEDOR" debe recibir respuesta en menos de 4 horas. Texto sugerido:<br><br><em>"¡Hola! Perfecto 🙌 Te paso el link para registrarte y quedarte con uno de los 50 lugares con 1 año sin comisión → [link]"</em></div>
+  </div>
+  <div class="tip-card">
+    <div class="tip-icon">📸</div>
+    <div class="tip-title">Imágenes para Canva</div>
+    <div class="tip-body">Fotos gratis: Unsplash.com o Pexels.com. Buscar "garage", "storage room", "empty room Buenos Aires". Paleta de colores TMC: azul marino #0f172a + blanco + degradé rosa/morado para llamadas a la acción.</div>
+  </div>
+  <div class="tip-card">
+    <div class="tip-icon">#️⃣</div>
+    <div class="tip-title">Hashtags Instagram</div>
+    <div class="tip-body">Usar entre 8 y 15 hashtags al final de la caption. Mezclar: nicho (#IngresoExtra, #PropTech), geo (#BuenosAires, #CABA), amplificadores (#Startup, #Emprendimiento). Siempre incluir #TodasMisCosas para construir el hashtag propio.</div>
+  </div>
+  <div class="tip-card">
+    <div class="tip-icon">📊</div>
+    <div class="tip-title">Métricas a medir</div>
+    <div class="tip-body">
+      <ul>
+        <li>Alcance total (Insights > Contenido)</li>
+        <li>DMs recibidos por post</li>
+        <li>Clics al link en bio</li>
+        <li>Respuestas a la encuesta de Stories</li>
+        <li>Nuevos seguidores durante los 12 días</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</div>
+
+</div><!-- /content -->
+
+<footer>
+  <strong>📸 TMC — Serie Instagram de Lanzamiento · 18 jun 2026</strong><br>
+  TodasMisCosas.com · CABA &amp; AMBA · Feed + Reels + Stories · Primeros 50 premium<br>
+  <span style="font-size:.68rem;color:#1e293b;margin-top:3px;display:block;">Generado por Claude Sonnet 4.6</span>
+</footer>
+
+<script>
+function switchTab(id){
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+function copyPost(id,btn){
+  const text=document.getElementById(id).innerText;
+  const orig=btn.textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='✅ Copiado!';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent=orig;btn.classList.remove('copied');},2500);
+  }).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    btn.textContent='✅ Copiado!';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent=orig;btn.classList.remove('copied');},2500);
+  });
+}
+</script>
+</body>
+</html>

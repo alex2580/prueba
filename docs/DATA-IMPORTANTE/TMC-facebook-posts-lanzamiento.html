@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC — Serie Facebook de Lanzamiento</title>
+<style>
+:root{
+  --fb:#1877f2;--fb-dark:#0a4fa8;--fb-bg:#e7f0fd;--fb-mid:#166fe5;
+  --gold:#f59e0b;--navy:#0f172a;--text:#1e293b;--text2:#475569;--text3:#94a3b8;
+  --border:#e2e8f0;--bg:#f0f4f8;--white:#fff;
+  --green:#16a34a;--green-bg:#f0fdf4;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:13.5px;line-height:1.65;}
+
+.header{background:linear-gradient(135deg,#0a2040 0%,#0a4fa8 60%,#1877f2 100%);padding:36px 48px 28px;}
+.hl{font-size:1.1rem;font-weight:900;color:#fff;letter-spacing:.06em;}
+.ht{font-size:1.65rem;font-weight:900;color:#f1f5f9;margin:6px 0 4px;}
+.hs{color:#64748b;font-size:.83rem;}
+.hchips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+.chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:4px 14px;font-size:.72rem;color:#94a3b8;}
+.chip strong{color:#f1f5f9;}
+
+.tabs-nav{display:flex;gap:0;background:var(--white);border-bottom:2px solid var(--border);padding:0 48px;overflow-x:auto;}
+.tab-btn{padding:14px 20px;font-size:.82rem;font-weight:700;color:var(--text3);border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color .2s;}
+.tab-btn.active{color:var(--fb);border-bottom-color:var(--fb);}
+.tab-btn:hover:not(.active){color:var(--text2);}
+
+.content{max-width:900px;margin:0 auto;padding:40px 32px 80px;}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+
+/* FB POST MOCKUP */
+.fb-mockup{background:var(--white);border:1px solid #dadde1;border-radius:10px;overflow:hidden;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.1);}
+.fb-top{display:flex;align-items:center;gap:10px;padding:12px 16px;}
+.fb-avatar{width:40px;height:40px;border-radius:50%;background:var(--fb);display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:900;color:#fff;flex-shrink:0;}
+.fb-user{font-weight:700;font-size:.82rem;color:var(--text);}
+.fb-time{font-size:.68rem;color:var(--text3);}
+.fb-text{padding:0 16px 10px;font-size:.85rem;color:var(--text);line-height:1.75;}
+.fb-image{background:linear-gradient(135deg,#0f172a,#1e3a5f);height:160px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.9rem;font-weight:700;text-align:center;padding:20px;}
+.fb-reactions{padding:8px 16px;font-size:.72rem;color:var(--text3);display:flex;justify-content:space-between;border-top:1px solid #e4e6eb;margin-top:6px;}
+
+/* MAIN POST CARD */
+.post-card{background:var(--white);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.05);}
+.post-header{padding:16px 24px;display:flex;align-items:center;justify-content:space-between;}
+.post-label{font-weight:800;font-size:.88rem;color:#fff;}
+.post-meta{font-size:.72rem;color:rgba(255,255,255,.75);}
+.post-badge{border-radius:20px;padding:3px 12px;font-size:.68rem;font-weight:700;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);}
+.post-body{padding:24px 28px;}
+
+.obj-box{border-left:4px solid;border-radius:8px;padding:10px 16px;font-size:.77rem;font-weight:600;margin-bottom:18px;}
+.segment{margin-bottom:16px;}
+.seg-label{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:4px 12px;border-radius:6px;margin-bottom:8px;}
+.seg-body{background:#fafbfc;border:1px solid var(--border);border-radius:10px;padding:16px;font-size:.86rem;line-height:1.85;white-space:pre-wrap;}
+
+.copy-btn{display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:10px 20px;border:none;border-radius:10px;font-size:.78rem;font-weight:700;cursor:pointer;color:#fff;transition:opacity .2s;}
+.copy-btn:hover{opacity:.88;}
+.copy-btn.copied{background:var(--green) !important;}
+
+.note-box{background:#e7f0fd;border:1px solid #b3cdf7;border-left:4px solid var(--fb);border-radius:10px;padding:12px 16px;font-size:.77rem;color:#1e3a6e;margin-top:12px;}
+.note-box strong{color:#0a4fa8;}
+
+.sec-title{font-size:1rem;font-weight:800;color:var(--text);margin:28px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--border);}
+
+/* GRUPOS */
+.grupo-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:12px;border-left:5px solid var(--fb);}
+.grupo-name{font-weight:800;font-size:.9rem;margin-bottom:4px;}
+.grupo-meta{font-size:.73rem;color:var(--text3);margin-bottom:8px;}
+.grupo-desc{font-size:.77rem;color:var(--text2);margin-bottom:10px;}
+.grupo-tag{display:inline-block;background:var(--fb-bg);color:var(--fb-dark);font-size:.67rem;font-weight:700;padding:3px 10px;border-radius:8px;margin-right:5px;}
+.grupo-tip{font-size:.73rem;color:#0a4fa8;background:var(--fb-bg);padding:6px 10px;border-radius:6px;margin-top:8px;}
+
+/* TIPS */
+.tips-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.tip-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:20px;}
+.tip-icon{font-size:1.5rem;margin-bottom:8px;}
+.tip-title{font-weight:800;font-size:.88rem;margin-bottom:6px;}
+.tip-body{font-size:.77rem;color:var(--text2);line-height:1.7;}
+.tip-body ul{padding-left:14px;}
+.tip-body li{margin-bottom:4px;}
+
+/* EVENTO */
+.evento-card{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px;}
+.evento-header{background:var(--fb);padding:12px 16px;}
+.evento-title-fb{color:#fff;font-weight:800;font-size:.92rem;}
+.evento-body{padding:18px;}
+
+footer{background:var(--navy);color:#334155;text-align:center;padding:20px;font-size:.72rem;}
+footer strong{color:#475569;}
+
+@media(max-width:640px){
+  .header{padding:22px 16px;}
+  .tabs-nav{padding:0 8px;}
+  .content{padding:20px 12px 48px;}
+  .tips-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="hl">👍 FACEBOOK · Serie de Lanzamiento</div>
+  <div class="ht">TodasMisCosas.com — Posts + Grupos + Evento</div>
+  <div class="hs">4 Posts para la Página · Estrategia de Grupos · Evento de Lanzamiento · 18 jun 2026</div>
+  <div class="hchips">
+    <div class="chip"><strong>4</strong> posts para la página</div>
+    <div class="chip"><strong>15+</strong> grupos estratégicos</div>
+    <div class="chip"><strong>1</strong> evento de lanzamiento</div>
+    <div class="chip">Texto <strong>listo para copiar</strong></div>
+    <div class="chip">Oferta <strong>50 lugares</strong> premium</div>
+  </div>
+</div>
+
+<div class="tabs-nav">
+  <button class="tab-btn active" onclick="switchTab('p1')">📘 Post 1</button>
+  <button class="tab-btn" onclick="switchTab('p2')">📘 Post 2</button>
+  <button class="tab-btn" onclick="switchTab('p3')">📘 Post 3</button>
+  <button class="tab-btn" onclick="switchTab('p4')">📘 Post 4</button>
+  <button class="tab-btn" onclick="switchTab('grupos')">👥 Grupos</button>
+  <button class="tab-btn" onclick="switchTab('evento')">🗓️ Evento</button>
+  <button class="tab-btn" onclick="switchTab('tips')">💡 Tips</button>
+</div>
+
+<div class="content">
+
+<!-- ══ POST 1 ══ -->
+<div class="tab-pane active" id="p1">
+
+<div class="fb-mockup">
+  <div class="fb-top">
+    <div class="fb-avatar">📦</div>
+    <div><div class="fb-user">TodasMisCosas.com</div><div class="fb-time">Hace 2 minutos · 🌐</div></div>
+  </div>
+  <div class="fb-text">¿Sabías que Buenos Aires tiene millones de m² vacíos que nadie usa? Garages, habitaciones, depósitos... Nosotros los conectamos con quien los necesita. 📦</div>
+  <div class="fb-image">📦 TodasMisCosas.com<br><span style="font-size:.75rem;opacity:.75;display:block;margin-top:6px;">El primer marketplace de almacenamiento de Argentina</span></div>
+  <div class="fb-reactions">👍❤️😮 1,2k reacciones <span>342 comentarios · 218 compartidos</span></div>
+</div>
+
+<div class="post-card">
+  <div class="post-header" style="background:linear-gradient(90deg,#1877f2,#0a4fa8);">
+    <div>
+      <div class="post-label">📘 Post 1 — El Gancho</div>
+      <div class="post-meta">Día 1 · Miércoles · 12 PM · Awareness · Página + Perfil personal</div>
+    </div>
+    <span class="post-badge">PUBLICAR PRIMERO</span>
+  </div>
+  <div class="post-body">
+    <div class="obj-box" style="background:#e7f0fd;border-color:#1877f2;color:#0a4fa8;">🎯 Facebook favorece el texto largo. A diferencia de Instagram y TikTok, acá se puede contar la historia completa. El algoritmo amplifica posts con comentarios, así que hacer una pregunta directa al final es clave.</div>
+
+    <div class="segment">
+      <div class="seg-label" style="background:#e7f0fd;color:#0a4fa8;">📝 TEXTO COMPLETO para publicar</div>
+      <div class="seg-body" id="fb-post1">¿Sabías que Buenos Aires tiene millones de metros cuadrados vacíos que nadie usa?
+
+Garages sin autos. Habitaciones sin inquilinos. Galpones a la mitad de capacidad.
+
+Al mismo tiempo, en la misma ciudad: miles de personas que se mudan, que viajan, que reducen su espacio, que acumulan más de lo que su departamento puede aguantar... y no saben dónde guardar sus cosas.
+
+Esa brecha existe hace décadas.
+
+Nosotros la cerramos.
+
+—
+
+📦 Presentamos TodasMisCosas.com — el primer marketplace de almacenamiento urbano de Argentina.
+
+Un proveedor publica su espacio libre.
+Un cliente lo reserva.
+El pago es seguro. El acceso, acordado. Todo queda documentado.
+
+Sin intermediarios. Sin complicaciones. Sin burocracia.
+
+Estamos por lanzar en CABA y AMBA — y los primeros 50 en sumarse van a tener condiciones que no van a repetirse.
+
+—
+
+📌 Compartí esta publicación si conocés a alguien con un garage, habitación o depósito libre en Buenos Aires. Puede que le cambie el mes. 🙌
+
+👇 Comentá: ¿Tenés espacio libre o necesitás guardar algo?
+
+#TodasMisCosas #Almacenamiento #BuenosAires #CABA #AMBA #IngresoExtra #Emprendimiento #Startup #PropTech</div>
+    </div>
+    <button class="copy-btn" style="background:#1877f2;" onclick="copyPost('fb-post1',this)">📋 Copiar texto</button>
+
+    <div class="note-box">
+      <strong>📘 Clave Facebook:</strong> Pedir "compartí si conocés a alguien" activa el mecanismo de alcance viral de Facebook. La pregunta al final ("¿Tenés espacio libre?") genera comentarios que el algoritmo interpreta como engagement y amplifica el post. Publicar también desde el perfil personal de Ale y Guille compartiendo la publicación de la Página con un texto propio corto.
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ POST 2 ══ -->
+<div class="tab-pane" id="p2">
+<div class="post-card">
+  <div class="post-header" style="background:linear-gradient(90deg,#0ea5e9,#0369a1);">
+    <div>
+      <div class="post-label">📘 Post 2 — Cómo Funciona</div>
+      <div class="post-meta">Día 4 · Sábado · 10 AM · Educación · Con imagen explicativa</div>
+    </div>
+    <span class="post-badge">POST 2</span>
+  </div>
+  <div class="post-body">
+    <div class="obj-box" style="background:#e0f2fe;border-color:#0ea5e9;color:#0c4a6e;">🎯 Facebook tiene una audiencia algo mayor en edad que Instagram/TikTok. El texto puede ser más explicativo y cálido. Las listas con viñetas funcionan muy bien. Adjuntar una imagen de infografía del proceso.</div>
+
+    <div class="segment">
+      <div class="seg-label" style="background:#e0f2fe;color:#0369a1;">📝 TEXTO COMPLETO para publicar</div>
+      <div class="seg-body" id="fb-post2">Nos preguntan seguido: "¿Cómo funciona exactamente TodasMisCosas?"
+
+Acá va la explicación completa, sin vueltas:
+
+—
+
+🏠 SI TENÉS ESPACIO LIBRE:
+
+1. Publicás tu garage, habitación, depósito o cualquier espacio en nuestra plataforma.
+2. Un cliente lo encuentra, lo reserva y paga a través de Mercado Pago.
+3. El dinero queda protegido hasta que vos confirmás que el cliente accedió.
+4. Una vez que confirmás, el dinero se acredita en tu cuenta.
+
+Vos fijás el precio, vos decidís las fechas disponibles, vos elegís quién puede entrar y en qué horario.
+
+—
+
+📦 SI NECESITÁS GUARDAR ALGO:
+
+1. Buscás un espacio cerca de tu casa o trabajo en CABA o AMBA.
+2. Elegís las fechas y el precio que mejor se adapta a lo que necesitás.
+3. Pagás con tarjeta o Mercado Pago — tu dinero queda protegido hasta que confirmás que todo está bien.
+
+Sin tener que confiar a ciegas en desconocidos.
+
+—
+
+¿Por qué usar TodasMisCosas en lugar de publicar en un grupo de Facebook o en Marketplace?
+
+✅ El pago es seguro — el dinero no se libera hasta que confirmás el acceso
+✅ Hay historial y reviews de cada proveedor
+✅ El acuerdo queda documentado con fechas y condiciones claras
+✅ Tenés soporte si algo sale mal
+
+Esto es guardar con confianza.
+
+—
+
+¿Tenés dudas? Escribinos por mensaje privado o comentá acá abajo 👇
+
+#TodasMisCosas #ComoFunciona #Almacenamiento #BuenosAires #MercadoPago #Startup #PropTech</div>
+    </div>
+    <button class="copy-btn" style="background:#0369a1;" onclick="copyPost('fb-post2',this)">📋 Copiar texto</button>
+
+    <div class="note-box">
+      <strong>📘 Tips para este post:</strong> Adjuntar una imagen de infografía con los 3 pasos (hacer en Canva). En los comentarios, si alguien pregunta el costo: "la plataforma es gratuita para registrarse. Los primeros 50 proveedores no pagan comisión por 1 año. Para clientes: solo pagás el espacio que usás." Responder todos los comentarios.
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ POST 3 ══ -->
+<div class="tab-pane" id="p3">
+<div class="post-card">
+  <div class="post-header" style="background:linear-gradient(90deg,#16a34a,#14532d);">
+    <div>
+      <div class="post-label">📘 Post 3 — Para Proveedores ⭐</div>
+      <div class="post-meta">Día 8 · Miércoles · 12 PM · Captación de oferta · Compartir también en Grupos</div>
+    </div>
+    <span class="post-badge">EL MÁS IMPORTANTE</span>
+  </div>
+  <div class="post-body">
+    <div class="obj-box" style="background:#f0fdf4;border-color:#16a34a;color:#14532d;">🎯 Este post es para compartir en GRUPOS de Facebook — consorcios, inmobiliarias, alquileres, mudanzas. El texto es más largo y persuasivo. Adaptable para copiar y pegar directo en grupos.</div>
+
+    <div class="segment">
+      <div class="seg-label" style="background:#f0fdf4;color:#16a34a;">📝 TEXTO COMPLETO para la Página</div>
+      <div class="seg-body" id="fb-post3">¿Cuánto vale el espacio que tenés parado en tu casa? 🤔
+
+La respuesta puede sorprenderte.
+
+Un garage en Palermo puede generar entre $80.000 y $200.000 ARS por mes guardando cosas.
+Una habitación libre en Caballito, Flores o Villa Urquiza, lo mismo.
+Un depósito o galpón, todavía más.
+
+Y sin las complicaciones del alquiler tradicional.
+
+—
+
+EN TODASMISCOSAS.COM VOS ELEGÍS:
+
+📐 Qué espacio ofrecés y qué dimensiones tiene
+💰 Cuánto cobrás por día o por mes
+📅 Qué fechas está disponible
+🔐 Quién puede acceder y en qué horario
+
+Nosotros nos encargamos de la plataforma, el cobro seguro con Mercado Pago, y el historial del cliente.
+
+Sin contratos de alquiler. Sin AFIP. Sin inmobiliaria. Sin lidiar directamente con desconocidos.
+
+—
+
+👑 OFERTA DE LANZAMIENTO — SOLO 50 LUGARES:
+
+Antes de nuestro lanzamiento oficial en CABA y AMBA, estamos reservando 50 posiciones de proveedor con beneficios permanentes:
+
+✅ 1 AÑO SIN COMISIÓN (normalmente cobramos el 15% de cada reserva)
+✅ Sin costo de membresía
+✅ Perfil destacado en los primeros resultados de búsqueda
+✅ Acceso prioritario a nuevas funcionalidades y soporte
+
+El valor concreto de esos 50 lugares: si en un mes generás $150.000 con tu espacio, normalmente te cobraríamos $22.500. Con la oferta de lanzamiento, ese 15% no te lo cobramos durante 12 meses.
+
+Los 50 lugares se están llenando.
+
+—
+
+¿A QUIÉN LE SIRVE?
+
+🏠 Dueños de departamentos con espacio libre
+🏢 Administradores de consorcios o edificios
+🏭 Empresas con depósitos o galpones subutilizados
+🚗 Propietarios de garages sin uso regular
+🛋️ Cualquier persona con metros cuadrados libres en CABA o AMBA
+
+—
+
+Para registrarte: escribinos por mensaje privado o entrá a todasmiscosas.com 🔗
+
+📌 Si conocés a alguien que tenga espacio libre en BsAs, compartile esta publicación. Podría cambiarle el mes.
+
+#TodasMisCosas #IngresoExtra #Proveedores #BuenosAires #CABA #GBA #GanarDinero #SinInquilinos #PropTech #Almacenamiento #Startup #EmprendimientoArgentino</div>
+    </div>
+    <button class="copy-btn" style="background:#16a34a;" onclick="copyPost('fb-post3',this)">📋 Copiar texto (Página)</button>
+
+    <div class="segment" style="margin-top:20px;">
+      <div class="seg-label" style="background:#dcfce7;color:#15803d;">📝 VERSIÓN CORTA para Grupos de Facebook</div>
+      <div class="seg-body" id="fb-post3-grupo">Hola! Comparto esto porque puede interesarle a alguien del grupo 🙌
+
+Lanzamos TodasMisCosas.com, el primer marketplace de almacenamiento urbano de Argentina.
+
+Si tenés un garage, habitación o depósito libre en CABA o GBA, podés publicarlo en nuestra plataforma y generar entre $80.000 y $200.000 ARS por mes sin los problemas del alquiler tradicional.
+
+El pago es seguro (Mercado Pago), vos fijás el precio y las condiciones.
+
+OFERTA DE LANZAMIENTO — 50 lugares:
+✅ 1 año sin comisión
+✅ Sin membresía
+✅ Perfil destacado
+
+Para registrarte o hacer preguntas: mensaje privado a la página @TodasMisCosas o entrá a todasmiscosas.com
+
+¡Gracias por el espacio! 🙏</div>
+    </div>
+    <button class="copy-btn" style="background:#16a34a;" onclick="copyPost('fb-post3-grupo',this)">📋 Copiar versión para Grupos</button>
+
+    <div class="note-box">
+      <strong>📘 Estrategia de grupos:</strong> Publicar la versión corta en los grupos de la pestaña "Grupos". Ver la pestaña "Grupos" de este documento para la lista completa de grupos recomendados en Argentina. No usar copy/paste idéntico en más de 3 grupos el mismo día — Facebook lo penaliza como spam.
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ POST 4 ══ -->
+<div class="tab-pane" id="p4">
+<div class="post-card">
+  <div class="post-header" style="background:linear-gradient(90deg,#ea580c,#9a3412);">
+    <div>
+      <div class="post-label">📘 Post 4 — CTA Final</div>
+      <div class="post-meta">Día 12 · Sábado · 10 AM · Conversión · Urgencia real</div>
+    </div>
+    <span class="post-badge">CIERRE</span>
+  </div>
+  <div class="post-body">
+    <div class="obj-box" style="background:#fff7ed;border-color:#ea580c;color:#7c2d12;">🎯 El cierre debe sentirse personal y urgente. Contar la historia detrás del proyecto humaniza la marca. En Facebook esto funciona especialmente bien porque la audiencia es más comunidad que en otras redes.</div>
+
+    <div class="segment">
+      <div class="seg-label" style="background:#fff7ed;color:#ea580c;">📝 TEXTO COMPLETO para publicar</div>
+      <div class="seg-body" id="fb-post4">Los primeros 50 lugares casi se llenaron. ⏳
+
+Cuando arrancamos a construir TodasMisCosas.com, el objetivo era simple: conectar a quien tiene espacio con quien lo necesita. De forma segura, transparente, y sin la burocracia del mercado inmobiliario tradicional.
+
+Lo que no esperábamos era la respuesta que estamos viendo antes de lanzar oficialmente.
+
+—
+
+Por eso, antes del lanzamiento oficial en CABA y AMBA, decidimos hacer algo que no vamos a repetir:
+
+Reservar 50 posiciones de proveedor con beneficios permanentes:
+
+✅ 1 año sin comisión — el 15% que normalmente cobramos, no te lo cobramos
+✅ Sin costo de membresía
+✅ Tu perfil destacado en los primeros resultados de búsqueda
+✅ Acceso prioritario a soporte y nuevas funcionalidades
+
+El valor real de esa oferta es concreto: si en un mes generás $150.000 con tu espacio, te ahorrás $22.500 en comisiones. Por 12 meses. Son casi $270.000 ARS en comisiones que no vas a pagar.
+
+—
+
+¿A quién le sirve?
+
+🏠 Dueños de departamentos con espacio libre
+🏢 Administradores de consorcios o edificios
+🏭 Empresas con depósitos subutilizados
+🚗 Propietarios de garages sin uso regular en CABA o AMBA
+
+—
+
+¿Cómo sumarte? Tres pasos:
+
+1️⃣ Escribinos por mensaje privado a esta página
+2️⃣ O entrá directamente a todasmiscosas.com desde el enlace de esta publicación
+3️⃣ Te contactamos para guiarte en el registro
+
+—
+
+Buenos Aires tiene espacio de sobra. Falta organizarlo. Eso es lo que hacemos.
+
+🔗 todasmiscosas.com
+
+📌 Compartí esta publicación si conocés a alguien que pueda estar interesado. ¡Gracias!
+
+#TodasMisCosas #Lanzamiento #BuenosAires #CABA #GBA #IngresoExtra #Proveedores #Marketplace #Startup #Argentina #PropTech</div>
+    </div>
+    <button class="copy-btn" style="background:#ea580c;" onclick="copyPost('fb-post4',this)">📋 Copiar texto</button>
+
+    <div class="note-box">
+      <strong>📘 Tips para el cierre:</strong> Adjuntar imagen con el contador "Quedan X / 50 lugares". Si es posible, agregar el número de teléfono de WhatsApp Business para que la gente pueda contactar fácilmente desde Facebook. Responder a cada comentario con el link directo a todasmiscosas.com.
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ GRUPOS ══ -->
+<div class="tab-pane" id="grupos">
+<div class="sec-title">👥 Grupos de Facebook — Estrategia para Argentina</div>
+<p style="font-size:.8rem;color:var(--text2);margin-bottom:20px;">Los grupos son el mayor diferencial de Facebook vs otras redes. Hay comunidades de miles de personas en CABA/AMBA con interés directo en alquileres, espacios, mudanzas y emprendimiento. Publicar el Post 3 (versión corta) en estos grupos puede generar más conversiones que los posts de la página.</p>
+
+<div class="sec-title">🏠 Grupos de Alquileres y Propiedades</div>
+
+<div class="grupo-card">
+  <div class="grupo-name">Alquileres en Buenos Aires</div>
+  <div class="grupo-meta">🔍 Buscar en Facebook · Varios grupos con este nombre · 50k-200k miembros</div>
+  <div class="grupo-desc">Personas buscando o ofreciendo alquileres. Ideal para llegar a dueños con espacio libre y a personas que necesitan guardar cosas durante mudanzas.</div>
+  <span class="grupo-tag">Proveedores</span><span class="grupo-tag">Clientes</span>
+  <div class="grupo-tip">💡 Publicar adaptando el texto: "Alternativa al alquiler tradicional — sin contrato, sin AFIP, cobrás en pesos por Mercado Pago"</div>
+</div>
+
+<div class="grupo-card">
+  <div class="grupo-name">Alquiler de Garages y Cocheras CABA</div>
+  <div class="grupo-meta">🔍 Buscar en Facebook · Grupos específicos de CABA</div>
+  <div class="grupo-desc">Comunidad específica de dueños de garages. Público perfecto para la propuesta de TMC: ya están ofreciendo sus espacios, solo falta una plataforma mejor.</div>
+  <span class="grupo-tag">Proveedores</span>
+  <div class="grupo-tip">💡 Mensaje: "Si ya alquilás tu garage por grupos de WA, con TMC cobrás más seguro y tenés el historial del cliente"</div>
+</div>
+
+<div class="grupo-card">
+  <div class="grupo-name">Consorcios y Administradores de Edificios Argentina</div>
+  <div class="grupo-meta">🔍 Buscar: "consorcios argentina", "administradores edificios CABA"</div>
+  <div class="grupo-desc">Administradores de edificios con espacios comunes subutilizados: salones, cocheras, cuartos de bauleras. Segmento con alto potencial de volumen de m².</div>
+  <span class="grupo-tag">Proveedores B2B</span>
+  <div class="grupo-tip">💡 Ángulo: "Genera ingresos para el consorcio con espacios comunes sin uso"</div>
+</div>
+
+<div class="sec-title" style="margin-top:24px;">📦 Grupos de Mudanzas y Guardado</div>
+
+<div class="grupo-card">
+  <div class="grupo-name">Mudanzas Buenos Aires / Zona Norte / Zona Sur / Zona Oeste</div>
+  <div class="grupo-meta">🔍 Buscar: "mudanzas CABA", "mudanzas GBA" · Múltiples grupos por zona</div>
+  <div class="grupo-desc">Personas en proceso de mudanza tienen necesidad inmediata de guardar cosas. Timing perfecto: al momento de mudarse es cuando más se necesita el servicio.</div>
+  <span class="grupo-tag">Clientes</span>
+  <div class="grupo-tip">💡 Mensaje: "Si estás de mudanza y necesitás guardar cosas transitoriamente, tenemos proveedores en CABA y GBA con pago seguro"</div>
+</div>
+
+<div class="grupo-card">
+  <div class="grupo-name">Ventas, Mudanzas y Servicios — CABA y GBA</div>
+  <div class="grupo-meta">🔍 Buscar: "servicios CABA", "ventas mudanzas GBA"</div>
+  <div class="grupo-desc">Grupos de servicios mixtos donde el público busca soluciones locales. Buena conversión para captación de clientes.</div>
+  <span class="grupo-tag">Clientes</span><span class="grupo-tag">Mixto</span>
+</div>
+
+<div class="sec-title" style="margin-top:24px;">🚀 Grupos de Emprendimiento</div>
+
+<div class="grupo-card">
+  <div class="grupo-name">Emprendedores Argentina / StartUp Argentina</div>
+  <div class="grupo-meta">🔍 Buscar: "emprendedores argentina", "startup argentina" · 20k-100k miembros</div>
+  <div class="grupo-desc">Comunidad emprendedora. Ideal para dar a conocer el proyecto, generar credibilidad, conseguir early adopters y posibles alianzas o inversores.</div>
+  <span class="grupo-tag">Brand awareness</span><span class="grupo-tag">Networking</span>
+  <div class="grupo-tip">💡 Compartir el pitch del proyecto, no solo la oferta de los 50 lugares</div>
+</div>
+
+<div class="grupo-card">
+  <div class="grupo-name">PropTech Argentina / Real Estate Tech</div>
+  <div class="grupo-meta">🔍 Buscar: "proptech argentina", "real estate argentina"</div>
+  <div class="grupo-desc">Nicho tecnológico del sector inmobiliario. Público informado que puede convertirse en early adopter, partner o referente de credibilidad.</div>
+  <span class="grupo-tag">Brand</span><span class="grupo-tag">B2B</span>
+</div>
+
+<div class="sec-title" style="margin-top:24px;">📋 Reglas para publicar en grupos</div>
+<div style="background:var(--white);border:1px solid var(--border);border-radius:12px;padding:18px;">
+  <div style="font-size:.82rem;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+    <div style="display:flex;align-items:flex-start;gap:8px;"><span style="color:#16a34a;font-weight:800;">✅</span><span>Leer las reglas del grupo antes de publicar</span></div>
+    <div style="display:flex;align-items:flex-start;gap:8px;"><span style="color:#16a34a;font-weight:800;">✅</span><span>Adaptar el texto levemente en cada grupo (no copiar/pegar igual)</span></div>
+    <div style="display:flex;align-items:flex-start;gap:8px;"><span style="color:#16a34a;font-weight:800;">✅</span><span>Responder todos los comentarios en menos de 2 horas</span></div>
+    <div style="display:flex;align-items:flex-start;gap:8px;"><span style="color:#16a34a;font-weight:800;">✅</span><span>Máximo 3-4 grupos por día para no ser marcado como spam</span></div>
+    <div style="display:flex;align-items:flex-start;gap:8px;"><span style="color:#dc2626;font-weight:800;">❌</span><span>No publicar el mismo texto en más de 3 grupos en 24h</span></div>
+    <div style="display:flex;align-items:flex-start;gap:8px;"><span style="color:#dc2626;font-weight:800;">❌</span><span>No poner links en el primer mensaje si el grupo lo prohíbe</span></div>
+  </div>
+</div>
+</div>
+
+<!-- ══ EVENTO ══ -->
+<div class="tab-pane" id="evento">
+<div class="sec-title">🗓️ Evento de Lanzamiento en Facebook</div>
+<p style="font-size:.8rem;color:var(--text2);margin-bottom:20px;">Crear un Evento de Facebook genera una segunda fuente de alcance orgánico. Los usuarios pueden marcar "Interesado" o "Asistiré" y eso aparece en el feed de sus amigos. Ideal para el lanzamiento oficial.</p>
+
+<div class="evento-card">
+  <div class="evento-header">📅 Datos del Evento</div>
+  <div class="evento-body">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;font-size:.82rem;">
+      <div><strong>Nombre del evento:</strong><br>🚀 Lanzamiento oficial TodasMisCosas.com — CABA &amp; AMBA</div>
+      <div><strong>Fecha sugerida:</strong><br>A definir por Ale y Guille (primer semana post-campaña)</div>
+      <div><strong>Formato:</strong><br>Online — Facebook Live o Zoom</div>
+      <div><strong>Duración:</strong><br>45 minutos (30 min pitch + 15 min Q&A)</div>
+      <div><strong>Quién habla:</strong><br>Ale (CTO) · Guille (CIO) · Agustina (host)</div>
+      <div><strong>Objetivo:</strong><br>Cerrar los últimos lugares de los 50 proveedores premium</div>
+    </div>
+
+    <div class="segment">
+      <div class="seg-label" style="background:#e7f0fd;color:#0a4fa8;">📝 DESCRIPCIÓN del evento (copiar en Facebook)</div>
+      <div class="seg-body" id="fb-evento">🚀 LANZAMIENTO OFICIAL — TodasMisCosas.com
+
+El primer marketplace de almacenamiento urbano de Argentina llega a CABA y AMBA.
+
+En este evento online vas a conocer:
+
+📦 Cómo funciona la plataforma desde adentro
+💰 Cómo publicar tu espacio y empezar a generar ingresos
+🔒 Cómo funciona el pago seguro para clientes y proveedores
+👑 Los beneficios exclusivos para los primeros 50 proveedores (solo quedan X lugares)
+❓ Sesión de preguntas y respuestas en vivo
+
+—
+
+¿Para quién es este evento?
+
+✅ Dueños de garages, habitaciones o depósitos libres en CABA o GBA
+✅ Personas que necesiten guardar cosas por mudanza, viaje o falta de espacio
+✅ Administradores de consorcios o edificios con espacios comunes subutilizados
+✅ Cualquier persona curiosa sobre el modelo de economía colaborativa
+
+—
+
+CUPOS LIMITADOS — La sesión de Q&A es en vivo y queremos poder responder todas las preguntas.
+
+Marcá "Asistiré" y compartí con alguien que tenga espacio libre en BsAs 🙌
+
+—
+
+🔗 todasmiscosas.com
+📩 Consultas por mensaje privado a esta página</div>
+    </div>
+    <button class="copy-btn" style="background:#1877f2;" onclick="copyPost('fb-evento',this)">📋 Copiar descripción del evento</button>
+
+    <div class="note-box" style="margin-top:16px;">
+      <strong>💡 Cómo crear el evento:</strong> Ir a la Página de Facebook → "Eventos" → "Crear evento" → Elegir "Online" → Pegar la descripción → Subir imagen del evento (diseñar en Canva: logo TMC + "LANZAMIENTO OFICIAL" + fecha). Compartir el evento en los grupos de la pestaña "Grupos" adaptando el mensaje.
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ TIPS ══ -->
+<div class="tab-pane" id="tips">
+<div class="sec-title">💡 Estrategia Facebook para TMC</div>
+<div class="tips-grid">
+  <div class="tip-card">
+    <div class="tip-icon">⏰</div>
+    <div class="tip-title">Horarios óptimos</div>
+    <div class="tip-body">Para Argentina en Facebook: miércoles y sábados tienen mayor engagement. Publicar entre 10 AM y 12 PM o entre 18 y 20 hs. Los sábados a la mañana tienen muy buena retención porque la gente navega con más calma.</div>
+  </div>
+  <div class="tip-card">
+    <div class="tip-icon">📸</div>
+    <div class="tip-title">Fotos propias > stock</div>
+    <div class="tip-body">Facebook favorece imágenes originales sobre fotos de stock. Si es posible, publicar una foto real de un garage o habitación ordenada con el logo de TMC superpuesto. La autenticidad genera más confianza en Facebook que en otras redes.</div>
+  </div>
+  <div class="tip-card">
+    <div class="tip-icon">💬</div>
+    <div class="tip-title">Pedí siempre que compartan</div>
+    <div class="tip-body">En Facebook el "compartí si conocés a alguien" sigue funcionando. Es el mecanismo de crecimiento orgánico más efectivo de la plataforma. Incluirlo en TODOS los posts con una razón concreta: "puede cambiarle el mes a alguien".</div>
+  </div>
+  <div class="tip-card">
+    <div class="tip-icon">🤖</div>
+    <div class="tip-title">Respuesta automática de Messenger</div>
+    <div class="tip-body">Configurar un mensaje automático de bienvenida en el Messenger de la Página: "Hola 👋 Gracias por escribirnos a TodasMisCosas. ¿Tenés espacio libre o necesitás guardar algo? Te respondemos en minutos." Configurar en Configuración → Mensajería de la Página.</div>
+  </div>
+  <div class="tip-card">
+    <div class="tip-icon">📊</div>
+    <div class="tip-title">Métricas clave</div>
+    <div class="tip-body">
+      <ul>
+        <li>Alcance orgánico por post (Meta Business Suite)</li>
+        <li>Compartidos totales de cada post</li>
+        <li>Mensajes recibidos por Messenger</li>
+        <li>Interesados en el Evento</li>
+        <li>Miembros nuevos que vienen de grupos</li>
+      </ul>
+    </div>
+  </div>
+  <div class="tip-card">
+    <div class="tip-icon">💸</div>
+    <div class="tip-title">Pauta opcional ($10-20 USD)</div>
+    <div class="tip-body">Si el Post 3 (proveedores) tiene buen engagement, impulsarlo con $10-20 USD en Meta Ads. Segmentación: CABA + GBA · Edad 30-60 · Intereses: "Propiedades", "Alquiler", "Finanzas personales", "Emprendimiento". Objetivo: Interacción o Mensajes.</div>
+  </div>
+</div>
+
+<div class="sec-title" style="margin-top:28px;">📅 Calendario Facebook — 12 días</div>
+<div style="background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
+  <table style="width:100%;border-collapse:collapse;">
+    <thead>
+      <tr style="background:#f8fafc;">
+        <th style="padding:12px 16px;text-align:left;font-size:.78rem;color:var(--text3);font-weight:700;border-bottom:1px solid var(--border);">DÍA</th>
+        <th style="padding:12px 16px;text-align:left;font-size:.78rem;color:var(--text3);font-weight:700;border-bottom:1px solid var(--border);">ACCIÓN</th>
+        <th style="padding:12px 16px;text-align:left;font-size:.78rem;color:var(--text3);font-weight:700;border-bottom:1px solid var(--border);">HORA</th>
+        <th style="padding:12px 16px;text-align:left;font-size:.78rem;color:var(--text3);font-weight:700;border-bottom:1px solid var(--border);">QUIÉN</th>
+      </tr>
+    </thead>
+    <tbody style="font-size:.78rem;">
+      <tr style="border-bottom:1px solid var(--border);"><td style="padding:10px 16px;font-weight:700;">Día 1 · Mié</td><td style="padding:10px 16px;">Post 1 + Crear evento + Compartir en 2 grupos</td><td style="padding:10px 16px;">12 PM</td><td style="padding:10px 16px;">Ale + Guille comparten desde perfil</td></tr>
+      <tr style="border-bottom:1px solid var(--border);background:#fafbfc;"><td style="padding:10px 16px;font-weight:700;">Día 4 · Sáb</td><td style="padding:10px 16px;">Post 2 + Compartir en 2 grupos distintos</td><td style="padding:10px 16px;">10 AM</td><td style="padding:10px 16px;">Página + perfiles personales</td></tr>
+      <tr style="border-bottom:1px solid var(--border);"><td style="padding:10px 16px;font-weight:700;">Día 8 · Mié</td><td style="padding:10px 16px;">Post 3 ⭐ + Grupos de alquileres + Grupos de mudanzas</td><td style="padding:10px 16px;">12 PM</td><td style="padding:10px 16px;">Página + 3-4 grupos estratégicos</td></tr>
+      <tr><td style="padding:10px 16px;font-weight:700;">Día 12 · Sáb</td><td style="padding:10px 16px;">Post 4 + Recordatorio del evento</td><td style="padding:10px 16px;">10 AM</td><td style="padding:10px 16px;">Página + perfiles personales</td></tr>
+    </tbody>
+  </table>
+</div>
+</div>
+
+</div><!-- /content -->
+
+<footer>
+  <strong>👍 TMC — Serie Facebook de Lanzamiento · 18 jun 2026</strong><br>
+  TodasMisCosas.com · CABA &amp; AMBA · Posts + Grupos + Evento · Primeros 50 premium<br>
+  <span style="font-size:.68rem;color:#1e293b;margin-top:3px;display:block;">Generado por Claude Sonnet 4.6</span>
+</footer>
+
+<script>
+function switchTab(id){
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+function copyPost(id,btn){
+  const text=document.getElementById(id).innerText;
+  const orig=btn.textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='✅ Copiado!';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent=orig;btn.classList.remove('copied');},2500);
+  }).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    btn.textContent='✅ Copiado!';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent=orig;btn.classList.remove('copied');},2500);
+  });
+}
+</script>
+</body>
+</html>

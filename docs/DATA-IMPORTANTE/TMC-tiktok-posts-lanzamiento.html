@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC — Serie TikTok de Lanzamiento · 4 Videos</title>
+<style>
+:root{
+  --tt:#010101;--tt-red:#fe2c55;--tt-cyan:#25f4ee;--tt-mid:#161823;
+  --gold:#f59e0b;--navy:#0f172a;--text:#1e293b;--text2:#475569;--text3:#94a3b8;
+  --border:#e2e8f0;--bg:#f0f0f0;--white:#fff;
+  --green:#16a34a;--green-bg:#f0fdf4;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:13.5px;line-height:1.65;}
+
+.header{background:linear-gradient(135deg,#010101 0%,#1a0a1a 55%,#2d0a2d 100%);padding:36px 48px 28px;}
+.hl{font-size:1.1rem;font-weight:900;color:var(--tt-red);letter-spacing:.06em;}
+.ht{font-size:1.65rem;font-weight:900;color:#f1f5f9;margin:6px 0 4px;letter-spacing:-.3px;}
+.hs{color:#64748b;font-size:.83rem;}
+.hchips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+.chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:4px 14px;font-size:.72rem;color:#94a3b8;}
+.chip strong{color:#f1f5f9;}
+
+.tabs-nav{display:flex;gap:0;background:var(--white);border-bottom:2px solid var(--border);padding:0 48px;overflow-x:auto;}
+.tab-btn{padding:14px 22px;font-size:.82rem;font-weight:700;color:var(--text3);border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color .2s;}
+.tab-btn.active{color:var(--tt-red);border-bottom-color:var(--tt-red);}
+.tab-btn:hover:not(.active){color:var(--text2);}
+
+.content{max-width:900px;margin:0 auto;padding:40px 32px 80px;}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+
+/* PHONE MOCKUP */
+.phone-wrap{display:flex;gap:32px;align-items:flex-start;margin-bottom:24px;}
+.phone{width:220px;flex-shrink:0;background:var(--tt-mid);border-radius:32px;border:3px solid #333;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.3);}
+.phone-screen{background:linear-gradient(180deg,#1a1a2e 0%,#010101 100%);padding:20px 16px 14px;min-height:380px;position:relative;}
+.phone-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.phone-user{font-size:.68rem;color:rgba(255,255,255,.7);font-weight:700;}
+.phone-follow{background:var(--tt-red);color:#fff;font-size:.6rem;font-weight:700;padding:3px 10px;border-radius:12px;}
+.phone-caption{font-size:.72rem;color:rgba(255,255,255,.9);line-height:1.6;margin-top:8px;}
+.phone-hashtags{font-size:.68rem;color:var(--tt-cyan);margin-top:6px;line-height:1.7;}
+.phone-actions{position:absolute;right:12px;bottom:60px;display:flex;flex-direction:column;align-items:center;gap:14px;}
+.ph-action{text-align:center;}
+.ph-icon{font-size:1.4rem;}
+.ph-label{font-size:.58rem;color:rgba(255,255,255,.7);margin-top:2px;}
+.phone-bar{background:#0a0a0a;padding:8px 16px;display:flex;justify-content:space-around;}
+.ph-nav{font-size:.65rem;color:rgba(255,255,255,.5);text-align:center;}
+
+.script-panel{flex:1;}
+
+.post-card{background:var(--white);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.05);}
+.post-header{padding:16px 24px;display:flex;align-items:center;justify-content:space-between;}
+.post-label{font-weight:800;font-size:.88rem;}
+.post-meta{font-size:.72rem;color:var(--text3);}
+.post-badge{border-radius:20px;padding:3px 12px;font-size:.68rem;font-weight:700;}
+
+.post-body{padding:24px 28px;}
+.obj-box{border-left:4px solid;border-radius:8px;padding:10px 16px;font-size:.77rem;font-weight:600;margin-bottom:20px;}
+
+.segment{margin-bottom:18px;}
+.seg-label{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:4px 12px;border-radius:6px;margin-bottom:8px;}
+.seg-body{background:#fafbfc;border:1px solid var(--border);border-radius:10px;padding:16px;font-size:.87rem;line-height:1.85;white-space:pre-wrap;}
+
+.note-box{background:#fff8f0;border:1px solid #fde68a;border-left:4px solid var(--gold);border-radius:10px;padding:12px 16px;font-size:.77rem;color:#713f12;margin-top:12px;}
+.note-box strong{color:#92400e;}
+
+.copy-btn{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:10px 20px;border:none;border-radius:10px;font-size:.78rem;font-weight:700;cursor:pointer;transition:background .2s;color:#fff;}
+.copy-btn:hover{opacity:.9;}
+.copy-btn.copied{background:var(--green) !important;}
+
+.sec-title{font-size:1rem;font-weight:800;color:var(--text);margin:28px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--border);}
+
+/* TIPS TAB */
+.tips-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.tip-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:20px;}
+.tip-icon{font-size:1.6rem;margin-bottom:8px;}
+.tip-title{font-weight:800;font-size:.88rem;margin-bottom:6px;}
+.tip-body{font-size:.77rem;color:var(--text2);line-height:1.7;}
+.tip-body ul{padding-left:14px;}
+.tip-body li{margin-bottom:4px;}
+
+/* HASHTAG TAB */
+.ht-section{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;}
+.ht-title{font-weight:800;font-size:.9rem;margin-bottom:12px;}
+.tag-cloud{display:flex;flex-wrap:wrap;gap:8px;}
+.htag{border-radius:20px;padding:4px 14px;font-size:.78rem;font-weight:700;cursor:pointer;}
+.htag:hover{opacity:.8;}
+
+/* CALENDAR */
+.cal-row{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px 22px;display:grid;grid-template-columns:80px 1fr auto;gap:16px;align-items:center;margin-bottom:12px;}
+.cal-day-num{font-size:1.8rem;font-weight:900;line-height:1;}
+.cal-day-label{font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;}
+.cal-time{font-size:.75rem;font-weight:700;padding:5px 12px;border-radius:10px;text-align:center;white-space:nowrap;}
+
+footer{background:var(--navy);color:#334155;text-align:center;padding:20px;font-size:.72rem;}
+footer strong{color:#475569;}
+
+@media(max-width:640px){
+  .header{padding:22px 16px;}
+  .tabs-nav{padding:0 8px;}
+  .content{padding:20px 12px 48px;}
+  .phone-wrap{flex-direction:column;align-items:center;}
+  .phone{width:180px;}
+  .tips-grid{grid-template-columns:1fr;}
+  .cal-row{grid-template-columns:60px 1fr;}
+  .cal-time{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="hl">🎵 TIKTOK · Serie de Lanzamiento</div>
+  <div class="ht">TodasMisCosas.com — 4 Videos · CABA &amp; AMBA</div>
+  <div class="hs">Guiones listos para grabar · Hooks de 3 segundos · Formatos virales · 18 jun 2026</div>
+  <div class="hchips">
+    <div class="chip"><strong>4</strong> guiones listos</div>
+    <div class="chip"><strong>30-60 seg</strong> por video</div>
+    <div class="chip">Hook <strong>3 seg</strong> en cada uno</div>
+    <div class="chip">Formato <strong>vertical</strong> 9:16</div>
+    <div class="chip">Oferta <strong>50 lugares</strong> premium</div>
+  </div>
+</div>
+
+<div class="tabs-nav">
+  <button class="tab-btn active" onclick="switchTab('v1')">🎬 Video 1</button>
+  <button class="tab-btn" onclick="switchTab('v2')">🎬 Video 2</button>
+  <button class="tab-btn" onclick="switchTab('v3')">🎬 Video 3</button>
+  <button class="tab-btn" onclick="switchTab('v4')">🎬 Video 4</button>
+  <button class="tab-btn" onclick="switchTab('produccion')">🎥 Producción</button>
+  <button class="tab-btn" onclick="switchTab('hashtags')"># Hashtags</button>
+</div>
+
+<div class="content">
+
+<!-- ══ VIDEO 1 ══ -->
+<div class="tab-pane active" id="v1">
+<div class="phone-wrap">
+  <div class="phone">
+    <div class="phone-screen">
+      <div class="phone-top"><span class="phone-user">@todasmiscosas</span><span class="phone-follow">+ Seguir</span></div>
+      <div style="font-size:2rem;text-align:center;margin:20px 0;">🏠📦</div>
+      <div class="phone-caption">¿Sabías que tu garage vacío puede darte $200k por mes? 😱</div>
+      <div class="phone-hashtags">#TodasMisCosas #IngresoExtra #BuenosAires #Emprendimiento</div>
+      <div class="phone-actions">
+        <div class="ph-action"><div class="ph-icon">❤️</div><div class="ph-label">24.5k</div></div>
+        <div class="ph-action"><div class="ph-icon">💬</div><div class="ph-label">312</div></div>
+        <div class="ph-action"><div class="ph-icon">↗️</div><div class="ph-label">Compartir</div></div>
+      </div>
+    </div>
+    <div class="phone-bar">
+      <div class="ph-nav">🏠</div><div class="ph-nav">🔍</div><div class="ph-nav" style="color:#fff;font-weight:900;">➕</div><div class="ph-nav">✉️</div><div class="ph-nav">👤</div>
+    </div>
+  </div>
+  <div class="script-panel">
+    <div class="post-card">
+      <div class="post-header" style="background:linear-gradient(90deg,#fe2c55,#c0175d);">
+        <div>
+          <div class="post-label" style="color:#fff;">🎬 Video 1 — El Gancho</div>
+          <div class="post-meta" style="color:rgba(255,255,255,.75);">Semana 1 · Lunes · 6 PM · Awareness · ~40 segundos</div>
+        </div>
+        <span class="post-badge" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);">PUBLICAR PRIMERO</span>
+      </div>
+      <div class="post-body">
+        <div class="obj-box" style="background:#fff0f3;border-color:#fe2c55;color:#9d0a2e;">🎯 Hook brutal en 3 segundos. Hablar directo a cámara, cara sorprendida. Énfasis en el número concreto para detener el scroll.</div>
+
+        <div class="segment">
+          <div class="seg-label" style="background:#fee2e2;color:#991b1b;">⚡ HOOK — primeros 3 segundos (aparece en pantalla grande)</div>
+          <div class="seg-body">¿Sabías que tu garage vacío puede darte $200.000 pesos por mes? 🤯</div>
+        </div>
+
+        <div class="segment">
+          <div class="seg-label" style="background:#f3f4f6;color:#374151;">🎙️ DESARROLLO — 5 a 35 segundos</div>
+          <div class="seg-body">En Buenos Aires hay millones de metros cuadrados vacíos.
+Garages. Habitaciones. Depósitos. Galpones.
+
+Y al mismo tiempo... miles de personas que necesitan guardar sus cosas y no saben dónde.
+
+Por eso creamos TodasMisCosas punto com.
+
+Un marketplace donde vos publicás tu espacio libre, y un cliente lo reserva y te paga de forma segura por Mercado Pago.
+
+Vos fijás el precio, vos decidís quién entra, y el dinero va directo a tu cuenta.</div>
+        </div>
+
+        <div class="segment">
+          <div class="seg-label" style="background:#dcfce7;color:#166534;">🚀 CTA — últimos 5 segundos</div>
+          <div class="seg-body">Si tenés un espacio libre en CABA o GBA, seguinos. Vamos a lanzar y hay una oferta que no vas a querer perderte. 👀</div>
+        </div>
+
+        <div class="segment">
+          <div class="seg-label" style="background:#ede9fe;color:#5b21b6;">📝 CAPTION del video (texto bajo el video)</div>
+          <div class="seg-body" id="cap1">¿Sabías que tu garage vacío puede darte $200k/mes? 😱 En BsAs hay millones de m² vacíos. Nosotros los conectamos con quienes los necesitan. Seguinos 👀 #TodasMisCosas #IngresoExtra #BuenosAires #Startup #PropTech #Almacenamiento #Argentina</div>
+        </div>
+        <button class="copy-btn" style="background:#fe2c55;" onclick="copyPost('cap1',this)">📋 Copiar caption</button>
+
+        <div class="note-box">
+          <strong>🎬 Notas de producción:</strong> Grabar de frente a cámara, buena iluminación. En el hook mostrar el número "$200.000" en texto grande en pantalla (CapCut). Fondo: tu espacio de trabajo o con el logo de TMC. Música de fondo trending suave (sin letra para que se entienda el audio). Duración ideal: 38-42 segundos.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ VIDEO 2 ══ -->
+<div class="tab-pane" id="v2">
+<div class="phone-wrap">
+  <div class="phone">
+    <div class="phone-screen">
+      <div class="phone-top"><span class="phone-user">@todasmiscosas</span><span class="phone-follow">+ Seguir</span></div>
+      <div style="font-size:2rem;text-align:center;margin:20px 0;">⚙️✅</div>
+      <div class="phone-caption">Así funciona TodasMisCosas en 30 segundos 👇</div>
+      <div class="phone-hashtags">#TodasMisCosas #ComoFunciona #BuenosAires #PropTech</div>
+      <div class="phone-actions">
+        <div class="ph-action"><div class="ph-icon">❤️</div><div class="ph-label">18.2k</div></div>
+        <div class="ph-action"><div class="ph-icon">💬</div><div class="ph-label">204</div></div>
+        <div class="ph-action"><div class="ph-icon">↗️</div><div class="ph-label">Compartir</div></div>
+      </div>
+    </div>
+    <div class="phone-bar">
+      <div class="ph-nav">🏠</div><div class="ph-nav">🔍</div><div class="ph-nav" style="color:#fff;font-weight:900;">➕</div><div class="ph-nav">✉️</div><div class="ph-nav">👤</div>
+    </div>
+  </div>
+  <div class="script-panel">
+    <div class="post-card">
+      <div class="post-header" style="background:linear-gradient(90deg,#25f4ee,#0097a7);">
+        <div>
+          <div class="post-label" style="color:#010101;">🎬 Video 2 — Cómo Funciona</div>
+          <div class="post-meta" style="color:rgba(0,0,0,.6);">Semana 1 · Jueves · 6 PM · Educación · ~50 segundos</div>
+        </div>
+        <span class="post-badge" style="background:rgba(0,0,0,.12);color:#010101;border:1px solid rgba(0,0,0,.2);">POST 2</span>
+      </div>
+      <div class="post-body">
+        <div class="obj-box" style="background:#e0fffe;border-color:#25f4ee;color:#006064;">🎯 Formato "paso a paso" con texto en pantalla. Hablar rápido y claro. Ideal filmarse mostrando la pantalla del celular con la app abierta.</div>
+
+        <div class="segment">
+          <div class="seg-label" style="background:#fee2e2;color:#991b1b;">⚡ HOOK — primeros 3 segundos</div>
+          <div class="seg-body">Así funciona TodasMisCosas en menos de un minuto. Prestá atención. 👇</div>
+        </div>
+
+        <div class="segment">
+          <div class="seg-label" style="background:#f3f4f6;color:#374151;">🎙️ DESARROLLO — 5 a 45 segundos</div>
+          <div class="seg-body">Si tenés espacio libre: [TEXTO EN PANTALLA: PASO 1]
+Publicás tu garage, habitación o depósito en la plataforma.
+
+[TEXTO EN PANTALLA: PASO 2]
+Un cliente lo reserva y paga con Mercado Pago.
+
+[TEXTO EN PANTALLA: PASO 3]
+El dinero llega a tu cuenta cuando confirmás el acceso. Punto.
+
+Si necesitás guardar algo: [TEXTO EN PANTALLA: ASÍ DE FÁCIL]
+Entrás, buscás un espacio cerca tuyo, elegís fechas y pagás.
+Tu plata queda protegida hasta que confirmás que todo está bien.
+
+Lo que nos diferencia de un grupo de Whatsapp o un aviso de Marketplace:
+el pago es seguro, hay reviews, y tenés soporte si algo sale mal.</div>
+        </div>
+
+        <div class="segment">
+          <div class="seg-label" style="background:#dcfce7;color:#166534;">🚀 CTA — últimos 5 segundos</div>
+          <div class="seg-body">¿Tenés dudas? Las respondemos en los comentarios. Seguinos para enterarte de los beneficios para los primeros 50. 🔥</div>
+        </div>
+
+        <div class="segment">
+          <div class="seg-label" style="background:#ede9fe;color:#5b21b6;">📝 CAPTION del video</div>
+          <div class="seg-body" id="cap2">Así funciona TodasMisCosas en menos de 1 minuto ⚙️✅ Publicás tu espacio → cliente reserva → Mercado Pago seguro → dinero en tu cuenta. Sin complicaciones. #TodasMisCosas #ComoFunciona #Argentina #BuenosAires #GanarDinero #IngresoExtra #Startup</div>
+        </div>
+        <button class="copy-btn" style="background:#0097a7;" onclick="copyPost('cap2',this)">📋 Copiar caption</button>
+
+        <div class="note-box">
+          <strong>🎬 Notas de producción:</strong> Usar CapCut para agregar los textos "PASO 1, PASO 2, PASO 3" en pantalla con animación de entrada. Hablar rápido, ritmo ágil. Filmar mostrando el celular con todasmiscosas.com abierto si es posible. Agregar sonido de "ding" cuando aparece cada paso.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ VIDEO 3 ══ -->
+<div class="tab-pane" id="v3">
+<div class="phone-wrap">
+  <div class="phone">
+    <div class="phone-screen">
+      <div class="phone-top"><span class="phone-user">@todasmiscosas</span><span class="phone-follow">+ Seguir</span></div>
+      <div style="font-size:2rem;text-align:center;margin:20px 0;">🏠💰</div>
+      <div class="phone-caption">Monetizá tu espacio vacío sin ser propietario ni pagar AFIP 😮</div>
+      <div class="phone-hashtags">#TodasMisCosas #Proveedores #IngresoExtra #CABA</div>
+      <div class="phone-actions">
+        <div class="ph-action"><div class="ph-icon">❤️</div><div class="ph-label">41.8k</div></div>
+        <div class="ph-action"><div class="ph-icon">💬</div><div class="ph-label">892</div></div>
+        <div class="ph-action"><div class="ph-icon">↗️</div><div class="ph-label">Compartir</div></div>
+      </div>
+    </div>
+    <div class="phone-bar">
+      <div class="ph-nav">🏠</div><div class="ph-nav">🔍</div><div class="ph-nav" style="color:#fff;font-weight:900;">➕</div><div class="ph-nav">✉️</div><div class="ph-nav">👤</div>
+    </div>
+  </div>
+  <div class="script-panel">
+    <div class="post-card">
+      <div class="post-header" style="background:linear-gradient(90deg,#16a34a,#14532d);">
+        <div>
+          <div class="post-label" style="color:#fff;">🎬 Video 3 — Para Proveedores ⭐</div>
+          <div class="post-meta" style="color:rgba(255,255,255,.75);">Semana 2 · Lunes · 6 PM · Captación oferta · ~55 segundos</div>
+        </div>
+        <span class="post-badge" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);">EL MÁS IMPORTANTE</span>
+      </div>
+      <div class="post-body">
+        <div class="obj-box" style="background:#f0fdf4;border-color:#16a34a;color:#14532d;">🎯 POV format o "storytime". Hablar como si le contaras a un amigo. Mostrar el espacio real si es posible. Revelar la oferta de los 50 lugares como un secreto.</div>
+
+        <div class="segment">
+          <div class="seg-label" style="background:#fee2e2;color:#991b1b;">⚡ HOOK — primeros 3 segundos</div>
+          <div class="seg-body">Si tenés un garage, una habitación o un depósito vacío en Buenos Aires, escuchame 👂</div>
+        </div>
+
+        <div class="segment">
+          <div class="seg-label" style="background:#f3f4f6;color:#374151;">🎙️ DESARROLLO — 5 a 48 segundos</div>
+          <div class="seg-body">Ese espacio que tenés parado... puede darte entre $80.000 y $200.000 pesos por mes.
+
+Sin inquilinos. Sin contratos de alquiler. Sin gastar en AFIP ni inmobiliaria.
+
+Cómo: publicás el espacio en TodasMisCosas punto com, un cliente lo reserva, Mercado Pago retiene la plata, y cuando vos confirmás que el cliente entró, te acreditamos el dinero. Así de simple.
+
+Vos ponés el precio, vos elegís las fechas, vos decidís quién puede entrar.
+
+[pausa — mirar a cámara]
+
+Ahora... lo que te quiero contar es esto:
+
+Antes del lanzamiento oficial, estamos reservando 50 lugares con beneficios permanentes:
+— Un año sin comisión. Cero. El 15% que normalmente cobramos, no te lo cobramos.
+— Sin membresía.
+— Tu espacio primero en los resultados de búsqueda.
+
+Esos 50 lugares se están llenando.</div>
+        </div>
+
+        <div class="segment">
+          <div class="seg-label" style="background:#dcfce7;color:#166534;">🚀 CTA — últimos 5 segundos</div>
+          <div class="seg-body">Mandanos un DM o entrá a todasmiscosas.com para registrarte. El link está en la bio. 🔗</div>
+        </div>
+
+        <div class="segment">
+          <div class="seg-label" style="background:#ede9fe;color:#5b21b6;">📝 CAPTION del video</div>
+          <div class="seg-body" id="cap3">Si tenés espacio libre en CABA o AMBA 👉 podés ganar $80k-$200k/mes guardando cosas. Y si sos de los primeros 50 → 1 año SIN COMISIÓN 🔥 Link en bio. #TodasMisCosas #IngresoExtra #BuenosAires #Proveedores #GanarDinero #Argentina #Startup #PropTech #CABA</div>
+        </div>
+        <button class="copy-btn" style="background:#16a34a;" onclick="copyPost('cap3',this)">📋 Copiar caption</button>
+
+        <div class="note-box">
+          <strong>🎬 Notas de producción:</strong> Este video puede funcionar como Stitch con alguien que muestre su garage o espacio vacío. Usar el formato "POV: tenés esto parado" como texto de apertura. La parte de "lo que te quiero contar" hacerla con voz más baja, como un secreto — genera engagement. Subir subtítulos automáticos con CapCut.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ VIDEO 4 ══ -->
+<div class="tab-pane" id="v4">
+<div class="phone-wrap">
+  <div class="phone">
+    <div class="phone-screen">
+      <div class="phone-top"><span class="phone-user">@todasmiscosas</span><span class="phone-follow">+ Seguir</span></div>
+      <div style="font-size:2rem;text-align:center;margin:20px 0;">⏳🔥</div>
+      <div class="phone-caption">Los primeros 50 ya casi están. ¿Llegás a tiempo? 👀</div>
+      <div class="phone-hashtags">#TodasMisCosas #Lanzamiento #Ahora #BuenosAires</div>
+      <div class="phone-actions">
+        <div class="ph-action"><div class="ph-icon">❤️</div><div class="ph-label">29.1k</div></div>
+        <div class="ph-action"><div class="ph-icon">💬</div><div class="ph-label">541</div></div>
+        <div class="ph-action"><div class="ph-icon">↗️</div><div class="ph-label">Compartir</div></div>
+      </div>
+    </div>
+    <div class="phone-bar">
+      <div class="ph-nav">🏠</div><div class="ph-nav">🔍</div><div class="ph-nav" style="color:#fff;font-weight:900;">➕</div><div class="ph-nav">✉️</div><div class="ph-nav">👤</div>
+    </div>
+  </div>
+  <div class="script-panel">
+    <div class="post-card">
+      <div class="post-header" style="background:linear-gradient(90deg,#ea580c,#9a3412);">
+        <div>
+          <div class="post-label" style="color:#fff;">🎬 Video 4 — Urgencia y CTA</div>
+          <div class="post-meta" style="color:rgba(255,255,255,.75);">Semana 2 · Jueves · 6 PM · Conversión · ~45 segundos</div>
+        </div>
+        <span class="post-badge" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);">CIERRE</span>
+      </div>
+      <div class="post-body">
+        <div class="obj-box" style="background:#fff7ed;border-color:#ea580c;color:#7c2d12;">🎯 Urgencia real, contador visual, instrucciones de 3 pasos simples. Tono de "última oportunidad". Mostrar el contador en pantalla si es posible.</div>
+
+        <div class="segment">
+          <div class="seg-label" style="background:#fee2e2;color:#991b1b;">⚡ HOOK — primeros 3 segundos</div>
+          <div class="seg-body">[mostrar en pantalla: "Quedan X / 50 lugares"] Los primeros 50 lugares casi se llenaron. ¿Llegás? ⏳</div>
+        </div>
+
+        <div class="segment">
+          <div class="seg-label" style="background:#f3f4f6;color:#374151;">🎙️ DESARROLLO — 5 a 40 segundos</div>
+          <div class="seg-body">Cuando arrancamos con TodasMisCosas el objetivo era simple: conectar quien tiene espacio con quien lo necesita, de forma segura.
+
+Y antes de lanzar oficialmente en CABA y AMBA quisimos hacer algo que no íbamos a repetir:
+
+Los primeros 50 proveedores en sumarse se llevan:
+✅ Un año sin comisión — el 15% que cobramos, no te lo cobramos.
+✅ Sin membresía.
+✅ Tu espacio primero en búsqueda.
+
+¿A quién le sirve? Dueños de garages, habitaciones, depósitos, galpones, empresas con espacio libre. En CABA o GBA.
+
+Cómo sumarte — son 3 pasos: [texto en pantalla]
+Uno: seguinos en TikTok.
+Dos: mandanos un DM que diga "QUIERO SER PROVEEDOR".
+Tres: te contactamos nosotros para el registro.
+
+Eso es todo.</div>
+        </div>
+
+        <div class="segment">
+          <div class="seg-label" style="background:#dcfce7;color:#166534;">🚀 CTA — últimos 5 segundos</div>
+          <div class="seg-body">Buenos Aires tiene espacio de sobra. Falta organizarlo. Eso es lo que hacemos. 📦</div>
+        </div>
+
+        <div class="segment">
+          <div class="seg-label" style="background:#ede9fe;color:#5b21b6;">📝 CAPTION del video</div>
+          <div class="seg-body" id="cap4">Los primeros 50 CASI se llenaron ⏳🔥 1 año sin comisión · sin membresía · perfil destacado. DM "QUIERO SER PROVEEDOR" o link en bio. ¿Llegás a tiempo? #TodasMisCosas #Lanzamiento #BuenosAires #IngresoExtra #CABA #GBA #Argentina #Startup #UltimoLugar</div>
+        </div>
+        <button class="copy-btn" style="background:#ea580c;" onclick="copyPost('cap4',this)">📋 Copiar caption</button>
+
+        <div class="note-box">
+          <strong>🎬 Notas de producción:</strong> Arrancar con un overlay de texto GRANDE "Quedan X / 50 lugares" (actualizar el número manualmente). Música con tensión creciente al final. El texto de los 3 pasos puede animarse uno por uno con CapCut. Duración: máximo 50 segundos para no perder retención.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ PRODUCCIÓN ══ -->
+<div class="tab-pane" id="produccion">
+<div class="sec-title">📅 Calendario de publicación</div>
+
+<div class="cal-row" style="border-left:5px solid #fe2c55;">
+  <div class="cal-day-num" style="color:#fe2c55;">L</div>
+  <div>
+    <div style="font-weight:800;font-size:.9rem;margin-bottom:3px;">Video 1 — El Gancho</div>
+    <div style="font-size:.77rem;color:var(--text2);">Awareness · Número impactante · 40 seg · @todasmiscosas</div>
+  </div>
+  <div class="cal-time" style="background:#fff0f3;color:#fe2c55;">🌆 6 PM</div>
+</div>
+<div class="cal-row" style="border-left:5px solid #25f4ee;">
+  <div class="cal-day-num" style="color:#0097a7;">J</div>
+  <div>
+    <div style="font-weight:800;font-size:.9rem;margin-bottom:3px;">Video 2 — Cómo Funciona</div>
+    <div style="font-size:.77rem;color:var(--text2);">Educación · Paso a paso · Texto en pantalla · 50 seg</div>
+  </div>
+  <div class="cal-time" style="background:#e0fffe;color:#0097a7;">🌆 6 PM</div>
+</div>
+<div class="cal-row" style="border-left:5px solid #16a34a;">
+  <div class="cal-day-num" style="color:#16a34a;">L</div>
+  <div>
+    <div style="font-weight:800;font-size:.9rem;margin-bottom:3px;">Video 3 — Para Proveedores ⭐</div>
+    <div style="font-size:.77rem;color:var(--text2);">Captación oferta · POV format · Revelar los 50 lugares · 55 seg</div>
+  </div>
+  <div class="cal-time" style="background:#f0fdf4;color:#16a34a;">🌆 6 PM</div>
+</div>
+<div class="cal-row" style="border-left:5px solid #ea580c;">
+  <div class="cal-day-num" style="color:#ea580c;">J</div>
+  <div>
+    <div style="font-weight:800;font-size:.9rem;margin-bottom:3px;">Video 4 — CTA Final</div>
+    <div style="font-size:.77rem;color:var(--text2);">Urgencia · Contador visual · 3 pasos simples · 45 seg</div>
+  </div>
+  <div class="cal-time" style="background:#fff7ed;color:#ea580c;">🌆 6 PM</div>
+</div>
+
+<div class="sec-title" style="margin-top:28px;">🎬 Stack de producción recomendado (todo gratis)</div>
+<div class="tips-grid">
+  <div class="tip-card">
+    <div class="tip-icon">📱</div>
+    <div class="tip-title">CapCut (edición)</div>
+    <div class="tip-body">La herramienta estándar para TikTok. Permite: subtítulos automáticos, overlays de texto animados, transitions, música de tendencia sin copyright, velocidades variables. Gratuito para todo lo que necesitamos.</div>
+  </div>
+  <div class="tip-card">
+    <div class="tip-icon">💡</div>
+    <div class="tip-title">Iluminación</div>
+    <div class="tip-body">Ring light barata ($3.000-$5.000 ARS en ML) o simplemente grabar frente a una ventana con luz natural. La imagen buena retiene más que la edición sofisticada.</div>
+  </div>
+  <div class="tip-card">
+    <div class="tip-icon">🎵</div>
+    <div class="tip-title">Música trending</div>
+    <div class="tip-body">Usar sonidos en tendencia en Argentina esa semana. TikTok amplifica videos con audio popular. Buscar en "Tendencias de sonido" en la app antes de publicar. Mantener el volumen bajo (20-30%) para que se entienda la voz.</div>
+  </div>
+  <div class="tip-card">
+    <div class="tip-icon">📐</div>
+    <div class="tip-title">Formato y técnica</div>
+    <div class="tip-body">Siempre 9:16 vertical. Cara visible en los primeros 2 segundos. Subtítulos en pantalla (CapCut los genera solos). No más de 60 segundos — la retención cae drásticamente. Hablar rápido y natural.</div>
+  </div>
+  <div class="tip-card">
+    <div class="tip-icon">⏰</div>
+    <div class="tip-title">Horario óptimo</div>
+    <div class="tip-body">Para Argentina: publicar entre 18 y 21 hs de lunes a jueves. El algoritmo de TikTok evalúa el engagement de la primera hora. Responder comentarios en los primeros 30 minutos.</div>
+  </div>
+  <div class="tip-card">
+    <div class="tip-icon">💬</div>
+    <div class="tip-title">Engagement activo</div>
+    <div class="tip-body">Responder TODOS los comentarios. "¿Cuánto sale?" → responder con el rango de precios. "¿Cómo me registro?" → "Link en bio, DM para los 50 lugares". Los comentarios propios aumentan el alcance del video.</div>
+  </div>
+</div>
+
+</div>
+
+<!-- ══ HASHTAGS ══ -->
+<div class="tab-pane" id="hashtags">
+<div class="sec-title"># Estrategia de hashtags para TikTok</div>
+
+<div class="ht-section">
+  <div class="ht-title">🏷️ Hashtags propios (usar en TODOS los videos)</div>
+  <div class="tag-cloud">
+    <span class="htag" style="background:#fff0f3;color:#fe2c55;">#TodasMisCosas</span>
+    <span class="htag" style="background:#fff0f3;color:#fe2c55;">#TMC</span>
+  </div>
+  <p style="font-size:.75rem;color:var(--text3);margin-top:10px;">Construyen la marca. Con el tiempo el hashtag propio agrega todos los videos bajo un mismo universo.</p>
+</div>
+
+<div class="ht-section">
+  <div class="ht-title">📍 Hashtags de nicho (alta conversión)</div>
+  <div class="tag-cloud">
+    <span class="htag" style="background:#dbeafe;color:#1d4ed8;">#IngresoExtra</span>
+    <span class="htag" style="background:#dbeafe;color:#1d4ed8;">#GanarDinero</span>
+    <span class="htag" style="background:#dbeafe;color:#1d4ed8;">#Almacenamiento</span>
+    <span class="htag" style="background:#dbeafe;color:#1d4ed8;">#PropTech</span>
+    <span class="htag" style="background:#dbeafe;color:#1d4ed8;">#RealEstate</span>
+    <span class="htag" style="background:#dbeafe;color:#1d4ed8;">#Proveedores</span>
+    <span class="htag" style="background:#dbeafe;color:#1d4ed8;">#Emprendimiento</span>
+  </div>
+</div>
+
+<div class="ht-section">
+  <div class="ht-title">🌎 Hashtags geolocalizados</div>
+  <div class="tag-cloud">
+    <span class="htag" style="background:#dcfce7;color:#15803d;">#BuenosAires</span>
+    <span class="htag" style="background:#dcfce7;color:#15803d;">#CABA</span>
+    <span class="htag" style="background:#dcfce7;color:#15803d;">#GBA</span>
+    <span class="htag" style="background:#dcfce7;color:#15803d;">#Argentina</span>
+    <span class="htag" style="background:#dcfce7;color:#15803d;">#AMBA</span>
+  </div>
+</div>
+
+<div class="ht-section">
+  <div class="ht-title">🚀 Hashtags de alcance (amplificadores)</div>
+  <div class="tag-cloud">
+    <span class="htag" style="background:#fef9c3;color:#854d0e;">#Startup</span>
+    <span class="htag" style="background:#fef9c3;color:#854d0e;">#Marketplace</span>
+    <span class="htag" style="background:#fef9c3;color:#854d0e;">#Lanzamiento</span>
+    <span class="htag" style="background:#fef9c3;color:#854d0e;">#TechArgentina</span>
+  </div>
+  <p style="font-size:.75rem;color:var(--text3);margin-top:10px;">Usar máximo 5-7 hashtags por video. TikTok no premia cantidad — premia relevancia.</p>
+</div>
+
+</div>
+
+</div><!-- /content -->
+
+<footer>
+  <strong>🎵 TMC — Serie TikTok de Lanzamiento · 18 jun 2026</strong><br>
+  TodasMisCosas.com · CABA &amp; AMBA · 4 videos · Primeros 50 con beneficios premium<br>
+  <span style="font-size:.68rem;color:#1e293b;margin-top:3px;display:block;">Generado por Claude Sonnet 4.6</span>
+</footer>
+
+<script>
+function switchTab(id){
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+function copyPost(id,btn){
+  const text=document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='✅ Copiado!';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='📋 Copiar caption';btn.classList.remove('copied');},2500);
+  }).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    btn.textContent='✅ Copiado!';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='📋 Copiar caption';btn.classList.remove('copied');},2500);
+  });
+}
+</script>
+</body>
+</html>
