@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC — Serie LinkedIn de Lanzamiento · 4 Posts</title>
+<style>
+:root{
+  --li:#0a66c2;--li-dark:#004182;--li-light:#e8f0fe;
+  --gold:#f59e0b;--navy:#0f172a;--text:#1e293b;--text2:#475569;--text3:#94a3b8;
+  --border:#e2e8f0;--bg:#f0f4f8;--white:#fff;
+  --green:#16a34a;--green-bg:#f0fdf4;
+  --orange:#ea580c;--orange-bg:#fff7ed;
+  --purple:#7c3aed;--purple-bg:#f5f3ff;
+  --red:#dc2626;--red-bg:#fef2f2;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:13.5px;line-height:1.65;}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#0f172a 0%,#0a2540 55%,#004182 100%);padding:36px 48px 28px;}
+.hl{font-size:1.1rem;font-weight:900;color:var(--gold);letter-spacing:.06em;}
+.ht{font-size:1.65rem;font-weight:900;color:#f1f5f9;margin:6px 0 4px;letter-spacing:-.3px;}
+.hs{color:#64748b;font-size:.83rem;}
+.hchips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+.chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:4px 14px;font-size:.72rem;color:#94a3b8;}
+.chip strong{color:#f1f5f9;}
+
+/* TABS */
+.tabs-nav{display:flex;gap:0;background:var(--white);border-bottom:2px solid var(--border);padding:0 48px;overflow-x:auto;}
+.tab-btn{padding:14px 22px;font-size:.82rem;font-weight:700;color:var(--text3);border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color .2s;}
+.tab-btn.active{color:var(--li);border-bottom-color:var(--li);}
+.tab-btn:hover:not(.active){color:var(--text2);}
+
+.content{max-width:900px;margin:0 auto;padding:40px 32px 80px;}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+
+/* POST CARD */
+.post-card{background:var(--white);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.05);}
+.post-header{background:var(--li);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;}
+.post-label{color:#fff;font-weight:800;font-size:.88rem;}
+.post-meta{font-size:.72rem;color:rgba(255,255,255,.75);}
+.post-badge{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:3px 12px;font-size:.68rem;color:#fff;font-weight:700;}
+
+.post-body{padding:28px 32px;}
+.post-objective{background:var(--li-light);border-left:4px solid var(--li);border-radius:8px;padding:10px 16px;font-size:.77rem;color:#1d4ed8;margin-bottom:20px;font-weight:600;}
+
+.post-text{white-space:pre-wrap;font-size:.88rem;line-height:1.85;color:var(--text);background:#fafbfc;border:1px solid var(--border);border-radius:12px;padding:24px;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;}
+
+.copy-btn{display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:10px 20px;background:var(--li);color:#fff;border:none;border-radius:10px;font-size:.78rem;font-weight:700;cursor:pointer;transition:background .2s;}
+.copy-btn:hover{background:var(--li-dark);}
+.copy-btn.copied{background:var(--green);}
+
+.tip-box{background:#fffbeb;border:1px solid #fde047;border-left:4px solid var(--gold);border-radius:10px;padding:12px 16px;font-size:.77rem;color:#713f12;margin-top:20px;}
+.tip-box strong{color:#92400e;}
+
+/* CALENDAR TAB */
+.cal-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:32px;}
+.cal-row{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:20px 24px;display:grid;grid-template-columns:100px 1fr auto;gap:20px;align-items:center;}
+.cal-day{text-align:center;}
+.cal-day-num{font-size:2rem;font-weight:900;color:var(--li);line-height:1;}
+.cal-day-label{font-size:.68rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;}
+.cal-info .title{font-weight:800;font-size:.9rem;margin-bottom:4px;}
+.cal-info .desc{font-size:.77rem;color:var(--text2);}
+.cal-time{background:var(--li-light);color:var(--li);font-size:.75rem;font-weight:700;padding:6px 14px;border-radius:10px;text-align:center;white-space:nowrap;}
+
+.post-num{display:inline-flex;width:28px;height:28px;align-items:center;justify-content:center;border-radius:50%;font-size:.75rem;font-weight:900;background:var(--li);color:#fff;margin-right:8px;}
+
+/* TIPS TAB */
+.tips-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.tip-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:20px;}
+.tip-card-icon{font-size:1.6rem;margin-bottom:8px;}
+.tip-card-title{font-weight:800;font-size:.88rem;margin-bottom:6px;color:var(--text);}
+.tip-card-body{font-size:.77rem;color:var(--text2);line-height:1.7;}
+.tip-card-body ul{padding-left:14px;}
+.tip-card-body li{margin-bottom:4px;}
+
+.metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px;}
+.metric-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;}
+.metric-n{font-size:1.8rem;font-weight:900;color:var(--li);line-height:1;}
+.metric-l{font-size:.68rem;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-top:4px;}
+.metric-desc{font-size:.72rem;color:var(--text2);margin-top:6px;}
+
+.sec-title{font-size:1rem;font-weight:800;color:var(--text);margin:28px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--border);}
+
+/* VARIACIONES TAB */
+.var-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px;}
+.var-title{font-weight:800;font-size:.9rem;margin-bottom:4px;}
+.var-sub{font-size:.75rem;color:var(--text3);margin-bottom:16px;}
+.var-text{white-space:pre-wrap;font-size:.82rem;line-height:1.8;color:var(--text);background:#fafbfc;border:1px solid var(--border);border-radius:10px;padding:18px;}
+
+footer{background:var(--navy);color:#334155;text-align:center;padding:20px;font-size:.72rem;}
+footer strong{color:#475569;}
+
+@media(max-width:640px){
+  .header{padding:22px 16px 18px;}
+  .tabs-nav{padding:0 8px;}
+  .content{padding:24px 14px 48px;}
+  .cal-row{grid-template-columns:64px 1fr;gap:12px;}
+  .cal-time{display:none;}
+  .tips-grid{grid-template-columns:1fr;}
+  .metrics-grid{grid-template-columns:1fr 1fr;}
+  .post-body{padding:16px;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="hl">📱 LINKEDIN · Serie de Lanzamiento</div>
+  <div class="ht">TodasMisCosas.com — 4 Posts · CABA &amp; AMBA</div>
+  <div class="hs">Estrategia multi-etapa · Clientes + Seguidores + Proveedores · Oferta: primeros 50 afiliados</div>
+  <div class="hchips">
+    <div class="chip"><strong>4</strong> posts listos</div>
+    <div class="chip"><strong>12 días</strong> de campaña</div>
+    <div class="chip"><strong>3</strong> audiencias objetivo</div>
+    <div class="chip">Oferta <strong>50 lugares</strong> premium</div>
+    <div class="chip">18 jun 2026</div>
+  </div>
+</div>
+
+<div class="tabs-nav">
+  <button class="tab-btn active" onclick="switchTab('post1')">📣 Post 1 — El Gancho</button>
+  <button class="tab-btn" onclick="switchTab('post2')">⚙️ Post 2 — Cómo Funciona</button>
+  <button class="tab-btn" onclick="switchTab('post3')">🏠 Post 3 — Proveedores</button>
+  <button class="tab-btn" onclick="switchTab('post4')">🚀 Post 4 — CTA Final</button>
+  <button class="tab-btn" onclick="switchTab('calendario')">📅 Calendario</button>
+  <button class="tab-btn" onclick="switchTab('tips')">💡 Tips &amp; Métricas</button>
+</div>
+
+<div class="content">
+
+<!-- ══════════════════════════════════════════════ POST 1 ══════════════════════════════════════════════ -->
+<div class="tab-pane active" id="post1">
+
+  <div class="post-card">
+    <div class="post-header">
+      <div>
+        <div class="post-label">📣 Post 1 — El Gancho</div>
+        <div class="post-meta">Día 1 · Lunes · 9:00 AM · Awareness y alcance orgánico</div>
+      </div>
+      <span class="post-badge">PUBLICAR PRIMERO</span>
+    </div>
+    <div class="post-body">
+      <div class="post-objective">🎯 Objetivo: generar curiosidad, alcanzar personas que ni saben que el problema existe. La primera línea debe hacer que se detengan a leer.</div>
+
+      <div class="post-text" id="text-post1">¿Sabías que Buenos Aires tiene millones de metros cuadrados vacíos que nadie usa... y miles de personas que necesitan un lugar para guardar sus cosas?
+
+Garages sin autos. Habitaciones sin inquilinos. Galpones a la mitad.
+
+Al mismo tiempo: personas que se mudan, que viajan, que reducen su espacio, que acumulan más de lo que su departamento aguanta.
+
+Esa brecha existe hace décadas.
+
+Nosotros la cerramos.
+
+📦 TodasMisCosas.com — el primer marketplace de almacenamiento urbano de Argentina.
+
+Un proveedor publica su espacio libre.
+Un cliente lo reserva.
+El pago es seguro. El acceso, acordado. Todo trazado.
+
+Sin intermediarios. Sin complicaciones. Sin burocracia.
+
+🚀 Estamos por lanzar en CABA y AMBA — y los primeros 50 en sumarse van a tener condiciones que no van a repetirse.
+
+¿Tenés espacio libre o necesitás guardar algo?
+
+👉 Seguinos para enterarte primero.
+
+#TodasMisCosas #Marketplace #Almacenamiento #BuenosAires #Emprendimiento #Startup</div>
+
+      <button class="copy-btn" onclick="copyPost('text-post1', this)">📋 Copiar texto</button>
+
+      <div class="tip-box">
+        <strong>💡 Tips para este post:</strong> Ponerlo el lunes a las 9 AM cuando LinkedIn tiene mayor tráfico. Ale y Guille lo publican ambos (en sus perfiles) con 30 min de diferencia para duplicar alcance orgánico. No poner el link de la web en el cuerpo — ponerlo en el primer comentario después de publicar.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════ POST 2 ══════════════════════════════════════════════ -->
+<div class="tab-pane" id="post2">
+
+  <div class="post-card">
+    <div class="post-header">
+      <div>
+        <div class="post-label">⚙️ Post 2 — Cómo Funciona</div>
+        <div class="post-meta">Día 4 · Jueves · 12:00 PM · Educación y confianza</div>
+      </div>
+      <span class="post-badge">DESPUÉS DEL POST 1</span>
+    </div>
+    <div class="post-body">
+      <div class="post-objective">🎯 Objetivo: convertir el interés en comprensión. Quien vio el Post 1 y quedó curioso, acá entiende exactamente cómo funciona. Generar preguntas en los comentarios.</div>
+
+      <div class="post-text" id="text-post2">Mucha gente nos pregunta: "¿Cómo funciona exactamente?"
+
+Simple. Tres pasos.
+
+─────────────────────────────
+Si tenés espacio libre:
+─────────────────────────────
+
+1️⃣ Publicás tu espacio en todasmiscosas.com — garage, habitación, depósito, lo que sea.
+2️⃣ Un cliente lo reserva y paga de forma segura a través de MercadoPago.
+3️⃣ El dinero llega a tu cuenta cuando confirmás que el cliente accedió.
+
+Sin lidiar con desconocidos. Sin riesgo de no cobrar. Sin papelerío.
+
+─────────────────────────────
+Si necesitás guardar cosas:
+─────────────────────────────
+
+1️⃣ Buscás un espacio cerca tuyo en CABA o AMBA.
+2️⃣ Elegís fechas, precio y condiciones.
+3️⃣ Pagás con tarjeta o Mercado Pago — y tu dinero queda protegido hasta que confirmás que todo está bien.
+
+─────────────────────────────
+
+Lo que nos diferencia de un grupo de WhatsApp o un aviso en Marketplace:
+
+✅ Pago protegido — el dinero no se libera hasta que confirmás el acceso
+✅ Historial y reviews de cada proveedor
+✅ Acuerdo documentado con fechas y condiciones
+✅ Soporte en caso de inconvenientes
+
+Esto es lo que significa guardar con confianza.
+
+🔔 Seguinos. En los próximos días anunciamos los beneficios para los primeros 50.
+
+#TodasMisCosas #PropTech #Startup #CABA #AMBA #EmprendimientoArgentino</div>
+
+      <button class="copy-btn" onclick="copyPost('text-post2', this)">📋 Copiar texto</button>
+
+      <div class="tip-box">
+        <strong>💡 Tips para este post:</strong> En los comentarios agregar "¿Tenés alguna duda sobre cómo funciona?" para activar la sección de Q&amp;A. Responder cada comentario en los primeros 60 minutos. Si alguien pregunta el precio, responder con "depende del espacio — lo define el proveedor libremente" y linkear la web en ese comentario.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════ POST 3 ══════════════════════════════════════════════ -->
+<div class="tab-pane" id="post3">
+
+  <div class="post-card">
+    <div class="post-header">
+      <div>
+        <div class="post-label">🏠 Post 3 — Para Proveedores</div>
+        <div class="post-meta">Día 8 · Lunes · 9:00 AM · Captar el lado de la oferta</div>
+      </div>
+      <span class="post-badge">EL MÁS IMPORTANTE</span>
+    </div>
+    <div class="post-body">
+      <div class="post-objective">🎯 Objetivo: captar proveedores (lado de la oferta). Sin espacios publicados no hay marketplace. Es el post más importante de la serie y donde se menciona por primera vez la oferta de los 50 lugares.</div>
+
+      <div class="post-text" id="text-post3">¿Cuánto vale el espacio que tenés parado en tu casa?
+
+Un garage en Palermo puede generar entre $80.000 y $200.000 ARS por mes guardando cosas.
+
+Una habitación libre en Caballito, Villa Urquiza o Flores — lo mismo.
+
+Sin inquilinos. Sin contratos de alquiler. Sin AFIP ni inmobiliaria.
+
+Solo un acuerdo claro, un cliente verificado y el dinero directo en tu cuenta.
+
+─────────────────────────────
+
+En TodasMisCosas.com vos decidís:
+
+📐 Qué espacio ofrecés y qué dimensiones
+💰 Cuánto cobrás por día o por mes
+📅 Qué fechas está disponible
+🔐 Quién puede acceder y en qué horario
+
+Y nosotros nos encargamos del resto: la plataforma, el cobro, la protección del pago y el historial del cliente.
+
+─────────────────────────────
+
+👑 OFERTA DE LANZAMIENTO — Solo 50 lugares:
+
+Los primeros 50 proveedores en registrarse van a acceder a:
+
+✅ 1 año sin comisión (normalmente cobramos el 15% de cada reserva)
+✅ Sin costo de membresía
+✅ Perfil destacado en los primeros resultados de búsqueda
+✅ Acceso prioritario a soporte y nuevas funcionalidades
+
+Esos 50 lugares se están llenando.
+
+📩 Escribinos por DM o entrá a todasmiscosas.com para registrarte antes del lanzamiento.
+
+#TodasMisCosas #Proveedores #IngresoExtra #BuenosAires #PropTech #Almacenamiento</div>
+
+      <button class="copy-btn" onclick="copyPost('text-post3', this)">📋 Copiar texto</button>
+
+      <div class="tip-box">
+        <strong>💡 Tips para este post:</strong> Etiquetar en el primer comentario a 2-3 contactos conocidos que tengan garage o habitación libre — con su permiso. Agregar imagen del post: foto de un garage/habitación ordenada con texto "¿Tenés esto vacío?" en Canva. Esta publicación es la que más vale impulsar con una pequeña pauta de $10-15 USD en LinkedIn Ads.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════ POST 4 ══════════════════════════════════════════════ -->
+<div class="tab-pane" id="post4">
+
+  <div class="post-card">
+    <div class="post-header">
+      <div>
+        <div class="post-label">🚀 Post 4 — CTA Final</div>
+        <div class="post-meta">Día 12 · Jueves · 12:00 PM · Conversión directa</div>
+      </div>
+      <span class="post-badge">CIERRE + URGENCIA</span>
+    </div>
+    <div class="post-body">
+      <div class="post-objective">🎯 Objetivo: conversión. Crear urgencia real sobre los 50 lugares. Quienes vieron los 3 posts anteriores ya conocen TMC — este es el momento de que actúen. CTA claro y sin vueltas.</div>
+
+      <div class="post-text" id="text-post4">Los primeros 50 ya casi están completos.
+
+Cuando empezamos a construir TodasMisCosas.com, el objetivo era simple:
+conectar a quien tiene espacio con quien lo necesita, de forma segura, transparente y sin fricción.
+
+Lo que no sabíamos es que había tanta gente esperando exactamente esto.
+
+─────────────────────────────
+
+Hoy, antes del lanzamiento oficial en CABA y AMBA, queremos hacer algo que no vamos a repetir:
+
+Reservar 50 lugares de proveedor con beneficios permanentes.
+
+Sin comisión por 12 meses.
+Sin membresía.
+Con perfil destacado desde el primer día.
+
+El valor de esas 50 posiciones es real — el 15% de comisión que no vas a pagar en cada reserva se acumula rápido.
+
+─────────────────────────────
+
+¿A quién le sirve esto?
+
+🏠 Dueños de departamentos con espacio libre
+🏢 Administradores de edificios o propiedades
+🏭 Empresas con depósitos subutilizados
+🚗 Propietarios de garages sin uso regular
+🛋️ Cualquier persona que tenga metros cuadrados vacíos en CABA o AMBA
+
+─────────────────────────────
+
+¿Cómo te sumás?
+
+1. Seguí nuestra página: TodasMisCosas
+2. Mandanos un DM con "QUIERO SER PROVEEDOR"
+3. Te contactamos para guiarte en el registro
+
+Eso es todo.
+
+─────────────────────────────
+
+Buenos Aires tiene espacio de sobra.
+Falta organizarlo.
+Eso es lo que hacemos.
+
+🔗 todasmiscosas.com
+
+#TodasMisCosas #Lanzamiento #Marketplace #Startup #BuenosAires #CABA #AMBA #EmprendimientoArgentino #IngresoExtra #PropTech</div>
+
+      <button class="copy-btn" onclick="copyPost('text-post4', this)">📋 Copiar texto</button>
+
+      <div class="tip-box">
+        <strong>💡 Tips para este post:</strong> Adjuntar una imagen con el contador "Quedan X lugares" en tiempo real (hacerlo en Canva con número manual). Ale y Guille ambos publican el mismo día con diferencia de 2 horas — uno etiqueta al otro. Si llegaron a los 50 antes de este post: cambiar "Los primeros 50 ya casi están completos" por "Los 50 lugares se llenaron — lista de espera abierta."
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════ CALENDARIO ══════════════════════════════════════════════ -->
+<div class="tab-pane" id="calendario">
+
+  <div class="sec-title">📅 Calendario de Publicación — 12 días</div>
+
+  <div class="cal-grid">
+
+    <div class="cal-row" style="border-left:5px solid var(--li);">
+      <div class="cal-day">
+        <div class="cal-day-num">L</div>
+        <div class="cal-day-label">Día 1</div>
+      </div>
+      <div class="cal-info">
+        <div class="title"><span class="post-num">1</span>El Gancho — Awareness</div>
+        <div class="desc">Primera publicación. Genera curiosidad sobre el problema. No menciona la oferta de los 50 todavía. Crea expectativa para los próximos posts.</div>
+      </div>
+      <div class="cal-time">☀️ 9:00 AM</div>
+    </div>
+
+    <div class="cal-row" style="border-left:5px solid #7c3aed;">
+      <div class="cal-day">
+        <div class="cal-day-num">J</div>
+        <div class="cal-day-label">Día 4</div>
+      </div>
+      <div class="cal-info">
+        <div class="title"><span class="post-num" style="background:#7c3aed;">2</span>Cómo Funciona — Educación</div>
+        <div class="desc">Explica el mecanismo paso a paso. Diferencia TMC de grupos de WhatsApp o Marketplace. Finaliza con CTA de seguir para los beneficios.</div>
+      </div>
+      <div class="cal-time">🌞 12:00 PM</div>
+    </div>
+
+    <div class="cal-row" style="border-left:5px solid var(--green);">
+      <div class="cal-day">
+        <div class="cal-day-num">L</div>
+        <div class="cal-day-label">Día 8</div>
+      </div>
+      <div class="cal-info">
+        <div class="title"><span class="post-num" style="background:var(--green);">3</span>Para Proveedores — Captación de oferta ⭐</div>
+        <div class="desc">El post más importante. Dirige la oferta al lado del espacio disponible. Revela por primera vez los 50 lugares con beneficios premium. Contemplar pauta de $10-15 USD.</div>
+      </div>
+      <div class="cal-time">☀️ 9:00 AM</div>
+    </div>
+
+    <div class="cal-row" style="border-left:5px solid var(--orange);">
+      <div class="cal-day">
+        <div class="cal-day-num">J</div>
+        <div class="cal-day-label">Día 12</div>
+      </div>
+      <div class="cal-info">
+        <div class="title"><span class="post-num" style="background:var(--orange);">4</span>CTA Final — Conversión y urgencia</div>
+        <div class="desc">Cierre de la serie. Urgencia sobre los 50 lugares. Instrucciones simples de registro. Ale y Guille publican con 2 horas de diferencia y se etiquetan mutuamente.</div>
+      </div>
+      <div class="cal-time">🌞 12:00 PM</div>
+    </div>
+
+  </div>
+
+  <div class="sec-title">👥 Quién publica qué</div>
+  <div style="background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
+    <table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr style="background:#f8fafc;">
+          <th style="padding:12px 16px;text-align:left;font-size:.78rem;color:var(--text3);font-weight:700;border-bottom:1px solid var(--border);">POST</th>
+          <th style="padding:12px 16px;text-align:left;font-size:.78rem;color:var(--text3);font-weight:700;border-bottom:1px solid var(--border);">ALE (CTO)</th>
+          <th style="padding:12px 16px;text-align:left;font-size:.78rem;color:var(--text3);font-weight:700;border-bottom:1px solid var(--border);">GUILLE (CIO)</th>
+          <th style="padding:12px 16px;text-align:left;font-size:.78rem;color:var(--text3);font-weight:700;border-bottom:1px solid var(--border);">AGUSTINA / DANIEL</th>
+        </tr>
+      </thead>
+      <tbody style="font-size:.78rem;">
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:12px 16px;font-weight:700;">Post 1</td>
+          <td style="padding:12px 16px;">✅ Publica a las 9:00</td>
+          <td style="padding:12px 16px;">✅ Publica a las 9:30</td>
+          <td style="padding:12px 16px;">🔄 Comparte (re-post)</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);background:#fafbfc;">
+          <td style="padding:12px 16px;font-weight:700;">Post 2</td>
+          <td style="padding:12px 16px;">✅ Publica a las 12:00</td>
+          <td style="padding:12px 16px;">🔄 Comparte</td>
+          <td style="padding:12px 16px;">🔄 Comparte</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:12px 16px;font-weight:700;">Post 3 ⭐</td>
+          <td style="padding:12px 16px;">✅ Publica a las 9:00</td>
+          <td style="padding:12px 16px;">✅ Publica a las 9:30</td>
+          <td style="padding:12px 16px;">🔄 Comparte + comenta</td>
+        </tr>
+        <tr>
+          <td style="padding:12px 16px;font-weight:700;">Post 4</td>
+          <td style="padding:12px 16px;">✅ Publica a las 12:00</td>
+          <td style="padding:12px 16px;">✅ Publica a las 14:00</td>
+          <td style="padding:12px 16px;">🔄 Comparte</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tip-box" style="margin-top:20px;">
+    <strong>⚠️ Regla de oro:</strong> Nunca poner el link de todasmiscosas.com en el cuerpo del post. LinkedIn penaliza los posts con links externos y reduce el alcance orgánico a la mitad. Ponerlo siempre en el <strong>primer comentario</strong> inmediatamente después de publicar.
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════ TIPS ══════════════════════════════════════════════ -->
+<div class="tab-pane" id="tips">
+
+  <div class="sec-title">💡 Estrategia para maximizar alcance orgánico</div>
+
+  <div class="tips-grid">
+
+    <div class="tip-card">
+      <div class="tip-card-icon">⚡</div>
+      <div class="tip-card-title">La primera hora es crítica</div>
+      <div class="tip-card-body">
+        LinkedIn mide el engagement de los primeros 60 minutos para decidir si amplificar el post. Estrategia:<br>
+        <ul style="margin-top:8px;">
+          <li>Publicar y quedarse 20 min respondiendo comentarios</li>
+          <li>Pedirle al equipo que reaccione al publicar</li>
+          <li>Hacer una pregunta al final de cada post para estimular respuestas</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tip-card">
+      <div class="tip-card-icon">🔗</div>
+      <div class="tip-card-title">Links siempre en comentarios</div>
+      <div class="tip-card-body">
+        LinkedIn penaliza los posts que llevan tráfico fuera de la plataforma. Nunca poner todasmiscosas.com en el cuerpo. Después de publicar, escribir el primer comentario:<br><br>
+        <em>"🔗 Registrarse en: todasmiscosas.com"</em><br><br>
+        Ese comentario aparece de todas formas y el post no pierde alcance.
+      </div>
+    </div>
+
+    <div class="tip-card">
+      <div class="tip-card-icon">🤝</div>
+      <div class="tip-card-title">Dos perfiles = doble alcance</div>
+      <div class="tip-card-body">
+        Ale y Guille publican ambos — no re-post del otro, texto propio (puede ser idéntico o levemente variado). Que se etiqueten entre sí en los posts del Post 3 y Post 4 para activar la red de contactos de ambos simultáneamente.
+      </div>
+    </div>
+
+    <div class="tip-card">
+      <div class="tip-card-icon">📸</div>
+      <div class="tip-card-title">Imágenes recomendadas</div>
+      <div class="tip-card-body">
+        LinkedIn posts con imagen tienen 2x más impresiones. Opciones en Canva (gratis):<br>
+        <ul style="margin-top:8px;">
+          <li>Post 1: Foto de un garage vacío + texto "¿Cuánto vale esto?"</li>
+          <li>Post 3: Imagen con "50 lugares · 1 año sin comisión"</li>
+          <li>Post 4: Contador "Quedan X / 50 lugares"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tip-card">
+      <div class="tip-card-icon">#️⃣</div>
+      <div class="tip-card-title">Hashtags óptimos</div>
+      <div class="tip-card-body">
+        Usar entre 3 y 5 hashtags. LinkedIn penaliza posts con 10+. Los más efectivos para TMC:<br><br>
+        <strong>#TodasMisCosas</strong> (propio, construye marca)<br>
+        <strong>#BuenosAires</strong> (geolocalizado)<br>
+        <strong>#PropTech</strong> (nicho tech)<br>
+        <strong>#Startup</strong> (amplio)<br>
+        <strong>#IngresoExtra</strong> (para proveedores)
+      </div>
+    </div>
+
+    <div class="tip-card">
+      <div class="tip-card-icon">💸</div>
+      <div class="tip-card-title">Pauta opcional (Post 3)</div>
+      <div class="tip-card-body">
+        Si el Post 3 tiene buen engagement orgánico las primeras 3 horas, impulsarlo con $10-15 USD en LinkedIn Campaign Manager. Segmentación sugerida:<br>
+        <ul style="margin-top:8px;">
+          <li>Ubicación: CABA + GBA</li>
+          <li>Intereses: Real Estate, Finanzas personales, Emprendimiento</li>
+          <li>Objetivo: Engagement o visitas al perfil</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="sec-title">📊 Métricas de éxito — KPIs esperados</div>
+
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-n">500+</div>
+      <div class="metric-l">impresiones totales</div>
+      <div class="metric-desc">Mínimo esperado en los 4 posts combinados con dos perfiles publicando</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-n">50</div>
+      <div class="metric-l">DMs / consultas</div>
+      <div class="metric-desc">Meta: 50 mensajes recibidos durante los 12 días de la campaña</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-n">50</div>
+      <div class="metric-l">registros premium</div>
+      <div class="metric-desc">Objetivo principal: llenar los 50 lugares antes del lanzamiento oficial</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-n">200+</div>
+      <div class="metric-l">nuevos seguidores</div>
+      <div class="metric-desc">Página de TodasMisCosas en LinkedIn durante el período de campaña</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-n">3%</div>
+      <div class="metric-l">tasa engagement</div>
+      <div class="metric-desc">Meta de engagement rate por post (likes + comentarios / impresiones)</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-n">72h</div>
+      <div class="metric-l">tiempo de respuesta</div>
+      <div class="metric-desc">Máximo para responder DMs. Idealmente en menos de 4 horas en días hábiles</div>
+    </div>
+  </div>
+
+  <div class="sec-title" style="margin-top:32px;">📋 Checklist antes de publicar cada post</div>
+  <div style="background:var(--white);border:1px solid var(--border);border-radius:14px;padding:24px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.82rem;">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" style="width:16px;height:16px;"> Texto copiado y pegado sin perder formato</label>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" style="width:16px;height:16px;"> Imagen adjuntada (si aplica)</label>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" style="width:16px;height:16px;"> NO hay link en el cuerpo del post</label>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" style="width:16px;height:16px;"> Horario correcto verificado</label>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" style="width:16px;height:16px;"> Ale Y Guille publican (ambos perfiles)</label>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" style="width:16px;height:16px;"> Primer comentario con link listo para pegar</label>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" style="width:16px;height:16px;"> Agustina y Daniel notificados para compartir</label>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" style="width:16px;height:16px;"> Bloquear 20 min en agenda para responder la primera hora</label>
+    </div>
+  </div>
+
+</div>
+
+</div><!-- /content -->
+
+<footer>
+  <strong>📱 TMC — Serie LinkedIn de Lanzamiento · 18 jun 2026</strong><br>
+  TodasMisCosas.com · CABA &amp; AMBA · Primeros 50 afiliados con beneficios premium<br>
+  <span style="font-size:.68rem;color:#1e293b;margin-top:3px;display:block;">Generado por Claude Sonnet 4.6</span>
+</footer>
+
+<script>
+function switchTab(id){
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function copyPost(id, btn){
+  const text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent = '✅ Copiado!';
+    btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='📋 Copiar texto';btn.classList.remove('copied');},2500);
+  }).catch(()=>{
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = '✅ Copiado!';
+    btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='📋 Copiar texto';btn.classList.remove('copied');},2500);
+  });
+}
+</script>
+</body>
+</html>
