@@ -423,8 +423,8 @@ export default function PublicarPage() {
     return ok;
   }
 
-  async function handleRegister(nombre: string, email: string, password: string, _tipo: 'usuario', tel?: string) {
-    const ok = await register(nombre, email, password, 'usuario', tel);
+  async function handleRegister(nombre: string, email: string, password: string, _tipo: 'usuario', tel?: string, terminos_aceptados?: boolean) {
+    const ok = await register(nombre, email, password, 'usuario', tel, terminos_aceptados);
     if (ok && ok !== 'email-confirm') setPublicarPendiente(true);
     return ok;
   }

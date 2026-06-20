@@ -601,8 +601,8 @@ export default function HomePage() {
           />
         ) : (
           <RegisterForm
-            onRegister={async (nombre, email, password, tipo, tel) => {
-              const ok = await register(nombre, email, password, tipo, tel);
+            onRegister={async (nombre, email, password, tipo, tel, terminos_aceptados) => {
+              const ok = await register(nombre, email, password, tipo, tel, terminos_aceptados);
               if (ok && ok !== 'email-confirm' && !otpPending) setAuthModal(false);
               return ok;
             }}

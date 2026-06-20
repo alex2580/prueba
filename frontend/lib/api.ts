@@ -233,8 +233,11 @@ export const usuariosAPI = {
       method: 'POST', body: JSON.stringify({ codigo }),
     }, token),
 
-  sync: (data: { supabase_id: string; nombre: string; email: string; tipo?: string; tel?: string }) =>
+  sync: (data: { supabase_id: string; nombre: string; email: string; tipo?: string; tel?: string; terminos_aceptados?: boolean }) =>
     fetchAPI<Usuario>('/api/usuarios/sync', { method: 'POST', body: JSON.stringify(data) }),
+
+  aceptarTerminos: (token: string) =>
+    fetchAPI<{ ok: boolean }>('/api/usuarios/me/terminos', { method: 'PATCH' }, token),
 
   verPerfil: (id: string) =>
     fetchAPI<Usuario>(`/api/usuarios/${id}`),

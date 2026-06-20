@@ -38,6 +38,7 @@ router.post('/me/solicitar-cambio-perfil', requireAuth, ctrl.solicitarCambioPerf
 router.post('/me/verificar-cambio-perfil', requireAuth, [
   body('codigo').trim().notEmpty().isLength({ min: 6, max: 6 }),
 ], ctrl.verificarCambioPerfil);
+router.patch('/me/terminos', requireAuth, ctrl.aceptarTerminos);
 router.post('/sync',        requireSyncAuth, [
   body('supabase_id').notEmpty(),
   body('nombre').trim().notEmpty(),

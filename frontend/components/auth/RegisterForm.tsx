@@ -16,7 +16,7 @@ function EyeIcon({ visible }: { visible: boolean }) {
 }
 
 interface RegisterFormProps {
-  onRegister: (nombre: string, email: string, password: string, tipo: 'usuario', tel?: string) => Promise<boolean | string>;
+  onRegister: (nombre: string, email: string, password: string, tipo: 'usuario', tel?: string, terminos_aceptados?: boolean) => Promise<boolean | string>;
   onSwitch: () => void;
   loading?: boolean;
   error?: string | null;
@@ -29,11 +29,12 @@ export function RegisterForm({ onRegister, onSwitch, loading, error }: RegisterF
   const [password,  setPassword]  = useState('');
   const [showPass,  setShowPass]  = useState(false);
   const [mayorEdad, setMayorEdad] = useState(false);
+  const [terminos,  setTerminos]  = useState(false);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!nombre || !email || !password || !mayorEdad) return;
-    await onRegister(nombre, email, password, 'usuario', tel);
+    if (!nombre || !email || !password || !mayorEdad || !terminos) return;
+    await onRegister(nombre, email, password, 'usuario', tel, terminos);
   }
 
   return (
@@ -96,9 +97,31 @@ export function RegisterForm({ onRegister, onSwitch, loading, error }: RegisterF
         </span>
       </label>
 
+      <label style={{ display: 'flex', alignItems: 'center', gap: '.6rem', cursor: 'pointer', userSelect: 'none' }}>
+        <input
+          type="checkbox"
+          checked={terminos}
+          onChange={e => setTerminos(e.target.checked)}
+          required
+          style={{ width: 18, height: 18, accentColor: 'var(--orange)', flexShrink: 0, cursor: 'pointer' }}
+        />
+        <span style={{ fontSize: '.83rem', color: 'var(--text2)' }}>
+          Acepto los{' '}
+          <a href="/es/legales" target="_blank" rel="noopener noreferrer"
+            style={{ color: 'var(--orange)', textDecoration: 'underline' }}>
+            Términos y Condiciones
+          </a>
+          {' '}y la{' '}
+          <a href="/es/legales#politica-privacidad" target="_blank" rel="noopener noreferrer"
+            style={{ color: 'var(--orange)', textDecoration: 'underline' }}>
+            Política de Privacidad
+          </a>
+        </span>
+      </label>
+
       {error && <div className="alert alert--error">{error}</div>}
 
-      <Button type="submit" loading={loading} disabled={!mayorEdad} style={{ width: '100%', marginTop: '.3rem' }}>
+      <Button type="submit" loading={loading} disabled={!mayorEdad || !terminos} style={{ width: '100%', marginTop: '.3rem' }}>
         Crear cuenta
       </Button>
 

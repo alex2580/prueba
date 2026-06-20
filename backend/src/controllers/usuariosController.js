@@ -143,7 +143,7 @@ async function sync(req, res, next) {
       return res.status(422).json({ error: 'Datos inválidos', details: errors.array() });
     }
 
-    const { supabase_id, nombre, email, tipo, tel } = req.body;
+    const { supabase_id, nombre, email, tipo, tel, terminos_aceptados } = req.body;
 
     // Check if already exists
     const existing = await queryOne(
@@ -169,9 +169,17 @@ async function sync(req, res, next) {
       .split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
     const tipoFinal = adminEmails.includes(email.toLowerCase()) ? 'admin' : 'usuario';
 
+    const aceptoTerminos = terminos_aceptados ? 1 : 0;
     await query(
-      'INSERT INTO usuarios (supabase_id, nombre, email, tipo, tel) VALUES (?, ?, ?, ?, ?)',
-      [supabase_id, nombre, email, tipoFinal, tel || '']
+      `INSERT INTO usuarios
+         (supabase_id, nombre, email, tipo, tel, terminos_aceptados, terminos_aceptados_at, terminos_version)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        supabase_id, nombre, email, tipoFinal, tel || '',
+        aceptoTerminos,
+        aceptoTerminos ? new Date() : null,
+        aceptoTerminos ? '2026-06' : null,
+      ]
     );
 
     const nuevo = await queryOne(
@@ -437,4 +445,17 @@ async function subirAvatar(req, res, next) {
   }
 }
 
-module.exports = { perfil, actualizar, sync, verPerfil, listar, cambiarTipo, solicitarCambioTel, verificarCambioTel, solicitarCambioPerfil, verificarCambioPerfil, subirAvatar };
+// PATCH /api/usuarios/me/terminos
+async function aceptarTerminos(req, res, next) {
+  try {
+    await query(
+      'UPDATE usuarios SET terminos_aceptados = 1, terminos_aceptados_at = NOW(), terminos_version = ? WHERE id = ?',
+      ['2026-06', req.user.id]
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { perfil, actualizar, sync, verPerfil, listar, cambiarTipo, solicitarCambioTel, verificarCambioTel, solicitarCambioPerfil, verificarCambioPerfil, subirAvatar, aceptarTerminos };

@@ -207,7 +207,8 @@ export function useAuth() {
     email: string,
     password: string,
     tipo: 'usuario' = 'usuario',
-    tel?: string
+    tel?: string,
+    terminos_aceptados?: boolean
   ) => {
     setState(s => ({ ...s, loading: true, error: null }));
     otpFlowRef.current = true;
@@ -225,7 +226,7 @@ export function useAuth() {
 
     if (data.user) {
       try {
-        await usuariosAPI.sync({ supabase_id: data.user.id, nombre, email, tipo, tel });
+        await usuariosAPI.sync({ supabase_id: data.user.id, nombre, email, tipo, tel, terminos_aceptados });
       } catch (e) { console.warn('Sync error:', e); }
     }
 

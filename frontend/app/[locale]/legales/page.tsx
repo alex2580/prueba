@@ -333,7 +333,7 @@ export default function LegalesPage() {
           <div style={{ borderTop: '2px solid var(--border)', margin: '3.5rem 0' }} />
 
           {/* ── POLÍTICA DE PRIVACIDAD ── */}
-          <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: 'clamp(1.5rem, 3vw, 2rem)', marginBottom: '.35rem' }}>
+          <h1 id="politica-privacidad" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: 'clamp(1.5rem, 3vw, 2rem)', marginBottom: '.35rem' }}>
             🔒 Política de Privacidad
           </h1>
           <p style={{ color: 'var(--text3)', fontSize: '.82rem', marginBottom: '.4rem' }}>
