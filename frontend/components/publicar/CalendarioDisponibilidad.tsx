@@ -91,16 +91,19 @@ export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) 
         <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.88rem', marginBottom: '.6rem' }}>
           📅 Días disponibles
         </div>
-        <div style={{ background: 'rgba(232,98,42,.06)', border: '1px solid rgba(232,98,42,.2)', borderRadius: 8, padding: '.6rem .85rem', display: 'grid', gap: '.25rem' }}>
-          <div style={{ fontSize: '.75rem', fontWeight: 700, color: 'var(--orange)', fontFamily: 'Sora, sans-serif' }}>¿Cómo marcar tu disponibilidad?</div>
-          <div style={{ fontSize: '.72rem', color: 'var(--text2)', display: 'flex', gap: '.4rem' }}>
-            <span>1️⃣</span><span><strong>Primer click:</strong> marcá el inicio del período disponible.</span>
+        <div style={{ background: 'rgba(232,98,42,.06)', border: '1px solid rgba(232,98,42,.2)', borderRadius: 8, padding: '.65rem .85rem', display: 'grid', gap: '.35rem' }}>
+          <div style={{ fontSize: '.75rem', fontWeight: 700, color: 'var(--orange)', fontFamily: 'Sora, sans-serif', marginBottom: '.1rem' }}>¿Cómo marcar tu disponibilidad?</div>
+          <div style={{ display: 'flex', gap: '.5rem', alignItems: 'flex-start' }}>
+            <span style={{ background: 'var(--orange)', color: '#fff', borderRadius: 5, padding: '1px 6px', fontSize: '.65rem', fontWeight: 800, whiteSpace: 'nowrap', marginTop: 1 }}>1 click</span>
+            <span style={{ fontSize: '.72rem', color: 'var(--text2)' }}><strong>Día suelto</strong> — hacé click en el día que querés y luego otro click en el mismo día para confirmarlo.</span>
           </div>
-          <div style={{ fontSize: '.72rem', color: 'var(--text2)', display: 'flex', gap: '.4rem' }}>
-            <span>2️⃣</span><span><strong>Segundo click:</strong> marcá el fin — todos los días del rango quedan seleccionados.</span>
+          <div style={{ display: 'flex', gap: '.5rem', alignItems: 'flex-start' }}>
+            <span style={{ background: 'var(--orange)', color: '#fff', borderRadius: 5, padding: '1px 6px', fontSize: '.65rem', fontWeight: 800, whiteSpace: 'nowrap', marginTop: 1 }}>rango</span>
+            <span style={{ fontSize: '.72rem', color: 'var(--text2)' }}><strong>Período corrido</strong> — click en el primer día, click en el último día. Todo lo del medio queda marcado automáticamente.</span>
           </div>
-          <div style={{ fontSize: '.72rem', color: 'var(--text2)', display: 'flex', gap: '.4rem' }}>
-            <span>✨</span><span>Repetí para agregar más rangos o días sueltos (un click = un día).</span>
+          <div style={{ display: 'flex', gap: '.5rem', alignItems: 'flex-start' }}>
+            <span style={{ background: 'rgba(232,98,42,.2)', color: 'var(--orange)', borderRadius: 5, padding: '1px 6px', fontSize: '.65rem', fontWeight: 800, whiteSpace: 'nowrap', marginTop: 1 }}>+más</span>
+            <span style={{ fontSize: '.72rem', color: 'var(--text2)' }}>Repetí para agregar tantos días sueltos y rangos como quieras en una misma publicación.</span>
           </div>
         </div>
       </div>

@@ -378,16 +378,19 @@ export default function ReservarPage() {
                       .rmdp-arrow { border-color: var(--text2) !important; }
                       .rmdp-arrow-container:hover { background: rgba(232,98,42,.1) !important; }
                     `}</style>
-                    <div style={{ background: 'rgba(232,98,42,.06)', border: '1px solid rgba(232,98,42,.2)', borderRadius: 8, padding: '.6rem .85rem', marginBottom: '.75rem', display: 'grid', gap: '.25rem' }}>
-                      <div style={{ fontSize: '.75rem', fontWeight: 700, color: 'var(--orange)', fontFamily: 'Sora, sans-serif' }}>¿Cómo seleccionar fechas?</div>
-                      <div style={{ fontSize: '.72rem', color: 'var(--text2)', display: 'flex', gap: '.4rem' }}>
-                        <span>1️⃣</span><span><strong>Primer click:</strong> marcá el inicio del período que necesitás.</span>
+                    <div style={{ background: 'rgba(232,98,42,.06)', border: '1px solid rgba(232,98,42,.2)', borderRadius: 8, padding: '.65rem .85rem', marginBottom: '.75rem', display: 'grid', gap: '.35rem' }}>
+                      <div style={{ fontSize: '.75rem', fontWeight: 700, color: 'var(--orange)', fontFamily: 'Sora, sans-serif', marginBottom: '.1rem' }}>¿Cómo seleccionar fechas?</div>
+                      <div style={{ display: 'flex', gap: '.5rem', alignItems: 'flex-start' }}>
+                        <span style={{ background: 'var(--orange)', color: '#fff', borderRadius: 5, padding: '1px 6px', fontSize: '.65rem', fontWeight: 800, whiteSpace: 'nowrap', marginTop: 1 }}>1 click</span>
+                        <span style={{ fontSize: '.72rem', color: 'var(--text2)' }}><strong>Día suelto</strong> — hacé click en el día que necesitás y luego otro click en el mismo día para confirmarlo.</span>
                       </div>
-                      <div style={{ fontSize: '.72rem', color: 'var(--text2)', display: 'flex', gap: '.4rem' }}>
-                        <span>2️⃣</span><span><strong>Segundo click:</strong> marcá el fin — todos los días del rango quedan seleccionados.</span>
+                      <div style={{ display: 'flex', gap: '.5rem', alignItems: 'flex-start' }}>
+                        <span style={{ background: 'var(--orange)', color: '#fff', borderRadius: 5, padding: '1px 6px', fontSize: '.65rem', fontWeight: 800, whiteSpace: 'nowrap', marginTop: 1 }}>rango</span>
+                        <span style={{ fontSize: '.72rem', color: 'var(--text2)' }}><strong>Período corrido</strong> — click en el primer día, click en el último día. Todo lo del medio queda seleccionado automáticamente.</span>
                       </div>
-                      <div style={{ fontSize: '.72rem', color: 'var(--text2)', display: 'flex', gap: '.4rem' }}>
-                        <span>✨</span><span>Repetí para agregar más rangos. Un solo click = un día suelto.</span>
+                      <div style={{ display: 'flex', gap: '.5rem', alignItems: 'flex-start' }}>
+                        <span style={{ background: 'rgba(232,98,42,.2)', color: 'var(--orange)', borderRadius: 5, padding: '1px 6px', fontSize: '.65rem', fontWeight: 800, whiteSpace: 'nowrap', marginTop: 1 }}>+más</span>
+                        <span style={{ fontSize: '.72rem', color: 'var(--text2)' }}>Repetí para combinar tantos días sueltos y rangos como necesites en una misma reserva.</span>
                       </div>
                     </div>
                     <Cal
