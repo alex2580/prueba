@@ -45,7 +45,7 @@ async function listar(req, res, next) {
              (SELECT url FROM espacio_fotos ef WHERE ef.espacio_id = e.id ORDER BY ef.orden LIMIT 1) AS img_principal
       FROM espacios e
       JOIN usuarios u ON e.oferente_id = u.id
-      WHERE e.activo = TRUE AND e.disponible = 1
+      WHERE e.activo = TRUE AND e.disponible IS TRUE
     `;
     const params = [];
 

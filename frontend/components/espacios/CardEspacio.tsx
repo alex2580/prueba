@@ -177,18 +177,7 @@ export function CardEspacio({ espacio, onClick, isFavorito = false, onToggleFavo
           </span>
         </div>
 
-        {/* No disponible overlay */}
-        {!espacio.disponible && (
-          <div style={{
-            position: 'absolute', inset: 0,
-            background: 'rgba(255,255,255,.75)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '13px', fontWeight: 700, color: 'var(--text2)', fontFamily: 'Sora, sans-serif',
-            zIndex: 3,
-          }}>
-            No disponible
-          </div>
-        )}
+
       </div>
 
       <div className="espacio-card__body">
