@@ -50,14 +50,20 @@ async function listar(req, res, next) {
     const params = [];
 
     if (barrio)     { sql += ' AND e.barrio = ?';  params.push(barrio); }
-    if (tipo)       { sql += ' AND e.tipo = ?';    params.push(tipo); }
+    if (tipo) {
+      sql += ' AND e.tipo = ?';
+      params.push(tipo);
+      if (tipo === 'compartido') {
+        sql += ' AND e.disponible = 1 AND e.cupo_disponible = 1';
+      }
+    }
 
     sql += ' AND e.precio_dia > 0';
     if (precio_max) { sql += ' AND e.precio_dia <= ?'; params.push(Number(precio_max)); }
     if (precio_min) { sql += ' AND e.precio_dia >= ?'; params.push(Number(precio_min)); }
 
     if (disponible !== undefined) { sql += ' AND e.disponible = ?'; params.push(disponible === 'true' ? 1 : 0); }
-    if (con_cupo === 'true')      { sql += ' AND e.cupo_disponible = 1'; }
+    if (con_cupo === 'true')      { sql += ' AND e.cupo_disponible = 1 AND e.disponible = 1'; }
     if (con_seguridad === 'true') {
       sql += " AND e.seguridad IS NOT NULL AND e.seguridad NOT IN ('null', '{}', '')";
     }
