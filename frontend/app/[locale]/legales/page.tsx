@@ -309,6 +309,198 @@ export default function LegalesPage() {
             </a>
           </div>
 
+          {/* ── DIVISOR ── */}
+          <div style={{ borderTop: '2px solid var(--border)', margin: '3.5rem 0' }} />
+
+          {/* ── POLÍTICA DE PRIVACIDAD ── */}
+          <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: 'clamp(1.5rem, 3vw, 2rem)', marginBottom: '.35rem' }}>
+            🔒 Política de Privacidad
+          </h1>
+          <p style={{ color: 'var(--text3)', fontSize: '.82rem', marginBottom: '.4rem' }}>
+            Conforme a la Ley 25.326 de Protección de Datos Personales — República Argentina
+          </p>
+          <p style={{ color: 'var(--text3)', fontSize: '.82rem', marginBottom: '2.5rem' }}>
+            Última actualización: junio 2026
+          </p>
+
+          {/* I */}
+          <section style={sectionStyle}>
+            <h2 style={h2Style}>I. Responsable del tratamiento</h2>
+            <p style={pStyle}>
+              TodasMisCosas.com es responsable del tratamiento de los datos personales de sus usuarios.
+              Para consultas relacionadas con privacidad y protección de datos, podés escribirnos a{' '}
+              <a href="mailto:privacidad@todasmiscosas.com" style={{ color: 'var(--orange)' }}>privacidad@todasmiscosas.com</a>.
+            </p>
+          </section>
+
+          {/* II */}
+          <section style={sectionStyle}>
+            <h2 style={h2Style}>II. Datos personales que recopilamos</h2>
+            <ul style={ulStyle}>
+              <li><strong>Datos de registro:</strong> nombre completo, dirección de correo electrónico, número de teléfono y contraseña (almacenada en formato hash irreversible).</li>
+              <li><strong>Datos de perfil:</strong> CBU o Alias bancario (únicamente proveedores, para recibir pagos por sus reservas).</li>
+              <li><strong>Datos de publicación:</strong> dirección del espacio, descripción, fotografías y precios cargados por el proveedor.</li>
+              <li><strong>Datos de transacción:</strong> historial de reservas, montos y estados de pago procesados a través de MercadoPago.</li>
+              <li><strong>Datos de comunicación:</strong> mensajes intercambiados a través del chat de la plataforma y consultas públicas realizadas en publicaciones.</li>
+              <li><strong>Datos técnicos:</strong> dirección IP, tipo de dispositivo y registros de acceso al servicio, utilizados exclusivamente con fines de seguridad y soporte.</li>
+            </ul>
+          </section>
+
+          {/* III */}
+          <section style={sectionStyle}>
+            <h2 style={h2Style}>III. Finalidad del tratamiento</h2>
+            <p style={{ ...pStyle, marginBottom: '.75rem' }}>Los datos personales son tratados exclusivamente para las siguientes finalidades:</p>
+            <ul style={ulStyle}>
+              <li>Prestar y mejorar el servicio de marketplace de almacenamiento.</li>
+              <li>Procesar pagos y gestionar el sistema de depósito en garantía.</li>
+              <li>Enviar notificaciones transaccionales: confirmación de reserva, PIN de acceso, avisos de vencimiento de publicación.</li>
+              <li>Resolver disputas entre las partes de una reserva.</li>
+              <li>Garantizar la seguridad de la plataforma y prevenir el fraude.</li>
+              <li>Cumplir con las obligaciones legales vigentes en la República Argentina.</li>
+            </ul>
+          </section>
+
+          {/* IV */}
+          <section style={sectionStyle}>
+            <h2 style={h2Style}>IV. Base legal del tratamiento</h2>
+            <p style={pStyle}>
+              El tratamiento de datos se realiza con el <strong>consentimiento del titular</strong>, prestado al momento del registro en la plataforma,
+              conforme al artículo 5° de la Ley 25.326. El retiro del consentimiento podrá ejercerse en cualquier momento a través de los canales
+              indicados en la sección VI (Derechos ARCO).
+            </p>
+          </section>
+
+          {/* V */}
+          <section style={sectionStyle}>
+            <h2 style={h2Style}>V. Conservación de los datos</h2>
+            <p style={pStyle}>
+              Los datos personales se conservan durante la vigencia de la cuenta y por un plazo adicional de <strong>5 (cinco) años</strong> tras
+              la baja de la cuenta, a efectos de cumplimiento legal y resolución de eventuales disputas. Los datos de transacción
+              podrán conservarse por el plazo que exija la normativa fiscal y contable aplicable.
+            </p>
+          </section>
+
+          {/* VI */}
+          <section style={sectionStyle}>
+            <h2 style={h2Style}>VI. Derechos ARCO</h2>
+            <p style={{ ...pStyle, marginBottom: '.75rem' }}>
+              Conforme a los artículos 14 a 16 de la Ley 25.326, el titular de los datos tiene derecho a:
+            </p>
+            <ul style={ulStyle}>
+              <li>
+                <strong>Acceso (A):</strong> solicitar información sobre qué datos personales propios son tratados por la plataforma,
+                su origen, finalidad y los destinatarios de cualquier cesión realizada o prevista.
+              </li>
+              <li>
+                <strong>Rectificación (R):</strong> requerir la corrección de datos inexactos, incompletos, desactualizados o que induzcan a error.
+              </li>
+              <li>
+                <strong>Cancelación (C):</strong> solicitar la supresión o bloqueo de datos cuyo tratamiento no resulte ajustado a lo dispuesto en la Ley 25.326.
+              </li>
+              <li>
+                <strong>Oposición (O):</strong> oponerse, por motivos legítimos, al tratamiento de los propios datos en los supuestos en que la ley lo permita.
+              </li>
+            </ul>
+            <p style={{ ...pStyle, margin: '.9rem 0 .75rem' }}>
+              Para ejercer cualquiera de estos derechos, el titular debe enviar una solicitud escrita a{' '}
+              <a href="mailto:privacidad@todasmiscosas.com" style={{ color: 'var(--orange)' }}>privacidad@todasmiscosas.com</a>{' '}
+              indicando: nombre completo, número de documento (DNI) y descripción clara del derecho que desea ejercer.
+            </p>
+            <ul style={ulStyle}>
+              <li>Solicitudes de <strong>acceso:</strong> respuesta en un plazo máximo de <strong>10 días hábiles</strong>.</li>
+              <li>Solicitudes de <strong>rectificación, cancelación u oposición:</strong> respuesta en un plazo máximo de <strong>5 días hábiles</strong>.</li>
+            </ul>
+            <div style={{
+              background: 'rgba(99,102,241,.07)',
+              border: '1px solid rgba(99,102,241,.25)',
+              borderRadius: 'var(--r2)',
+              padding: '.85rem 1.1rem',
+              marginTop: '.9rem',
+              fontSize: '.83rem',
+              color: 'var(--text2)',
+              lineHeight: 1.65,
+            }}>
+              <strong>Organismo de control:</strong> la <strong>Agencia de Acceso a la Información Pública (AAIP)</strong>, Órgano de Control
+              de la Ley N° 25.326, tiene la atribución de atender denuncias y reclamos por incumplimiento de la normativa de protección de datos personales.
+              Sitio web:{' '}
+              <a href="https://www.argentina.gob.ar/aaip" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--orange)' }}>
+                www.argentina.gob.ar/aaip
+              </a>
+            </div>
+          </section>
+
+          {/* VII */}
+          <section style={sectionStyle}>
+            <h2 style={h2Style}>VII. Transferencia y compartición de datos</h2>
+            <p style={{ ...pStyle, marginBottom: '.75rem' }}>
+              TodasMisCosas.com <strong>no vende ni cede datos personales a terceros</strong> con fines comerciales.
+              Los datos pueden ser compartidos únicamente en los siguientes casos:
+            </p>
+            <ul style={ulStyle}>
+              <li>
+                <strong>Proveedores de servicio tecnológico:</strong> MercadoPago (procesamiento de pagos),
+                Supabase (autenticación y almacenamiento de imágenes) y Resend (envío de correos electrónicos).
+                Todos actúan como encargados del tratamiento bajo acuerdos de confidencialidad y no están autorizados
+                a utilizar los datos con fines distintos a los estrictamente necesarios para prestar el servicio.
+              </li>
+              <li>
+                <strong>Autoridades competentes:</strong> cuando sea requerido por ley, orden judicial o autoridad gubernamental competente.
+              </li>
+            </ul>
+            <p style={{ ...pStyle, marginTop: '.75rem' }}>
+              No se realizan transferencias internacionales de datos personales fuera del marco de los proveedores mencionados precedentemente.
+            </p>
+          </section>
+
+          {/* VIII */}
+          <section style={sectionStyle}>
+            <h2 style={h2Style}>VIII. Medidas de seguridad</h2>
+            <p style={pStyle}>
+              Implementamos medidas técnicas y organizativas orientadas a proteger los datos personales contra acceso no autorizado,
+              pérdida, alteración o divulgación. Entre ellas: almacenamiento de contraseñas en formato hash irreversible,
+              conexiones cifradas mediante HTTPS/TLS, acceso restringido a bases de datos por rol, y registros internos
+              de auditoría sobre cambios en los perfiles de usuario. En caso de producirse un incidente de seguridad que afecte
+              datos personales, notificaremos a los usuarios perjudicados y a la AAIP en los plazos y formas que establezca la normativa vigente.
+            </p>
+          </section>
+
+          {/* IX */}
+          <section style={sectionStyle}>
+            <h2 style={h2Style}>IX. Cookies</h2>
+            <p style={pStyle}>
+              La plataforma utiliza cookies técnicas estrictamente necesarias para el funcionamiento del servicio,
+              incluyendo la gestión de sesión de usuario y las preferencias de idioma. No se utilizan cookies
+              de seguimiento publicitario ni se comparte información de navegación con redes de publicidad.
+              Al continuar navegando en la plataforma, el usuario acepta el uso de cookies técnicas esenciales.
+            </p>
+          </section>
+
+          {/* X */}
+          <section style={sectionStyle}>
+            <h2 style={h2Style}>X. Modificaciones a esta política</h2>
+            <p style={pStyle}>
+              Esta política podrá ser actualizada para reflejar cambios en la normativa vigente o en las funcionalidades
+              del servicio. Las modificaciones sustanciales serán notificadas por correo electrónico a los usuarios registrados
+              y publicadas en esta página con al menos <strong>15 días de anticipación</strong> a su entrada en vigencia.
+              El uso continuado de la plataforma tras esa fecha implicará la aceptación de la política actualizada.
+            </p>
+          </section>
+
+          <div style={{
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+            borderRadius: 'var(--r3)',
+            padding: '1.25rem 1.5rem',
+            marginTop: '2rem',
+            fontSize: '.82rem',
+            color: 'var(--text3)',
+          }}>
+            ¿Querés ejercer tus derechos ARCO o tenés consultas sobre privacidad? Escribinos a{' '}
+            <a href="mailto:privacidad@todasmiscosas.com" style={{ color: 'var(--orange)', textDecoration: 'none' }}>
+              privacidad@todasmiscosas.com
+            </a>
+          </div>
+
         </div>
       </div>
     </div>
