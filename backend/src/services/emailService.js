@@ -382,8 +382,9 @@ async function sendPagoRecibidoOferente(toEmail, nombreOferente, { demandanteNom
 }
 
 // ── Ambos: la reserva fue cancelada ─────────────────────────────
-async function sendReservaCancelada(toEmail, nombre, { espacioNombre, fechaDesde, fechaHasta, canceladoPor }) {
+async function sendReservaCancelada(toEmail, nombre, { espacioNombre, fechaDesde, fechaHasta, canceladoPor, motivo }) {
   if (!await emailConfig.isEnabled('reserva_cancelada')) return;
+  const esArrepentimiento = motivo === 'arrepentimiento';
   const html = baseTemplate('Reserva cancelada', `
     <h2>❌ Reserva cancelada</h2>
     <p>Hola <span class="highlight">${nombre}</span>, la siguiente reserva fue cancelada.</p>
@@ -396,12 +397,17 @@ async function sendReservaCancelada(toEmail, nombre, { espacioNombre, fechaDesde
     <div class="info-row">
       <div><div class="info-label">Cancelada por</div><div class="info-val">${canceladoPor}</div></div>
     </div>
+    ${esArrepentimiento ? `
+    <div style="background:#0f2a1a;border:1px solid #16a34a;border-radius:8px;padding:12px 16px;margin:16px 0;">
+      <p style="margin:0;color:#4ade80;font-weight:700;">💚 Reembolso del 100%</p>
+      <p style="margin:8px 0 0;color:#86efac;font-size:.88rem;">El cliente ejerció su derecho de arrepentimiento. El monto abonado será devuelto en su totalidad. Si tenés dudas sobre el reembolso, escribinos a <a href="mailto:contacto@todasmiscosas.com" style="color:#4ade80;">contacto@todasmiscosas.com</a>.</p>
+    </div>` : ''}
     <p>Si tenés alguna consulta, contactanos por la plataforma.</p>
-    <a class="btn" href="${process.env.FRONTEND_URL}/panel">Ir a mi panel →</a>
+    <a class="btn" href="${process.env.FRONTEND_URL}/es/panel">Ir a mi panel →</a>
   `);
   await transporter.sendMail({
     from: FROM, to: toEmail,
-    subject: `❌ Reserva cancelada — ${espacioNombre}`,
+    subject: `❌ Reserva cancelada${esArrepentimiento ? ' — arrepentimiento' : ''} — ${espacioNombre}`,
     html,
   });
 }

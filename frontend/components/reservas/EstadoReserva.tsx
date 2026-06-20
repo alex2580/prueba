@@ -9,6 +9,7 @@ import { TimelineReserva } from '@/components/reservas/TimelineReserva';
 interface EstadoReservaProps {
   reserva: Reserva;
   onCancelar?: () => void;
+  onArrepentirse?: () => void;
   onPagar?: () => void;
   onCalificar?: () => void;
   onExtender?: () => void;
@@ -17,7 +18,7 @@ interface EstadoReservaProps {
   onConfirmarAcceso?: () => void;
 }
 
-export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar, onExtender, onEliminar, onChat, onConfirmarAcceso }: EstadoReservaProps) {
+export function EstadoReserva({ reserva, onCancelar, onArrepentirse, onPagar, onCalificar, onExtender, onEliminar, onChat, onConfirmarAcceso }: EstadoReservaProps) {
   const dias = diasEntre(reserva.fecha_desde, reserva.fecha_hasta);
 
   return (
@@ -84,36 +85,53 @@ export function EstadoReserva({ reserva, onCancelar, onPagar, onCalificar, onExt
         </div>
       )}
       {reserva.estado === 'pagada' && reserva.escrow_neto_oferente != null && !reserva.escrow_liberado && (
-        onConfirmarAcceso ? (
-          /* Fecha de inicio llegó — mostrar botón */
-          <div style={{
-            background: '#000', border: '1px solid #166534',
-            borderRadius: 'var(--r2)', padding: '.9rem 1rem', marginBottom: '.75rem',
-          }}>
-            <p style={{ color: '#fff', fontSize: '.92rem', margin: '0 0 .6rem', fontWeight: 700 }}>
-              🔒 Tu pago está en depósito de garantía
-            </p>
-            <p style={{ color: '#fff', fontSize: '.85rem', margin: '0 0 .75rem', lineHeight: 1.6 }}>
-              Cuando accedas al espacio, confirmá el ingreso para liberar el pago al oferente. Al confirmar, el chat con el proveedor se cerrará.
-            </p>
-            <Button variant="primary" onClick={onConfirmarAcceso} size="sm" style={{ width: '100%' }}>
-              ✅ Confirmar acceso al espacio
-            </Button>
-          </div>
-        ) : (
-          /* Fecha de inicio aún no llegó — mostrar aviso */
-          <div style={{
-            background: '#000', border: '1px solid #444',
-            borderRadius: 'var(--r2)', padding: '.9rem 1rem', marginBottom: '.75rem',
-          }}>
-            <p style={{ color: '#fff', fontSize: '.92rem', margin: '0 0 .4rem', fontWeight: 800 }}>
-              🔒 Pago en depósito de garantía
-            </p>
-            <p style={{ color: '#fff', fontSize: '.85rem', margin: 0, lineHeight: 1.6 }}>
-              Tu pago está retenido de forma segura. El <strong>{formatFechaCorta(reserva.fecha_desde)}</strong> vas a poder confirmar el acceso desde tu panel y el pago se liberará al proveedor dentro de las 48 hs hábiles.
-            </p>
-          </div>
-        )
+        <>
+          {onConfirmarAcceso ? (
+            /* Fecha de inicio llegó — mostrar botón */
+            <div style={{
+              background: '#000', border: '1px solid #166534',
+              borderRadius: 'var(--r2)', padding: '.9rem 1rem', marginBottom: '.75rem',
+            }}>
+              <p style={{ color: '#fff', fontSize: '.92rem', margin: '0 0 .6rem', fontWeight: 700 }}>
+                🔒 Tu pago está en depósito de garantía
+              </p>
+              <p style={{ color: '#fff', fontSize: '.85rem', margin: '0 0 .75rem', lineHeight: 1.6 }}>
+                Cuando accedas al espacio, confirmá el ingreso para liberar el pago al proveedor. Al confirmar, el chat se cerrará.
+              </p>
+              <Button variant="primary" onClick={onConfirmarAcceso} size="sm" style={{ width: '100%' }}>
+                ✅ Confirmar acceso al espacio
+              </Button>
+            </div>
+          ) : (
+            /* Fecha de inicio aún no llegó — mostrar aviso */
+            <div style={{
+              background: '#000', border: '1px solid #444',
+              borderRadius: 'var(--r2)', padding: '.9rem 1rem', marginBottom: '.75rem',
+            }}>
+              <p style={{ color: '#fff', fontSize: '.92rem', margin: '0 0 .4rem', fontWeight: 800 }}>
+                🔒 Pago en depósito de garantía
+              </p>
+              <p style={{ color: '#fff', fontSize: '.85rem', margin: 0, lineHeight: 1.6 }}>
+                Tu pago está retenido de forma segura. El <strong>{formatFechaCorta(reserva.fecha_desde)}</strong> vas a poder confirmar el acceso desde tu panel y el pago se liberará al proveedor dentro de las 48 hs hábiles.
+              </p>
+            </div>
+          )}
+          {onArrepentirse && (
+            <div style={{
+              border: '1px solid rgba(239,68,68,.3)', borderRadius: 'var(--r2)',
+              padding: '.75rem 1rem', marginBottom: '.75rem',
+              background: 'rgba(239,68,68,.04)',
+            }}>
+              <p style={{ fontSize: '.8rem', color: 'var(--text3)', margin: '0 0 .55rem', lineHeight: 1.5 }}>
+                ¿Cambiaste de idea? Podés cancelar la reserva y recibir el <strong style={{ color: 'var(--text2)' }}>reembolso del 100%</strong> del monto pagado, siempre que el pago aún no haya sido liberado al proveedor.
+              </p>
+              <Button variant="ghost" size="sm" onClick={onArrepentirse}
+                style={{ color: 'var(--red)', border: '1px solid rgba(239,68,68,.4)', width: '100%' }}>
+                🙅 Me arrepentí — cancelar y pedir reembolso
+              </Button>
+            </div>
+          )}
+        </>
       )}
 
       {reserva.estado === 'pagada' && reserva.escrow_liberado === 1 && (

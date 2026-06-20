@@ -1093,7 +1093,14 @@ export default function PanelPage() {
                       <EstadoReserva
                         key={r.id}
                         reserva={r}
-                        onCancelar={!['cancelada', 'finalizada'].includes(r.estado) ? () => cancelar(r.id) : undefined}
+                        onCancelar={!['cancelada', 'finalizada', 'pagada'].includes(r.estado) ? () => cancelar(r.id) : undefined}
+                        onArrepentirse={r.estado === 'pagada' && !r.escrow_liberado
+                          ? () => {
+                              if (window.confirm('¿Confirmás que querés cancelar esta reserva?\n\nVas a recibir el reembolso del 100% del monto pagado.\n\nEsta acción no se puede deshacer.')) {
+                                cancelar(r.id, 'arrepentimiento');
+                              }
+                            }
+                          : undefined}
                         onPagar={r.estado === 'confirmada' ? () => router.push(`/reserva/${r.id}/checkout`) : undefined}
                         onCalificar={['pagada', 'finalizada'].includes(r.estado) ? () => abrirReview(r) : undefined}
                         onExtender={r.estado === 'pagada' ? () => abrirExtension(r) : undefined}

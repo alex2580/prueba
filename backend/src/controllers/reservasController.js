@@ -334,30 +334,44 @@ async function cancelar(req, res, next) {
       return res.status(400).json({ error: `No se puede cancelar una reserva en estado "${reserva.estado}"` });
     }
 
-    await query('UPDATE reservas SET estado = ? WHERE id = ?', ['cancelada', reserva.id]);
+    // Solo el cliente puede usar motivo 'arrepentimiento'
+    const motivo = req.body?.motivo || null;
+    if (motivo === 'arrepentimiento' && req.user.id !== reserva.usuario_id && req.user.tipo !== 'admin') {
+      return res.status(403).json({ error: 'Solo el cliente puede ejercer el derecho de arrepentimiento' });
+    }
+
+    await query(
+      'UPDATE reservas SET estado = ?, cancelacion_motivo = ? WHERE id = ?',
+      ['cancelada', motivo, reserva.id]
+    );
 
     // Registro contable: si la reserva estaba pagada había dinero en escrow → devolver al cliente
     if (reserva.estado === 'pagada') {
+      const desc = motivo === 'arrepentimiento'
+        ? `Arrepentimiento del cliente — reembolso 100% — ${reserva.espacio_nombre}`
+        : `Cancelación — ${reserva.espacio_nombre}`;
       ledgerService.registrarCancelacion(
-        reserva.id, reserva.usuario_id, reserva.precio_total,
-        `Cancelación — ${reserva.espacio_nombre}`
+        reserva.id, reserva.usuario_id, reserva.precio_total, desc
       ).catch(e => console.warn('Ledger cancelacion:', e.message));
     }
 
     // Avisar a ambas partes
-    const canceladoPor = req.user.id === reserva.usuario_id ? 'el demandante' : 'el oferente';
+    const canceladoPor = motivo === 'arrepentimiento'
+      ? 'el cliente (arrepentimiento — reembolso 100%)'
+      : req.user.id === reserva.usuario_id ? 'el cliente' : 'el proveedor';
     const emailData = {
       espacioNombre: reserva.espacio_nombre,
       fechaDesde: reserva.fecha_desde,
       fechaHasta: reserva.fecha_hasta,
       canceladoPor,
+      motivo,
     };
     emailService.sendReservaCancelada(reserva.usuario_email, reserva.usuario_nombre, emailData)
-      .catch(e => console.warn('Email cancelada (demandante):', e.message));
+      .catch(e => console.warn('Email cancelada (cliente):', e.message));
     const oferente = await queryOne('SELECT email, nombre FROM usuarios WHERE id = ?', [reserva.oferente_id]);
     if (oferente) {
       emailService.sendReservaCancelada(oferente.email, oferente.nombre, emailData)
-        .catch(e => console.warn('Email cancelada (oferente):', e.message));
+        .catch(e => console.warn('Email cancelada (proveedor):', e.message));
     }
 
     res.json({ message: 'Reserva cancelada', id: reserva.id });

@@ -1825,6 +1825,7 @@ interface ReservaOp {
   oferente_nombre: string;
   oferente_email: string;
   mp_payment_id?: string;
+  cancelacion_motivo?: string;
 }
 
 interface ResumenOp {
@@ -2005,6 +2006,22 @@ function TabOperaciones({ token }: { token: string }) {
                   <span style={{ fontSize: '.72rem', color: 'var(--text3)' }}>{formatFechaCorta(r.created_at)}</span>
                 </div>
               </div>
+
+              {/* Motivo cancelación */}
+              {r.estado === 'cancelada' && (
+                <div style={{ marginBottom: '.5rem' }}>
+                  <span style={{
+                    fontSize: '.68rem', fontWeight: 700, padding: '2px 8px', borderRadius: '99px',
+                    background: r.cancelacion_motivo === 'arrepentimiento' ? 'rgba(239,68,68,.15)' : 'rgba(148,163,184,.15)',
+                    color: r.cancelacion_motivo === 'arrepentimiento' ? '#ef4444' : 'var(--text3)',
+                    border: `1px solid ${r.cancelacion_motivo === 'arrepentimiento' ? 'rgba(239,68,68,.4)' : 'var(--border)'}`,
+                  }}>
+                    {r.cancelacion_motivo === 'arrepentimiento'
+                      ? '🙅 Cancelada por el cliente — arrepentimiento (reembolso 100%)'
+                      : '❌ Cancelada por las partes'}
+                  </span>
+                </div>
+              )}
 
               {/* People */}
               <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', fontSize: '.78rem', color: 'var(--text2)', marginBottom: '.55rem' }}>

@@ -103,8 +103,8 @@ export const reservasAPI = {
   cambiarEstado: (id: string, estado: string, token: string) =>
     fetchAPI<Reserva>(`/api/reservas/${id}/estado`, { method: 'PATCH', body: JSON.stringify({ estado }) }, token),
 
-  cancelar: (id: string, token: string) =>
-    fetchAPI<{ message: string }>(`/api/reservas/${id}`, { method: 'DELETE' }, token),
+  cancelar: (id: string, token: string, motivo?: string) =>
+    fetchAPI<{ message: string }>(`/api/reservas/${id}`, { method: 'DELETE', body: JSON.stringify({ motivo }) }, token),
 
   ocultar: (id: string, token: string) =>
     fetchAPI<{ ok: boolean }>(`/api/reservas/${id}/ocultar`, { method: 'PATCH' }, token),

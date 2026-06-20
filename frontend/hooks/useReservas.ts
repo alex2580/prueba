@@ -27,9 +27,9 @@ export function useReservas(token: string | null, tipo: 'mias' | 'recibidas' = '
 
   useEffect(() => { cargar(); }, [cargar]);
 
-  const cancelar = useCallback(async (id: string) => {
+  const cancelar = useCallback(async (id: string, motivo?: string) => {
     if (!token) return;
-    await reservasAPI.cancelar(id, token);
+    await reservasAPI.cancelar(id, token, motivo);
     setReservas(prev => prev.map(r => r.id === id ? { ...r, estado: 'cancelada' } : r));
   }, [token]);
 

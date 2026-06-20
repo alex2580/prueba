@@ -503,7 +503,7 @@ async function getOperaciones(req, res, next) {
   try {
     const reservas = await query(`
       SELECT r.id, r.estado, r.precio_total, r.fecha_desde, r.fecha_hasta, r.created_at,
-             r.mp_payment_id,
+             r.mp_payment_id, r.cancelacion_motivo,
              e.nombre   AS espacio_nombre,
              e.barrio   AS espacio_barrio,
              ud.nombre  AS demandante_nombre,
