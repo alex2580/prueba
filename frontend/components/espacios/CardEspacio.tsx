@@ -145,26 +145,6 @@ export function CardEspacio({ espacio, onClick, isFavorito = false, onToggleFavo
           </div>
         )}
 
-        {/* Precio — bottom right sobre la foto */}
-        {hasDia && (
-          <div style={{ position: 'absolute', bottom: 10, right: 10, zIndex: 2 }}>
-            <span style={{
-              fontSize: '11px', fontWeight: 800,
-              fontFamily: 'Sora, sans-serif',
-              padding: '.18rem .7rem',
-              borderRadius: '999px',
-              border: `1.5px solid ${accentColor}`,
-              color: accentColor,
-              background: 'rgba(255,255,255,.92)',
-              backdropFilter: 'blur(4px)',
-              whiteSpace: 'nowrap',
-              display: 'inline-block',
-            }}>
-              📅 {formatARS(espacio.precio_dia)}/día
-            </span>
-          </div>
-        )}
-
         {/* Tipo + cupo — bottom left sobre la foto */}
         <div style={{ position: 'absolute', bottom: 10, left: 10, zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '.28rem' }}>
           {espacio.tipo === 'compartido' && (
@@ -218,11 +198,18 @@ export function CardEspacio({ espacio, onClick, isFavorito = false, onToggleFavo
 
         <div className="espacio-card__address">📍 {espacio.barrio}{Number(espacio.m2) > 0 ? ` · ${espacio.m2} m²` : ''}</div>
 
-        <div className="espacio-card__meta">
-          <RatingDisplay value={espacio.rating ?? 0} count={espacio.reviews_count} size="sm" />
-          {espacio.reservas_mes > 0 && (
-            <span style={{ fontSize: '11px', color: 'var(--text3)' }}>
-              · {espacio.reservas_mes} reservas este mes
+        <div className="espacio-card__meta" style={{ justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '.3rem' }}>
+            <RatingDisplay value={espacio.rating ?? 0} count={espacio.reviews_count} size="sm" />
+            {espacio.reservas_mes > 0 && (
+              <span style={{ fontSize: '11px', color: 'var(--text3)' }}>
+                · {espacio.reservas_mes} reservas este mes
+              </span>
+            )}
+          </div>
+          {hasDia && (
+            <span style={{ fontSize: '12px', fontWeight: 800, color: accentColor, fontFamily: 'Sora, sans-serif', whiteSpace: 'nowrap' }}>
+              {formatARS(espacio.precio_dia)}/día
             </span>
           )}
         </div>
