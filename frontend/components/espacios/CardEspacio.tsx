@@ -145,6 +145,26 @@ export function CardEspacio({ espacio, onClick, isFavorito = false, onToggleFavo
           </div>
         )}
 
+        {/* Precio — bottom right sobre la foto */}
+        {hasDia && (
+          <div style={{ position: 'absolute', bottom: 10, right: 10, zIndex: 2 }}>
+            <span style={{
+              fontSize: '11px', fontWeight: 800,
+              fontFamily: 'Sora, sans-serif',
+              padding: '.18rem .7rem',
+              borderRadius: '999px',
+              border: `1.5px solid ${accentColor}`,
+              color: accentColor,
+              background: 'rgba(255,255,255,.92)',
+              backdropFilter: 'blur(4px)',
+              whiteSpace: 'nowrap',
+              display: 'inline-block',
+            }}>
+              📅 {formatARS(espacio.precio_dia)}/día
+            </span>
+          </div>
+        )}
+
         {/* Tipo + cupo — bottom left sobre la foto */}
         <div style={{ position: 'absolute', bottom: 10, left: 10, zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '.28rem' }}>
           {espacio.tipo === 'compartido' && (
@@ -207,19 +227,6 @@ export function CardEspacio({ espacio, onClick, isFavorito = false, onToggleFavo
           )}
         </div>
 
-        <div style={{
-          display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end',
-          borderTop: '1px solid var(--border)', paddingTop: '.6rem', marginTop: '.1rem',
-        }}>
-          {hasDia && (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '.1rem' }}>
-              <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text2)', fontFamily: 'Sora, sans-serif' }}>
-                📅 Por día
-              </span>
-              <span className="espacio-card__price" style={{ color: accentColor }}>{formatARS(espacio.precio_dia)}</span>
-            </div>
-          )}
-        </div>
       </div>
     </article>
   );
