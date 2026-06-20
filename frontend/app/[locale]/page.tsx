@@ -27,18 +27,33 @@ export default function HomePage() {
   const { user, token, loading: authLoading, login, register, logout, error: authError, isAdmin,
     otpPending, otpEmailHint, otpCanales, verifyOTP, reenviarOTP,
     emailConfirmPending, emailConfirmEmail } = useAuth();
-  const { espacios, loading, error: espaciosError, filtros, aplicarFiltros, limpiarFiltros } = useEspacios();
+  const [filtrosIniciales] = useState<import('@/types').FiltrosEspacios>(() => {
+    if (typeof window === 'undefined') return {};
+    const p = new URLSearchParams(window.location.search);
+    const f: import('@/types').FiltrosEspacios = {};
+    if (p.get('tipo'))          f.tipo = p.get('tipo') as EspacioTipo;
+    if (p.get('barrio'))        f.barrio = p.get('barrio')!;
+    if (p.get('pais'))          f.pais = p.get('pais')!;
+    if (p.get('precio_max'))    f.precio_max = Number(p.get('precio_max'));
+    if (p.get('seguridad_min')) f.seguridad_min = Number(p.get('seguridad_min'));
+    if (p.get('con_cupo'))      f.con_cupo = true;
+    if (p.get('q'))             f.q = p.get('q')!;
+    return f;
+  });
+  const { espacios, loading, error: espaciosError, filtros, aplicarFiltros, limpiarFiltros } = useEspacios(filtrosIniciales);
 
-  const [vista, setVista] = useState<Vista>('lista');
+  const [vista, setVista] = useState<Vista>(() => {
+    if (typeof window === 'undefined') return 'lista';
+    return new URLSearchParams(window.location.search).get('vista') === 'mapa' ? 'mapa' : 'lista';
+  });
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('vista') === 'mapa') setVista('mapa');
-  }, []);
   const [selectedEspacio, setSelectedEspacio] = useState<Espacio | null>(null);
   const [authModal, setAuthModal] = useState(false);
   const [authTab, setAuthTab] = useState<'login' | 'register'>('login');
-  const [busqueda, setBusqueda] = useState('');
+  const [busqueda, setBusqueda] = useState(() => {
+    if (typeof window === 'undefined') return '';
+    return new URLSearchParams(window.location.search).get('q') || '';
+  });
   const [filtrosOpen, setFiltrosOpen] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [geoLoading, setGeoLoading] = useState(false);
@@ -66,6 +81,20 @@ export default function HomePage() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
+
+  useEffect(() => {
+    const p = new URLSearchParams();
+    if (vista === 'mapa')       p.set('vista', 'mapa');
+    if (filtros.tipo)           p.set('tipo', filtros.tipo);
+    if (filtros.barrio)         p.set('barrio', filtros.barrio);
+    if (filtros.pais)           p.set('pais', filtros.pais);
+    if (filtros.precio_max)     p.set('precio_max', String(filtros.precio_max));
+    if (filtros.seguridad_min)  p.set('seguridad_min', String(filtros.seguridad_min));
+    if (filtros.con_cupo)       p.set('con_cupo', 'true');
+    if (filtros.q)              p.set('q', filtros.q);
+    const qs = p.toString();
+    history.replaceState(null, '', qs ? `?${qs}` : window.location.pathname);
+  }, [filtros, vista]);
 
   function handleCercaMio() {
     if (!navigator.geolocation) { setGeoError('Tu navegador no soporta geolocalización'); return; }
