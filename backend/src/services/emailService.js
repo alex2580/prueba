@@ -65,7 +65,7 @@ async function sendReservaConfirmada(toEmail, nombre, { espacioNombre, fechaDesd
     ${pin ? `
     <div style="margin:24px 0;padding:20px;background:#0f172a;border-radius:12px;text-align:center;">
       <p style="margin:0 0 8px;color:#94a3b8;font-size:13px;text-transform:uppercase;letter-spacing:.08em;">🔐 PIN de acceso al espacio</p>
-      <span style="font-family:monospace;font-size:2.6rem;font-weight:900;color:#e8622a;letter-spacing:.4em;">${pin}</span>
+      <span style="font-family:monospace;font-size:1.7rem;font-weight:900;color:#e8622a;letter-spacing:.22em;margin-right:-.22em;">${pin}</span>
       <p style="margin:10px 0 0;color:#64748b;font-size:12px;">Guardá este código — lo vas a necesitar al ingresar al espacio.</p>
     </div>` : ''}
     <p>Ahora podés completar el pago desde la plataforma.</p>
@@ -296,7 +296,7 @@ async function sendNuevaReserva(toEmail, nombreOferente, { demandanteNombre, dem
     ${pin ? `
     <div style="margin:24px 0;padding:20px;background:#0f172a;border-radius:12px;text-align:center;">
       <p style="margin:0 0 8px;color:#94a3b8;font-size:13px;text-transform:uppercase;letter-spacing:.08em;">🔐 PIN de acceso al espacio</p>
-      <span style="font-family:monospace;font-size:2.6rem;font-weight:900;color:#e8622a;letter-spacing:.4em;">${pin}</span>
+      <span style="font-family:monospace;font-size:1.7rem;font-weight:900;color:#e8622a;letter-spacing:.22em;margin-right:-.22em;">${pin}</span>
       <p style="margin:10px 0 0;color:#64748b;font-size:12px;">El cliente tiene el mismo código — verificalo al momento de la entrega.</p>
     </div>` : ''}
     <p>Ingresá a tu panel para confirmar o rechazar la solicitud.</p>
@@ -517,8 +517,8 @@ async function sendOTP(toEmail, nombre, { codigo, expiraEn }) {
     <p>Hola <span class="highlight">${nombre}</span>, alguien (esperemos que seas vos) está intentando ingresar a tu cuenta.</p>
     <p>Tu código de verificación es:</p>
     <div style="text-align:center; margin: 24px 0;">
-      <div style="display:inline-block; background:#0f172a; border:2px solid #e8622a; border-radius:14px; padding:18px 36px;">
-        <span style="font-family:monospace; font-size:2.4rem; font-weight:900; color:#e8622a; letter-spacing:.4em;">${codigo}</span>
+      <div style="display:inline-block; background:#0f172a; border:2px solid #e8622a; border-radius:14px; padding:14px 28px;">
+        <span style="font-family:monospace; font-size:1.7rem; font-weight:900; color:#e8622a; letter-spacing:.22em; margin-right:-.22em;">${codigo}</span>
       </div>
     </div>
     <p style="text-align:center; font-size:.82rem; color:#64748b;">Válido por <strong style="color:#e2e8f0">${expiraEn} minutos</strong>. No lo compartás con nadie.</p>
