@@ -20,7 +20,7 @@ import { Calendar } from 'react-multi-date-picker';
 const SEMANA = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'];
 const MESES  = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
-function isoDate(d: any): string {
+function isoFromDateObj(d: any): string {
   const date = d.toDate ? d.toDate() : new Date(d);
   return [
     date.getFullYear(),
@@ -29,12 +29,11 @@ function isoDate(d: any): string {
   ].join('-');
 }
 
-function expandRange(start: any, end: any): string[] {
+function expandIsoRange(desde: string, hasta: string): string[] {
   const days: string[] = [];
-  const s = new Date((start.toDate ? start.toDate() : new Date(start)).setHours(12, 0, 0, 0));
-  const e = new Date((end.toDate ? end.toDate() : new Date(end)).setHours(12, 0, 0, 0));
-  const cur = new Date(s);
-  while (cur <= e) {
+  const cur = new Date(desde + 'T12:00:00');
+  const end = new Date((hasta || desde) + 'T12:00:00');
+  while (cur <= end) {
     days.push(`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}-${String(cur.getDate()).padStart(2,'0')}`);
     cur.setDate(cur.getDate() + 1);
   }
@@ -132,8 +131,9 @@ export default function ReservarPage() {
   const [step, setStep] = useState(1);
 
   // Step 1 state
-  const [rangeValue, setRangeValue] = useState<any[]>([]);
   const [diasMulti, setDiasMulti] = useState<string[]>([]);
+  const [rDesde, setRDesde] = useState('');
+  const [rHasta, setRHasta] = useState('');
   const [step1Error, setStep1Error] = useState('');
   const [fechasOcupadas, setFechasOcupadas] = useState<string[]>([]);
 
@@ -371,30 +371,23 @@ export default function ReservarPage() {
                       .rmdp-calendar { width: 100% !important; }
                       .rmdp-day-picker { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
                       .rmdp-header { font-family: Sora, sans-serif; font-weight: 700; }
-                      .rmdp-range { background: rgba(232,98,42,.15) !important; color: var(--text) !important; }
-                      .rmdp-range.start, .rmdp-range.end { background: var(--orange) !important; }
-                      .rmdp-range.start span, .rmdp-range.end span { background: var(--orange) !important; color: #fff !important; }
-                      .rmdp-day:not(.rmdp-disabled):not(.rmdp-range) span:hover { background: rgba(232,98,42,.2) !important; }
-                      .rmdp-day.rmdp-disabled { opacity: 0.3; cursor: not-allowed; }
+                      .rmdp-day.rmdp-selected span:not(.highlight) { background: var(--orange) !important; color: #fff !important; }
+                      .rmdp-day:not(.rmdp-disabled):not(.rmdp-selected) span:hover { background: rgba(232,98,42,.2) !important; }
+                      .rmdp-day.rmdp-disabled { opacity: 0.35; cursor: not-allowed; }
                       .rmdp-day.rmdp-today span { border: 1.5px solid var(--orange) !important; font-weight: 700; }
                       .rmdp-arrow { border-color: var(--text2) !important; }
                       .rmdp-arrow-container:hover { background: rgba(232,98,42,.1) !important; }
                     `}</style>
-                    <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginBottom: '.6rem', fontStyle: 'italic' }}>
-                      📅 Tocá para elegir el inicio y luego el fin — un día o un rango
+                    <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginBottom: '.6rem' }}>
+                      📅 Tocá días individuales para seleccionarlos o desmarcarlos. Usá el panel de abajo para agregar un rango.
                     </div>
                     <Calendar
-                      range
-                      value={rangeValue}
+                      multiple
+                      value={diasMulti.map(iso => new Date(iso + 'T12:00:00'))}
                       onChange={(dates: any) => {
-                        setRangeValue(dates ?? []);
-                        if (!dates || !Array.isArray(dates) || dates.length === 0) {
-                          setDiasMulti([]); return;
-                        }
-                        const [start, end] = dates;
-                        if (!start) { setDiasMulti([]); return; }
-                        const days = expandRange(start, end ?? start);
-                        setDiasMulti(days);
+                        if (!dates) { setDiasMulti([]); return; }
+                        const arr = Array.isArray(dates) ? dates : [dates];
+                        setDiasMulti(arr.map(isoFromDateObj).sort());
                         setStep1Error('');
                       }}
                       numberOfMonths={2}
@@ -405,14 +398,51 @@ export default function ReservarPage() {
                       weekStartDayIndex={1}
                       mapDays={({ date }: any) => {
                         const iso = `${date.year}-${String(date.month.number).padStart(2,'0')}-${String(date.day).padStart(2,'0')}`;
-                        if (fechasOcupadas.includes(iso)) {
+                        if (fechasOcupadas.includes(iso))
                           return { disabled: true, style: { color: '#ef4444', textDecoration: 'line-through' } };
-                        }
-                        if (disponibilidad?.dias?.length && !disponibilidad.dias.includes(iso)) {
+                        if (disponibilidad?.dias?.length && !disponibilidad.dias.includes(iso))
                           return { disabled: true, style: { color: '#ccc' } };
-                        }
                       }}
                     />
+
+                    {/* Agregar rango */}
+                    <div style={{ marginTop: '.85rem', background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '.75rem', display: 'flex', gap: '.5rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+                      <div style={{ flex: 1, minWidth: 120 }}>
+                        <label style={{ fontSize: '.68rem', color: 'var(--text3)', fontWeight: 600, display: 'block', marginBottom: '.25rem' }}>Desde</label>
+                        <input type="date" value={rDesde} min={new Date().toISOString().slice(0,10)} max={maxDateFinal}
+                          onChange={e => setRDesde(e.target.value)}
+                          style={{ width: '100%', fontSize: '.82rem' }} />
+                      </div>
+                      <div style={{ flex: 1, minWidth: 120 }}>
+                        <label style={{ fontSize: '.68rem', color: 'var(--text3)', fontWeight: 600, display: 'block', marginBottom: '.25rem' }}>Hasta</label>
+                        <input type="date" value={rHasta} min={rDesde || new Date().toISOString().slice(0,10)} max={maxDateFinal}
+                          onChange={e => setRHasta(e.target.value)}
+                          style={{ width: '100%', fontSize: '.82rem' }} />
+                      </div>
+                      <button type="button"
+                        onClick={() => {
+                          if (!rDesde) return;
+                          const nuevos = expandIsoRange(rDesde, rHasta || rDesde);
+                          const merged = Array.from(new Set([...diasMulti, ...nuevos])).sort();
+                          setDiasMulti(merged);
+                          setRDesde(''); setRHasta('');
+                          setStep1Error('');
+                        }}
+                        style={{ padding: '.5rem .9rem', borderRadius: 'var(--r2)', border: 'none', background: 'var(--orange)', color: '#fff', fontWeight: 700, fontSize: '.8rem', cursor: rDesde ? 'pointer' : 'not-allowed', opacity: rDesde ? 1 : .5, whiteSpace: 'nowrap' }}>
+                        + Agregar rango
+                      </button>
+                      {diasMulti.length > 0 && (
+                        <button type="button" onClick={() => { setDiasMulti([]); setStep1Error(''); }}
+                          style={{ padding: '.5rem .75rem', borderRadius: 'var(--r2)', border: '1px solid var(--border)', background: 'none', color: 'var(--text3)', fontSize: '.78rem', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                          Limpiar
+                        </button>
+                      )}
+                    </div>
+                    {diasMulti.length > 0 && (
+                      <div style={{ marginTop: '.4rem', fontSize: '.72rem', color: 'var(--mint)', fontWeight: 600 }}>
+                        ✅ {diasMulti.length} día{diasMulti.length !== 1 ? 's' : ''} seleccionado{diasMulti.length !== 1 ? 's' : ''}
+                      </div>
+                    )}
 
                     {precioEstimado > 0 && (
                       <div style={{

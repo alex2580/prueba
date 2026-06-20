@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Calendar } from 'react-multi-date-picker';
 
 const DIAS_VIGENCIA = 60;
@@ -26,22 +27,45 @@ function isoFromDateObj(d: any): string {
   ].join('-');
 }
 
+function expandIsoRange(desde: string, hasta: string): string[] {
+  const days: string[] = [];
+  const cur = new Date(desde + 'T12:00:00');
+  const end = new Date((hasta || desde) + 'T12:00:00');
+  while (cur <= end) {
+    days.push(`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}-${String(cur.getDate()).padStart(2,'0')}`);
+    cur.setDate(cur.getDate() + 1);
+  }
+  return days;
+}
+
 export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) {
+  const [rDesde, setRDesde] = useState('');
+  const [rHasta, setRHasta] = useState('');
+
   if (!precioDia) return null;
 
   const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
   const maxDate = new Date(hoy); maxDate.setDate(hoy.getDate() + DIAS_VIGENCIA - 1);
+  const maxIso = maxDate.toISOString().slice(0, 10);
+  const hoyIso = hoy.toISOString().slice(0, 10);
 
-  const selected = (value.dias || []).map(iso => new Date(iso + 'T12:00:00'));
+  const dias = value.dias || [];
+  const selected = dias.map(iso => new Date(iso + 'T12:00:00'));
+  const count = dias.length;
 
-  function handleChange(dates: any) {
+  function handleCalendarChange(dates: any) {
     if (!dates) { onChange({ ...value, dias: [] }); return; }
     const arr = Array.isArray(dates) ? dates : [dates];
-    const isos = arr.map(isoFromDateObj).sort();
-    onChange({ ...value, dias: isos });
+    onChange({ ...value, dias: arr.map(isoFromDateObj).sort() });
   }
 
-  const count = value.dias?.length ?? 0;
+  function agregarRango() {
+    if (!rDesde) return;
+    const nuevos = expandIsoRange(rDesde, rHasta || rDesde);
+    const merged = Array.from(new Set([...dias, ...nuevos])).sort();
+    onChange({ ...value, dias: merged });
+    setRDesde(''); setRHasta('');
+  }
 
   return (
     <div style={{ background: 'var(--surface2)', border: '1.5px solid var(--border)', borderRadius: 'var(--r2)', padding: '1rem' }}>
@@ -49,13 +73,12 @@ export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) 
         .rmdp-wrapper { width: 100% !important; box-shadow: none !important; background: transparent !important; }
         .rmdp-calendar { width: 100% !important; }
         .rmdp-day-picker { display: flex; gap: 1rem; flex-wrap: wrap; }
-        .rmdp-month-picker, .rmdp-year-picker { background: var(--surface2) !important; }
         .rmdp-header { font-family: Sora, sans-serif; font-weight: 700; }
         .rmdp-day.rmdp-selected span:not(.highlight) { background: var(--orange) !important; color: #fff !important; }
-        .rmdp-day:not(.rmdp-disabled):not(.rmdp-day-hidden) span:hover { background: rgba(232,98,42,.18) !important; color: var(--text) !important; }
+        .rmdp-day:not(.rmdp-disabled):not(.rmdp-selected) span:hover { background: rgba(232,98,42,.18) !important; color: var(--text) !important; }
+        .rmdp-day.rmdp-today span { border: 1.5px solid var(--orange) !important; font-weight: 700; }
         .rmdp-arrow { border-color: var(--text2) !important; }
         .rmdp-arrow-container:hover { background: rgba(232,98,42,.1) !important; }
-        .rmdp-today span { border: 1.5px solid var(--orange) !important; font-weight: 700; }
       `}</style>
 
       <div style={{ marginBottom: '.75rem' }}>
@@ -63,14 +86,14 @@ export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) 
           📅 Días disponibles
         </div>
         <div style={{ fontSize: '.75rem', color: 'var(--text3)' }}>
-          Seleccioná los días en que tu espacio está disponible. Tocá para marcar o desmarcar.
+          Tocá días individuales para marcarlos o desmarcalos. Usá el panel de abajo para agregar un rango de días de una sola vez.
         </div>
       </div>
 
       <Calendar
         multiple
         value={selected}
-        onChange={handleChange}
+        onChange={handleCalendarChange}
         numberOfMonths={2}
         minDate={hoy}
         maxDate={maxDate}
@@ -80,15 +103,35 @@ export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) 
         className="rmdp-mobile"
       />
 
-      {count > 0 && (
-        <div style={{ marginTop: '.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: '.75rem', color: 'var(--mint)' }}>
-            ✅ {count} día{count !== 1 ? 's' : ''} disponible{count !== 1 ? 's' : ''}
-          </span>
+      {/* Agregar rango */}
+      <div style={{ marginTop: '.85rem', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '.75rem', display: 'flex', gap: '.5rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+        <div style={{ flex: 1, minWidth: 120 }}>
+          <label style={{ fontSize: '.68rem', color: 'var(--text3)', fontWeight: 600, display: 'block', marginBottom: '.25rem' }}>Desde</label>
+          <input type="date" value={rDesde} min={hoyIso} max={maxIso}
+            onChange={e => setRDesde(e.target.value)}
+            style={{ width: '100%', fontSize: '.82rem' }} />
+        </div>
+        <div style={{ flex: 1, minWidth: 120 }}>
+          <label style={{ fontSize: '.68rem', color: 'var(--text3)', fontWeight: 600, display: 'block', marginBottom: '.25rem' }}>Hasta</label>
+          <input type="date" value={rHasta} min={rDesde || hoyIso} max={maxIso}
+            onChange={e => setRHasta(e.target.value)}
+            style={{ width: '100%', fontSize: '.82rem' }} />
+        </div>
+        <button type="button" onClick={agregarRango}
+          style={{ padding: '.5rem .9rem', borderRadius: 'var(--r2)', border: 'none', background: 'var(--orange)', color: '#fff', fontWeight: 700, fontSize: '.8rem', cursor: rDesde ? 'pointer' : 'not-allowed', opacity: rDesde ? 1 : .5, whiteSpace: 'nowrap' }}>
+          + Agregar rango
+        </button>
+        {count > 0 && (
           <button type="button" onClick={() => onChange({ ...value, dias: [] })}
-            style={{ background: 'none', border: 'none', color: 'var(--text3)', fontSize: '.72rem', cursor: 'pointer' }}>
+            style={{ padding: '.5rem .75rem', borderRadius: 'var(--r2)', border: '1px solid var(--border)', background: 'none', color: 'var(--text3)', fontSize: '.78rem', cursor: 'pointer', whiteSpace: 'nowrap' }}>
             Limpiar
           </button>
+        )}
+      </div>
+
+      {count > 0 && (
+        <div style={{ marginTop: '.5rem', fontSize: '.75rem', color: 'var(--mint)', fontWeight: 600 }}>
+          ✅ {count} día{count !== 1 ? 's' : ''} disponible{count !== 1 ? 's' : ''}
         </div>
       )}
     </div>
