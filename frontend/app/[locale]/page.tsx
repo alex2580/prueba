@@ -141,6 +141,7 @@ export default function HomePage() {
       <SiteHeader
         onLoginClick={() => { setAuthTab('login'); setAuthModal(true); }}
         onRegisterClick={() => { setAuthTab('register'); setAuthModal(true); }}
+        onLogoClick={() => { if (vista === 'mapa') setVista('lista'); }}
       />
 
       {/* ── Content ────────────────────────────────────────── */}

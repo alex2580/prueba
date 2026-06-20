@@ -9,6 +9,7 @@ import { SiteLogo } from '@/components/ui/SiteLogo';
 interface SiteHeaderProps {
   onLoginClick?: () => void;
   onRegisterClick?: () => void;
+  onLogoClick?: () => void;
 }
 
 function LocaleSwitcher() {
@@ -56,7 +57,7 @@ function LocaleSwitcher() {
   );
 }
 
-export function SiteHeader({ onLoginClick, onRegisterClick }: SiteHeaderProps) {
+export function SiteHeader({ onLoginClick, onRegisterClick, onLogoClick }: SiteHeaderProps) {
   const t = useTranslations('header');
   const router = useRouter();
   const pathname = usePathname();
@@ -74,7 +75,7 @@ export function SiteHeader({ onLoginClick, onRegisterClick }: SiteHeaderProps) {
   return (
     <>
       <header className="site-header">
-        <SiteLogo onClick={() => { router.push('/'); close(); }} />
+        <SiteLogo onClick={() => { close(); onLogoClick ? onLogoClick() : router.push('/'); }} />
 
         {/* Nav central — oculto en mobile, visible en tablet+ */}
         <nav className="nav">
