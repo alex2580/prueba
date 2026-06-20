@@ -145,7 +145,7 @@ async function crear(req, res, next) {
 
     // Verify espacio exists and is available
     const espacio = await queryOne(
-      'SELECT id, precio_dia, precio_mes, disponible, cupo_disponible, tipo, oferente_id, nombre FROM espacios WHERE id = ? AND activo = TRUE',
+      'SELECT id, precio_dia, disponible, cupo_disponible, tipo, oferente_id, nombre FROM espacios WHERE id = ? AND activo = TRUE',
       [espacio_id]
     );
     if (!espacio) return res.status(404).json({ error: 'Espacio no encontrado' });
@@ -196,10 +196,8 @@ async function crear(req, res, next) {
     const dias   = esMododia ? diasOrdenados.length : (Math.ceil((hasta - desde) / (1000 * 60 * 60 * 24)) + 1);
 
     if (dias < 1) return res.status(400).json({ error: 'Las fechas seleccionadas no son válidas.' });
-    if (dias > 90) return res.status(400).json({ error: 'La reserva no puede superar los 90 días (3 meses).' });
-    const precio_total = dias >= 28
-      ? Math.ceil(dias / 30) * espacio.precio_mes
-      : dias * espacio.precio_dia;
+    if (dias > 90) return res.status(400).json({ error: 'La reserva no puede superar los 90 días.' });
+    const precio_total = dias * espacio.precio_dia;
 
     const pin = String(Math.floor(1000 + Math.random() * 9000));
     const diasJsonStr = esMododia ? JSON.stringify(diasOrdenados) : null;
@@ -416,9 +414,7 @@ async function extender(req, res, next) {
 
     // Calcular precio de la extensión (días adicionales)
     const diasExtra = Math.ceil((fechaNueva - fechaHastaActual) / (1000 * 60 * 60 * 24));
-    const precio = diasExtra >= 28
-      ? Math.ceil(diasExtra / 30) * parseFloat(reserva.precio_mes)
-      : diasExtra * parseFloat(reserva.precio_dia);
+    const precio = diasExtra * parseFloat(reserva.precio_dia);
 
     // Crear registro de extensión pendiente
     const extensionId = uuidv4();

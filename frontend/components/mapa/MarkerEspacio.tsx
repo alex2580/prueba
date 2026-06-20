@@ -91,29 +91,16 @@ export function MarkerEspacioCard({ espacio, onClose, onVerDetalle, onReservar }
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '.5rem', flexWrap: 'wrap' }}>
-            {(() => {
+            {Number(espacio.precio_dia) > 0 && (() => {
               const precioColor = espacio.tipo === 'exclusivo' ? 'var(--text)' : 'var(--orange)';
-              return (<>
-                {Number(espacio.precio_mes) > 0 && (
-                  <span>
-                    <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.1rem', color: precioColor }}>
-                      {formatARS(espacio.precio_mes)}
-                    </span>
-                    <span style={{ fontSize: '.75rem', color: 'var(--text3)' }}>/mes</span>
+              return (
+                <span>
+                  <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.1rem', color: precioColor }}>
+                    {formatARS(espacio.precio_dia)}
                   </span>
-                )}
-                {Number(espacio.precio_mes) > 0 && Number(espacio.precio_dia) > 0 && (
-                  <span style={{ fontSize: '.75rem', color: 'var(--text3)' }}>·</span>
-                )}
-                {Number(espacio.precio_dia) > 0 && (
-                  <span>
-                    <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: Number(espacio.precio_mes) > 0 ? '.88rem' : '1.1rem', color: precioColor }}>
-                      {formatARS(espacio.precio_dia)}
-                    </span>
-                    <span style={{ fontSize: '.75rem', color: 'var(--text3)' }}>/día</span>
-                  </span>
-                )}
-              </>);
+                  <span style={{ fontSize: '.75rem', color: 'var(--text3)' }}>/día</span>
+                </span>
+              );
             })()}
           </div>
           <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>

@@ -38,7 +38,6 @@ export function CardEspacio({ espacio, onClick, isFavorito = false, onToggleFavo
   const imgSrc = imgs[imgIdx];
   const accentColor = espacio.tipo === 'exclusivo' ? 'var(--text)' : 'var(--orange)';
   const hasDia = (espacio.precio_dia ?? 0) > 0;
-  const hasMes = (espacio.precio_mes ?? 0) > 0;
 
   return (
     <article className="espacio-card" onClick={handleClick} role="button" tabIndex={0}
@@ -209,29 +208,17 @@ export function CardEspacio({ espacio, onClick, isFavorito = false, onToggleFavo
         </div>
 
         <div style={{
-          display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
+          display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end',
           borderTop: '1px solid var(--border)', paddingTop: '.6rem', marginTop: '.1rem',
-          gap: '.5rem',
         }}>
-          {/* Izquierda — precio por mes */}
-          {hasMes ? (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '.1rem' }}>
-              <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text2)', fontFamily: 'Sora, sans-serif' }}>
-                📆 Por mes
-              </span>
-              <span className="espacio-card__price" style={{ color: accentColor }}>{formatARS(espacio.precio_mes)}</span>
-            </div>
-          ) : <div />}
-
-          {/* Derecha — precio por día */}
-          {hasDia ? (
+          {hasDia && (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '.1rem' }}>
               <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text2)', fontFamily: 'Sora, sans-serif' }}>
                 📅 Por día
               </span>
-              <span className="espacio-card__price" style={{ color: accentColor, fontSize: hasMes ? '.95rem' : undefined }}>{formatARS(espacio.precio_dia)}</span>
+              <span className="espacio-card__price" style={{ color: accentColor }}>{formatARS(espacio.precio_dia)}</span>
             </div>
-          ) : <div />}
+          )}
         </div>
       </div>
     </article>

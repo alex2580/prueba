@@ -203,7 +203,6 @@ export default function PublicarPage() {
     barrio: '',
     m2: '',
     precio_dia: '',
-    precio_mes: '',
     lat: '',
     lng: '',
     tipo: 'exclusivo',
@@ -358,7 +357,7 @@ export default function PublicarPage() {
       if (!form.categoria) return 'Seleccioná el tipo de espacio';
       if (!form.nombre.trim()) return 'Ingresá el nombre del espacio';
       if (!form.direccion.trim()) return 'Ingresá la dirección';
-      if (!form.precio_dia && !form.precio_mes) return 'Ingresá al menos un precio';
+      if (!form.precio_dia) return 'Ingresá el precio por día';
     }
     return null;
   }
@@ -391,7 +390,6 @@ export default function PublicarPage() {
         tipo: (form.tipo || 'exclusivo') as 'exclusivo' | 'compartido',
         categoria: form.categoria,
         precio_dia: Number(form.precio_dia) || 0,
-        precio_mes: Number(form.precio_mes) || 0,
         descripcion: form.descripcion,
         lat: Number(form.lat) || -34.6037,
         lng: Number(form.lng) || -58.3816,
@@ -508,7 +506,7 @@ export default function PublicarPage() {
                     // Resetear todo el formulario
                     setEspacioPublicadoId(null);
                     setPaso(0);
-                    setForm({ categoria: '', nombre: '', descripcion: '', direccion: '', barrio: '', m2: '', precio_dia: '', precio_mes: '', lat: '', lng: '', tipo: 'exclusivo', moneda: 'ARS' });
+                    setForm({ categoria: '', nombre: '', descripcion: '', direccion: '', barrio: '', m2: '', precio_dia: '', lat: '', lng: '', tipo: 'exclusivo', moneda: 'ARS' });
                     setFotos([]);
                     setPreviews([]);
                     setFotoPrincipal(0);
@@ -702,17 +700,11 @@ export default function PublicarPage() {
                   <input type="number" value={form.precio_dia} onChange={e => set('precio_dia', e.target.value)}
                     placeholder="" min="0" />
                 </div>
-                <div>
-                  <label className="form-label">Precio por mes</label>
-                  <input type="number" value={form.precio_mes} onChange={e => set('precio_mes', e.target.value)}
-                    placeholder="" min="0" />
-                </div>
               </div>
 
               {/* Calendario disponibilidad */}
               <CalendarioDisponibilidad
                 precioDia={Number(form.precio_dia) || 0}
-                precioMes={Number(form.precio_mes) || 0}
                 value={disponibilidad}
                 onChange={setDisponibilidad}
               />

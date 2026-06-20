@@ -52,18 +52,9 @@ async function listar(req, res, next) {
     if (barrio)     { sql += ' AND e.barrio = ?';  params.push(barrio); }
     if (tipo)       { sql += ' AND e.tipo = ?';    params.push(tipo); }
 
-    if (periodo === 'dia') {
-      sql += ' AND e.precio_dia > 0';
-      if (precio_max) { sql += ' AND e.precio_dia <= ?'; params.push(Number(precio_max)); }
-      if (precio_min) { sql += ' AND e.precio_dia >= ?'; params.push(Number(precio_min)); }
-    } else if (periodo === 'mes') {
-      sql += ' AND e.precio_mes > 0';
-      if (precio_max) { sql += ' AND e.precio_mes <= ?'; params.push(Number(precio_max)); }
-      if (precio_min) { sql += ' AND e.precio_mes >= ?'; params.push(Number(precio_min)); }
-    } else {
-      if (precio_max) { sql += ' AND e.precio_mes <= ?'; params.push(Number(precio_max)); }
-      if (precio_min) { sql += ' AND e.precio_mes >= ?'; params.push(Number(precio_min)); }
-    }
+    sql += ' AND e.precio_dia > 0';
+    if (precio_max) { sql += ' AND e.precio_dia <= ?'; params.push(Number(precio_max)); }
+    if (precio_min) { sql += ' AND e.precio_dia >= ?'; params.push(Number(precio_min)); }
 
     if (disponible !== undefined) { sql += ' AND e.disponible = ?'; params.push(disponible === 'true' ? 1 : 0); }
     if (con_cupo === 'true')      { sql += ' AND e.cupo_disponible = 1'; }
@@ -154,15 +145,15 @@ async function crear(req, res, next) {
       return res.status(422).json({ error: 'Datos inválidos', details: errors.array() });
     }
 
-    const { nombre, direccion, barrio, m2, tipo, categoria, precio_dia, precio_mes, descripcion, lat, lng, disponibilidad, seguridad, moneda } = req.body;
+    const { nombre, direccion, barrio, m2, tipo, categoria, precio_dia, descripcion, lat, lng, disponibilidad, seguridad, moneda } = req.body;
 
     // Base INSERT — always works regardless of migration state
     await transaction(async (conn) => {
       await conn.execute(
         `INSERT INTO espacios (nombre, direccion, barrio, m2, tipo, precio_dia, precio_mes, descripcion, oferente_id, lat, lng)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?)`,
         [nombre, direccion, barrio || '', m2 ?? 0, tipo || 'exclusivo',
-         precio_dia || 0, precio_mes || 0, descripcion || '', req.user.id, lat || -34.6037, lng || -58.3816]
+         precio_dia || 0, descripcion || '', req.user.id, lat || -34.6037, lng || -58.3816]
       );
     });
 
@@ -211,15 +202,15 @@ async function actualizar(req, res, next) {
       return res.status(403).json({ error: 'Sin permisos para modificar este espacio' });
     }
 
-    const { nombre, direccion, barrio, m2, tipo, precio_dia, precio_mes, descripcion, lat, lng, disponible, moneda, categoria, disponibilidad } = req.body;
+    const { nombre, direccion, barrio, m2, tipo, precio_dia, descripcion, lat, lng, disponible, moneda, categoria, disponibilidad } = req.body;
 
     const nuevoDisponible = disponible !== undefined ? Boolean(disponible) : espacio.disponible;
     await query(
       `UPDATE espacios SET nombre=?, direccion=?, barrio=?, m2=?, tipo=?, precio_dia=?,
-       precio_mes=?, descripcion=?, lat=?, lng=?, disponible=?,
+       descripcion=?, lat=?, lng=?, disponible=?,
        activo = IF(?, TRUE, activo)
        WHERE id=?`,
-      [nombre, direccion, barrio, m2, tipo, precio_dia, precio_mes, descripcion || '', lat, lng,
+      [nombre, direccion, barrio, m2, tipo, precio_dia, descripcion || '', lat, lng,
        nuevoDisponible,
        nuevoDisponible,
        req.params.id]

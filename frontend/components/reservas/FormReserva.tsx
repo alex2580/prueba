@@ -3,7 +3,7 @@
 import { useState, FormEvent } from 'react';
 import type { Espacio } from '@/types';
 import { Button } from '@/components/ui/Button';
-import { calcularPrecio, formatARS, diasEntre } from '@/lib/utils';
+import { formatARS, diasEntre } from '@/lib/utils';
 
 interface FormReservaProps {
   espacio: Espacio;
@@ -19,7 +19,7 @@ export function FormReserva({ espacio, onSubmit, loading, error }: FormReservaPr
   const [notas, setNotas] = useState('');
 
   const dias = desde && hasta ? diasEntre(desde, hasta) : 0;
-  const total = desde && hasta && dias > 0 ? calcularPrecio(desde, hasta, espacio.precio_dia, espacio.precio_mes) : 0;
+  const total = desde && hasta && dias > 0 ? dias * espacio.precio_dia : 0;
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -67,8 +67,8 @@ export function FormReserva({ espacio, onSubmit, loading, error }: FormReservaPr
             <span>{dias} día{dias !== 1 ? 's' : ''}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '.83rem', color: 'var(--text2)' }}>
-            <span>Precio {dias >= 28 ? 'mensual' : 'diario'}</span>
-            <span>{formatARS(dias >= 28 ? espacio.precio_mes : espacio.precio_dia)}</span>
+            <span>Precio por día</span>
+            <span>{formatARS(espacio.precio_dia)}</span>
           </div>
           <div style={{ height: 1, background: 'var(--border)', margin: '.2rem 0' }} />
           <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'Sora, sans-serif', fontWeight: 800 }}>

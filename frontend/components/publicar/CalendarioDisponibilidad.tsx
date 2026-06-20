@@ -11,13 +11,11 @@ import { es } from 'date-fns/locale';
 const DIAS_VIGENCIA = 90;
 
 export interface Disponibilidad {
-  dias?: string[];   // ['2026-05-21', ...]
-  meses?: string[];  // ['2026-05', ...]
+  dias?: string[];
 }
 
 interface Props {
   precioDia: number;
-  precioMes: number;
   value: Disponibilidad;
   onChange: (d: Disponibilidad) => void;
 }
@@ -45,7 +43,6 @@ function CalendarioDias({ dias, onChange }: { dias: string[]; onChange: (d: stri
 
   return (
     <div>
-      {/* Navegación mes */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '.75rem' }}>
         <button type="button" onClick={() => setMes(m => subMonths(m, 1))}
           style={{ background: 'none', border: 'none', color: 'var(--text2)', cursor: 'pointer', fontSize: '1.1rem', padding: '4px 8px' }}>
@@ -60,14 +57,12 @@ function CalendarioDias({ dias, onChange }: { dias: string[]; onChange: (d: stri
         </button>
       </div>
 
-      {/* Cabecera días */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2, marginBottom: 4 }}>
         {DIAS_SEMANA.map(d => (
           <div key={d} style={{ textAlign: 'center', fontSize: '.68rem', color: 'var(--text3)', fontWeight: 600, padding: '2px 0' }}>{d}</div>
         ))}
       </div>
 
-      {/* Celdas */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
         {celdas.map(dia => {
           const key       = format(dia, 'yyyy-MM-dd');
@@ -119,131 +114,23 @@ function CalendarioDias({ dias, onChange }: { dias: string[]; onChange: (d: stri
   );
 }
 
-function SelectorMeses({ meses, onChange }: { meses: string[]; onChange: (m: string[]) => void }) {
-  const now = new Date();
-  const minMes = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-  const maxDate = new Date(now.getFullYear(), now.getMonth() + 2, 1);
-  const maxMes  = `${maxDate.getFullYear()}-${String(maxDate.getMonth() + 1).padStart(2, '0')}`;
-
-  // Derivar desde/hasta del array de meses (siempre ordenado)
-  const desde = meses.length > 0 ? meses[0] : '';
-  const hasta  = meses.length > 0 ? meses[meses.length - 1] : '';
-
-  function buildArray(d: string, h: string): string[] {
-    if (!d) return [];
-    if (!h || h < d) return [d];
-    const result: string[] = [];
-    const [dy, dm] = d.split('-').map(Number);
-    const [hy, hm] = h.split('-').map(Number);
-    let y = dy, m = dm;
-    while (y < hy || (y === hy && m <= hm)) {
-      result.push(`${y}-${String(m).padStart(2, '0')}`);
-      m++;
-      if (m > 12) { m = 1; y++; }
-    }
-    return result;
-  }
-
-  function handleDesde(val: string) {
-    if (!val) { onChange([]); return; }
-    const newHasta = hasta && hasta >= val ? hasta : '';
-    onChange(buildArray(val, newHasta));
-  }
-
-  function handleHasta(val: string) {
-    if (!val) { onChange(desde ? [desde] : []); return; }
-    onChange(buildArray(desde || val, val));
-  }
+export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) {
+  if (!precioDia) return null;
 
   return (
-    <div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.75rem' }}>
-        <label className="form-label">
-          Desde (mes)
-          <input
-            type="month"
-            value={desde}
-            onChange={e => handleDesde(e.target.value)}
-            min={minMes}
-            max={maxMes}
-            style={{ marginTop: '.3rem' }}
-          />
-        </label>
-        <label className="form-label">
-          Hasta (mes)
-          <input
-            type="month"
-            value={hasta}
-            onChange={e => handleHasta(e.target.value)}
-            min={desde || minMes}
-            max={maxMes}
-            style={{ marginTop: '.3rem' }}
-          />
-        </label>
+    <div style={{ background: 'var(--surface2)', border: '1.5px solid var(--border)', borderRadius: 'var(--r2)', padding: '1rem' }}>
+      <div style={{ marginBottom: '.75rem' }}>
+        <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.88rem', marginBottom: '.2rem' }}>
+          📅 Días disponibles
+        </div>
+        <div style={{ fontSize: '.75rem', color: 'var(--text3)' }}>
+          Seleccioná los días en que tu espacio está disponible para reservar.
+        </div>
       </div>
-      {meses.length > 0 && (
-        <div style={{ marginTop: '.6rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: '.75rem', color: 'var(--mint)' }}>
-            ✅ {meses.length} mes{meses.length !== 1 ? 'es' : ''} disponible{meses.length !== 1 ? 's' : ''}
-          </span>
-          <button type="button" onClick={() => onChange([])}
-            style={{ background: 'none', border: 'none', color: 'var(--text3)', fontSize: '.72rem', cursor: 'pointer' }}>
-            Limpiar
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export function CalendarioDisponibilidad({ precioDia, precioMes, value, onChange }: Props) {
-  const tieneDia = precioDia > 0;
-  const tieneMes = precioMes > 0;
-
-  if (!tieneDia && !tieneMes) return null;
-
-  const cardStyle: React.CSSProperties = {
-    background: 'var(--surface2)',
-    border: '1.5px solid var(--border)',
-    borderRadius: 'var(--r2)',
-    padding: '1rem',
-  };
-
-  return (
-    <div style={{ display: 'grid', gap: '1rem' }}>
-      {tieneDia && (
-        <div style={cardStyle}>
-          <div style={{ marginBottom: '.75rem' }}>
-            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.88rem', marginBottom: '.2rem' }}>
-              📅 Días disponibles
-            </div>
-            <div style={{ fontSize: '.75rem', color: 'var(--text3)' }}>
-              Seleccioná los días en que tu espacio está disponible para reservar por día.
-            </div>
-          </div>
-          <CalendarioDias
-            dias={value.dias || []}
-            onChange={dias => onChange({ ...value, dias })}
-          />
-        </div>
-      )}
-
-      {tieneMes && (
-        <div style={cardStyle}>
-          <div style={{ marginBottom: '.75rem' }}>
-            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.88rem', marginBottom: '.2rem' }}>
-              🗓️ Meses disponibles
-            </div>
-            <div style={{ fontSize: '.75rem', color: 'var(--text3)' }}>
-              Seleccioná los meses en que tu espacio está disponible para reservar por mes.
-            </div>
-          </div>
-          <SelectorMeses
-            meses={value.meses || []}
-            onChange={meses => onChange({ ...value, meses })}
-          />
-        </div>
-      )}
+      <CalendarioDias
+        dias={value.dias || []}
+        onChange={dias => onChange({ ...value, dias })}
+      />
     </div>
   );
 }

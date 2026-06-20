@@ -13,7 +13,6 @@ const validarEspacio = [
   body('m2').optional({ nullable: true }).isFloat({ min: 0 }).withMessage('m2 inválido'),
   body('tipo').isIn(['exclusivo', 'compartido']).withMessage('Tipo inválido'),
   body('precio_dia').isFloat({ min: 0 }).withMessage('Precio día inválido'),
-  body('precio_mes').isFloat({ min: 0 }).withMessage('Precio mes inválido'),
   body('lat').isFloat().withMessage('Latitud inválida'),
   body('lng').isFloat().withMessage('Longitud inválida'),
 ];

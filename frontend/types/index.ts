@@ -46,7 +46,7 @@ export interface Espacio {
   m2?: number;
   tipo: EspacioTipo;
   precio_dia: number;
-  precio_mes: number;
+  precio_mes?: number;
   descripcion?: string;
   moneda?: string;
   oferente_id: string;
@@ -84,13 +84,12 @@ export interface EspacioFormData {
   m2?: number;
   tipo: EspacioTipo;
   precio_dia: number;
-  precio_mes: number;
   descripcion: string;
   lat: number;
   lng: number;
   moneda?: string;
   categoria?: string;
-  disponibilidad?: { dias?: string[]; meses?: string[] };
+  disponibilidad?: { dias?: string[] };
   seguridad?: Record<string, boolean>;
 }
 

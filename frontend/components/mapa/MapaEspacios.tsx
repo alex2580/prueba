@@ -102,13 +102,10 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center, filt
         : '#e8622a';
 
       const sim = getMonedaSimbolo(espacio.moneda);
-      const pMes = Number(espacio.precio_mes);
       const pDia = Number(espacio.precio_dia);
-      const precio = pMes > 0 ? pMes : pDia;
-      const sufijo = pMes > 0 ? '' : '/d';
-      const iconLabel = precio >= 1000
-        ? `${sim}${Math.round(precio / 1000)}k${sufijo}`
-        : `${sim}${Math.round(precio)}${sufijo}`;
+      const iconLabel = pDia >= 1000
+        ? `${sim}${Math.round(pDia / 1000)}k/d`
+        : `${sim}${Math.round(pDia)}/d`;
 
       // Pin con precio (cuando hay filtros activos)
       const pinSvgFull = (color: string) => `
@@ -165,8 +162,6 @@ export function MapaEspacios({ espacios, onMarkerClick, selectedId, center, filt
               <strong style="font-size:13px;display:block;margin-bottom:2px;">${espacio.nombre}</strong>
               <span style="color:#666;">📍 ${espacio.barrio}</span>
               <div style="margin-top:3px;">
-                ${Number(espacio.precio_mes) > 0 ? `<span style="font-weight:700;color:${espacio.tipo === 'exclusivo' ? '#1E293B' : '#e8622a'};">${sim}${Number(espacio.precio_mes).toLocaleString('es-AR')}<span style="font-weight:400;color:#999;">/mes</span></span>` : ''}
-                ${Number(espacio.precio_mes) > 0 && Number(espacio.precio_dia) > 0 ? '<span style="color:#ccc;margin:0 4px;">·</span>' : ''}
                 ${Number(espacio.precio_dia) > 0 ? `<span style="font-weight:700;color:${espacio.tipo === 'exclusivo' ? '#1E293B' : '#e8622a'};">${sim}${Number(espacio.precio_dia).toLocaleString('es-AR')}<span style="font-weight:400;color:#999;">/día</span></span>` : ''}
               </div>
             </div>

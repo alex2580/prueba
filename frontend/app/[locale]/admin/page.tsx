@@ -2226,7 +2226,6 @@ function TabPublicaciones({ token }: { token: string }) {
                 </div>
                 <div style={{ fontSize: '.8rem', color: 'var(--text2)' }}>
                   {pub.precio_dia != null && <span>Día: <b>{formatARS(pub.precio_dia)}</b> </span>}
-                  {pub.precio_mes != null && <span>Mes: <b>{formatARS(pub.precio_mes)}</b> </span>}
                   {pub.moneda && pub.moneda !== 'ARS' && <span style={{ opacity: .7 }}>({pub.moneda})</span>}
                 </div>
                 <div style={{ fontSize: '.77rem', color: 'var(--text3)', marginTop: '.25rem' }}>

@@ -339,48 +339,32 @@ export default function HomePage() {
                   </button>
                 )}
 
-                {/* Período */}
-                <button
-                  className={`filter-pill ${filtros.periodo === 'dia' ? 'active' : ''}`}
-                  onClick={() => aplicarFiltros({ periodo: filtros.periodo === 'dia' ? '' : 'dia', precio_max: undefined })}
-                >
-                  {t('porDia')}
-                </button>
-                <button
-                  className={`filter-pill ${filtros.periodo === 'mes' ? 'active' : ''}`}
-                  onClick={() => aplicarFiltros({ periodo: filtros.periodo === 'mes' ? '' : 'mes', precio_max: undefined })}
-                >
-                  {t('porMes')}
-                </button>
-
-                {/* Precio — solo visible cuando hay periodo seleccionado */}
-                {filtros.periodo && (
-                  <div style={{
-                    display: 'inline-flex', alignItems: 'center', gap: '.5rem',
-                    padding: '.3rem .65rem .3rem .9rem',
-                    borderRadius: 999, flexShrink: 0,
-                    border: `1.5px solid ${precioValHome < PRECIO_MAX_HOME ? 'var(--text)' : 'var(--border2)'}`,
-                    background: precioValHome < PRECIO_MAX_HOME ? 'var(--text)' : 'var(--surface)',
+                {/* Precio máximo por día */}
+                <div style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '.5rem',
+                  padding: '.3rem .65rem .3rem .9rem',
+                  borderRadius: 999, flexShrink: 0,
+                  border: `1.5px solid ${precioValHome < PRECIO_MAX_HOME ? 'var(--text)' : 'var(--border2)'}`,
+                  background: precioValHome < PRECIO_MAX_HOME ? 'var(--text)' : 'var(--surface)',
+                }}>
+                  <span style={{
+                    fontSize: '.82rem', fontWeight: 700, whiteSpace: 'nowrap',
+                    color: precioValHome < PRECIO_MAX_HOME ? '#fff' : 'var(--text)',
+                    fontFamily: 'Sora, sans-serif',
                   }}>
-                    <span style={{
-                      fontSize: '.82rem', fontWeight: 700, whiteSpace: 'nowrap',
-                      color: precioValHome < PRECIO_MAX_HOME ? '#fff' : 'var(--text)',
-                      fontFamily: 'Sora, sans-serif',
-                    }}>
-                      💰 {precioValHome < PRECIO_MAX_HOME ? `$${precioValHome.toLocaleString('es-AR')}` : (filtros.periodo === 'dia' ? t('precioDia') : t('precioMes'))}
-                    </span>
-                    <input
-                      type="range"
-                      min={0} max={PRECIO_MAX_HOME} step={PRECIO_STEP}
-                      value={precioValHome > PRECIO_MAX_HOME ? PRECIO_MAX_HOME : precioValHome}
-                      onChange={e => {
-                        const val = Number(e.target.value);
-                        aplicarFiltros({ precio_max: val < PRECIO_MAX_HOME ? val : undefined });
-                      }}
-                      style={{ width: 80, cursor: 'pointer', accentColor: precioValHome < PRECIO_MAX_HOME ? '#fff' : 'var(--orange)' }}
-                    />
-                  </div>
-                )}
+                    💰 {precioValHome < PRECIO_MAX_HOME ? `$${precioValHome.toLocaleString('es-AR')}/día` : t('precioDia')}
+                  </span>
+                  <input
+                    type="range"
+                    min={0} max={PRECIO_MAX_HOME} step={PRECIO_STEP}
+                    value={precioValHome > PRECIO_MAX_HOME ? PRECIO_MAX_HOME : precioValHome}
+                    onChange={e => {
+                      const val = Number(e.target.value);
+                      aplicarFiltros({ precio_max: val < PRECIO_MAX_HOME ? val : undefined });
+                    }}
+                    style={{ width: 80, cursor: 'pointer', accentColor: precioValHome < PRECIO_MAX_HOME ? '#fff' : 'var(--orange)' }}
+                  />
+                </div>
 
                 {/* Nivel de Seguridad — pill con estrellas inline */}
                 <div

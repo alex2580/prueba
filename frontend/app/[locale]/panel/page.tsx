@@ -166,7 +166,7 @@ export default function PanelPage() {
   const [editando, setEditando] = useState<Espacio | null>(null);
   const [editForm, setEditForm] = useState({
     nombre: '', descripcion: '', direccion: '',
-    precio_dia: '', precio_mes: '', categoria: '', moneda: 'ARS',
+    precio_dia: '', categoria: '', moneda: 'ARS',
     m2: '', lat: '', lng: '',
   });
   const editDireccionRef = useRef<HTMLInputElement>(null);
@@ -367,7 +367,7 @@ export default function PanelPage() {
     try {
       await espaciosAPI.actualizar(id, {
         nombre: esp.nombre, direccion: esp.direccion, barrio: esp.barrio,
-        m2: esp.m2, tipo: esp.tipo, precio_dia: esp.precio_dia, precio_mes: esp.precio_mes,
+        m2: esp.m2, tipo: esp.tipo, precio_dia: esp.precio_dia,
         descripcion: esp.descripcion || '', lat: esp.lat, lng: esp.lng,
         disponible,
       }, token);
@@ -384,7 +384,6 @@ export default function PanelPage() {
       descripcion: esp.descripcion || '',
       direccion: esp.direccion || '',
       precio_dia: String(esp.precio_dia || ''),
-      precio_mes: String(esp.precio_mes || ''),
       categoria: (esp as any).categoria || '',
       moneda: esp.moneda || 'ARS',
       m2: esp.m2 ? String(esp.m2) : '',
@@ -613,7 +612,6 @@ export default function PanelPage() {
         direccion: editForm.direccion,
         barrio: editando.barrio,
         precio_dia: Number(editForm.precio_dia) || 0,
-        precio_mes: Number(editForm.precio_mes) || 0,
         m2: editForm.m2 ? Number(editForm.m2) : undefined,
         tipo: editando.tipo,
         lat: editForm.lat ? Number(editForm.lat) : editando.lat,
@@ -886,7 +884,6 @@ export default function PanelPage() {
                             </div>
                             <div style={{ fontSize: '.82rem', fontWeight: 700, marginTop: '.2rem', display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
                               {esp.precio_dia > 0 && <span style={{ color: 'var(--orange)' }}>{formatARS(esp.precio_dia)}/día</span>}
-                              {esp.precio_mes > 0 && <span style={{ color: 'var(--orange)' }}>{formatARS(esp.precio_mes)}/mes</span>}
                             </div>
                             {esp.fecha_vencimiento && !esVencida && !proximaAVencer && (
                               <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginTop: '.2rem' }}>
@@ -1850,12 +1847,6 @@ export default function PanelPage() {
                     onChange={e => setEditForm(f => ({ ...f, precio_dia: e.target.value }))}
                     placeholder="850" />
                 </div>
-                <div>
-                  <label className="form-label">Precio por mes</label>
-                  <input type="number" value={editForm.precio_mes} min="0"
-                    onChange={e => setEditForm(f => ({ ...f, precio_mes: e.target.value }))}
-                    placeholder="18000" />
-                </div>
               </div>
             </div>
           )}
@@ -1864,7 +1855,6 @@ export default function PanelPage() {
           {editTab === 'calendario' && (
             <CalendarioDisponibilidad
               precioDia={Number(editForm.precio_dia) || 0}
-              precioMes={Number(editForm.precio_mes) || 0}
               value={editDisponibilidad}
               onChange={setEditDisponibilidad}
             />
