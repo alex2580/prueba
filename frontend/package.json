@@ -22,7 +22,7 @@
     "react-dom": "^18",
     "react-multi-date-picker": "^4.5.2",
     "socket.io-client": "^4.7.5",
-    "typescript": "^5"
+    "typescript": "^6"
   },
   "devDependencies": {
     "@types/google.maps": "^3.55.11",
