@@ -17,27 +17,26 @@ import { getFotoFallback, getFotosFallback } from '@/lib/fotosFallback';
 import QRCode from 'qrcode';
 import { Calendar } from 'react-multi-date-picker';
 
+const Cal = Calendar as any;
 const SEMANA = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'];
 const MESES  = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
-function isoFromDateObj(d: any): string {
-  const date = d.toDate ? d.toDate() : new Date(d);
-  return [
-    date.getFullYear(),
-    String(date.getMonth() + 1).padStart(2, '0'),
-    String(date.getDate()).padStart(2, '0'),
-  ].join('-');
-}
-
-function expandIsoRange(desde: string, hasta: string): string[] {
-  const days: string[] = [];
-  const cur = new Date(desde + 'T12:00:00');
-  const end = new Date((hasta || desde) + 'T12:00:00');
-  while (cur <= end) {
-    days.push(`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}-${String(cur.getDate()).padStart(2,'0')}`);
-    cur.setDate(cur.getDate() + 1);
-  }
-  return days;
+function expandRanges(ranges: any[]): string[] {
+  const days = new Set<string>();
+  if (!Array.isArray(ranges)) return [];
+  ranges.forEach((r: any) => {
+    if (!Array.isArray(r)) return;
+    const [start, end] = r;
+    if (!start) return;
+    const toMs = (d: any) => (d.toDate ? d.toDate() : new Date(d)).setHours(12, 0, 0, 0);
+    const cur = new Date(toMs(start));
+    const e   = new Date(end ? toMs(end) : toMs(start));
+    while (cur <= e) {
+      days.add(`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}-${String(cur.getDate()).padStart(2,'0')}`);
+      cur.setDate(cur.getDate() + 1);
+    }
+  });
+  return Array.from(days).sort();
 }
 
 
@@ -132,8 +131,7 @@ export default function ReservarPage() {
 
   // Step 1 state
   const [diasMulti, setDiasMulti] = useState<string[]>([]);
-  const [rDesde, setRDesde] = useState('');
-  const [rHasta, setRHasta] = useState('');
+  const [rangesValue, setRangesValue] = useState<any[]>([]);
   const [step1Error, setStep1Error] = useState('');
   const [fechasOcupadas, setFechasOcupadas] = useState<string[]>([]);
 
@@ -371,8 +369,10 @@ export default function ReservarPage() {
                       .rmdp-calendar { width: 100% !important; }
                       .rmdp-day-picker { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
                       .rmdp-header { font-family: Sora, sans-serif; font-weight: 700; }
-                      .rmdp-day.rmdp-selected span:not(.highlight) { background: var(--orange) !important; color: #fff !important; }
-                      .rmdp-day:not(.rmdp-disabled):not(.rmdp-selected) span:hover { background: rgba(232,98,42,.2) !important; }
+                      .rmdp-range { background: rgba(232,98,42,.15) !important; color: var(--text) !important; }
+                      .rmdp-range.start span, .rmdp-range.end span { background: var(--orange) !important; color: #fff !important; }
+                      .rmdp-range.start, .rmdp-range.end { background: var(--orange) !important; }
+                      .rmdp-day:not(.rmdp-disabled):not(.rmdp-range) span:hover { background: rgba(232,98,42,.2) !important; }
                       .rmdp-day.rmdp-disabled { opacity: 0.35; cursor: not-allowed; }
                       .rmdp-day.rmdp-today span { border: 1.5px solid var(--orange) !important; font-weight: 700; }
                       .rmdp-arrow { border-color: var(--text2) !important; }
@@ -381,22 +381,23 @@ export default function ReservarPage() {
                     <div style={{ background: 'rgba(232,98,42,.06)', border: '1px solid rgba(232,98,42,.2)', borderRadius: 8, padding: '.6rem .85rem', marginBottom: '.75rem', display: 'grid', gap: '.25rem' }}>
                       <div style={{ fontSize: '.75rem', fontWeight: 700, color: 'var(--orange)', fontFamily: 'Sora, sans-serif' }}>¿Cómo seleccionar fechas?</div>
                       <div style={{ fontSize: '.72rem', color: 'var(--text2)', display: 'flex', gap: '.4rem' }}>
-                        <span>📅</span><span><strong>Día suelto:</strong> tocá cualquier día del calendario para marcarlo o desmarcarlo.</span>
+                        <span>1️⃣</span><span><strong>Primer click:</strong> marcá el inicio del período que necesitás.</span>
                       </div>
                       <div style={{ fontSize: '.72rem', color: 'var(--text2)', display: 'flex', gap: '.4rem' }}>
-                        <span>📆</span><span><strong>Rango de fechas:</strong> completá Desde y Hasta en el panel inferior y tocá <em>+ Agregar rango</em>.</span>
+                        <span>2️⃣</span><span><strong>Segundo click:</strong> marcá el fin — todos los días del rango quedan seleccionados.</span>
                       </div>
                       <div style={{ fontSize: '.72rem', color: 'var(--text2)', display: 'flex', gap: '.4rem' }}>
-                        <span>✨</span><span>Podés combinar días sueltos y múltiples rangos en una misma reserva.</span>
+                        <span>✨</span><span>Repetí para agregar más rangos. Un solo click = un día suelto.</span>
                       </div>
                     </div>
-                    <Calendar
+                    <Cal
                       multiple
-                      value={diasMulti.map(iso => new Date(iso + 'T12:00:00'))}
-                      onChange={(dates: any) => {
-                        if (!dates) { setDiasMulti([]); return; }
-                        const arr = Array.isArray(dates) ? dates : [dates];
-                        setDiasMulti(arr.map(isoFromDateObj).sort());
+                      range
+                      value={rangesValue}
+                      onChange={(ranges: any) => {
+                        const next = ranges ?? [];
+                        setRangesValue(next);
+                        setDiasMulti(expandRanges(next));
                         setStep1Error('');
                       }}
                       numberOfMonths={2}
@@ -414,44 +415,17 @@ export default function ReservarPage() {
                       }}
                     />
 
-                    {/* Agregar rango */}
-                    <div style={{ marginTop: '.85rem', background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '.75rem', display: 'flex', gap: '.5rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
-                      <div style={{ flex: 1, minWidth: 120 }}>
-                        <label style={{ fontSize: '.68rem', color: 'var(--text3)', fontWeight: 600, display: 'block', marginBottom: '.25rem' }}>Desde</label>
-                        <input type="date" value={rDesde} min={new Date().toISOString().slice(0,10)} max={maxDateFinal}
-                          onChange={e => setRDesde(e.target.value)}
-                          style={{ width: '100%', fontSize: '.82rem' }} />
-                      </div>
-                      <div style={{ flex: 1, minWidth: 120 }}>
-                        <label style={{ fontSize: '.68rem', color: 'var(--text3)', fontWeight: 600, display: 'block', marginBottom: '.25rem' }}>Hasta</label>
-                        <input type="date" value={rHasta} min={rDesde || new Date().toISOString().slice(0,10)} max={maxDateFinal}
-                          onChange={e => setRHasta(e.target.value)}
-                          style={{ width: '100%', fontSize: '.82rem' }} />
-                      </div>
-                      <button type="button"
-                        onClick={() => {
-                          if (!rDesde) return;
-                          const nuevos = expandIsoRange(rDesde, rHasta || rDesde);
-                          const merged = Array.from(new Set([...diasMulti, ...nuevos])).sort();
-                          setDiasMulti(merged);
-                          setRDesde(''); setRHasta('');
-                          setStep1Error('');
-                        }}
-                        style={{ padding: '.5rem .9rem', borderRadius: 'var(--r2)', border: 'none', background: 'var(--orange)', color: '#fff', fontWeight: 700, fontSize: '.8rem', cursor: rDesde ? 'pointer' : 'not-allowed', opacity: rDesde ? 1 : .5, whiteSpace: 'nowrap' }}>
-                        + Agregar rango
-                      </button>
+                    <div style={{ marginTop: '.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      {diasMulti.length > 0
+                        ? <span style={{ fontSize: '.72rem', color: 'var(--mint)', fontWeight: 600 }}>✅ {diasMulti.length} día{diasMulti.length !== 1 ? 's' : ''} seleccionado{diasMulti.length !== 1 ? 's' : ''}</span>
+                        : <span />}
                       {diasMulti.length > 0 && (
-                        <button type="button" onClick={() => { setDiasMulti([]); setStep1Error(''); }}
-                          style={{ padding: '.5rem .75rem', borderRadius: 'var(--r2)', border: '1px solid var(--border)', background: 'none', color: 'var(--text3)', fontSize: '.78rem', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                        <button type="button" onClick={() => { setRangesValue([]); setDiasMulti([]); setStep1Error(''); }}
+                          style={{ background: 'none', border: 'none', color: 'var(--text3)', fontSize: '.72rem', cursor: 'pointer' }}>
                           Limpiar
                         </button>
                       )}
                     </div>
-                    {diasMulti.length > 0 && (
-                      <div style={{ marginTop: '.4rem', fontSize: '.72rem', color: 'var(--mint)', fontWeight: 600 }}>
-                        ✅ {diasMulti.length} día{diasMulti.length !== 1 ? 's' : ''} seleccionado{diasMulti.length !== 1 ? 's' : ''}
-                      </div>
-                    )}
 
                     {precioEstimado > 0 && (
                       <div style={{
