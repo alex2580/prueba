@@ -15,208 +15,32 @@ import type { ServicioTipo } from '@/types';
 import { formatARS } from '@/lib/utils';
 import { getFotoFallback, getFotosFallback } from '@/lib/fotosFallback';
 import QRCode from 'qrcode';
+import { Calendar } from 'react-multi-date-picker';
 
-// ─── Mini Calendar ──────────────────────────────────────────────
+const SEMANA = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'];
+const MESES  = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
-type ModoCalendario = 'dia' | 'mes' | 'ambos';
-
-function MiniCalendar({
-  diasDisponibles,
-  diasOcupados = [],
-  fechaDesde,
-  fechaHasta,
-  onSelect,
-  modo = 'ambos',
-  diasMulti = [],
-  onSelectMulti,
-  maxDate,
-}: {
-  diasDisponibles?: string[];
-  diasOcupados?: string[];
-  fechaDesde: string;
-  fechaHasta: string;
-  onSelect: (desde: string, hasta: string) => void;
-  modo?: ModoCalendario;
-  diasMulti?: string[];
-  onSelectMulti?: (dias: string[]) => void;
-  maxDate?: string;
-}) {
-  const [month, setMonth] = useState(() => new Date());
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-  const year = month.getFullYear();
-  const mi = month.getMonth();
-  const firstDay = new Date(year, mi, 1).getDay();
-  const daysInMonth = new Date(year, mi + 1, 0).getDate();
-  const cells: (Date | null)[] = [];
-  for (let i = 0; i < firstDay; i++) cells.push(null);
-  for (let d = 1; d <= daysInMonth; d++) cells.push(new Date(year, mi, d));
-
-  function pad(n: number) { return String(n).padStart(2, '0'); }
-  function toISO(d: Date) {
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-  }
-  function isAvail(d: Date) {
-    const iso = toISO(d);
-    if (maxDate && iso > maxDate) return false;
-    if (diasOcupados.includes(iso)) return false;
-    if (!diasDisponibles?.length) return true;
-    return diasDisponibles.includes(iso);
-  }
-  function inRange(d: Date) {
-    if (!fechaDesde || !fechaHasta) return false;
-    const iso = toISO(d);
-    return iso > fechaDesde && iso < fechaHasta;
-  }
-  function isEdge(d: Date) {
-    const iso = toISO(d);
-    return iso === fechaDesde || iso === fechaHasta;
-  }
-
-  const diasSelec = fechaDesde && fechaHasta
-    ? Math.round((new Date(fechaHasta).getTime() - new Date(fechaDesde).getTime()) / 86400000) + 1
-    : 0;
-  const esMensual = diasSelec >= 28;
-
-  const maxDateObj = maxDate ? new Date(maxDate + 'T12:00:00') : null;
-  const canGoNext = !maxDateObj || new Date(year, mi + 1, 1) <= maxDateObj;
-
-  function handleClick(d: Date) {
-    if (d < today || !isAvail(d)) return;
-    const iso = toISO(d);
-
-    if (modo === 'dia') {
-      // Toggle: agregar o quitar el día del array
-      const nuevo = diasMulti.includes(iso)
-        ? diasMulti.filter(x => x !== iso)
-        : [...diasMulti, iso].sort();
-      onSelectMulti?.(nuevo);
-    } else if (modo === 'mes') {
-      const primerDia = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-01`;
-      const ultimoDia = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate())}`;
-      onSelect(primerDia, ultimoDia);
-    } else {
-      if (!fechaDesde || (fechaDesde && fechaHasta)) {
-        onSelect(iso, '');
-      } else if (iso < fechaDesde) {
-        onSelect(iso, fechaDesde);
-      } else {
-        onSelect(fechaDesde, iso);
-      }
-    }
-  }
-
-  const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-
-  const colorEdge  = esMensual ? '#3b82f6' : 'var(--orange)';
-  const colorRange = esMensual ? 'rgba(59,130,246,.12)' : 'rgba(232,98,42,.12)';
-  const borderRange = esMensual ? '1px solid rgba(59,130,246,.2)' : '1px solid rgba(232,98,42,.18)';
-
-  return (
-    <div>
-      {/* Indicador de modo */}
-      <div style={{ display: 'flex', gap: '.5rem', marginBottom: '.75rem', flexWrap: 'wrap' }}>
-        {modo === 'dia' && (
-          <div style={{ fontSize: '.72rem', color: 'var(--orange)', background: 'rgba(232,98,42,.08)', border: '1px solid rgba(232,98,42,.25)', borderRadius: 6, padding: '.25rem .65rem', fontWeight: 600 }}>
-            📅 Tocá los días que querés reservar — podés elegir varios salteados
-          </div>
-        )}
-        {modo === 'mes' && (
-          <div style={{ fontSize: '.72rem', color: '#3b82f6', background: 'rgba(59,130,246,.1)', border: '1px solid rgba(59,130,246,.25)', borderRadius: 6, padding: '.25rem .65rem', fontWeight: 600 }}>
-            🗓 Seleccioná un mes completo
-          </div>
-        )}
-        {modo === 'ambos' && fechaDesde && fechaHasta && (
-          <div style={{
-            fontSize: '.72rem', fontWeight: 600, borderRadius: 6, padding: '.25rem .65rem',
-            color: esMensual ? '#3b82f6' : 'var(--orange)',
-            background: esMensual ? 'rgba(59,130,246,.1)' : 'rgba(232,98,42,.08)',
-            border: `1px solid ${esMensual ? 'rgba(59,130,246,.25)' : 'rgba(232,98,42,.25)'}`,
-          }}>
-            {esMensual ? `🗓 Tarifa mensual (${diasSelec} días)` : `📅 Tarifa diaria (${diasSelec} día${diasSelec !== 1 ? 's' : ''})`}
-          </div>
-        )}
-        {modo === 'ambos' && fechaDesde && !fechaHasta && (
-          <div style={{ fontSize: '.72rem', color: 'var(--text3)', fontStyle: 'italic' }}>Seleccioná la fecha de fin</div>
-        )}
-        {modo === 'ambos' && !fechaDesde && (
-          <div style={{ fontSize: '.72rem', color: 'var(--text3)', fontStyle: 'italic' }}>Seleccioná la fecha de inicio</div>
-        )}
-      </div>
-
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.75rem' }}>
-        <button
-          onClick={() => setMonth(m => new Date(m.getFullYear(), m.getMonth() - 1, 1))}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: 'var(--text2)', padding: '.2rem .5rem' }}
-        >←</button>
-        <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.88rem' }}>
-          {MONTHS[mi]} {year}
-        </span>
-        <button
-          onClick={() => canGoNext && setMonth(m => new Date(m.getFullYear(), m.getMonth() + 1, 1))}
-          style={{ background: 'none', border: 'none', cursor: canGoNext ? 'pointer' : 'default', fontSize: '1rem', color: canGoNext ? 'var(--text2)' : '#ccc', padding: '.2rem .5rem' }}
-        >→</button>
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
-        {['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map(d => (
-          <div key={d} style={{ textAlign: 'center', fontSize: '.62rem', color: '#aaa', fontWeight: 700, padding: '.2rem 0', letterSpacing: '.02em' }}>{d}</div>
-        ))}
-        {cells.map((d, i) => {
-          if (!d) return <div key={i} />;
-          const avail = isAvail(d);
-          const past = d < today;
-          const iso = toISO(d);
-
-          if (modo === 'dia') {
-            const selected = diasMulti.includes(iso);
-            return (
-              <div
-                key={i}
-                onClick={() => handleClick(d)}
-                style={{
-                  textAlign: 'center', fontSize: '.78rem', padding: '.32rem .1rem',
-                  borderRadius: 6, cursor: (!past && avail) ? 'pointer' : 'default',
-                  background: selected ? 'var(--orange)' : avail && !past ? 'rgba(16,185,129,.07)' : 'transparent',
-                  color: selected ? '#fff' : past ? '#ccc' : avail ? 'var(--text)' : '#ccc',
-                  border: selected ? '1.5px solid var(--orange)' : avail && !past ? '1px solid rgba(16,185,129,.2)' : '1px solid transparent',
-                  fontWeight: selected ? 700 : 400,
-                  opacity: past ? 0.4 : 1,
-                }}
-              >
-                {d.getDate()}
-              </div>
-            );
-          }
-
-          const edge = isEdge(d);
-          const range = inRange(d);
-          return (
-            <div
-              key={i}
-              onClick={() => handleClick(d)}
-              style={{
-                textAlign: 'center', fontSize: '.78rem', padding: '.32rem .1rem',
-                borderRadius: 6, cursor: (!past && avail) ? 'pointer' : 'default',
-                background: edge ? colorEdge : range ? colorRange : avail && !past ? 'rgba(16,185,129,.07)' : 'transparent',
-                color: edge ? '#fff' : past ? '#ccc' : avail ? 'var(--text)' : '#ccc',
-                border: edge ? `1.5px solid ${colorEdge}` : range ? borderRange : avail && !past ? '1px solid rgba(16,185,129,.2)' : '1px solid transparent',
-                fontWeight: edge ? 700 : 400,
-                opacity: past ? 0.4 : 1,
-              }}
-            >
-              {d.getDate()}
-            </div>
-          );
-        })}
-      </div>
-      {diasDisponibles?.length ? (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem', marginTop: '.75rem', fontSize: '.7rem', color: 'var(--text3)' }}>
-          <span style={{ width: 10, height: 10, borderRadius: 3, background: 'rgba(16,185,129,.4)', display: 'inline-block' }} />
-          Días disponibles marcados por el oferente
-        </div>
-      ) : null}
-    </div>
-  );
+function isoDate(d: any): string {
+  const date = d.toDate ? d.toDate() : new Date(d);
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0'),
+  ].join('-');
 }
+
+function expandRange(start: any, end: any): string[] {
+  const days: string[] = [];
+  const s = new Date((start.toDate ? start.toDate() : new Date(start)).setHours(12, 0, 0, 0));
+  const e = new Date((end.toDate ? end.toDate() : new Date(end)).setHours(12, 0, 0, 0));
+  const cur = new Date(s);
+  while (cur <= e) {
+    days.push(`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}-${String(cur.getDate()).padStart(2,'0')}`);
+    cur.setDate(cur.getDate() + 1);
+  }
+  return days;
+}
+
 
 // ─── Photo Carousel ─────────────────────────────────────────────
 
@@ -308,8 +132,7 @@ export default function ReservarPage() {
   const [step, setStep] = useState(1);
 
   // Step 1 state
-  const [fechaDesde, setFechaDesde] = useState('');
-  const [fechaHasta, setFechaHasta] = useState('');
+  const [rangeValue, setRangeValue] = useState<any[]>([]);
   const [diasMulti, setDiasMulti] = useState<string[]>([]);
   const [step1Error, setStep1Error] = useState('');
   const [fechasOcupadas, setFechasOcupadas] = useState<string[]>([]);
@@ -543,16 +366,52 @@ export default function ReservarPage() {
                       📅 Disponibilidad & Fechas
                     </div>
 
-                    <MiniCalendar
-                      diasDisponibles={disponibilidad?.dias}
-                      diasOcupados={fechasOcupadas}
-                      fechaDesde={fechaDesde}
-                      fechaHasta={fechaHasta}
-                      onSelect={(d, h) => { setFechaDesde(d); setFechaHasta(h); setStep1Error(''); }}
-                      modo="dia"
-                      diasMulti={diasMulti}
-                      onSelectMulti={dias => { setDiasMulti(dias); setStep1Error(''); }}
-                      maxDate={maxDateFinal}
+                    <style>{`
+                      .rmdp-wrapper { width: 100% !important; box-shadow: none !important; background: transparent !important; }
+                      .rmdp-calendar { width: 100% !important; }
+                      .rmdp-day-picker { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+                      .rmdp-header { font-family: Sora, sans-serif; font-weight: 700; }
+                      .rmdp-range { background: rgba(232,98,42,.15) !important; color: var(--text) !important; }
+                      .rmdp-range.start, .rmdp-range.end { background: var(--orange) !important; }
+                      .rmdp-range.start span, .rmdp-range.end span { background: var(--orange) !important; color: #fff !important; }
+                      .rmdp-day:not(.rmdp-disabled):not(.rmdp-range) span:hover { background: rgba(232,98,42,.2) !important; }
+                      .rmdp-day.rmdp-disabled { opacity: 0.3; cursor: not-allowed; }
+                      .rmdp-day.rmdp-today span { border: 1.5px solid var(--orange) !important; font-weight: 700; }
+                      .rmdp-arrow { border-color: var(--text2) !important; }
+                      .rmdp-arrow-container:hover { background: rgba(232,98,42,.1) !important; }
+                    `}</style>
+                    <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginBottom: '.6rem', fontStyle: 'italic' }}>
+                      📅 Tocá para elegir el inicio y luego el fin — un día o un rango
+                    </div>
+                    <Calendar
+                      range
+                      value={rangeValue}
+                      onChange={(dates: any) => {
+                        setRangeValue(dates ?? []);
+                        if (!dates || !Array.isArray(dates) || dates.length === 0) {
+                          setDiasMulti([]); return;
+                        }
+                        const [start, end] = dates;
+                        if (!start) { setDiasMulti([]); return; }
+                        const days = expandRange(start, end ?? start);
+                        setDiasMulti(days);
+                        setStep1Error('');
+                      }}
+                      numberOfMonths={2}
+                      minDate={new Date()}
+                      maxDate={new Date(maxDateFinal + 'T12:00:00')}
+                      weekDays={SEMANA}
+                      months={MESES}
+                      weekStartDayIndex={1}
+                      mapDays={({ date }: any) => {
+                        const iso = `${date.year}-${String(date.month.number).padStart(2,'0')}-${String(date.day).padStart(2,'0')}`;
+                        if (fechasOcupadas.includes(iso)) {
+                          return { disabled: true, style: { color: '#ef4444', textDecoration: 'line-through' } };
+                        }
+                        if (disponibilidad?.dias?.length && !disponibilidad.dias.includes(iso)) {
+                          return { disabled: true, style: { color: '#ccc' } };
+                        }
+                      }}
                     />
 
                     {precioEstimado > 0 && (

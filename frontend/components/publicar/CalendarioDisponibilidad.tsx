@@ -1,14 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import {
-  format, addMonths, subMonths,
-  isSameMonth, startOfMonth, endOfMonth, eachDayOfInterval,
-  startOfWeek, endOfWeek, isToday, isBefore, isAfter, startOfToday, addDays,
-} from 'date-fns';
-import { es } from 'date-fns/locale';
+import { Calendar } from 'react-multi-date-picker';
 
-const DIAS_VIGENCIA = 90;
+const DIAS_VIGENCIA = 60;
 
 export interface Disponibilidad {
   dias?: string[];
@@ -20,117 +14,83 @@ interface Props {
   onChange: (d: Disponibilidad) => void;
 }
 
-const DIAS_SEMANA = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa', 'Do'];
+const SEMANA = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'];
+const MESES  = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
-function CalendarioDias({ dias, onChange }: { dias: string[]; onChange: (d: string[]) => void }) {
-  const [mes, setMes] = useState(new Date());
-  const hoy = startOfToday();
-  const limite = addDays(hoy, DIAS_VIGENCIA);
-
-  const inicio = startOfWeek(startOfMonth(mes), { weekStartsOn: 1 });
-  const fin    = endOfWeek(endOfMonth(mes),     { weekStartsOn: 1 });
-  const celdas = eachDayOfInterval({ start: inicio, end: fin });
-
-  function toggleDia(fecha: Date) {
-    if (isBefore(fecha, hoy) || isAfter(fecha, limite)) return;
-    const key = format(fecha, 'yyyy-MM-dd');
-    if (dias.includes(key)) {
-      onChange(dias.filter(d => d !== key));
-    } else {
-      onChange([...dias, key].sort());
-    }
-  }
-
-  return (
-    <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '.75rem' }}>
-        <button type="button" onClick={() => setMes(m => subMonths(m, 1))}
-          style={{ background: 'none', border: 'none', color: 'var(--text2)', cursor: 'pointer', fontSize: '1.1rem', padding: '4px 8px' }}>
-          ‹
-        </button>
-        <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.9rem', color: 'var(--text)', textTransform: 'capitalize' }}>
-          {format(mes, 'MMMM yyyy', { locale: es })}
-        </span>
-        <button type="button" onClick={() => setMes(m => addMonths(m, 1))}
-          style={{ background: 'none', border: 'none', color: 'var(--text2)', cursor: 'pointer', fontSize: '1.1rem', padding: '4px 8px' }}>
-          ›
-        </button>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2, marginBottom: 4 }}>
-        {DIAS_SEMANA.map(d => (
-          <div key={d} style={{ textAlign: 'center', fontSize: '.68rem', color: 'var(--text3)', fontWeight: 600, padding: '2px 0' }}>{d}</div>
-        ))}
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
-        {celdas.map(dia => {
-          const key       = format(dia, 'yyyy-MM-dd');
-          const pasado    = isBefore(dia, hoy);
-          const fuera     = isAfter(dia, limite);
-          const bloqueado = pasado || fuera;
-          const delMes    = isSameMonth(dia, mes);
-          const selected  = dias.includes(key);
-          const esHoy     = isToday(dia);
-
-          return (
-            <button
-              key={key}
-              type="button"
-              onClick={() => toggleDia(dia)}
-              disabled={bloqueado}
-              title={fuera ? 'Fuera del período de vigencia (90 días)' : undefined}
-              style={{
-                padding: '6px 2px',
-                borderRadius: 6,
-                border: esHoy ? '1.5px solid var(--orange)' : '1.5px solid transparent',
-                background: selected ? 'var(--orange)' : 'transparent',
-                color: selected ? '#fff' : bloqueado || !delMes ? 'var(--text3)' : 'var(--text)',
-                fontSize: '.78rem',
-                fontWeight: selected ? 700 : 400,
-                cursor: bloqueado ? 'not-allowed' : 'pointer',
-                opacity: !delMes ? 0.3 : fuera ? 0.25 : 1,
-                transition: 'all .1s',
-              }}
-            >
-              {format(dia, 'd')}
-            </button>
-          );
-        })}
-      </div>
-
-      {dias.length > 0 && (
-        <div style={{ marginTop: '.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: '.75rem', color: 'var(--mint)' }}>
-            ✅ {dias.length} día{dias.length !== 1 ? 's' : ''} disponible{dias.length !== 1 ? 's' : ''}
-          </span>
-          <button type="button" onClick={() => onChange([])}
-            style={{ background: 'none', border: 'none', color: 'var(--text3)', fontSize: '.72rem', cursor: 'pointer' }}>
-            Limpiar
-          </button>
-        </div>
-      )}
-    </div>
-  );
+function isoFromDateObj(d: any): string {
+  const date = d.toDate ? d.toDate() : new Date(d);
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0'),
+  ].join('-');
 }
 
 export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) {
   if (!precioDia) return null;
 
+  const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+  const maxDate = new Date(hoy); maxDate.setDate(hoy.getDate() + DIAS_VIGENCIA - 1);
+
+  const selected = (value.dias || []).map(iso => new Date(iso + 'T12:00:00'));
+
+  function handleChange(dates: any) {
+    if (!dates) { onChange({ ...value, dias: [] }); return; }
+    const arr = Array.isArray(dates) ? dates : [dates];
+    const isos = arr.map(isoFromDateObj).sort();
+    onChange({ ...value, dias: isos });
+  }
+
+  const count = value.dias?.length ?? 0;
+
   return (
     <div style={{ background: 'var(--surface2)', border: '1.5px solid var(--border)', borderRadius: 'var(--r2)', padding: '1rem' }}>
+      <style>{`
+        .rmdp-wrapper { width: 100% !important; box-shadow: none !important; background: transparent !important; }
+        .rmdp-calendar { width: 100% !important; }
+        .rmdp-day-picker { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .rmdp-month-picker, .rmdp-year-picker { background: var(--surface2) !important; }
+        .rmdp-header { font-family: Sora, sans-serif; font-weight: 700; }
+        .rmdp-day.rmdp-selected span:not(.highlight) { background: var(--orange) !important; color: #fff !important; }
+        .rmdp-day:not(.rmdp-disabled):not(.rmdp-day-hidden) span:hover { background: rgba(232,98,42,.18) !important; color: var(--text) !important; }
+        .rmdp-arrow { border-color: var(--text2) !important; }
+        .rmdp-arrow-container:hover { background: rgba(232,98,42,.1) !important; }
+        .rmdp-today span { border: 1.5px solid var(--orange) !important; font-weight: 700; }
+      `}</style>
+
       <div style={{ marginBottom: '.75rem' }}>
         <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.88rem', marginBottom: '.2rem' }}>
           📅 Días disponibles
         </div>
         <div style={{ fontSize: '.75rem', color: 'var(--text3)' }}>
-          Seleccioná los días en que tu espacio está disponible para reservar.
+          Seleccioná los días en que tu espacio está disponible. Tocá para marcar o desmarcar.
         </div>
       </div>
-      <CalendarioDias
-        dias={value.dias || []}
-        onChange={dias => onChange({ ...value, dias })}
+
+      <Calendar
+        multiple
+        value={selected}
+        onChange={handleChange}
+        numberOfMonths={2}
+        minDate={hoy}
+        maxDate={maxDate}
+        weekDays={SEMANA}
+        months={MESES}
+        weekStartDayIndex={1}
+        className="rmdp-mobile"
       />
+
+      {count > 0 && (
+        <div style={{ marginTop: '.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontSize: '.75rem', color: 'var(--mint)' }}>
+            ✅ {count} día{count !== 1 ? 's' : ''} disponible{count !== 1 ? 's' : ''}
+          </span>
+          <button type="button" onClick={() => onChange({ ...value, dias: [] })}
+            style={{ background: 'none', border: 'none', color: 'var(--text3)', fontSize: '.72rem', cursor: 'pointer' }}>
+            Limpiar
+          </button>
+        </div>
+      )}
     </div>
   );
 }
