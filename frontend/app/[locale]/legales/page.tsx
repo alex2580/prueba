@@ -380,6 +380,44 @@ export default function LegalesPage() {
             </div>
           </section>
 
+          {/* 17 */}
+          <section style={sectionStyle} id="danos">
+            <h2 style={h2Style}>17. Daños al espacio causados por el cliente</h2>
+            <p style={{ ...pStyle, marginBottom: '.75rem' }}>
+              El cliente es responsable de devolver el espacio en las mismas condiciones en que lo recibió.
+              Cualquier daño material ocasionado durante la vigencia de la reserva — incluyendo pero no limitado a:
+              roturas, rayones o manchas en paredes, pisos o techos; daños en cerraduras, llaves o mecanismos de acceso;
+              deterioro de instalaciones eléctricas, sanitarias o de gas; y cualquier otro menoscabo al espacio o a
+              las instalaciones del inmueble — es responsabilidad exclusiva del cliente.
+            </p>
+
+            <p style={{ ...pStyle, fontWeight: 700, marginBottom: '.4rem' }}>Primera instancia — resolución directa entre las partes</p>
+            <p style={{ ...pStyle, marginBottom: '.75rem' }}>
+              Ante la detección de un daño, el proveedor debe comunicárselo al cliente de forma directa e inmediata,
+              idealmente a través del chat de la reserva (si aún está activo) o por cualquier otro medio acordado.
+              Las partes tienen la posibilidad y se las alienta a llegar a un acuerdo económico directo
+              sin intervención de la plataforma. TodasMisCosas.com <strong>no es responsable</strong> de los
+              daños producidos ni actúa como garante del cobro de los mismos.
+            </p>
+
+            <p style={{ ...pStyle, fontWeight: 700, marginBottom: '.4rem' }}>Segunda instancia — disputa formal ante la plataforma</p>
+            <p style={{ ...pStyle, marginBottom: '.75rem' }}>
+              Si las partes no logran un acuerdo directo, el proveedor puede iniciar el proceso formal de disputa
+              descripto en la <strong>sección 16</strong>, enviando un correo a{' '}
+              <a href="mailto:contacto@todasmiscosas.com" style={{ color: 'var(--orange)' }}>contacto@todasmiscosas.com</a>{' '}
+              con el asunto <strong>"Disputa — Daños — [ID de reserva]"</strong>. En ese caso deberá aportar
+              documentación del estado previo y posterior del espacio (fotos, videos u otro respaldo).
+              TodasMisCosas.com evaluará la evidencia presentada y, de corresponder, actuará como
+              mediador entre las partes dentro del alcance de la plataforma.
+            </p>
+
+            <ul style={ulStyle}>
+              <li><strong>Documentación recomendada:</strong> se recomienda al proveedor registrar fotográficamente el estado del espacio antes y después de cada reserva como medida de respaldo ante posibles reclamos.</li>
+              <li><strong>Límite de intervención:</strong> TodasMisCosas.com no tiene capacidad de ejecutar cobros compulsivos ni interviene en disputas judiciales entre las partes. La plataforma actúa únicamente como mediador dentro de su ámbito de servicio.</li>
+              <li><strong>Vía judicial:</strong> sin perjuicio de lo anterior, cualquiera de las partes puede ejercer las acciones legales que correspondan ante los Tribunales Ordinarios de la Ciudad Autónoma de Buenos Aires, conforme a la sección 10.</li>
+            </ul>
+          </section>
+
           <div style={{
             background: 'var(--surface)',
             border: '1px solid var(--border)',
