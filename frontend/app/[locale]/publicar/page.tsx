@@ -239,67 +239,80 @@ export default function PublicarPage() {
   useEffect(() => {
     if (!MAPS_KEY || paso !== 0) return;
 
-    const loader = new Loader({ apiKey: MAPS_KEY, version: 'weekly' });
+    const style = document.createElement('style');
+    style.id = 'pac-fix-publicar';
+    style.textContent = '.pac-container { z-index: 99999 !important; }';
+    document.head.appendChild(style);
 
-    loader.load().then(async (google) => {
+    const timer = setTimeout(() => {
       if (!direccionRef.current) return;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { Autocomplete } = await google.maps.importLibrary('places') as any;
+      const loader = new Loader({ apiKey: MAPS_KEY, version: 'weekly' });
+      loader.load().then(async (google) => {
+        if (!direccionRef.current) return;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { Autocomplete } = await google.maps.importLibrary('places') as any;
 
-      const autocomplete = new Autocomplete(direccionRef.current, {
-        componentRestrictions: { country: 'ar' },
-        fields: ['formatted_address', 'geometry', 'address_components'],
+        const autocomplete = new Autocomplete(direccionRef.current, {
+          componentRestrictions: { country: 'ar' },
+          fields: ['formatted_address', 'geometry', 'address_components'],
+        });
+
+        autocomplete.addListener('place_changed', async () => {
+          const place = autocomplete.getPlace();
+          if (!place.geometry?.location) return;
+
+          const lat = place.geometry.location.lat();
+          const lng = place.geometry.location.lng();
+
+          let barrio = '';
+          for (const comp of place.address_components || []) {
+            if (comp.types.includes('sublocality_level_1') || comp.types.includes('neighborhood') || comp.types.includes('locality')) {
+              barrio = comp.long_name;
+              break;
+            }
+          }
+
+          setForm(f => ({ ...f, direccion: place.formatted_address || f.direccion, lat: String(lat), lng: String(lng), barrio }));
+
+          if (mapPreviewRef.current) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const { Map } = await google.maps.importLibrary('maps') as any;
+            if (!mapObjRef.current) {
+              mapObjRef.current = new Map(mapPreviewRef.current, {
+                center: { lat, lng }, zoom: 15, disableDefaultUI: true, zoomControl: true,
+                styles: [
+                  { elementType: 'geometry', stylers: [{ color: '#0a0e1a' }] },
+                  { elementType: 'labels.text.fill', stylers: [{ color: '#9aacc5' }] },
+                  { elementType: 'labels.text.stroke', stylers: [{ color: '#0a0e1a' }] },
+                  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#1a2035' }] },
+                  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0f1525' }] },
+                  { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+                ],
+              });
+            } else {
+              mapObjRef.current.panTo({ lat, lng });
+            }
+            if (markerRef.current) {
+              markerRef.current.setPosition({ lat, lng });
+            } else {
+              markerRef.current = new google.maps.Marker({
+                map: mapObjRef.current, position: { lat, lng },
+                icon: {
+                  url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="#e8622a"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>')}`,
+                  scaledSize: new google.maps.Size(32, 32),
+                  anchor: new google.maps.Point(16, 32),
+                },
+              });
+            }
+          }
+        });
       });
+    }, 200);
 
-      autocomplete.addListener('place_changed', async () => {
-        const place = autocomplete.getPlace();
-        if (!place.geometry?.location) return;
-
-        const lat = place.geometry.location.lat();
-        const lng = place.geometry.location.lng();
-
-        let barrio = '';
-        for (const comp of place.address_components || []) {
-          if (comp.types.includes('sublocality_level_1') || comp.types.includes('neighborhood') || comp.types.includes('locality')) {
-            barrio = comp.long_name;
-            break;
-          }
-        }
-
-        setForm(f => ({ ...f, direccion: place.formatted_address || f.direccion, lat: String(lat), lng: String(lng), barrio }));
-
-        if (mapPreviewRef.current) {
-          const { Map } = await google.maps.importLibrary('maps') as google.maps.MapsLibrary;
-          if (!mapObjRef.current) {
-            mapObjRef.current = new Map(mapPreviewRef.current, {
-              center: { lat, lng }, zoom: 15, disableDefaultUI: true, zoomControl: true,
-              styles: [
-                { elementType: 'geometry', stylers: [{ color: '#0a0e1a' }] },
-                { elementType: 'labels.text.fill', stylers: [{ color: '#9aacc5' }] },
-                { elementType: 'labels.text.stroke', stylers: [{ color: '#0a0e1a' }] },
-                { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#1a2035' }] },
-                { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0f1525' }] },
-                { featureType: 'poi', stylers: [{ visibility: 'off' }] },
-              ],
-            });
-          } else {
-            mapObjRef.current.panTo({ lat, lng });
-          }
-          if (markerRef.current) {
-            markerRef.current.setPosition({ lat, lng });
-          } else {
-            markerRef.current = new google.maps.Marker({
-              map: mapObjRef.current, position: { lat, lng },
-              icon: {
-                url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="#e8622a"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>')}`,
-                scaledSize: new google.maps.Size(32, 32),
-                anchor: new google.maps.Point(16, 32),
-              },
-            });
-          }
-        }
-      });
-    });
+    return () => {
+      clearTimeout(timer);
+      document.getElementById('pac-fix-publicar')?.remove();
+    };
   }, [paso]);
 
   async function comprimirImagen(file: File, maxW = 1600, quality = 0.82): Promise<File> {
