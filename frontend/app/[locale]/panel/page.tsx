@@ -12,7 +12,6 @@ import { useConversaciones } from '@/hooks/useChat';
 import { ConversacionList } from '@/components/chat/ConversacionList';
 import { MensajesConversacion } from '@/components/chat/MensajesConversacion';
 import { CardEspacio } from '@/components/espacios/CardEspacio';
-import { SeguridadChecklist } from '@/components/publicar/SeguridadChecklist';
 import type { Espacio, Reserva } from '@/types';
 import { MONEDAS } from '@/types';
 import { StatsOferente } from '@/components/panel/StatsOferente';
@@ -188,7 +187,7 @@ export default function PanelPage() {
   const [editSeguridad, setEditSeguridad] = useState<Record<string, boolean>>({});
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
-  const [editTab, setEditTab] = useState<'datos' | 'calendario' | 'seguridad'>('datos');
+  const [editTab, setEditTab] = useState<'datos' | 'calendario'>('datos');
 
   // Extension modal
   const [extModal, setExtModal] = useState(false);
@@ -1754,7 +1753,6 @@ export default function PanelPage() {
             {([
               { key: 'datos',      label: '📋 Datos generales' },
               { key: 'calendario', label: '📅 Calendario' },
-              { key: 'seguridad',  label: '🛡️ Seguridad' },
             ] as const).map(t => (
               <button
                 key={t.key}
@@ -1857,14 +1855,6 @@ export default function PanelPage() {
               precioDia={Number(editForm.precio_dia) || 0}
               value={editDisponibilidad}
               onChange={setEditDisponibilidad}
-            />
-          )}
-
-          {/* ── Tab 3: Seguridad ── */}
-          {editTab === 'seguridad' && (
-            <SeguridadChecklist
-              seguridad={editSeguridad}
-              onChange={key => setEditSeguridad(s => ({ ...s, [key]: !s[key] }))}
             />
           )}
 
