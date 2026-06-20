@@ -666,7 +666,7 @@ export default function PublicarPage() {
               }} />
 
 
-              {/* Moneda + Superficie */}
+              {/* Moneda + Precio por día */}
               <div className="form-row">
                 <div>
                   <label className="form-label">Moneda de publicación</label>
@@ -677,21 +677,7 @@ export default function PublicarPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="form-label">Superficie (m²) <span style={{ color: 'var(--text3)', fontWeight: 400 }}>— opcional</span></label>
-                  <input
-                    type="number"
-                    value={form.m2}
-                    onChange={e => set('m2', e.target.value)}
-                    placeholder=""
-                    min="0"
-                  />
-                </div>
-              </div>
-
-              {/* Precios */}
-              <div className="form-row">
-                <div>
-                  <label className="form-label">Precio por día</label>
+                  <label className="form-label">Precio por día *</label>
                   <input type="number" value={form.precio_dia} onChange={e => set('precio_dia', e.target.value)}
                     placeholder="" min="0" />
                 </div>
