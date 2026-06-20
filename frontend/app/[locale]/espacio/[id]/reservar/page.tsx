@@ -378,8 +378,17 @@ export default function ReservarPage() {
                       .rmdp-arrow { border-color: var(--text2) !important; }
                       .rmdp-arrow-container:hover { background: rgba(232,98,42,.1) !important; }
                     `}</style>
-                    <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginBottom: '.6rem' }}>
-                      📅 Tocá días individuales para seleccionarlos o desmarcarlos. Usá el panel de abajo para agregar un rango.
+                    <div style={{ background: 'rgba(232,98,42,.06)', border: '1px solid rgba(232,98,42,.2)', borderRadius: 8, padding: '.6rem .85rem', marginBottom: '.75rem', display: 'grid', gap: '.25rem' }}>
+                      <div style={{ fontSize: '.75rem', fontWeight: 700, color: 'var(--orange)', fontFamily: 'Sora, sans-serif' }}>¿Cómo seleccionar fechas?</div>
+                      <div style={{ fontSize: '.72rem', color: 'var(--text2)', display: 'flex', gap: '.4rem' }}>
+                        <span>📅</span><span><strong>Día suelto:</strong> tocá cualquier día del calendario para marcarlo o desmarcarlo.</span>
+                      </div>
+                      <div style={{ fontSize: '.72rem', color: 'var(--text2)', display: 'flex', gap: '.4rem' }}>
+                        <span>📆</span><span><strong>Rango de fechas:</strong> completá Desde y Hasta en el panel inferior y tocá <em>+ Agregar rango</em>.</span>
+                      </div>
+                      <div style={{ fontSize: '.72rem', color: 'var(--text2)', display: 'flex', gap: '.4rem' }}>
+                        <span>✨</span><span>Podés combinar días sueltos y múltiples rangos en una misma reserva.</span>
+                      </div>
                     </div>
                     <Calendar
                       multiple
