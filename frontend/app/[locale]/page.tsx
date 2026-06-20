@@ -36,7 +36,6 @@ export default function HomePage() {
     if (p.get('pais'))          f.pais = p.get('pais')!;
     if (p.get('precio_max'))    f.precio_max = Number(p.get('precio_max'));
     if (p.get('seguridad_min')) f.seguridad_min = Number(p.get('seguridad_min'));
-    if (p.get('con_cupo'))      f.con_cupo = true;
     if (p.get('q'))             f.q = p.get('q')!;
     return f;
   });
@@ -90,7 +89,6 @@ export default function HomePage() {
     if (filtros.pais)           p.set('pais', filtros.pais);
     if (filtros.precio_max)     p.set('precio_max', String(filtros.precio_max));
     if (filtros.seguridad_min)  p.set('seguridad_min', String(filtros.seguridad_min));
-    if (filtros.con_cupo)       p.set('con_cupo', 'true');
     if (filtros.q)              p.set('q', filtros.q);
     const qs = p.toString();
     history.replaceState(null, '', qs ? `?${qs}` : window.location.pathname);
@@ -160,8 +158,8 @@ export default function HomePage() {
   const PRECIO_STEP = 500;
   const precioValHome = filtros.precio_max ?? PRECIO_MAX_DIA;
 
-  const filtrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.barrio || filtros.q || filtros.pais || filtros.seguridad_min || filtros.con_cupo);
-  const hayFiltrosActivos = !!(filtros.tipo || filtros.precio_max || userLocation || filtros.q || filtros.pais || filtros.seguridad_min || filtros.con_cupo);
+  const filtrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.barrio || filtros.q || filtros.pais || filtros.seguridad_min);
+  const hayFiltrosActivos = !!(filtros.tipo || filtros.precio_max || userLocation || filtros.q || filtros.pais || filtros.seguridad_min);
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
@@ -351,21 +349,10 @@ export default function HomePage() {
                 </button>
                 <button
                   className={`filter-pill ${filtros.tipo === 'compartido' ? 'active' : ''}`}
-                  onClick={() => aplicarFiltros({
-                    tipo: (filtros.tipo === 'compartido' ? '' : 'compartido') as EspacioTipo,
-                    ...(filtros.tipo === 'compartido' ? { con_cupo: undefined } : {}),
-                  })}
+                  onClick={() => aplicarFiltros({ tipo: (filtros.tipo === 'compartido' ? '' : 'compartido') as EspacioTipo })}
                 >
                   {t('compartido')}
                 </button>
-                {filtros.tipo === 'compartido' && (
-                  <button
-                    className={`filter-pill ${filtros.con_cupo ? 'active' : ''}`}
-                    onClick={() => aplicarFiltros({ con_cupo: filtros.con_cupo ? undefined : true })}
-                  >
-                    🟢 Con espacio disponible
-                  </button>
-                )}
 
                 {/* Precio máximo por día */}
                 <div style={{

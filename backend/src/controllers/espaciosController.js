@@ -45,7 +45,7 @@ async function listar(req, res, next) {
              (SELECT url FROM espacio_fotos ef WHERE ef.espacio_id = e.id ORDER BY ef.orden LIMIT 1) AS img_principal
       FROM espacios e
       JOIN usuarios u ON e.oferente_id = u.id
-      WHERE e.activo = TRUE
+      WHERE e.activo = TRUE AND e.disponible = 1
     `;
     const params = [];
 
@@ -54,16 +54,13 @@ async function listar(req, res, next) {
       sql += ' AND e.tipo = ?';
       params.push(tipo);
       if (tipo === 'compartido') {
-        sql += ' AND e.disponible = 1 AND e.cupo_disponible = 1';
+        sql += ' AND e.cupo_disponible = 1';
       }
     }
 
     sql += ' AND e.precio_dia > 0';
     if (precio_max) { sql += ' AND e.precio_dia <= ?'; params.push(Number(precio_max)); }
     if (precio_min) { sql += ' AND e.precio_dia >= ?'; params.push(Number(precio_min)); }
-
-    if (disponible !== undefined) { sql += ' AND e.disponible = ?'; params.push(disponible === 'true' ? 1 : 0); }
-    if (con_cupo === 'true')      { sql += ' AND e.cupo_disponible = 1 AND e.disponible = 1'; }
     if (con_seguridad === 'true') {
       sql += " AND e.seguridad IS NOT NULL AND e.seguridad NOT IN ('null', '{}', '')";
     }
