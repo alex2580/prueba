@@ -23,15 +23,16 @@ interface RegisterFormProps {
 }
 
 export function RegisterForm({ onRegister, onSwitch, loading, error }: RegisterFormProps) {
-  const [nombre,   setNombre]   = useState('');
-  const [email,    setEmail]    = useState('');
-  const [tel,      setTel]      = useState('');
-  const [password, setPassword] = useState('');
-  const [showPass, setShowPass] = useState(false);
+  const [nombre,    setNombre]    = useState('');
+  const [email,     setEmail]     = useState('');
+  const [tel,       setTel]       = useState('');
+  const [password,  setPassword]  = useState('');
+  const [showPass,  setShowPass]  = useState(false);
+  const [mayorEdad, setMayorEdad] = useState(false);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!nombre || !email || !password) return;
+    if (!nombre || !email || !password || !mayorEdad) return;
     await onRegister(nombre, email, password, 'usuario', tel);
   }
 
@@ -82,9 +83,22 @@ export function RegisterForm({ onRegister, onSwitch, loading, error }: RegisterF
         </div>
       </div>
 
+      <label style={{ display: 'flex', alignItems: 'center', gap: '.6rem', cursor: 'pointer', userSelect: 'none' }}>
+        <input
+          type="checkbox"
+          checked={mayorEdad}
+          onChange={e => setMayorEdad(e.target.checked)}
+          required
+          style={{ width: 18, height: 18, accentColor: 'var(--orange)', flexShrink: 0, cursor: 'pointer' }}
+        />
+        <span style={{ fontSize: '.83rem', color: 'var(--text2)' }}>
+          Soy mayor de 18 años
+        </span>
+      </label>
+
       {error && <div className="alert alert--error">{error}</div>}
 
-      <Button type="submit" loading={loading} style={{ width: '100%', marginTop: '.3rem' }}>
+      <Button type="submit" loading={loading} disabled={!mayorEdad} style={{ width: '100%', marginTop: '.3rem' }}>
         Crear cuenta
       </Button>
 
