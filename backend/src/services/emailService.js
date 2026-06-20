@@ -689,7 +689,7 @@ async function sendNuevoMensajeChat(toEmail, nombreDestinatario, { nombreRemiten
 }
 
 // ── Consulta pública en una publicación ─────────────────────────
-async function sendNuevaConsultaPublica(toEmail, nombreOferente, { autorNombre, espacioNombre, pregunta, espacioId }) {
+async function sendNuevaConsultaPublica(toEmail, nombreOferente, { autorNombre, espacioNombre, pregunta, espacioId, fechaHora }) {
   if (!await emailConfig.isEnabled('consulta_publica')) return;
   const preview = pregunta?.length > 160 ? pregunta.slice(0, 160) + '…' : pregunta;
 
@@ -698,7 +698,7 @@ async function sendNuevaConsultaPublica(toEmail, nombreOferente, { autorNombre, 
     <p style="color:#94a3b8;line-height:1.7;margin:8px 0;">Hola <span style="color:#e8622a;font-weight:700;">${nombreOferente}</span>, alguien hizo una consulta en tu publicación <strong style="color:#e2e8f0;">${espacioNombre}</strong>.</p>
     <div style="background:#0f172a;border-left:3px solid #e8622a;border-radius:0 10px 10px 0;padding:14px 16px;margin:16px 0;">
       <p style="margin:0;color:#e2e8f0;font-style:italic;">"${preview}"</p>
-      <p style="margin:8px 0 0;font-size:12px;color:#64748b;">— ${autorNombre}</p>
+      <p style="margin:8px 0 0;font-size:12px;color:#64748b;">— ${autorNombre}${fechaHora ? ` · ${fechaHora}` : ''}</p>
     </div>
     <a style="display:inline-block;background:linear-gradient(135deg,#e8622a,#d4521a);color:#fff;padding:12px 28px;border-radius:12px;text-decoration:none;font-weight:700;margin:20px 0;" href="${process.env.FRONTEND_URL}/panel">Responder desde mi cuenta →</a>
     <p style="font-size:12px;color:#64748b;margin-top:16px;">Ingresá a tu cuenta y buscá la sección <strong style="color:#94a3b8;">Consultas pendientes</strong> para responderla.</p>
@@ -713,7 +713,7 @@ async function sendNuevaConsultaPublica(toEmail, nombreOferente, { autorNombre, 
 }
 
 // ── Respuesta a consulta pública ────────────────────────────────
-async function sendRespuestaConsultaPublica(toEmail, nombreDemandante, { espacioNombre, pregunta, respuesta, espacioId }) {
+async function sendRespuestaConsultaPublica(toEmail, nombreDemandante, { espacioNombre, pregunta, respuesta, espacioId, fechaHora }) {
   if (!await emailConfig.isEnabled('respuesta_consulta')) return;
   const previewPregunta = pregunta?.length > 120 ? pregunta.slice(0, 120) + '…' : pregunta;
   const previewRespuesta = respuesta?.length > 160 ? respuesta.slice(0, 160) + '…' : respuesta;
@@ -726,7 +726,7 @@ async function sendRespuestaConsultaPublica(toEmail, nombreDemandante, { espacio
       <p style="margin:0;color:#94a3b8;font-style:italic;">"${previewPregunta}"</p>
     </div>
     <div style="background:#0f172a;border-left:3px solid #e8622a;border-radius:0 10px 10px 0;padding:14px 16px;margin:0 0 16px;">
-      <p style="margin:0 0 6px;font-size:12px;color:#e8622a;">Respuesta del proveedor:</p>
+      <p style="margin:0 0 6px;font-size:12px;color:#e8622a;">Respuesta del proveedor${fechaHora ? ` · ${fechaHora}` : ''}:</p>
       <p style="margin:0;color:#e2e8f0;">"${previewRespuesta}"</p>
     </div>
     <a style="display:inline-block;background:linear-gradient(135deg,#e8622a,#d4521a);color:#fff;padding:12px 28px;border-radius:12px;text-decoration:none;font-weight:700;margin:20px 0;" href="${process.env.FRONTEND_URL}/es/espacio/${espacioId}">Ver publicación →</a>

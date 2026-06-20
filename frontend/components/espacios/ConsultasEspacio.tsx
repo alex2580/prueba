@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Avatar } from '@/components/ui/Avatar';
-import { formatFecha } from '@/lib/utils';
+import { formatFechaHora } from '@/lib/utils';
 import { detectViolation, getViolationMessage } from '@/lib/contactFilter';
 
 interface ConsultaPublica {
@@ -144,7 +144,7 @@ export function ConsultasEspacio({ espacioId, token, userId, oferenteId, showHis
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '.3rem' }}>
                       <span style={{ fontSize: '.8rem', fontWeight: 700 }}>{c.autor_nombre.split(' ')[0]}</span>
-                      <span style={{ fontSize: '.72rem', color: 'var(--text3)' }}>{formatFecha(c.created_at)}</span>
+                      <span style={{ fontSize: '.72rem', color: 'var(--text3)' }}>{formatFechaHora(c.created_at)}</span>
                     </div>
                     <p style={{ margin: 0, fontSize: '.88rem', color: 'var(--text)', lineHeight: 1.6 }}>{c.pregunta}</p>
                   </div>
@@ -163,7 +163,7 @@ export function ConsultasEspacio({ espacioId, token, userId, oferenteId, showHis
                       Respuesta del proveedor
                       {c.respuesta_at && (
                         <span style={{ color: 'var(--text3)', fontWeight: 400, marginLeft: '.4rem' }}>
-                          · {formatFecha(c.respuesta_at)}
+                          · {formatFechaHora(c.respuesta_at)}
                         </span>
                       )}
                     </div>

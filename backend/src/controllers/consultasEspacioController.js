@@ -36,11 +36,13 @@ async function crear(req, res) {
       if (espacio && espacio.oferente_id !== autorId) {
         const [oferente] = await query('SELECT email, nombre FROM usuarios WHERE id = ?', [espacio.oferente_id]);
         if (oferente) {
+          const fechaHora = new Date().toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
           await sendNuevaConsultaPublica(oferente.email, oferente.nombre, {
             autorNombre,
             espacioNombre: espacio.nombre,
             pregunta: pregunta.trim(),
             espacioId,
+            fechaHora,
           });
         }
       }
@@ -84,11 +86,13 @@ async function responder(req, res) {
     try {
       const [autor] = await query('SELECT email, nombre FROM usuarios WHERE id = ?', [consulta.autor_id]);
       if (autor) {
+        const fechaHora = new Date().toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
         await sendRespuestaConsultaPublica(autor.email, autor.nombre, {
           espacioNombre: espacio.nombre,
           pregunta: consulta.pregunta,
           respuesta: respuesta.trim(),
           espacioId: consulta.espacio_id,
+          fechaHora,
         });
       }
     } catch (e) {

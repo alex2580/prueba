@@ -13,6 +13,10 @@ export function formatFechaCorta(dateStr: string): string {
   return formatFecha(dateStr, 'dd-MM-yyyy');
 }
 
+export function formatFechaHora(dateStr: string): string {
+  return formatFecha(dateStr, "d 'de' MMMM 'de' yyyy, HH:mm");
+}
+
 export function diasEntre(desde: string, hasta: string): number {
   return differenceInDays(parseISO(hasta), parseISO(desde)) + 1;
 }
