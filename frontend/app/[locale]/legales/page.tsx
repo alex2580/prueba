@@ -304,8 +304,8 @@ export default function LegalesPage() {
             color: 'var(--text3)',
           }}>
             ¿Tenés dudas legales? Escribinos a{' '}
-            <a href="mailto:legal@todasmiscosas.com" style={{ color: 'var(--orange)', textDecoration: 'none' }}>
-              legal@todasmiscosas.com
+            <a href="mailto:contacto@todasmiscosas.com" style={{ color: 'var(--orange)', textDecoration: 'none' }}>
+              contacto@todasmiscosas.com
             </a>
           </div>
 
@@ -329,7 +329,7 @@ export default function LegalesPage() {
             <p style={pStyle}>
               TodasMisCosas.com es responsable del tratamiento de los datos personales de sus usuarios.
               Para consultas relacionadas con privacidad y protección de datos, podés escribirnos a{' '}
-              <a href="mailto:legal@todasmiscosas.com" style={{ color: 'var(--orange)' }}>legal@todasmiscosas.com</a>.
+              <a href="mailto:contacto@todasmiscosas.com" style={{ color: 'var(--orange)' }}>contacto@todasmiscosas.com</a>.
             </p>
           </section>
 
@@ -403,7 +403,7 @@ export default function LegalesPage() {
             </ul>
             <p style={{ ...pStyle, margin: '.9rem 0 .75rem' }}>
               Para ejercer cualquiera de estos derechos, el titular debe enviar una solicitud escrita a{' '}
-              <a href="mailto:legal@todasmiscosas.com" style={{ color: 'var(--orange)' }}>legal@todasmiscosas.com</a>{' '}
+              <a href="mailto:contacto@todasmiscosas.com" style={{ color: 'var(--orange)' }}>contacto@todasmiscosas.com</a>{' '}
               indicando: nombre completo, número de documento (DNI) y descripción clara del derecho que desea ejercer.
             </p>
             <ul style={ulStyle}>
@@ -496,8 +496,8 @@ export default function LegalesPage() {
             color: 'var(--text3)',
           }}>
             ¿Querés ejercer tus derechos ARCO o tenés consultas sobre privacidad? Escribinos a{' '}
-            <a href="mailto:legal@todasmiscosas.com" style={{ color: 'var(--orange)', textDecoration: 'none' }}>
-              legal@todasmiscosas.com
+            <a href="mailto:contacto@todasmiscosas.com" style={{ color: 'var(--orange)', textDecoration: 'none' }}>
+              contacto@todasmiscosas.com
             </a>
           </div>
 
