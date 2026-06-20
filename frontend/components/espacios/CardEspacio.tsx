@@ -208,7 +208,7 @@ export function CardEspacio({ espacio, onClick, isFavorito = false, onToggleFavo
             )}
           </div>
           {hasDia && (
-            <span style={{ fontSize: '12px', fontWeight: 800, color: accentColor, fontFamily: 'Sora, sans-serif', whiteSpace: 'nowrap' }}>
+            <span className="espacio-card__price" style={{ color: accentColor, whiteSpace: 'nowrap' }}>
               {formatARS(espacio.precio_dia)}/día
             </span>
           )}
