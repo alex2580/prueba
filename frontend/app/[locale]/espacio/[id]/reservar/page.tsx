@@ -169,17 +169,17 @@ export default function ReservarPage() {
 
   const disponibilidad = (espacio as any)?.disponibilidad as { dias?: string[] } | undefined;
 
-  const maxDate90 = (() => {
+  const maxDate60 = (() => {
     const d = new Date(); d.setHours(0, 0, 0, 0);
-    d.setDate(d.getDate() + 89);
+    d.setDate(d.getDate() + 59);
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   })();
 
   const maxDateFinal = (() => {
     const raw = espacio?.fecha_vencimiento;
-    if (!raw) return maxDate90;
+    if (!raw) return maxDate60;
     const venc = String(raw).slice(0, 10);
-    return maxDate90 < venc ? maxDate90 : venc;
+    return maxDate60 < venc ? maxDate60 : venc;
   })();
 
   const precioEstimado = espacio ? diasMulti.length * Number(espacio.precio_dia) : 0;

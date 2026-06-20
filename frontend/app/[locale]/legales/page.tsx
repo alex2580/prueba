@@ -83,7 +83,7 @@ export default function LegalesPage() {
               <li>Cumplir con la legislación vigente en materia de alquileres, impuestos y habilitaciones municipales.</li>
               <li>No permitir el ingreso de objetos prohibidos (ver sección 5).</li>
               <li>Conservar el espacio limpio y libre de plagas durante la locación.</li>
-              <li>Renovar la publicación creando una nueva cuando venza el plazo de 90 días, si desea continuar ofreciendo el espacio (ver sección 11).</li>
+              <li>Renovar la publicación creando una nueva cuando venza el plazo de 60 días, si desea continuar ofreciendo el espacio (ver sección 11).</li>
             </ul>
           </section>
 
@@ -222,12 +222,12 @@ export default function LegalesPage() {
           <section style={sectionStyle}>
             <h2 style={h2Style}>11. Vigencia de las publicaciones</h2>
             <p style={{ ...pStyle, marginBottom: '.75rem' }}>
-              Cada publicación de espacio tiene una vigencia de <strong>90 días corridos</strong> contados desde la fecha de publicación.
+              Cada publicación de espacio tiene una vigencia de <strong>60 días corridos</strong> contados desde la fecha de publicación.
               Durante ese período, el espacio es visible para los clientes y puede recibir reservas.
             </p>
             <ul style={ulStyle}>
-              <li><strong>Aviso previo:</strong> 30 días antes del vencimiento, la plataforma notifica al proveedor por correo electrónico para que pueda tomar acción.</li>
-              <li><strong>Vencimiento automático:</strong> Al cumplirse los 90 días, la publicación se desactiva automáticamente y deja de ser visible para los clientes.</li>
+              <li><strong>Aviso previo:</strong> 15 días antes del vencimiento, la plataforma notifica al proveedor por correo electrónico para que pueda tomar acción.</li>
+              <li><strong>Vencimiento automático:</strong> Al cumplirse los 60 días, la publicación se desactiva automáticamente y deja de ser visible para los clientes.</li>
               <li><strong>Renovación:</strong> Para continuar ofreciendo el espacio, el proveedor debe crear una nueva publicación. No existe renovación automática.</li>
               <li><strong>Reservas vigentes:</strong> Las reservas confirmadas al momento del vencimiento no se ven afectadas y continúan normalmente hasta su fecha de finalización.</li>
               <li><strong>Sin costo:</strong> Crear una nueva publicación tras el vencimiento es gratuito, igual que la publicación original.</li>

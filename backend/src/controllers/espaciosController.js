@@ -169,7 +169,7 @@ async function crear(req, res, next) {
       const oferente = await queryOne('SELECT pais FROM usuarios WHERE id = ?', [req.user.id]);
       await query(
         `UPDATE espacios SET categoria = ?, disponibilidad = ?, seguridad = ?, moneda = ?, pais = ?,
-                fecha_vencimiento = DATE_ADD(NOW(), INTERVAL 90 DAY)
+                fecha_vencimiento = DATE_ADD(NOW(), INTERVAL 60 DAY)
          WHERE id = ?`,
         [categoria || null,
          disponibilidad ? JSON.stringify(disponibilidad) : null,

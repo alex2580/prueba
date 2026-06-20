@@ -48,7 +48,7 @@ async function procesarVencimientos() {
         AND e.vencida = 0
         AND e.aviso_vencimiento_enviado = 0
         AND e.fecha_vencimiento IS NOT NULL
-        AND DATEDIFF(e.fecha_vencimiento, CURDATE()) = 30
+        AND DATEDIFF(e.fecha_vencimiento, CURDATE()) = 15
     `);
 
     for (const esp of proximas) {
@@ -64,7 +64,7 @@ async function procesarVencimientos() {
           'UPDATE espacios SET aviso_vencimiento_enviado = 1 WHERE id = ?',
           [esp.id]
         );
-        console.log(`[vencimiento] 📧 Aviso 30d enviado: "${esp.nombre}" (${esp.oferente_email})`);
+        console.log(`[vencimiento] 📧 Aviso 15d enviado: "${esp.nombre}" (${esp.oferente_email})`);
       } catch (e) {
         console.warn(`[vencimiento] ❌ Error enviando aviso espacio ${esp.id}:`, e.message);
       }
