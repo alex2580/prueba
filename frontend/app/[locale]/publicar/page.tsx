@@ -6,7 +6,6 @@ import { Loader } from '@googlemaps/js-api-loader';
 import { useAuth } from '@/hooks/useAuth';
 import { espaciosAPI, emailAPI } from '@/lib/api';
 import { Button } from '@/components/ui/Button';
-import { Modal } from '@/components/ui/Modal';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { OTPStep } from '@/components/auth/OTPStep';
@@ -38,7 +37,7 @@ const SEGURIDAD_OPCIONES = [
   { key: 'extintor',           label: 'Extintor en las cercanías',      emoji: '🔥', detalle: 'Hay extintor accesible cerca del espacio.' },
 ];
 
-const PASOS = ['Datos', 'Fotos', 'Seguridad', 'Cuenta'];
+const PASOS = ['Datos', 'Fotos', 'Seguridad', 'Publicar'];
 
 // ── Componente separado para el paso de seguridad ─────────────
 function PasoSeguridad({
@@ -216,19 +215,8 @@ export default function PublicarPage() {
   const [seguridad, setSeguridad]           = useState<Record<string, boolean>>({});
   const [loading, setLoading]               = useState(false);
   const [error, setError]                   = useState<string | null>(null);
-  const [authModal, setAuthModal]           = useState(false);
   const [authTab, setAuthTab]               = useState<'login' | 'register'>('register');
-  const [publicarPendiente, setPublicarPendiente] = useState(false);
   const [espacioPublicadoId, setEspacioPublicadoId] = useState<string | null>(null);
-
-  // Cuando el usuario completa el OTP y queda logueado, publicar automáticamente
-  useEffect(() => {
-    if (user && token && publicarPendiente) {
-      setPublicarPendiente(false);
-      publicar(token);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, token, publicarPendiente]);
 
   const direccionRef  = useRef<HTMLInputElement>(null);
   const cameraRef     = useRef<HTMLInputElement>(null);
@@ -366,15 +354,6 @@ export default function PublicarPage() {
     const err = validarPaso();
     if (err) { setError(err); return; }
     setError(null);
-    if (paso === 3) {
-      // Último paso — si logueado publicar, sino mostrar auth
-      if (token) {
-        publicar(token);
-      } else {
-        setAuthModal(true);
-      }
-      return;
-    }
     setPaso(p => p + 1);
   }
 
@@ -416,24 +395,6 @@ export default function PublicarPage() {
     }
   }
 
-  async function handleLogin(email: string, password: string) {
-    const ok = await login(email, password);
-    if (ok) {
-      setAuthModal(false);
-      setPublicarPendiente(true); // publicar() se llamará automáticamente cuando el OTP se verifique
-    }
-    return ok;
-  }
-
-  async function handleRegister(nombre: string, email: string, password: string, _tipo: 'usuario', tel?: string) {
-    const ok = await register(nombre, email, password, 'usuario', tel);
-    if (ok && ok !== 'email-confirm') {
-      setAuthModal(false);
-      setPublicarPendiente(true);
-    }
-    return ok;
-  }
-
   // ── UI ─────────────────────────────────────────────────────
 
   const cardStyle: React.CSSProperties = {
@@ -445,6 +406,94 @@ export default function PublicarPage() {
 
   const accentColor = form.tipo === 'exclusivo' ? '#1E293B' : 'var(--orange)';
   const accentBg    = form.tipo === 'exclusivo' ? 'rgba(30,41,59,.08)' : 'rgba(232,98,42,.1)';
+
+  // ── Auth gate — se muestra mientras no hay sesión ─────────────
+  if (authLoading) {
+    return (
+      <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
+        <SiteHeader />
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <span style={{ color: 'var(--text3)', fontSize: '.9rem' }}>Cargando…</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
+        <SiteHeader />
+        <div className="page-scroll" style={{ flex: 1 }}>
+          <div style={{ maxWidth: 460, margin: '0 auto', padding: '2.5rem 1rem' }}>
+            <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.5rem', marginBottom: '.4rem' }}>
+              Publicar espacio
+            </h1>
+
+            {emailConfirmPending ? (
+              <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r3)', padding: '2rem', textAlign: 'center', marginTop: '1.5rem' }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: '.75rem' }}>📧</div>
+                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.95rem', marginBottom: '.4rem' }}>Revisá tu email</p>
+                <p style={{ color: 'var(--text2)', fontSize: '.85rem', lineHeight: 1.6 }}>
+                  Te enviamos un link a <strong>{emailConfirmEmail}</strong>. Hacé clic para activar tu cuenta y volvé a esta página para publicar.
+                </p>
+                <p style={{ fontSize: '.78rem', color: 'var(--text3)', marginTop: '.5rem' }}>¿No llegó? Revisá spam.</p>
+              </div>
+            ) : otpPending ? (
+              <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r3)', padding: '1.5rem', marginTop: '1.5rem' }}>
+                <OTPStep
+                  emailHint={otpEmailHint}
+                  canales={otpCanales}
+                  onVerify={verifyOTP}
+                  onReenviar={reenviarOTP}
+                  loading={authLoading}
+                  error={authError}
+                />
+              </div>
+            ) : (
+              <>
+                <p style={{ color: 'var(--text2)', fontSize: '.88rem', marginBottom: '1.5rem' }}>
+                  Necesitás una cuenta para publicar. Es gratis y sin comisión hasta que alguien te reserve.
+                </p>
+                <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r3)', overflow: 'hidden' }}>
+                  <div style={{ display: 'flex', borderBottom: '1px solid var(--border)' }}>
+                    {(['register', 'login'] as const).map(tab => (
+                      <button key={tab} type="button" onClick={() => setAuthTab(tab)} style={{
+                        flex: 1, padding: '.75rem',
+                        background: authTab === tab ? 'var(--orange)' : 'var(--surface2)',
+                        border: 'none',
+                        color: authTab === tab ? '#fff' : 'var(--text3)',
+                        fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.82rem', cursor: 'pointer',
+                        transition: 'all .15s',
+                      }}>
+                        {tab === 'register' ? '✚ Crear cuenta' : '→ Ya tengo cuenta'}
+                      </button>
+                    ))}
+                  </div>
+                  <div style={{ padding: '1.25rem' }}>
+                    {authTab === 'register' ? (
+                      <RegisterForm
+                        onRegister={register}
+                        onSwitch={() => setAuthTab('login')}
+                        error={authError}
+                        loading={authLoading}
+                      />
+                    ) : (
+                      <LoginForm
+                        onLogin={login}
+                        onSwitch={() => setAuthTab('register')}
+                        error={authError}
+                        loading={authLoading}
+                      />
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // ── Pantalla de éxito ─────────────────────────────────────────
   if (espacioPublicadoId) {
@@ -546,7 +595,7 @@ export default function PublicarPage() {
               Publicar espacio
             </h1>
             <p style={{ color: 'var(--text2)', fontSize: '.88rem' }}>
-              Podés crear tu cuenta al final si todavía no tenés una.
+              Completá los datos, subí fotos y confirmá. Tu espacio aparece en el mapa al instante.
             </p>
           </div>
 
@@ -799,113 +848,39 @@ export default function PublicarPage() {
             />
           )}
 
-          {/* ── PASO 4: CUENTA ────────────────────────────── */}
+          {/* ── PASO 4: PUBLICAR ──────────────────────────── */}
           {paso === 3 && (
-            <div style={{ display: 'grid', gap: '1rem' }}>
-              {user ? (
-                /* Ya logueado: mostrar resumen y botón publicar */
-                <div style={{ ...cardStyle, textAlign: 'center', padding: '2rem' }}>
-                  <div style={{ fontSize: '2.5rem', marginBottom: '.5rem' }}>✅</div>
-                  <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '1rem', marginBottom: '.3rem' }}>
-                    ¡Todo listo, {user.nombre}!
-                  </div>
-                  <p style={{ color: 'var(--text2)', fontSize: '.85rem', marginBottom: '.75rem' }}>
-                    Tu espacio está configurado. Hacé click en Publicar para que aparezca en el mapa.
-                  </p>
-                  <div style={{ background: 'rgba(245,158,11,.1)', border: '1px solid rgba(245,158,11,.3)', borderRadius: 'var(--r2)', padding: '.6rem .9rem', marginBottom: '1.25rem', fontSize: '.78rem', color: 'var(--text2)', textAlign: 'left' }}>
-                    📅 <strong>Vigencia de 60 días:</strong> tu publicación estará activa por 60 días corridos. Te avisamos 15 días antes del vencimiento para que puedas renovarla.
-                  </div>
-                  <Button onClick={() => publicar(token!)} loading={loading} style={{ width: '100%' }}>
-                    Publicar espacio
-                  </Button>
-                  {error && <div className="alert alert--error" style={{ marginTop: '.75rem' }}>{error}</div>}
-                </div>
-              ) : emailConfirmPending ? (
-                /* Email confirm pendiente */
-                <div style={cardStyle}>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '2.5rem', marginBottom: '.75rem' }}>📧</div>
-                    <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.95rem', marginBottom: '.4rem' }}>
-                      Revisá tu email
-                    </p>
-                    <p style={{ color: 'var(--text2)', fontSize: '.85rem', lineHeight: 1.6, marginBottom: '.5rem' }}>
-                      Te enviamos un link a <strong>{emailConfirmEmail}</strong>.
-                      Hacé clic para activar tu cuenta y publicar tu espacio.
-                    </p>
-                    <p style={{ fontSize: '.78rem', color: 'var(--text3)' }}>¿No llegó? Revisá spam.</p>
-                  </div>
-                </div>
-              ) : otpPending ? (
-                /* OTP pendiente: mostrar verificación de código */
-                <div style={cardStyle}>
-                  <OTPStep
-                    emailHint={otpEmailHint}
-                    canales={otpCanales}
-                    onVerify={verifyOTP}
-                    onReenviar={reenviarOTP}
-                    loading={authLoading}
-                    error={authError}
-                  />
-                  <p style={{ fontSize: '.75rem', color: 'var(--text3)', textAlign: 'center', marginTop: '1rem' }}>
-                    Una vez verificado, tu espacio se publicará automáticamente.
-                  </p>
-                </div>
-              ) : (
-                /* No logueado y sin OTP pendiente: mostrar registro/login */
-                <div style={cardStyle}>
-                  <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.95rem', marginBottom: '.3rem' }}>
-                    Creá tu cuenta para publicar
-                  </div>
-                  <p style={{ color: 'var(--text2)', fontSize: '.82rem', marginBottom: '1rem' }}>
-                    Es gratis. Ya tenés todo cargado, solo falta confirmar tu identidad.
-                  </p>
-                  <div style={{ display: 'flex', gap: '.6rem', marginBottom: '1rem' }}>
-                    {(['register', 'login'] as const).map(tab => (
-                      <button key={tab} type="button" onClick={() => setAuthTab(tab)} style={{
-                        flex: 1, padding: '.5rem',
-                        borderRadius: 'var(--r2)',
-                        border: `2px solid ${authTab === tab ? 'var(--orange)' : 'var(--border)'}`,
-                        background: authTab === tab ? 'rgba(232,98,42,.1)' : 'var(--surface2)',
-                        color: authTab === tab ? 'var(--orange)' : 'var(--text2)',
-                        fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.8rem', cursor: 'pointer',
-                      }}>
-                        {tab === 'register' ? 'Crear cuenta' : 'Ya tengo cuenta'}
-                      </button>
-                    ))}
-                  </div>
-                  {authTab === 'register' ? (
-                    <RegisterForm
-                      onRegister={handleRegister}
-                      onSwitch={() => setAuthTab('login')}
-                      error={authError}
-                      loading={authLoading}
-                    />
-                  ) : (
-                    <LoginForm
-                      onLogin={handleLogin}
-                      onSwitch={() => setAuthTab('register')}
-                      error={authError}
-                      loading={authLoading}
-                    />
-                  )}
-                </div>
-              )}
+            <div style={{ ...cardStyle, textAlign: 'center', padding: '2rem' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: '.5rem' }}>✅</div>
+              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '1rem', marginBottom: '.3rem' }}>
+                ¡Todo listo, {user.nombre}!
+              </div>
+              <p style={{ color: 'var(--text2)', fontSize: '.85rem', marginBottom: '.75rem' }}>
+                Tu espacio está configurado. Hacé click en Publicar para que aparezca en el mapa.
+              </p>
+              <div style={{ background: 'rgba(245,158,11,.1)', border: '1px solid rgba(245,158,11,.3)', borderRadius: 'var(--r2)', padding: '.6rem .9rem', marginBottom: '1.25rem', fontSize: '.78rem', color: 'var(--text2)', textAlign: 'left' }}>
+                📅 <strong>Vigencia de 60 días:</strong> tu publicación estará activa por 60 días corridos. Te avisamos 15 días antes del vencimiento para que puedas renovarla.
+              </div>
+              <Button onClick={() => publicar(token!)} loading={loading} style={{ width: '100%' }}>
+                Publicar espacio
+              </Button>
+              {error && <div className="alert alert--error" style={{ marginTop: '.75rem' }}>{error}</div>}
             </div>
           )}
 
           {/* Navegación */}
-          <div style={{ display: 'flex', gap: '.75rem', marginTop: '1.5rem' }}>
-            {paso > 0 && (
-              <Button type="button" variant="secondary" onClick={() => { setError(null); setPaso(p => p - 1); }} style={{ flex: 1 }}>
-                ← Anterior
-              </Button>
-            )}
-            {paso < 3 && (
+          {paso < 3 && (
+            <div style={{ display: 'flex', gap: '.75rem', marginTop: '1.5rem' }}>
+              {paso > 0 && (
+                <Button type="button" variant="secondary" onClick={() => { setError(null); setPaso(p => p - 1); }} style={{ flex: 1 }}>
+                  ← Anterior
+                </Button>
+              )}
               <Button type="button" onClick={siguiente} style={{ flex: 2 }}>
                 Siguiente →
               </Button>
-            )}
-          </div>
+            </div>
+          )}
 
           <p style={{ fontSize: '.72rem', color: 'var(--text3)', textAlign: 'center', marginTop: '1rem' }}>
             Al publicar aceptás los{' '}
@@ -917,44 +892,6 @@ export default function PublicarPage() {
         </div>
       </div>
 
-      {/* Auth Modal fallback */}
-      <Modal
-        open={authModal}
-        onClose={() => setAuthModal(false)}
-        title={emailConfirmPending ? '📧 Revisá tu email' : otpPending ? '🔐 Verificá tu identidad' : '👋 Iniciar sesión'}
-        subtitle={emailConfirmPending ? undefined : otpPending ? 'Ingresá el código que enviamos a tu email' : 'Iniciá sesión para publicar tu espacio'}
-      >
-        {emailConfirmPending ? (
-          <div style={{ textAlign: 'center' }}>
-            <p style={{ color: 'var(--text2)', fontSize: '.88rem', lineHeight: 1.6, marginBottom: '.5rem' }}>
-              Te enviamos un link a <strong style={{ color: 'var(--text)' }}>{emailConfirmEmail}</strong>.
-              Hacé clic para activar tu cuenta.
-            </p>
-            <p style={{ fontSize: '.78rem', color: 'var(--text3)', marginTop: '.75rem' }}>¿No llegó? Revisá spam.</p>
-          </div>
-        ) : otpPending ? (
-          <>
-            <OTPStep
-              emailHint={otpEmailHint}
-              canales={otpCanales}
-              onVerify={verifyOTP}
-              onReenviar={reenviarOTP}
-              loading={authLoading}
-              error={authError}
-            />
-            <p style={{ fontSize: '.75rem', color: 'var(--text3)', textAlign: 'center', marginTop: '1rem' }}>
-              Una vez verificado, tu espacio se publicará automáticamente.
-            </p>
-          </>
-        ) : (
-          <LoginForm
-            onLogin={handleLogin}
-            onSwitch={() => { setAuthModal(false); setAuthTab('register'); setPaso(3); }}
-            error={authError}
-            loading={authLoading}
-          />
-        )}
-      </Modal>
     </div>
   );
 }
