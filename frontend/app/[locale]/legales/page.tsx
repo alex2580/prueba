@@ -314,6 +314,72 @@ export default function LegalesPage() {
             </p>
           </section>
 
+          {/* 16 */}
+          <section style={sectionStyle} id="disputas">
+            <h2 style={h2Style}>16. Proceso formal de disputas</h2>
+            <p style={{ ...pStyle, marginBottom: '.75rem' }}>
+              TodasMisCosas.com pone a disposición un proceso formal para que cualquiera de las partes
+              (cliente o proveedor) pueda presentar un reclamo relacionado con una reserva, un pago
+              o el uso de la plataforma.
+            </p>
+
+            <p style={{ ...pStyle, fontWeight: 700, marginBottom: '.4rem' }}>Paso 1 — Contacto inicial</p>
+            <p style={{ ...pStyle, marginBottom: '.75rem' }}>
+              Enviá un correo a{' '}
+              <a href="mailto:contacto@todasmiscosas.com" style={{ color: 'var(--orange)' }}>
+                contacto@todasmiscosas.com
+              </a>{' '}
+              con el asunto <strong>"Disputa — [ID de reserva]"</strong> e incluí la siguiente información:
+            </p>
+            <ul style={ulStyle}>
+              <li>Nombre completo y correo electrónico registrado en la plataforma.</li>
+              <li>ID de la reserva involucrada.</li>
+              <li>Descripción clara y detallada del inconveniente.</li>
+              <li>Evidencia de respaldo: capturas de pantalla, fotos, conversaciones u otro material relevante.</li>
+            </ul>
+
+            <p style={{ ...pStyle, fontWeight: 700, margin: '.9rem 0 .4rem' }}>Paso 2 — Revisión</p>
+            <p style={{ ...pStyle, marginBottom: '.75rem' }}>
+              El equipo de TodasMisCosas.com revisará el reclamo y responderá al correo del solicitante
+              dentro de las <strong>48 horas hábiles</strong> contadas desde la recepción del mensaje.
+              Durante ese período podremos solicitar información adicional a cualquiera de las partes.
+            </p>
+
+            <p style={{ ...pStyle, fontWeight: 700, marginBottom: '.4rem' }}>Paso 3 — Resolución</p>
+            <p style={{ ...pStyle, marginBottom: '.75rem' }}>
+              TodasMisCosas.com comunicará su decisión por correo a ambas partes. La resolución podrá incluir,
+              según corresponda: liberación o retención del depósito en garantía, reembolso total o parcial,
+              o cualquier otra medida dentro del alcance de la plataforma. La decisión de TodasMisCosas.com
+              es definitiva en el ámbito de la plataforma, sin perjuicio de las acciones legales que cada
+              parte pueda ejercer por vía judicial.
+            </p>
+
+            <ul style={ulStyle}>
+              <li><strong>Plazo para disputar:</strong> el reclamo debe presentarse <strong>antes de que se libere el depósito en garantía</strong> — ya sea por confirmación manual del cliente o por vencimiento automático del plazo de 48 horas (ver sección 12). No se aceptarán disputas sobre pagos ya liberados.</li>
+              <li><strong>Buena fe:</strong> ambas partes se comprometen a actuar de buena fe durante el proceso, aportando información veraz y completa.</li>
+              <li><strong>Sin costo:</strong> el proceso de disputa es gratuito para los usuarios de la plataforma.</li>
+            </ul>
+
+            <div style={{
+              background: 'rgba(16,185,129,.07)',
+              border: '1.5px solid rgba(16,185,129,.3)',
+              borderRadius: 'var(--r2)',
+              padding: '.85rem 1.1rem',
+              marginTop: '1rem',
+              fontSize: '.85rem',
+              color: 'var(--text2)',
+              lineHeight: 1.65,
+            }}>
+              <strong style={{ color: '#10b981' }}>📩 Canal de disputas</strong>
+              <p style={{ margin: '.4rem 0 0' }}>
+                <a href="mailto:contacto@todasmiscosas.com" style={{ color: 'var(--orange)', fontWeight: 700 }}>
+                  contacto@todasmiscosas.com
+                </a>
+                {' '}· Asunto: <strong>"Disputa — [ID de reserva]"</strong> · Respuesta en <strong>48 horas hábiles</strong>
+              </p>
+            </div>
+          </section>
+
           <div style={{
             background: 'var(--surface)',
             border: '1px solid var(--border)',
