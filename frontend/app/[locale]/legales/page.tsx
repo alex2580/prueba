@@ -244,13 +244,33 @@ export default function LegalesPage() {
               <li><strong>Retención del pago:</strong> Al completarse el pago por MercadoPago, el monto queda retenido por la plataforma. El proveedor <strong>no recibe el dinero en ese momento</strong>.</li>
               <li><strong>Confirmación de acceso:</strong> Una vez llegada la fecha de inicio de la reserva, el cliente debe confirmar desde su panel que efectivamente accedió al espacio.</li>
               <li><strong>Liberación del pago:</strong> Tras la confirmación, la plataforma transfiere el importe neto (precio total menos la comisión del 15%) al CBU o Alias bancario registrado por el proveedor en su perfil, dentro de las 48 horas hábiles.</li>
-              <li><strong>Liberación automática:</strong> Si el cliente no confirma el acceso dentro de las 48 horas posteriores al inicio de la reserva, el sistema libera el pago automáticamente al proveedor.</li>
-              <li><strong>Disputas:</strong> Si el cliente tiene inconvenientes para acceder al espacio, debe contactar a TodasMisCosas.com <strong>antes de confirmar el acceso</strong>, escribiendo a <a href="mailto:contacto@todasmiscosas.com" style={{ color: 'var(--orange)' }}>contacto@todasmiscosas.com</a>. Una vez confirmado el acceso, el pago es definitivo.</li>
+              <li>
+                <strong>Liberación automática por vencimiento de plazo:</strong> Si el cliente no confirma el acceso ni presenta una disputa dentro de las <strong>48 horas corridas</strong> contadas desde la fecha y hora de inicio de la reserva, el sistema libera el pago automáticamente al proveedor, sin intervención manual. Una vez producida la liberación automática, el pago es <strong>definitivo e irrevocable</strong>: el cliente pierde el derecho a reclamar el reembolso por esta vía. La plataforma notifica al cliente por correo electrónico al inicio de la reserva recordándole el plazo disponible para confirmar el acceso o abrir una disputa.
+              </li>
+              <li><strong>Disputas:</strong> Si el cliente tiene inconvenientes para acceder al espacio, debe contactar a TodasMisCosas.com <strong>antes de confirmar el acceso y antes de que venza el plazo de 48 horas</strong>, escribiendo a <a href="mailto:contacto@todasmiscosas.com" style={{ color: 'var(--orange)' }}>contacto@todasmiscosas.com</a>. Los reclamos presentados después de la confirmación manual o de la liberación automática no serán considerados para reembolso.</li>
               <li><strong>CBU / Alias requerido:</strong> Para recibir las transferencias, el proveedor debe tener su CBU o Alias bancario cargado en su perfil. TodasMisCosas.com no se responsabiliza por demoras causadas por datos bancarios incorrectos o faltantes.</li>
             </ul>
             <p style={{ ...pStyle, marginTop: '.75rem' }}>
               Este mecanismo no constituye intermediación financiera en los términos de la Ley 21.526, sino una mediación comercial destinada a garantizar el cumplimiento de las obligaciones de ambas partes antes de liberar los fondos.
             </p>
+            <div style={{
+              background: 'rgba(245,158,11,.08)',
+              border: '1.5px solid rgba(245,158,11,.35)',
+              borderRadius: 'var(--r2)',
+              padding: '.9rem 1.1rem',
+              marginTop: '1rem',
+              fontSize: '.85rem',
+              color: 'var(--text2)',
+              lineHeight: 1.65,
+            }}>
+              <strong style={{ color: '#d97706' }}>⚠️ Plazo de confirmación — importante para el cliente</strong>
+              <p style={{ margin: '.4rem 0 0' }}>
+                El cliente dispone de un plazo de <strong>48 horas corridas</strong> desde el inicio de la reserva para confirmar el acceso
+                al espacio o para abrir una disputa. Transcurrido ese plazo sin acción del cliente, el sistema libera el pago al proveedor
+                de forma automática y el cobro queda firme. Se recomienda confirmar el acceso o reportar inconvenientes de inmediato,
+                sin esperar al vencimiento del plazo.
+              </p>
+            </div>
           </section>
 
           {/* 13 */}
