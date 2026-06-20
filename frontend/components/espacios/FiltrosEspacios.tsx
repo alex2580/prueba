@@ -2,7 +2,6 @@
 
 import type { FiltrosEspacios as FiltrosType, EspacioTipo } from '@/types';
 
-const PRECIO_MAX_MES = 100000;
 const PRECIO_MAX_DIA = 10000;
 const PRECIO_STEP = 500;
 
@@ -21,9 +20,8 @@ export function FiltrosEspacios({
   filtros, onChange, onReset,
   onCercaMio, cercaMioActive, cercaMioLoading, onQuitarCercaMio, geoError,
 }: FiltrosEspaciosProps) {
-  const periodo = filtros.periodo ?? '';
-  const PRECIO_MAX = periodo === 'dia' ? PRECIO_MAX_DIA : PRECIO_MAX_MES;
-  const hasActive = !!(filtros.tipo || filtros.precio_max || filtros.periodo || cercaMioActive);
+  const PRECIO_MAX = PRECIO_MAX_DIA;
+  const hasActive = !!(filtros.tipo || filtros.precio_max || cercaMioActive);
   const precioVal = filtros.precio_max ?? PRECIO_MAX;
 
   const btnBase: React.CSSProperties = {
@@ -102,7 +100,7 @@ export function FiltrosEspacios({
         {/* Header: label + valor */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.55rem' }}>
           <div style={{ fontSize: '.68rem', fontWeight: 800, color: '#aaa', textTransform: 'uppercase', letterSpacing: '.1em' }}>
-            Precio máx{periodo === 'dia' ? '/día' : '/mes'}
+            Precio máx/día
           </div>
           <div style={{
             fontSize: '.82rem', fontWeight: 800,
@@ -112,32 +110,6 @@ export function FiltrosEspacios({
           }}>
             {precioVal < PRECIO_MAX ? `$${precioVal.toLocaleString('es-AR')}` : 'Sin límite'}
           </div>
-        </div>
-
-        {/* Toggle Por día / Por mes */}
-        <div style={{ display: 'flex', gap: '.4rem', marginBottom: '.65rem' }}>
-          <button
-            onClick={() => onChange({
-              ...filtros,
-              periodo: periodo === 'dia' ? '' : 'dia',
-              precio_max: undefined,
-            })}
-            style={periodo === 'dia' ? btnActive : btnInactive}
-          >
-            <span style={{ fontSize: '1rem' }}>📅</span>
-            <span>Por día</span>
-          </button>
-          <button
-            onClick={() => onChange({
-              ...filtros,
-              periodo: periodo === 'mes' ? '' : 'mes',
-              precio_max: undefined,
-            })}
-            style={periodo === 'mes' ? btnActive : btnInactive}
-          >
-            <span style={{ fontSize: '1rem' }}>📆</span>
-            <span>Por mes</span>
-          </button>
         </div>
 
         {/* Slider */}
@@ -153,7 +125,7 @@ export function FiltrosEspacios({
         />
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '.67rem', color: '#bbb', marginTop: '.3rem' }}>
           <span>$0</span>
-          <span>{periodo === 'dia' ? '$10.000+' : '$100.000+'}</span>
+          <span>$10.000+</span>
         </div>
       </div>
 

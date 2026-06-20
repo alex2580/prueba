@@ -127,14 +127,12 @@ export default function HomePage() {
     }, 350);
   }, [aplicarFiltros]);
 
-  const PRECIO_MAX_MES = 100000;
   const PRECIO_MAX_DIA = 10000;
   const PRECIO_STEP = 500;
-  const PRECIO_MAX_HOME = filtros.periodo === 'dia' ? PRECIO_MAX_DIA : PRECIO_MAX_MES;
-  const precioValHome = filtros.precio_max ?? PRECIO_MAX_HOME;
+  const precioValHome = filtros.precio_max ?? PRECIO_MAX_DIA;
 
-  const filtrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.periodo || filtros.barrio || filtros.q || filtros.pais || filtros.seguridad_min || filtros.con_cupo);
-  const hayFiltrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.periodo || userLocation || filtros.q || filtros.pais || filtros.seguridad_min || filtros.con_cupo);
+  const filtrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.barrio || filtros.q || filtros.pais || filtros.seguridad_min || filtros.con_cupo);
+  const hayFiltrosActivos = !!(filtros.tipo || filtros.precio_max || userLocation || filtros.q || filtros.pais || filtros.seguridad_min || filtros.con_cupo);
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
@@ -206,7 +204,7 @@ export default function HomePage() {
                     fontSize: '.65rem', fontWeight: 800,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
-                    {[filtros.tipo, filtros.precio_max, filtros.periodo].filter(Boolean).length}
+                    {[filtros.tipo, filtros.precio_max].filter(Boolean).length}
                   </span>
                 )}
               </button>
@@ -344,25 +342,25 @@ export default function HomePage() {
                   display: 'inline-flex', alignItems: 'center', gap: '.5rem',
                   padding: '.3rem .65rem .3rem .9rem',
                   borderRadius: 999, flexShrink: 0,
-                  border: `1.5px solid ${precioValHome < PRECIO_MAX_HOME ? 'var(--text)' : 'var(--border2)'}`,
-                  background: precioValHome < PRECIO_MAX_HOME ? 'var(--text)' : 'var(--surface)',
+                  border: `1.5px solid ${precioValHome < PRECIO_MAX_DIA ? 'var(--text)' : 'var(--border2)'}`,
+                  background: precioValHome < PRECIO_MAX_DIA ? 'var(--text)' : 'var(--surface)',
                 }}>
                   <span style={{
                     fontSize: '.82rem', fontWeight: 700, whiteSpace: 'nowrap',
-                    color: precioValHome < PRECIO_MAX_HOME ? '#fff' : 'var(--text)',
+                    color: precioValHome < PRECIO_MAX_DIA ? '#fff' : 'var(--text)',
                     fontFamily: 'Sora, sans-serif',
                   }}>
-                    💰 {precioValHome < PRECIO_MAX_HOME ? `$${precioValHome.toLocaleString('es-AR')}/día` : t('precioDia')}
+                    💰 {precioValHome < PRECIO_MAX_DIA ? `$${precioValHome.toLocaleString('es-AR')}/día` : t('precioDia')}
                   </span>
                   <input
                     type="range"
-                    min={0} max={PRECIO_MAX_HOME} step={PRECIO_STEP}
-                    value={precioValHome > PRECIO_MAX_HOME ? PRECIO_MAX_HOME : precioValHome}
+                    min={0} max={PRECIO_MAX_DIA} step={PRECIO_STEP}
+                    value={precioValHome > PRECIO_MAX_DIA ? PRECIO_MAX_DIA : precioValHome}
                     onChange={e => {
                       const val = Number(e.target.value);
-                      aplicarFiltros({ precio_max: val < PRECIO_MAX_HOME ? val : undefined });
+                      aplicarFiltros({ precio_max: val < PRECIO_MAX_DIA ? val : undefined });
                     }}
-                    style={{ width: 80, cursor: 'pointer', accentColor: precioValHome < PRECIO_MAX_HOME ? '#fff' : 'var(--orange)' }}
+                    style={{ width: 80, cursor: 'pointer', accentColor: precioValHome < PRECIO_MAX_DIA ? '#fff' : 'var(--orange)' }}
                   />
                 </div>
 

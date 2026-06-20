@@ -216,7 +216,6 @@ export interface FiltrosEspacios {
   precio_min?: number;
   disponible?: boolean;
   q?: string;
-  periodo?: 'dia' | 'mes' | '';
   con_seguridad?: boolean;
   pais?: string;
   rating_min?: number;
