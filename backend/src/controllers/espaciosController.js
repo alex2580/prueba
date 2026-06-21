@@ -46,17 +46,12 @@ async function listar(req, res, next) {
       FROM espacios e
       JOIN usuarios u ON e.oferente_id = u.id
       WHERE e.activo = TRUE AND e.disponible IS TRUE
+        AND (e.tipo != 'compartido' OR e.cupo_disponible = 1)
     `;
     const params = [];
 
     if (barrio)     { sql += ' AND e.barrio = ?';  params.push(barrio); }
-    if (tipo) {
-      sql += ' AND e.tipo = ?';
-      params.push(tipo);
-      if (tipo === 'compartido') {
-        sql += ' AND e.cupo_disponible = 1';
-      }
-    }
+    if (tipo)       { sql += ' AND e.tipo = ?';     params.push(tipo); }
 
     sql += ' AND e.precio_dia > 0';
     if (precio_max) { sql += ' AND e.precio_dia <= ?'; params.push(Number(precio_max)); }
