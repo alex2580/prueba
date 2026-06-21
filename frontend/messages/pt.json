@@ -68,7 +68,7 @@
     "selloGratis": "GRÁTIS",
     "pasosReservar": [
       { "icon": "🔍", "titulo": "Busca um espaço", "desc": "Selecione um card ou clique nas publicações do mapa. Pode ser compartilhado ou só para você." },
-      { "icon": "📦", "titulo": "Escolhe e reserva", "desc": "Selecione o espaço mais conveniente. Alugue por dia ou por mês." },
+      { "icon": "📦", "titulo": "Escolhe e reserva", "desc": "Selecione o espaço mais conveniente. Alugue por dia ou por intervalo de dias." },
       { "icon": "💳", "titulo": "Paga com segurança", "desc": "Você pode pagar com Mercado Pago." },
       { "icon": "🔑", "titulo": "Coordena o acesso", "desc": "Você e quem publicou o espaço receberão o mesmo PIN de 4 dígitos por e-mail para se identificarem." }
     ],
