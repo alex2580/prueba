@@ -86,8 +86,7 @@ export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) 
         .rmdp-range.start, .rmdp-range.end { background: var(--orange) !important; }
         .rmdp-day:not(.rmdp-disabled):not(.rmdp-range) span:hover { background: rgba(232,98,42,.2) !important; }
         .rmdp-day.rmdp-today span { border: 1.5px solid var(--orange) !important; font-weight: 700; }
-        .rmdp-arrow { border-color: var(--text2) !important; }
-        .rmdp-arrow-container:hover { background: rgba(232,98,42,.1) !important; }
+        .rmdp-arrow-container { display: none !important; }
       `}</style>
 
       <div style={{ marginBottom: '.75rem' }}>

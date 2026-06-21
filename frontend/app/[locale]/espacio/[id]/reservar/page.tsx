@@ -379,8 +379,7 @@ export default function ReservarPage() {
                       .rmdp-day:not(.rmdp-disabled):not(.rmdp-range) span:hover { background: rgba(232,98,42,.2) !important; }
                       .rmdp-day.rmdp-disabled { opacity: 0.35; cursor: not-allowed; }
                       .rmdp-day.rmdp-today span { border: 1.5px solid var(--orange) !important; font-weight: 700; }
-                      .rmdp-arrow { border-color: var(--text2) !important; }
-                      .rmdp-arrow-container:hover { background: rgba(232,98,42,.1) !important; }
+                      .rmdp-arrow-container { display: none !important; }
                     `}</style>
                     <div style={{ background: 'rgba(232,98,42,.06)', border: '1px solid rgba(232,98,42,.2)', borderRadius: 8, padding: '.65rem .85rem', marginBottom: '.75rem', display: 'grid', gap: '.35rem' }}>
                       <div style={{ fontSize: '.75rem', fontWeight: 700, color: 'var(--orange)', fontFamily: 'Sora, sans-serif', marginBottom: '.1rem' }}>¿Cómo seleccionar fechas?</div>
