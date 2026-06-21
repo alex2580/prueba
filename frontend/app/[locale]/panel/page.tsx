@@ -1838,15 +1838,6 @@ export default function PanelPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="form-label">Superficie (m²)</label>
-                  <input type="number" value={editForm.m2} min="1"
-                    onChange={e => setEditForm(f => ({ ...f, m2: e.target.value }))}
-                    placeholder="" />
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div>
                   <label className="form-label">Precio por día</label>
                   <input type="number" value={editForm.precio_dia} min="0"
                     onChange={e => setEditForm(f => ({ ...f, precio_dia: e.target.value }))}

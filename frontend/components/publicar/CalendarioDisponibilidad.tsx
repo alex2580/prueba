@@ -79,7 +79,9 @@ export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) 
       <style>{`
         .rmdp-wrapper { width: 100% !important; box-shadow: none !important; background: transparent !important; }
         .rmdp-calendar { width: 100% !important; }
-        .rmdp-day-picker { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .rmdp-day-picker { display: flex; gap: .6rem; flex-wrap: nowrap; }
+        .rmdp-day-picker > div { flex: 1; min-width: 0; }
+        .rmdp-day-picker .rmdp-week { justify-content: space-between; }
         .rmdp-header { font-family: Sora, sans-serif; font-weight: 700; }
         .rmdp-range { background: rgba(232,98,42,.15) !important; color: var(--text) !important; }
         .rmdp-range.start span, .rmdp-range.end span { background: var(--orange) !important; color: #fff !important; }
