@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Calendar } from 'react-multi-date-picker';
+import { maxFechaCalendario } from '@/lib/utils';
 
 const DIAS_VIGENCIA = 60;
 
@@ -57,7 +58,9 @@ export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) 
   if (!precioDia) return null;
 
   const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
-  const maxDate = new Date(hoy); maxDate.setDate(hoy.getDate() + DIAS_VIGENCIA - 1);
+  const maxDate60 = new Date(hoy); maxDate60.setDate(hoy.getDate() + DIAS_VIGENCIA - 1);
+  const limiteMeses = new Date(maxFechaCalendario(hoy) + 'T12:00:00');
+  const maxDate = maxDate60 < limiteMeses ? maxDate60 : limiteMeses;
   const count = value.dias?.length ?? 0;
 
   function handleChange(ranges: any) {

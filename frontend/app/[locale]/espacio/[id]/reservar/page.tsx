@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/Button';
 import type { Espacio } from '@/types';
 import { SERVICIOS_ADICIONALES } from '@/types';
 import type { ServicioTipo } from '@/types';
-import { formatARS } from '@/lib/utils';
+import { formatARS, maxFechaCalendario } from '@/lib/utils';
 import { getFotoFallback, getFotosFallback } from '@/lib/fotosFallback';
 import QRCode from 'qrcode';
 import { Calendar } from 'react-multi-date-picker';
@@ -177,9 +177,13 @@ export default function ReservarPage() {
 
   const maxDateFinal = (() => {
     const raw = espacio?.fecha_vencimiento;
-    if (!raw) return maxDate60;
-    const venc = String(raw).slice(0, 10);
-    return maxDate60 < venc ? maxDate60 : venc;
+    let max = maxDate60;
+    if (raw) {
+      const venc = String(raw).slice(0, 10);
+      if (venc < max) max = venc;
+    }
+    const limiteMeses = maxFechaCalendario();
+    return limiteMeses < max ? limiteMeses : max;
   })();
 
   const precioEstimado = espacio ? diasMulti.length * Number(espacio.precio_dia) : 0;

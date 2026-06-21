@@ -58,7 +58,7 @@ async function start() {
     // Retroactivo: espacios sin fecha_vencimiento la obtienen desde su created_at
     await pool.query(`
       UPDATE espacios
-      SET fecha_vencimiento = DATE_ADD(created_at, INTERVAL 90 DAY)
+      SET fecha_vencimiento = DATE_ADD(created_at, INTERVAL 60 DAY)
       WHERE fecha_vencimiento IS NULL AND activo = TRUE
     `).catch(e => console.error('⚠️  retroactivo vencimiento:', e.message));
 
