@@ -57,7 +57,8 @@ export default function HomePage() {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [geoLoading, setGeoLoading] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
-  const [seguridadInfo, setSeguridadInfo] = useState(false);
+  const [seguridadInfoPos, setSeguridadInfoPos] = useState<{ top: number; left: number } | null>(null);
+  const seguridadInfoIconRef = useRef<HTMLSpanElement>(null);
   const [favIds, setFavIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -413,15 +414,19 @@ export default function HomePage() {
 
                   {/* Info icon */}
                   <span
-                    onMouseEnter={() => setSeguridadInfo(true)}
-                    onMouseLeave={() => setSeguridadInfo(false)}
+                    ref={seguridadInfoIconRef}
+                    onMouseEnter={() => {
+                      const rect = seguridadInfoIconRef.current?.getBoundingClientRect();
+                      if (rect) setSeguridadInfoPos({ top: rect.bottom + 8, left: Math.min(rect.left, window.innerWidth - 270 - 16) });
+                    }}
+                    onMouseLeave={() => setSeguridadInfoPos(null)}
                     style={{ fontSize: '.78rem', cursor: 'help', color: 'var(--text3)', lineHeight: 1, userSelect: 'none' }}
                   >ℹ️</span>
 
                   {/* Popover */}
-                  {seguridadInfo && (
+                  {seguridadInfoPos && (
                     <div style={{
-                      position: 'absolute', top: 'calc(100% + .5rem)', right: 0, zIndex: 500,
+                      position: 'fixed', top: seguridadInfoPos.top, left: seguridadInfoPos.left, zIndex: 500,
                       background: 'var(--surface)', border: '1.5px solid var(--border)',
                       borderRadius: 'var(--r3)', padding: '1rem',
                       boxShadow: 'var(--s3)', width: 270,
