@@ -63,6 +63,14 @@ export default function HomePage() {
   const [seguridadInfoPos, setSeguridadInfoPos] = useState<{ top: number; left: number } | null>(null);
   const seguridadInfoIconRef = useRef<HTMLSpanElement>(null);
   const [favIds, setFavIds] = useState<Set<string>>(new Set());
+  const [headerScrolled, setHeaderScrolled] = useState(false);
+  const [headerExpandido, setHeaderExpandido] = useState(false);
+
+  function handlePageScroll(e: React.UIEvent<HTMLDivElement>) {
+    const top = e.currentTarget.scrollTop;
+    setHeaderScrolled(top > 40);
+    if (top <= 40) setHeaderExpandido(false);
+  }
 
   useEffect(() => {
     if (!token) { setFavIds(new Set()); return; }
@@ -160,6 +168,11 @@ export default function HomePage() {
       aplicarFiltros({ q: q || undefined });
     }, 350);
   }, [aplicarFiltros]);
+
+  function fmtCorta(iso?: string): string {
+    if (!iso) return '';
+    return new Date(iso + 'T12:00:00').toLocaleDateString('es-AR', { day: 'numeric', month: 'short' });
+  }
 
   const PRECIO_MAX_DIA = 10000;
   const PRECIO_STEP = 500;
@@ -296,10 +309,33 @@ export default function HomePage() {
 
         {/* ── Lista ────────────────────────────────────────── */}
         {vista === 'lista' && (
-          <div className="page-scroll">
+          <div className="page-scroll" onScroll={handlePageScroll}>
 
-            {/* Sticky search + filters header */}
+            {/* Sticky search + filters header — colapsa a una pastilla al scrollear */}
             <div className="list-search-header">
+              {headerScrolled && !headerExpandido ? (
+                <button
+                  className="search-pill-compact"
+                  onClick={() => setHeaderExpandido(true)}
+                >
+                  <span>🔍</span>
+                  <span className="search-pill-compact__item">{busqueda || t('searchPlaceholder')}</span>
+                  <span className="search-pill-compact__dot">·</span>
+                  <span className="search-pill-compact__item">
+                    {filtros.fecha_desde ? `${fmtCorta(filtros.fecha_desde)} - ${fmtCorta(filtros.fecha_hasta)}` : 'Fechas'}
+                  </span>
+                  <span className="search-pill-compact__dot">·</span>
+                  <span className="search-pill-compact__item">
+                    {precioValHome < PRECIO_MAX_DIA ? `$${precioValHome.toLocaleString('es-AR')}/día` : 'Precio'}
+                  </span>
+                </button>
+              ) : (
+              <>
+              {headerScrolled && (
+                <button className="search-pill-close" onClick={() => setHeaderExpandido(false)}>
+                  ✕ Cerrar
+                </button>
+              )}
               {/* Search bar row */}
               <div className="list-search-row">
                 <div className="search-bar-wrap">
@@ -477,6 +513,8 @@ export default function HomePage() {
                   </button>
                 )}
               </div>
+              </>
+              )}
             </div>
 
             {/* Results grid */}

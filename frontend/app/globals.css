@@ -470,6 +470,47 @@ select.filter-pill {
   padding: .75rem 1.5rem;
 }
 
+/* ── Pastilla compacta (efecto Airbnb al hacer scroll) ─────── */
+.search-pill-compact {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin: .6rem auto;
+  padding: .55rem 1.25rem;
+  background: var(--surface);
+  border: 1.5px solid var(--border2);
+  border-radius: 999px;
+  box-shadow: var(--s1);
+  cursor: pointer;
+  font-size: .82rem;
+  color: var(--text);
+  font-family: inherit;
+  animation: search-pill-in .18s ease-out;
+}
+.search-pill-compact:hover { border-color: var(--text); }
+.search-pill-compact__item {
+  font-weight: 600;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.search-pill-compact__dot { color: var(--text3); }
+.search-pill-close {
+  display: block;
+  margin: .5rem auto 0;
+  background: none;
+  border: none;
+  color: var(--text3);
+  font-size: .75rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+@keyframes search-pill-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* ── "Ver en mapa" / "Ver lista" floating CTA ─────────────── */
 .btn-ver-mapa {
   position: fixed;
