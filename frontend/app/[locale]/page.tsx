@@ -68,8 +68,15 @@ export default function HomePage() {
 
   function handlePageScroll(e: React.UIEvent<HTMLDivElement>) {
     const top = e.currentTarget.scrollTop;
-    setHeaderScrolled(top > 40);
-    if (top <= 40) setHeaderExpandido(false);
+    // Histéresis: colapsa pasados los 80px, recién vuelve a expandirse por
+    // debajo de 20px. Con un solo umbral, el scroll lento que se queda
+    // rondando ese valor hace titilar el header al cruzarlo de a poco.
+    setHeaderScrolled(prev => {
+      if (!prev && top > 80) return true;
+      if (prev && top < 20) return false;
+      return prev;
+    });
+    if (top < 20) setHeaderExpandido(false);
   }
 
   useEffect(() => {
