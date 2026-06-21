@@ -28,7 +28,9 @@ const DARK_STYLES: google.maps.MapTypeStyle[] = [
   { featureType: 'poi', stylers: [{ visibility: 'off' }] },
 ];
 
-const LIGHT_STYLES: google.maps.MapTypeStyle[] = [];
+const LIGHT_STYLES: google.maps.MapTypeStyle[] = [
+  { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+];
 
 export function MapaEspacios({ espacios, onMarkerClick, selectedId, center, filtrosActivos }: MapaEspaciosProps) {
   const mapRef           = useRef<HTMLDivElement>(null);
