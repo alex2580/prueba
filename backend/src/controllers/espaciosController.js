@@ -85,6 +85,11 @@ async function listar(req, res, next) {
       params.push(like, like, like, like);
     }
     if (fecha_desde && fecha_hasta) {
+      // La publicación tiene que seguir vigente durante todo el rango pedido
+      // (si no, para esa fecha ya estaría vencida y dada de baja).
+      sql += ' AND (e.fecha_vencimiento IS NULL OR e.fecha_vencimiento >= ?)';
+      params.push(fecha_hasta);
+
       // Compartidos siempre se muestran (no hay bloqueo por fecha, solo cupo_disponible).
       // Exclusivos: se excluyen si tienen una reserva activa que solapa el rango pedido.
       sql += ` AND (
