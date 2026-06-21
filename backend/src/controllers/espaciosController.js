@@ -34,7 +34,7 @@ async function getEspacioWithFotos(id) {
 // GET /api/espacios
 async function listar(req, res, next) {
   try {
-    const { barrio, tipo, precio_max, precio_min, disponible, q, periodo, con_seguridad, pais, rating_min, seguridad_min, con_cupo } = req.query;
+    const { barrio, tipo, precio_max, precio_min, disponible, q, periodo, con_seguridad, pais, rating_min, seguridad_min, con_cupo, fecha_desde, fecha_hasta } = req.query;
 
     let sql = `
       SELECT e.id, e.nombre, e.direccion, e.barrio, e.m2, e.tipo,
@@ -83,6 +83,20 @@ async function listar(req, res, next) {
       sql += ' AND (e.nombre LIKE ? OR e.descripcion LIKE ? OR e.barrio LIKE ? OR e.direccion LIKE ?)';
       const like = `%${q}%`;
       params.push(like, like, like, like);
+    }
+    if (fecha_desde && fecha_hasta) {
+      // Compartidos siempre se muestran (no hay bloqueo por fecha, solo cupo_disponible).
+      // Exclusivos: se excluyen si tienen una reserva activa que solapa el rango pedido.
+      sql += ` AND (
+        e.tipo = 'compartido'
+        OR NOT EXISTS (
+          SELECT 1 FROM reservas r
+          WHERE r.espacio_id = e.id
+            AND r.estado IN ('pendiente','confirmada','pagada','activa')
+            AND r.fecha_desde <= ? AND r.fecha_hasta >= ?
+        )
+      )`;
+      params.push(fecha_hasta, fecha_desde);
     }
 
     sql += ' ORDER BY e.reservas_mes DESC, e.rating DESC';

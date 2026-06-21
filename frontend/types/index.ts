@@ -221,6 +221,8 @@ export interface FiltrosEspacios {
   rating_min?: number;
   seguridad_min?: number;
   con_cupo?: boolean;
+  fecha_desde?: string;
+  fecha_hasta?: string;
 }
 
 export interface ApiResponse<T = unknown> {

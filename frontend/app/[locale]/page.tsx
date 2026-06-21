@@ -9,6 +9,7 @@ import { useEspacios } from '@/hooks/useEspacios';
 import { useAuth } from '@/hooks/useAuth';
 import { GridEspacios } from '@/components/espacios/GridEspacios';
 import { FiltrosEspacios } from '@/components/espacios/FiltrosEspacios';
+import { FiltroFechas } from '@/components/espacios/FiltroFechas';
 import { Modal } from '@/components/ui/Modal';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
@@ -37,6 +38,8 @@ export default function HomePage() {
     if (p.get('precio_max'))    f.precio_max = Number(p.get('precio_max'));
     if (p.get('seguridad_min')) f.seguridad_min = Number(p.get('seguridad_min'));
     if (p.get('q'))             f.q = p.get('q')!;
+    if (p.get('fecha_desde'))   f.fecha_desde = p.get('fecha_desde')!;
+    if (p.get('fecha_hasta'))   f.fecha_hasta = p.get('fecha_hasta')!;
     return f;
   });
   const { espacios, loading, error: espaciosError, filtros, aplicarFiltros, limpiarFiltros } = useEspacios(filtrosIniciales);
@@ -92,6 +95,8 @@ export default function HomePage() {
     if (filtros.precio_max)     p.set('precio_max', String(filtros.precio_max));
     if (filtros.seguridad_min)  p.set('seguridad_min', String(filtros.seguridad_min));
     if (filtros.q)              p.set('q', filtros.q);
+    if (filtros.fecha_desde)    p.set('fecha_desde', filtros.fecha_desde);
+    if (filtros.fecha_hasta)    p.set('fecha_hasta', filtros.fecha_hasta);
     const qs = p.toString();
     history.replaceState(null, '', qs ? `?${qs}` : window.location.pathname);
   }, [filtros, vista]);
@@ -160,8 +165,8 @@ export default function HomePage() {
   const PRECIO_STEP = 500;
   const precioValHome = filtros.precio_max ?? PRECIO_MAX_DIA;
 
-  const filtrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.barrio || filtros.q || filtros.pais || filtros.seguridad_min);
-  const hayFiltrosActivos = !!(filtros.tipo || filtros.precio_max || userLocation || filtros.q || filtros.pais || filtros.seguridad_min);
+  const filtrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.barrio || filtros.q || filtros.pais || filtros.seguridad_min || filtros.fecha_desde);
+  const hayFiltrosActivos = !!(filtros.tipo || filtros.precio_max || userLocation || filtros.q || filtros.pais || filtros.seguridad_min || filtros.fecha_desde);
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
@@ -318,6 +323,12 @@ export default function HomePage() {
                     >✕</button>
                   )}
                 </div>
+
+                <FiltroFechas
+                  fechaDesde={filtros.fecha_desde}
+                  fechaHasta={filtros.fecha_hasta}
+                  onChange={(fecha_desde, fecha_hasta) => aplicarFiltros({ fecha_desde, fecha_hasta })}
+                />
               </div>
 
               {/* Single filter bar — all options in one scrollable row */}

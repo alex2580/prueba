@@ -44,6 +44,8 @@ export const espaciosAPI = {
     if (filtros?.pais)         params.set('pais', filtros.pais);
     if (filtros?.rating_min)     params.set('rating_min', String(filtros.rating_min));
     if (filtros?.seguridad_min) params.set('seguridad_min', String(filtros.seguridad_min));
+    if (filtros?.fecha_desde)  params.set('fecha_desde', filtros.fecha_desde);
+    if (filtros?.fecha_hasta)  params.set('fecha_hasta', filtros.fecha_hasta);
     const qs = params.toString() ? `?${params}` : '';
     return fetchAPI<Espacio[]>(`/api/espacios${qs}`, {}, token);
   },
