@@ -575,7 +575,7 @@ export default function PublicarPage() {
 
           {/* ── PASO 1: DATOS ─────────────────────────────── */}
           {paso === 0 && (
-            <div style={{ display: 'grid', gap: '1.2rem' }}>
+            <div style={{ display: 'grid', gap: '.9rem' }}>
               {/* Tipo de alquiler */}
               <div>
                 <label className="form-label">Tipo de alquiler *</label>
@@ -655,15 +655,15 @@ export default function PublicarPage() {
                     ✅ Ubicación detectada{form.barrio ? ` · ${form.barrio}` : ''}
                   </div>
                 )}
+                {/* Mapa preview — anidado para no contar como item extra del gap del form */}
+                <div ref={mapPreviewRef} style={{
+                  width: '100%', height: form.lat ? 200 : 0,
+                  borderRadius: 'var(--r2)', overflow: 'hidden',
+                  border: form.lat ? '1.5px solid var(--border)' : 'none',
+                  marginTop: form.lat ? '.6rem' : 0,
+                  transition: 'height .3s ease',
+                }} />
               </div>
-
-              {/* Mapa preview */}
-              <div ref={mapPreviewRef} style={{
-                width: '100%', height: form.lat ? 200 : 0,
-                borderRadius: 'var(--r2)', overflow: 'hidden',
-                border: form.lat ? '1.5px solid var(--border)' : 'none',
-                transition: 'height .3s ease',
-              }} />
 
 
               {/* Moneda + Precio por día */}
@@ -868,7 +868,7 @@ export default function PublicarPage() {
           )}
 
           {/* Navegación */}
-          <div style={{ display: 'flex', gap: '.75rem', marginTop: '1.5rem' }}>
+          <div style={{ display: 'flex', gap: '.75rem', marginTop: '.9rem' }}>
             {paso > 0 && !otpPending && (
               <Button type="button" variant="secondary" onClick={() => { setError(null); setPaso(p => p - 1); }} style={{ flex: 1 }}>
                 ← Anterior
