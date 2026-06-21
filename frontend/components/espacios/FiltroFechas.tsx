@@ -27,25 +27,29 @@ interface Props {
 export function FiltroFechas({ fechaDesde, fechaHasta, onChange }: Props) {
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
+  const [seleccion, setSeleccion] = useState<any[]>([]);
   const btnRef = useRef<HTMLDivElement>(null);
-
-  const rangeValue = fechaDesde
-    ? [new Date(fechaDesde + 'T12:00:00'), new Date((fechaHasta || fechaDesde) + 'T12:00:00')]
-    : [];
 
   function abrir() {
     const rect = btnRef.current?.getBoundingClientRect();
     if (rect) setPos({ top: rect.bottom + 8, left: Math.max(8, Math.min(rect.left, window.innerWidth - POPOVER_WIDTH - 24)) });
+    setSeleccion(
+      fechaDesde
+        ? [new Date(fechaDesde + 'T12:00:00'), new Date((fechaHasta || fechaDesde) + 'T12:00:00')]
+        : []
+    );
     setOpen(true);
   }
 
+  // Mientras el usuario elige el primer día, solo guardamos selección local:
+  // si propagáramos un rango de 1 día al value controlado, el calendario
+  // reinicia la selección y nunca se puede marcar el segundo día.
   function handleChange(range: any) {
-    if (!Array.isArray(range) || range.length === 0) { onChange(undefined, undefined); return; }
-    const [start, end] = range;
-    const desde = start ? toISO(start) : undefined;
-    const hasta = end ? toISO(end) : desde;
-    onChange(desde, hasta);
-    if (start && end) setOpen(false);
+    setSeleccion(Array.isArray(range) ? range : []);
+    if (Array.isArray(range) && range.length === 2 && range[0] && range[1]) {
+      onChange(toISO(range[0]), toISO(range[1]));
+      setOpen(false);
+    }
   }
 
   function limpiar(e: React.MouseEvent) {
@@ -69,7 +73,7 @@ export function FiltroFechas({ fechaDesde, fechaHasta, onChange }: Props) {
         <span style={{ fontSize: '1rem' }}>📅</span>
         <div style={{ display: 'flex', alignItems: 'center', gap: '.45rem', fontFamily: 'Sora, sans-serif' }}>
           <div>
-            <div style={{ fontSize: '.6rem', color: 'var(--text3)', fontWeight: 700 }}>Llegada</div>
+            <div style={{ fontSize: '.6rem', color: 'var(--text3)', fontWeight: 700 }}>Ingreso</div>
             <div style={{ fontSize: '.8rem', fontWeight: 700, color: 'var(--text)', whiteSpace: 'nowrap' }}>{fmt(fechaDesde) || '¿Cuándo?'}</div>
           </div>
           <span style={{ color: 'var(--text3)' }}>→</span>
@@ -109,7 +113,7 @@ export function FiltroFechas({ fechaDesde, fechaHasta, onChange }: Props) {
             `}</style>
             <Cal
               range
-              value={rangeValue}
+              value={seleccion}
               onChange={handleChange}
               numberOfMonths={1}
               minDate={hoy}
