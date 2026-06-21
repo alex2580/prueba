@@ -57,6 +57,7 @@ export default function HomePage() {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [geoLoading, setGeoLoading] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
+  const [seguridadInfo, setSeguridadInfo] = useState(false);
   const [favIds, setFavIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -381,35 +382,72 @@ export default function HomePage() {
                   />
                 </div>
 
-                {/* Nivel de Seguridad — pill con estrellas inline */}
-                <div
-                  title={t('seguridadTooltip')}
-                  style={{
-                  display: 'inline-flex', alignItems: 'center', gap: '.15rem',
-                  padding: '.3rem .9rem',
-                  borderRadius: 999, flexShrink: 0,
-                  border: `1.5px solid ${filtros.seguridad_min ? 'var(--text)' : 'var(--border2)'}`,
-                  background: filtros.seguridad_min ? 'var(--text)' : 'var(--surface)',
-                }}>
-                  {[1, 2, 3, 4, 5].map(star => (
-                    <span
-                      key={star}
-                      onClick={() => aplicarFiltros({ seguridad_min: filtros.seguridad_min === star ? undefined : star })}
-                      title={`${star} estrella${star !== 1 ? 's' : ''} de seguridad mínimo`}
-                      style={{
-                        fontSize: '1rem', cursor: 'pointer', lineHeight: 1,
-                        color: star <= (filtros.seguridad_min || 0) ? 'var(--amber)' : filtros.seguridad_min ? 'rgba(255,255,255,.25)' : 'var(--border)',
-                        transition: 'color .12s',
-                      }}
-                    >★</span>
-                  ))}
-                  <span style={{
-                    fontSize: '.78rem', fontWeight: 700, whiteSpace: 'nowrap',
-                    color: filtros.seguridad_min ? '#fff' : 'var(--text)',
-                    fontFamily: 'Sora, sans-serif', marginLeft: '.3rem',
+                {/* Nivel de Seguridad */}
+                <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', flexShrink: 0, gap: '.3rem' }}>
+                  <div style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '.15rem',
+                    padding: '.3rem .9rem',
+                    borderRadius: 999,
+                    border: `1.5px solid ${filtros.seguridad_min ? 'var(--text)' : 'var(--border2)'}`,
+                    background: filtros.seguridad_min ? 'var(--text)' : 'var(--surface)',
                   }}>
-                    {filtros.seguridad_min ? `${filtros.seguridad_min}+ ★` : t('nivelSeguridad')}
-                  </span>
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <span
+                        key={star}
+                        onClick={() => aplicarFiltros({ seguridad_min: filtros.seguridad_min === star ? undefined : star })}
+                        style={{
+                          fontSize: '1rem', cursor: 'pointer', lineHeight: 1,
+                          color: star <= (filtros.seguridad_min || 0) ? 'var(--amber)' : filtros.seguridad_min ? 'rgba(255,255,255,.25)' : 'var(--border)',
+                          transition: 'color .12s',
+                        }}
+                      >★</span>
+                    ))}
+                    <span style={{
+                      fontSize: '.78rem', fontWeight: 700, whiteSpace: 'nowrap',
+                      color: filtros.seguridad_min ? '#fff' : 'var(--text)',
+                      fontFamily: 'Sora, sans-serif', marginLeft: '.3rem',
+                    }}>
+                      {filtros.seguridad_min ? `${filtros.seguridad_min}+ ★` : t('nivelSeguridad')}
+                    </span>
+                  </div>
+
+                  {/* Info icon */}
+                  <span
+                    onMouseEnter={() => setSeguridadInfo(true)}
+                    onMouseLeave={() => setSeguridadInfo(false)}
+                    style={{ fontSize: '.78rem', cursor: 'help', color: 'var(--text3)', lineHeight: 1, userSelect: 'none' }}
+                  >ℹ️</span>
+
+                  {/* Popover */}
+                  {seguridadInfo && (
+                    <div style={{
+                      position: 'absolute', top: 'calc(100% + .5rem)', right: 0, zIndex: 500,
+                      background: 'var(--surface)', border: '1.5px solid var(--border)',
+                      borderRadius: 'var(--r3)', padding: '1rem',
+                      boxShadow: 'var(--s3)', width: 270,
+                      pointerEvents: 'none',
+                    }}>
+                      <p style={{ fontSize: '.75rem', fontWeight: 700, color: 'var(--text)', margin: '0 0 .6rem', fontFamily: 'Sora, sans-serif' }}>
+                        🔒 ¿Qué mide la seguridad?
+                      </p>
+                      <p style={{ fontSize: '.72rem', color: 'var(--text3)', margin: '0 0 .75rem', lineHeight: 1.5 }}>
+                        Cada publicación responde un checklist de 8 características. El puntaje refleja cuántas cumple.
+                      </p>
+                      {[
+                        { stars: '★', label: 'Básico', desc: 'Cerradura en la entrada' },
+                        { stars: '★★', label: 'Elemental', desc: '+ Estructura seca y ventilada' },
+                        { stars: '★★★', label: 'Intermedio', desc: '+ Iluminación en el espacio' },
+                        { stars: '★★★★', label: 'Avanzado', desc: '+ Cámaras o acceso controlado' },
+                        { stars: '★★★★★', label: 'Máximo', desc: '+ Acceso 24hs y extintor' },
+                      ].map(row => (
+                        <div key={row.stars} style={{ display: 'flex', alignItems: 'baseline', gap: '.5rem', marginBottom: '.35rem' }}>
+                          <span style={{ fontSize: '.72rem', color: 'var(--amber)', minWidth: 56, flexShrink: 0 }}>{row.stars}</span>
+                          <span style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--text2)', minWidth: 64, flexShrink: 0 }}>{row.label}</span>
+                          <span style={{ fontSize: '.72rem', color: 'var(--text3)' }}>{row.desc}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Limpiar */}
