@@ -733,11 +733,11 @@ export default function ReservarPage() {
 
                   <p style={{ fontSize: '.72rem', color: 'var(--text3)', textAlign: 'center', lineHeight: 1.6, marginTop: '.75rem' }}>
                     Al proceder con el pago aceptás nuestros{' '}
-                    <a href="/legales" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--orange)', textDecoration: 'underline' }}>
+                    <a href="/es/legales" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--orange)', textDecoration: 'underline' }}>
                       Términos y Condiciones
                     </a>
                     {' '}y{' '}
-                    <a href="/legales" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--orange)', textDecoration: 'underline' }}>
+                    <a href="/es/legales#politica-privacidad" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--orange)', textDecoration: 'underline' }}>
                       Política de Privacidad
                     </a>
                     .

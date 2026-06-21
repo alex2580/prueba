@@ -883,7 +883,7 @@ export default function PublicarPage() {
 
           <p style={{ fontSize: '.72rem', color: 'var(--text3)', textAlign: 'center', marginTop: '1rem' }}>
             Al publicar aceptás los{' '}
-            <a href="/legales" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--orange)', textDecoration: 'underline' }}>
+            <a href="/es/legales" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--orange)', textDecoration: 'underline' }}>
               Términos y Condiciones
             </a>
             {' '}de TodasMisCosas.com
