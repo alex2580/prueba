@@ -40,7 +40,7 @@ async function listar(req, res, next) {
       SELECT e.id, e.nombre, e.direccion, e.barrio, e.m2, e.tipo,
              e.precio_dia, e.precio_mes, e.descripcion,
              e.lat, e.lng, e.disponible, e.cupo_disponible, e.rating, e.reviews_count,
-             e.reservas_mes, e.badge, e.created_at,
+             e.reservas_mes, e.badge, e.created_at, e.disponibilidad,
              u.nombre AS oferente_nombre, u.email AS oferente_email, u.tel AS oferente_tel,
              (SELECT url FROM espacio_fotos ef WHERE ef.espacio_id = e.id ORDER BY ef.orden LIMIT 1) AS img_principal
       FROM espacios e
@@ -101,7 +101,29 @@ async function listar(req, res, next) {
 
     sql += ' ORDER BY e.reservas_mes DESC, e.rating DESC';
 
-    const espacios = await query(sql, params);
+    let espacios = await query(sql, params);
+
+    if (fecha_desde && fecha_hasta) {
+      // El proveedor marca qué días ofrece el espacio (e.disponibilidad.dias),
+      // acotado por la vigencia de 60 días de la publicación. Si configuró
+      // días, el rango pedido tiene que estar contenido ahí; sin configurar
+      // (null o vacío) se interpreta como "sin restricción".
+      const diasPedidos = [];
+      const cur = new Date(`${fecha_desde}T12:00:00`);
+      const fin = new Date(`${fecha_hasta}T12:00:00`);
+      while (cur <= fin) {
+        diasPedidos.push(`${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, '0')}-${String(cur.getDate()).padStart(2, '0')}`);
+        cur.setDate(cur.getDate() + 1);
+      }
+      espacios = espacios.filter(e => {
+        if (!e.disponibilidad) return true;
+        let dias;
+        try { dias = JSON.parse(e.disponibilidad).dias; } catch (_) { dias = null; }
+        if (!dias || !dias.length) return true;
+        return diasPedidos.every(d => dias.includes(d));
+      });
+    }
+    espacios.forEach(e => { delete e.disponibilidad; });
 
     // Build full foto arrays
     const ids = espacios.map(e => e.id);
