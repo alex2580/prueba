@@ -92,7 +92,7 @@ export default function HomePage() {
     if (filtros.tipo)           p.set('tipo', filtros.tipo);
     if (filtros.barrio)         p.set('barrio', filtros.barrio);
     if (filtros.pais)           p.set('pais', filtros.pais);
-    if (filtros.precio_max)     p.set('precio_max', String(filtros.precio_max));
+    if (filtros.precio_max !== undefined) p.set('precio_max', String(filtros.precio_max));
     if (filtros.seguridad_min)  p.set('seguridad_min', String(filtros.seguridad_min));
     if (filtros.q)              p.set('q', filtros.q);
     if (filtros.fecha_desde)    p.set('fecha_desde', filtros.fecha_desde);
@@ -165,8 +165,8 @@ export default function HomePage() {
   const PRECIO_STEP = 500;
   const precioValHome = filtros.precio_max ?? PRECIO_MAX_DIA;
 
-  const filtrosActivos = !!(filtros.tipo || filtros.precio_max || filtros.barrio || filtros.q || filtros.pais || filtros.seguridad_min || filtros.fecha_desde);
-  const hayFiltrosActivos = !!(filtros.tipo || filtros.precio_max || userLocation || filtros.q || filtros.pais || filtros.seguridad_min || filtros.fecha_desde);
+  const filtrosActivos = !!(filtros.tipo || filtros.precio_max !== undefined || filtros.barrio || filtros.q || filtros.pais || filtros.seguridad_min || filtros.fecha_desde);
+  const hayFiltrosActivos = !!(filtros.tipo || filtros.precio_max !== undefined || userLocation || filtros.q || filtros.pais || filtros.seguridad_min || filtros.fecha_desde);
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
@@ -239,7 +239,7 @@ export default function HomePage() {
                     fontSize: '.65rem', fontWeight: 800,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
-                    {[filtros.tipo, filtros.precio_max].filter(Boolean).length}
+                    {[filtros.tipo, filtros.precio_max !== undefined].filter(Boolean).length}
                   </span>
                 )}
               </button>

@@ -35,7 +35,7 @@ export const espaciosAPI = {
     const params = new URLSearchParams();
     if (filtros?.barrio)     params.set('barrio', filtros.barrio);
     if (filtros?.tipo)       params.set('tipo', filtros.tipo);
-    if (filtros?.precio_max) params.set('precio_max', String(filtros.precio_max));
+    if (filtros?.precio_max !== undefined) params.set('precio_max', String(filtros.precio_max));
     if (filtros?.precio_min) params.set('precio_min', String(filtros.precio_min));
     if (filtros?.disponible !== undefined) params.set('disponible', String(filtros.disponible));
     if (filtros?.q)             params.set('q', filtros.q);

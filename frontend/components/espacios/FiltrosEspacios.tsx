@@ -21,7 +21,7 @@ export function FiltrosEspacios({
   onCercaMio, cercaMioActive, cercaMioLoading, onQuitarCercaMio, geoError,
 }: FiltrosEspaciosProps) {
   const PRECIO_MAX = PRECIO_MAX_DIA;
-  const hasActive = !!(filtros.tipo || filtros.precio_max || cercaMioActive);
+  const hasActive = !!(filtros.tipo || filtros.precio_max !== undefined || cercaMioActive);
   const precioVal = filtros.precio_max ?? PRECIO_MAX;
 
   const btnBase: React.CSSProperties = {
