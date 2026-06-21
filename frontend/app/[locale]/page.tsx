@@ -313,24 +313,28 @@ export default function HomePage() {
 
             {/* Sticky search + filters header — colapsa a una pastilla al scrollear */}
             <div className="list-search-header">
-              {headerScrolled && !headerExpandido ? (
-                <button
-                  className="search-pill-compact"
-                  onClick={() => setHeaderExpandido(true)}
-                >
-                  <span>🔍</span>
-                  <span className="search-pill-compact__item">{busqueda || t('searchPlaceholder')}</span>
-                  <span className="search-pill-compact__dot">·</span>
-                  <span className="search-pill-compact__item">
-                    {filtros.fecha_desde ? `${fmtCorta(filtros.fecha_desde)} - ${fmtCorta(filtros.fecha_hasta)}` : 'Fechas'}
-                  </span>
-                  <span className="search-pill-compact__dot">·</span>
-                  <span className="search-pill-compact__item">
-                    {precioValHome < PRECIO_MAX_DIA ? `$${precioValHome.toLocaleString('es-AR')}/día` : 'Precio'}
-                  </span>
-                </button>
-              ) : (
-              <>
+              <div className={`search-collapsible ${headerScrolled && !headerExpandido ? 'is-visible' : ''}`}>
+                <div className="search-collapsible__inner">
+                  <button
+                    className="search-pill-compact"
+                    onClick={() => setHeaderExpandido(true)}
+                  >
+                    <span>🔍</span>
+                    <span className="search-pill-compact__item">{busqueda || t('searchPlaceholder')}</span>
+                    <span className="search-pill-compact__dot">·</span>
+                    <span className="search-pill-compact__item">
+                      {filtros.fecha_desde ? `${fmtCorta(filtros.fecha_desde)} - ${fmtCorta(filtros.fecha_hasta)}` : 'Fechas'}
+                    </span>
+                    <span className="search-pill-compact__dot">·</span>
+                    <span className="search-pill-compact__item">
+                      {precioValHome < PRECIO_MAX_DIA ? `$${precioValHome.toLocaleString('es-AR')}/día` : 'Precio'}
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              <div className={`search-collapsible ${!(headerScrolled && !headerExpandido) ? 'is-visible' : ''}`}>
+                <div className="search-collapsible__inner">
               {headerScrolled && (
                 <button className="search-pill-close" onClick={() => setHeaderExpandido(false)}>
                   ✕ Cerrar
@@ -513,8 +517,8 @@ export default function HomePage() {
                   </button>
                 )}
               </div>
-              </>
-              )}
+                </div>
+              </div>
             </div>
 
             {/* Results grid */}

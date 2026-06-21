@@ -471,6 +471,20 @@ select.filter-pill {
 }
 
 /* ── Pastilla compacta (efecto Airbnb al hacer scroll) ─────── */
+/* grid-template-rows 0fr→1fr anima la altura real del contenido,
+   sin necesidad de medirlo a mano ni "adivinar" un max-height. */
+.search-collapsible {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows .3s ease, opacity .2s ease;
+}
+.search-collapsible.is-visible {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.search-collapsible__inner { overflow: hidden; min-height: 0; }
+
 .search-pill-compact {
   display: flex;
   align-items: center;
@@ -485,7 +499,6 @@ select.filter-pill {
   font-size: .82rem;
   color: var(--text);
   font-family: inherit;
-  animation: search-pill-in .18s ease-out;
 }
 .search-pill-compact:hover { border-color: var(--text); }
 .search-pill-compact__item {
@@ -505,10 +518,6 @@ select.filter-pill {
   font-size: .75rem;
   cursor: pointer;
   font-family: inherit;
-}
-@keyframes search-pill-in {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ── "Ver en mapa" / "Ver lista" floating CTA ─────────────── */
