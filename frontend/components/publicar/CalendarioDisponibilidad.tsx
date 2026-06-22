@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Calendar, DateObject } from 'react-multi-date-picker';
-import { CalendarioCarrusel } from '@/components/ui/CalendarioCarrusel';
+import { Calendar } from 'react-multi-date-picker';
 
 const DIAS_VIGENCIA = 60;
 
@@ -59,7 +58,6 @@ export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) 
 
   const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
   const maxDate = new Date(hoy); maxDate.setDate(hoy.getDate() + DIAS_VIGENCIA - 1);
-  const meses = [0, 1, 2].map(i => new DateObject(new Date(hoy.getFullYear(), hoy.getMonth() + i, 1)));
   const count = value.dias?.length ?? 0;
 
   function handleChange(ranges: any) {
@@ -76,15 +74,15 @@ export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) 
   return (
     <div style={{ background: 'var(--surface2)', border: '1.5px solid var(--border)', borderRadius: 'var(--r2)', padding: '1rem' }}>
       <style>{`
-        .calendario-multi .rmdp-wrapper { width: 100% !important; box-shadow: none !important; background: transparent !important; }
-        .calendario-multi .rmdp-calendar { width: 100% !important; }
-        .calendario-multi .rmdp-header { font-family: Sora, sans-serif; font-weight: 700; }
-        .calendario-multi .rmdp-range { background: rgba(232,98,42,.15) !important; color: var(--text) !important; }
-        .calendario-multi .rmdp-range.start span, .calendario-multi .rmdp-range.end span { background: var(--orange) !important; color: #fff !important; }
-        .calendario-multi .rmdp-range.start, .calendario-multi .rmdp-range.end { background: var(--orange) !important; }
-        .calendario-multi .rmdp-day:not(.rmdp-disabled):not(.rmdp-range) span:hover { background: rgba(232,98,42,.2) !important; }
-        .calendario-multi .rmdp-day.rmdp-today span { border: 1.5px solid var(--orange) !important; font-weight: 700; }
-        .calendario-multi .rmdp-arrow-container { display: none !important; }
+        .calendario-mes .rmdp-wrapper { width: 100% !important; box-shadow: none !important; background: transparent !important; }
+        .calendario-mes .rmdp-calendar { width: 100% !important; }
+        .calendario-mes .rmdp-header { font-family: Sora, sans-serif; font-weight: 700; }
+        .calendario-mes .rmdp-range { background: rgba(232,98,42,.15) !important; color: var(--text) !important; }
+        .calendario-mes .rmdp-range.start span, .calendario-mes .rmdp-range.end span { background: var(--orange) !important; color: #fff !important; }
+        .calendario-mes .rmdp-range.start, .calendario-mes .rmdp-range.end { background: var(--orange) !important; }
+        .calendario-mes .rmdp-day:not(.rmdp-disabled):not(.rmdp-range) span:hover { background: rgba(232,98,42,.2) !important; }
+        .calendario-mes .rmdp-day.rmdp-today span { border: 1.5px solid var(--orange) !important; font-weight: 700; }
+        .calendario-mes .rmdp-arrow-container:hover { background: rgba(232,98,42,.1) !important; }
       `}</style>
 
       <div style={{ marginBottom: '.75rem' }}>
@@ -108,26 +106,23 @@ export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) 
         </div>
       </div>
 
-      <div className="calendario-multi">
-        <CalendarioCarrusel>
-          {meses.map((mes, i) => (
-            <Cal
-              key={i}
-              multiple
-              range
-              value={rangesValue}
-              onChange={handleChange}
-              numberOfMonths={1}
-              currentDate={mes}
-              minDate={hoy}
-              maxDate={maxDate}
-              weekDays={SEMANA}
-              months={MESES}
-              weekStartDayIndex={1}
-              className="rmdp-mobile"
-            />
-          ))}
-        </CalendarioCarrusel>
+      <div className="calendario-mes">
+        <Cal
+          multiple
+          range
+          value={rangesValue}
+          onChange={handleChange}
+          numberOfMonths={1}
+          minDate={hoy}
+          maxDate={maxDate}
+          weekDays={SEMANA}
+          months={MESES}
+          weekStartDayIndex={1}
+          className="rmdp-mobile"
+        />
+      </div>
+      <div style={{ fontSize: '.68rem', color: 'var(--text3)', textAlign: 'center', marginTop: '.3rem' }}>
+        ‹ Usá las flechas para moverte entre los próximos meses ›
       </div>
 
       <div style={{ marginTop: '.6rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
