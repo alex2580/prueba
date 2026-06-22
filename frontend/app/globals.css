@@ -375,6 +375,7 @@ textarea { resize: vertical; line-height: 1.6; }
 .filter-pills-bar {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: .5rem;
   overflow-x: auto;
   padding: .65rem 1.5rem;
