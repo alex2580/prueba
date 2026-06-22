@@ -94,25 +94,6 @@ export default function ComoFuncionaPage() {
 
       <SiteHeader />
 
-      {/* Hero */}
-      <div style={{
-        background: 'linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%)',
-        borderBottom: '1px solid var(--border)',
-        padding: '3rem 1.5rem 2.5rem',
-        textAlign: 'center',
-      }}>
-        <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: 'clamp(2rem, 5vw, 3.2rem)', lineHeight: 1.15, marginBottom: '1.25rem' }}>
-          <span style={{ color: 'var(--text)', display: 'block' }}>{t('heroTitulo1')}</span>
-          <span style={{ color: 'var(--orange)', display: 'block' }}>{t('heroTitulo2')}</span>
-        </h1>
-        <p style={{ color: 'var(--text2)', fontSize: '.95rem', lineHeight: 1.7, maxWidth: 560, margin: '0 auto 1.75rem' }}>
-          {t('heroDesc')}
-        </p>
-        <button className="btn-primary" onClick={() => router.push('/publicar')}>
-          {t('publicarBtn')}
-        </button>
-      </div>
-
       <div className="page-scroll" style={{ flex: 1 }}>
         <div style={{ maxWidth: 980, margin: '0 auto', padding: '2.5rem 1.25rem' }}>
 

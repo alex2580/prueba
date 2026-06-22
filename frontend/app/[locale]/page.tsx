@@ -24,6 +24,7 @@ type Vista = 'mapa' | 'lista';
 
 export default function HomePage() {
   const t = useTranslations('home');
+  const tc = useTranslations('comoFunciona');
   const router = useRouter();
   const { user, token, loading: authLoading, login, register, logout, error: authError, isAdmin,
     otpPending, otpEmailHint, otpCanales, verifyOTP, reenviarOTP,
@@ -317,6 +318,25 @@ export default function HomePage() {
         {/* ── Lista ────────────────────────────────────────── */}
         {vista === 'lista' && (
           <div className="page-scroll" onScroll={handlePageScroll}>
+
+            {/* Hero */}
+            <div style={{
+              background: 'linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%)',
+              borderBottom: '1px solid var(--border)',
+              padding: '3rem 1.5rem 2.5rem',
+              textAlign: 'center',
+            }}>
+              <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: 'clamp(2rem, 5vw, 3.2rem)', lineHeight: 1.15, marginBottom: '1.25rem' }}>
+                <span style={{ color: 'var(--text)', display: 'block' }}>{tc('heroTitulo1')}</span>
+                <span style={{ color: 'var(--orange)', display: 'block' }}>{tc('heroTitulo2')}</span>
+              </h1>
+              <p style={{ color: 'var(--text2)', fontSize: '.95rem', lineHeight: 1.7, maxWidth: 560, margin: '0 auto 1.75rem' }}>
+                {tc('heroDesc')}
+              </p>
+              <button className="btn-primary" onClick={() => router.push('/publicar')}>
+                {tc('publicarBtn')}
+              </button>
+            </div>
 
             {/* Sticky search + filters header — colapsa a una pastilla al scrollear */}
             <div className="list-search-header">
