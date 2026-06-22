@@ -10,14 +10,14 @@ async function run() {
       ADD COLUMN IF NOT EXISTS aviso_vencimiento_enviado TINYINT(1) NOT NULL DEFAULT 0
   `);
 
-  // Retroactivo: espacios existentes vencen 60 días desde su creación
+  // Retroactivo: espacios existentes vencen 90 días desde su creación
   await query(`
     UPDATE espacios
-    SET fecha_vencimiento = DATE_ADD(created_at, INTERVAL 60 DAY)
+    SET fecha_vencimiento = DATE_ADD(created_at, INTERVAL 90 DAY)
     WHERE fecha_vencimiento IS NULL
   `);
 
-  // Los que ya pasaron los 60 días quedan marcados como vencidos
+  // Los que ya pasaron los 90 días quedan marcados como vencidos
   await query(`
     UPDATE espacios
     SET vencida = 1, activo = FALSE

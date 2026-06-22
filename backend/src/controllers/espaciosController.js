@@ -105,7 +105,7 @@ async function listar(req, res, next) {
 
     if (fecha_desde && fecha_hasta) {
       // El proveedor marca qué días ofrece el espacio (e.disponibilidad.dias),
-      // acotado por la vigencia de 60 días de la publicación. Si configuró
+      // acotado por la vigencia de 90 días de la publicación. Si configuró
       // días, el rango pedido tiene que estar contenido ahí; sin configurar
       // (null o vacío) se interpreta como "sin restricción".
       const diasPedidos = [];
@@ -208,7 +208,7 @@ async function crear(req, res, next) {
       const oferente = await queryOne('SELECT pais FROM usuarios WHERE id = ?', [req.user.id]);
       await query(
         `UPDATE espacios SET categoria = ?, disponibilidad = ?, seguridad = ?, moneda = ?, pais = ?,
-                fecha_vencimiento = DATE_ADD(NOW(), INTERVAL 60 DAY)
+                fecha_vencimiento = DATE_ADD(NOW(), INTERVAL 90 DAY)
          WHERE id = ?`,
         [categoria || null,
          disponibilidad ? JSON.stringify(disponibilidad) : null,

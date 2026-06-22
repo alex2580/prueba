@@ -751,7 +751,7 @@ async function sendAvisoVencimientoPublicacion(toEmail, nombre, { espacioNombre,
       <div><div class="info-label">Publicación</div><div class="info-val">${espacioNombre}</div></div>
       <div><div class="info-label">Fecha de vencimiento</div><div class="info-val">${fechaVencimiento}</div></div>
     </div>
-    <p>Las publicaciones tienen una vigencia de 60 días. Una vez vencida, dejará de mostrarse en el marketplace.</p>
+    <p>Las publicaciones tienen una vigencia de 90 días. Una vez vencida, dejará de mostrarse en el marketplace.</p>
     <p>Si querés seguir ofreciendo tu espacio, creá una nueva publicación desde tu panel antes de esa fecha.</p>
     <a class="btn" href="${process.env.FRONTEND_URL}/publicar">Publicar nuevo espacio →</a>
     <p style="font-size:12px;color:#64748b;margin-top:16px">Si ya no querés seguir ofreciendo el espacio, simplemente ignorá este mensaje.</p>
@@ -768,7 +768,7 @@ async function sendPublicacionVencida(toEmail, nombre, { espacioNombre }) {
   if (!await emailConfig.isEnabled('publicacion_vencida')) return;
   const html = baseTemplate('Tu publicación venció', `
     <h2>🔴 Tu publicación venció</h2>
-    <p>Hola <span class="highlight">${nombre}</span>, tu publicación <strong>${espacioNombre}</strong> llegó al final de su vigencia de 60 días y fue dada de baja automáticamente.</p>
+    <p>Hola <span class="highlight">${nombre}</span>, tu publicación <strong>${espacioNombre}</strong> llegó al final de su vigencia de 90 días y fue dada de baja automáticamente.</p>
     <p>Si querés seguir ofreciendo tu espacio, podés crear una nueva publicación desde tu panel en cualquier momento.</p>
     <a class="btn" href="${process.env.FRONTEND_URL}/publicar">Crear nueva publicación →</a>
     <p style="font-size:12px;color:#64748b;margin-top:16px">¡Gracias por ser parte de TodasMisCosas.com!</p>

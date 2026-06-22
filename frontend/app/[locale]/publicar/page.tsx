@@ -793,7 +793,7 @@ export default function PublicarPage() {
                     Tu espacio está configurado. Hacé click en Publicar para que aparezca en el mapa.
                   </p>
                   <div style={{ background: 'rgba(245,158,11,.1)', border: '1px solid rgba(245,158,11,.3)', borderRadius: 'var(--r2)', padding: '.6rem .9rem', marginBottom: '1.25rem', fontSize: '.78rem', color: 'var(--text2)', textAlign: 'left' }}>
-                    📅 <strong>Vigencia de 60 días:</strong> tu publicación estará activa por 60 días corridos. Te avisamos 15 días antes del vencimiento para que puedas renovarla.
+                    📅 <strong>Vigencia de 90 días:</strong> tu publicación estará activa por 90 días corridos. Te avisamos 15 días antes del vencimiento para que puedas renovarla.
                   </div>
                   <Button onClick={() => publicar(token!)} loading={loading} style={{ width: '100%' }}>
                     Publicar espacio
