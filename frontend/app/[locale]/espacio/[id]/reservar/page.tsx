@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/Button';
 import type { Espacio } from '@/types';
 import { SERVICIOS_ADICIONALES } from '@/types';
 import type { ServicioTipo } from '@/types';
-import { formatARS, maxFechaCalendario } from '@/lib/utils';
+import { formatARS } from '@/lib/utils';
 import { getFotoFallback, getFotosFallback } from '@/lib/fotosFallback';
 import QRCode from 'qrcode';
 import { Calendar } from 'react-multi-date-picker';
@@ -182,8 +182,7 @@ export default function ReservarPage() {
       const venc = String(raw).slice(0, 10);
       if (venc < max) max = venc;
     }
-    const limiteMeses = maxFechaCalendario();
-    return limiteMeses < max ? limiteMeses : max;
+    return max;
   })();
 
   const precioEstimado = espacio ? diasMulti.length * Number(espacio.precio_dia) : 0;
@@ -371,7 +370,11 @@ export default function ReservarPage() {
                     <style>{`
                       .rmdp-wrapper { width: 100% !important; box-shadow: none !important; background: transparent !important; }
                       .rmdp-calendar { width: 100% !important; }
-                      .rmdp-day-picker { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+                      .rmdp-day-picker {
+                        display: flex; flex-direction: column; gap: 1.1rem;
+                        max-height: 300px; overflow-y: auto; scrollbar-width: thin;
+                        padding-right: .3rem;
+                      }
                       .rmdp-header { font-family: Sora, sans-serif; font-weight: 700; }
                       .rmdp-range { background: rgba(232,98,42,.15) !important; color: var(--text) !important; }
                       .rmdp-range.start span, .rmdp-range.end span { background: var(--orange) !important; color: #fff !important; }
@@ -406,7 +409,7 @@ export default function ReservarPage() {
                         setDiasMulti(expandRanges(next));
                         setStep1Error('');
                       }}
-                      numberOfMonths={2}
+                      numberOfMonths={3}
                       minDate={new Date()}
                       maxDate={new Date(maxDateFinal + 'T12:00:00')}
                       weekDays={SEMANA}
@@ -420,6 +423,9 @@ export default function ReservarPage() {
                           return { disabled: true, style: { color: '#ccc' } };
                       }}
                     />
+                    <div style={{ fontSize: '.68rem', color: 'var(--text3)', textAlign: 'center', marginTop: '.3rem' }}>
+                      ↕ Desplazate dentro del calendario para ver los próximos meses
+                    </div>
 
                     <div style={{ marginTop: '.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       {diasMulti.length > 0

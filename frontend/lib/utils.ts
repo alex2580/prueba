@@ -37,14 +37,6 @@ export function formatARS(amount: number): string {
   }).format(amount);
 }
 
-// Tope de navegación de los calendarios de disponibilidad/reserva: nunca
-// dejar ver más allá del mes siguiente, aunque la vigencia en días alcance
-// para asomar un tercer mes (ej. publicado el día 28).
-export function maxFechaCalendario(hoy: Date = new Date()): string {
-  const fin = new Date(hoy.getFullYear(), hoy.getMonth() + 2, 0);
-  return `${fin.getFullYear()}-${String(fin.getMonth() + 1).padStart(2, '0')}-${String(fin.getDate()).padStart(2, '0')}`;
-}
-
 export function formatKm(distanceM: number): string {
   if (distanceM < 1000) return `${Math.round(distanceM)} m`;
   return `${(distanceM / 1000).toFixed(1)} km`;

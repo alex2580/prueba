@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { Calendar } from 'react-multi-date-picker';
-import { maxFechaCalendario } from '@/lib/utils';
 
 const DIAS_VIGENCIA = 60;
 
@@ -58,9 +57,7 @@ export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) 
   if (!precioDia) return null;
 
   const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
-  const maxDate60 = new Date(hoy); maxDate60.setDate(hoy.getDate() + DIAS_VIGENCIA - 1);
-  const limiteMeses = new Date(maxFechaCalendario(hoy) + 'T12:00:00');
-  const maxDate = maxDate60 < limiteMeses ? maxDate60 : limiteMeses;
+  const maxDate = new Date(hoy); maxDate.setDate(hoy.getDate() + DIAS_VIGENCIA - 1);
   const count = value.dias?.length ?? 0;
 
   function handleChange(ranges: any) {
@@ -79,9 +76,11 @@ export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) 
       <style>{`
         .rmdp-wrapper { width: 100% !important; box-shadow: none !important; background: transparent !important; }
         .rmdp-calendar { width: 100% !important; }
-        .rmdp-day-picker { display: flex; gap: .6rem; flex-wrap: nowrap; }
-        .rmdp-day-picker > div { flex: 1; min-width: 0; }
-        .rmdp-day-picker .rmdp-week { justify-content: space-between; }
+        .rmdp-day-picker {
+          display: flex; flex-direction: column; gap: 1.1rem;
+          max-height: 300px; overflow-y: auto; scrollbar-width: thin;
+          padding-right: .3rem;
+        }
         .rmdp-header { font-family: Sora, sans-serif; font-weight: 700; }
         .rmdp-range { background: rgba(232,98,42,.15) !important; color: var(--text) !important; }
         .rmdp-range.start span, .rmdp-range.end span { background: var(--orange) !important; color: #fff !important; }
@@ -117,7 +116,7 @@ export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) 
         range
         value={rangesValue}
         onChange={handleChange}
-        numberOfMonths={2}
+        numberOfMonths={3}
         minDate={hoy}
         maxDate={maxDate}
         weekDays={SEMANA}
@@ -125,6 +124,9 @@ export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) 
         weekStartDayIndex={1}
         className="rmdp-mobile"
       />
+      <div style={{ fontSize: '.68rem', color: 'var(--text3)', textAlign: 'center', marginTop: '.3rem' }}>
+        ↕ Desplazate dentro del calendario para ver los próximos meses
+      </div>
 
       <div style={{ marginTop: '.6rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         {count > 0
