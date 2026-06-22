@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Calendar, DateObject } from 'react-multi-date-picker';
+import { CalendarioCarrusel } from '@/components/ui/CalendarioCarrusel';
 
 const DIAS_VIGENCIA = 60;
 
@@ -75,16 +76,15 @@ export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) 
   return (
     <div style={{ background: 'var(--surface2)', border: '1.5px solid var(--border)', borderRadius: 'var(--r2)', padding: '1rem' }}>
       <style>{`
-        .calendario-scroll { max-height: 320px; overflow-y: auto; scrollbar-width: thin; padding-right: .3rem; display: grid; gap: 1.1rem; }
-        .calendario-scroll .rmdp-wrapper { width: 100% !important; box-shadow: none !important; background: transparent !important; }
-        .calendario-scroll .rmdp-calendar { width: 100% !important; }
-        .calendario-scroll .rmdp-header { font-family: Sora, sans-serif; font-weight: 700; }
-        .calendario-scroll .rmdp-range { background: rgba(232,98,42,.15) !important; color: var(--text) !important; }
-        .calendario-scroll .rmdp-range.start span, .calendario-scroll .rmdp-range.end span { background: var(--orange) !important; color: #fff !important; }
-        .calendario-scroll .rmdp-range.start, .calendario-scroll .rmdp-range.end { background: var(--orange) !important; }
-        .calendario-scroll .rmdp-day:not(.rmdp-disabled):not(.rmdp-range) span:hover { background: rgba(232,98,42,.2) !important; }
-        .calendario-scroll .rmdp-day.rmdp-today span { border: 1.5px solid var(--orange) !important; font-weight: 700; }
-        .calendario-scroll .rmdp-arrow-container { display: none !important; }
+        .calendario-multi .rmdp-wrapper { width: 100% !important; box-shadow: none !important; background: transparent !important; }
+        .calendario-multi .rmdp-calendar { width: 100% !important; }
+        .calendario-multi .rmdp-header { font-family: Sora, sans-serif; font-weight: 700; }
+        .calendario-multi .rmdp-range { background: rgba(232,98,42,.15) !important; color: var(--text) !important; }
+        .calendario-multi .rmdp-range.start span, .calendario-multi .rmdp-range.end span { background: var(--orange) !important; color: #fff !important; }
+        .calendario-multi .rmdp-range.start, .calendario-multi .rmdp-range.end { background: var(--orange) !important; }
+        .calendario-multi .rmdp-day:not(.rmdp-disabled):not(.rmdp-range) span:hover { background: rgba(232,98,42,.2) !important; }
+        .calendario-multi .rmdp-day.rmdp-today span { border: 1.5px solid var(--orange) !important; font-weight: 700; }
+        .calendario-multi .rmdp-arrow-container { display: none !important; }
       `}</style>
 
       <div style={{ marginBottom: '.75rem' }}>
@@ -108,27 +108,26 @@ export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) 
         </div>
       </div>
 
-      <div className="calendario-scroll">
-        {meses.map((mes, i) => (
-          <Cal
-            key={i}
-            multiple
-            range
-            value={rangesValue}
-            onChange={handleChange}
-            numberOfMonths={1}
-            currentDate={mes}
-            minDate={hoy}
-            maxDate={maxDate}
-            weekDays={SEMANA}
-            months={MESES}
-            weekStartDayIndex={1}
-            className="rmdp-mobile"
-          />
-        ))}
-      </div>
-      <div style={{ fontSize: '.68rem', color: 'var(--text3)', textAlign: 'center', marginTop: '.3rem' }}>
-        ↕ Desplazate dentro del calendario para ver los próximos meses
+      <div className="calendario-multi">
+        <CalendarioCarrusel>
+          {meses.map((mes, i) => (
+            <Cal
+              key={i}
+              multiple
+              range
+              value={rangesValue}
+              onChange={handleChange}
+              numberOfMonths={1}
+              currentDate={mes}
+              minDate={hoy}
+              maxDate={maxDate}
+              weekDays={SEMANA}
+              months={MESES}
+              weekStartDayIndex={1}
+              className="rmdp-mobile"
+            />
+          ))}
+        </CalendarioCarrusel>
       </div>
 
       <div style={{ marginTop: '.6rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
