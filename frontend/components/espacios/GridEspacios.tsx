@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef, useState, useEffect, useCallback } from 'react';
 import type { Espacio } from '@/types';
 import { CardEspacio } from './CardEspacio';
 
@@ -31,12 +32,59 @@ function SkeletonCard() {
   );
 }
 
+function GridScrollArrows({ children }: { children: React.ReactNode }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canLeft, setCanLeft] = useState(false);
+  const [canRight, setCanRight] = useState(false);
+
+  const actualizar = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanLeft(el.scrollLeft > 4);
+    setCanRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  }, []);
+
+  useEffect(() => {
+    actualizar();
+    window.addEventListener('resize', actualizar);
+    return () => window.removeEventListener('resize', actualizar);
+  }, [actualizar, children]);
+
+  function mover(dir: 1 | -1) {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * el.clientWidth * 0.9, behavior: 'smooth' });
+  }
+
+  return (
+    <div className="espacios-grid-wrap">
+      <button
+        type="button"
+        className="espacios-grid-arrow espacios-grid-arrow--left"
+        onClick={() => mover(-1)}
+        disabled={!canLeft}
+        aria-label="Ver espacios anteriores"
+      >‹</button>
+      <div className="espacios-grid" ref={scrollRef} onScroll={actualizar}>
+        {children}
+      </div>
+      <button
+        type="button"
+        className="espacios-grid-arrow espacios-grid-arrow--right"
+        onClick={() => mover(1)}
+        disabled={!canRight}
+        aria-label="Ver más espacios"
+      >›</button>
+    </div>
+  );
+}
+
 export function GridEspacios({ espacios, loading, onCardClick, favoritos, onToggleFavorito, token }: GridEspaciosProps) {
   if (loading) {
     return (
-      <div className="espacios-grid">
+      <GridScrollArrows>
         {[...Array(6)].map((_, i) => <SkeletonCard key={i} />)}
-      </div>
+      </GridScrollArrows>
     );
   }
 
@@ -55,7 +103,7 @@ export function GridEspacios({ espacios, loading, onCardClick, favoritos, onTogg
   }
 
   return (
-    <div className="espacios-grid">
+    <GridScrollArrows>
       {espacios.map(espacio => (
         <CardEspacio
           key={espacio.id}
@@ -66,6 +114,6 @@ export function GridEspacios({ espacios, loading, onCardClick, favoritos, onTogg
           token={token}
         />
       ))}
-    </div>
+    </GridScrollArrows>
   );
 }
