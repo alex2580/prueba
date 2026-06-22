@@ -418,12 +418,9 @@ export default function HomePage() {
                 <span style={{ color: 'var(--text)', display: 'block' }}>{tc('heroTitulo1')}</span>
                 <span style={{ color: 'var(--orange)', display: 'block' }}>{tc('heroTitulo2')}</span>
               </h1>
-              <p style={{ color: 'var(--text2)', fontSize: '.95rem', lineHeight: 1.7, maxWidth: 560, margin: '0 auto 1.75rem' }}>
+              <p style={{ color: 'var(--text2)', fontSize: '.95rem', lineHeight: 1.7, maxWidth: 560, margin: '0 auto' }}>
                 {tc('heroDesc')}
               </p>
-              <button className="btn-primary" onClick={() => router.push('/publicar')}>
-                {tc('publicarBtn')}
-              </button>
             </div>
 
             {/* Filtros — sección propia, independiente del header que se colapsa */}
@@ -595,6 +592,13 @@ export default function HomePage() {
                 onToggleFavorito={handleToggleFavorito}
                 token={token}
               />
+            </div>
+
+            {/* CTA publicar — debajo del hero, arriba de las preguntas frecuentes */}
+            <div style={{ textAlign: 'center', padding: '0 1.5rem 3rem' }}>
+              <button className="btn-primary" onClick={() => router.push('/publicar')}>
+                {tc('publicarBtn')}
+              </button>
             </div>
 
             {/* Preguntas frecuentes */}
