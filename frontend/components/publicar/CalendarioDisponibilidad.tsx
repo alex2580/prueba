@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Calendar } from 'react-multi-date-picker';
+import { Calendar, DateObject } from 'react-multi-date-picker';
 
 const DIAS_VIGENCIA = 60;
 
@@ -58,7 +58,7 @@ export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) 
 
   const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
   const maxDate = new Date(hoy); maxDate.setDate(hoy.getDate() + DIAS_VIGENCIA - 1);
-  const meses = [0, 1, 2].map(i => new Date(hoy.getFullYear(), hoy.getMonth() + i, 1));
+  const meses = [0, 1, 2].map(i => new DateObject(new Date(hoy.getFullYear(), hoy.getMonth() + i, 1)));
   const count = value.dias?.length ?? 0;
 
   function handleChange(ranges: any) {

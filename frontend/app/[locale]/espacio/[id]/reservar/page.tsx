@@ -15,7 +15,7 @@ import type { ServicioTipo } from '@/types';
 import { formatARS } from '@/lib/utils';
 import { getFotoFallback, getFotosFallback } from '@/lib/fotosFallback';
 import QRCode from 'qrcode';
-import { Calendar } from 'react-multi-date-picker';
+import { Calendar, DateObject } from 'react-multi-date-picker';
 
 const Cal = Calendar as any;
 const SEMANA = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'];
@@ -187,7 +187,7 @@ export default function ReservarPage() {
 
   const mesesCalendario = (() => {
     const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
-    return [0, 1, 2].map(i => new Date(hoy.getFullYear(), hoy.getMonth() + i, 1));
+    return [0, 1, 2].map(i => new DateObject(new Date(hoy.getFullYear(), hoy.getMonth() + i, 1)));
   })();
 
   const precioEstimado = espacio ? diasMulti.length * Number(espacio.precio_dia) : 0;
