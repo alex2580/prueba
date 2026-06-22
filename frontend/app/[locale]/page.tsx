@@ -187,6 +187,13 @@ export default function HomePage() {
     setSelectedEspacio(espacio);
   }
 
+  // URL actual (filtros, búsqueda y vista ya sincronizados por el efecto
+  // de arriba) para que "Volver" desde la publicación traiga de vuelta
+  // exactamente los mismos filtros activos.
+  function volverQS() {
+    return encodeURIComponent(`/${window.location.search}`);
+  }
+
   function handleReservar(espacio: Espacio) {
     router.push(`/espacio/${espacio.id}/reservar`);
   }
@@ -332,7 +339,7 @@ export default function HomePage() {
               <MarkerEspacioCard
                 espacio={selectedEspacio}
                 onClose={() => setSelectedEspacio(null)}
-                onVerDetalle={() => router.push(`/espacio/${selectedEspacio.id}?from=mapa`)}
+                onVerDetalle={() => router.push(`/espacio/${selectedEspacio.id}?volver=${volverQS()}`)}
                 onReservar={() => router.push(`/espacio/${selectedEspacio.id}/reservar?from=mapa`)}
               />
             )}
@@ -587,7 +594,7 @@ export default function HomePage() {
               <GridEspacios
                 espacios={espacios}
                 loading={loading}
-                onCardClick={espacio => router.push(`/espacio/${espacio.id}`)}
+                onCardClick={espacio => router.push(`/espacio/${espacio.id}?volver=${volverQS()}`)}
                 favoritos={favIds}
                 onToggleFavorito={handleToggleFavorito}
                 token={token}

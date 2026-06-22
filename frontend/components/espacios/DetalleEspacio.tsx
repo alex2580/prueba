@@ -23,7 +23,10 @@ export function DetalleEspacio({ espacio, onReservar, token, userId }: DetalleEs
   const router = useRouter();
   const searchParams = useSearchParams();
   const [tab, setTab] = useState<'info' | 'reviews'>('info');
-  const volverUrl = searchParams.get('from') === 'mapa' ? '/?vista=mapa' : '/';
+  const volverParam = searchParams.get('volver');
+  const volverUrl = volverParam
+    ? decodeURIComponent(volverParam)
+    : searchParams.get('from') === 'mapa' ? '/?vista=mapa' : '/';
   const precioColor = espacio.tipo === 'exclusivo' ? 'var(--text)' : 'var(--orange)';
 
   return (
