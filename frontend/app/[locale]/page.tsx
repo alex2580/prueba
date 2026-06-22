@@ -22,6 +22,29 @@ const MarkerEspacioCard = dynamic(() => import('@/components/mapa/MarkerEspacio'
 
 type Vista = 'mapa' | 'lista';
 
+const FAQ = [
+  {
+    q: '¿Cuándo se le paga al proveedor?',
+    a: 'El pago queda retenido como depósito en garantía a través de MercadoPago. El proveedor lo recibe recién cuando vos confirmás el acceso al espacio desde tu panel, no antes.',
+  },
+  {
+    q: '¿Cuál es la diferencia entre un espacio exclusivo y uno compartido?',
+    a: 'En un espacio exclusivo solo vos usás el lugar, con acceso privado. En uno compartido, varios clientes guardan sus cosas al mismo tiempo en el mismo espacio, lo que suele tener un precio más bajo.',
+  },
+  {
+    q: '¿Puedo cancelar una reserva si me arrepiento?',
+    a: 'Sí, con el botón "Me arrepentí" podés cancelar y te reembolsamos el 100% de lo pagado, siempre antes de coordinar el acceso con el proveedor.',
+  },
+  {
+    q: '¿Cuánto cuesta publicar un espacio?',
+    a: 'Publicar es 100% gratis. TodasMisCosas.com solo cobra una comisión del 15% cuando se concreta una reserva. Si nadie te reserva, no pagás nada.',
+  },
+  {
+    q: '¿Qué hago si tengo un problema con el espacio o el proveedor?',
+    a: 'Podés contactarnos antes de confirmar el acceso desde la misma reserva. Mientras no confirmes, el dinero sigue retenido en garantía y podemos intervenir para resolver cualquier inconveniente.',
+  },
+];
+
 export default function HomePage() {
   const t = useTranslations('home');
   const tc = useTranslations('comoFunciona');
@@ -66,6 +89,7 @@ export default function HomePage() {
   const [favIds, setFavIds] = useState<Set<string>>(new Set());
   const [headerScrolled, setHeaderScrolled] = useState(false);
   const [headerExpandido, setHeaderExpandido] = useState(false);
+  const [faqAbierta, setFaqAbierta] = useState<number | null>(null);
 
   function handlePageScroll(e: React.UIEvent<HTMLDivElement>) {
     const top = e.currentTarget.scrollTop;
@@ -571,6 +595,36 @@ export default function HomePage() {
                 onToggleFavorito={handleToggleFavorito}
                 token={token}
               />
+            </div>
+
+            {/* Preguntas frecuentes */}
+            <div style={{ maxWidth: 720, margin: '0 auto', padding: '0 1.5rem 4rem' }}>
+              <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.3rem', textAlign: 'center', marginBottom: '1.5rem', color: 'var(--text)' }}>
+                Preguntas frecuentes
+              </h2>
+              <div style={{ display: 'grid', gap: '.75rem' }}>
+                {FAQ.map((item, i) => (
+                  <div key={i} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', overflow: 'hidden' }}>
+                    <button
+                      onClick={() => setFaqAbierta(faqAbierta === i ? null : i)}
+                      style={{
+                        width: '100%', background: 'none', border: 'none', cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '.75rem',
+                        padding: '.9rem 1.1rem', textAlign: 'left',
+                        fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: '.9rem', color: 'var(--text)',
+                      }}
+                    >
+                      {item.q}
+                      <span style={{ color: 'var(--orange)', flexShrink: 0, transform: faqAbierta === i ? 'rotate(45deg)' : 'none', transition: 'transform .15s', fontSize: '1.1rem' }}>+</span>
+                    </button>
+                    {faqAbierta === i && (
+                      <p style={{ margin: 0, padding: '0 1.1rem 1rem', fontSize: '.85rem', color: 'var(--text2)', lineHeight: 1.6 }}>
+                        {item.a}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Floating "Ver en Mapa" button */}
