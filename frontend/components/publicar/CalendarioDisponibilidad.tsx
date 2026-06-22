@@ -58,6 +58,7 @@ export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) 
 
   const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
   const maxDate = new Date(hoy); maxDate.setDate(hoy.getDate() + DIAS_VIGENCIA - 1);
+  const meses = [0, 1, 2].map(i => new Date(hoy.getFullYear(), hoy.getMonth() + i, 1));
   const count = value.dias?.length ?? 0;
 
   function handleChange(ranges: any) {
@@ -74,20 +75,16 @@ export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) 
   return (
     <div style={{ background: 'var(--surface2)', border: '1.5px solid var(--border)', borderRadius: 'var(--r2)', padding: '1rem' }}>
       <style>{`
-        .rmdp-wrapper { width: 100% !important; box-shadow: none !important; background: transparent !important; }
-        .rmdp-calendar { width: 100% !important; }
-        .rmdp-day-picker {
-          display: flex; flex-direction: column; gap: 1.1rem;
-          max-height: 300px; overflow-y: auto; scrollbar-width: thin;
-          padding-right: .3rem;
-        }
-        .rmdp-header { font-family: Sora, sans-serif; font-weight: 700; }
-        .rmdp-range { background: rgba(232,98,42,.15) !important; color: var(--text) !important; }
-        .rmdp-range.start span, .rmdp-range.end span { background: var(--orange) !important; color: #fff !important; }
-        .rmdp-range.start, .rmdp-range.end { background: var(--orange) !important; }
-        .rmdp-day:not(.rmdp-disabled):not(.rmdp-range) span:hover { background: rgba(232,98,42,.2) !important; }
-        .rmdp-day.rmdp-today span { border: 1.5px solid var(--orange) !important; font-weight: 700; }
-        .rmdp-arrow-container { display: none !important; }
+        .calendario-scroll { max-height: 320px; overflow-y: auto; scrollbar-width: thin; padding-right: .3rem; display: grid; gap: 1.1rem; }
+        .calendario-scroll .rmdp-wrapper { width: 100% !important; box-shadow: none !important; background: transparent !important; }
+        .calendario-scroll .rmdp-calendar { width: 100% !important; }
+        .calendario-scroll .rmdp-header { font-family: Sora, sans-serif; font-weight: 700; }
+        .calendario-scroll .rmdp-range { background: rgba(232,98,42,.15) !important; color: var(--text) !important; }
+        .calendario-scroll .rmdp-range.start span, .calendario-scroll .rmdp-range.end span { background: var(--orange) !important; color: #fff !important; }
+        .calendario-scroll .rmdp-range.start, .calendario-scroll .rmdp-range.end { background: var(--orange) !important; }
+        .calendario-scroll .rmdp-day:not(.rmdp-disabled):not(.rmdp-range) span:hover { background: rgba(232,98,42,.2) !important; }
+        .calendario-scroll .rmdp-day.rmdp-today span { border: 1.5px solid var(--orange) !important; font-weight: 700; }
+        .calendario-scroll .rmdp-arrow-container { display: none !important; }
       `}</style>
 
       <div style={{ marginBottom: '.75rem' }}>
@@ -111,19 +108,25 @@ export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) 
         </div>
       </div>
 
-      <Cal
-        multiple
-        range
-        value={rangesValue}
-        onChange={handleChange}
-        numberOfMonths={3}
-        minDate={hoy}
-        maxDate={maxDate}
-        weekDays={SEMANA}
-        months={MESES}
-        weekStartDayIndex={1}
-        className="rmdp-mobile"
-      />
+      <div className="calendario-scroll">
+        {meses.map((mes, i) => (
+          <Cal
+            key={i}
+            multiple
+            range
+            value={rangesValue}
+            onChange={handleChange}
+            numberOfMonths={1}
+            currentDate={mes}
+            minDate={hoy}
+            maxDate={maxDate}
+            weekDays={SEMANA}
+            months={MESES}
+            weekStartDayIndex={1}
+            className="rmdp-mobile"
+          />
+        ))}
+      </div>
       <div style={{ fontSize: '.68rem', color: 'var(--text3)', textAlign: 'center', marginTop: '.3rem' }}>
         ↕ Desplazate dentro del calendario para ver los próximos meses
       </div>

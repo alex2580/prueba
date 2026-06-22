@@ -185,6 +185,11 @@ export default function ReservarPage() {
     return max;
   })();
 
+  const mesesCalendario = (() => {
+    const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+    return [0, 1, 2].map(i => new Date(hoy.getFullYear(), hoy.getMonth() + i, 1));
+  })();
+
   const precioEstimado = espacio ? diasMulti.length * Number(espacio.precio_dia) : 0;
   const diasSeleccionados = diasMulti.length;
 
@@ -368,21 +373,17 @@ export default function ReservarPage() {
                     </div>
 
                     <style>{`
-                      .rmdp-wrapper { width: 100% !important; box-shadow: none !important; background: transparent !important; }
-                      .rmdp-calendar { width: 100% !important; }
-                      .rmdp-day-picker {
-                        display: flex; flex-direction: column; gap: 1.1rem;
-                        max-height: 300px; overflow-y: auto; scrollbar-width: thin;
-                        padding-right: .3rem;
-                      }
-                      .rmdp-header { font-family: Sora, sans-serif; font-weight: 700; }
-                      .rmdp-range { background: rgba(232,98,42,.15) !important; color: var(--text) !important; }
-                      .rmdp-range.start span, .rmdp-range.end span { background: var(--orange) !important; color: #fff !important; }
-                      .rmdp-range.start, .rmdp-range.end { background: var(--orange) !important; }
-                      .rmdp-day:not(.rmdp-disabled):not(.rmdp-range) span:hover { background: rgba(232,98,42,.2) !important; }
-                      .rmdp-day.rmdp-disabled { opacity: 0.35; cursor: not-allowed; }
-                      .rmdp-day.rmdp-today span { border: 1.5px solid var(--orange) !important; font-weight: 700; }
-                      .rmdp-arrow-container { display: none !important; }
+                      .calendario-scroll { max-height: 320px; overflow-y: auto; scrollbar-width: thin; padding-right: .3rem; display: grid; gap: 1.1rem; }
+                      .calendario-scroll .rmdp-wrapper { width: 100% !important; box-shadow: none !important; background: transparent !important; }
+                      .calendario-scroll .rmdp-calendar { width: 100% !important; }
+                      .calendario-scroll .rmdp-header { font-family: Sora, sans-serif; font-weight: 700; }
+                      .calendario-scroll .rmdp-range { background: rgba(232,98,42,.15) !important; color: var(--text) !important; }
+                      .calendario-scroll .rmdp-range.start span, .calendario-scroll .rmdp-range.end span { background: var(--orange) !important; color: #fff !important; }
+                      .calendario-scroll .rmdp-range.start, .calendario-scroll .rmdp-range.end { background: var(--orange) !important; }
+                      .calendario-scroll .rmdp-day:not(.rmdp-disabled):not(.rmdp-range) span:hover { background: rgba(232,98,42,.2) !important; }
+                      .calendario-scroll .rmdp-day.rmdp-disabled { opacity: 0.35; cursor: not-allowed; }
+                      .calendario-scroll .rmdp-day.rmdp-today span { border: 1.5px solid var(--orange) !important; font-weight: 700; }
+                      .calendario-scroll .rmdp-arrow-container { display: none !important; }
                     `}</style>
                     <div style={{ background: 'rgba(232,98,42,.06)', border: '1px solid rgba(232,98,42,.2)', borderRadius: 8, padding: '.65rem .85rem', marginBottom: '.75rem', display: 'grid', gap: '.35rem' }}>
                       <div style={{ fontSize: '.75rem', fontWeight: 700, color: 'var(--orange)', fontFamily: 'Sora, sans-serif', marginBottom: '.1rem' }}>¿Cómo seleccionar fechas?</div>
@@ -399,30 +400,36 @@ export default function ReservarPage() {
                         <span style={{ fontSize: '.72rem', color: 'var(--text2)' }}>Repetí para combinar tantos días sueltos y rangos como necesites en una misma reserva.</span>
                       </div>
                     </div>
-                    <Cal
-                      multiple
-                      range
-                      value={rangesValue}
-                      onChange={(ranges: any) => {
-                        const next = ranges ?? [];
-                        setRangesValue(next);
-                        setDiasMulti(expandRanges(next));
-                        setStep1Error('');
-                      }}
-                      numberOfMonths={3}
-                      minDate={new Date()}
-                      maxDate={new Date(maxDateFinal + 'T12:00:00')}
-                      weekDays={SEMANA}
-                      months={MESES}
-                      weekStartDayIndex={1}
-                      mapDays={({ date }: any) => {
-                        const iso = `${date.year}-${String(date.month.number).padStart(2,'0')}-${String(date.day).padStart(2,'0')}`;
-                        if (fechasOcupadas.includes(iso))
-                          return { disabled: true, style: { color: '#ef4444', textDecoration: 'line-through' } };
-                        if (disponibilidad?.dias?.length && !disponibilidad.dias.includes(iso))
-                          return { disabled: true, style: { color: '#ccc' } };
-                      }}
-                    />
+                    <div className="calendario-scroll">
+                      {mesesCalendario.map((mes, i) => (
+                        <Cal
+                          key={i}
+                          multiple
+                          range
+                          value={rangesValue}
+                          onChange={(ranges: any) => {
+                            const next = ranges ?? [];
+                            setRangesValue(next);
+                            setDiasMulti(expandRanges(next));
+                            setStep1Error('');
+                          }}
+                          numberOfMonths={1}
+                          currentDate={mes}
+                          minDate={new Date()}
+                          maxDate={new Date(maxDateFinal + 'T12:00:00')}
+                          weekDays={SEMANA}
+                          months={MESES}
+                          weekStartDayIndex={1}
+                          mapDays={({ date }: any) => {
+                            const iso = `${date.year}-${String(date.month.number).padStart(2,'0')}-${String(date.day).padStart(2,'0')}`;
+                            if (fechasOcupadas.includes(iso))
+                              return { disabled: true, style: { color: '#ef4444', textDecoration: 'line-through' } };
+                            if (disponibilidad?.dias?.length && !disponibilidad.dias.includes(iso))
+                              return { disabled: true, style: { color: '#ccc' } };
+                          }}
+                        />
+                      ))}
+                    </div>
                     <div style={{ fontSize: '.68rem', color: 'var(--text3)', textAlign: 'center', marginTop: '.3rem' }}>
                       ↕ Desplazate dentro del calendario para ver los próximos meses
                     </div>
