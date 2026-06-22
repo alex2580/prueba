@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import type { Espacio } from '@/types';
 import { GaleriaFotos } from './GaleriaFotos';
 import { RatingDisplay } from '@/components/ui/Rating';
@@ -20,12 +20,12 @@ interface DetalleEspacioProps {
 }
 
 export function DetalleEspacio({ espacio, onReservar, token, userId }: DetalleEspacioProps) {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [tab, setTab] = useState<'info' | 'reviews'>('info');
+  // searchParams.get() ya decodifica el valor — no hace falta decodeURIComponent.
   const volverParam = searchParams.get('volver');
   const volverUrl = volverParam
-    ? decodeURIComponent(volverParam)
+    ? volverParam
     : searchParams.get('from') === 'mapa' ? '/?vista=mapa' : '/';
   const precioColor = espacio.tipo === 'exclusivo' ? 'var(--text)' : 'var(--orange)';
 
@@ -33,7 +33,10 @@ export function DetalleEspacio({ espacio, onReservar, token, userId }: DetalleEs
     <div style={{ maxWidth: 860, margin: '0 auto', padding: '2rem 1rem' }}>
       {/* Back */}
       <button
-        onClick={() => router.push(volverUrl)}
+        // Navegación dura (no router.push): el router de Next puede reutilizar
+        // una instancia cacheada de "/" sin filtros e ignorar el querystring
+        // nuevo, así que con SPA navigation "Volver" perdía los filtros.
+        onClick={() => { window.location.href = volverUrl; }}
         className="btn-ghost"
         style={{ marginBottom: '1.2rem', display: 'flex', alignItems: 'center', gap: '.4rem' }}
       >
