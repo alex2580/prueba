@@ -370,6 +370,8 @@ export default function ReservarPage() {
                     <style>{`
                       .calendario-mes .rmdp-wrapper { width: 100% !important; box-shadow: none !important; background: transparent !important; }
                       .calendario-mes .rmdp-calendar { width: 100% !important; }
+                      .calendario-mes .rmdp-day-picker { display: flex; gap: .6rem; flex-wrap: nowrap; }
+                      .calendario-mes .rmdp-day-picker > div { flex: 1; min-width: 0; }
                       .calendario-mes .rmdp-header { font-family: Sora, sans-serif; font-weight: 700; }
                       .calendario-mes .rmdp-range { background: rgba(232,98,42,.15) !important; color: var(--text) !important; }
                       .calendario-mes .rmdp-range.start span, .calendario-mes .rmdp-range.end span { background: var(--orange) !important; color: #fff !important; }
@@ -405,7 +407,7 @@ export default function ReservarPage() {
                           setDiasMulti(expandRanges(next));
                           setStep1Error('');
                         }}
-                        numberOfMonths={1}
+                        numberOfMonths={2}
                         minDate={new Date()}
                         maxDate={new Date(maxDateFinal + 'T12:00:00')}
                         weekDays={SEMANA}
@@ -421,7 +423,7 @@ export default function ReservarPage() {
                       />
                     </div>
                     <div style={{ fontSize: '.68rem', color: 'var(--text3)', textAlign: 'center', marginTop: '.3rem' }}>
-                      ‹ Usá las flechas para avanzar mes a mes ›
+                      ‹ Usá las flechas o deslizá para ver los próximos meses ›
                     </div>
 
                     <div style={{ marginTop: '.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
