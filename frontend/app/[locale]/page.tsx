@@ -379,152 +379,6 @@ export default function HomePage() {
                 />
               </div>
 
-              {/* Single filter bar — all options in one scrollable row */}
-              <div className="filter-pills-bar">
-
-                {/* País */}
-                <select
-                  value={filtros.pais || ''}
-                  onChange={e => aplicarFiltros({ pais: e.target.value || undefined })}
-                  className={`filter-pill ${filtros.pais ? 'active' : ''}`}
-                  style={{ cursor: 'pointer', fontFamily: 'inherit' }}
-                >
-                  <option value="">{t('pais')}</option>
-                  <option value="Argentina">🇦🇷 Argentina</option>
-                  <option value="Uruguay">🇺🇾 Uruguay</option>
-                  <option value="Chile">🇨🇱 Chile</option>
-                  <option value="Colombia">🇨🇴 Colombia</option>
-                  <option value="México">🇲🇽 México</option>
-                  <option value="Brasil">🇧🇷 Brasil</option>
-                  <option value="Perú">🇵🇪 Perú</option>
-                  <option value="Paraguay">🇵🇾 Paraguay</option>
-                  <option value="Puerto Rico">🇵🇷 Puerto Rico</option>
-                </select>
-
-                {/* Tipo */}
-                <button
-                  className={`filter-pill ${filtros.tipo === 'exclusivo' ? 'active' : ''}`}
-                  onClick={() => aplicarFiltros({ tipo: (filtros.tipo === 'exclusivo' ? '' : 'exclusivo') as EspacioTipo })}
-                >
-                  {t('exclusivo')}
-                </button>
-                <button
-                  className={`filter-pill ${filtros.tipo === 'compartido' ? 'active' : ''}`}
-                  onClick={() => aplicarFiltros({ tipo: (filtros.tipo === 'compartido' ? '' : 'compartido') as EspacioTipo })}
-                >
-                  {t('compartido')}
-                </button>
-
-                {/* Precio máximo por día */}
-                <div style={{
-                  display: 'inline-flex', alignItems: 'center', gap: '.5rem',
-                  padding: '.3rem .65rem .3rem .9rem',
-                  borderRadius: 999, flexShrink: 0,
-                  border: `1.5px solid ${precioValHome < PRECIO_MAX_DIA ? 'var(--text)' : 'var(--border2)'}`,
-                  background: precioValHome < PRECIO_MAX_DIA ? 'var(--text)' : 'var(--surface)',
-                }}>
-                  <span style={{
-                    fontSize: '.82rem', fontWeight: 700, whiteSpace: 'nowrap',
-                    color: precioValHome < PRECIO_MAX_DIA ? '#fff' : 'var(--text)',
-                    fontFamily: 'Sora, sans-serif',
-                  }}>
-                    💰 {precioValHome < PRECIO_MAX_DIA ? `$${precioValHome.toLocaleString('es-AR')}/día` : t('precioDia')}
-                  </span>
-                  <input
-                    type="range"
-                    min={0} max={PRECIO_MAX_DIA} step={PRECIO_STEP}
-                    value={precioValHome > PRECIO_MAX_DIA ? PRECIO_MAX_DIA : precioValHome}
-                    onChange={e => {
-                      const val = Number(e.target.value);
-                      aplicarFiltros({ precio_max: val < PRECIO_MAX_DIA ? val : undefined });
-                    }}
-                    style={{ width: 80, cursor: 'pointer', accentColor: precioValHome < PRECIO_MAX_DIA ? '#fff' : 'var(--orange)' }}
-                  />
-                </div>
-
-                {/* Nivel de Seguridad */}
-                <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', flexShrink: 0, gap: '.3rem' }}>
-                  <div style={{
-                    display: 'inline-flex', alignItems: 'center', gap: '.15rem',
-                    padding: '.3rem .9rem',
-                    borderRadius: 999,
-                    border: `1.5px solid ${filtros.seguridad_min ? 'var(--text)' : 'var(--border2)'}`,
-                    background: filtros.seguridad_min ? 'var(--text)' : 'var(--surface)',
-                  }}>
-                    {[1, 2, 3, 4, 5].map(star => (
-                      <span
-                        key={star}
-                        onClick={() => aplicarFiltros({ seguridad_min: filtros.seguridad_min === star ? undefined : star })}
-                        style={{
-                          fontSize: '1rem', cursor: 'pointer', lineHeight: 1,
-                          color: star <= (filtros.seguridad_min || 0) ? 'var(--amber)' : filtros.seguridad_min ? 'rgba(255,255,255,.25)' : 'var(--border)',
-                          transition: 'color .12s',
-                        }}
-                      >★</span>
-                    ))}
-                    <span style={{
-                      fontSize: '.78rem', fontWeight: 700, whiteSpace: 'nowrap',
-                      color: filtros.seguridad_min ? '#fff' : 'var(--text)',
-                      fontFamily: 'Sora, sans-serif', marginLeft: '.3rem',
-                    }}>
-                      {filtros.seguridad_min ? `${filtros.seguridad_min}+ ★` : t('nivelSeguridad')}
-                    </span>
-                  </div>
-
-                  {/* Info icon */}
-                  <span
-                    ref={seguridadInfoIconRef}
-                    onMouseEnter={() => {
-                      const rect = seguridadInfoIconRef.current?.getBoundingClientRect();
-                      if (rect) setSeguridadInfoPos({ top: rect.bottom + 8, left: Math.min(rect.left, window.innerWidth - 270 - 16) });
-                    }}
-                    onMouseLeave={() => setSeguridadInfoPos(null)}
-                    style={{ fontSize: '.78rem', cursor: 'help', color: 'var(--text3)', lineHeight: 1, userSelect: 'none' }}
-                  >ℹ️</span>
-
-                  {/* Popover */}
-                  {seguridadInfoPos && (
-                    <div style={{
-                      position: 'fixed', top: seguridadInfoPos.top, left: seguridadInfoPos.left, zIndex: 500,
-                      background: 'var(--surface)', border: '1.5px solid var(--border)',
-                      borderRadius: 'var(--r3)', padding: '1rem',
-                      boxShadow: 'var(--s3)', width: 270,
-                      pointerEvents: 'none',
-                    }}>
-                      <p style={{ fontSize: '.75rem', fontWeight: 700, color: 'var(--text)', margin: '0 0 .6rem', fontFamily: 'Sora, sans-serif' }}>
-                        🔒 ¿Qué mide la seguridad?
-                      </p>
-                      <p style={{ fontSize: '.72rem', color: 'var(--text3)', margin: '0 0 .75rem', lineHeight: 1.5 }}>
-                        Cada publicación responde un checklist de 8 características. El puntaje refleja cuántas cumple.
-                      </p>
-                      {[
-                        { stars: '★', label: 'Básico', desc: 'Cerradura en la entrada' },
-                        { stars: '★★', label: 'Elemental', desc: '+ Estructura seca y ventilada' },
-                        { stars: '★★★', label: 'Intermedio', desc: '+ Iluminación en el espacio' },
-                        { stars: '★★★★', label: 'Avanzado', desc: '+ Cámaras o acceso controlado' },
-                        { stars: '★★★★★', label: 'Máximo', desc: '+ Acceso 24hs y extintor' },
-                      ].map(row => (
-                        <div key={row.stars} style={{ display: 'flex', alignItems: 'baseline', gap: '.5rem', marginBottom: '.35rem' }}>
-                          <span style={{ fontSize: '.72rem', color: 'var(--amber)', minWidth: 56, flexShrink: 0 }}>{row.stars}</span>
-                          <span style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--text2)', minWidth: 64, flexShrink: 0 }}>{row.label}</span>
-                          <span style={{ fontSize: '.72rem', color: 'var(--text3)' }}>{row.desc}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Limpiar */}
-                {hayFiltrosActivos && (
-                  <button
-                    className="filter-pill"
-                    style={{ color: 'var(--orange)', borderColor: 'rgba(232,98,42,.3)' }}
-                    onClick={() => { limpiarFiltros(); setUserLocation(null); setBusqueda(''); }}
-                  >
-                    {t('limpiar')}
-                  </button>
-                )}
-              </div>
                 </div>
               </div>
             </div>
@@ -546,6 +400,153 @@ export default function HomePage() {
               <button className="btn-primary" onClick={() => router.push('/publicar')}>
                 {tc('publicarBtn')}
               </button>
+            </div>
+
+            {/* Filtros — sección propia, independiente del header que se colapsa */}
+            <div className="filter-pills-bar">
+
+              {/* País */}
+              <select
+                value={filtros.pais || ''}
+                onChange={e => aplicarFiltros({ pais: e.target.value || undefined })}
+                className={`filter-pill ${filtros.pais ? 'active' : ''}`}
+                style={{ cursor: 'pointer', fontFamily: 'inherit' }}
+              >
+                <option value="">{t('pais')}</option>
+                <option value="Argentina">🇦🇷 Argentina</option>
+                <option value="Uruguay">🇺🇾 Uruguay</option>
+                <option value="Chile">🇨🇱 Chile</option>
+                <option value="Colombia">🇨🇴 Colombia</option>
+                <option value="México">🇲🇽 México</option>
+                <option value="Brasil">🇧🇷 Brasil</option>
+                <option value="Perú">🇵🇪 Perú</option>
+                <option value="Paraguay">🇵🇾 Paraguay</option>
+                <option value="Puerto Rico">🇵🇷 Puerto Rico</option>
+              </select>
+
+              {/* Tipo */}
+              <button
+                className={`filter-pill ${filtros.tipo === 'exclusivo' ? 'active' : ''}`}
+                onClick={() => aplicarFiltros({ tipo: (filtros.tipo === 'exclusivo' ? '' : 'exclusivo') as EspacioTipo })}
+              >
+                {t('exclusivo')}
+              </button>
+              <button
+                className={`filter-pill ${filtros.tipo === 'compartido' ? 'active' : ''}`}
+                onClick={() => aplicarFiltros({ tipo: (filtros.tipo === 'compartido' ? '' : 'compartido') as EspacioTipo })}
+              >
+                {t('compartido')}
+              </button>
+
+              {/* Precio máximo por día */}
+              <div style={{
+                display: 'inline-flex', alignItems: 'center', gap: '.5rem',
+                padding: '.3rem .65rem .3rem .9rem',
+                borderRadius: 999, flexShrink: 0,
+                border: `1.5px solid ${precioValHome < PRECIO_MAX_DIA ? 'var(--text)' : 'var(--border2)'}`,
+                background: precioValHome < PRECIO_MAX_DIA ? 'var(--text)' : 'var(--surface)',
+              }}>
+                <span style={{
+                  fontSize: '.82rem', fontWeight: 700, whiteSpace: 'nowrap',
+                  color: precioValHome < PRECIO_MAX_DIA ? '#fff' : 'var(--text)',
+                  fontFamily: 'Sora, sans-serif',
+                }}>
+                  💰 {precioValHome < PRECIO_MAX_DIA ? `$${precioValHome.toLocaleString('es-AR')}/día` : t('precioDia')}
+                </span>
+                <input
+                  type="range"
+                  min={0} max={PRECIO_MAX_DIA} step={PRECIO_STEP}
+                  value={precioValHome > PRECIO_MAX_DIA ? PRECIO_MAX_DIA : precioValHome}
+                  onChange={e => {
+                    const val = Number(e.target.value);
+                    aplicarFiltros({ precio_max: val < PRECIO_MAX_DIA ? val : undefined });
+                  }}
+                  style={{ width: 80, cursor: 'pointer', accentColor: precioValHome < PRECIO_MAX_DIA ? '#fff' : 'var(--orange)' }}
+                />
+              </div>
+
+              {/* Nivel de Seguridad */}
+              <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', flexShrink: 0, gap: '.3rem' }}>
+                <div style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '.15rem',
+                  padding: '.3rem .9rem',
+                  borderRadius: 999,
+                  border: `1.5px solid ${filtros.seguridad_min ? 'var(--text)' : 'var(--border2)'}`,
+                  background: filtros.seguridad_min ? 'var(--text)' : 'var(--surface)',
+                }}>
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <span
+                      key={star}
+                      onClick={() => aplicarFiltros({ seguridad_min: filtros.seguridad_min === star ? undefined : star })}
+                      style={{
+                        fontSize: '1rem', cursor: 'pointer', lineHeight: 1,
+                        color: star <= (filtros.seguridad_min || 0) ? 'var(--amber)' : filtros.seguridad_min ? 'rgba(255,255,255,.25)' : 'var(--border)',
+                        transition: 'color .12s',
+                      }}
+                    >★</span>
+                  ))}
+                  <span style={{
+                    fontSize: '.78rem', fontWeight: 700, whiteSpace: 'nowrap',
+                    color: filtros.seguridad_min ? '#fff' : 'var(--text)',
+                    fontFamily: 'Sora, sans-serif', marginLeft: '.3rem',
+                  }}>
+                    {filtros.seguridad_min ? `${filtros.seguridad_min}+ ★` : t('nivelSeguridad')}
+                  </span>
+                </div>
+
+                {/* Info icon */}
+                <span
+                  ref={seguridadInfoIconRef}
+                  onMouseEnter={() => {
+                    const rect = seguridadInfoIconRef.current?.getBoundingClientRect();
+                    if (rect) setSeguridadInfoPos({ top: rect.bottom + 8, left: Math.min(rect.left, window.innerWidth - 270 - 16) });
+                  }}
+                  onMouseLeave={() => setSeguridadInfoPos(null)}
+                  style={{ fontSize: '.78rem', cursor: 'help', color: 'var(--text3)', lineHeight: 1, userSelect: 'none' }}
+                >ℹ️</span>
+
+                {/* Popover */}
+                {seguridadInfoPos && (
+                  <div style={{
+                    position: 'fixed', top: seguridadInfoPos.top, left: seguridadInfoPos.left, zIndex: 500,
+                    background: 'var(--surface)', border: '1.5px solid var(--border)',
+                    borderRadius: 'var(--r3)', padding: '1rem',
+                    boxShadow: 'var(--s3)', width: 270,
+                    pointerEvents: 'none',
+                  }}>
+                    <p style={{ fontSize: '.75rem', fontWeight: 700, color: 'var(--text)', margin: '0 0 .6rem', fontFamily: 'Sora, sans-serif' }}>
+                      🔒 ¿Qué mide la seguridad?
+                    </p>
+                    <p style={{ fontSize: '.72rem', color: 'var(--text3)', margin: '0 0 .75rem', lineHeight: 1.5 }}>
+                      Cada publicación responde un checklist de 8 características. El puntaje refleja cuántas cumple.
+                    </p>
+                    {[
+                      { stars: '★', label: 'Básico', desc: 'Cerradura en la entrada' },
+                      { stars: '★★', label: 'Elemental', desc: '+ Estructura seca y ventilada' },
+                      { stars: '★★★', label: 'Intermedio', desc: '+ Iluminación en el espacio' },
+                      { stars: '★★★★', label: 'Avanzado', desc: '+ Cámaras o acceso controlado' },
+                      { stars: '★★★★★', label: 'Máximo', desc: '+ Acceso 24hs y extintor' },
+                    ].map(row => (
+                      <div key={row.stars} style={{ display: 'flex', alignItems: 'baseline', gap: '.5rem', marginBottom: '.35rem' }}>
+                        <span style={{ fontSize: '.72rem', color: 'var(--amber)', minWidth: 56, flexShrink: 0 }}>{row.stars}</span>
+                        <span style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--text2)', minWidth: 64, flexShrink: 0 }}>{row.label}</span>
+                        <span style={{ fontSize: '.72rem', color: 'var(--text3)' }}>{row.desc}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Limpiar */}
+              {hayFiltrosActivos && (
+                <button
+                  className="filter-pill"
+                  style={{ color: 'var(--orange)', borderColor: 'rgba(232,98,42,.3)' }}
+                  onClick={() => { limpiarFiltros(); setUserLocation(null); setBusqueda(''); }}
+                >
+                  {t('limpiar')}
+                </button>
+              )}
             </div>
 
             {/* Results grid */}
