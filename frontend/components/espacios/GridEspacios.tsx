@@ -13,20 +13,24 @@ interface GridEspaciosProps {
   token?: string | null;
 }
 
-// El grid usa grid-auto-flow: column (para tener 2 filas fijas con
-// scroll horizontal), lo que de otro modo llenaría columna por columna
-// (fila 1 y 2 alternadas). Reordenamos los items para que, al leerse
-// por columna, la fila 1 quede completa primero y la 2 sea el resto.
-function intercalarFilas<T>(items: T[], filas = 2): T[] {
-  const porFila = Math.ceil(items.length / filas);
-  const grupos: T[][] = Array.from({ length: filas }, (_, f) => items.slice(f * porFila, (f + 1) * porFila));
-  const resultado: T[] = [];
-  for (let i = 0; i < porFila; i++) {
-    for (let f = 0; f < filas; f++) {
-      if (grupos[f][i] !== undefined) resultado.push(grupos[f][i]);
-    }
-  }
-  return resultado;
+const GRID_COLS = 5;
+const GRID_FILAS = 2;
+
+// El auto-placement de CSS Grid (incluso con grid-auto-flow: column) no
+// puede "saltear" la fila 2 de una columna porque sí — siempre completa
+// fila1+fila2 de una columna antes de pasar a la siguiente. Para que la
+// fila 1 se llene completa (las 5 posiciones) antes de tocar la fila 2,
+// hay que posicionar cada tarjeta explícitamente con grid-row/grid-column
+// en vez de confiar en el orden del array.
+function gridPos(idx: number, cols = GRID_COLS, filas = GRID_FILAS) {
+  const bloque = cols * filas;
+  const pos = idx % bloque;
+  const fila = pos < cols ? 1 : 2;
+  const colEnBloque = pos % cols;
+  const columna = Math.floor(idx / bloque) * cols + colEnBloque + 1;
+  // display:grid en el wrapper para que estire su única hija (la tarjeta)
+  // a la altura completa de la fila, como hacía el grid original.
+  return { gridRow: fila, gridColumn: columna, display: 'grid' as const };
 }
 
 function SkeletonCard() {
@@ -99,7 +103,9 @@ export function GridEspacios({ espacios, loading, onCardClick, favoritos, onTogg
   if (loading) {
     return (
       <GridScrollArrows>
-        {[...Array(6)].map((_, i) => <SkeletonCard key={i} />)}
+        {[...Array(6)].map((_, i) => (
+          <div key={i} style={gridPos(i)}><SkeletonCard /></div>
+        ))}
       </GridScrollArrows>
     );
   }
@@ -120,15 +126,16 @@ export function GridEspacios({ espacios, loading, onCardClick, favoritos, onTogg
 
   return (
     <GridScrollArrows>
-      {intercalarFilas(espacios).map(espacio => (
-        <CardEspacio
-          key={espacio.id}
-          espacio={espacio}
-          onClick={onCardClick ? () => onCardClick(espacio) : undefined}
-          isFavorito={favoritos?.has(espacio.id)}
-          onToggleFavorito={onToggleFavorito}
-          token={token}
-        />
+      {espacios.map((espacio, i) => (
+        <div key={espacio.id} style={gridPos(i)}>
+          <CardEspacio
+            espacio={espacio}
+            onClick={onCardClick ? () => onCardClick(espacio) : undefined}
+            isFavorito={favoritos?.has(espacio.id)}
+            onToggleFavorito={onToggleFavorito}
+            token={token}
+          />
+        </div>
       ))}
     </GridScrollArrows>
   );
