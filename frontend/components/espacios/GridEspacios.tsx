@@ -13,6 +13,22 @@ interface GridEspaciosProps {
   token?: string | null;
 }
 
+// El grid usa grid-auto-flow: column (para tener 2 filas fijas con
+// scroll horizontal), lo que de otro modo llenaría columna por columna
+// (fila 1 y 2 alternadas). Reordenamos los items para que, al leerse
+// por columna, la fila 1 quede completa primero y la 2 sea el resto.
+function intercalarFilas<T>(items: T[], filas = 2): T[] {
+  const porFila = Math.ceil(items.length / filas);
+  const grupos: T[][] = Array.from({ length: filas }, (_, f) => items.slice(f * porFila, (f + 1) * porFila));
+  const resultado: T[] = [];
+  for (let i = 0; i < porFila; i++) {
+    for (let f = 0; f < filas; f++) {
+      if (grupos[f][i] !== undefined) resultado.push(grupos[f][i]);
+    }
+  }
+  return resultado;
+}
+
 function SkeletonCard() {
   return (
     <div style={{
@@ -104,7 +120,7 @@ export function GridEspacios({ espacios, loading, onCardClick, favoritos, onTogg
 
   return (
     <GridScrollArrows>
-      {espacios.map(espacio => (
+      {intercalarFilas(espacios).map(espacio => (
         <CardEspacio
           key={espacio.id}
           espacio={espacio}
