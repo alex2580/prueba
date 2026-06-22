@@ -81,9 +81,9 @@ frontend/
 
 ## Migraciones DB pendientes (Guille debe correr en VPS)
 
-> Sin migraciones pendientes al 11 jun 2026.
+> Sin migraciones pendientes al 22 jun 2026.
 
-> Corridas en prod: `add-consultas-espacio.js`, `fix-consultas-charset.js` (7 jun), `add-movimientos-ledger.js`, `add-eliminado-por-oferente.js` (8 jun).
+> Corridas en prod: `add-consultas-espacio.js`, `fix-consultas-charset.js` (7 jun), `add-movimientos-ledger.js`, `add-eliminado-por-oferente.js` (8 jun), `fix-consultas-espacio-id-type.js` (20 jun — corrida directo por Claude, no por Guille, vía acceso DB local).
 
 ## Variables de entorno críticas (backend .env en VPS)
 
@@ -102,3 +102,6 @@ frontend/
 - **Comisión**: 15% TMC, 85% oferente (`netoOferente()` en utils.ts)
 - **Consultas públicas**: `consultas_espacio` tiene collation `utf8mb4_unicode_ci` distinto a `espacios` (`utf8mb4_0900_ai_ci`). NUNCA usar JOIN entre ellas — siempre dos queries separadas y merge en JS. Ver `consultasEspacioController.js`.
 - **CI/CD deploy**: self-hosted runner instalado en VPS (`/opt/github-runner`). El runner conecta OUT a GitHub. Ver `.github/workflows/deploy.yml`.
+- **Vigencia de publicaciones**: 90 días corridos desde la creación (`fecha_vencimiento`). Tocar en `espaciosController.js`, `server.js`, `add-vencimiento-espacios.js`, `CalendarioDisponibilidad.tsx`, `reservar/page.tsx`, `emailService.js`, `legales/page.tsx`, `publicar/page.tsx`, `messages/es.json` + `pt.json` si cambia de nuevo.
+- **Calendarios** (publicar/editar/reservar): `numberOfMonths={2}` + flechas nativas de react-multi-date-picker. NO usar `currentDate` para forzar mes ni armar un carrusel propio — la librería calcula mal el offset de transición y desborda el layout.
+- **Grid de tarjetas en la home**: posicionamiento explícito (`gridRow`/`gridColumn` inline) para llenar fila 1 completa antes de fila 2 — el auto-placement de CSS Grid con `grid-auto-flow: column` no lo permite por reordenamiento de array.

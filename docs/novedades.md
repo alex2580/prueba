@@ -774,6 +774,36 @@ Solo funciona si `inactiva_auto = 1`. Si alguien intenta reactivar un espacio qu
 
 ---
 
+## 22 de Junio 2026 — v1.12.0
+
+Sesión larga (19–22 jun) centrada en la **home page**, el **calendario de disponibilidad/reserva** y un **bug de datos serio** en consultas públicas. Detalle completo en `docs/snapshot-v1.12.0-22jun2026.md`.
+
+### 🐛 Bug corregido: consultas públicas cruzadas entre espacios
+
+Una publicación nueva mostraba las preguntas de otra (ej. "Cochera"). Causa: `consultas_espacio.espacio_id` estaba como `int(11)` en producción en vez de `varchar(36)`, así que MySQL truncaba los UUID y espacios con UUID parecido compartían `espacio_id`. Se corrigió el tipo de columna y se vació la tabla (datos viejos irrecuperables). **Commit:** `52e14f8`
+
+### 📅 Calendario rediseñado (publicar, editar, reservar)
+
+Tras varias iteraciones (scroll vertical, carrusel horizontal propio — este último con un bug real de la librería `react-multi-date-picker`), se llegó a la solución final: un calendario de 2 meses con las flechas nativas de la librería, sin lógica de carrusel propia. Vigencia de publicaciones fijada en **90 días**.
+
+### 🏠 Home page reestructurada
+
+Orden final: header → buscador+fechas (colapsa a pastilla al hacer scroll) → hero "Guardá lo que querés, donde querés" (movido desde Cómo Funciona) → fila de filtros (País/Tipo/Precio/Seguridad, ahora independiente del header) → grid de tarjetas (2 filas × 5 columnas con scroll horizontal) → botón de publicar → sección de Preguntas Frecuentes (nueva, 5 preguntas).
+
+También se corrigió que el botón "← Volver" de una publicación perdía los filtros activos de la home (causa: cacheo del router de Next.js — solución: navegación dura con `window.location.href`).
+
+### Otros fixes
+
+- Filtro de precio en $0 no se aplicaba (`if (precio_max)` descartaba el `0`)
+- Pines de Google Maps (aeropuerto, cementerio) se confundían con los de publicaciones — ocultados en modo claro
+- Links de Política de Privacidad en modales sin anchor ni `/es/`
+- Compartidos sin cupo se filtraban solo si el usuario elegía tipo=compartido explícitamente — ahora siempre
+- Modal Editar espacio: Superficie eliminada, Precio junto a Moneda
+
+**Migración corrida en producción:** `fix-consultas-espacio-id-type.js` (20 jun, corrida directo por Claude vía acceso DB local).
+
+---
+
 ## 12 de Junio 2026 — v1.11.1
 
 ### 🏆 Hito: pruebas end-to-end completas en producción

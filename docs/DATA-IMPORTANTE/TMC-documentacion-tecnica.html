@@ -199,7 +199,7 @@
   <div class="cover-sub">Documentación Técnica Completa</div>
   <div style="font-size:10pt;color:#888;margin-bottom:28px;">Marketplace de almacenamiento urbano — Buenos Aires</div>
   <div class="cover-meta">
-    <b>Versión:</b> 1.11.1 — 12 de Junio 2026<br>
+    <b>Versión:</b> 1.12.0 — 22 de Junio 2026<br>
     <b>URL producción:</b> https://todasmiscosas.com<br>
     <b>Repositorio:</b> github.com/alex2580/prueba (privado)<br>
     <b>Autores:</b> Alejandro Laporte · Guillermo Domínguez<br>
@@ -1365,6 +1365,42 @@ curl http://localhost:4000/health</pre>
 </table>
 <p><strong>El MVP está validado en producción. Listo para lanzamiento comercial.</strong></p>
 
+<h2>Cambios v1.12.0 — 22 junio 2026</h2>
+<table>
+  <tr><th>Área</th><th>Cambio</th><th>Commits</th></tr>
+  <tr>
+    <td>Bug crítico — consultas públicas cruzadas</td>
+    <td>Una publicación nueva mostraba las preguntas públicas de otra (ej. "Cochera"). Causa real: <code>consultas_espacio.espacio_id</code> estaba como <code>int(11)</code> en producción en vez de <code>varchar(36)</code> — MySQL truncaba cada UUID a sus dígitos numéricos iniciales (o a 0 si arrancaba con letra), así que espacios con UUID parecido compartían el mismo <code>espacio_id</code> y por lo tanto las mismas consultas. Se corrigió el tipo de columna y se vació la tabla (los registros viejos ya tenían el UUID truncado, irrecuperable). Migración <code>fix-consultas-espacio-id-type.js</code> corrida directo por Claude vía acceso DB local.</td>
+    <td><code>52e14f8</code></td>
+  </tr>
+  <tr>
+    <td>Calendario de disponibilidad/reserva — rediseño</td>
+    <td>Tras iterar sobre varios enfoques (scroll vertical con bug de header compartido entre meses; carrusel horizontal propio con bug real de <code>react-multi-date-picker</code> en el cálculo de offset de <code>currentDate</code>), se llegó a la solución final: un <code>Cal numberOfMonths=2</code> con las flechas nativas de la librería, sin lógica de carrusel propia. Aplicado en publicar, editar y reservar.</td>
+    <td><code>08fe410</code>…<code>862f46a</code></td>
+  </tr>
+  <tr>
+    <td>Vigencia de publicaciones — 90 días</td>
+    <td>Quedó fijada en 90 días (hubo idas y vueltas 60→90→60→90 durante la sesión). Recalculado en producción el <code>fecha_vencimiento</code> de los espacios activos existentes.</td>
+    <td><code>3614906</code></td>
+  </tr>
+  <tr>
+    <td>Home page — reestructuración completa</td>
+    <td>Orden final: header → buscador+fechas (colapsa a pastilla al hacer scroll, con histéresis anti-titileo) → hero "Guardá lo que querés, donde querés" (reubicado desde Cómo Funciona) → fila de filtros País/Tipo/Precio/Seguridad (desacoplada del header colapsable) → grid de tarjetas (2 filas × 5 columnas, scroll/flechas horizontales, posicionamiento explícito gridRow/gridColumn) → botón de publicar → sección Preguntas Frecuentes (nueva, 5 preguntas con acordeón).</td>
+    <td><code>8d08cf9</code>…<code>c0f24d1</code></td>
+  </tr>
+  <tr>
+    <td>Fix — "Volver" perdía los filtros de la home</td>
+    <td>El botón "← Volver" de una publicación volvía siempre a la home sin filtros. Causa: <code>router.push</code> de Next.js reutilizaba una instancia cliente cacheada de la home que nunca releía el querystring nuevo. Fix: navegación dura con <code>window.location.href</code> para ese botón.</td>
+    <td><code>f33d38c</code>, <code>c0114d5</code></td>
+  </tr>
+  <tr>
+    <td>Otros fixes</td>
+    <td>Filtro de precio en $0 no se aplicaba (falsy); pines de Google Maps confundidos con publicaciones en modo claro; links de Política de Privacidad sin anchor/<code>/es/</code>; compartidos sin cupo no se excluían del listado general; modal Editar espacio sin campo Superficie y Precio junto a Moneda.</td>
+    <td>varios</td>
+  </tr>
+</table>
+<p>Detalle completo en <code>docs/snapshot-v1.12.0-22jun2026.md</code>.</p>
+
 <h2>Cambios v1.11.1 — 12 junio 2026</h2>
 <table>
   <tr><th>Área</th><th>Cambio</th><th>Archivo</th></tr>
@@ -1702,7 +1738,7 @@ curl http://localhost:4000/health</pre>
      FOOTER
 ══════════════════════════════════════════════════════════════ -->
 <div class="footer">
-  TodasMisCosas.com — Documentación técnica interna · Versión 1.11.0 · 11 Junio 2026<br>
+  TodasMisCosas.com — Documentación técnica interna · Versión 1.12.0 · 22 Junio 2026<br>
   Alejandro Laporte · Guillermo Domínguez<br>
   <em>Este documento es confidencial. No distribuir.</em>
 </div>
