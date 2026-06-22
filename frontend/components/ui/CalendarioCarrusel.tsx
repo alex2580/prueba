@@ -31,12 +31,12 @@ export function CalendarioCarrusel({ children }: Props) {
         ref={scrollRef}
         onScroll={handleScroll}
         style={{
-          display: 'flex', overflowX: 'auto', scrollSnapType: 'x mandatory',
+          display: 'flex', width: '100%', overflowX: 'auto', scrollSnapType: 'x mandatory',
           WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none',
         }}
       >
         {children.map((child, i) => (
-          <div key={i} style={{ flex: '0 0 100%', minWidth: 0, scrollSnapAlign: 'start' }}>
+          <div key={i} style={{ flex: '0 0 100%', width: '100%', minWidth: 0, scrollSnapAlign: 'start' }}>
             {child}
           </div>
         ))}
