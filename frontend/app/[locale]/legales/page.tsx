@@ -203,8 +203,12 @@ export default function LegalesPage() {
             <p style={pStyle}>
               TodasMisCosas.com actúa como intermediario y no es depositario de los objetos almacenados.
               No nos responsabilizamos por daños, robos o pérdidas de objetos almacenados. Recomendamos
-              contratar un seguro para objetos de valor. La plataforma tampoco es responsable por
-              incumplimientos entre las partes, ni por daños derivados de caso fortuito o fuerza mayor.
+              contratar un seguro para objetos de valor. TodasMisCosas.com no es una aseguradora: el
+              servicio de seguro de contenido se gestiona a través de una aseguradora habilitada y
+              actuamos únicamente como intermediarios entre el usuario y dicha aseguradora. El contrato
+              de seguro, la cobertura y la resolución de cualquier siniestro son exclusivamente entre el
+              usuario y la aseguradora. La plataforma tampoco es responsable por incumplimientos entre
+              las partes, ni por daños derivados de caso fortuito o fuerza mayor.
             </p>
           </section>
 

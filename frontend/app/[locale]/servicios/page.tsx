@@ -63,9 +63,9 @@ const SERVICIOS_ADICIONALES_INFO = [
   },
   {
     icon: '🛡️',
-    nombre: 'Seguros',
-    desc: 'Protección total sobre los bienes almacenados contra robo, incendio y daños accidentales. Emitido por aseguradora habilitada. Certificado digital disponible al instante.',
-    detalle: 'Cobertura hasta el valor declarado.',
+    nombre: 'Seguro de contenido',
+    desc: 'Te conectamos con una aseguradora habilitada para que asegures tus bienes contra robo, incendio y daños accidentales. TodasMisCosas.com actúa como intermediario: el contrato y la cobertura son entre vos y la aseguradora.',
+    detalle: 'Cobertura hasta el valor declarado. Los siniestros se gestionan directamente con la aseguradora.',
     precio: 'Desde $2.500/mes',
     color: '#F59E0B',
     colorBg: 'rgba(245,158,11,.12)',

@@ -499,7 +499,7 @@ export default function ReservarPage() {
                             <div style={{ fontSize: '.9rem', fontWeight: 700, marginBottom: '.1rem' }}>{cfg.label}</div>
                             <div style={{ fontSize: '.75rem', color: 'var(--text3)' }}>
                               {tipo === 'transporte' && 'Incluye retiro, traslado y descarga'}
-                              {tipo === 'seguro' && 'Cobertura contra robo, incendio y daños'}
+                              {tipo === 'seguro' && 'Cobertura contra robo, incendio y daños, emitida por una aseguradora'}
                               {tipo === 'embalaje' && 'Kit con cajas, cinta y papel burbuja'}
                               {tipo === 'limpieza' && 'Limpieza general del espacio'}
                               {' · '}
