@@ -101,7 +101,7 @@ export default function ComoFuncionaPage() {
           <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.1rem', marginBottom: '1.1rem', color: 'var(--text)' }}>
             {t('tiposTitle')}
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem', marginBottom: '2.5rem', justifyItems: 'center', justifyContent: 'center', maxWidth: 640, margin: '0 auto 2.5rem' }}>
+          <div className="cf-sections" style={{ marginBottom: '2.5rem' }}>
             <div style={{ background: 'var(--surface)', border: '1px solid rgba(30,41,59,.18)', borderRadius: 'var(--r3)', padding: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', marginBottom: '.65rem' }}>
                 <span style={{ fontSize: '1.5rem' }}>🔒</span>
