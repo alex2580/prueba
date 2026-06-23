@@ -40,7 +40,7 @@ const FAQ = [
     a: 'Publicar es 100% gratis. TodasMisCosas.com solo cobra una comisión del 15% cuando se concreta una reserva. Si nadie te reserva, no pagás nada.',
   },
   {
-    q: '¿Qué hago si tengo un problema con el espacio o con quien cuidará tus cosas?',
+    q: '¿Qué hago si tengo un problema con el espacio o con quien procedió con el cuidado de mis cosas?',
     a: 'Podés contactarnos antes de confirmar el acceso desde la misma reserva. Mientras no confirmes, el dinero sigue retenido en garantía y podemos intervenir para resolver cualquier inconveniente.',
   },
 ];
