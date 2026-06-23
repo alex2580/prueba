@@ -168,7 +168,6 @@ export default function PanelPage() {
     precio_dia: '', categoria: '', moneda: 'ARS',
     m2: '', lat: '', lng: '',
   });
-  const editDireccionRef = useRef<HTMLInputElement>(null);
 
   // Profile edit
   const [perfilOpen, setPerfilOpen] = useState(false);
@@ -461,40 +460,6 @@ export default function PanelPage() {
       document.getElementById('pac-fix')?.remove();
     };
   }, [perfilOpen]);
-
-  // Google Maps autocomplete for edit espacio address
-  useEffect(() => {
-    if (!editando || !MAPS_KEY) return;
-    const style = document.createElement('style');
-    style.id = 'pac-fix-edit';
-    style.textContent = '.pac-container { z-index: 99999 !important; }';
-    document.head.appendChild(style);
-    const timer = setTimeout(() => {
-      if (!editDireccionRef.current) return;
-      const loader = new Loader({ apiKey: MAPS_KEY, version: 'weekly' });
-      loader.load().then(async (google) => {
-        if (!editDireccionRef.current) return;
-        const { Autocomplete } = await google.maps.importLibrary('places') as any;
-        const ac = new Autocomplete(editDireccionRef.current, {
-          fields: ['formatted_address', 'geometry'],
-        });
-        ac.addListener('place_changed', () => {
-          const place = ac.getPlace();
-          if (!place.geometry?.location) return;
-          setEditForm(f => ({
-            ...f,
-            direccion: place.formatted_address || f.direccion,
-            lat: String(place.geometry.location.lat()),
-            lng: String(place.geometry.location.lng()),
-          }));
-        });
-      });
-    }, 200);
-    return () => {
-      clearTimeout(timer);
-      document.getElementById('pac-fix-edit')?.remove();
-    };
-  }, [editando]);
 
   async function handleGuardarPerfil() {
     if (!token) return;
@@ -1833,12 +1798,6 @@ export default function PanelPage() {
                 <textarea rows={3} value={editForm.descripcion}
                   onChange={e => setEditForm(f => ({ ...f, descripcion: e.target.value }))}
                   placeholder="Describí tu espacio…" />
-              </div>
-
-              <div>
-                <label className="form-label">Dirección</label>
-                <input ref={editDireccionRef} value={editForm.direccion} onChange={e => setEditForm(f => ({ ...f, direccion: e.target.value }))}
-                  placeholder="Calle y número" />
               </div>
 
               <div className="form-row">
