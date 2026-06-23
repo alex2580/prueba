@@ -489,7 +489,7 @@ export default function HomePage() {
                     const val = Number(e.target.value);
                     aplicarFiltros({ precio_max: val < PRECIO_MAX_DIA ? val : undefined });
                   }}
-                  style={{ width: 80, cursor: 'pointer', accentColor: precioValHome < PRECIO_MAX_DIA ? '#fff' : 'var(--orange)' }}
+                  style={{ width: 180, height: 4, cursor: 'pointer', accentColor: precioValHome < PRECIO_MAX_DIA ? '#fff' : 'var(--orange)' }}
                 />
               </div>
 
