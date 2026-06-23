@@ -195,6 +195,14 @@ export default function LegalesPage() {
               (nombre, teléfono, email, dirección, CBU/Alias), accesible únicamente por el equipo de administración
               de TodasMisCosas.com con fines de seguridad y soporte.
             </p>
+            <p style={pStyle}>
+              <strong>Derecho al olvido / eliminación de cuenta:</strong> si querés ejercer tu derecho de acceso,
+              rectificación o supresión de tus datos personales, o solicitar la eliminación definitiva de tu
+              cuenta, escribinos desde la página de{' '}
+              <a href="/contacto" style={{ color: 'var(--orange)' }}>Contacto</a>{' '}
+              seleccionando el tipo <strong>"Consulta"</strong>, indicando tu nombre y el correo electrónico
+              registrado en la plataforma. No se procesan estas solicitudes por otra vía.
+            </p>
           </section>
 
           {/* 9 */}
