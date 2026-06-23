@@ -24,8 +24,8 @@ type Vista = 'mapa' | 'lista';
 
 const FAQ = [
   {
-    q: '¿Cuándo se le paga al proveedor?',
-    a: 'El pago queda retenido como depósito en garantía a través de MercadoPago. El proveedor lo recibe recién cuando vos confirmás el acceso al espacio desde tu panel, no antes.',
+    q: '¿Cuándo se le paga a quien cuidará tus cosas?',
+    a: 'El pago queda retenido como depósito en garantía a través de MercadoPago. Quien cuidará tus cosas lo recibe recién cuando vos confirmás el acceso al espacio desde tu panel, no antes.',
   },
   {
     q: '¿Cuál es la diferencia entre un espacio exclusivo y uno compartido?',
@@ -33,14 +33,14 @@ const FAQ = [
   },
   {
     q: '¿Puedo cancelar una reserva si me arrepiento?',
-    a: 'Sí, con el botón "Me arrepentí" podés cancelar y te reembolsamos el 100% de lo pagado, siempre antes de coordinar el acceso con el proveedor.',
+    a: 'Sí, con el botón "Me arrepentí" podés cancelar y te reembolsamos el 100% de lo pagado, siempre antes de coordinar el acceso con quien cuidará tus cosas.',
   },
   {
     q: '¿Cuánto cuesta publicar un espacio?',
     a: 'Publicar es 100% gratis. TodasMisCosas.com solo cobra una comisión del 15% cuando se concreta una reserva. Si nadie te reserva, no pagás nada.',
   },
   {
-    q: '¿Qué hago si tengo un problema con el espacio o el proveedor?',
+    q: '¿Qué hago si tengo un problema con el espacio o con quien cuidará tus cosas?',
     a: 'Podés contactarnos antes de confirmar el acceso desde la misma reserva. Mientras no confirmes, el dinero sigue retenido en garantía y podemos intervenir para resolver cualquier inconveniente.',
   },
 ];
