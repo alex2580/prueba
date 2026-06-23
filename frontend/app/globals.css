@@ -463,6 +463,10 @@ select.filter-pill {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  /* Su alto cambia (pastilla ↔ header completo) mientras el usuario
+     scrollea — sin esto el scroll-anchoring nativo del navegador puede
+     "trabar" el scroll hacia arriba justo en ese punto. */
+  overflow-anchor: none;
 }
 .list-search-row {
   display: flex;

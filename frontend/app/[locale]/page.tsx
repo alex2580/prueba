@@ -93,8 +93,7 @@ export default function HomePage() {
   const [precioPillPos, setPrecioPillPos] = useState<{ top: number; left: number } | null>(null);
   const precioPillRef = useRef<HTMLButtonElement>(null);
 
-  function handlePageScroll(e: React.UIEvent<HTMLDivElement>) {
-    const top = e.currentTarget.scrollTop;
+  function actualizarHeaderScroll(top: number) {
     // Histéresis: colapsa pasados los 80px, recién vuelve a expandirse por
     // debajo de 20px. Con un solo umbral, el scroll lento que se queda
     // rondando ese valor hace titilar el header al cruzarlo de a poco.
@@ -105,6 +104,16 @@ export default function HomePage() {
     });
     if (top < 20) setHeaderExpandido(false);
   }
+
+  // La vista lista fluye con el scroll del body (no tiene su propio
+  // contenedor interno) para que el footer no quede en un contexto de
+  // scroll anidado y "ancle" al querer volver arriba.
+  useEffect(() => {
+    if (vista !== 'lista') return;
+    function onScroll() { actualizarHeaderScroll(window.scrollY); }
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [vista]);
 
   useEffect(() => {
     if (!token) { setFavIds(new Set()); return; }
@@ -197,7 +206,11 @@ export default function HomePage() {
   const hayFiltrosActivos = !!(filtros.tipo || filtros.precio_max !== undefined || userLocation || filtros.q || filtros.pais || filtros.seguridad_min || filtros.fecha_desde);
 
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
+    <div style={{
+      height: vista === 'mapa' ? '100vh' : 'auto',
+      minHeight: vista === 'lista' ? '100vh' : undefined,
+      display: 'flex', flexDirection: 'column', background: 'var(--bg)',
+    }}>
 
       {/* ── Header ─────────────────────────────────────────── */}
       <SiteHeader
@@ -207,7 +220,11 @@ export default function HomePage() {
       />
 
       {/* ── Content ────────────────────────────────────────── */}
-      <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
+      <div style={{
+        flex: vista === 'mapa' ? 1 : undefined,
+        overflow: vista === 'mapa' ? 'hidden' : 'visible',
+        position: 'relative',
+      }}>
 
         {/* ── Mapa ─────────────────────────────────────────── */}
         {vista === 'mapa' && (
@@ -324,7 +341,7 @@ export default function HomePage() {
 
         {/* ── Lista ────────────────────────────────────────── */}
         {vista === 'lista' && (
-          <div className="page-scroll" onScroll={handlePageScroll}>
+          <div className="page-scroll" style={{ height: 'auto', overflowY: 'visible' }}>
 
             {/* Sticky search + filters header — colapsa a una pastilla al scrollear */}
             <div className="list-search-header">
