@@ -12,7 +12,7 @@ const iconProps = {
   strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const,
 };
 
-const PASOS: Paso[] = [
+export const PASOS_RESERVAR: Paso[] = [
   {
     titulo: 'Buscás',
     desc: 'Filtrás por zona, precio y tipo hasta encontrar el espacio ideal.',
@@ -70,7 +70,56 @@ const PASOS: Paso[] = [
   },
 ];
 
-export function ComoFuncionaFlow() {
+export const PASOS_PUBLICAR: Paso[] = [
+  {
+    titulo: 'Publicás',
+    desc: 'Contás qué espacio ofrecés, si es exclusivo o compartido, y marcás los días disponibles.',
+    icon: (
+      <svg {...iconProps}>
+        <rect x="4" y="3" width="16" height="18" rx="2" />
+        <line x1="12" y1="9" x2="12" y2="15" />
+        <line x1="9" y1="12" x2="15" y2="12" />
+      </svg>
+    ),
+  },
+  {
+    titulo: 'Subís fotos',
+    desc: 'Sumás hasta 5 fotos para que se vea lo que ofrecés.',
+    icon: (
+      <svg {...iconProps}>
+        <path d="M4 8h3l1.5-2h7L17 8h3v11H4V8z" />
+        <circle cx="12" cy="13" r="3.2" />
+      </svg>
+    ),
+  },
+  {
+    titulo: 'Sumás seguridad',
+    desc: 'Marcás las medidas de seguridad con las que cuenta tu espacio.',
+    icon: (
+      <svg {...iconProps}>
+        <path d="M12 3l7 3.2v5.8c0 4.8-3 7.8-7 9-4-1.2-7-4.2-7-9V6.2L12 3z" />
+      </svg>
+    ),
+  },
+  {
+    titulo: 'Recibís reservas',
+    desc: 'Respondés consultas y coordinás el acceso cuando alguien te reserva.',
+    icon: (
+      <svg {...iconProps}>
+        <path d="M4 5.5h16V16H9.5L4.5 19.5V16H4V5.5z" />
+        <line x1="8" y1="9.2" x2="16" y2="9.2" />
+        <line x1="8" y1="12.2" x2="13" y2="12.2" />
+      </svg>
+    ),
+  },
+];
+
+interface ComoFuncionaFlowProps {
+  titulo: string;
+  pasos: Paso[];
+}
+
+export function ComoFuncionaFlow({ titulo, pasos }: ComoFuncionaFlowProps) {
   return (
     <div className="cf-flow">
       <style>{`
@@ -114,11 +163,11 @@ export function ComoFuncionaFlow() {
         }
       `}</style>
 
-      <h2 className="cf-flow__title">¿Cómo funciona?</h2>
+      <h2 className="cf-flow__title">{titulo}</h2>
 
       <div className="cf-flow__row">
         <div className="cf-flow__connector" />
-        {PASOS.map((paso, i) => (
+        {pasos.map((paso, i) => (
           <div className="cf-flow__step" key={i}>
             <div className="cf-flow__icon">{paso.icon}</div>
             <div>
