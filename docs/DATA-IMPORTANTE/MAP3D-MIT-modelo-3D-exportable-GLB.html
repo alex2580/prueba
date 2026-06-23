@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TMC — Evaluación: map3d (MIT) — Modelo 3D exportable a GLB</title>
+  <style>
+    :root {
+      --primary: #1a73e8;
+      --primary-dark: #1557b0;
+      --accent: #34a853;
+      --warn: #fbbc04;
+      --danger: #ea4335;
+      --bg: #f8f9fa;
+      --card: #ffffff;
+      --text: #202124;
+      --muted: #5f6368;
+      --border: #e0e0e0;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+      color: white;
+      padding: 48px 32px 40px;
+      text-align: center;
+    }
+    header .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 20px;
+      padding: 4px 16px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+    header p { font-size: 1.05rem; opacity: 0.85; max-width: 680px; margin: 0 auto; }
+    header .meta { margin-top: 16px; font-size: 13px; opacity: 0.65; }
+
+    .container { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+
+    .status-bar {
+      background: #e8f0fe;
+      border: 1px solid var(--primary);
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--primary-dark);
+    }
+    .status-bar .icon { font-size: 20px; }
+
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card ul { padding-left: 18px; }
+    .card ul li { margin-bottom: 6px; font-size: 14px; color: var(--muted); }
+    .card ul li strong { color: var(--text); }
+    .card p { font-size: 14px; color: var(--muted); margin-bottom: 8px; }
+
+    .card.highlight { border-left: 4px solid var(--primary); }
+    .card.accent { border-left: 4px solid var(--accent); }
+    .card.danger { border-left: 4px solid var(--danger); }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-right: 6px;
+    }
+    .tag.gratis { background: #e6f4ea; color: #1e7e34; }
+    .tag.pago { background: #fce8e6; color: #c5221f; }
+    .tag.ya-tenemos { background: #f3e8fd; color: #6a1b9a; }
+    .tag.no-sirve { background: #fce8e6; color: #c5221f; }
+
+    .table-wrapper { overflow-x: auto; margin-bottom: 32px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      font-size: 13px;
+    }
+    thead { background: var(--primary); color: white; }
+    thead th { padding: 12px 14px; text-align: left; font-weight: 600; }
+    tbody tr:nth-child(even) { background: #f8f9fa; }
+    tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--muted); }
+    tbody td:first-child { color: var(--text); font-weight: 500; }
+
+    footer { text-align: center; padding: 32px; color: var(--muted); font-size: 12px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Investigación técnica — referencia</div>
+  <h1>map3d (MIT) — Modelo 3D exportable a formato GLB</h1>
+  <p>Evaluación de si este repo open source puede reemplazar las APIs de Google Maps Platform que usa TMC para navegar publicaciones.</p>
+  <div class="meta">Investigado 23 jun 2026 · Fuente: github.com/cartesiancs/map3d (vía link compartido por Alejandro)</div>
+</header>
+
+<div class="container">
+
+  <div class="status-bar">
+    <span class="icon">📌</span>
+    <span><strong>Conclusión corta:</strong> NO reemplaza ninguna de las 3 funciones que usamos hoy. Queda documentado como referencia para el futuro, no para implementar ahora.</span>
+  </div>
+
+  <h2 class="section-title">🗺️ Qué usa TMC hoy — Google Maps Platform</h2>
+  <div class="card highlight">
+    <ul>
+      <li><strong>Maps JavaScript API</strong> — el mapa interactivo con los pines de cada publicación (<code>frontend/components/mapa/MapaEspacios.tsx</code>), pan/zoom, click en pin → ficha del espacio.</li>
+      <li><strong>Places API (Autocomplete)</strong> — autocompletado de direcciones al publicar un espacio o editar el perfil (<code>publicar/page.tsx</code>, <code>panel/page.tsx</code>).</li>
+      <li><strong>Geocoding</strong> (vía los datos que devuelve el propio Autocomplete) — convierte la dirección elegida en lat/lng para guardar el espacio y ubicarlo en el mapa.</li>
+    </ul>
+  </div>
+
+  <h2 class="section-title">📦 Qué es map3d</h2>
+  <div class="card">
+    <p>Aplicación web open source (<span class="tag gratis">MIT</span>) que genera <strong>modelos 3D exportables (formato GLB)</strong> de edificios y calles de una ciudad real, usando datos de <strong>OpenStreetMap</strong>. Pensada para visualización 3D de una ciudad completa (tipo maqueta digital), no para navegación interactiva de marcadores.</p>
+    <ul>
+      <li><strong>Stack:</strong> React-Three-Fiber (Three.js + React), TypeScript 97.9%, Vite.</li>
+      <li><strong>Distribución:</strong> open source, autohospedable. Demo público en map.fleet.im.</li>
+      <li><strong>Madurez:</strong> 1.9k estrellas / 300 forks, pero solo 42 commits totales y documentación mínima (README básico). Roadmap con tareas pendientes (texturas de edificios, mapas de altura) — fase temprana.</li>
+      <li><strong>Lo que NO tiene:</strong> autocompletado de direcciones, geocoding, pines clickeables con eventos, paneo/zoom de navegación tipo mapa de consumo.</li>
+    </ul>
+  </div>
+
+  <h2 class="section-title">⚖️ Comparación directa</h2>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr><th>Función necesaria en TMC</th><th>Google Maps Platform (actual)</th><th>map3d</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Mapa interactivo con pines clickeables</td><td>✅ Maps JavaScript API</td><td>❌ No es su propósito (renderiza modelos 3D estáticos exportables)</td></tr>
+        <tr><td>Autocompletado de direcciones</td><td>✅ Places API</td><td>❌ No tiene</td></tr>
+        <tr><td>Geocoding (dirección → lat/lng)</td><td>✅ Incluido en Places</td><td>❌ No tiene</td></tr>
+        <tr><td>Costo</td><td><span class="tag pago">Pago por uso</span> (con cuota gratis mensual)</td><td><span class="tag gratis">Gratis</span> (self-hosted, datos OSM)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="section-title">🔮 Si en el futuro se quisiera dejar de depender de Google Maps Platform</h2>
+  <div class="card accent">
+    <p>map3d no es el camino, pero <strong>sí existe</strong> un ecosistema open source maduro que cubriría las 3 funciones, por si algún día se evalúa por costo:</p>
+    <ul>
+      <li><strong>Leaflet + tiles de OpenStreetMap</strong> — reemplazo directo de Maps JavaScript API (mapa interactivo, pines, pan/zoom). Gratis, muy usado en producción.</li>
+      <li><strong>Nominatim o Photon</strong> — reemplazo de Places Autocomplete + Geocoding (búsqueda de direcciones, dirección → lat/lng). Gratis (Nominatim tiene límites de uso si se usa el servicio público; Photon es self-hostable).</li>
+    </ul>
+    <p>Es un cambio de arquitectura más grande que migrar un repo puntual — implica tocar <code>MapaEspacios.tsx</code>, el formulario de publicar, y el preview de mapa en el panel. No se evaluó en profundidad en esta sesión; queda anotado para evaluar si Alejandro lo pide explícitamente.</p>
+  </div>
+
+  <footer>
+    TodasMisCosas.com — Documento de referencia interna · Generado 23 Junio 2026<br>
+    No requiere acción inmediata — queda como antecedente para decisiones futuras sobre el stack de mapas.
+  </footer>
+
+</div>
+</body>
+</html>
