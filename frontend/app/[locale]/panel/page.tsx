@@ -877,7 +877,20 @@ export default function PanelPage() {
                             />
                           )}
                           <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>{esp.nombre}</div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', flexWrap: 'wrap' }}>
+                              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>{esp.nombre}</div>
+                              <span style={{
+                                fontSize: '10px', fontWeight: 800,
+                                fontFamily: 'Sora, sans-serif',
+                                padding: '.12rem .5rem',
+                                borderRadius: '999px',
+                                border: `1.5px solid ${esp.tipo === 'exclusivo' ? 'var(--ink)' : 'var(--orange)'}`,
+                                color: esp.tipo === 'exclusivo' ? 'var(--ink)' : 'var(--orange)',
+                                whiteSpace: 'nowrap',
+                              }}>
+                                {esp.tipo === 'exclusivo' ? '🔒 Exclusivo' : '🤝 Compartido'}
+                              </span>
+                            </div>
                             <div style={{ fontSize: '.78rem', color: 'var(--text3)', marginTop: '.15rem' }}>
                               📍 {esp.barrio}{Number(esp.m2) > 0 ? ` · ${esp.m2} m²` : ''}
                             </div>
