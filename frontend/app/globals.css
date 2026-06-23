@@ -496,12 +496,26 @@ select.filter-pill {
   border: 1.5px solid var(--border2);
   border-radius: 999px;
   box-shadow: var(--s1);
-  cursor: pointer;
   font-size: .82rem;
   color: var(--text);
   font-family: inherit;
+  width: fit-content;
 }
 .search-pill-compact:hover { border-color: var(--text); }
+.search-pill-compact__segment {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border-radius: 999px;
+}
+.search-pill-compact__segment:hover { color: var(--orange); }
 .search-pill-compact__item {
   font-weight: 600;
   max-width: 140px;

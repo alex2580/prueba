@@ -90,6 +90,8 @@ export default function HomePage() {
   const [headerScrolled, setHeaderScrolled] = useState(false);
   const [headerExpandido, setHeaderExpandido] = useState(false);
   const [faqAbierta, setFaqAbierta] = useState<number | null>(null);
+  const [precioPillPos, setPrecioPillPos] = useState<{ top: number; left: number } | null>(null);
+  const precioPillRef = useRef<HTMLButtonElement>(null);
 
   function handlePageScroll(e: React.UIEvent<HTMLDivElement>) {
     const top = e.currentTarget.scrollTop;
@@ -328,21 +330,62 @@ export default function HomePage() {
             <div className="list-search-header">
               <div className={`search-collapsible ${headerScrolled && !headerExpandido ? 'is-visible' : ''}`}>
                 <div className="search-collapsible__inner">
-                  <button
-                    className="search-pill-compact"
-                    onClick={() => setHeaderExpandido(true)}
-                  >
-                    <span>🔍</span>
-                    <span className="search-pill-compact__item">{busqueda || t('searchPlaceholder')}</span>
+                  <div className="search-pill-compact">
+                    <button
+                      type="button"
+                      className="search-pill-compact__segment"
+                      onClick={() => setHeaderExpandido(true)}
+                    >
+                      <span>🔍</span>
+                      <span className="search-pill-compact__item">{busqueda || t('searchPlaceholder')}</span>
+                      <span className="search-pill-compact__dot">·</span>
+                      <span className="search-pill-compact__item">
+                        {filtros.fecha_desde ? `${fmtCorta(filtros.fecha_desde)} - ${fmtCorta(filtros.fecha_hasta)}` : 'Fechas'}
+                      </span>
+                    </button>
                     <span className="search-pill-compact__dot">·</span>
-                    <span className="search-pill-compact__item">
-                      {filtros.fecha_desde ? `${fmtCorta(filtros.fecha_desde)} - ${fmtCorta(filtros.fecha_hasta)}` : 'Fechas'}
-                    </span>
-                    <span className="search-pill-compact__dot">·</span>
-                    <span className="search-pill-compact__item">
-                      {precioValHome < PRECIO_MAX_DIA ? `$${precioValHome.toLocaleString('es-AR')}/día` : 'Precio'}
-                    </span>
-                  </button>
+                    <button
+                      type="button"
+                      ref={precioPillRef}
+                      className="search-pill-compact__segment"
+                      onClick={() => {
+                        const rect = precioPillRef.current?.getBoundingClientRect();
+                        if (rect) setPrecioPillPos({ top: rect.bottom + 8, left: Math.min(rect.left, window.innerWidth - 240 - 16) });
+                      }}
+                    >
+                      <span className="search-pill-compact__item">
+                        {precioValHome < PRECIO_MAX_DIA ? `$${precioValHome.toLocaleString('es-AR')}/día` : 'Precio'}
+                      </span>
+                    </button>
+                  </div>
+
+                  {precioPillPos && (
+                    <>
+                      <div onClick={() => setPrecioPillPos(null)} style={{ position: 'fixed', inset: 0, zIndex: 499 }} />
+                      <div style={{
+                        position: 'fixed', top: precioPillPos.top, left: precioPillPos.left, zIndex: 500,
+                        background: 'var(--surface)', border: '1.5px solid var(--border)',
+                        borderRadius: 'var(--r3)', padding: '1rem', boxShadow: 'var(--s3)', width: 240,
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.6rem' }}>
+                          <span style={{ fontSize: '.75rem', fontWeight: 700, fontFamily: 'Sora, sans-serif', color: 'var(--text)' }}>💰 Precio máx/día</span>
+                          <span style={{ fontSize: '.82rem', fontWeight: 700, color: precioValHome < PRECIO_MAX_DIA ? 'var(--orange)' : 'var(--text3)' }}>
+                            {precioValHome < PRECIO_MAX_DIA ? `$${precioValHome.toLocaleString('es-AR')}` : 'Sin límite'}
+                          </span>
+                        </div>
+                        <input
+                          type="range"
+                          min={0} max={PRECIO_MAX_DIA} step={PRECIO_STEP}
+                          value={precioValHome > PRECIO_MAX_DIA ? PRECIO_MAX_DIA : precioValHome}
+                          onChange={e => {
+                            const val = Number(e.target.value);
+                            aplicarFiltros({ precio_max: val < PRECIO_MAX_DIA ? val : undefined });
+                          }}
+                          style={{ width: '100%', height: 4, cursor: 'pointer', accentColor: 'var(--orange)' }}
+                        />
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 
