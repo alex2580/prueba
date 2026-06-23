@@ -827,7 +827,7 @@ select.filter-pill {
 .espacios-grid-wrap { position: relative; }
 .espacios-grid {
   display: grid;
-  grid-template-rows: repeat(2, 1fr);
+  grid-template-rows: repeat(2, auto);
   grid-auto-flow: column;
   grid-auto-columns: calc((100% - 4 * 1.25rem) / 5);
   gap: 1.25rem;
