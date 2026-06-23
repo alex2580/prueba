@@ -774,6 +774,52 @@ Solo funciona si `inactiva_auto = 1`. Si alguien intenta reactivar un espacio qu
 
 ---
 
+## 23 de Junio 2026 — v1.13.0
+
+Sesión centrada en **footer global + páginas legales/contacto**, **terminología visible al usuario**, **dos nuevos flujos visuales en la home** ("¿Cómo funciona?") y varios **fixes de UI** en tarjetas y filtros.
+
+### 🦶 Footer global responsive + páginas nuevas
+
+Se agregó un footer estándar (columnas Empresa/Soporte/Legal) a todas las páginas vía el layout raíz. Se crearon `/sobre-nosotros` y `/contacto` (con `ContactoForm.tsx` compartido), accesibles solo desde el footer — no se cargaron en el header. **Commit:** `cfaff56`
+
+Se corrigió que el footer quedara "anclado" al hacer scroll hacia arriba en la home: la causa era un doble contexto de scroll anidado (la home usaba `height:100vh` + scroll interno propio mientras el footer vivía a nivel `body`). Se hizo que la vista de lista fluya con el scroll natural del body (`height:'auto'`), conservando `height:100vh` solo en la vista de mapa. **Commit:** `5f9ce12`
+
+### 🧭 Dos flujos visuales "¿Cómo funciona?" en la home
+
+Se incorporó una imagen de trazos simples con el flujo de uso, ubicada debajo de las tarjetas de publicaciones, con las fases distribuidas horizontalmente (apiladas en mobile/tablet) y cada paso resumido en una sola oración. El componente `ComoFuncionaFlow.tsx` se hizo reutilizable (recibe `titulo` y `pasos`) y se usa dos veces: **"El flujo para hacer una reserva"** (5 pasos) y **"El flujo para publicar tu espacio"** (4 pasos), con el botón "Publicar mi espacio" justo debajo del segundo. **Commits:** `d9e1e19`, `3e06d53`
+
+En la página `/como-funciona` se alineó el contenedor de "Tipos de espacio" (Exclusivo/Compartido) para que ocupe el mismo ancho que las secciones de Reservar/Publicar (mismo grid `cf-sections`), y se reemplazó la palabra "candado" en la descripción de "Exclusivo" por una frase que aclara que es un espacio de uso exclusivo/privado (es y pt). **Commit:** `569c533`
+
+### 🐛 Fix: segunda fila de tarjetas dejaba espacio vacío al filtrar
+
+El grid de tarjetas de la home (2 filas × 5 columnas) usaba `grid-template-rows: repeat(2, 1fr)`, lo que forzaba que la fila 2 tomara la misma altura que la fila 1 aunque estuviera vacía (ej. al filtrar "Exclusivos" y quedar solo 4-5 resultados). Se cambió a `repeat(2, auto)` para que cada fila tome la altura de su propio contenido y colapse a 0 si no tiene tarjetas — todo el contenido inferior (flujos, FAQ, footer) ahora sube correctamente. **Commit:** `8f90e9a`
+
+### 🛡️ TMC como intermediario, no aseguradora
+
+Se revisó todo el sitio para que quede claro que TMC intermedia el seguro de contenido entre el usuario y una aseguradora habilitada, sin ser parte del contrato ni responsable por siniestros: ajustes en `/servicios` (tarjeta "Seguro de contenido"), en el paso 2 del flujo de reserva, y una cláusula nueva en `/legales` (sección 9). **Commit:** `eaee4c3`
+
+Se agregó en `/legales` (sección 8, Privacidad y datos personales) una cláusula de **derecho al olvido / eliminación de cuenta**, indicando que estas solicitudes se gestionan únicamente vía el formulario de Contacto, tipo "Consulta". **Commit:** `a81fccd`
+
+### Terminología del FAQ
+
+Se reemplazó "proveedor" por "quien cuidará tus cosas" en las Preguntas Frecuentes (3 ocurrencias) y se corrigió la concordancia gramatical de la última pregunta para mantener consistencia de persona. **Commits:** `4df85e2`, `6f56cd8`
+
+### Filtro de precios
+
+Se ensanchó el slider de precio de la home (80px → 180px, igualando la calidad del filtro de precio del mapa) y se hizo accesible desde la pastilla compacta del buscador cuando el header colapsa al hacer scroll (antes el segmento "Precio" era texto estático sin acción). **Commits:** `f54a9a9`, `68b25f3`
+
+### Panel del proveedor y tarjetas
+
+- Tag Exclusivo/Compartido agregado en "Mis espacios publicados" del panel, reutilizando el estilo de badge de `CardEspacio.tsx`. **Commit:** `dee36d0`
+- El precio de las tarjetas pasó a su propia línea centrada (antes se apretaba junto a rating/reseñas y montos grandes como "$56.000/día" no entraban bien). **Commit:** `f5e1bb3`
+- Se eliminó el campo "Dirección" del modal de edición de espacios en el panel (en todas las vistas) — el dato (`direccion`/`lat`/`lng`) se conserva en la base, solo deja de ser editable. **Commit:** `ac6f16d`
+
+### Documentación
+
+Se evaluó el repo `cartesiancs/map3d` (MIT) como posible reemplazo de Google Maps — conclusión: no cubre las 3 funciones que usa TMC (Maps JS API, Places Autocomplete, Geocoding). Queda como referencia en `docs/DATA-IMPORTANTE/MAP3D-MIT-modelo-3D-exportable-GLB.html`. **Commit:** `dd2fa94`
+
+---
+
 ## 22 de Junio 2026 — v1.12.0
 
 Sesión larga (19–22 jun) centrada en la **home page**, el **calendario de disponibilidad/reserva** y un **bug de datos serio** en consultas públicas. Detalle completo en `docs/snapshot-v1.12.0-22jun2026.md`.
