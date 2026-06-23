@@ -315,7 +315,7 @@ textarea { resize: vertical; line-height: 1.6; }
 .espacio-card__price {
   font-family: 'Sora', sans-serif;
   font-weight: 800;
-  font-size: 1.08rem;
+  font-size: .92rem;
   color: var(--orange);
 }
 

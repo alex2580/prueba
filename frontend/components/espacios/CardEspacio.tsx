@@ -187,7 +187,7 @@ export function CardEspacio({ espacio, onClick, isFavorito = false, onToggleFavo
 
         <div className="espacio-card__address">📍 {espacio.barrio}{Number(espacio.m2) > 0 ? ` · ${espacio.m2} m²` : ''}</div>
 
-        <div className="espacio-card__meta" style={{ justifyContent: 'space-between' }}>
+        <div className="espacio-card__meta">
           <div style={{ display: 'flex', alignItems: 'center', gap: '.3rem' }}>
             <RatingDisplay value={espacio.rating ?? 0} count={espacio.reviews_count} size="sm" />
             {espacio.reservas_mes > 0 && (
@@ -196,12 +196,15 @@ export function CardEspacio({ espacio, onClick, isFavorito = false, onToggleFavo
               </span>
             )}
           </div>
-          {hasDia && (
+        </div>
+
+        {hasDia && (
+          <div style={{ textAlign: 'center' }}>
             <span className="espacio-card__price" style={{ color: accentColor, whiteSpace: 'nowrap' }}>
               {formatARS(espacio.precio_dia)}/día
             </span>
-          )}
-        </div>
+          </div>
+        )}
 
       </div>
     </article>
