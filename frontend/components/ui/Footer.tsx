@@ -1,6 +1,7 @@
 'use client';
 
-import { useRouter } from '@/navigation';
+import { useSearchParams } from 'next/navigation';
+import { useRouter, usePathname } from '@/navigation';
 import { SiteLogo } from './SiteLogo';
 
 interface Columna {
@@ -35,6 +36,10 @@ const COLUMNAS: Columna[] = [
 
 export function Footer() {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  if (pathname === '/' && searchParams.get('vista') === 'mapa') return null;
 
   return (
     <footer className="site-footer">
