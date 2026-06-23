@@ -16,6 +16,7 @@ import { RegisterForm } from '@/components/auth/RegisterForm';
 import { OTPStep } from '@/components/auth/OTPStep';
 import { SiteHeader } from '@/components/ui/SiteHeader';
 import { ContactoForm } from '@/components/contacto/ContactoForm';
+import { ComoFuncionaFlow } from '@/components/ui/ComoFuncionaFlow';
 
 const MapaEspacios = dynamic(() => import('@/components/mapa/MapaEspacios').then(m => ({ default: m.MapaEspacios })), { ssr: false });
 const MarkerEspacioCard = dynamic(() => import('@/components/mapa/MarkerEspacio').then(m => ({ default: m.MarkerEspacioCard })), { ssr: false });
@@ -634,6 +635,8 @@ export default function HomePage() {
                 token={token}
               />
             </div>
+
+            <ComoFuncionaFlow />
 
             {/* CTA publicar — debajo del hero, arriba de las preguntas frecuentes */}
             <div style={{ textAlign: 'center', padding: '0 1.5rem 3rem' }}>
