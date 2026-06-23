@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { Footer } from '@/components/ui/Footer';
 import '../globals.css';
 
 const locales = ['es', 'pt'] as const;
@@ -49,6 +50,7 @@ export default async function LocaleLayout({ children, params: { locale } }: Pro
       <body>
         <NextIntlClientProvider messages={messages}>
           {children}
+          <Footer />
         </NextIntlClientProvider>
       </body>
     </html>

@@ -15,7 +15,7 @@ import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { OTPStep } from '@/components/auth/OTPStep';
 import { SiteHeader } from '@/components/ui/SiteHeader';
-import { Button } from '@/components/ui/Button';
+import { ContactoForm } from '@/components/contacto/ContactoForm';
 
 const MapaEspacios = dynamic(() => import('@/components/mapa/MapaEspacios').then(m => ({ default: m.MapaEspacios })), { ssr: false });
 const MarkerEspacioCard = dynamic(() => import('@/components/mapa/MarkerEspacio').then(m => ({ default: m.MarkerEspacioCard })), { ssr: false });
@@ -156,32 +156,6 @@ export default function HomePage() {
   }
 
   const [contactoOpen, setContactoOpen] = useState(false);
-  const [contactoForm, setContactoForm] = useState({
-    nombre: '', email: '', asunto: '', tipo: 'consulta', mensaje: '',
-  });
-  const [contactoSending, setContactoSending] = useState(false);
-  const [contactoSuccess, setContactoSuccess] = useState(false);
-  const [contactoError, setContactoError] = useState('');
-
-  async function enviarContacto() {
-    if (!contactoForm.nombre || !contactoForm.email || !contactoForm.asunto || !contactoForm.mensaje) return;
-    setContactoSending(true);
-    setContactoError('');
-    try {
-      const res = await fetch('/api/admin/consultas', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(contactoForm),
-      });
-      if (!res.ok) throw new Error('No se pudo enviar el mensaje');
-      setContactoSuccess(true);
-      setContactoForm({ nombre: '', email: '', asunto: '', tipo: 'consulta', mensaje: '' });
-    } catch (e: unknown) {
-      setContactoError(e instanceof Error ? e.message : 'Error al enviar');
-    } finally {
-      setContactoSending(false);
-    }
-  }
 
   function handleMarkerClick(espacio: Espacio) {
     setSelectedEspacio(espacio);
@@ -609,7 +583,7 @@ export default function HomePage() {
             </div>
 
             {/* Preguntas frecuentes */}
-            <div style={{ maxWidth: 720, margin: '0 auto', padding: '0 1.5rem 4rem' }}>
+            <div id="preguntas-frecuentes" style={{ maxWidth: 720, margin: '0 auto', padding: '0 1.5rem 4rem' }}>
               <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.3rem', textAlign: 'center', marginBottom: '1.5rem', color: 'var(--text)' }}>
                 Preguntas frecuentes
               </h2>
@@ -660,7 +634,7 @@ export default function HomePage() {
       {/* Floating Contacto button */}
       <button
         className="contacto-btn"
-        onClick={() => { setContactoOpen(true); setContactoSuccess(false); setContactoError(''); }}
+        onClick={() => setContactoOpen(true)}
         style={{
           position: 'fixed', bottom: '1.5rem', right: '1.5rem',
           background: 'var(--surface)', border: '1.5px solid var(--border2)',
@@ -684,84 +658,7 @@ export default function HomePage() {
         subtitle="Consultás, reclamos o sugerencias. Te respondemos a la brevedad."
         maxWidth="520px"
       >
-        {contactoSuccess ? (
-          <div style={{ textAlign: 'center', padding: '1.5rem 0' }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '.5rem' }}>✅</div>
-            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, marginBottom: '.4rem' }}>Mensaje enviado</div>
-            <p style={{ color: 'var(--text2)', fontSize: '.88rem' }}>Gracias por escribirnos. Te responderemos a la brevedad.</p>
-            <button className="btn-secondary" style={{ marginTop: '1.25rem' }} onClick={() => setContactoOpen(false)}>
-              Cerrar
-            </button>
-          </div>
-        ) : (
-          <div style={{ display: 'grid', gap: '1rem' }}>
-            {contactoError && <p className="alert alert--error">{contactoError}</p>}
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-              <label className="form-label">
-                Nombre *
-                <input
-                  value={contactoForm.nombre}
-                  onChange={e => setContactoForm(f => ({ ...f, nombre: e.target.value }))}
-                  placeholder="Tu nombre"
-                  style={{ marginTop: '.4rem' }}
-                />
-              </label>
-              <label className="form-label">
-                Email *
-                <input
-                  type="email"
-                  value={contactoForm.email}
-                  onChange={e => setContactoForm(f => ({ ...f, email: e.target.value }))}
-                  placeholder="tu@email.com"
-                  style={{ marginTop: '.4rem' }}
-                />
-              </label>
-            </div>
-
-            <label className="form-label">
-              Asunto *
-              <input
-                value={contactoForm.asunto}
-                onChange={e => setContactoForm(f => ({ ...f, asunto: e.target.value }))}
-                placeholder="¿En qué te podemos ayudar?"
-                style={{ marginTop: '.4rem' }}
-              />
-            </label>
-
-            <label className="form-label">
-              Tipo
-              <select
-                value={contactoForm.tipo}
-                onChange={e => setContactoForm(f => ({ ...f, tipo: e.target.value }))}
-                style={{ marginTop: '.4rem' }}
-              >
-                <option value="consulta">Consulta</option>
-                <option value="reclamo">Reclamo</option>
-                <option value="sugerencia">Sugerencia</option>
-              </select>
-            </label>
-
-            <label className="form-label">
-              Mensaje *
-              <textarea
-                rows={4}
-                value={contactoForm.mensaje}
-                onChange={e => setContactoForm(f => ({ ...f, mensaje: e.target.value }))}
-                placeholder="Escribí tu mensaje acá…"
-                style={{ marginTop: '.4rem' }}
-              />
-            </label>
-
-            <Button
-              onClick={enviarContacto}
-              loading={contactoSending}
-              disabled={!contactoForm.nombre || !contactoForm.email || !contactoForm.asunto || !contactoForm.mensaje}
-            >
-              Enviar mensaje
-            </Button>
-          </div>
-        )}
+        <ContactoForm onDone={() => setContactoOpen(false)} />
       </Modal>
 
       {/* Auth Modal */}
