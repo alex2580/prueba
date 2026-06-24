@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC — Escalado: Hoy vs. Recomendaciones a Futuro</title>
+<style>
+:root{
+  --gold:#f59e0b;--navy:#0f172a;--text:#1e293b;--text2:#475569;--text3:#94a3b8;
+  --border:#e2e8f0;--bg:#f8fafc;--white:#fff;--orange:#e8622a;--green:#16a34a;--red:#dc2626;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:13.5px;line-height:1.65;}
+
+.header{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 55%,#1e293b 100%);padding:36px 48px 28px;}
+.hl{font-size:1.1rem;font-weight:900;color:var(--gold);letter-spacing:.06em;}
+.ht{font-size:1.6rem;font-weight:900;color:#f1f5f9;margin:6px 0 4px;letter-spacing:-.3px;}
+.hs{color:#64748b;font-size:.83rem;}
+.hchips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+.chip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:20px;padding:4px 14px;font-size:.72rem;color:#94a3b8;}
+.chip strong{color:#f1f5f9;}
+
+.content{max-width:960px;margin:0 auto;padding:40px 48px 80px;}
+.sec{font-size:1.05rem;font-weight:800;color:var(--text);margin:34px 0 14px;}
+.sec:first-child{margin-top:0;}
+.ssub{font-size:.78rem;color:var(--text3);margin:-10px 0 16px;}
+
+.alert{background:#fefce8;border:1px solid #fde047;border-left:4px solid #eab308;border-radius:12px;padding:12px 16px;font-size:.78rem;color:#713f12;margin-bottom:24px;}
+.callout{background:#eff6ff;border:1px solid #93c5fd;border-left:4px solid #2563eb;border-radius:12px;padding:14px 18px;font-size:.84rem;color:#1e3a8a;margin-bottom:20px;line-height:1.7;}
+.callout strong{color:#1e3a8a;}
+
+table{width:100%;border-collapse:collapse;background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:8px;}
+th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top;}
+th{background:#f1f5f9;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);}
+td{font-size:.82rem;color:var(--text2);}
+td.k{font-weight:700;color:var(--navy);}
+tr:last-child td{border-bottom:none;}
+
+.cost{font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:6px;display:inline-block;white-space:nowrap;}
+.cost-0{background:#dcfce7;color:#166534;}
+.cost-bajo{background:#fef9c3;color:#854d0e;}
+.cost-doble{background:#fee2e2;color:#991b1b;}
+
+ul.list{list-style:none;}
+ul.list li{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:8px;font-size:.82rem;color:var(--text2);}
+ul.list li strong{color:var(--text);}
+ul.list.no li{border-left:4px solid var(--red);}
+ul.list.no li::before{content:"❌ ";}
+ul.list.signal li{border-left:4px solid var(--orange);}
+ul.list.signal li::before{content:"📡 ";}
+
+footer{background:var(--navy);color:#334155;text-align:center;padding:20px;font-size:.72rem;}
+
+@media(max-width:700px){
+  .header{padding:22px 16px 18px;}
+  .content{padding:24px 14px 48px;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="hl">📈 TODASMISCOSAS.COM</div>
+  <div class="ht">Escalado: Hoy vs. Recomendaciones a Futuro</div>
+  <div class="hs">Escenario evaluado: 1000 publicaciones (500 compartidas + 500 exclusivas) · 24 jun 2026</div>
+  <div class="hchips">
+    <div class="chip"><strong>Premisa</strong> gastar solo lo necesario</div>
+    <div class="chip"><strong>No siempre</strong> lo más "claro" es lo mejor</div>
+  </div>
+</div>
+
+<div class="content">
+
+  <div class="callout">
+    💡 <strong>Conclusión adelantada:</strong> 1000 publicaciones no es "escala grande" — son unas pocas miles de filas en MySQL, manejables sin esfuerzo por una sola instancia bien indexada. El estrés real a esa escala no viene de cuántas filas hay, sino de cuánta gente concurrente busca, cuántos chats activos hay en simultáneo, y cuántos pagos se procesan por día. Si el crecimiento es solo en cantidad de publicaciones, <strong>el stack actual aguanta sin tocar nada estructural.</strong>
+  </div>
+
+  <div class="sec">🏗️ Hoy (escala actual)</div>
+  <table>
+    <tbody>
+      <tr><td class="k">Infraestructura</td><td>Un solo VPS Hostinger corriendo todo: frontend Next.js, backend Express, MySQL y el runner self-hosted de GitHub Actions, vía PM2.</td></tr>
+      <tr><td class="k">Auth / Storage</td><td>Delegado a Supabase — ya bien tercerizado, sin cambios necesarios.</td></tr>
+      <tr><td class="k">Pagos</td><td>MercadoPago — externo, sin cambios necesarios.</td></tr>
+      <tr><td class="k">Chat</td><td>Socket.io en el mismo proceso del backend.</td></tr>
+      <tr><td class="k">Búsqueda</td><td><code>LIKE %texto%</code> directo sobre MySQL.</td></tr>
+      <tr><td class="k">Observabilidad</td><td>Ninguna instrumentada todavía (Sentry/Clarity identificados como pendientes, no implementados).</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec">🎯 Recomendaciones para el escenario de 1000 publicaciones</div>
+  <p class="ssub">Ordenadas por relación costo/beneficio, no por "lo más correcto en abstracto"</p>
+  <table>
+    <thead><tr><th>Cambio</th><th>Costo</th><th>Por qué</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="k">Separar el runner de CI del proceso de prod</td>
+        <td><span class="cost cost-0">$0</span></td>
+        <td>Hoy el build de GitHub Actions corre en la misma máquina que sirve a usuarios reales — un deploy pesado puede robarle CPU/RAM al server justo cuando más tráfico hay. Mover el runner a un proceso aislado (o un VPS chico de CI aparte, ~$5/mes) es la mejora de mejor relación costo/beneficio de toda la lista.</td>
+      </tr>
+      <tr>
+        <td class="k">Índices MySQL en filtros reales de búsqueda</td>
+        <td><span class="cost cost-0">$0</span></td>
+        <td>Barrio, tipo, precio, fecha. Con 1000 filas seguramente todavía no duele, pero es el momento de auditarlo antes de que sí duela.</td>
+      </tr>
+      <tr>
+        <td class="k">Medir antes de optimizar</td>
+        <td><span class="cost cost-0">$0</span></td>
+        <td>Sentry (errores) + Microsoft Clarity (heatmaps/sesiones), ya identificados como pendientes gratis. No optimices lo que no sabés que es lento.</td>
+      </tr>
+      <tr>
+        <td class="k">Full-text search de MySQL en vez de <code>LIKE</code></td>
+        <td><span class="cost cost-0">$0</span></td>
+        <td>Mejora real de UX sin sumar infraestructura nueva. Solo si esto no alcanza, evaluar Algolia (free tier hasta 10k búsquedas/mes).</td>
+      </tr>
+      <tr>
+        <td class="k">Cache simple del listado de home (in-memory)</td>
+        <td><span class="cost cost-bajo">Bajo</span></td>
+        <td>Solo si las métricas del punto anterior muestran que la query de listado es un cuello de botella real — no preventivamente.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="sec">🚫 Lo que NO se recomienda todavía</div>
+  <p class="ssub">Para frenar el reflejo de "hay que escalar" sin evidencia</p>
+  <ul class="list no">
+    <li><strong>Microservicios</strong> — ningún dominio del negocio (reservas/pagos/chat) tiene volumen propio que justifique separarlo en servicios independientes.</li>
+    <li><strong>Kubernetes / orquestación</strong> — un VPS bien configurado con PM2 sigue siendo más barato y simple de operar a este volumen.</li>
+    <li><strong>Read replicas de MySQL</strong> — con miles de filas, una sola instancia con buenos índices rinde órdenes de magnitud por encima de lo necesario.</li>
+    <li><strong>Colas de mensajes (RabbitMQ/SQS) para el cron de escrow</strong> — el job sigue siendo trivial en volumen; un <code>for</code> secuencial con awaits está perfectamente bien hasta varios cientos de liberaciones por corrida.</li>
+    <li><strong>Multi-región / segundo VPS de aplicación</strong> — el costo doble no se justifica sin evidencia real de contención de CPU/RAM en el VPS actual.</li>
+  </ul>
+
+  <div class="sec">📡 Señales concretas de cuándo escalar en serio</div>
+  <p class="ssub">No por cantidad de publicaciones — por estas señales medibles</p>
+  <ul class="list signal">
+    <li>CPU/RAM del VPS sostenido <strong>&gt;70-80% en horario pico</strong> (medible, no estimado).</li>
+    <li>Deploys que generan caída perceptible con usuarios activos en el momento.</li>
+    <li>Cientos de conexiones de chat simultáneas compitiendo con el tráfico REST.</li>
+    <li>Volumen de reservas/pagos en el orden de <strong>cientos por día</strong> (no por mes).</li>
+  </ul>
+
+  <div class="alert">
+    ⚠️ Cuando aparezca alguna de estas señales, el primer paso de menor costo es separar la base de datos a su propia instancia (segundo VPS chico o MySQL administrado) — antes de pensar siquiera en escalar el backend horizontalmente.
+  </div>
+
+</div>
+
+<footer>
+  <strong>📈 TodasMisCosas.com · Escalado Hoy vs. Recomendaciones a Futuro</strong><br>
+  Generado a pedido de Alejandro desde Claude Code · 24 jun 2026
+</footer>
+</body>
+</html>
