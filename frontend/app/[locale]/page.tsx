@@ -53,34 +53,15 @@ export default function HomePage() {
   const { user, token, loading: authLoading, login, register, logout, error: authError, isAdmin,
     otpPending, otpEmailHint, otpCanales, verifyOTP, reenviarOTP,
     emailConfirmPending, emailConfirmEmail } = useAuth();
-  const [filtrosIniciales] = useState<import('@/types').FiltrosEspacios>(() => {
-    if (typeof window === 'undefined') return {};
-    const p = new URLSearchParams(window.location.search);
-    const f: import('@/types').FiltrosEspacios = {};
-    if (p.get('tipo'))          f.tipo = p.get('tipo') as EspacioTipo;
-    if (p.get('barrio'))        f.barrio = p.get('barrio')!;
-    if (p.get('pais'))          f.pais = p.get('pais')!;
-    if (p.get('precio_max'))    f.precio_max = Number(p.get('precio_max'));
-    if (p.get('seguridad_min')) f.seguridad_min = Number(p.get('seguridad_min'));
-    if (p.get('q'))             f.q = p.get('q')!;
-    if (p.get('fecha_desde'))   f.fecha_desde = p.get('fecha_desde')!;
-    if (p.get('fecha_hasta'))   f.fecha_hasta = p.get('fecha_hasta')!;
-    return f;
-  });
+  const [filtrosIniciales] = useState<import('@/types').FiltrosEspacios>({});
   const { espacios, loading, error: espaciosError, filtros, aplicarFiltros, limpiarFiltros } = useEspacios(filtrosIniciales);
 
-  const [vista, setVista] = useState<Vista>(() => {
-    if (typeof window === 'undefined') return 'lista';
-    return new URLSearchParams(window.location.search).get('vista') === 'mapa' ? 'mapa' : 'lista';
-  });
+  const [vista, setVista] = useState<Vista>('lista');
 
   const [selectedEspacio, setSelectedEspacio] = useState<Espacio | null>(null);
   const [authModal, setAuthModal] = useState(false);
   const [authTab, setAuthTab] = useState<'login' | 'register'>('login');
-  const [busqueda, setBusqueda] = useState(() => {
-    if (typeof window === 'undefined') return '';
-    return new URLSearchParams(window.location.search).get('q') || '';
-  });
+  const [busqueda, setBusqueda] = useState('');
   const [filtrosOpen, setFiltrosOpen] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [geoLoading, setGeoLoading] = useState(false);
@@ -115,6 +96,27 @@ export default function HomePage() {
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, [vista]);
+
+  // Lee la URL real recién después de montar (no durante la hidratación)
+  // para que el primer render del cliente coincida con el del servidor —
+  // leer window.location.search en el inicializador del useState causaba
+  // un hydration mismatch cuando la URL traía query params.
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    const f: import('@/types').FiltrosEspacios = {};
+    if (p.get('tipo'))          f.tipo = p.get('tipo') as EspacioTipo;
+    if (p.get('barrio'))        f.barrio = p.get('barrio')!;
+    if (p.get('pais'))          f.pais = p.get('pais')!;
+    if (p.get('precio_max'))    f.precio_max = Number(p.get('precio_max'));
+    if (p.get('seguridad_min')) f.seguridad_min = Number(p.get('seguridad_min'));
+    if (p.get('q'))             f.q = p.get('q')!;
+    if (p.get('fecha_desde'))   f.fecha_desde = p.get('fecha_desde')!;
+    if (p.get('fecha_hasta'))   f.fecha_hasta = p.get('fecha_hasta')!;
+    if (Object.keys(f).length) aplicarFiltros(f);
+    if (f.q) setBusqueda(f.q);
+    if (p.get('vista') === 'mapa') setVista('mapa');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!token) { setFavIds(new Set()); return; }
