@@ -113,6 +113,22 @@ footer{background:var(--navy);color:#334155;text-align:center;padding:20px;font-
     </tbody>
   </table>
 
+  <div class="sec">🛠️ Comandos personalizados de este proyecto (TMC)</div>
+  <p class="ssub">Definidos a medida en <code>.claude/commands/</code> de este repo — no existen en otros proyectos.</p>
+  <table>
+    <thead><tr><th>Comando</th><th>Qué hace</th></tr></thead>
+    <tbody>
+      <tr><td class="cmd">/pre-deploy</td><td>Checklist antes de pushear a master: corre TypeScript, revisa archivos modificados, chequea si <code>novedades.md</code> está actualizado, lista commits pendientes y da un resumen final ✅/⚠️.</td></tr>
+      <tr><td class="cmd">/nuevo-feature</td><td>Checklist a marcar al implementar una funcionalidad nueva: backend (controller/route/DB/email), frontend (componente/API/types/panel), calidad (TypeScript/casos borde/mobile) y deploy.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec" style="margin-top:34px;">❓ ¿Y los "100+ comandos" de los que se habla?</div>
+  <p class="ssub" style="margin-bottom:14px;">Lo que probablemente se confunde con un número grande:</p>
+  <div class="alert" style="background:#eff6ff;border-color:#93c5fd;border-left-color:#2563eb;color:#1e3a8a;">
+    No son comandos que vos tipeás — son <strong>funciones/herramientas individuales</strong> que yo invoco internamente, sobre todo de los conectores MCP (Canva, Figma, Gmail, Google Calendar, Drive, Slack, WordPress). Cada conector trae entre 10 y 35 funciones propias (ej. Canva sola tiene ~30: <code>create-design-from-candidate</code>, <code>export-design</code>, <code>list-comments</code>, etc.). Sumando todos los conectores activos, fácil se pasa de 100 — pero eso es "herramientas que Claude puede usar", no "comandos que el usuario escribe". La lista de comandos reales (lo de esta página) es la que importa para vos.
+  </div>
+
 </div>
 
 <footer>
