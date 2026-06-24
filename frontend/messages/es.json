@@ -68,7 +68,7 @@
     "selloGratis": "GRATIS",
     "pasosReservar": [
       { "icon": "🔍", "titulo": "Buscás un espacio", "desc": "Seleccioná una tarjeta o hacé click en las publicaciones del mapa. Puede ser compartido o solo para vos. Desde cada publicación podés hacer preguntas al proveedor antes de reservar — las respuestas son visibles para todos." },
-      { "icon": "📦", "titulo": "Elegís y reservás", "desc": "Seleccioná el espacio que más te conviene. Alquilá por día o por rango de días. Al reservar podés solicitar servicios adicionales: seguro de contenido, embalaje o transporte. Si te arrepentís, podés cancelar con reembolso del 100%." },
+      { "icon": "📦", "titulo": "Elegís y reservás", "desc": "Seleccioná el espacio que más te conviene. Alquilá por día o por rango de días. Al reservar podés solicitar servicios adicionales: seguro de contenido, embalaje o transporte. Si te arrepentís, podés cancelar y te reembolsamos el 100% de forma automática a través de MercadoPago." },
       { "icon": "💳", "titulo": "Pagás de forma segura", "desc": "Pagás con MercadoPago. El dinero queda retenido en depósito en garantía — el proveedor no lo recibe hasta que vos confirmés el acceso al espacio." },
       { "icon": "💬", "titulo": "Coordinás por chat", "desc": "Una vez confirmada la reserva, se habilita un chat directo con el proveedor para coordinar el acceso, días y horarios. Ambos también reciben un PIN de 4 dígitos por correo para identificarse." },
       { "icon": "🔑", "titulo": "Confirmás el acceso", "desc": "Cuando accedés al espacio, confirmás desde tu panel. En ese momento se libera el pago al proveedor. Si tenés algún inconveniente, contactanos antes de confirmar." }

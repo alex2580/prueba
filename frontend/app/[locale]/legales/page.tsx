@@ -181,6 +181,9 @@ export default function LegalesPage() {
               dan derecho a reembolso total. Las cancelaciones con menos de 48 horas pueden estar sujetas
               a una penalidad equivalente a un día de alquiler. Las cancelaciones realizadas por el proveedor
               sin causa justificada están sujetas a una penalidad que se acredita al cliente.
+              Cuando corresponde reembolso total — incluyendo el derecho de arrepentimiento descripto en la
+              sección 12 — el monto se devuelve de forma automática a través de MercadoPago, al mismo medio
+              de pago utilizado por el cliente, sin necesidad de gestionarlo con soporte.
             </p>
           </section>
 
@@ -256,6 +259,7 @@ export default function LegalesPage() {
               <li><strong>Retención del pago:</strong> Al completarse el pago por MercadoPago, el monto queda retenido por la plataforma. El proveedor <strong>no recibe el dinero en ese momento</strong>.</li>
               <li><strong>Confirmación de acceso:</strong> Una vez llegada la fecha de inicio de la reserva, el cliente debe confirmar desde su panel que efectivamente accedió al espacio.</li>
               <li><strong>Liberación del pago:</strong> Tras la confirmación, la plataforma transfiere el importe neto (precio total menos la comisión del 15%) al CBU o Alias bancario registrado por el proveedor en su perfil, dentro de las 48 horas hábiles.</li>
+              <li><strong>Cancelación por arrepentimiento:</strong> Si el cliente cancela la reserva antes de confirmar el acceso al espacio, la plataforma reembolsa automáticamente el 100% del monto pagado a través de MercadoPago, al mismo medio de pago utilizado, sin intervención manual.</li>
               <li>
                 <strong>Liberación automática por vencimiento de plazo:</strong> Si el cliente no confirma el acceso ni presenta una disputa dentro de las <strong>48 horas corridas</strong> contadas desde la fecha y hora de inicio de la reserva, el sistema libera el pago automáticamente al proveedor, sin intervención manual. Una vez producida la liberación automática, el pago es <strong>definitivo e irrevocable</strong>: el cliente pierde el derecho a reclamar el reembolso por esta vía. La plataforma notifica al cliente por correo electrónico al inicio de la reserva recordándole el plazo disponible para confirmar el acceso o abrir una disputa.
               </li>
