@@ -458,7 +458,7 @@ select.filter-pill {
 /* ── Sticky search header (list view) ─────────────────────── */
 .list-search-header {
   position: sticky;
-  top: 0;
+  top: 68px;
   z-index: 50;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
@@ -950,8 +950,8 @@ select.filter-pill {
   .filter-pill { padding: .38rem .75rem; font-size: .78rem; }
   select.filter-pill { min-width: 120px; max-width: 160px; flex-shrink: 0; }
 
-  /* List header */
-  .list-search-header { padding: .75rem 1rem .5rem; gap: .5rem; }
+  /* List header — pegado debajo del .site-header, que en mobile baja a 60px */
+  .list-search-header { top: 60px; padding: .75rem 1rem .5rem; gap: .5rem; }
 
   /* Cards */
   .espacio-card { border-radius: var(--r2); }
