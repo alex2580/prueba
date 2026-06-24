@@ -893,6 +893,39 @@ async function sendEscrowLiberadoAdmin(toEmail, { reservaId, espacioNombre, ofer
   });
 }
 
+// ── Reembolso automático falló — admin (acción manual requerida) ─
+async function sendReembolsoFallidoAdmin(toEmail, { reservaId, espacioNombre, demandanteNombre, monto, mpPaymentId, errorMsg }) {
+  const html = baseTemplate('Reembolso automático falló — acción requerida', `
+    <h2>⚠️ El reembolso automático en MercadoPago falló</h2>
+    <p>Hay que reembolsar manualmente desde el dashboard de MercadoPago.</p>
+    <div class="info-row">
+      <div><div class="info-label">Reserva ID</div><div class="info-val" style="font-family:monospace;font-size:.85rem;">${reservaId}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Espacio</div><div class="info-val">${espacioNombre}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">Cliente</div><div class="info-val">${demandanteNombre}</div></div>
+    </div>
+    <div class="info-row">
+      <div><div class="info-label">MP Payment ID</div><div class="info-val" style="font-family:monospace;">${mpPaymentId || '(sin payment id)'}</div></div>
+    </div>
+    <div style="margin:20px 0;background:#2a0f0f;border-radius:12px;padding:16px 20px;border:2px solid #dc2626;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <span style="color:#fca5a5;font-size:13px;font-weight:700;">Monto a reembolsar</span>
+        <span style="color:#fff;font-size:1.3rem;font-weight:800;">$${Number(monto).toLocaleString('es-AR')}</span>
+      </div>
+      <div style="color:#fca5a5;font-size:.82rem;">${errorMsg || 'Error desconocido'}</div>
+    </div>
+    <a class="btn" href="${process.env.FRONTEND_URL}/admin">Ver en panel admin →</a>
+  `);
+  await transporter.sendMail({
+    from: FROM, to: toEmail,
+    subject: `⚠️ Reembolso manual requerido — $${Number(monto).toLocaleString('es-AR')} — ${espacioNombre}`,
+    html,
+  });
+}
+
 // ── Escrow liberado — al oferente (tu plata viene) ───────────────
 async function sendAccesoConfirmadoOferente(toEmail, nombre, { espacioNombre, monto, reservaId, autoRelease = false }) {
   if (!await emailConfig.isEnabled('escrow_liberado')) return;
@@ -969,6 +1002,7 @@ module.exports = {
   sendEscrowRetenidoDemandante,
   sendEscrowRetenidoOferente,
   sendEscrowLiberadoAdmin,
+  sendReembolsoFallidoAdmin,
   sendAccesoConfirmadoOferente,
   sendAccesoConfirmadoDemandante,
   sendReservaConfirmada,

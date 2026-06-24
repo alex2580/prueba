@@ -345,14 +345,34 @@ async function cancelar(req, res, next) {
       ['cancelada', motivo, reserva.id]
     );
 
-    // Registro contable: si la reserva estaba pagada había dinero en escrow → devolver al cliente
-    if (reserva.estado === 'pagada') {
+    // Si la reserva estaba pagada y el escrow todavía no se liberó al proveedor,
+    // hay plata real retenida en MercadoPago que hay que devolver.
+    if (reserva.estado === 'pagada' && !reserva.escrow_liberado) {
       const desc = motivo === 'arrepentimiento'
         ? `Arrepentimiento del cliente — reembolso 100% — ${reserva.espacio_nombre}`
         : `Cancelación — ${reserva.espacio_nombre}`;
-      ledgerService.registrarCancelacion(
-        reserva.id, reserva.usuario_id, reserva.precio_total, desc
-      ).catch(e => console.warn('Ledger cancelacion:', e.message));
+
+      if (reserva.mp_payment_id) {
+        try {
+          await mercadopagoService.reembolsarPago(reserva.mp_payment_id);
+          ledgerService.registrarCancelacion(
+            reserva.id, reserva.usuario_id, reserva.precio_total, desc
+          ).catch(e => console.warn('Ledger cancelacion:', e.message));
+        } catch (e) {
+          console.error(`Reembolso MP falló — reserva ${reserva.id}:`, e.message);
+          const adminEmail = process.env.ADMIN_EMAILS || 'contacto@todasmiscosas.com';
+          emailService.sendReembolsoFallidoAdmin(adminEmail, {
+            reservaId: reserva.id,
+            espacioNombre: reserva.espacio_nombre,
+            demandanteNombre: reserva.usuario_nombre,
+            monto: reserva.precio_total,
+            mpPaymentId: reserva.mp_payment_id,
+            errorMsg: e.message,
+          }).catch(e2 => console.warn('Email reembolso fallido:', e2.message));
+        }
+      } else {
+        console.warn(`Reserva ${reserva.id} pagada sin mp_payment_id — no se pudo reembolsar automáticamente`);
+      }
     }
 
     // Avisar a ambas partes

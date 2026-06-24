@@ -1,4 +1,4 @@
-const { MercadoPagoConfig, Preference, Payment } = require('mercadopago');
+const { MercadoPagoConfig, Preference, Payment, PaymentRefund } = require('mercadopago');
 require('dotenv').config();
 
 const client = new MercadoPagoConfig({
@@ -8,6 +8,7 @@ const client = new MercadoPagoConfig({
 
 const preferenceAPI = new Preference(client);
 const paymentAPI    = new Payment(client);
+const refundAPI     = new PaymentRefund(client);
 
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 
@@ -108,4 +109,15 @@ async function buscarPagoPorReferencia(externalRef) {
   }
 }
 
-module.exports = { crearPreferencia, crearPreferenciaExtension, obtenerPago, buscarPagoPorReferencia };
+/**
+ * Reembolsa el 100% de un pago aprobado en MercadoPago.
+ * @throws si MP rechaza el reembolso (pago ya reembolsado, fuera de plazo, etc.)
+ */
+async function reembolsarPago(paymentId) {
+  return refundAPI.total({ payment_id: paymentId });
+}
+
+module.exports = {
+  crearPreferencia, crearPreferenciaExtension, obtenerPago, buscarPagoPorReferencia,
+  reembolsarPago,
+};
