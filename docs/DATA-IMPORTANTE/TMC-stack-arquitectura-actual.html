@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC — Stack & Arquitectura Actual</title>
+<style>
+:root{
+  --gold:#f59e0b;--navy:#0f172a;--text:#1e293b;--text2:#475569;--text3:#94a3b8;
+  --border:#e2e8f0;--bg:#f8fafc;--white:#fff;--orange:#e8622a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:13.5px;line-height:1.65;}
+
+.header{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 55%,#1e293b 100%);padding:36px 48px 28px;}
+.hl{font-size:1.1rem;font-weight:900;color:var(--gold);letter-spacing:.06em;}
+.ht{font-size:1.6rem;font-weight:900;color:#f1f5f9;margin:6px 0 4px;letter-spacing:-.3px;}
+.hs{color:#64748b;font-size:.83rem;}
+.hchips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+.chip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:20px;padding:4px 14px;font-size:.72rem;color:#94a3b8;}
+.chip strong{color:#f1f5f9;}
+
+.content{max-width:960px;margin:0 auto;padding:40px 48px 80px;}
+.sec{font-size:1rem;font-weight:800;color:var(--text);margin:34px 0 14px;}
+.sec:first-child{margin-top:0;}
+.ssub{font-size:.78rem;color:var(--text3);margin:-10px 0 16px;}
+
+.alert{background:#fefce8;border:1px solid #fde047;border-left:4px solid #eab308;border-radius:12px;padding:12px 16px;font-size:.78rem;color:#713f12;margin-bottom:24px;}
+
+table{width:100%;border-collapse:collapse;background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:8px;}
+th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top;}
+th{background:#f1f5f9;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);}
+td{font-size:.82rem;color:var(--text2);}
+td.k{font-weight:700;color:var(--navy);white-space:nowrap;}
+td code{font-family:'Consolas','Monaco',monospace;font-size:.78rem;background:#f1f5f9;padding:1px 5px;border-radius:4px;color:var(--orange);}
+tr:last-child td{border-bottom:none;}
+
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
+.card-t{font-weight:800;font-size:.85rem;color:var(--text);margin-bottom:6px;}
+.card-d{font-size:.78rem;color:var(--text2);line-height:1.6;}
+.card-d code{font-family:'Consolas','Monaco',monospace;font-size:.74rem;background:#f1f5f9;padding:1px 5px;border-radius:4px;}
+
+ul.dec{list-style:none;}
+ul.dec li{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:8px;font-size:.82rem;color:var(--text2);}
+ul.dec li strong{color:var(--text);}
+
+.tag{font-size:.62rem;font-weight:700;padding:2px 7px;border-radius:5px;display:inline-block;}
+.t-ok{background:#dcfce7;color:#166534;}
+.t-pend{background:#fef9c3;color:#854d0e;}
+
+footer{background:var(--navy);color:#334155;text-align:center;padding:20px;font-size:.72rem;}
+
+@media(max-width:700px){
+  .header{padding:22px 16px 18px;}
+  .content{padding:24px 14px 48px;}
+  .cards{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="hl">🏗️ TODASMISCOSAS.COM</div>
+  <div class="ht">Stack & Arquitectura Actual</div>
+  <div class="hs">Estado real del proyecto visto desde Claude Code · 24 jun 2026</div>
+  <div class="hchips">
+    <div class="chip"><strong>v1.14.0</strong> última versión</div>
+    <div class="chip"><strong>Next.js 14</strong> + Express + MySQL</div>
+    <div class="chip"><strong>VPS Hostinger</strong> producción</div>
+    <div class="chip">Repo <strong>alex2580/prueba</strong></div>
+  </div>
+</div>
+
+<div class="content">
+
+  <div class="alert">
+    📌 Generado a pedido de Alejandro desde el propio Claude Code, leyendo <code>CLAUDE.md</code>, <code>package.json</code> y el estado real del entorno — no es un documento de marketing, es un snapshot técnico.
+  </div>
+
+  <div class="sec">⚙️ Stack tecnológico</div>
+  <table>
+    <thead><tr><th>Capa</th><th>Tecnología</th><th>Versión instalada</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Frontend</td><td>Next.js 14 App Router + TypeScript</td><td><code>next@14.2.5</code> · <code>typescript@5</code></td></tr>
+      <tr><td class="k">Backend</td><td>Express.js + Node.js</td><td><code>express@4.19.2</code> · Node <code>v20.20.2</code></td></tr>
+      <tr><td class="k">Base de datos</td><td>MySQL</td><td><code>mysql2@3.10.1</code></td></tr>
+      <tr><td class="k">Auth</td><td>Supabase JWT</td><td>—</td></tr>
+      <tr><td class="k">Fotos</td><td>Supabase Storage (multer memoryStorage, nunca disco local)</td><td>—</td></tr>
+      <tr><td class="k">Chat</td><td>Socket.io</td><td>—</td></tr>
+      <tr><td class="k">Pagos</td><td>MercadoPago SDK oficial</td><td><code>mercadopago@2.0.15</code></td></tr>
+      <tr><td class="k">Deploy</td><td>GitHub Actions → SSH → PM2 (self-hosted runner en el VPS)</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec">🌐 Producción & repo</div>
+  <table>
+    <tbody>
+      <tr><td class="k">URL</td><td>https://todasmiscosas.com</td></tr>
+      <tr><td class="k">VPS</td><td>Hostinger — IP <code>2.24.105.151</code></td></tr>
+      <tr><td class="k">Repo</td><td><code>alex2580/prueba</code> en GitHub (privado)</td></tr>
+      <tr><td class="k">Flujo de deploy</td><td>push a <code>master</code> → GitHub Actions (TypeScript check) → SSH deploy → PM2 restart</td></tr>
+      <tr><td class="k">Migraciones pendientes</td><td>Ninguna al 22 jun 2026</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec">👥 Equipo</div>
+  <table>
+    <tbody>
+      <tr><td class="k">Alejandro</td><td>CTO — product owner, decisiones de negocio y tecnología</td></tr>
+      <tr><td class="k">Guille</td><td>CIO — administra el VPS, corre migraciones, gestiona secretos en GitHub</td></tr>
+      <tr><td class="k">Agustina</td><td>Entrevistadora/conductora del podcast y contenidos de difusión</td></tr>
+      <tr><td class="k">Daniel</td><td>Productor del podcast y contenidos de marketing</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec">📂 Arquitectura de archivos clave</div>
+  <div class="cards">
+    <div class="card">
+      <div class="card-t">Backend</div>
+      <div class="card-d">
+        <code>app.js</code> entry point Express<br>
+        <code>controllers/</code> lógica de negocio<br>
+        <code>routes/</code> definición de endpoints<br>
+        <code>middleware/</code> auth, contactFilter<br>
+        <code>services/emailService.js</code> templates (Resend)<br>
+        <code>services/mercadopagoService.js</code> pagos + reembolsos<br>
+        <code>services/ledgerService.js</code> contabilidad de escrow<br>
+        <code>jobs/escrow.js</code> cron de auto-liberación<br>
+        <code>db/connection.js</code> pool MySQL + migraciones
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-t">Frontend</div>
+      <div class="card-d">
+        <code>app/</code> Next.js App Router pages<br>
+        <code>components/</code> UI reutilizable<br>
+        <code>hooks/</code> useAuth, useEspacios, useChat<br>
+        <code>lib/api.ts</code> todos los fetch al backend<br>
+        <code>lib/contactFilter.ts</code> filtro de contenido<br>
+        <code>lib/utils.ts</code> formatARS, netoOferente, etc<br>
+        <code>types/index.ts</code> tipos compartidos<br>
+        <code>messages/es.json · pt.json</code> i18n
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" style="margin-top:28px;">🔑 Decisiones de arquitectura clave</div>
+  <ul class="dec">
+    <li><strong>Escrow:</strong> el pago queda retenido hasta que el cliente confirma acceso (manual) o vencen 48hs sin confirmación (cron automático) → 85% al proveedor / 15% comisión TMC, registrado en <code>movimientos_ledger</code> en ambos caminos.</li>
+    <li><strong>Reembolso por arrepentimiento:</strong> automático vía API de MercadoPago (<code>PaymentRefund.total()</code>) si el escrow todavía no se liberó al proveedor — agregado 23 jun 2026.</li>
+    <li><strong>Chat restringido:</strong> habilitado desde <code>confirmada</code> hasta que se libera el depósito en garantía (<code>escrow_liberado = 1</code>), cierre simétrico para cliente y proveedor.</li>
+    <li><strong>Consultas públicas:</strong> <code>consultas_espacio</code> tiene collation distinta a <code>espacios</code> — nunca JOIN directo, siempre dos queries separadas y merge en JS.</li>
+    <li><strong>Vigencia de publicaciones:</strong> 90 días corridos desde la creación, con aviso 15 días antes del vencimiento.</li>
+    <li><strong>Filtro de contenido:</strong> regex puro (no IA), 4 categorías, aplicado en frontend (UX) y backend (seguridad).</li>
+  </ul>
+
+  <div class="sec">💻 Activo en este Chromebook ahora mismo</div>
+  <ul class="dec">
+    <li><span class="tag t-ok">activo</span> &nbsp;Servicio <code>tmc-docs.service</code> (systemd) — sirve <code>docs/DATA-IMPORTANTE/</code> en <code>http://localhost:8888</code>, persistente tras reinicio.</li>
+    <li><span class="tag t-ok">activo</span> &nbsp;2 comandos personalizados en <code>.claude/commands/</code>: <code>/pre-deploy</code> y <code>/nuevo-feature</code>.</li>
+    <li><span class="tag t-ok">activo</span> &nbsp;<code>docs/novedades.md</code> como bitácora diaria de cambios (local + GitHub).</li>
+  </ul>
+
+  <div class="sec">⏳ Pendiente / decisiones abiertas</div>
+  <ul class="dec">
+    <li><span class="tag t-pend">en pausa</span> &nbsp;Proveedor de KYC/RENAPER para validar DNI de proveedores antes de publicar — Didit vs. MetaMap, a la espera de que Alejandro confirme legitimidad/decisión.</li>
+    <li><span class="tag t-pend">futuro</span> &nbsp;Expansión a otros países de Latinoamérica — sin países ni fecha definidos, pero ya influye en decisiones de proveedores.</li>
+    <li><span class="tag t-pend">conocido</span> &nbsp;Brecha entre legales y código en penalidades por cancelación tardía — resuelta dejándola explícitamente a criterio de TMC en vez de prometer un monto fijo no implementado.</li>
+  </ul>
+
+</div>
+
+<footer>
+  <strong>🏗️ TodasMisCosas.com · Stack & Arquitectura</strong><br>
+  Repositorio: github.com/alex2580/prueba · Generado desde Claude Code · 24 jun 2026
+</footer>
+</body>
+</html>
