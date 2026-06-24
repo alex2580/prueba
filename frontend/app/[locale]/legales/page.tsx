@@ -178,9 +178,10 @@ export default function LegalesPage() {
             <h2 style={h2Style}>7. Política de cancelación</h2>
             <p style={pStyle}>
               Las cancelaciones realizadas con más de 48 horas de anticipación al inicio del período reservado
-              dan derecho a reembolso total. Las cancelaciones con menos de 48 horas pueden estar sujetas
-              a una penalidad equivalente a un día de alquiler. Las cancelaciones realizadas por el proveedor
-              sin causa justificada están sujetas a una penalidad que se acredita al cliente.
+              dan derecho a reembolso total. Las cancelaciones con menos de 48 horas, así como las realizadas
+              por el proveedor sin causa justificada, podrán estar sujetas a una penalidad —equivalente a un
+              día de alquiler, acreditada a la parte afectada según corresponda— cuya aplicación y monto quedan
+              a criterio exclusivo de TodasMisCosas.com, evaluando cada caso particular.
               Cuando corresponde reembolso total — incluyendo el derecho de arrepentimiento descripto en la
               sección 12 — el monto se devuelve de forma automática a través de MercadoPago, al mismo medio
               de pago utilizado por el cliente, sin necesidad de gestionarlo con soporte.
