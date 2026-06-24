@@ -293,12 +293,15 @@ async function webhook(req, res, next) {
       else if (status === 'rejected' || status === 'cancelled') nuevoEstado = 'cancelada';
       else nuevoEstado = 'pendiente';
 
-      await query(
-        'UPDATE reservas SET estado = ?, mp_payment_id = ?, mp_status = ? WHERE id = ?',
+      // El UPDATE solo afecta la fila si todavía no está "pagada" — evita que este
+      // webhook y /api/pagos/sincronizar (el fallback del frontend) procesen el
+      // mismo pago dos veces si llegan casi en simultáneo.
+      const result = await query(
+        "UPDATE reservas SET estado = ?, mp_payment_id = ?, mp_status = ? WHERE id = ? AND estado != 'pagada'",
         [nuevoEstado, String(paymentId), status, reservaId]
       );
 
-      if (nuevoEstado === 'pagada') {
+      if (nuevoEstado === 'pagada' && result.affectedRows > 0) {
         _procesarPagada(reserva, paymentId).catch(e => console.warn('procesarPagada webhook:', e.message));
       }
     }
@@ -344,14 +347,19 @@ async function sincronizar(req, res, next) {
       return res.json({ estado: reserva.estado });
     }
 
-    await query(
-      'UPDATE reservas SET estado = ?, mp_payment_id = ?, mp_status = ? WHERE id = ?',
+    // Igual que en el webhook: el UPDATE solo afecta la fila si todavía no está
+    // "pagada", para que esta llamada y el webhook no disparen _procesarPagada
+    // dos veces si llegan casi en simultáneo.
+    const result = await query(
+      "UPDATE reservas SET estado = ?, mp_payment_id = ?, mp_status = ? WHERE id = ? AND estado != 'pagada'",
       ['pagada', String(payment.id), payment.status, reserva.id]
     );
 
-    // Leer la reserva actualizada para que _procesarPagada tenga los datos frescos
-    const reservaActualizada = await queryOne('SELECT * FROM reservas WHERE id = ?', [reserva.id]);
-    _procesarPagada(reservaActualizada, payment.id).catch(e => console.warn('procesarPagada sincronizar:', e.message));
+    if (result.affectedRows > 0) {
+      // Leer la reserva actualizada para que _procesarPagada tenga los datos frescos
+      const reservaActualizada = await queryOne('SELECT * FROM reservas WHERE id = ?', [reserva.id]);
+      _procesarPagada(reservaActualizada, payment.id).catch(e => console.warn('procesarPagada sincronizar:', e.message));
+    }
 
     res.json({ estado: 'pagada' });
   } catch (err) {
