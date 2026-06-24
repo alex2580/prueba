@@ -6,7 +6,7 @@ async function procesarEscrowAutorelease() {
   try {
     reservas = await query(`
       SELECT r.*,
-             e.nombre AS espacio_nombre,
+             e.nombre AS espacio_nombre, e.oferente_id AS oferente_id,
              u.nombre  AS usuario_nombre, u.email   AS usuario_email,
              u2.nombre AS oferente_nombre, u2.email  AS oferente_email, u2.cbu_alias AS oferente_cbu
       FROM reservas r
@@ -26,8 +26,9 @@ async function procesarEscrowAutorelease() {
 
   console.log(`[escrow] Auto-liberando ${reservas.length} escrow(s) vencidos…`);
 
-  const emailService = require('../services/emailService');
-  const adminEmail   = process.env.ADMIN_EMAILS || 'contacto@todasmiscosas.com';
+  const emailService  = require('../services/emailService');
+  const ledgerService = require('../services/ledgerService');
+  const adminEmail    = process.env.ADMIN_EMAILS || 'contacto@todasmiscosas.com';
 
   for (const reserva of reservas) {
     try {
@@ -35,6 +36,13 @@ async function procesarEscrowAutorelease() {
         `UPDATE reservas SET escrow_liberado = 1, escrow_liberado_at = NOW() WHERE id = ?`,
         [reserva.id]
       );
+
+      // Registro contable: tmc.escrow → proveedor (85%) + tmc.comision (15%)
+      // (mismo movimiento que confirmarAcceso, acá disparado por el cron en vez del cliente)
+      await ledgerService.registrarLiberacion(
+        reserva.id, reserva.oferente_id, reserva.precio_total,
+        `Auto-liberación 48hs — ${reserva.espacio_nombre}`
+      ).catch(e => console.warn(`[escrow] Ledger liberacion reserva ${reserva.id}:`, e.message));
 
       const neto = Number(reserva.escrow_neto_oferente) || Math.round(Number(reserva.precio_total) * 0.85);
 
