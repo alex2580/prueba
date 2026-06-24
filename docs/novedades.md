@@ -774,6 +774,36 @@ Solo funciona si `inactiva_auto = 1`. Si alguien intenta reactivar un espacio qu
 
 ---
 
+## 23 de Junio 2026 (Noche) — v1.14.0
+
+Sesión nocturna centrada en un bug real reportado del **mini-menú de búsqueda** (terminó siendo dos bugs distintos) y, a pedido, una **auditoría completa del flujo de escrow** que encontró y corrigió 3 problemas reales con plata de por medio.
+
+### 🐛 Mini-menú de búsqueda — dos bugs encadenados
+
+El header colapsable (pastilla) a veces no funcionaba al hacer scroll. Investigación con consola del navegador + Playwright headless contra producción:
+
+1. **Hydration mismatch:** `filtrosIniciales`, `vista` y `busqueda` se inicializaban con `useState(() => { if (typeof window === 'undefined') return ...; ... window.location.search ... })`. El servidor siempre devolvía el default; el cliente, en la pasada de hidratación, ya leía la URL real — si la URL tenía query params (que `history.replaceState` va escribiendo al usar el buscador), servidor y cliente armaban árboles distintos y React tiraba todo el árbol para re-renderizar 100% en cliente (errores #418/#423), sintiéndose como que el menú "aparecía y desaparecía". Fix: los 3 estados arrancan siempre con el default, un `useEffect` post-montaje aplica la URL real después de hidratar. **Commit:** `5d8a0c7`
+2. **Superposición visual:** `.site-header` y `.list-search-header` son ambos `position: sticky; top: 0` — el primero (z-index 100, 68px) tapaba por completo al segundo (z-index 50) en el instante en que también se volvía sticky. Se veía aparecer (mientras estaba en flujo normal, debajo del header) y desaparecer (al pegarse también en `top:0`, quedando detrás). Fix: `top: 68px` (60px en mobile). **Commit:** `829a7ad`
+
+### 💰 Auditoría del flujo de escrow — 3 fixes con plata real
+
+A pedido, revisión completa de pago → escrow → liberación → cancelación. Encontrados y corregidos:
+
+1. **Cron de auto-liberación (48hs) no registraba el movimiento contable** — `jobs/escrow.js` marcaba `escrow_liberado=1` y mandaba emails, pero a diferencia del flujo manual (`confirmarAcceso`) nunca llamaba a `ledgerService.registrarLiberacion()`. El saldo de escrow y las comisiones que ve el admin quedaban mal calculados para toda reserva liberada automáticamente. **Commit:** `cc6dcb1`
+2. **Reembolso automático real en MercadoPago al cancelar** — cancelar una reserva pagada ("Me arrepentí") solo actualizaba el estado y un asiento contable interno; la plata real en la cuenta de MP de TMC nunca se devolvía sola, pese a que el FAQ/legales prometían "reembolso del 100%". Se agregó `mercadopagoService.reembolsarPago()` (`PaymentRefund.total()` del SDK) + guard para no intentar reembolsar si el escrow ya se había liberado al proveedor + alerta nueva al admin (`sendReembolsoFallidoAdmin`) si MP rechaza el reembolso. **Commit:** `31105ea`
+3. **Doble procesamiento si webhook y `/sincronizar` corren a la vez** — ambos chequeaban `estado !== 'pagada'` con un SELECT antes de actualizar, con una ventana de carrera real para disparar `_procesarPagada()` dos veces. El `UPDATE` ahora lleva `AND estado != 'pagada'` y se chequea `affectedRows` antes de procesar. **Commit:** `66141be`
+
+### 📄 Legales actualizado
+
+- Sección 7 y 12: el reembolso por arrepentimiento ahora se describe explícitamente como automático vía MercadoPago. **Commit:** `08132e2`
+- Sección 7: las penalidades por cancelación tardía del cliente o cancelación sin causa del proveedor pasan a quedar explícitamente a criterio exclusivo de TMC (antes prometían un monto fijo que el código nunca calculó). **Commit:** `d9e73f8`
+
+### 🔍 Investigación (sin código todavía) — Renaper / KYC de proveedores
+
+Research de proveedores para validar DNI de oferentes antes de su primera publicación. Acceso directo a RENAPER requiere convenio institucional vía TAD, sin pricing público, aprobación discrecional — poco viable para una SAS chica en el corto plazo. Comparados como intermediarios con convenio ya hecho: **Didit** (pricing público, $0.20/consulta vía módulo `arg_renaper`, 500 gratis/mes, SOC2/ISO27001), **MetaMap** (especialista LatAm, ~14 países con integración profunda a bases de gobierno, pricing a cotización), **Truora** (solo 6 países, no confirma Argentina) y **KYC-Chain** (soporta RENAPER, pricing solo Enterprise a cotizar). Pendiente: el usuario va a evaluar legitimidad/decisión antes de avanzar — factor nuevo a considerar: TMC contempla expansión futura a LatAm, lo que favorecería a MetaMap por su especialización regional.
+
+---
+
 ## 23 de Junio 2026 — v1.13.0
 
 Sesión centrada en **footer global + páginas legales/contacto**, **terminología visible al usuario**, **dos nuevos flujos visuales en la home** ("¿Cómo funciona?") y varios **fixes de UI** en tarjetas y filtros.
