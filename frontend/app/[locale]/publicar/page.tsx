@@ -670,7 +670,7 @@ export default function PublicarPage() {
               <div className="form-row">
                 <div>
                   <label className="form-label">Moneda de publicación</label>
-                  <select value={form.moneda} onChange={e => set('moneda', e.target.value)} style={{ marginTop: '.4rem' }}>
+                  <select value={form.moneda} onChange={e => set('moneda', e.target.value)}>
                     {MONEDAS.map(m => (
                       <option key={m.value} value={m.value}>{m.flag} {m.label} ({m.simbolo})</option>
                     ))}
