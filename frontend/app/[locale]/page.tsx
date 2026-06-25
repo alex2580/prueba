@@ -23,32 +23,12 @@ const MarkerEspacioCard = dynamic(() => import('@/components/mapa/MarkerEspacio'
 
 type Vista = 'mapa' | 'lista';
 
-const FAQ = [
-  {
-    q: '¿Cuándo se le paga a quien cuidará tus cosas?',
-    a: 'El pago queda retenido como depósito en garantía a través de MercadoPago. Quien cuidará tus cosas lo recibe recién cuando vos confirmás el acceso al espacio desde tu panel, no antes.',
-  },
-  {
-    q: '¿Cuál es la diferencia entre un espacio exclusivo y uno compartido?',
-    a: 'En un espacio exclusivo solo vos usás el lugar, con acceso privado. En uno compartido, varios clientes guardan sus cosas al mismo tiempo en el mismo espacio, lo que suele tener un precio más bajo.',
-  },
-  {
-    q: '¿Puedo cancelar una reserva si me arrepiento?',
-    a: 'Sí, con el botón "Me arrepentí" podés cancelar y te reembolsamos el 100% de lo pagado.',
-  },
-  {
-    q: '¿Cuánto cuesta publicar un espacio?',
-    a: 'Publicar es 100% gratis. TodasMisCosas.com solo cobra una comisión del 15% cuando se concreta una reserva. Si nadie te reserva, no pagás nada.',
-  },
-  {
-    q: '¿Qué hago si tengo un problema con el espacio o con quien procedió con el cuidado de mis cosas?',
-    a: 'Podés contactarnos antes de confirmar el acceso desde la misma reserva. Mientras no confirmes, el dinero sigue retenido en garantía y podemos intervenir para resolver cualquier inconveniente.',
-  },
-];
+interface FaqItem { q: string; a: string; }
 
 export default function HomePage() {
   const t = useTranslations('home');
   const tc = useTranslations('comoFunciona');
+  const FAQ = t.raw('faq') as FaqItem[];
   const router = useRouter();
   const { user, token, loading: authLoading, login, register, logout, error: authError, isAdmin,
     otpPending, otpEmailHint, otpCanales, verifyOTP, reenviarOTP,
@@ -667,7 +647,7 @@ export default function HomePage() {
             {/* Preguntas frecuentes */}
             <div id="preguntas-frecuentes" style={{ maxWidth: 720, margin: '0 auto', padding: '0 1.5rem 4rem' }}>
               <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: '1.3rem', textAlign: 'center', marginBottom: '1.5rem', color: 'var(--text)' }}>
-                Preguntas frecuentes
+                {t('faqTitulo')}
               </h2>
               <div style={{ display: 'grid', gap: '.75rem' }}>
                 {FAQ.map((item, i) => (

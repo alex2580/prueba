@@ -47,7 +47,15 @@
     "contactoEnviando": "Enviando…",
     "contactoExito": "Mensagem enviada! Responderemos em breve.",
     "precioDia": "Preço/dia",
-    "precioMes": "Preço/mês"
+    "precioMes": "Preço/mês",
+    "faqTitulo": "Perguntas frequentes",
+    "faq": [
+      { "q": "Quando o anunciante recebe o pagamento?", "a": "O pagamento fica retido em depósito de garantia via MercadoPago. O anunciante só recebe quando você confirma o acesso ao espaço pelo seu painel, não antes." },
+      { "q": "Qual a diferença entre um espaço exclusivo e um compartilhado?", "a": "Em um espaço exclusivo só você usa o lugar, com acesso privado. Em um compartilhado, vários clientes guardam suas coisas ao mesmo tempo no mesmo espaço, o que geralmente tem um preço mais baixo." },
+      { "q": "Posso cancelar uma reserva se mudar de ideia?", "a": "Sim, com o botão \"Mudei de ideia\" você pode cancelar e devolvemos 100% do valor pago." },
+      { "q": "Quanto custa publicar um espaço?", "a": "Publicar é 100% gratuito. TodasMisCosas.com cobra uma comissão de 15% somente quando uma reserva é concretizada. Se ninguém reservar, você não paga nada." },
+      { "q": "O que faço se tiver um problema com o espaço ou com quem cuidou das minhas coisas?", "a": "Você pode nos contatar antes de confirmar o acesso, pela própria reserva. Enquanto não confirmar, o dinheiro continua retido em garantia e podemos intervir para resolver qualquer problema." }
+    ]
   },
   "comoFunciona": {
     "heroTitulo1": "Guarde o que quiser",
@@ -62,21 +70,22 @@
     "compartidoPill": "Melhor preço",
     "compartidoDesc": "Vários clientes usam o espaço ao mesmo tempo. Preço mais baixo, ideal para longo prazo. O anunciante abre ou fecha as vagas pelo painel quando quiser.",
     "reservarTitulo": "Para Reservar",
-    "reservarSubtitulo": "4 passos simples",
+    "reservarSubtitulo": "5 passos simples",
     "publicarTitulo": "Para Publicar",
     "publicarSubtitulo": "4 passos simples",
     "selloGratis": "GRÁTIS",
     "pasosReservar": [
-      { "icon": "🔍", "titulo": "Busca um espaço", "desc": "Selecione um card ou clique nas publicações do mapa. Pode ser compartilhado ou só para você." },
-      { "icon": "📦", "titulo": "Escolhe e reserva", "desc": "Selecione o espaço mais conveniente. Alugue por dia ou por intervalo de dias. Se mudar de ideia, pode cancelar e devolvemos 100% automaticamente via MercadoPago." },
-      { "icon": "💳", "titulo": "Paga com segurança", "desc": "Você pode pagar com Mercado Pago." },
-      { "icon": "🔑", "titulo": "Coordena o acesso", "desc": "Você e quem publicou o espaço receberão o mesmo PIN de 4 dígitos por e-mail para se identificarem." }
+      { "icon": "🔍", "titulo": "Busca um espaço", "desc": "Selecione um card ou clique nas publicações do mapa. Pode ser compartilhado ou só para você. Em cada publicação você pode fazer perguntas ao anunciante antes de reservar — as respostas ficam visíveis para todos." },
+      { "icon": "📦", "titulo": "Escolhe e reserva", "desc": "Selecione o espaço mais conveniente. Alugue por dia ou por intervalo de dias. Ao reservar você pode solicitar serviços adicionais: seguro de conteúdo, embalagem ou transporte. Se mudar de ideia, pode cancelar e devolvemos 100% automaticamente via MercadoPago." },
+      { "icon": "💳", "titulo": "Paga com segurança", "desc": "Você paga com Mercado Pago. O dinheiro fica retido em depósito de garantia — o anunciante só recebe quando você confirmar o acesso ao espaço." },
+      { "icon": "💬", "titulo": "Coordena pelo chat", "desc": "Depois que a reserva é confirmada, um chat direto com o anunciante é liberado para coordenar o acesso, dias e horários. Ambos também recebem um PIN de 4 dígitos por e-mail para se identificarem." },
+      { "icon": "🔑", "titulo": "Confirma o acesso", "desc": "Quando você acessa o espaço, confirma pelo seu painel. Nesse momento o pagamento é liberado ao anunciante. Se tiver algum problema, fale com a gente antes de confirmar." }
     ],
     "pasosPublicar": [
       { "icon": "📢", "titulo": "Publica seu espaço", "desc": "Vá ao botão \"Publicar espaço\" e conte a todos qual espaço você oferece: se é exclusivo ou compartilhado, se aluga por dia, por mês ou ambas as formas. Marque no calendário os dias ou meses em que estará disponível. Se for compartilhado, pelo painel você pode abrir ou fechar as vagas com o botão 🟢 Tenho Espaço / 🔴 Não tenho Espaço." },
       { "icon": "📷", "titulo": "Envia fotos", "desc": "Você pode enviar até 5 fotos." },
       { "icon": "🛡️", "titulo": "Define o nível de segurança", "desc": "Clique nas medidas de segurança que seu espaço possui. Isso permite que quem busca espaço saiba quais medidas você oferece para cuidar dos pertences." },
-      { "icon": "👤", "titulo": "Se cadastra", "desc": "Se ainda não se identificou, este é o momento. Quando alguém reservar seu espaço, ambos receberão um PIN de 4 dígitos por e-mail para se identificarem." }
+      { "icon": "👤", "titulo": "Se cadastra e responde dúvidas", "desc": "Se ainda não se identificou, este é o momento. Quando alguém reservar, ambos recebem um PIN de 4 dígitos por e-mail. Você também pode responder as perguntas dos interessados direto pelo seu painel — as respostas ficam visíveis na publicação." }
     ],
     "notaGratisTitle": "✅ Publicar é gratuito",
     "notaGratisDesc": "Buscar e publicar são <b>100% gratuitos</b>. TodasMisCosas cobra <b>15% de comissão somente quando uma reserva é concretizada</b>. Se ninguém reservar, você não paga nada.",

@@ -47,7 +47,15 @@
     "contactoEnviando": "Enviando…",
     "contactoExito": "¡Mensaje enviado! Te respondemos pronto.",
     "precioDia": "Precio/día",
-    "precioMes": "Precio/mes"
+    "precioMes": "Precio/mes",
+    "faqTitulo": "Preguntas frecuentes",
+    "faq": [
+      { "q": "¿Cuándo se le paga a quien cuidará tus cosas?", "a": "El pago queda retenido como depósito en garantía a través de MercadoPago. Quien cuidará tus cosas lo recibe recién cuando vos confirmás el acceso al espacio desde tu panel, no antes." },
+      { "q": "¿Cuál es la diferencia entre un espacio exclusivo y uno compartido?", "a": "En un espacio exclusivo solo vos usás el lugar, con acceso privado. En uno compartido, varios clientes guardan sus cosas al mismo tiempo en el mismo espacio, lo que suele tener un precio más bajo." },
+      { "q": "¿Puedo cancelar una reserva si me arrepiento?", "a": "Sí, con el botón \"Me arrepentí\" podés cancelar y te reembolsamos el 100% de lo pagado." },
+      { "q": "¿Cuánto cuesta publicar un espacio?", "a": "Publicar es 100% gratis. TodasMisCosas.com solo cobra una comisión del 15% cuando se concreta una reserva. Si nadie te reserva, no pagás nada." },
+      { "q": "¿Qué hago si tengo un problema con el espacio o con quien procedió con el cuidado de mis cosas?", "a": "Podés contactarnos antes de confirmar el acceso desde la misma reserva. Mientras no confirmes, el dinero sigue retenido en garantía y podemos intervenir para resolver cualquier inconveniente." }
+    ]
   },
   "comoFunciona": {
     "heroTitulo1": "Guardá lo que querés",
