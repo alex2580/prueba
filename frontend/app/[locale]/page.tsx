@@ -503,9 +503,14 @@ export default function HomePage() {
                 {t('compartido')}
               </button>
 
-              {/* Precio máximo por día */}
-              <div style={{
-                display: 'inline-flex', alignItems: 'center', gap: '.5rem',
+              {/* Precio máximo por día — slider inline en desktop. En mobile el
+                  slider "se come" el gesto de swipe de toda la barra (el touch
+                  que empieza sobre un <input type="range"> queda capturado por
+                  el slider en vez de scrollear el contenedor), así que ahí se
+                  reemplaza por un botón que abre el mismo popover que ya usa
+                  la pastilla del header colapsado. */}
+              <div className="precio-pill-desktop" style={{
+                alignItems: 'center', gap: '.5rem',
                 padding: '.3rem .65rem .3rem .9rem',
                 borderRadius: 999, flexShrink: 0,
                 border: `1.5px solid ${precioValHome < PRECIO_MAX_DIA ? 'var(--text)' : 'var(--border2)'}`,
@@ -529,6 +534,16 @@ export default function HomePage() {
                   style={{ width: 180, height: 4, cursor: 'pointer', accentColor: precioValHome < PRECIO_MAX_DIA ? '#fff' : 'var(--orange)' }}
                 />
               </div>
+              <button
+                type="button"
+                className={`filter-pill precio-pill-mobile ${precioValHome < PRECIO_MAX_DIA ? 'active' : ''}`}
+                onClick={e => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  setPrecioPillPos({ top: rect.bottom + 8, left: Math.min(rect.left, window.innerWidth - 240 - 16) });
+                }}
+              >
+                💰 {precioValHome < PRECIO_MAX_DIA ? `$${precioValHome.toLocaleString('es-AR')}/día` : t('precioDia')}
+              </button>
 
               {/* Nivel de Seguridad */}
               <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', flexShrink: 0, gap: '.3rem' }}>

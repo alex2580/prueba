@@ -412,6 +412,9 @@ textarea { resize: vertical; line-height: 1.6; }
   color: #fff;
   border-color: var(--text);
 }
+.precio-pill-desktop { display: inline-flex; }
+.precio-pill-mobile { display: none; }
+
 select.filter-pill {
   display: inline-block;
   appearance: auto;
@@ -956,6 +959,11 @@ select.filter-pill {
   .filter-pills-bar { padding: .5rem 1rem; gap: .4rem; }
   .filter-pill { padding: .38rem .75rem; font-size: .78rem; }
   select.filter-pill { min-width: 120px; max-width: 160px; flex-shrink: 0; }
+
+  /* El slider de precio inline le roba el gesto de swipe a toda la barra
+     en mobile — se reemplaza por un botón que abre el popover. */
+  .precio-pill-desktop { display: none; }
+  .precio-pill-mobile { display: inline-flex; }
 
   /* List header — pegado debajo del .site-header, que en mobile baja a 60px */
   .list-search-header { top: 60px; padding: .75rem 1rem .5rem; gap: .5rem; }
