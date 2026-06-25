@@ -9,6 +9,13 @@ const supabase = createClient(
   { realtime: { transport: ws } }
 );
 
+const authCache = new Map();
+const CACHE_TTL = 5 * 60 * 1000;
+setInterval(() => {
+  const now = Date.now();
+  for (const [k, v] of authCache) if (v.expiresAt <= now) authCache.delete(k);
+}, CACHE_TTL).unref();
+
 /**
  * Verifica el JWT de Supabase y adjunta el usuario al request.
  * El token debe ir en el header: Authorization: Bearer <token>
@@ -20,6 +27,12 @@ async function requireAuth(req, res, next) {
   }
 
   const token = header.slice(7);
+
+  const cached = authCache.get(token);
+  if (cached && cached.expiresAt > Date.now()) {
+    req.user = cached.user;
+    return next();
+  }
 
   try {
     const { data, error } = await supabase.auth.getUser(token);
@@ -76,6 +89,7 @@ async function requireAuth(req, res, next) {
     }
 
     req.user = { ...usuario, supabase_id: data.user.id };
+    authCache.set(token, { user: req.user, expiresAt: Date.now() + CACHE_TTL });
     next();
   } catch (err) {
     console.error('Auth middleware error:', err);
@@ -113,6 +127,11 @@ async function optionalAuth(req, res, next) {
   if (!header || !header.startsWith('Bearer ')) return next();
 
   const token = header.slice(7);
+  const cached = authCache.get(token);
+  if (cached && cached.expiresAt > Date.now()) {
+    req.user = cached.user;
+    return next();
+  }
   try {
     const { data } = await supabase.auth.getUser(token);
     if (data?.user) {
@@ -122,6 +141,7 @@ async function optionalAuth(req, res, next) {
       );
       if (usuario && usuario.activo) {
         req.user = { ...usuario, supabase_id: data.user.id };
+        authCache.set(token, { user: req.user, expiresAt: Date.now() + CACHE_TTL });
       }
     }
   } catch {}
