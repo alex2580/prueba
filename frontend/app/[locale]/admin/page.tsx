@@ -2064,6 +2064,8 @@ function TabConversaciones({ token }: { token: string }) {
   const [convs, setConvs] = useState<ConvAdmin[]>([]);
   const [loading, setLoading] = useState(false);
   const [filtro, setFiltro] = useState({ espacio_id: '', demandante_id: '', oferente_id: '' });
+  const [purgando, setPurgando] = useState(false);
+  const [purgeResult, setPurgeResult] = useState<string | null>(null);
 
   async function cargar(f = filtro) {
     setLoading(true);
@@ -2078,6 +2080,22 @@ function TabConversaciones({ token }: { token: string }) {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function purgar() {
+    if (!confirm('¿Purgar conversaciones con retención vencida (purgar_after < hoy)? Esta acción es irreversible.')) return;
+    setPurgando(true);
+    setPurgeResult(null);
+    try {
+      const res = await chatAPI.purgarRetencion(token);
+      setPurgeResult(`✅ ${res.purgadas} conversación${res.purgadas !== 1 ? 'es' : ''} purgada${res.purgadas !== 1 ? 's' : ''}`);
+      if (res.purgadas > 0) cargar();
+    } catch (err) {
+      setPurgeResult('❌ Error al purgar');
+      console.error(err);
+    } finally {
+      setPurgando(false);
     }
   }
 
@@ -2104,6 +2122,14 @@ function TabConversaciones({ token }: { token: string }) {
             🔍 Buscar
           </Button>
         </div>
+      </div>
+
+      {/* Purgar retención */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '.75rem 1rem' }}>
+        <Button onClick={purgar} loading={purgando} size="sm" style={{ background: 'var(--red, #c0392b)', color: '#fff', borderColor: 'transparent' }}>
+          🗑️ Purgar retención vencida
+        </Button>
+        {purgeResult && <span style={{ fontSize: '.82rem', color: 'var(--text2)' }}>{purgeResult}</span>}
       </div>
 
       {/* Lista */}

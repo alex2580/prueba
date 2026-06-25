@@ -175,6 +175,9 @@ export const chatAPI = {
       method: 'POST',
       body: JSON.stringify({ texto }),
     }, token),
+
+  purgarRetencion: (token: string) =>
+    fetchAPI<{ purgadas: number }>('/api/admin/chat/purgar', { method: 'POST' }, token),
 };
 
 // ── Admin ────────────────────────────────────────────────────

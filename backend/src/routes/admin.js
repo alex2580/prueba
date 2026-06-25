@@ -72,6 +72,9 @@ router.post('/sincronizar-pendientes',                     ctrl.sincronizarPendi
 // Auditoría de cambios de perfil
 router.get('/auditoria-perfil',                            ctrl.getAuditoriaPerfil);
 
+// Purga de chat con retención vencida
+router.post('/chat/purgar',                                ctrl.purgarChatRetencion);
+
 // Consultas públicas (consultas_espacio)
 router.get('/consultas-publicas',                          consultasCtrl.listarAdmin);
 router.delete('/consultas-publicas/:id',                   consultasCtrl.eliminarAdmin);

@@ -689,7 +689,20 @@ module.exports = {
   sincronizarPendientes,
   getMovimientos,
   getAuditoriaPerfil,
+  purgarChatRetencion,
 };
+
+// ── POST /api/admin/chat/purgar ───────────────────────────────
+async function purgarChatRetencion(req, res, next) {
+  try {
+    const result = await query(
+      `DELETE FROM conversaciones WHERE purgar_after IS NOT NULL AND purgar_after < CURDATE()`
+    );
+    res.json({ purgadas: result.affectedRows });
+  } catch (err) {
+    next(err);
+  }
+}
 
 // ── GET /api/admin/auditoria-perfil ───────────────────────────
 async function getAuditoriaPerfil(req, res, next) {
