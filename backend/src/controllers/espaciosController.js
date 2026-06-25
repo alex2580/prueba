@@ -80,74 +80,68 @@ async function listar(req, res, next) {
       params.push(like, like, like, like);
     }
     if (fecha_desde && fecha_hasta) {
-      // La publicación tiene que seguir vigente durante todo el rango pedido
-      // (si no, para esa fecha ya estaría vencida y dada de baja).
+      // Alcanza con que la publicación siga vigente en ALGÚN punto del rango
+      // pedido (no que cubra el rango entero) — el filtro fino de "al menos
+      // un día libre" se hace después en JS, día por día.
       sql += ' AND (e.fecha_vencimiento IS NULL OR e.fecha_vencimiento >= ?)';
-      params.push(fecha_hasta);
-
-      // Compartidos siempre se muestran (no hay bloqueo por fecha, solo cupo_disponible).
-      // Exclusivos: se excluyen si tienen una reserva activa que solapa el rango pedido.
-      sql += ` AND (
-        e.tipo = 'compartido'
-        OR NOT EXISTS (
-          SELECT 1 FROM reservas r
-          WHERE r.espacio_id = e.id
-            AND r.estado IN ('pendiente','confirmada','pagada','activa')
-            AND r.fecha_desde <= ? AND r.fecha_hasta >= ?
-        )
-      )`;
-      params.push(fecha_hasta, fecha_desde);
+      params.push(fecha_desde);
     }
 
     sql += ' ORDER BY e.reservas_mes DESC, e.rating DESC';
 
     let espacios = await query(sql, params);
 
-    if (fecha_desde && fecha_hasta) {
-      // El proveedor marca qué días ofrece el espacio (e.disponibilidad.dias),
-      // acotado por la vigencia de 90 días de la publicación. Si configuró
-      // días, el rango pedido tiene que estar contenido ahí; sin configurar
-      // (null o vacío) se interpreta como "sin restricción".
-      const diasPedidos = [];
-      const cur = new Date(`${fecha_desde}T12:00:00`);
-      const fin = new Date(`${fecha_hasta}T12:00:00`);
-      while (cur <= fin) {
-        diasPedidos.push(`${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, '0')}-${String(cur.getDate()).padStart(2, '0')}`);
-        cur.setDate(cur.getDate() + 1);
-      }
-      espacios = espacios.filter(e => {
-        if (!e.disponibilidad) return true;
-        let dias;
-        try { dias = JSON.parse(e.disponibilidad).dias; } catch (_) { dias = null; }
-        if (!dias || !dias.length) return true;
-        return diasPedidos.every(d => dias.includes(d));
-      });
-    } else {
-      // Sin fechas elegidas por el visitante: igual hay que ocultar un espacio
-      // si no le queda NINGÚN día disponible entre hoy y el vencimiento de la
-      // publicación (90 días) — no importa que esté activo o con cupo abierto.
+    {
+      // Independientemente de si el visitante eligió fechas o no, un espacio
+      // se muestra si tiene AL MENOS UN DÍA LIBRE dentro del rango relevante
+      // — nunca se exige que el rango entero esté libre. "Libre" = el día
+      // está permitido por disponibilidad.dias (si el proveedor configuró
+      // días puntuales) Y, para exclusivos, no está cubierto por una reserva
+      // activa.
       const hoy = new Date();
       hoy.setHours(12, 0, 0, 0);
+
+      let inicio, fin;
+      if (fecha_desde && fecha_hasta) {
+        // Rango pedido por el visitante, acotado por hoy (no tiene sentido
+        // buscar disponibilidad en el pasado).
+        inicio = new Date(`${fecha_desde}T12:00:00`);
+        if (inicio < hoy) inicio = hoy;
+        fin = new Date(`${fecha_hasta}T12:00:00`);
+      } else {
+        // Sin fechas elegidas: todo lo que queda de vigencia de la publicación.
+        inicio = hoy;
+        fin = null; // se acota por espacio, más abajo (cada uno tiene su propio fecha_vencimiento)
+      }
 
       const idsExclusivos = espacios.filter(e => e.tipo !== 'compartido').map(e => e.id);
       const reservasPorEspacio = {};
       if (idsExclusivos.length) {
-        const reservas = await query(
-          `SELECT espacio_id, fecha_desde, fecha_hasta FROM reservas
+        let sqlReservas = `SELECT espacio_id, fecha_desde, fecha_hasta FROM reservas
            WHERE espacio_id IN (${idsExclusivos.map(() => '?').join(',')})
              AND estado IN ('pendiente','confirmada','pagada','activa')
-             AND fecha_hasta >= CURDATE()`,
-          idsExclusivos
-        );
+             AND fecha_hasta >= ?`;
+        const paramsReservas = [...idsExclusivos, `${inicio.getFullYear()}-${String(inicio.getMonth() + 1).padStart(2, '0')}-${String(inicio.getDate()).padStart(2, '0')}`];
+        if (fin) { sqlReservas += ' AND fecha_desde <= ?'; paramsReservas.push(fecha_hasta); }
+        const reservas = await query(sqlReservas, paramsReservas);
         for (const r of reservas) {
           (reservasPorEspacio[r.espacio_id] ||= []).push(r);
         }
       }
 
       espacios = espacios.filter(e => {
-        if (!e.fecha_vencimiento) return true; // sin vencimiento configurado, no se puede acotar
-        const vencimiento = new Date(`${String(e.fecha_vencimiento).slice(0, 10)}T12:00:00`);
-        if (vencimiento < hoy) return false;
+        // Tope superior real: el más restrictivo entre lo que pidió el
+        // visitante y el propio vencimiento de la publicación — un espacio
+        // no puede tener días "libres" más allá de cuando deja de existir
+        // como publicación activa.
+        let topeEspacio = fin;
+        if (e.fecha_vencimiento) {
+          const venc = new Date(`${String(e.fecha_vencimiento).slice(0, 10)}T12:00:00`);
+          topeEspacio = topeEspacio && topeEspacio < venc ? topeEspacio : venc;
+        } else if (!topeEspacio) {
+          return true; // ni fecha pedida ni vencimiento configurado, no se puede acotar
+        }
+        if (topeEspacio < inicio) return false; // no hay ninguna superposición posible
 
         let diasConfigurados = null;
         if (e.disponibilidad) {
@@ -155,8 +149,8 @@ async function listar(req, res, next) {
         }
         const reservasEspacio = reservasPorEspacio[e.id] || [];
 
-        const cur = new Date(hoy);
-        while (cur <= vencimiento) {
+        const cur = new Date(inicio);
+        while (cur <= topeEspacio) {
           const dStr = `${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, '0')}-${String(cur.getDate()).padStart(2, '0')}`;
           const permitidoPorConfig = !diasConfigurados || !diasConfigurados.length || diasConfigurados.includes(dStr);
           if (permitidoPorConfig) {
@@ -169,7 +163,7 @@ async function listar(req, res, next) {
           }
           cur.setDate(cur.getDate() + 1);
         }
-        return false; // ningún día libre en todo lo que queda de vigencia
+        return false; // ningún día libre en todo el rango relevante
       });
     }
     espacios.forEach(e => { delete e.disponibilidad; delete e.fecha_vencimiento; });
