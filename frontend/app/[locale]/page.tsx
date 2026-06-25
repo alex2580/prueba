@@ -34,7 +34,7 @@ const FAQ = [
   },
   {
     q: '¿Puedo cancelar una reserva si me arrepiento?',
-    a: 'Sí, con el botón "Me arrepentí" podés cancelar y te reembolsamos el 100% de lo pagado, siempre antes de coordinar el acceso con quien cuidará tus cosas.',
+    a: 'Sí, con el botón "Me arrepentí" podés cancelar y te reembolsamos el 100% de lo pagado.',
   },
   {
     q: '¿Cuánto cuesta publicar un espacio?',
