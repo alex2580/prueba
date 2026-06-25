@@ -96,7 +96,28 @@ export function OTPStep({ emailHint, canales, onVerify, onReenviar, loading, err
       </div>
 
       {/* Inputs de 6 dígitos */}
-      <div style={{ display: 'flex', gap: '.5rem', justifyContent: 'center' }}>
+      <style>{`
+        .otp-row { display: flex; gap: .5rem; justify-content: center; }
+        .otp-digit {
+          width: 46px; height: 56px;
+          text-align: center;
+          font-size: 1.5rem;
+          font-weight: 800;
+          font-family: monospace;
+          border-radius: var(--r2);
+          outline: none;
+          transition: border-color .15s, background .15s;
+        }
+        @media (max-width: 480px) {
+          .otp-row { gap: .4rem; }
+          .otp-digit { width: 40px; height: 50px; font-size: 1.3rem; }
+        }
+        @media (max-width: 360px) {
+          .otp-row { gap: .3rem; }
+          .otp-digit { width: 34px; height: 46px; font-size: 1.15rem; }
+        }
+      `}</style>
+      <div className="otp-row">
         {digits.map((d, i) => (
           <input
             key={i}
@@ -109,18 +130,11 @@ export function OTPStep({ emailHint, canales, onVerify, onReenviar, loading, err
             onKeyDown={e => handleKeyDown(i, e)}
             onPaste={i === 0 ? handlePaste : undefined}
             disabled={loading}
+            className="otp-digit"
             style={{
-              width: 46, height: 56,
-              textAlign: 'center',
-              fontSize: '1.5rem',
-              fontWeight: 800,
-              fontFamily: 'monospace',
-              borderRadius: 'var(--r2)',
               border: `2px solid ${d ? 'var(--orange)' : 'var(--border)'}`,
               background: d ? 'rgba(232,98,42,.08)' : 'var(--surface2)',
               color: 'var(--text)',
-              outline: 'none',
-              transition: 'border-color .15s, background .15s',
               cursor: loading ? 'not-allowed' : 'text',
               opacity: loading ? .6 : 1,
             }}
