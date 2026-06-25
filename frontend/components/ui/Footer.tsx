@@ -41,13 +41,23 @@ export function Footer() {
 
   if (pathname === '/' && searchParams.get('vista') === 'mapa') return null;
 
+  // Flujos de reserva, publicación y edición (modal en /panel) — sin footer
+  // en mobile, donde el espacio de pantalla es más crítico para el flujo.
+  const ocultarEnMobile = pathname === '/publicar'
+    || pathname === '/panel'
+    || pathname.startsWith('/reserva')
+    || pathname.endsWith('/reservar');
+
   return (
-    <footer className="site-footer">
+    <footer className={`site-footer ${ocultarEnMobile ? 'site-footer--oculto-mobile' : ''}`}>
       <style>{`
         .site-footer {
           background: var(--surface);
           border-top: 1px solid var(--border);
           padding: 2.5rem 1.5rem 1.5rem;
+        }
+        @media (max-width: 640px) {
+          .site-footer--oculto-mobile { display: none; }
         }
         .site-footer__inner {
           max-width: 1200px;
