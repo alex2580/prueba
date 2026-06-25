@@ -1,6 +1,6 @@
 'use client';
 
-interface Paso {
+export interface Paso {
   icon: React.ReactNode;
   titulo: string;
   desc: string;
@@ -12,106 +12,73 @@ const iconProps = {
   strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const,
 };
 
-export const PASOS_RESERVAR: Paso[] = [
-  {
-    titulo: 'Buscás',
-    desc: 'Filtrás por zona, precio y tipo hasta encontrar el espacio ideal.',
-    icon: (
-      <svg {...iconProps}>
-        <circle cx="10" cy="10" r="6" />
-        <line x1="15" y1="15" x2="20" y2="20" />
-      </svg>
-    ),
-  },
-  {
-    titulo: 'Reservás',
-    desc: 'Elegís las fechas y confirmás la reserva en minutos.',
-    icon: (
-      <svg {...iconProps}>
-        <rect x="3" y="5" width="18" height="16" rx="2" />
-        <line x1="3" y1="9.5" x2="21" y2="9.5" />
-        <line x1="7.5" y1="3" x2="7.5" y2="7" />
-        <line x1="16.5" y1="3" x2="16.5" y2="7" />
-      </svg>
-    ),
-  },
-  {
-    titulo: 'Pagás seguro',
-    desc: 'El dinero queda en garantía hasta que confirmás el acceso.',
-    icon: (
-      <svg {...iconProps}>
-        <path d="M12 3l7 3.2v5.8c0 4.8-3 7.8-7 9-4-1.2-7-4.2-7-9V6.2L12 3z" />
-        <path d="M9 12l2 2 4-4.5" />
-      </svg>
-    ),
-  },
-  {
-    titulo: 'Coordinás',
-    desc: 'Chateás directo con quien cuidará tus cosas para acordar el ingreso.',
-    icon: (
-      <svg {...iconProps}>
-        <path d="M4 5.5h16V16H9.5L4.5 19.5V16H4V5.5z" />
-        <line x1="8" y1="9.2" x2="16" y2="9.2" />
-        <line x1="8" y1="12.2" x2="13" y2="12.2" />
-      </svg>
-    ),
-  },
-  {
-    titulo: 'Confirmás',
-    desc: 'Accedés al espacio y ahí se libera el pago — listo.',
-    icon: (
-      <svg {...iconProps}>
-        <circle cx="8" cy="8" r="4" />
-        <line x1="11" y1="11" x2="20" y2="20" />
-        <line x1="15.5" y1="15.5" x2="17.7" y2="13.3" />
-        <line x1="18" y1="18" x2="20.2" y2="15.8" />
-      </svg>
-    ),
-  },
+// Solo los íconos — el título y la descripción de cada paso vienen
+// traducidos desde home.flowReservarPasos / home.flowPublicarPasos
+// (mismo orden posicional que estos arrays).
+export const ICONOS_RESERVAR: React.ReactNode[] = [
+  (
+    <svg {...iconProps} key="buscar">
+      <circle cx="10" cy="10" r="6" />
+      <line x1="15" y1="15" x2="20" y2="20" />
+    </svg>
+  ),
+  (
+    <svg {...iconProps} key="reservar">
+      <rect x="3" y="5" width="18" height="16" rx="2" />
+      <line x1="3" y1="9.5" x2="21" y2="9.5" />
+      <line x1="7.5" y1="3" x2="7.5" y2="7" />
+      <line x1="16.5" y1="3" x2="16.5" y2="7" />
+    </svg>
+  ),
+  (
+    <svg {...iconProps} key="pagar">
+      <path d="M12 3l7 3.2v5.8c0 4.8-3 7.8-7 9-4-1.2-7-4.2-7-9V6.2L12 3z" />
+      <path d="M9 12l2 2 4-4.5" />
+    </svg>
+  ),
+  (
+    <svg {...iconProps} key="coordinar">
+      <path d="M4 5.5h16V16H9.5L4.5 19.5V16H4V5.5z" />
+      <line x1="8" y1="9.2" x2="16" y2="9.2" />
+      <line x1="8" y1="12.2" x2="13" y2="12.2" />
+    </svg>
+  ),
+  (
+    <svg {...iconProps} key="confirmar">
+      <circle cx="8" cy="8" r="4" />
+      <line x1="11" y1="11" x2="20" y2="20" />
+      <line x1="15.5" y1="15.5" x2="17.7" y2="13.3" />
+      <line x1="18" y1="18" x2="20.2" y2="15.8" />
+    </svg>
+  ),
 ];
 
-export const PASOS_PUBLICAR: Paso[] = [
-  {
-    titulo: 'Publicás',
-    desc: 'Contás qué espacio ofrecés, si es exclusivo o compartido, y marcás los días disponibles.',
-    icon: (
-      <svg {...iconProps}>
-        <rect x="4" y="3" width="16" height="18" rx="2" />
-        <line x1="12" y1="9" x2="12" y2="15" />
-        <line x1="9" y1="12" x2="15" y2="12" />
-      </svg>
-    ),
-  },
-  {
-    titulo: 'Subís fotos',
-    desc: 'Sumás hasta 5 fotos para que se vea lo que ofrecés.',
-    icon: (
-      <svg {...iconProps}>
-        <path d="M4 8h3l1.5-2h7L17 8h3v11H4V8z" />
-        <circle cx="12" cy="13" r="3.2" />
-      </svg>
-    ),
-  },
-  {
-    titulo: 'Sumás seguridad',
-    desc: 'Marcás las medidas de seguridad con las que cuenta tu espacio.',
-    icon: (
-      <svg {...iconProps}>
-        <path d="M12 3l7 3.2v5.8c0 4.8-3 7.8-7 9-4-1.2-7-4.2-7-9V6.2L12 3z" />
-      </svg>
-    ),
-  },
-  {
-    titulo: 'Recibís reservas',
-    desc: 'Respondés consultas y coordinás el acceso cuando alguien te reserva.',
-    icon: (
-      <svg {...iconProps}>
-        <path d="M4 5.5h16V16H9.5L4.5 19.5V16H4V5.5z" />
-        <line x1="8" y1="9.2" x2="16" y2="9.2" />
-        <line x1="8" y1="12.2" x2="13" y2="12.2" />
-      </svg>
-    ),
-  },
+export const ICONOS_PUBLICAR: React.ReactNode[] = [
+  (
+    <svg {...iconProps} key="publicar">
+      <rect x="4" y="3" width="16" height="18" rx="2" />
+      <line x1="12" y1="9" x2="12" y2="15" />
+      <line x1="9" y1="12" x2="15" y2="12" />
+    </svg>
+  ),
+  (
+    <svg {...iconProps} key="fotos">
+      <path d="M4 8h3l1.5-2h7L17 8h3v11H4V8z" />
+      <circle cx="12" cy="13" r="3.2" />
+    </svg>
+  ),
+  (
+    <svg {...iconProps} key="seguridad">
+      <path d="M12 3l7 3.2v5.8c0 4.8-3 7.8-7 9-4-1.2-7-4.2-7-9V6.2L12 3z" />
+    </svg>
+  ),
+  (
+    <svg {...iconProps} key="recibir">
+      <path d="M4 5.5h16V16H9.5L4.5 19.5V16H4V5.5z" />
+      <line x1="8" y1="9.2" x2="16" y2="9.2" />
+      <line x1="8" y1="12.2" x2="13" y2="12.2" />
+    </svg>
+  ),
 ];
 
 interface ComoFuncionaFlowProps {

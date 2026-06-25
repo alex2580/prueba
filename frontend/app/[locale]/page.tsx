@@ -16,7 +16,7 @@ import { RegisterForm } from '@/components/auth/RegisterForm';
 import { OTPStep } from '@/components/auth/OTPStep';
 import { SiteHeader } from '@/components/ui/SiteHeader';
 import { ContactoForm } from '@/components/contacto/ContactoForm';
-import { ComoFuncionaFlow, PASOS_RESERVAR, PASOS_PUBLICAR } from '@/components/ui/ComoFuncionaFlow';
+import { ComoFuncionaFlow, ICONOS_RESERVAR, ICONOS_PUBLICAR, type Paso } from '@/components/ui/ComoFuncionaFlow';
 
 const MapaEspacios = dynamic(() => import('@/components/mapa/MapaEspacios').then(m => ({ default: m.MapaEspacios })), { ssr: false });
 const MarkerEspacioCard = dynamic(() => import('@/components/mapa/MarkerEspacio').then(m => ({ default: m.MarkerEspacioCard })), { ssr: false });
@@ -24,11 +24,14 @@ const MarkerEspacioCard = dynamic(() => import('@/components/mapa/MarkerEspacio'
 type Vista = 'mapa' | 'lista';
 
 interface FaqItem { q: string; a: string; }
+interface PasoTexto { titulo: string; desc: string; }
 
 export default function HomePage() {
   const t = useTranslations('home');
   const tc = useTranslations('comoFunciona');
   const FAQ = t.raw('faq') as FaqItem[];
+  const flowReservarPasos: Paso[] = (t.raw('flowReservarPasos') as PasoTexto[]).map((p, i) => ({ ...p, icon: ICONOS_RESERVAR[i] }));
+  const flowPublicarPasos: Paso[] = (t.raw('flowPublicarPasos') as PasoTexto[]).map((p, i) => ({ ...p, icon: ICONOS_PUBLICAR[i] }));
   const router = useRouter();
   const { user, token, loading: authLoading, login, register, logout, error: authError, isAdmin,
     otpPending, otpEmailHint, otpCanales, verifyOTP, reenviarOTP,
@@ -633,9 +636,9 @@ export default function HomePage() {
               />
             </div>
 
-            <ComoFuncionaFlow titulo="El flujo para hacer una reserva" pasos={PASOS_RESERVAR} />
+            <ComoFuncionaFlow titulo={t('flowReservarTitulo')} pasos={flowReservarPasos} />
 
-            <ComoFuncionaFlow titulo="El flujo para publicar tu espacio" pasos={PASOS_PUBLICAR} />
+            <ComoFuncionaFlow titulo={t('flowPublicarTitulo')} pasos={flowPublicarPasos} />
 
             {/* CTA publicar — debajo del flujo de publicación, arriba de las preguntas frecuentes */}
             <div style={{ textAlign: 'center', padding: '0 1.5rem 3rem' }}>

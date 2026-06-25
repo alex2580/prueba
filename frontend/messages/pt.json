@@ -55,6 +55,21 @@
       { "q": "Posso cancelar uma reserva se mudar de ideia?", "a": "Sim, com o botão \"Mudei de ideia\" você pode cancelar e devolvemos 100% do valor pago." },
       { "q": "Quanto custa publicar um espaço?", "a": "Publicar é 100% gratuito. TodasMisCosas.com cobra uma comissão de 15% somente quando uma reserva é concretizada. Se ninguém reservar, você não paga nada." },
       { "q": "O que faço se tiver um problema com o espaço ou com quem cuidou das minhas coisas?", "a": "Você pode nos contatar antes de confirmar o acesso, pela própria reserva. Enquanto não confirmar, o dinheiro continua retido em garantia e podemos intervir para resolver qualquer problema." }
+    ],
+    "flowReservarTitulo": "O fluxo para fazer uma reserva",
+    "flowReservarPasos": [
+      { "titulo": "Busca", "desc": "Filtra por região, preço e tipo até encontrar o espaço ideal." },
+      { "titulo": "Reserva", "desc": "Escolhe as datas e confirma a reserva em minutos." },
+      { "titulo": "Paga com segurança", "desc": "O dinheiro fica em garantia até você confirmar o acesso." },
+      { "titulo": "Coordena", "desc": "Conversa direto pelo chat com quem vai cuidar das suas coisas para acertar a entrada." },
+      { "titulo": "Confirma", "desc": "Acessa o espaço e nesse momento o pagamento é liberado — pronto." }
+    ],
+    "flowPublicarTitulo": "O fluxo para publicar seu espaço",
+    "flowPublicarPasos": [
+      { "titulo": "Publica", "desc": "Conta qual espaço você oferece, se é exclusivo ou compartilhado, e marca os dias disponíveis." },
+      { "titulo": "Envia fotos", "desc": "Adiciona até 5 fotos para mostrar o que você oferece." },
+      { "titulo": "Adiciona segurança", "desc": "Marca as medidas de segurança que seu espaço possui." },
+      { "titulo": "Recebe reservas", "desc": "Responde dúvidas e coordena o acesso quando alguém reservar." }
     ]
   },
   "comoFunciona": {
