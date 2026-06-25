@@ -10,7 +10,7 @@ const supabase = createClient(
 );
 
 const authCache = new Map();
-const CACHE_TTL = 5 * 60 * 1000;
+const CACHE_TTL = 30 * 1000;
 setInterval(() => {
   const now = Date.now();
   for (const [k, v] of authCache) if (v.expiresAt <= now) authCache.delete(k);
