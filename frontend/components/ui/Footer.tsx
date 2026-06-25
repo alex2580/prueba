@@ -41,10 +41,12 @@ export function Footer() {
 
   if (pathname === '/' && searchParams.get('vista') === 'mapa') return null;
 
-  // En mobile el footer solo tiene sentido en la home — en cualquier otra
-  // página le come espacio de pantalla a flujos donde importa más (reserva,
-  // publicación, panel, detalle de espacio, etc).
-  const ocultarEnMobile = pathname !== '/';
+  // En mobile el footer se muestra en la home y en páginas de contenido
+  // (cómo funciona, legales) — en el resto le come espacio de pantalla a
+  // flujos donde importa más (reserva, publicación, panel, detalle de
+  // espacio, etc). En tablet/desktop siempre se muestra (CSS).
+  const PAGINAS_CON_FOOTER_MOBILE = ['/', '/como-funciona', '/legales'];
+  const ocultarEnMobile = !PAGINAS_CON_FOOTER_MOBILE.includes(pathname);
 
   return (
     <footer className={`site-footer ${ocultarEnMobile ? 'site-footer--oculto-mobile' : ''}`}>
