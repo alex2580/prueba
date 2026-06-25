@@ -40,7 +40,7 @@ async function listar(req, res, next) {
       SELECT e.id, e.nombre, e.direccion, e.barrio, e.m2, e.tipo,
              e.precio_dia, e.precio_mes, e.descripcion,
              e.lat, e.lng, e.disponible, e.cupo_disponible, e.rating, e.reviews_count,
-             e.reservas_mes, e.badge, e.created_at, e.disponibilidad,
+             e.reservas_mes, e.badge, e.created_at, e.disponibilidad, e.fecha_vencimiento,
              u.nombre AS oferente_nombre, u.email AS oferente_email, u.tel AS oferente_tel,
              (SELECT url FROM espacio_fotos ef WHERE ef.espacio_id = e.id ORDER BY ef.orden LIMIT 1) AS img_principal
       FROM espacios e
@@ -122,8 +122,57 @@ async function listar(req, res, next) {
         if (!dias || !dias.length) return true;
         return diasPedidos.every(d => dias.includes(d));
       });
+    } else {
+      // Sin fechas elegidas por el visitante: igual hay que ocultar un espacio
+      // si no le queda NINGÚN día disponible entre hoy y el vencimiento de la
+      // publicación (90 días) — no importa que esté activo o con cupo abierto.
+      const hoy = new Date();
+      hoy.setHours(12, 0, 0, 0);
+
+      const idsExclusivos = espacios.filter(e => e.tipo !== 'compartido').map(e => e.id);
+      const reservasPorEspacio = {};
+      if (idsExclusivos.length) {
+        const reservas = await query(
+          `SELECT espacio_id, fecha_desde, fecha_hasta FROM reservas
+           WHERE espacio_id IN (${idsExclusivos.map(() => '?').join(',')})
+             AND estado IN ('pendiente','confirmada','pagada','activa')
+             AND fecha_hasta >= CURDATE()`,
+          idsExclusivos
+        );
+        for (const r of reservas) {
+          (reservasPorEspacio[r.espacio_id] ||= []).push(r);
+        }
+      }
+
+      espacios = espacios.filter(e => {
+        if (!e.fecha_vencimiento) return true; // sin vencimiento configurado, no se puede acotar
+        const vencimiento = new Date(`${String(e.fecha_vencimiento).slice(0, 10)}T12:00:00`);
+        if (vencimiento < hoy) return false;
+
+        let diasConfigurados = null;
+        if (e.disponibilidad) {
+          try { diasConfigurados = JSON.parse(e.disponibilidad).dias; } catch (_) { diasConfigurados = null; }
+        }
+        const reservasEspacio = reservasPorEspacio[e.id] || [];
+
+        const cur = new Date(hoy);
+        while (cur <= vencimiento) {
+          const dStr = `${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, '0')}-${String(cur.getDate()).padStart(2, '0')}`;
+          const permitidoPorConfig = !diasConfigurados || !diasConfigurados.length || diasConfigurados.includes(dStr);
+          if (permitidoPorConfig) {
+            const bloqueadoPorReserva = e.tipo !== 'compartido' && reservasEspacio.some(r => {
+              const desde = String(r.fecha_desde).slice(0, 10);
+              const hasta = String(r.fecha_hasta).slice(0, 10);
+              return dStr >= desde && dStr <= hasta;
+            });
+            if (!bloqueadoPorReserva) return true; // encontró al menos un día libre
+          }
+          cur.setDate(cur.getDate() + 1);
+        }
+        return false; // ningún día libre en todo lo que queda de vigencia
+      });
     }
-    espacios.forEach(e => { delete e.disponibilidad; });
+    espacios.forEach(e => { delete e.disponibilidad; delete e.fecha_vencimiento; });
 
     // Build full foto arrays
     const ids = espacios.map(e => e.id);
