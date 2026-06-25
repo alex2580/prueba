@@ -81,7 +81,7 @@ frontend/
 
 ## Migraciones DB pendientes (Guille debe correr en VPS)
 
-> Sin migraciones pendientes al 24 jun 2026.
+> **Pendiente (25 jun 2026):** `add-retencion-chat.js` — agrega columnas `archivado_at`/`purgar_after` a `conversaciones`, cambia FKs de CASCADE a RESTRICT, y backfill de chats ya cerrados. Guille debe correr: `node backend/src/db/add-retencion-chat.js`
 
 > Corridas en prod: `add-consultas-espacio.js`, `fix-consultas-charset.js` (7 jun), `add-movimientos-ledger.js`, `add-eliminado-por-oferente.js` (8 jun), `fix-consultas-espacio-id-type.js` (20 jun — corrida directo por Claude, no por Guille, vía acceso DB local).
 

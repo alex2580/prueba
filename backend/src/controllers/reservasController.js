@@ -4,6 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 const emailService = require('../services/emailService');
 const mercadopagoService = require('../services/mercadopagoService');
 const ledgerService = require('../services/ledgerService');
+const { archivarConversacion } = require('./chatController');
 
 function expandirRango(fechaDesde, fechaHasta) {
   const dias = [];
@@ -558,6 +559,9 @@ async function confirmarAcceso(req, res, next) {
       `UPDATE reservas SET escrow_liberado = 1, escrow_liberado_at = NOW() WHERE id = ?`,
       [reserva.id]
     );
+
+    archivarConversacion(reserva.espacio_id, reserva.usuario_id)
+      .catch(e => console.warn('Chat archivar:', e.message));
 
     // Registro contable: tmc.escrow → proveedor (85%) + tmc.comision (15%)
     ledgerService.registrarLiberacion(

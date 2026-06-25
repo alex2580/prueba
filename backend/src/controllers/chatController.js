@@ -292,6 +292,15 @@ function setupSocketHandlers(io) {
   });
 }
 
+async function archivarConversacion(espacio_id, demandante_id) {
+  await query(
+    `UPDATE conversaciones
+     SET archivado_at = NOW(), purgar_after = DATE_ADD(NOW(), INTERVAL 6 MONTH)
+     WHERE espacio_id = ? AND demandante_id = ? AND archivado_at IS NULL`,
+    [espacio_id, demandante_id]
+  );
+}
+
 module.exports = {
   listarConversacionesAdmin,
   listarConversaciones,
@@ -299,4 +308,5 @@ module.exports = {
   iniciarConversacion,
   enviarMensaje,
   setupSocketHandlers,
+  archivarConversacion,
 };

@@ -28,6 +28,7 @@ async function procesarEscrowAutorelease() {
 
   const emailService  = require('../services/emailService');
   const ledgerService = require('../services/ledgerService');
+  const { archivarConversacion } = require('../controllers/chatController');
   const adminEmail    = process.env.ADMIN_EMAILS || 'contacto@todasmiscosas.com';
 
   for (const reserva of reservas) {
@@ -36,6 +37,9 @@ async function procesarEscrowAutorelease() {
         `UPDATE reservas SET escrow_liberado = 1, escrow_liberado_at = NOW() WHERE id = ?`,
         [reserva.id]
       );
+
+      archivarConversacion(reserva.espacio_id, reserva.usuario_id)
+        .catch(e => console.warn(`[escrow] Chat archivar reserva ${reserva.id}:`, e.message));
 
       // Registro contable: tmc.escrow → proveedor (85%) + tmc.comision (15%)
       // (mismo movimiento que confirmarAcceso, acá disparado por el cron en vez del cliente)
