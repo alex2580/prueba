@@ -81,7 +81,7 @@ frontend/
 
 ## Migraciones DB pendientes (Guille debe correr en VPS)
 
-> Sin migraciones pendientes al 22 jun 2026.
+> Sin migraciones pendientes al 24 jun 2026.
 
 > Corridas en prod: `add-consultas-espacio.js`, `fix-consultas-charset.js` (7 jun), `add-movimientos-ledger.js`, `add-eliminado-por-oferente.js` (8 jun), `fix-consultas-espacio-id-type.js` (20 jun — corrida directo por Claude, no por Guille, vía acceso DB local).
 
@@ -103,5 +103,8 @@ frontend/
 - **Consultas públicas**: `consultas_espacio` tiene collation `utf8mb4_unicode_ci` distinto a `espacios` (`utf8mb4_0900_ai_ci`). NUNCA usar JOIN entre ellas — siempre dos queries separadas y merge en JS. Ver `consultasEspacioController.js`.
 - **CI/CD deploy**: self-hosted runner instalado en VPS (`/opt/github-runner`). El runner conecta OUT a GitHub. Ver `.github/workflows/deploy.yml`.
 - **Vigencia de publicaciones**: 90 días corridos desde la creación (`fecha_vencimiento`). Tocar en `espaciosController.js`, `server.js`, `add-vencimiento-espacios.js`, `CalendarioDisponibilidad.tsx`, `reservar/page.tsx`, `emailService.js`, `legales/page.tsx`, `publicar/page.tsx`, `messages/es.json` + `pt.json` si cambia de nuevo.
-- **Calendarios** (publicar/editar/reservar): `numberOfMonths={2}` + flechas nativas de react-multi-date-picker. NO usar `currentDate` para forzar mes ni armar un carrusel propio — la librería calcula mal el offset de transición y desborda el layout.
+- **Calendarios** (publicar/editar/reservar): `numberOfMonths` responsive — 1 en mobile (`≤640px`), 2 en desktop, vía `useState` + listener de `resize` (arranca en 2, igual que SSR, se ajusta post-montaje para no generar hydration mismatch). 2 meses fijos desbordan ~430px en mobile y se llevan el botón "Continuar" fuera del viewport. Flechas nativas de react-multi-date-picker. NO usar `currentDate` para forzar mes ni armar un carrusel propio — la librería calcula mal el offset de transición y desborda el layout.
 - **Grid de tarjetas en la home**: posicionamiento explícito (`gridRow`/`gridColumn` inline) para llenar fila 1 completa antes de fila 2 — el auto-placement de CSS Grid con `grid-auto-flow: column` no lo permite por reordenamiento de array.
+- **Footer en mobile**: visible solo en `/`, `/como-funciona` y `/legales` — oculto en el resto (reserva, publicación, panel, detalle de espacio) donde el espacio de pantalla importa más. En tablet/desktop siempre visible. Ver `components/ui/Footer.tsx`.
+- **Disponibilidad de espacios (home + filtro Ingreso/Salida)**: un espacio se muestra si tiene **al menos un día libre** en el rango relevante — nunca se exige que el rango entero esté libre. "Libre" = permitido por `disponibilidad.dias` (si está configurada) y, para exclusivos, sin reserva activa ese día. Mismo criterio con o sin fechas elegidas por el visitante (sin fechas, el rango relevante es [hoy, `fecha_vencimiento`]). Ver `espaciosController.js` función `listar`.
+- **i18n de `/legales`**: la página no usa next-intl por string — está separada en `ContenidoES()` y `ContenidoPT()` (mismo archivo, mismos anchors `#disputas`/`#danos`/`#politica-privacidad`), elegida según `useLocale()`. Si se edita el texto legal en español, el portugués NO se actualiza solo — hay que tocar `ContenidoPT()` a mano.

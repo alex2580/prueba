@@ -774,6 +774,54 @@ Solo funciona si `inactiva_auto = 1`. Si alguien intenta reactivar un espacio qu
 
 ---
 
+## 24 de Junio 2026 — v1.15.0
+
+Sesión larga centrada en **bugs reales de mobile** (footer, calendario, filtros, OTP), un **bug de datos** en el filtro de fechas Ingreso/Salida, **traducción completa a portugués** (cómo funciona, FAQ, legales, flujos sintéticos), y **5 documentos nuevos** en `docs/DATA-IMPORTANTE/`.
+
+### 📄 Documentación viva — 5 docs nuevos
+
+Agregados e indexados en `docs/DATA-IMPORTANTE/INDEX.html`: referencia de comandos de Claude Code (built-in + skills + comandos personalizados del proyecto), snapshot de stack/arquitectura actual generado desde el propio Claude Code, análisis de escalado ("hoy vs. recomendaciones a futuro" para el escenario de 1000 publicaciones), pitch para inversores con gancho y cierre basado en la funcionalidad real, y guion de video de 90 segundos con 7 visuales generados con la IA de Canva. **Commits:** `a42bf24`…`13748fe`
+
+### 🦶 Footer — reglas finales en mobile
+
+Oculto en `/publicar`, `/panel`, `/reserva/*` y `/espacio/*` (incluye `/reservar`) — le comía espacio de pantalla a flujos donde importa más. Reactivado en `/como-funciona` y `/legales`, páginas de contenido donde sí tiene sentido. En tablet/desktop siempre visible (sin cambios ahí). **Commits:** `91cff91`, `7c9a02a`
+
+### 🐛 Espacios sin días libres — ahora se ocultan siempre
+
+Antes el chequeo de disponibilidad real solo corría al buscar con fechas explícitas. Ahora, incluso navegando sin elegir fechas, un espacio desaparece de la home y del mapa si no le queda **ningún día libre** entre hoy y su `fecha_vencimiento` (90 días) — no importa que esté activo y con cupo abierto. Si el proveedor edita la publicación y habilita un día, vuelve a aparecer solo. **Commit:** `71dc559`
+
+### 🐛 Bug real: filtro Ingreso/Salida exigía el rango entero libre
+
+Reportado: buscar 1 ago–18 sep no traía ninguna publicación pese a haber espacios con bastante disponibilidad. Causa: tanto el SQL (excluía un exclusivo con *cualquier* reserva que se solapara) como el filtro de `disponibilidad.dias` (exigía que *todos* los días pedidos coincidieran) implementaban "el rango entero tiene que estar libre" — un rango de 49 días quedaba excluido con un solo día ocupado adentro. Unificado con la misma lógica de "al menos un día libre" del punto anterior. Lista y mapa comparten el mismo array de datos, así que un único fix corrige ambos. Validado con 14 casos sintéticos. **Commit:** `9516f70`
+
+### 🐛 Calendario (reservar + publicar/editar) desbordaba en mobile
+
+`numberOfMonths=2` fuerza un ancho real de render >400px (cada mes tiene su propio mínimo de contenido); la tarjeta contenedora no tiene ancho fijo, así que crecía con él y el botón "Continuar" terminaba fuera del viewport, sin scroll posible para alcanzarlo — confirmado con una réplica exacta de la estructura real (429.59px de calendario en un viewport de 390px). Fix: `numberOfMonths` responsive (1 mes en mobile ≤640px, 2 en desktop) vía estado + listener de resize, sin tocar la navegación nativa de la librería. **Commit:** `1a872f9`
+
+### 🐛 Filtros de la home no se podían deslizar en mobile
+
+El slider de precio inline capturaba cualquier swipe que empezara sobre él — un conflicto clásico de touch entre un `<input type="range">` y su contenedor scrolleable. Confirmado con eventos táctiles reales (CDP `Input.dispatchTouchEvent`): swipe lejos del slider sí scrolleaba, swipe sobre el slider no. En mobile se reemplaza por un botón que abre el mismo popover que ya usa la pastilla del header colapsado — un tap simple sigue ajustando el precio. **Commit:** `6d260e8`
+
+### 🐛 Código OTP desbordaba el modal en celulares chicos
+
+Las 6 cajas de 46px + separación fija necesitaban 316px; en mobile el modal pasa a bottom-sheet a `width:100%` y con el padding solo quedaban 270-312px disponibles en pantallas de ~320-360px. Se agregan breakpoints que achican cajas y separación, verificado sin overflow entre 320px y 414px de ancho. **Commit:** `7b1c7b8`
+
+### 🎨 Grid de tarjetas — scrollbar oculta y flechas destacadas
+
+La barra de scroll horizontal debajo de la fila 2 quedaba fea — oculta sin afectar el scroll real. Las flechas de navegación pasaban desapercibidas (borde fino blanco sobre blanco, 38px) → círculo naranja sólido de 44px con sombra y hover. **Commit:** `34f01f3`
+
+### 🌐 Portugués — cómo funciona, FAQ, legales y flujos sintéticos
+
+`comoFunciona.pasosReservar` en `pt.json` tenía solo 4 de los 5 pasos del español, y contenido desactualizado (sin mención de servicios adicionales, depósito en garantía, chat, PIN) — completado. La FAQ de la home estaba hardcodeada en español directo en el código, sin pasar por next-intl — extraída a `home.faq` en ambos idiomas. `/legales` (17 secciones de Términos + 10 de Política de Privacidad) no tenía ningún soporte de idioma — separado en `ContenidoES()` (el JSX existente, intacto) y `ContenidoPT()` (traducción completa nueva), elegidos según el locale, cero riesgo sobre el texto legal ya en producción. Los dos flujos visuales cortos de la home ("El flujo para hacer una reserva/publicar tu espacio") también se tradujeron, separando los íconos (quedan en el componente) de los textos (pasan a las traducciones). Verificado en builds de producción reales en ambos idiomas. **Commits:** `f19327d`, `0fc632e`
+
+⚠️ Traducción al portugués hecha por IA — recomendado que alguien la revise antes de darla por definitiva, especialmente el texto legal.
+
+### Otros
+
+FAQ de la home: se simplificó la respuesta de cancelación, quitando "siempre antes de coordinar el acceso..." (la condición real ya está en `/legales`). **Commit:** `21e3fbd`
+
+---
+
 ## 23 de Junio 2026 (Noche) — v1.14.0
 
 Sesión nocturna centrada en un bug real reportado del **mini-menú de búsqueda** (terminó siendo dos bugs distintos) y, a pedido, una **auditoría completa del flujo de escrow** que encontró y corrigió 3 problemas reales con plata de por medio.

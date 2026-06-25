@@ -199,7 +199,7 @@
   <div class="cover-sub">Documentación Técnica Completa</div>
   <div style="font-size:10pt;color:#888;margin-bottom:28px;">Marketplace de almacenamiento urbano — Buenos Aires</div>
   <div class="cover-meta">
-    <b>Versión:</b> 1.12.0 — 22 de Junio 2026<br>
+    <b>Versión:</b> 1.15.0 — 24 de Junio 2026<br>
     <b>URL producción:</b> https://todasmiscosas.com<br>
     <b>Repositorio:</b> github.com/alex2580/prueba (privado)<br>
     <b>Autores:</b> Alejandro Laporte · Guillermo Domínguez<br>
@@ -1400,6 +1400,121 @@ curl http://localhost:4000/health</pre>
   </tr>
 </table>
 <p>Detalle completo en <code>docs/snapshot-v1.12.0-22jun2026.md</code>.</p>
+
+<h2>Cambios v1.15.0 — 24 junio 2026</h2>
+<table>
+  <tr><th>Área</th><th>Cambio</th><th>Commits</th></tr>
+  <tr>
+    <td>Documentación viva — 5 docs nuevos</td>
+    <td>Agregados a <code>docs/DATA-IMPORTANTE/</code> e indexados: referencia de comandos de Claude Code, snapshot de stack/arquitectura actual, análisis de escalado (hoy vs. recomendaciones a 1000 publicaciones), pitch para inversores, y guion de video de 90s con 7 visuales generados en Canva.</td>
+    <td><code>a42bf24</code>…<code>13748fe</code></td>
+  </tr>
+  <tr>
+    <td>Footer — reglas finales en mobile</td>
+    <td>Oculto en <code>/publicar</code>, <code>/panel</code>, <code>/reserva/*</code>, <code>/espacio/*</code> (incluye <code>/reservar</code>) — le comía espacio de pantalla a flujos críticos. Reactivado en <code>/como-funciona</code> y <code>/legales</code> (páginas de contenido). En tablet/desktop siempre visible.</td>
+    <td><code>91cff91</code>, <code>7c9a02a</code></td>
+  </tr>
+  <tr>
+    <td>Espacios — ocultos sin días libres en su vigencia</td>
+    <td>Antes solo se chequeaba disponibilidad real al buscar con fechas explícitas. Ahora, incluso navegando sin fechas, un espacio desaparece de la home/mapa si no le queda ningún día libre entre hoy y su <code>fecha_vencimiento</code> (90 días) — no importa que esté activo y con cupo.</td>
+    <td><code>71dc559</code></td>
+  </tr>
+  <tr>
+    <td>Filtro Ingreso/Salida — bug real corregido</td>
+    <td>Tanto el SQL (excluía un exclusivo con cualquier reserva que se solapara) como el filtro de <code>disponibilidad.dias</code> (exigían que TODOS los días pedidos coincidieran) implementaban "rango entero libre". Un rango amplio (ej. 1 ago–18 sep) quedaba en 0 resultados con un solo día ocupado adentro. Unificado a "al menos un día libre" en el rango, mismo criterio que el caso sin fechas. Lista y mapa comparten el mismo fix (mismo array de datos).</td>
+    <td><code>9516f70</code></td>
+  </tr>
+  <tr>
+    <td>Calendario (reservar + publicar/editar) — desborde en mobile</td>
+    <td><code>numberOfMonths=2</code> fuerza un ancho de render &gt;400px; la tarjeta contenedora sin ancho fijo crecía con él y el botón "Continuar" terminaba fuera del viewport, sin scroll posible para alcanzarlo. Fix: <code>numberOfMonths</code> responsive (1 en mobile ≤640px, 2 en desktop) vía estado + listener de resize, sin tocar la navegación nativa de la librería.</td>
+    <td><code>1a872f9</code></td>
+  </tr>
+  <tr>
+    <td>Filtros de la home — no se podían deslizar en mobile</td>
+    <td>El slider de precio inline capturaba cualquier swipe que empezara sobre él (conflicto touch nativo de <code>&lt;input type="range"&gt;</code> vs. contenedor scrolleable), confirmado con eventos táctiles reales (CDP). En mobile se reemplaza por un botón que abre el mismo popover que ya usa la pastilla del header colapsado.</td>
+    <td><code>6d260e8</code></td>
+  </tr>
+  <tr>
+    <td>OTP — código de 6 dígitos desbordaba el modal</td>
+    <td>Cajas fijas de 46px + separación no entraban en el modal-bottom-sheet de mobile (~320-360px). Breakpoints responsivos (40px/34px) agregados, verificado sin overflow entre 320 y 414px de ancho.</td>
+    <td><code>7b1c7b8</code></td>
+  </tr>
+  <tr>
+    <td>Grid de tarjetas — scrollbar y flechas</td>
+    <td>Scrollbar horizontal fea debajo de la fila 2 ocultada (<code>scrollbar-width:none</code>); flechas de navegación pasaban desapercibidas (borde fino blanco sobre blanco, 38px) → círculo naranja sólido de 44px con sombra y hover.</td>
+    <td><code>34f01f3</code></td>
+  </tr>
+  <tr>
+    <td>Portugués — cómo funciona, FAQ, legales y flujos sintéticos</td>
+    <td><code>comoFunciona.pasosReservar</code> (pt.json) le faltaba el 5to paso y tenía contenido desactualizado — completado. FAQ de la home estaba hardcodeada en español sin pasar por next-intl — extraída a <code>home.faq</code> en ambos idiomas. <code>/legales</code> (27 secciones: 17 Términos + 10 Privacidad) no tenía ningún soporte de idioma — separado en <code>ContenidoES()</code> (intacto) y <code>ContenidoPT()</code> (traducción completa nueva) elegidos por locale. Los dos flujos visuales cortos de la home también traducidos (íconos separados de textos en <code>ComoFuncionaFlow.tsx</code>).</td>
+    <td><code>f19327d</code>, <code>0fc632e</code></td>
+  </tr>
+  <tr>
+    <td>FAQ — texto de cancelación simplificado</td>
+    <td>Se quitó "siempre antes de coordinar el acceso..." — la condición real ya está documentada en <code>/legales</code>.</td>
+    <td><code>21e3fbd</code></td>
+  </tr>
+</table>
+
+<h2>Cambios v1.14.0 — 23 junio 2026 (noche)</h2>
+<table>
+  <tr><th>Área</th><th>Cambio</th><th>Commits</th></tr>
+  <tr>
+    <td>Mini-menú de búsqueda — dos bugs encadenados</td>
+    <td>(1) Hydration mismatch: <code>useState</code> de filtros/vista/búsqueda leía <code>window.location.search</code> en el inicializador — servidor y cliente armaban árboles distintos si la URL tenía query params, React tiraba todo el árbol (errores #418/#423). Fix: estados arrancan en default, <code>useEffect</code> post-montaje aplica la URL real. (2) Superposición visual: <code>.site-header</code> y <code>.list-search-header</code> son ambos <code>position:sticky; top:0</code> — el primero (z-index 100) tapaba al segundo. Fix: <code>top:68px</code> (60px mobile).</td>
+    <td><code>5d8a0c7</code>, <code>829a7ad</code></td>
+  </tr>
+  <tr>
+    <td>Auditoría completa del flujo de escrow — 3 fixes con plata real</td>
+    <td>(1) El cron de auto-liberación 48hs no registraba el movimiento contable en <code>movimientos_ledger</code> (saldo de escrow mal calculado para el admin). (2) Cancelar una reserva pagada solo actualizaba un asiento contable interno — la plata real en MercadoPago nunca se devolvía sola. Se agrega <code>mercadopagoService.reembolsarPago()</code> (reembolso real vía API) + guard para no reembolsar si el escrow ya se liberó + alerta al admin si MP rechaza el reembolso. (3) Race condition real entre el webhook de MP y <code>/sincronizar</code>: <code>UPDATE</code> ahora con <code>AND estado != 'pagada'</code> para que solo uno de los dos procese el pago.</td>
+    <td><code>cc6dcb1</code>, <code>31105ea</code>, <code>66141be</code></td>
+  </tr>
+  <tr>
+    <td>Legales — reembolso automático y penalidades</td>
+    <td>Secciones 7 y 12 ahora describen el reembolso por arrepentimiento como explícitamente automático vía MercadoPago. Las penalidades por cancelación tardía pasan a quedar a criterio exclusivo de TMC (antes prometían un monto fijo que el código nunca calculó).</td>
+    <td><code>08132e2</code>, <code>d9e73f8</code></td>
+  </tr>
+  <tr>
+    <td>Investigación — KYC/RENAPER para verificar proveedores</td>
+    <td>Comparados Didit (pricing público, $0.20/consulta, 500 gratis/mes), MetaMap (especialista LatAm), Truora (descartado, no cubre Argentina) y KYC-Chain (solo Enterprise). Sin implementar — decisión pendiente del usuario.</td>
+    <td>—</td>
+  </tr>
+</table>
+
+<h2>Cambios v1.13.0 — 23 junio 2026</h2>
+<table>
+  <tr><th>Área</th><th>Cambio</th><th>Commits</th></tr>
+  <tr>
+    <td>Footer global + páginas nuevas</td>
+    <td>Footer estándar (Empresa/Soporte/Legal) en todas las páginas vía layout raíz. Nuevas <code>/sobre-nosotros</code> y <code>/contacto</code>. Fix footer "anclado" al scroll hacia arriba: la vista lista pasó de <code>height:100vh</code> + scroll interno a fluir con el scroll natural del body.</td>
+    <td><code>cfaff56</code>, <code>5f9ce12</code></td>
+  </tr>
+  <tr>
+    <td>Dos flujos visuales "¿Cómo funciona?" en la home</td>
+    <td><code>ComoFuncionaFlow.tsx</code> reutilizable (<code>titulo</code> + <code>pasos</code>), usado para "El flujo para hacer una reserva" (5 pasos) y "El flujo para publicar tu espacio" (4 pasos).</td>
+    <td><code>d9e1e19</code>, <code>3e06d53</code></td>
+  </tr>
+  <tr>
+    <td>Fix — grid de tarjetas con espacio vacío al filtrar</td>
+    <td><code>grid-template-rows: repeat(2,1fr)</code> forzaba que la fila 2 tomara la misma altura que la fila 1 aunque estuviera vacía. Cambiado a <code>repeat(2,auto)</code>.</td>
+    <td><code>8f90e9a</code></td>
+  </tr>
+  <tr>
+    <td>TMC intermediario, no aseguradora + derecho al olvido</td>
+    <td>Aclarado en <code>/servicios</code>, paso 2 de reserva, y nueva cláusula en <code>/legales</code> (sección 9). Derecho al olvido/eliminación de cuenta agregado en sección 8, gestionado solo vía formulario de Contacto.</td>
+    <td><code>eaee4c3</code>, <code>a81fccd</code></td>
+  </tr>
+  <tr>
+    <td>Terminología FAQ + filtro de precio</td>
+    <td>"proveedor" → "quien cuidará tus cosas" en el FAQ. Slider de precio ensanchado (80px→180px) y accesible desde la pastilla compacta al colapsar el header.</td>
+    <td><code>4df85e2</code>, <code>f54a9a9</code>, <code>68b25f3</code></td>
+  </tr>
+  <tr>
+    <td>Documentación</td>
+    <td>Evaluado <code>cartesiancs/map3d</code> (MIT) como reemplazo de Google Maps — descartado, no cubre Maps JS API + Places Autocomplete + Geocoding.</td>
+    <td><code>dd2fa94</code></td>
+  </tr>
+</table>
 
 <h2>Cambios v1.11.1 — 12 junio 2026</h2>
 <table>
