@@ -135,6 +135,19 @@ export default function ReservarPage() {
   const [step1Error, setStep1Error] = useState('');
   const [fechasOcupadas, setFechasOcupadas] = useState<string[]>([]);
 
+  // 2 meses lado a lado no entran en pantallas chicas (el calendario fuerza
+  // un ancho real >400px, y la tarjeta contenedora no tiene ancho fijo, así
+  // que crece con él y se lleva puesto al botón "Continuar" fuera de la
+  // pantalla). Arranca en 2 (igual que SSR) y se ajusta recién después de
+  // montar, para no generar un hydration mismatch.
+  const [numMeses, setNumMeses] = useState(2);
+  useEffect(() => {
+    function actualizarNumMeses() { setNumMeses(window.innerWidth <= 640 ? 1 : 2); }
+    actualizarNumMeses();
+    window.addEventListener('resize', actualizarNumMeses);
+    return () => window.removeEventListener('resize', actualizarNumMeses);
+  }, []);
+
   // Step 2 state
   const [servicios, setServicios] = useState<ServicioTipo[]>([]);
 
@@ -407,7 +420,7 @@ export default function ReservarPage() {
                           setDiasMulti(expandRanges(next));
                           setStep1Error('');
                         }}
-                        numberOfMonths={2}
+                        numberOfMonths={numMeses}
                         minDate={new Date()}
                         maxDate={new Date(maxDateFinal + 'T12:00:00')}
                         weekDays={SEMANA}

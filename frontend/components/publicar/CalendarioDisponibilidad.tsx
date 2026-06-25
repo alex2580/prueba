@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Calendar } from 'react-multi-date-picker';
 
 const DIAS_VIGENCIA = 90;
@@ -53,6 +53,17 @@ function groupToRanges(days: string[]): Date[][] {
 
 export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) {
   const [rangesValue, setRangesValue] = useState<any[]>(() => groupToRanges(value.dias || []));
+
+  // 2 meses lado a lado no entran en pantallas chicas — ver el mismo fix en
+  // /espacio/[id]/reservar. Arranca en 2 (igual que SSR) y se ajusta recién
+  // después de montar, para no generar un hydration mismatch.
+  const [numMeses, setNumMeses] = useState(2);
+  useEffect(() => {
+    function actualizarNumMeses() { setNumMeses(window.innerWidth <= 640 ? 1 : 2); }
+    actualizarNumMeses();
+    window.addEventListener('resize', actualizarNumMeses);
+    return () => window.removeEventListener('resize', actualizarNumMeses);
+  }, []);
 
   if (!precioDia) return null;
 
@@ -114,7 +125,7 @@ export function CalendarioDisponibilidad({ precioDia, value, onChange }: Props) 
           range
           value={rangesValue}
           onChange={handleChange}
-          numberOfMonths={2}
+          numberOfMonths={numMeses}
           minDate={hoy}
           maxDate={maxDate}
           weekDays={SEMANA}

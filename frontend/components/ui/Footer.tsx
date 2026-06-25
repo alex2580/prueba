@@ -41,12 +41,10 @@ export function Footer() {
 
   if (pathname === '/' && searchParams.get('vista') === 'mapa') return null;
 
-  // Flujos de reserva, publicación y edición (modal en /panel) — sin footer
-  // en mobile, donde el espacio de pantalla es más crítico para el flujo.
-  const ocultarEnMobile = pathname === '/publicar'
-    || pathname === '/panel'
-    || pathname.startsWith('/reserva')
-    || pathname.endsWith('/reservar');
+  // En mobile el footer solo tiene sentido en la home — en cualquier otra
+  // página le come espacio de pantalla a flujos donde importa más (reserva,
+  // publicación, panel, detalle de espacio, etc).
+  const ocultarEnMobile = pathname !== '/';
 
   return (
     <footer className={`site-footer ${ocultarEnMobile ? 'site-footer--oculto-mobile' : ''}`}>
