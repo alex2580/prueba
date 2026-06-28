@@ -1,6 +1,13 @@
 require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
 const { pool } = require('./connection');
 
+// Emails de las cuentas admin que se conservan tras el reset
+const KEEP_EMAILS = [
+  'alejandro.laporte@gmail.com',
+  'guilleadominguez@gmail.com',
+  'admin@todasmiscosas.com',
+];
+
 async function run() {
   const conn = await pool.getConnection();
   try {
@@ -26,10 +33,12 @@ async function run() {
       'auth_otp',
       'perfil_otp',
       'auth_sesiones',
-      // Admin y auditoría
+      // Admin, campañas y auditoría
       'admin_notificaciones',
       'admin_consultas',
       'admin_solicitudes_puntuacion',
+      'admin_campanas',
+      'mailing_campanas',
       'mailing_log',
       'auditoria_perfil',
     ];
@@ -46,6 +55,14 @@ async function run() {
         }
       }
     }
+
+    // Eliminar usuarios no-admin (conservar solo Ale, Guille y admin@)
+    const placeholders = KEEP_EMAILS.map(() => '?').join(', ');
+    const [result] = await conn.execute(
+      `DELETE FROM usuarios WHERE email NOT IN (${placeholders})`,
+      KEEP_EMAILS
+    );
+    console.log(`✅ usuarios — ${result.affectedRows} cuenta(s) de prueba eliminadas (admins conservados)`);
 
     await conn.execute('SET FOREIGN_KEY_CHECKS = 1');
     console.log('\n🎉 Base de datos lista para pruebas desde cero.');
