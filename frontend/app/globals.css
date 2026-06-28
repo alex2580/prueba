@@ -955,8 +955,9 @@ select.filter-pill {
   .list-search-row { flex-wrap: wrap; }
   .search-bar-wrap { max-width: 100%; }
 
-  /* Filter pills — tighter on mobile */
-  .filter-pills-bar { padding: .5rem 1rem; gap: .4rem; }
+  /* Filter pills — tighter on mobile. justify-content: flex-start para que
+     el scroll empiece desde País (center con overflow clipea la izquierda). */
+  .filter-pills-bar { padding: .5rem 1rem; gap: .4rem; justify-content: flex-start; }
   .filter-pill { padding: .38rem .75rem; font-size: .78rem; }
   select.filter-pill { min-width: 120px; max-width: 160px; flex-shrink: 0; }
 

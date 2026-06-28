@@ -568,6 +568,9 @@ export default function ReservarPage() {
               {/* ──── STEP 3: Auth + Pago ──── */}
               {step === 3 && (
                 <div style={{ display: 'grid', gap: '1.4rem' }}>
+                  <button className="btn-secondary" style={{ justifySelf: 'start' }} onClick={() => setStep(2)}>
+                    ← Atrás
+                  </button>
                   {!user ? (
                     /* Not logged in: show auth or OTP */
                     <div>
@@ -741,11 +744,8 @@ export default function ReservarPage() {
                   )}
 
                   <div style={{ display: 'flex', gap: '.6rem' }}>
-                    <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setStep(2)}>
-                      ← Volver
-                    </button>
                     <button className="btn-secondary" style={{ flex: 1 }} onClick={() => router.push(`/espacio/${espacioId}`)}>
-                      Cancelar
+                      Cancelar reserva
                     </button>
                   </div>
 
