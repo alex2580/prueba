@@ -5,7 +5,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader } from '@googlemaps/js-api-loader';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { useReservas } from '@/hooks/useReservas';
 import { espaciosAPI, reservasAPI, usuariosAPI, reviewsAPI, favoritosAPI, chatAPI } from '@/lib/api';
 import { useConversaciones } from '@/hooks/useChat';

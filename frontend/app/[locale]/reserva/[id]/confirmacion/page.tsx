@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { pagosAPI } from '@/lib/api';
 import { parseMPReturnParams, formatARS } from '@/lib/mercadopago';
 import { Button } from '@/components/ui/Button';

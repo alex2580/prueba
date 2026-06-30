@@ -6,7 +6,7 @@ import { useRouter } from '@/navigation';
 import dynamic from 'next/dynamic';
 import type { Espacio, EspacioTipo } from '@/types';
 import { useEspacios } from '@/hooks/useEspacios';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { GridEspacios } from '@/components/espacios/GridEspacios';
 import { FiltrosEspacios } from '@/components/espacios/FiltrosEspacios';
 import { FiltroFechas } from '@/components/espacios/FiltroFechas';

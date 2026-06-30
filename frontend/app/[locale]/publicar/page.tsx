@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader } from '@googlemaps/js-api-loader';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { espaciosAPI, emailAPI } from '@/lib/api';
 import { Button } from '@/components/ui/Button';
 import { LoginForm } from '@/components/auth/LoginForm';

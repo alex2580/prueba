@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { reservasAPI } from '@/lib/api';
 import type { Reserva } from '@/types';
 import { EstadoReserva } from '@/components/reservas/EstadoReserva';

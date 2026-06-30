@@ -29,7 +29,9 @@ const INITIAL: AuthState = {
   emailConfirmPending: false, emailConfirmEmail: '',
 };
 
-export function useAuth() {
+export type AuthPublic = ReturnType<typeof useAuthState>;
+
+export function useAuthState() {
   const [state, setState] = useState<AuthState>(INITIAL);
   // Ref para saber si el load fue disparado post-OTP (no auto-load)
   const otpFlowRef = useRef(false);

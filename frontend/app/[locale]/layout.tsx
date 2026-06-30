@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { Footer } from '@/components/ui/Footer';
+import { AuthProvider } from '@/contexts/AuthContext';
 import '../globals.css';
 
 const locales = ['es', 'pt'] as const;
@@ -49,8 +50,10 @@ export default async function LocaleLayout({ children, params: { locale } }: Pro
       </head>
       <body>
         <NextIntlClientProvider messages={messages}>
-          {children}
-          <Footer />
+          <AuthProvider>
+            {children}
+            <Footer />
+          </AuthProvider>
         </NextIntlClientProvider>
       </body>
     </html>
