@@ -199,7 +199,7 @@
   <div class="cover-sub">Documentación Técnica Completa</div>
   <div style="font-size:10pt;color:#888;margin-bottom:28px;">Marketplace de almacenamiento urbano — Buenos Aires</div>
   <div class="cover-meta">
-    <b>Versión:</b> 1.15.0 — 24 de Junio 2026<br>
+    <b>Versión:</b> 1.16.0 — 30 de Junio 2026<br>
     <b>URL producción:</b> https://todasmiscosas.com<br>
     <b>Repositorio:</b> github.com/alex2580/prueba (privado)<br>
     <b>Autores:</b> Alejandro Laporte · Guillermo Domínguez<br>
@@ -1401,6 +1401,19 @@ curl http://localhost:4000/health</pre>
 </table>
 <p>Detalle completo en <code>docs/snapshot-v1.12.0-22jun2026.md</code>.</p>
 
+<h2>Cambios v1.16.0 — 30 junio 2026</h2>
+<table>
+  <tr><th>Área</th><th>Cambio</th><th>Commits</th></tr>
+  <tr>
+    <td>Fix crítico — OTP duplicado (Auth Context singleton)</td>
+    <td>
+      <b>Causa raíz:</b> <code>useAuth()</code> era un hook simple llamado de forma independiente en <code>page.tsx</code> y en <code>SiteHeader.tsx</code>, creando dos instancias con <code>otpFlowRef</code> separados. Al recargar la página con <code>tmc_otp_pending='1'</code> y sesión activa, ambas instancias ejecutaban <code>getSession()</code> en paralelo y las dos llamaban a <code>solicitar-otp</code> → dos emails OTP en segundos.<br><br>
+      <b>Fix:</b> <code>useAuth</code> convertido a Context singleton. Se crea <code>frontend/contexts/AuthContext.tsx</code> con <code>AuthProvider</code>; la lógica real (<code>useAuthState</code>) corre una sola vez en el provider. <code>useAuth()</code> queda como <code>useContext</code> sin efectos propios. <code>AuthProvider</code> envuelve el layout en <code>app/[locale]/layout.tsx</code>. Los 12 archivos que importaban desde <code>@/hooks/useAuth</code> migrados a <code>@/contexts/AuthContext</code>.
+    </td>
+    <td><code>7b36cdf</code></td>
+  </tr>
+</table>
+
 <h2>Cambios v1.15.0 — 24 junio 2026</h2>
 <table>
   <tr><th>Área</th><th>Cambio</th><th>Commits</th></tr>
@@ -1853,7 +1866,7 @@ curl http://localhost:4000/health</pre>
      FOOTER
 ══════════════════════════════════════════════════════════════ -->
 <div class="footer">
-  TodasMisCosas.com — Documentación técnica interna · Versión 1.12.0 · 22 Junio 2026<br>
+  TodasMisCosas.com — Documentación técnica interna · Versión 1.16.0 · 30 Junio 2026<br>
   Alejandro Laporte · Guillermo Domínguez<br>
   <em>Este documento es confidencial. No distribuir.</em>
 </div>

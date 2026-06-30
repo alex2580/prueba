@@ -774,6 +774,49 @@ Solo funciona si `inactiva_auto = 1`. Si alguien intenta reactivar un espacio qu
 
 ---
 
+## 30 de Junio 2026 — v1.16.0
+
+### 🐛 Fix crítico: OTP duplicado — `useAuth` convertido a Context singleton
+
+#### Problema
+
+Los usuarios recibían varios códigos de verificación OTP casi simultáneamente (en menos de 1 minuto). Reportado la noche del 30 jun alrededor de las 21:25-21:26 hs.
+
+#### Causa raíz
+
+`useAuth()` era un hook de React simple (no un Context). Era llamado de forma independiente en `page.tsx` **y** en `SiteHeader.tsx` (que está montado dentro de cada página), creando **dos instancias separadas** del hook, cada una con su propio `otpFlowRef` inicializado en `false`.
+
+El `useEffect` dentro del hook tiene el siguiente flujo:
+
+```ts
+supabase.auth.getSession().then(({ data }) => {
+  if (data.session?.access_token && !otpFlowRef.current) {
+    if (localStorage.getItem('tmc_otp_pending') === '1') {
+      otpFlowRef.current = true;
+      fetch(`${API}/api/auth/solicitar-otp`, ...)  // ← DISPARO
+    }
+  }
+});
+```
+
+Cuando el usuario recargaba la página (o navegaba) mientras el OTP estaba pendiente (`tmc_otp_pending = '1'` en localStorage + sesión Supabase activa), **ambas instancias** ejecutaban el `getSession()` en paralelo, ambas veían la condición cumplida, y ambas llamaban a `solicitar-otp` → dos emails en segundos.
+
+#### Fix
+
+Se creó `frontend/contexts/AuthContext.tsx` con un `AuthProvider` que envuelve el layout. La lógica real (`useAuthState`) corre **una sola vez** en el provider. El hook `useAuth` queda como un `useContext` liviano que no tiene efectos propios.
+
+**Archivos creados:**
+- `frontend/contexts/AuthContext.tsx` — `AuthProvider` + `useAuth` exportados desde aquí
+
+**Archivos modificados:**
+- `frontend/hooks/useAuth.ts` — renombrado export principal a `useAuthState`, exporta tipo `AuthPublic`
+- `frontend/app/[locale]/layout.tsx` — envuelve children con `<AuthProvider>`
+- 12 páginas y componentes — import `useAuth` migrado de `@/hooks/useAuth` → `@/contexts/AuthContext`
+
+**Commit:** `7b36cdf`
+
+---
+
 ## 24 de Junio 2026 — v1.15.0
 
 Sesión larga centrada en **bugs reales de mobile** (footer, calendario, filtros, OTP), un **bug de datos** en el filtro de fechas Ingreso/Salida, **traducción completa a portugués** (cómo funciona, FAQ, legales, flujos sintéticos), y **5 documentos nuevos** en `docs/DATA-IMPORTANTE/`.
