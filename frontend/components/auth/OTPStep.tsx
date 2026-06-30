@@ -128,7 +128,7 @@ export function OTPStep({ emailHint, canales, onVerify, onReenviar, loading, err
             value={d}
             onChange={e => handleChange(i, e.target.value)}
             onKeyDown={e => handleKeyDown(i, e)}
-            onPaste={i === 0 ? handlePaste : undefined}
+            onPaste={handlePaste}
             disabled={loading}
             className="otp-digit"
             style={{

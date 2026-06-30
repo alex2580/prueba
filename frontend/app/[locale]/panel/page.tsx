@@ -1373,7 +1373,7 @@ export default function PanelPage() {
                     value={d}
                     onChange={e => handlePerfilOtpChange(i, e.target.value)}
                     onKeyDown={e => handlePerfilOtpKeyDown(i, e)}
-                    onPaste={i === 0 ? handlePerfilOtpPaste : undefined}
+                    onPaste={handlePerfilOtpPaste}
                     disabled={perfilLoading}
                     style={{
                       width: 46, height: 56, textAlign: 'center',
