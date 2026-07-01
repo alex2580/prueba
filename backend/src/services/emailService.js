@@ -534,7 +534,7 @@ async function sendOTP(toEmail, nombre, { codigo, expiraEn }) {
   `);
   await transporter.sendMail({
     from: FROM, to: toEmail,
-    subject: `🔐 ${codigo} — Código de verificación TodasMisCosas`,
+    subject: `🔐 Código de verificación — TodasMisCosas`,
     html,
   });
 }
