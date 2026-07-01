@@ -240,6 +240,8 @@ export function useAuthState() {
       return 'email-confirm' as const;
     }
 
+    localStorage.setItem('tmc_otp_pending', '1');
+
     try {
       const res = await fetch(`${API}/api/auth/solicitar-otp`, {
         method: 'POST',
@@ -254,6 +256,7 @@ export function useAuthState() {
       }));
       return true;
     } catch {
+      localStorage.removeItem('tmc_otp_pending');
       otpFlowRef.current = false;
       setState(s => ({ ...s, loading: false }));
       return true;
