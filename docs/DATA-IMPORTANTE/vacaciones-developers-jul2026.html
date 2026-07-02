@@ -81,7 +81,7 @@ body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 /* grid principal: 170px nombre + 31 días julio + 4px sep + 3 días agosto */
 .tl-grid {
   display: grid;
-  grid-template-columns: 170px repeat(31, var(--cell)) 4px repeat(3, var(--cell));
+  grid-template-columns: 170px repeat(31, var(--cell)) 4px repeat(31, var(--cell)) 4px repeat(7, var(--cell));
   min-width: 910px;
 }
 
@@ -95,10 +95,16 @@ body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             letter-spacing: .16em; color: #3A6010; }
 .mh-sep  { grid-column: 33 / 34; border-bottom: 2px solid var(--border);
             background: var(--bg); }
-.mh-ago  { grid-column: 34 / 37; border-bottom: 2px solid var(--border);
-            background: #F8F4FF; text-align: center; padding: 7px 0 5px;
+.mh-ago  { grid-column: 34 / 65; border-bottom: 2px solid var(--border);
+            background: #F4F8FF; text-align: center; padding: 7px 0 5px;
             font-size: .7rem; font-weight: 900; text-transform: uppercase;
-            letter-spacing: .16em; color: #6040A0; }
+            letter-spacing: .16em; color: #2040A0; }
+.mh-sep2 { grid-column: 65 / 66; border-bottom: 2px solid var(--border);
+            background: var(--bg); }
+.mh-sept { grid-column: 66 / 73; border-bottom: 2px solid var(--border);
+            background: #FFF4F8; text-align: center; padding: 7px 0 5px;
+            font-size: .7rem; font-weight: 900; text-transform: uppercase;
+            letter-spacing: .16em; color: #A02060; }
 
 /* ── números de días ── */
 .dh-lbl  { border-bottom: 1px solid var(--border); }
@@ -220,7 +226,9 @@ footer { background: #242424; color: #606060; text-align: center;
     <div class="mh-lbl">Developer</div>
     <div class="mh-jul">J U L I O &nbsp; 2 0 2 6</div>
     <div class="mh-sep"></div>
-    <div class="mh-ago">AGO.</div>
+    <div class="mh-ago">A G O S T O &nbsp; 2 0 2 6</div>
+    <div class="mh-sep2"></div>
+    <div class="mh-sept">S E P T.</div>
 
     <!-- ── Fila: números de días ── -->
     <div class="dh-lbl"></div>
@@ -263,6 +271,17 @@ footer { background: #242424; color: #606060; text-align: center;
     <div class="dh wk">1</div>
     <div class="dh wk">2</div>
     <div class="dh">3</div>
+    <div class="dh">4</div><div class="dh">5</div><div class="dh">6</div><div class="dh">7</div>
+    <div class="dh wk">8</div><div class="dh wk">9</div>
+    <div class="dh">10</div><div class="dh">11</div><div class="dh">12</div><div class="dh">13</div><div class="dh">14</div>
+    <div class="dh wk">15</div><div class="dh wk">16</div>
+    <div class="dh">17</div><div class="dh">18</div><div class="dh">19</div><div class="dh">20</div><div class="dh">21</div>
+    <div class="dh wk">22</div><div class="dh wk">23</div>
+    <div class="dh">24</div><div class="dh">25</div><div class="dh">26</div><div class="dh">27</div><div class="dh">28</div>
+    <div class="dh wk">29</div><div class="dh wk">30</div><div class="dh">31</div>
+    <div class="dh-sep"></div><!-- sep ago/sep -->
+    <div class="dh">1</div><div class="dh">2</div><div class="dh">3</div><div class="dh">4</div>
+    <div class="dh wk">5</div><div class="dh wk">6</div><div class="dh">7</div>
 
     <!-- ══════════ FRANCISCO CACERES 🥝 ══════════ -->
     <!-- Vacaciones: 13 jul → 2 ago (sale 13, último día 10, regresa 3 ago) -->
@@ -307,6 +326,17 @@ footer { background: #242424; color: #606060; text-align: center;
     <div class="dc vm wk" style="--vc:var(--kiwi)"></div><!-- Ago 1 -->
     <div class="dc ve wk" style="--vc:var(--kiwi)"><span class="vic vic-r">🏠</span></div><!-- Ago 2 -->
     <div class="dc"></div><!-- Ago 3 REGRESA -->
+    <div class="dc"></div><!-- Ago 4 --><div class="dc"></div><!-- 5 --><div class="dc"></div><!-- 6 --><div class="dc"></div><!-- 7 -->
+    <div class="dc wk"></div><!-- 8 --><div class="dc wk"></div><!-- 9 -->
+    <div class="dc"></div><!-- 10 --><div class="dc"></div><!-- 11 --><div class="dc"></div><!-- 12 --><div class="dc"></div><!-- 13 --><div class="dc"></div><!-- 14 -->
+    <div class="dc wk"></div><!-- 15 --><div class="dc wk"></div><!-- 16 -->
+    <div class="dc"></div><!-- 17 --><div class="dc"></div><!-- 18 --><div class="dc"></div><!-- 19 --><div class="dc"></div><!-- 20 --><div class="dc"></div><!-- 21 -->
+    <div class="dc wk"></div><!-- 22 --><div class="dc wk"></div><!-- 23 -->
+    <div class="dc"></div><!-- 24 --><div class="dc"></div><!-- 25 --><div class="dc"></div><!-- 26 --><div class="dc"></div><!-- 27 --><div class="dc"></div><!-- 28 -->
+    <div class="dc wk"></div><!-- 29 --><div class="dc wk"></div><!-- 30 --><div class="dc"></div><!-- 31 -->
+    <div class="dc-sep"></div><!-- sep -->
+    <div class="dc"></div><!-- Sep 1 --><div class="dc"></div><!-- 2 --><div class="dc"></div><!-- 3 --><div class="dc"></div><!-- 4 -->
+    <div class="dc wk"></div><!-- 5 --><div class="dc wk"></div><!-- 6 --><div class="dc"></div><!-- 7 -->
 
     <!-- ══════════ ROBERTO MALAVE 🍑 ══════════ -->
     <!-- Último día: jue 2 jul · Sale: vie 3 jul · Regresa: mar 7 jul -->
@@ -349,6 +379,17 @@ footer { background: #242424; color: #606060; text-align: center;
     <div class="dc wk"></div><!-- Ago 1 -->
     <div class="dc wk"></div><!-- Ago 2 -->
     <div class="dc"></div><!-- Ago 3 -->
+    <div class="dc"></div><!-- Ago 4 --><div class="dc"></div><!-- 5 --><div class="dc"></div><!-- 6 --><div class="dc"></div><!-- 7 -->
+    <div class="dc wk"></div><!-- 8 --><div class="dc wk"></div><!-- 9 -->
+    <div class="dc"></div><!-- 10 --><div class="dc"></div><!-- 11 --><div class="dc"></div><!-- 12 --><div class="dc"></div><!-- 13 --><div class="dc"></div><!-- 14 -->
+    <div class="dc wk"></div><!-- 15 --><div class="dc wk"></div><!-- 16 -->
+    <div class="dc"></div><!-- 17 --><div class="dc"></div><!-- 18 --><div class="dc"></div><!-- 19 --><div class="dc"></div><!-- 20 --><div class="dc"></div><!-- 21 -->
+    <div class="dc wk"></div><!-- 22 --><div class="dc wk"></div><!-- 23 -->
+    <div class="dc"></div><!-- 24 --><div class="dc"></div><!-- 25 --><div class="dc"></div><!-- 26 --><div class="dc"></div><!-- 27 --><div class="dc"></div><!-- 28 -->
+    <div class="dc wk"></div><!-- 29 --><div class="dc wk"></div><!-- 30 --><div class="dc"></div><!-- 31 -->
+    <div class="dc-sep"></div><!-- sep -->
+    <div class="dc"></div><!-- Sep 1 --><div class="dc"></div><!-- 2 --><div class="dc"></div><!-- 3 --><div class="dc"></div><!-- 4 -->
+    <div class="dc wk"></div><!-- 5 --><div class="dc wk"></div><!-- 6 --><div class="dc"></div><!-- 7 -->
 
     <!-- ══════════ SERGIO ROSSI 🍐 ══════════ -->
     <!-- Vacaciones: 13 jul → 26 jul, regresa 27 -->
@@ -393,6 +434,17 @@ footer { background: #242424; color: #606060; text-align: center;
     <div class="dc wk"></div><!-- Ago 1 -->
     <div class="dc wk"></div><!-- Ago 2 -->
     <div class="dc"></div><!-- Ago 3 -->
+    <div class="dc"></div><!-- Ago 4 --><div class="dc"></div><!-- 5 --><div class="dc"></div><!-- 6 --><div class="dc"></div><!-- 7 -->
+    <div class="dc wk"></div><!-- 8 --><div class="dc wk"></div><!-- 9 -->
+    <div class="dc"></div><!-- 10 --><div class="dc"></div><!-- 11 --><div class="dc"></div><!-- 12 --><div class="dc"></div><!-- 13 --><div class="dc"></div><!-- 14 -->
+    <div class="dc wk"></div><!-- 15 --><div class="dc wk"></div><!-- 16 -->
+    <div class="dc"></div><!-- 17 --><div class="dc"></div><!-- 18 --><div class="dc"></div><!-- 19 --><div class="dc"></div><!-- 20 --><div class="dc"></div><!-- 21 -->
+    <div class="dc wk"></div><!-- 22 --><div class="dc wk"></div><!-- 23 -->
+    <div class="dc"></div><!-- 24 --><div class="dc"></div><!-- 25 --><div class="dc"></div><!-- 26 --><div class="dc"></div><!-- 27 --><div class="dc"></div><!-- 28 -->
+    <div class="dc wk"></div><!-- 29 --><div class="dc wk"></div><!-- 30 --><div class="dc"></div><!-- 31 -->
+    <div class="dc-sep"></div><!-- sep -->
+    <div class="dc"></div><!-- Sep 1 --><div class="dc"></div><!-- 2 --><div class="dc"></div><!-- 3 --><div class="dc"></div><!-- 4 -->
+    <div class="dc wk"></div><!-- 5 --><div class="dc wk"></div><!-- 6 --><div class="dc"></div><!-- 7 -->
 
     <!-- ══════════ ROGER RONDON 🍉 ══════════ -->
     <!-- Vacaciones: 13 jul → 26 jul, regresa 27 -->
@@ -437,6 +489,21 @@ footer { background: #242424; color: #606060; text-align: center;
     <div class="dc wk"></div><!-- Ago 1 -->
     <div class="dc wk"></div><!-- Ago 2 -->
     <div class="dc"></div><!-- Ago 3 -->
+    <div class="dc"></div><!-- Ago 4 --><div class="dc"></div><!-- 5 --><div class="dc"></div><!-- 6 --><div class="dc"></div><!-- 7 -->
+    <div class="dc wk"></div><!-- 8 --><div class="dc wk"></div><!-- 9 -->
+    <div class="dc"></div><!-- 10 --><div class="dc"></div><!-- 11 --><div class="dc"></div><!-- 12 --><div class="dc"></div><!-- 13 --><div class="dc"></div><!-- 14 -->
+    <div class="dc wk"></div><!-- 15 --><div class="dc wk"></div><!-- 16 -->
+    <div class="dc vs" style="--vc:var(--berry)"><span class="vic vic-l">✈️</span></div><!-- 17 sale -->
+    <div class="dc vm" style="--vc:var(--berry)"></div><!-- 18 --><div class="dc vm" style="--vc:var(--berry)"></div><!-- 19 --><div class="dc vm" style="--vc:var(--berry)"></div><!-- 20 --><div class="dc vm" style="--vc:var(--berry)"></div><!-- 21 -->
+    <div class="dc vm wk" style="--vc:var(--berry)"></div><!-- 22 --><div class="dc vm wk" style="--vc:var(--berry)"></div><!-- 23 -->
+    <div class="dc vm" style="--vc:var(--berry)"></div><!-- 24 --><div class="dc vm" style="--vc:var(--berry)"></div><!-- 25 --><div class="dc vm" style="--vc:var(--berry)"></div><!-- 26 --><div class="dc vm" style="--vc:var(--berry)"></div><!-- 27 --><div class="dc vm" style="--vc:var(--berry)"></div><!-- 28 -->
+    <div class="dc vm wk" style="--vc:var(--berry)"></div><!-- 29 --><div class="dc vm wk" style="--vc:var(--berry)"></div><!-- 30 -->
+    <div class="dc vm" style="--vc:var(--berry)"></div><!-- 31 -->
+    <div class="dc-sep"></div><!-- sep -->
+    <div class="dc vm" style="--vc:var(--berry)"></div><!-- Sep 1 --><div class="dc vm" style="--vc:var(--berry)"></div><!-- 2 --><div class="dc vm" style="--vc:var(--berry)"></div><!-- 3 --><div class="dc vm" style="--vc:var(--berry)"></div><!-- 4 -->
+    <div class="dc vm wk" style="--vc:var(--berry)"></div><!-- 5 -->
+    <div class="dc ve wk" style="--vc:var(--berry)"><span class="vic vic-r">🏠</span></div><!-- 6 fin vac -->
+    <div class="dc"></div><!-- 7 REGRESA -->
 
     <!-- ══════════ PEDRO DOHNERT 🥭 ══════════ -->
     <!-- Líder SDR/AS400. Vacaciones: 6 jul → 12 jul, regresa 13 -->
@@ -481,6 +548,17 @@ footer { background: #242424; color: #606060; text-align: center;
     <div class="dc wk"></div><!-- Ago 1 -->
     <div class="dc wk"></div><!-- Ago 2 -->
     <div class="dc"></div><!-- Ago 3 -->
+    <div class="dc"></div><!-- Ago 4 --><div class="dc"></div><!-- 5 --><div class="dc"></div><!-- 6 --><div class="dc"></div><!-- 7 -->
+    <div class="dc wk"></div><!-- 8 --><div class="dc wk"></div><!-- 9 -->
+    <div class="dc"></div><!-- 10 --><div class="dc"></div><!-- 11 --><div class="dc"></div><!-- 12 --><div class="dc"></div><!-- 13 --><div class="dc"></div><!-- 14 -->
+    <div class="dc wk"></div><!-- 15 --><div class="dc wk"></div><!-- 16 -->
+    <div class="dc"></div><!-- 17 --><div class="dc"></div><!-- 18 --><div class="dc"></div><!-- 19 --><div class="dc"></div><!-- 20 --><div class="dc"></div><!-- 21 -->
+    <div class="dc wk"></div><!-- 22 --><div class="dc wk"></div><!-- 23 -->
+    <div class="dc"></div><!-- 24 --><div class="dc"></div><!-- 25 --><div class="dc"></div><!-- 26 --><div class="dc"></div><!-- 27 --><div class="dc"></div><!-- 28 -->
+    <div class="dc wk"></div><!-- 29 --><div class="dc wk"></div><!-- 30 --><div class="dc"></div><!-- 31 -->
+    <div class="dc-sep"></div><!-- sep -->
+    <div class="dc"></div><!-- Sep 1 --><div class="dc"></div><!-- 2 --><div class="dc"></div><!-- 3 --><div class="dc"></div><!-- 4 -->
+    <div class="dc wk"></div><!-- 5 --><div class="dc wk"></div><!-- 6 --><div class="dc"></div><!-- 7 -->
 
     <!-- ══════════ JOSE ORTIZ 🍇 ══════════ -->
     <!-- Último día: mar 30 jun · Sale: mié 1 jul · Regresa: jue 16 jul -->
@@ -523,6 +601,17 @@ footer { background: #242424; color: #606060; text-align: center;
     <div class="dc wk"></div><!-- Ago 1 -->
     <div class="dc wk"></div><!-- Ago 2 -->
     <div class="dc"></div><!-- Ago 3 -->
+    <div class="dc"></div><!-- Ago 4 --><div class="dc"></div><!-- 5 --><div class="dc"></div><!-- 6 --><div class="dc"></div><!-- 7 -->
+    <div class="dc wk"></div><!-- 8 --><div class="dc wk"></div><!-- 9 -->
+    <div class="dc"></div><!-- 10 --><div class="dc"></div><!-- 11 --><div class="dc"></div><!-- 12 --><div class="dc"></div><!-- 13 --><div class="dc"></div><!-- 14 -->
+    <div class="dc wk"></div><!-- 15 --><div class="dc wk"></div><!-- 16 -->
+    <div class="dc"></div><!-- 17 --><div class="dc"></div><!-- 18 --><div class="dc"></div><!-- 19 --><div class="dc"></div><!-- 20 --><div class="dc"></div><!-- 21 -->
+    <div class="dc wk"></div><!-- 22 --><div class="dc wk"></div><!-- 23 -->
+    <div class="dc"></div><!-- 24 --><div class="dc"></div><!-- 25 --><div class="dc"></div><!-- 26 --><div class="dc"></div><!-- 27 --><div class="dc"></div><!-- 28 -->
+    <div class="dc wk"></div><!-- 29 --><div class="dc wk"></div><!-- 30 --><div class="dc"></div><!-- 31 -->
+    <div class="dc-sep"></div><!-- sep -->
+    <div class="dc"></div><!-- Sep 1 --><div class="dc"></div><!-- 2 --><div class="dc"></div><!-- 3 --><div class="dc"></div><!-- 4 -->
+    <div class="dc wk"></div><!-- 5 --><div class="dc wk"></div><!-- 6 --><div class="dc"></div><!-- 7 -->
 
   </div><!-- /tl-grid -->
   </div><!-- /tl-scroll -->
@@ -580,10 +669,11 @@ footer { background: #242424; color: #606060; text-align: center;
       <div class="card-av" style="background:var(--berry-s);">🍉</div>
       <div><h3>Roger Rondon</h3><div class="cr">Developer</div></div>
     </div>
-    <div class="card-row"><span class="l">Último día</span><span class="v">Dom 12 jul</span></div>
-    <div class="card-row"><span class="l">Sale</span><span class="v">Lun 13 jul</span></div>
-    <div class="card-row"><span class="l">Regresa</span><span class="v" style="color:var(--berry-t)">Lun 27 jul</span></div>
-    <div><span class="pill" style="background:var(--berry-s);color:var(--berry-t)">14 días de vacaciones</span></div>
+    <div class="card-row"><span class="l">1ra vac.</span><span class="v">13 jul → 26 jul</span></div>
+    <div class="card-row"><span class="l">Regresa 1ra</span><span class="v" style="color:var(--berry-t)">Lun 27 jul</span></div>
+    <div class="card-row"><span class="l">2da vac.</span><span class="v">17 ago → 6 sep</span></div>
+    <div class="card-row"><span class="l">Regresa op.</span><span class="v" style="color:var(--berry-t)">Lun 7 sep</span></div>
+    <div><span class="pill" style="background:var(--berry-s);color:var(--berry-t)">2 períodos de vacaciones</span></div>
   </div>
 
   <!-- Pedro -->
