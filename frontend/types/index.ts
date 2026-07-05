@@ -249,3 +249,18 @@ export const SERVICIOS_ADICIONALES: Record<ServicioTipo, { label: string; emoji:
   transporte: { label: 'Servicio de transporte', emoji: '🚚', precio: 0 },
   limpieza:   { label: 'Limpieza del espacio',   emoji: '🧹', precio: 0 },
 };
+
+// ── Waitlist ─────────────────────────────────────────────────────
+export type WaitlistTipo = 'proveedor' | 'cliente';
+
+export interface WaitlistPayload {
+  tipo: WaitlistTipo;
+  nombre: string;
+  email: string;
+  whatsapp?: string;
+  barrio?: string;
+  tipo_espacio?: string;
+  descripcion?: string;
+  para_que?: string;
+  duracion?: string;
+}

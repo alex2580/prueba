@@ -2522,6 +2522,101 @@ function TabConsultasPublicas({ token }: { token: string }) {
   );
 }
 
+// ── Tab: Waitlist ──────────────────────────────────────────────
+function TabWaitlist({ token }: { token: string }) {
+  const [rows, setRows] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [filtro, setFiltro] = useState<'todos' | 'proveedor' | 'cliente'>('todos');
+  const [totales, setTotales] = useState({ total: 0, proveedores: 0, clientes: 0 });
+
+  useEffect(() => {
+    setLoading(true);
+    const qs = filtro !== 'todos' ? `?tipo=${filtro}` : '';
+    fetch(`/api/admin/waitlist${qs}`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then(data => {
+        setRows(data.rows || []);
+        setTotales({ total: data.total || 0, proveedores: data.proveedores || 0, clientes: data.clientes || 0 });
+      })
+      .catch(() => setError('Error al cargar la waitlist'))
+      .finally(() => setLoading(false));
+  }, [token, filtro]);
+
+  const tdS: React.CSSProperties = { padding: '.6rem .75rem', fontSize: '.82rem', borderBottom: '1px solid var(--border)', color: 'var(--text)', verticalAlign: 'top' };
+  const thS: React.CSSProperties = { ...tdS, fontWeight: 700, color: 'var(--text2)', background: 'var(--surface2)', position: 'sticky', top: 0 };
+
+  return (
+    <>
+      <div style={{ display: 'flex', gap: '1rem', margin: '1.5rem 0 1rem', flexWrap: 'wrap' }}>
+        {[
+          { label: 'Total', val: totales.total, color: 'var(--text)' },
+          { label: 'Proveedores', val: totales.proveedores, color: 'var(--orange)' },
+          { label: 'Clientes', val: totales.clientes, color: 'var(--blue)' },
+        ].map(s => (
+          <div key={s.label} style={{ background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12, padding: '.75rem 1.25rem', minWidth: 110 }}>
+            <div style={{ fontSize: '.75rem', color: 'var(--text2)', marginBottom: '.2rem' }}>{s.label}</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: s.color }}>{s.val}</div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ display: 'flex', gap: '.5rem', marginBottom: '1rem' }}>
+        {(['todos', 'proveedor', 'cliente'] as const).map(f => (
+          <button key={f} onClick={() => setFiltro(f)} style={{ padding: '.4rem .9rem', borderRadius: 20, border: '1.5px solid', borderColor: filtro === f ? 'var(--orange)' : 'var(--border)', background: filtro === f ? '#FFF7ED' : 'var(--surface)', color: filtro === f ? 'var(--orange)' : 'var(--text2)', fontWeight: filtro === f ? 700 : 400, fontSize: '.82rem', cursor: 'pointer', fontFamily: 'Sora, sans-serif' }}>
+            {f === 'todos' ? 'Todos' : f === 'proveedor' ? '🏠 Proveedores' : '📦 Clientes'}
+          </button>
+        ))}
+      </div>
+
+      {loading && <p style={{ color: 'var(--text3)', fontSize: '.9rem' }}>Cargando…</p>}
+      {error && <p style={{ color: 'var(--red)', fontSize: '.9rem' }}>{error}</p>}
+      {!loading && !error && rows.length === 0 && <p style={{ color: 'var(--text3)', fontSize: '.9rem' }}>Sin registros todavía.</p>}
+
+      {!loading && rows.length > 0 && (
+        <div style={{ overflowX: 'auto', borderRadius: 12, border: '1px solid var(--border)' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr>
+                <th style={thS}>Tipo</th>
+                <th style={thS}>Nombre</th>
+                <th style={thS}>Email</th>
+                <th style={thS}>WhatsApp</th>
+                <th style={thS}>Barrio</th>
+                <th style={thS}>Detalle</th>
+                <th style={thS}>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map(r => (
+                <tr key={r.id}>
+                  <td style={tdS}>
+                    <span style={{ display: 'inline-block', padding: '.2rem .6rem', borderRadius: 99, fontSize: '.75rem', fontWeight: 700, background: r.tipo === 'proveedor' ? '#FFF7ED' : '#EFF6FF', color: r.tipo === 'proveedor' ? 'var(--orange)' : 'var(--blue)' }}>
+                      {r.tipo === 'proveedor' ? '🏠 Proveedor' : '📦 Cliente'}
+                    </span>
+                  </td>
+                  <td style={tdS}>{r.nombre}</td>
+                  <td style={tdS}><a href={`mailto:${r.email}`} style={{ color: 'var(--orange)' }}>{r.email}</a></td>
+                  <td style={tdS}>{r.whatsapp || '—'}</td>
+                  <td style={tdS}>{r.barrio || '—'}</td>
+                  <td style={tdS} title={r.descripcion || r.para_que || ''}>
+                    {r.tipo === 'proveedor'
+                      ? [r.tipo_espacio, r.descripcion].filter(Boolean).join(' · ') || '—'
+                      : [r.para_que, r.duracion].filter(Boolean).join(' · ') || '—'}
+                  </td>
+                  <td style={{ ...tdS, whiteSpace: 'nowrap' }}>
+                    {new Date(r.created_at).toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: '2-digit' })}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </>
+  );
+}
+
 export default function AdminPage() {
   const router = useRouter();
   const { user, token, loading: authLoading, isAdmin } = useAuth();
@@ -2576,6 +2671,7 @@ export default function AdminPage() {
     { key: 'movimientos',          label: '💵 Movimientos' },
     { key: 'auditoria-perfil',     label: '📋 Historial Perfil' },
     { key: 'emails',               label: '✉️ Emails' },
+    { key: 'waitlist',             label: '📋 Waitlist' },
   ];
 
   return (
@@ -2604,6 +2700,7 @@ export default function AdminPage() {
           {tab === 'movimientos'         && token && <TabMovimientos token={token} />}
           {tab === 'auditoria-perfil'    && token && <TabAuditoriaPerfil token={token} />}
           {tab === 'emails'              && token && <TabEmailConfig token={token} />}
+          {tab === 'waitlist'            && token && <TabWaitlist token={token} />}
         </div>
       </div>
     </div>

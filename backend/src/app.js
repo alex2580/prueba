@@ -28,6 +28,7 @@ const webhookRouter   = require('./routes/webhook');
 const favoritosRouter   = require('./routes/favoritos');
 const mailingRouter     = require('./routes/mailing');
 const consultasRouter   = require('./routes/consultasEspacio');
+const waitlistRouter    = require('./routes/waitlist');
 
 const app = express();
 
@@ -83,6 +84,7 @@ app.use('/api/webhook',   webhookRouter);
 app.use('/api/favoritos', favoritosRouter);
 app.use('/api/mailing',  mailingRouter);
 app.use('/api',          consultasRouter);
+app.use('/api',          waitlistRouter);
 
 // ── 404 ────────────────────────────────────────────────────────
 app.use((req, res) => {

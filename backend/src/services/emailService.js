@@ -998,6 +998,58 @@ async function sendNewsletter(toEmail, nombre, { asunto, cuerpoHtml }) {
   await transporter.sendMail({ from: FROM, to: toEmail, subject: asunto, html });
 }
 
+// ── Waitlist: bienvenida proveedor ───────────────────────────────
+async function sendWaitlistBienvenidaProveedor(toEmail, nombre) {
+  const html = baseTemplate('¡Estás en la lista! — TodasMisCosas', `
+    <h2>🎉 ¡Estás en la lista, ${nombre}!</h2>
+    <p>Gracias por anotarte como <span class="highlight">Proveedor</span> en TodasMisCosas.com.</p>
+    <p>Sos de las primeras personas en sumarse. Cuando abramos en tu zona, vas a ser de los primeros en saberlo.</p>
+    <div class="info-row">
+      <span class="info-label">¿Qué pasa ahora?</span>
+      <span class="info-val">Te avisamos por email en cuanto el servicio esté disponible en tu barrio.</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Tu beneficio por ser early</span>
+      <span class="info-val">0% de comisión los primeros 3 meses — solo para los primeros proveedores.</span>
+    </div>
+    <a class="btn" href="${process.env.FRONTEND_URL}/es/waitlist">Ver mi estado en la lista →</a>
+    <p style="font-size:13px;color:#94a3b8;margin-top:16px;">Si tenés alguna duda, respondé este email o escribinos a contacto@todasmiscosas.com</p>
+  `);
+
+  await transporter.sendMail({
+    from: FROM,
+    to: toEmail,
+    subject: '🎉 ¡Estás en la lista! — TodasMisCosas.com',
+    html,
+  });
+}
+
+// ── Waitlist: bienvenida cliente ─────────────────────────────────
+async function sendWaitlistBienvenidaCliente(toEmail, nombre) {
+  const html = baseTemplate('¡Estás en la lista! — TodasMisCosas', `
+    <h2>🎉 ¡Estás en la lista, ${nombre}!</h2>
+    <p>Gracias por anotarte en TodasMisCosas.com para encontrar <span class="highlight">dónde guardar tus cosas</span>.</p>
+    <p>Estamos armando la red de espacios en tu zona. En cuanto tengamos opciones disponibles, te avisamos.</p>
+    <div class="info-row">
+      <span class="info-label">¿Qué pasa ahora?</span>
+      <span class="info-val">Te contactamos cuando haya espacios disponibles en tu barrio.</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Tu beneficio por ser early</span>
+      <span class="info-val">20% de descuento en tu primer mes — solo para los primeros clientes.</span>
+    </div>
+    <a class="btn" href="${process.env.FRONTEND_URL}/es/waitlist">Ver mi estado en la lista →</a>
+    <p style="font-size:13px;color:#94a3b8;margin-top:16px;">Si tenés alguna duda, respondé este email o escribinos a contacto@todasmiscosas.com</p>
+  `);
+
+  await transporter.sendMail({
+    from: FROM,
+    to: toEmail,
+    subject: '🎉 ¡Estás en la lista! — TodasMisCosas.com',
+    html,
+  });
+}
+
 module.exports = {
   sendEscrowRetenidoDemandante,
   sendEscrowRetenidoOferente,
@@ -1034,4 +1086,6 @@ module.exports = {
   sendNuevoMensajeChat,
   sendNuevaConsultaPublica,
   sendRespuestaConsultaPublica,
+  sendWaitlistBienvenidaProveedor,
+  sendWaitlistBienvenidaCliente,
 };

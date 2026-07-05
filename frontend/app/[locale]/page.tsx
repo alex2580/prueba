@@ -450,6 +450,16 @@ export default function HomePage() {
               </p>
             </div>
 
+            {/* Banner Waitlist */}
+            <div style={{ background: 'linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%)', borderBottom: '1px solid #FDBA74', padding: '.75rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.75rem', flexWrap: 'wrap', textAlign: 'center' }}>
+              <span style={{ fontSize: '.88rem', color: '#92400E', fontWeight: 600 }}>
+                🚀 Estamos en lanzamiento — ¡Anotate a la lista de espera y accedé a beneficios exclusivos!
+              </span>
+              <a href="/es/waitlist" style={{ display: 'inline-block', background: 'var(--orange)', color: '#fff', fontWeight: 800, fontSize: '.82rem', padding: '.35rem .9rem', borderRadius: 99, textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                Anotarme →
+              </a>
+            </div>
+
             {/* Filtros — sección propia, independiente del header que se colapsa */}
             <div className="filter-pills-bar">
 

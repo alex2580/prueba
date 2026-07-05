@@ -1,6 +1,6 @@
 import type {
   Espacio, EspacioFormData, Reserva, Review, Conversacion, Mensaje,
-  MPPreferenciaResponse, FiltrosEspacios, Usuario,
+  MPPreferenciaResponse, FiltrosEspacios, Usuario, WaitlistPayload,
 } from '@/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
@@ -263,3 +263,27 @@ export const favoritosAPI = {
   eliminar:  (espacio_id: string, token: string) =>
     fetchAPI<{ ok: boolean }>(`/api/favoritos/${espacio_id}`, { method: 'DELETE' }, token),
 };
+
+export const waitlistAPI = {
+  registrar: (data: WaitlistPayload) =>
+    fetchAPI<{ ok: boolean }>('/api/waitlist', { method: 'POST', body: JSON.stringify(data) }),
+
+  listarAdmin: (token: string, tipo?: string, page?: number) => {
+    const params = new URLSearchParams();
+    if (tipo) params.set('tipo', tipo);
+    if (page) params.set('page', String(page));
+    const qs = params.toString() ? `?${params}` : '';
+    return fetchAPI<{
+      rows: Array<{
+        id: number; tipo: string; nombre: string; email: string;
+        whatsapp: string | null; barrio: string | null;
+        tipo_espacio: string | null; descripcion: string | null;
+        para_que: string | null; duracion: string | null; created_at: string;
+      }>;
+      total: number;
+      proveedores: number;
+      clientes: number;
+    }>(`/api/admin/waitlist${qs}`, {}, token);
+  },
+};
+
