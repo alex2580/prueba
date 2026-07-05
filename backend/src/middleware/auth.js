@@ -68,6 +68,17 @@ async function requireAuth(req, res, next) {
         'INSERT INTO usuarios (supabase_id, nombre, email, tipo, tel) VALUES (?, ?, ?, ?, ?)',
         [data.user.id, nombre, data.user.email, tipo, '']
       );
+
+      // Si el email está en la waitlist, marcar como early adopter por 3 meses
+      const enWaitlist = await queryOne('SELECT id FROM waitlist WHERE email = ? LIMIT 1', [data.user.email.toLowerCase()]);
+      if (enWaitlist) {
+        await query(
+          `UPDATE usuarios SET early_adopter = 1, early_adopter_hasta = DATE_ADD(NOW(), INTERVAL 3 MONTH)
+           WHERE supabase_id = ?`,
+          [data.user.id]
+        );
+      }
+
       usuario = await queryOne(
         'SELECT id, nombre, email, tel, tipo, verificado, activo FROM usuarios WHERE supabase_id = ?',
         [data.user.id]

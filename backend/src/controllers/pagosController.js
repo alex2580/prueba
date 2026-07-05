@@ -59,8 +59,14 @@ async function _procesarPagada(reserva, paymentId) {
     ? reserva.fecha_hasta.toISOString().slice(0, 10)
     : String(reserva.fecha_hasta).slice(0, 10);
 
-  // Inicializar escrow
-  const netoOferente = Math.round(Number(reserva.precio_total) * 0.85);
+  // Inicializar escrow — 0% comisión si el oferente es early adopter vigente
+  const esEarlyAdopter = oferente &&
+    oferente.early_adopter === 1 &&
+    oferente.early_adopter_hasta &&
+    new Date(oferente.early_adopter_hasta) > new Date();
+  const netoOferente = esEarlyAdopter
+    ? Number(reserva.precio_total)
+    : Math.round(Number(reserva.precio_total) * 0.85);
   await query(
     `UPDATE reservas SET escrow_liberado = 0, escrow_neto_oferente = ? WHERE id = ?`,
     [netoOferente, reserva.id]
