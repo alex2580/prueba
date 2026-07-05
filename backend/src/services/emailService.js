@@ -1012,7 +1012,7 @@ async function sendWaitlistBienvenidaProveedor(toEmail, nombre) {
       <span class="info-label">Tu beneficio por ser early</span>
       <span class="info-val">0% de comisión los primeros 3 meses — solo para los primeros proveedores.</span>
     </div>
-    <a class="btn" href="${process.env.FRONTEND_URL}/es/waitlist">Ver mi estado en la lista →</a>
+    <a class="btn" href="${process.env.FRONTEND_URL}/es/waitlist?ya=1">Ver mi estado en la lista →</a>
     <p style="font-size:13px;color:#94a3b8;margin-top:16px;">Si tenés alguna duda, respondé este email o escribinos a contacto@todasmiscosas.com</p>
   `);
 
@@ -1038,7 +1038,7 @@ async function sendWaitlistBienvenidaCliente(toEmail, nombre) {
       <span class="info-label">Tu beneficio por ser early</span>
       <span class="info-val">20% de descuento en tu primer mes — solo para los primeros clientes.</span>
     </div>
-    <a class="btn" href="${process.env.FRONTEND_URL}/es/waitlist">Ver mi estado en la lista →</a>
+    <a class="btn" href="${process.env.FRONTEND_URL}/es/waitlist?ya=1">Ver mi estado en la lista →</a>
     <p style="font-size:13px;color:#94a3b8;margin-top:16px;">Si tenés alguna duda, respondé este email o escribinos a contacto@todasmiscosas.com</p>
   `);
 

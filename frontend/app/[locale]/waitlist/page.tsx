@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { SiteHeader } from '@/components/ui/SiteHeader';
 import { waitlistAPI } from '@/lib/api';
 import type { WaitlistTipo, WaitlistPayload } from '@/types';
@@ -11,7 +12,40 @@ const TIPOS_ESPACIO = ['Cochera / Garage', 'Habitación', 'Depósito / Sótano',
 const PARA_QUE = ['Muebles / mudanza', 'Cosas del trabajo', 'Bicicleta / moto', 'Auto', 'Otro'];
 const DURACIONES = ['Menos de 1 mes', '1 a 3 meses', '3 a 6 meses', 'Indefinido'];
 
+function YaAnotado() {
+  return (
+    <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
+      <SiteHeader />
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem 1.5rem' }}>
+        <div style={{ width: '100%', maxWidth: 500, textAlign: 'center' }}>
+          <div style={{ fontSize: '4rem', marginBottom: '1.5rem' }}>🎉</div>
+          <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: 'clamp(1.6rem,4vw,2.2rem)', color: 'var(--text)', marginBottom: '1.25rem' }}>
+            ¡Ya estás en la lista!
+          </h1>
+          <p style={{ color: 'var(--text2)', fontSize: '.95rem', lineHeight: 1.8, maxWidth: 420, margin: '0 auto 1.5rem' }}>
+            Tu lugar está reservado. Cuando estemos operativos en tu zona, vas a ser de los primeros en saberlo — te escribimos directo al email con el acceso.
+          </p>
+          <p style={{ color: 'var(--text2)', fontSize: '.95rem', lineHeight: 1.8, maxWidth: 420, margin: '0 auto 2rem' }}>
+            Mientras tanto, si conocés a alguien que tenga espacio libre o que necesite guardar algo, compartile el link. Cada persona que se suma nos ayuda a llegar antes a más barrios.
+          </p>
+          <div style={{ background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12, padding: '1rem 1.5rem', display: 'inline-block', marginBottom: '2rem' }}>
+            <span style={{ fontSize: '.85rem', color: 'var(--text3)' }}>🔗 </span>
+            <span style={{ fontSize: '.85rem', fontWeight: 700, color: 'var(--orange)' }}>todasmiscosas.com/es/waitlist</span>
+          </div>
+          <p style={{ fontSize: '.8rem', color: 'var(--text3)' }}>— El equipo de TodasMisCosas.com</p>
+          <a href="/es" style={{ display: 'inline-block', marginTop: '2rem', color: 'var(--orange)', fontWeight: 700, fontSize: '.9rem', textDecoration: 'none' }}>
+            ← Volver a la home
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function WaitlistPage() {
+  const searchParams = useSearchParams();
+  if (searchParams.get('ya') === '1') return <YaAnotado />;
+
   const [paso, setPaso] = useState<Paso>('selector');
   const [tipo, setTipo] = useState<WaitlistTipo | null>(null);
   const [loading, setLoading] = useState(false);
