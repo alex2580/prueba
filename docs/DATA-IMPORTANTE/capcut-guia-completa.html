@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CapCut — Guia Completa 0 a 100 · 2026</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#F8FFF5;color:#2A2A2A;min-height:100vh}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#FF8FAB 0%,#FFB347 30%,#FFE566 55%,#7ED87E 80%,#5BC8A8 100%);padding:40px 20px 32px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'🎬 ✂️ 🎵 🎨 📱 🎬 ✂️ 🎵 🎨 📱';position:absolute;top:8px;left:0;right:0;font-size:18px;letter-spacing:4px;opacity:.2}
+.hero h1{font-size:clamp(1.6rem,5vw,2.6rem);font-weight:900;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.22)}
+.hero p{margin-top:8px;font-size:.95rem;color:rgba(255,255,255,.92);font-weight:500}
+.hero-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:14px}
+.hero-chip{background:rgba(255,255,255,.28);border:2px solid rgba(255,255,255,.5);color:#fff;border-radius:40px;padding:4px 16px;font-size:.75rem;font-weight:700}
+
+/* TABS */
+.tab-nav{display:flex;flex-wrap:wrap;gap:6px;background:#1A1A1A;padding:12px 14px;border-bottom:3px solid #CC4400;position:sticky;top:0;z-index:100;box-shadow:0 3px 12px rgba(0,0,0,.25)}
+.tab-btn{padding:10px 18px;border:2px solid #CC5500;background:#FF7A00;font-size:1rem;font-weight:800;cursor:pointer;border-radius:10px;color:#000;transition:all .15s;white-space:nowrap;letter-spacing:.01em}
+.tab-btn:hover{background:#FF5C00;border-color:#AA3A00;color:#000}
+.tab-btn.active{background:#FF3D00;border-color:#AA2200;color:#000;box-shadow:0 0 0 3px rgba(255,61,0,.35)}
+
+/* PANELS */
+.panels{padding:22px 16px 50px;max-width:940px;margin:0 auto}
+.panel{display:none}
+.panel.active{display:block}
+
+/* SECTION TITLE */
+.stitle{font-size:1.1rem;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.stitle .sdot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+
+/* CARDS GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;margin-bottom:22px}
+.card{border-radius:16px;padding:18px 16px;border:2px solid transparent;box-shadow:0 3px 12px rgba(0,0,0,.07);transition:transform .15s,box-shadow .15s}
+.card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.11)}
+.card h3{font-size:.95rem;font-weight:800;margin-bottom:8px}
+.card p,.card li{font-size:.8rem;line-height:1.55;color:#555}
+.card ul{padding-left:18px}
+.card li{margin-bottom:3px}
+
+/* CARD THEMES - frutas y verduras */
+.c-tomate   {background:#FFF0F0;border-color:#FF8FAB}
+.c-zanahoria{background:#FFF6EE;border-color:#FFB347}
+.c-limon    {background:#FFFFE0;border-color:#FFE566}
+.c-kiwi     {background:#F0FFF0;border-color:#7ED87E}
+.c-berenjena{background:#F5F0FF;border-color:#B39DDB}
+.c-mango    {background:#FFF9EE;border-color:#FFCC66}
+.c-fresa    {background:#FFF0F5;border-color:#FF8FAB}
+.c-pepino   {background:#F0FFF8;border-color:#5BC8A8}
+.c-uva      {background:#F8F0FF;border-color:#CE93D8}
+.c-ananá    {background:#FFFDE7;border-color:#FFD54F}
+.c-brocoli  {background:#F1F8E9;border-color:#8BC34A}
+.c-naranja  {background:#FFF3E0;border-color:#FFA726}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;gap:14px;align-items:flex-start;background:#fff;border-radius:14px;padding:16px 16px;box-shadow:0 2px 10px rgba(0,0,0,.06);border:2px solid #FFE0B2}
+.step-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:900;flex-shrink:0;color:#fff}
+.step-body h4{font-size:.9rem;font-weight:800;margin-bottom:4px}
+.step-body p,.step-body li{font-size:.79rem;color:#555;line-height:1.55}
+.step-body ul{padding-left:16px;margin-top:4px}
+.step-body a{color:#E65100;text-decoration:underline}
+
+/* KEYBOARD SHORTCUTS */
+.kb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.kb-item{background:#fff;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:2px solid #FFF3E0}
+.kb-key{background:#2A2A2A;color:#FFE066;border-radius:7px;padding:4px 10px;font-size:.72rem;font-weight:700;white-space:nowrap;font-family:monospace;min-width:70px;text-align:center;box-shadow:0 2px 0 #000}
+.kb-desc{font-size:.79rem;color:#444;font-weight:600}
+
+/* PROS CONS */
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pc-box{border-radius:16px;padding:18px 16px}
+.pc-box h3{font-size:.9rem;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.pc-box ul{list-style:none}
+.pc-box li{font-size:.79rem;line-height:1.55;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.06);display:flex;align-items:flex-start;gap:7px}
+.pc-box li:last-child{border-bottom:none}
+.pc-pro{background:#F0FFF4;border:2px solid #7ED87E}
+.pc-con{background:#FFF5F5;border:2px solid #FF8FAB}
+
+/* TOOLS LIST */
+.tool-card{background:#fff;border-radius:14px;padding:14px 16px;display:flex;gap:14px;align-items:flex-start;box-shadow:0 2px 10px rgba(0,0,0,.06);margin-bottom:10px;border-left:4px solid transparent}
+.tool-ico{font-size:1.6rem;flex-shrink:0;line-height:1}
+.tool-body h4{font-size:.9rem;font-weight:800;margin-bottom:3px}
+.tool-body p{font-size:.78rem;color:#555;line-height:1.5}
+.tool-body a{color:#0066CC;font-size:.75rem;font-weight:700}
+.t-free{color:#27AE60;font-size:.68rem;font-weight:700;background:#EAFAF1;border-radius:20px;padding:1px 8px;margin-left:6px}
+.t-paid{color:#E67E22;font-size:.68rem;font-weight:700;background:#FEF9E7;border-radius:20px;padding:1px 8px;margin-left:6px}
+
+/* TIPS */
+.tip-card{background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,.06);border-left:4px solid #FFB347;display:flex;gap:12px}
+.tip-ico{font-size:1.4rem;flex-shrink:0}
+.tip-body strong{display:block;font-size:.88rem;font-weight:800;margin-bottom:3px}
+.tip-body p{font-size:.79rem;color:#555;line-height:1.5}
+
+/* ALERT BOX */
+.alert{background:#FFF9C4;border:2px solid #FFD600;border-radius:14px;padding:14px 16px;font-size:.8rem;color:#7A6000;margin-bottom:18px;line-height:1.6}
+.alert b{color:#5A4000}
+
+/* INFO BOX */
+.info-box{background:#E8F4FD;border:2px solid #90CAF9;border-radius:14px;padding:14px 16px;font-size:.79rem;color:#1A3A5A;margin-bottom:18px;line-height:1.6}
+
+/* VERSION BOX */
+.ver-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+.ver-card{background:#fff;border-radius:14px;padding:14px 16px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.06);border:2px solid #FFE0B2}
+.ver-card .platform{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#888;margin-bottom:6px}
+.ver-card .version{font-size:1.1rem;font-weight:900;color:#CC5500}
+.ver-card .notes{font-size:.7rem;color:#888;margin-top:4px}
+
+/* COMMUNITY */
+.com-card{background:#fff;border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;box-shadow:0 2px 10px rgba(0,0,0,.06);margin-bottom:10px;border:2px solid #EEE}
+.com-card:hover{border-color:#FFB347}
+.com-ico{font-size:1.5rem;flex-shrink:0}
+.com-body h4{font-size:.88rem;font-weight:800;margin-bottom:2px}
+.com-body p{font-size:.77rem;color:#666;line-height:1.5}
+.com-body a{color:#0066CC;font-weight:700;font-size:.75rem}
+
+/* QUICK LINK */
+.main-link{display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#FF6B35,#FF8C42);color:#fff;border-radius:16px;padding:18px 24px;text-decoration:none;font-size:1rem;font-weight:800;box-shadow:0 4px 18px rgba(255,107,53,.35);margin-bottom:20px;transition:transform .15s,box-shadow .15s}
+.main-link:hover{transform:translateY(-2px);box-shadow:0 7px 24px rgba(255,107,53,.45)}
+
+footer{text-align:center;padding:20px 16px;background:linear-gradient(135deg,#FFE8D0,#FFF5D0);font-size:.72rem;color:#7A5020;line-height:1.7}
+footer b{color:#5A3010}
+
+@media(max-width:500px){
+  .tab-btn{padding:6px 8px;font-size:.71rem}
+  .pc-grid{grid-template-columns:1fr}
+  .grid{grid-template-columns:1fr}
+  .kb-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>🎬 CapCut — Guia Completa</h1>
+  <p>De 0 a 100 · Todo lo que necesitas saber para editar videos</p>
+  <div class="hero-chips">
+    <div class="hero-chip">✅ Gratuito</div>
+    <div class="hero-chip">🌐 Funciona en Chrome</div>
+    <div class="hero-chip">📱 iOS &amp; Android</div>
+    <div class="hero-chip">💻 Windows &amp; Mac</div>
+    <div class="hero-chip">🤖 IA integrada</div>
+    <div class="hero-chip">Julio 2026</div>
+  </div>
+</div>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="showTab('que',this)">🎬 ¿Qué es?</button>
+  <button class="tab-btn" onclick="showTab('pasos',this)">🚀 Primeros Pasos</button>
+  <button class="tab-btn" onclick="showTab('atajos',this)">⌨️ Atajos</button>
+  <button class="tab-btn" onclick="showTab('tips',this)">💡 Tips Pro</button>
+  <button class="tab-btn" onclick="showTab('tools',this)">➕ Complementos</button>
+  <button class="tab-btn" onclick="showTab('proscons',this)">⚖️ Pros &amp; Cons</button>
+  <button class="tab-btn" onclick="showTab('comunidad',this)">🌐 Comunidad</button>
+</div>
+
+<div class="panels">
+
+<!-- ===== QUE ES ===== -->
+<div id="tab-que" class="panel active">
+  <div class="stitle"><div class="sdot" style="background:#FFE0B2">🎬</div><span style="color:#CC5500">¿Qué es CapCut?</span></div>
+
+  <a class="main-link" href="https://www.capcut.com" target="_blank">🌐 Ir a capcut.com — Abrir el editor en Chrome</a>
+
+  <div class="grid">
+    <div class="card c-zanahoria">
+      <h3>🎯 En una frase</h3>
+      <p>Editor de video gratuito con inteligencia artificial, creado por ByteDance (la misma empresa de TikTok). Ideal para contenido de redes sociales, reels, YouTube Shorts y presentaciones.</p>
+    </div>
+    <div class="card c-kiwi">
+      <h3>📱 ¿Dónde funciona?</h3>
+      <ul>
+        <li>🌐 <b>Web:</b> capcut.com (Chrome, Edge, Firefox)</li>
+        <li>📱 <b>Android:</b> Google Play Store</li>
+        <li>🍎 <b>iOS:</b> App Store (iPhone/iPad)</li>
+        <li>💻 <b>Windows:</b> App descargable</li>
+        <li>🍏 <b>Mac:</b> App Store Mac</li>
+        <li>📺 <b>Chromebook:</b> funciona perfecto en Chrome</li>
+      </ul>
+    </div>
+    <div class="card c-mango">
+      <h3>🤖 IA integrada</h3>
+      <ul>
+        <li>Subtítulos automáticos en español</li>
+        <li>Eliminar fondo de video/imagen</li>
+        <li>Texto a video (genera clips con IA)</li>
+        <li>Traducción automática de subtítulos</li>
+        <li>Auto-reencuadre por aspecto</li>
+        <li>Avatares virtuales con voz</li>
+        <li>Generación de scripts con IA</li>
+      </ul>
+    </div>
+    <div class="card c-fresa">
+      <h3>🎯 ¿Para qué sirve?</h3>
+      <ul>
+        <li>Videos para Instagram / TikTok / YouTube</li>
+        <li>Reels y Shorts con efectos</li>
+        <li>Subtítulos para accesibilidad</li>
+        <li>Videos para empresas y marketing</li>
+        <li>Contenido educativo</li>
+        <li>Presentaciones con video</li>
+        <li>Podcasts con video animado</li>
+      </ul>
+    </div>
+    <div class="card c-pepino">
+      <h3>💰 ¿Cuánto cuesta?</h3>
+      <ul>
+        <li>✅ <b>Gratis:</b> la gran mayoría de funciones</li>
+        <li>⭐ <b>CapCut Pro:</b> ~USD 9,99/mes o ~USD 74,99/año</li>
+        <li>Pro incluye: sin marca de agua, efectos premium, exportación 4K, más plantillas IA</li>
+        <li>Para empezar: el plan gratuito es más que suficiente</li>
+      </ul>
+    </div>
+    <div class="card c-limon">
+      <h3>📊 Versiones actuales (2026)</h3>
+      <div class="ver-grid" style="margin-top:8px;margin-bottom:0">
+        <div class="ver-card" style="padding:10px">
+          <div class="platform">Web</div>
+          <div class="version">Continua</div>
+          <div class="notes">Sin nro. de versión fijo</div>
+        </div>
+        <div class="ver-card" style="padding:10px">
+          <div class="platform">Android</div>
+          <div class="version">v13.x</div>
+          <div class="notes">Actualización automática</div>
+        </div>
+        <div class="ver-card" style="padding:10px">
+          <div class="platform">iOS</div>
+          <div class="version">v13.x</div>
+          <div class="notes">App Store</div>
+        </div>
+        <div class="ver-card" style="padding:10px">
+          <div class="platform">Desktop</div>
+          <div class="version">v4.x</div>
+          <div class="notes">Windows / Mac</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PRIMEROS PASOS ===== -->
+<div id="tab-pasos" class="panel">
+  <div class="stitle"><div class="sdot" style="background:#B8F5C0">🚀</div><span style="color:#2E7D32">Primeros Pasos — De 0 a tu primer video</span></div>
+
+  <div class="alert"><b>⚠️ Para Chromebook:</b> Usá la versión web en Chrome. Andá a <b>capcut.com</b>, creá una cuenta con tu email de Google y empezá a editar directamente en el navegador, sin instalar nada.</div>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num" style="background:#FF8FAB">1</div>
+      <div class="step-body">
+        <h4>Crear tu cuenta</h4>
+        <p>Entrá a <a href="https://www.capcut.com" target="_blank">capcut.com</a> y hacé clic en "Registrarse". Podés usar tu cuenta de Google (lo más fácil). La cuenta es gratuita.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:#FFB347">2</div>
+      <div class="step-body">
+        <h4>Crear un nuevo proyecto</h4>
+        <p>Clic en el botón <b>"+ Nuevo proyecto"</b>. Se abre el editor. Elegí el ratio de aspecto según tu destino:</p>
+        <ul>
+          <li>9:16 → TikTok / Instagram Reels / YouTube Shorts</li>
+          <li>16:9 → YouTube horizontal / Presentaciones</li>
+          <li>1:1 → Post cuadrado de Instagram</li>
+          <li>4:5 → Feed de Instagram vertical</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:#FFE566; color:#5A4000">3</div>
+      <div class="step-body">
+        <h4>Importar tu video o fotos</h4>
+        <p>Clic en <b>"Importar"</b> y seleccioná los archivos desde tu computadora o Descargas. También podés arrastrar y soltar directamente al editor. Formatos soportados: MP4, MOV, AVI, JPG, PNG, GIF y más.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:#7ED87E">4</div>
+      <div class="step-body">
+        <h4>Editar en la línea de tiempo</h4>
+        <ul>
+          <li><b>Cortar:</b> posicioná el cursor donde querés cortar → clic en el ícono de tijeras (o presioná <kbd>B</kbd>)</li>
+          <li><b>Eliminar parte:</b> seleccioná el clip cortado → Delete</li>
+          <li><b>Mover clips:</b> arrastrarlos en la línea de tiempo</li>
+          <li><b>Ajustar velocidad:</b> clic derecho sobre el clip → Velocidad</li>
+          <li><b>Zoom en timeline:</b> Ctrl + Scroll del mouse</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:#B39DDB">5</div>
+      <div class="step-body">
+        <h4>Agregar texto y subtítulos</h4>
+        <ul>
+          <li><b>Texto manual:</b> Pestaña "Texto" → "Agregar texto" → escribí y elegí fuente/color</li>
+          <li><b>Subtítulos automáticos (IA):</b> Pestaña "Texto" → "Auto-subtítulos" → elegí idioma "Español" → Generar. ¡Listo, la IA los crea solos!</li>
+          <li>Podés editarlos uno por uno si hay errores</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:#FF8FAB">6</div>
+      <div class="step-body">
+        <h4>Agregar música y efectos de sonido</h4>
+        <ul>
+          <li>Pestaña "Audio" → "Música" → buscá en la biblioteca gratuita de CapCut</li>
+          <li>O importá tu propio archivo de audio (MP3, WAV)</li>
+          <li>Ajustá el volumen con el deslizador</li>
+          <li>"Efectos de sonido" para agregar sonidos puntuales</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:#5BC8A8">7</div>
+      <div class="step-body">
+        <h4>Agregar transiciones y efectos</h4>
+        <ul>
+          <li><b>Transiciones:</b> clic en el ícono entre dos clips en la timeline → elegí el efecto</li>
+          <li><b>Filtros:</b> pestaña "Efectos" → aplica al clip seleccionado o a todo el video</li>
+          <li><b>Stickers/Emojis:</b> pestaña "Sticker" para elementos animados</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:#FFB347">8</div>
+      <div class="step-body">
+        <h4>Exportar el video final</h4>
+        <ul>
+          <li>Clic en el botón <b>"Exportar"</b> (arriba a la derecha)</li>
+          <li>Elegí la resolución: <b>1080p es suficiente para redes</b></li>
+          <li>Frame rate: 30fps para contenido normal, 60fps para deportes/acción</li>
+          <li>El archivo se descarga a tu carpeta de Descargas</li>
+          <li>Formato: MP4 (compatible con todo)</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== ATAJOS ===== -->
+<div id="tab-atajos" class="panel">
+  <div class="stitle"><div class="sdot" style="background:#FFE566">⌨️</div><span style="color:#7A6000">Atajos de Teclado — Versión Web y Desktop</span></div>
+
+  <div class="info-box">💡 Estos atajos funcionan en la versión web (Chrome) y en la app de escritorio de Windows/Mac. En celular no hay atajos de teclado.</div>
+
+  <div style="font-size:.82rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">▸ Reproducción y navegación</div>
+  <div class="kb-grid" style="margin-bottom:20px">
+    <div class="kb-item"><div class="kb-key">Space</div><div class="kb-desc">Play / Pause</div></div>
+    <div class="kb-item"><div class="kb-key">← →</div><div class="kb-desc">Frame anterior / siguiente</div></div>
+    <div class="kb-item"><div class="kb-key">Shift + ←→</div><div class="kb-desc">Saltar 1 segundo</div></div>
+    <div class="kb-item"><div class="kb-key">Home</div><div class="kb-desc">Ir al inicio del video</div></div>
+    <div class="kb-item"><div class="kb-key">End</div><div class="kb-desc">Ir al final del video</div></div>
+    <div class="kb-item"><div class="kb-key">Ctrl + Scroll</div><div class="kb-desc">Zoom in/out en timeline</div></div>
+  </div>
+
+  <div style="font-size:.82rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">▸ Edición</div>
+  <div class="kb-grid" style="margin-bottom:20px">
+    <div class="kb-item"><div class="kb-key">B</div><div class="kb-desc">Dividir clip (Split)</div></div>
+    <div class="kb-item"><div class="kb-key">Delete</div><div class="kb-desc">Eliminar clip seleccionado</div></div>
+    <div class="kb-item"><div class="kb-key">Ctrl + Z</div><div class="kb-desc">Deshacer</div></div>
+    <div class="kb-item"><div class="kb-key">Ctrl + Y</div><div class="kb-desc">Rehacer</div></div>
+    <div class="kb-item"><div class="kb-key">Ctrl + C</div><div class="kb-desc">Copiar clip seleccionado</div></div>
+    <div class="kb-item"><div class="kb-key">Ctrl + V</div><div class="kb-desc">Pegar clip</div></div>
+    <div class="kb-item"><div class="kb-key">Ctrl + D</div><div class="kb-desc">Duplicar clip</div></div>
+    <div class="kb-item"><div class="kb-key">Ctrl + A</div><div class="kb-desc">Seleccionar todo</div></div>
+    <div class="kb-item"><div class="kb-key">[ y ]</div><div class="kb-desc">Ajustar inicio / fin del clip</div></div>
+    <div class="kb-item"><div class="kb-key">M</div><div class="kb-desc">Agregar marcador</div></div>
+  </div>
+
+  <div style="font-size:.82rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">▸ Herramientas</div>
+  <div class="kb-grid" style="margin-bottom:20px">
+    <div class="kb-item"><div class="kb-key">T</div><div class="kb-desc">Agregar texto</div></div>
+    <div class="kb-item"><div class="kb-key">Ctrl + I</div><div class="kb-desc">Importar medios</div></div>
+    <div class="kb-item"><div class="kb-key">Ctrl + S</div><div class="kb-desc">Guardar proyecto</div></div>
+    <div class="kb-item"><div class="kb-key">Ctrl + E</div><div class="kb-desc">Exportar video</div></div>
+    <div class="kb-item"><div class="kb-key">V</div><div class="kb-desc">Seleccionar herramienta</div></div>
+    <div class="kb-item"><div class="kb-key">Esc</div><div class="kb-desc">Cancelar / Deseleccionar</div></div>
+  </div>
+
+  <div style="background:#FFF9E6;border:2px solid #FFD600;border-radius:14px;padding:14px 16px;font-size:.79rem;color:#7A6000;line-height:1.6">
+    <b>💡 Tip:</b> Si no te acordás de un atajo, pasá el mouse sobre cualquier botón del editor y aparece el tooltip con el atajo correspondiente.
+  </div>
+</div>
+
+<!-- ===== TIPS PRO ===== -->
+<div id="tab-tips" class="panel">
+  <div class="stitle"><div class="sdot" style="background:#FFCC66">💡</div><span style="color:#8A5000">Tips Profesionales para sacarle el máximo</span></div>
+
+  <div class="tip-card" style="border-left-color:#FF8FAB">
+    <div class="tip-ico">🤖</div>
+    <div class="tip-body">
+      <strong>Subtítulos automáticos en español — la killer feature</strong>
+      <p>Pestaña Texto → Auto-subtítulos → Español → Generar. En menos de 2 minutos tenés todos los subtítulos. Podés editarlos uno por uno. Es la función más útil para redes sociales y accesibilidad.</p>
+    </div>
+  </div>
+
+  <div class="tip-card" style="border-left-color:#FFB347">
+    <div class="tip-ico">📐</div>
+    <div class="tip-body">
+      <strong>Usá plantillas para ir 10x más rápido</strong>
+      <p>En la pantalla de inicio buscá "Plantillas" — hay miles de diseños listos. Solo reemplazás los clips con los tuyos. Ideal para empezar sin saber editar.</p>
+    </div>
+  </div>
+
+  <div class="tip-card" style="border-left-color:#7ED87E">
+    <div class="tip-ico">✂️</div>
+    <div class="tip-body">
+      <strong>Eliminar silencios automáticamente</strong>
+      <p>Seleccioná un clip → pestaña "Herramientas" → "Eliminar silencios". CapCut detecta y elimina los momentos en que no hablás. Ahorrás horas de edición manual.</p>
+    </div>
+  </div>
+
+  <div class="tip-card" style="border-left-color:#B39DDB">
+    <div class="tip-ico">🎵</div>
+    <div class="tip-body">
+      <strong>Sincronizar cortes con el ritmo de la música (Auto Beat)</strong>
+      <p>Pestaña Audio → agregá una canción → clic en "Beat" → "Auto Beat". CapCut marca automáticamente los tiempos fuertes de la música para que puedas cortar justo ahí.</p>
+    </div>
+  </div>
+
+  <div class="tip-card" style="border-left-color:#5BC8A8">
+    <div class="tip-ico">🖼️</div>
+    <div class="tip-body">
+      <strong>Eliminar fondo de video sin croma</strong>
+      <p>Seleccioná el clip → "Eliminar fondo" (Remover fondo). La IA detecta la persona y elimina el fondo automáticamente. Funciona mejor con fondos sólidos y buena iluminación.</p>
+    </div>
+  </div>
+
+  <div class="tip-card" style="border-left-color:#FFE566">
+    <div class="tip-ico">📱</div>
+    <div class="tip-body">
+      <strong>Auto-reencuadre para distintos formatos</strong>
+      <p>Si tenés un video 16:9 y lo querés en 9:16 para Reels: clic en el clip → "Auto reencuadre". La IA sigue a la persona principal y ajusta el encuadre sola.</p>
+    </div>
+  </div>
+
+  <div class="tip-card" style="border-left-color:#FF8FAB">
+    <div class="tip-ico">🎨</div>
+    <div class="tip-body">
+      <strong>Exportá siempre en 1080p mínimo</strong>
+      <p>Al exportar elegí siempre 1080p (Full HD). Para 4K necesitás Pro. 30fps es suficiente para contenido cotidiano; usá 60fps solo si tu video tiene mucho movimiento o deporte.</p>
+    </div>
+  </div>
+
+  <div class="tip-card" style="border-left-color:#FFB347">
+    <div class="tip-ico">☁️</div>
+    <div class="tip-body">
+      <strong>Guardado en la nube automático</strong>
+      <p>Los proyectos se guardan automáticamente en tu cuenta de CapCut. Podés empezar en el celular y terminar en la web (o viceversa). Asegurate de tener sesión iniciada.</p>
+    </div>
+  </div>
+
+  <div class="tip-card" style="border-left-color:#7ED87E">
+    <div class="tip-ico">🎤</div>
+    <div class="tip-body">
+      <strong>Voz en off directamente desde el editor</strong>
+      <p>Pestaña Audio → "Voz en off" → grabá directamente en el editor mientras ves tu video. No necesitás un programa de grabación externo.</p>
+    </div>
+  </div>
+
+  <div class="tip-card" style="border-left-color:#B39DDB">
+    <div class="tip-ico">🔒</div>
+    <div class="tip-body">
+      <strong>Privacidad y datos — tener en cuenta</strong>
+      <p>CapCut es de ByteDance (China). Los videos que subís pasan por sus servidores. Para contenido personal o de redes no es problema. Para contenido corporativo confidencial, considerá alternativas como DaVinci Resolve (local, sin nube).</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== COMPLEMENTOS ===== -->
+<div id="tab-tools" class="panel">
+  <div class="stitle"><div class="sdot" style="background:#B8F5C0">➕</div><span style="color:#1A6A2A">Herramientas para complementar CapCut</span></div>
+
+  <div style="font-size:.82rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">▸ Thumbnails y diseño</div>
+
+  <div class="tool-card" style="border-left-color:#FF8FAB">
+    <div class="tool-ico">🎨</div>
+    <div class="tool-body">
+      <h4>Canva <span class="t-free">Gratis</span></h4>
+      <p>Para crear thumbnails (miniaturas), portadas y gráficos. Complementa perfectamente a CapCut. Funciona en Chrome.</p>
+      <a href="https://www.canva.com" target="_blank">canva.com →</a>
+    </div>
+  </div>
+
+  <div class="tool-card" style="border-left-color:#FFB347">
+    <div class="tool-ico">🖼️</div>
+    <div class="tool-body">
+      <h4>Remove.bg <span class="t-free">Gratis</span><span class="t-paid">Pro</span></h4>
+      <p>Elimina el fondo de imágenes (no video) con IA en un click. Para fotos y thumbnails.</p>
+      <a href="https://www.remove.bg" target="_blank">remove.bg →</a>
+    </div>
+  </div>
+
+  <div style="font-size:.82rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin:16px 0 12px">▸ Música y audio sin copyright</div>
+
+  <div class="tool-card" style="border-left-color:#7ED87E">
+    <div class="tool-ico">🎵</div>
+    <div class="tool-body">
+      <h4>Pixabay Music <span class="t-free">Gratis</span></h4>
+      <p>Miles de canciones sin copyright, uso libre para YouTube y redes. No necesita registro.</p>
+      <a href="https://pixabay.com/es/music/" target="_blank">pixabay.com/es/music →</a>
+    </div>
+  </div>
+
+  <div class="tool-card" style="border-left-color:#B39DDB">
+    <div class="tool-ico">🎧</div>
+    <div class="tool-body">
+      <h4>Epidemic Sound <span class="t-paid">Pago</span></h4>
+      <p>La mejor biblioteca de música sin copyright para creadores. Muy usada por YouTubers profesionales. ~USD 10/mes.</p>
+      <a href="https://www.epidemicsound.com" target="_blank">epidemicsound.com →</a>
+    </div>
+  </div>
+
+  <div class="tool-card" style="border-left-color:#5BC8A8">
+    <div class="tool-ico">🔊</div>
+    <div class="tool-body">
+      <h4>Freesound <span class="t-free">Gratis</span></h4>
+      <p>Biblioteca de efectos de sonido gratuitos. Más de 500.000 sonidos de la comunidad.</p>
+      <a href="https://freesound.org" target="_blank">freesound.org →</a>
+    </div>
+  </div>
+
+  <div style="font-size:.82rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin:16px 0 12px">▸ Video e imágenes stock gratuitas</div>
+
+  <div class="tool-card" style="border-left-color:#FFE566">
+    <div class="tool-ico">📷</div>
+    <div class="tool-body">
+      <h4>Pexels <span class="t-free">Gratis</span></h4>
+      <p>Fotos y videos de alta calidad para uso libre y comercial. Sin necesidad de atribuir.</p>
+      <a href="https://www.pexels.com/es-es/" target="_blank">pexels.com →</a>
+    </div>
+  </div>
+
+  <div class="tool-card" style="border-left-color:#FF8FAB">
+    <div class="tool-ico">🎞️</div>
+    <div class="tool-body">
+      <h4>Mixkit <span class="t-free">Gratis</span></h4>
+      <p>Clips de video, plantillas de After Effects y música libre de regalías. Todo gratis sin registro.</p>
+      <a href="https://mixkit.co" target="_blank">mixkit.co →</a>
+    </div>
+  </div>
+
+  <div style="font-size:.82rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin:16px 0 12px">▸ IA para guiones y voz en off</div>
+
+  <div class="tool-card" style="border-left-color:#FFB347">
+    <div class="tool-ico">🤖</div>
+    <div class="tool-body">
+      <h4>Claude / ChatGPT <span class="t-free">Gratis</span></h4>
+      <p>Para escribir guiones, descripciones, títulos y hashtags para tus videos. ¡Ya lo estás usando!</p>
+    </div>
+  </div>
+
+  <div class="tool-card" style="border-left-color:#B39DDB">
+    <div class="tool-ico">🎙️</div>
+    <div class="tool-body">
+      <h4>ElevenLabs <span class="t-free">Gratis</span><span class="t-paid">Pro</span></h4>
+      <p>Genera voces en off realistas con IA. Ideal para narrar videos sin tener que grabar tu voz.</p>
+      <a href="https://elevenlabs.io" target="_blank">elevenlabs.io →</a>
+    </div>
+  </div>
+
+  <div style="font-size:.82rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin:16px 0 12px">▸ Alternativas profesionales a CapCut</div>
+
+  <div class="tool-card" style="border-left-color:#7ED87E">
+    <div class="tool-ico">🎬</div>
+    <div class="tool-body">
+      <h4>DaVinci Resolve <span class="t-free">Gratis</span></h4>
+      <p>El editor profesional gratuito. Sin marca de agua, sin nube, sin límites. Para proyectos serios. Requiere PC potente.</p>
+      <a href="https://www.blackmagicdesign.com/products/davinciresolve" target="_blank">blackmagicdesign.com →</a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PROS & CONS ===== -->
+<div id="tab-proscons" class="panel">
+  <div class="stitle"><div class="sdot" style="background:#FFB3C6">⚖️</div><span style="color:#8A0040">Pros &amp; Contras — Análisis honesto</span></div>
+
+  <div class="pc-grid">
+    <div class="pc-box pc-pro">
+      <h3>✅ Pros — Lo que tiene de bueno</h3>
+      <ul>
+        <li><span>🎁</span> <span>Gratuito con funciones muy completas</span></li>
+        <li><span>🌐</span> <span>Funciona en Chrome sin instalar nada (perfecto para Chromebook)</span></li>
+        <li><span>🤖</span> <span>Subtítulos automáticos en español muy precisos</span></li>
+        <li><span>📱</span> <span>Multiplataforma: celular, PC y web en sincronía</span></li>
+        <li><span>🎨</span> <span>Enorme biblioteca de plantillas, efectos y música</span></li>
+        <li><span>👶</span> <span>Muy fácil de aprender, ideal para principiantes</span></li>
+        <li><span>✂️</span> <span>Herramientas IA: eliminar silencio, fondo, auto-subtítulos</span></li>
+        <li><span>🔄</span> <span>Exportación rápida en 1080p</span></li>
+        <li><span>☁️</span> <span>Proyectos guardados en la nube automáticamente</span></li>
+        <li><span>📤</span> <span>Publicación directa a TikTok/YouTube desde la app</span></li>
+        <li><span>🌍</span> <span>Interfaz disponible en español</span></li>
+        <li><span>🔄</span> <span>Actualizaciones frecuentes con nuevas funciones</span></li>
+      </ul>
+    </div>
+    <div class="pc-box pc-con">
+      <h3>❌ Cons — Lo que tiene de malo</h3>
+      <ul>
+        <li><span>🏢</span> <span>Es de ByteDance (TikTok) — datos en servidores chinos</span></li>
+        <li><span>💧</span> <span>Algunos efectos/plantillas tienen marca de agua (requieren Pro)</span></li>
+        <li><span>📉</span> <span>Exportación en 4K solo en plan de pago</span></li>
+        <li><span>🔋</span> <span>Consume mucha RAM en videos largos o en PC antigua</span></li>
+        <li><span>🎬</span> <span>No apto para producciones profesionales complejas</span></li>
+        <li><span>🌐</span> <span>Requiere conexión a internet (versión web)</span></li>
+        <li><span>⚡</span> <span>A veces lento al renderizar previsualizaciones</span></li>
+        <li><span>🎚️</span> <span>Mezcla de audio básica comparada con Adobe Premiere</span></li>
+        <li><span>💾</span> <span>Almacenamiento en nube limitado en plan gratuito</span></li>
+        <li><span>🔒</span> <span>No recomendado para contenido corporativo confidencial</span></li>
+        <li><span>🎛️</span> <span>Corrección de color limitada vs. herramientas pro</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="margin-top:18px;background:#F0FFF4;border:2px solid #7ED87E;border-radius:14px;padding:16px 18px;font-size:.8rem;color:#1A5A2A;line-height:1.7">
+    <b style="display:block;margin-bottom:6px;font-size:.88rem">🎯 Veredicto</b>
+    Para <b>contenido de redes sociales, reels, videos de marketing y proyectos personales</b>, CapCut es la mejor opción gratuita disponible hoy. Si necesitás editar para TV, cine o proyectos corporativos muy complejos, hay mejores alternativas (DaVinci Resolve, Adobe Premiere). Para el 90% de los casos de uso cotidiano, CapCut es suficiente y más que competente.
+  </div>
+</div>
+
+<!-- ===== COMUNIDAD ===== -->
+<div id="tab-comunidad" class="panel">
+  <div class="stitle"><div class="sdot" style="background:#C0B8F5">🌐</div><span style="color:#3A0088">Comunidad, Foros y Recursos</span></div>
+
+  <div style="font-size:.82rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">▸ Canales oficiales</div>
+
+  <div class="com-card">
+    <div class="com-ico">🌐</div>
+    <div class="com-body">
+      <h4>Sitio oficial</h4>
+      <p>El editor web, blog de actualizaciones, centro de ayuda y plantillas.</p>
+      <a href="https://www.capcut.com" target="_blank">capcut.com →</a>
+    </div>
+  </div>
+
+  <div class="com-card">
+    <div class="com-ico">📺</div>
+    <div class="com-body">
+      <h4>CapCut en YouTube (Canal Oficial)</h4>
+      <p>Tutoriales oficiales de nuevas funciones. Buscar "CapCut Tutorial Español" para videos en tu idioma.</p>
+      <a href="https://www.youtube.com/@CapCut" target="_blank">youtube.com/@CapCut →</a>
+    </div>
+  </div>
+
+  <div class="com-card">
+    <div class="com-ico">📱</div>
+    <div class="com-body">
+      <h4>TikTok oficial de CapCut</h4>
+      <p>Ver ejemplos, tendencias de edición y trucos rápidos en formato short.</p>
+      <a href="https://www.tiktok.com/@capcut" target="_blank">@capcut en TikTok →</a>
+    </div>
+  </div>
+
+  <div style="font-size:.82rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin:16px 0 12px">▸ Foros y comunidades</div>
+
+  <div class="com-card">
+    <div class="com-ico">🤖</div>
+    <div class="com-body">
+      <h4>Reddit — r/CapCut</h4>
+      <p>Foro en inglés muy activo. Preguntas, trucos, showcase de ediciones y soporte de la comunidad.</p>
+      <a href="https://www.reddit.com/r/CapCut/" target="_blank">reddit.com/r/CapCut →</a>
+    </div>
+  </div>
+
+  <div class="com-card">
+    <div class="com-ico">👥</div>
+    <div class="com-body">
+      <h4>Facebook — CapCut en Español</h4>
+      <p>Grupos de Facebook en español para compartir ediciones y hacer preguntas a la comunidad hispanohablante.</p>
+      <p style="margin-top:4px;color:#888">Buscar "CapCut Español" en Facebook Groups</p>
+    </div>
+  </div>
+
+  <div class="com-card">
+    <div class="com-ico">❓</div>
+    <div class="com-body">
+      <h4>Centro de Ayuda Oficial</h4>
+      <p>Preguntas frecuentes, guías paso a paso y soporte oficial de CapCut.</p>
+      <a href="https://www.capcut.com/tools/capcut-help-center" target="_blank">Centro de Ayuda CapCut →</a>
+    </div>
+  </div>
+
+  <div style="font-size:.82rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin:16px 0 12px">▸ YouTube en español — Canales recomendados para aprender</div>
+
+  <div class="com-card">
+    <div class="com-ico">🎓</div>
+    <div class="com-body">
+      <h4>Tutoriales en YouTube</h4>
+      <p>Buscá estos términos en YouTube para encontrar los mejores tutoriales en español:</p>
+      <ul style="font-size:.77rem;color:#555;padding-left:16px;margin-top:6px;line-height:1.7">
+        <li>"CapCut tutorial español 2026"</li>
+        <li>"CapCut para principiantes en español"</li>
+        <li>"CapCut web tutorial"</li>
+        <li>"CapCut subtítulos automáticos español"</li>
+        <li>"CapCut trucos y secretos"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="margin-top:18px;background:#FFF9E6;border:2px solid #FFD600;border-radius:14px;padding:16px 18px;font-size:.79rem;color:#7A6000;line-height:1.7">
+    <b style="display:block;margin-bottom:6px">📋 Recomendación final</b>
+    <b>Para Chromebook:</b> usá la versión web en Chrome — es la más cómoda y no requiere instalar nada.<br>
+    <b>Para celular:</b> descargá la app de Google Play o App Store — tiene funciones exclusivas de mobile.<br>
+    <b>Para empezar HOY:</b> abrí capcut.com, creá una cuenta con Google, importá un video corto y probá los subtítulos automáticos. En 15 minutos vas a tener tu primer video editado.
+  </div>
+</div>
+
+</div><!-- /panels -->
+
+<footer>
+  <b>CapCut — Guia Completa · Julio 2026</b><br>
+  Documento independiente · Sin dependencias externas · Funciona sin internet<br>
+  capcut.com · canva.com · pexels.com · pixabay.com/es/music · freesound.org
+</footer>
+
+<script>
+function showTab(name,btn){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>

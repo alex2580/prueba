@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TodasMisCosas SAS — 10 Modelos Legales · Argentina 2026</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#F0F4F8;color:#1A2332;min-height:100vh}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 55%,#0f172a 100%);padding:36px 24px 28px;text-align:center}
+.hero-badge{display:inline-block;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.4);color:#f59e0b;border-radius:20px;padding:4px 16px;font-size:.72rem;font-weight:700;letter-spacing:.06em;margin-bottom:12px}
+.hero h1{font-size:clamp(1.4rem,4vw,2.1rem);font-weight:900;color:#f1f5f9;letter-spacing:-.3px}
+.hero p{margin-top:8px;font-size:.87rem;color:#64748b}
+.hero-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:14px}
+.hero-chip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:20px;padding:4px 14px;font-size:.72rem;color:#94a3b8}
+.hero-chip strong{color:#f1f5f9}
+
+/* TABS */
+.tab-nav{display:flex;flex-wrap:wrap;gap:5px;background:#1A2332;padding:10px 12px;border-bottom:3px solid #f59e0b;position:sticky;top:0;z-index:100;box-shadow:0 3px 12px rgba(0,0,0,.3)}
+.tab-btn{padding:8px 13px;border:2px solid #374151;background:#253044;font-size:.78rem;font-weight:700;cursor:pointer;border-radius:8px;color:#CBD5E1;transition:all .15s;white-space:nowrap}
+.tab-btn:hover{background:#334155;border-color:#f59e0b;color:#fff}
+.tab-btn.active{background:#f59e0b;border-color:#d97706;color:#000;font-weight:900}
+
+/* PANELS */
+.panels{padding:24px 16px 60px;max-width:900px;margin:0 auto}
+.panel{display:none}
+.panel.active{display:block}
+
+/* INTRO CARD */
+.intro-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin-bottom:24px}
+.intro-card{background:#fff;border-radius:14px;padding:18px 16px;border-left:5px solid;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.intro-card h3{font-size:.9rem;font-weight:800;margin-bottom:8px}
+.intro-card p,.intro-card li{font-size:.79rem;color:#555;line-height:1.6}
+.intro-card ul{padding-left:16px}
+
+/* DOC CONTAINER */
+.doc-wrap{background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.1);overflow:hidden;margin-bottom:20px}
+.doc-header{background:linear-gradient(135deg,#0f172a,#1e3a5f);padding:20px 24px;color:#fff}
+.doc-header .doc-num{font-size:.7rem;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.doc-header h2{font-size:1.1rem;font-weight:900;color:#f1f5f9}
+.doc-header p{font-size:.78rem;color:#94a3b8;margin-top:4px}
+.doc-body{padding:24px}
+
+/* LEGAL TEXT */
+.legal{font-size:.82rem;line-height:1.85;color:#2A2A2A}
+.legal h3{font-size:.88rem;font-weight:800;margin:20px 0 8px;color:#0f172a;border-bottom:1px solid #E2E8F0;padding-bottom:4px}
+.legal h4{font-size:.82rem;font-weight:800;margin:14px 0 6px;color:#1e3a5f}
+.legal p{margin-bottom:10px}
+.legal ol,.legal ul{padding-left:22px;margin-bottom:10px}
+.legal li{margin-bottom:5px}
+.legal .art{font-weight:800;color:#0f172a}
+
+/* FILL FIELDS */
+.f{background:#FFFDE7;border:1px dashed #F59E0B;border-radius:4px;padding:1px 6px;color:#92400E;font-weight:700;font-size:.79rem;cursor:text}
+.f-optional{background:#EFF6FF;border:1px dashed #93C5FD;border-radius:4px;padding:1px 6px;color:#1D4ED8;font-weight:600;font-size:.79rem}
+
+/* NOTICE */
+.notice{background:#FEF9C3;border:1px solid #FDE047;border-left:4px solid #EAB308;border-radius:10px;padding:12px 16px;font-size:.77rem;color:#713F12;margin-bottom:18px;line-height:1.6}
+.notice b{color:#78350F}
+.notice-info{background:#EFF6FF;border:1px solid #BFDBFE;border-left:4px solid #3B82F6;border-radius:10px;padding:12px 16px;font-size:.77rem;color:#1E3A5F;margin-bottom:18px;line-height:1.6}
+
+/* STEPS */
+.steps-h{font-size:.82rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.step-row{display:flex;gap:14px;align-items:flex-start;margin-bottom:12px;background:#F8FAFC;border-radius:10px;padding:12px 14px;border:1px solid #E2E8F0}
+.step-n{width:28px;height:28px;border-radius:50%;background:#0f172a;color:#f59e0b;font-size:.8rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:.8rem;font-weight:700;margin-bottom:3px}
+.step-d{font-size:.76rem;color:#555;line-height:1.5}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.79rem;margin:12px 0}
+th{background:#0f172a;color:#f59e0b;padding:8px 12px;text-align:left;font-size:.72rem;font-weight:700;letter-spacing:.04em}
+td{padding:8px 12px;border-bottom:1px solid #E2E8F0;vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:nth-child(even) td{background:#F8FAFC}
+
+/* FIRMA BLOCK */
+.firma-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:30px}
+.firma-box{border:1px solid #CBD5E1;border-radius:10px;padding:16px;text-align:center}
+.firma-line{border-top:2px solid #0f172a;margin:40px 0 8px;width:80%;margin-left:auto;margin-right:auto}
+.firma-label{font-size:.72rem;color:#555;line-height:1.5}
+
+/* CHECKLIST */
+.check-list{list-style:none;padding:0}
+.check-list li{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #F1F5F9;font-size:.8rem;line-height:1.5}
+.check-list li:last-child{border-bottom:none}
+.chk-box{width:18px;height:18px;border:2px solid #CBD5E1;border-radius:4px;flex-shrink:0;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.7rem}
+.chk-box.done{background:#15803D;border-color:#15803D;color:#fff}
+
+/* TAG */
+.tag{font-size:.64rem;font-weight:700;padding:2px 8px;border-radius:5px;display:inline-block}
+.tag-legal{background:#FEF9C3;color:#854D0E}
+.tag-req{background:#DCFCE7;color:#166534}
+.tag-opt{background:#EFF6FF;color:#1D4ED8}
+
+footer{background:#0f172a;color:#334155;text-align:center;padding:18px;font-size:.72rem}
+footer strong{color:#475569}
+
+@media(max-width:520px){
+  .tab-btn{padding:6px 9px;font-size:.7rem}
+  .firma-grid{grid-template-columns:1fr}
+  .intro-grid{grid-template-columns:1fr}
+  .doc-body{padding:16px}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">⚖️ LEY 27.349 · SAS ARGENTINA</div>
+  <h1>TodasMisCosas.com — Modelos Legales SAS</h1>
+  <p>10 documentos modelo para constituir y operar la Sociedad por Acciones Simplificada</p>
+  <div class="hero-chips">
+    <div class="hero-chip"><strong>SAS</strong> Sociedad por Acciones Simplificada</div>
+    <div class="hero-chip"><strong>Ley 27.349</strong> Argentina</div>
+    <div class="hero-chip"><strong>CABA</strong> Sede social</div>
+    <div class="hero-chip">Julio 2026</div>
+  </div>
+</div>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="showTab('intro',this)">📘 Guía SAS</button>
+  <button class="tab-btn" onclick="showTab('m1',this)">01 · Instrumento Constitutivo</button>
+  <button class="tab-btn" onclick="showTab('m2',this)">02 · Estatuto Social</button>
+  <button class="tab-btn" onclick="showTab('m3',this)">03 · Libro de Actas</button>
+  <button class="tab-btn" onclick="showTab('m4',this)">04 · Acta Fundacional</button>
+  <button class="tab-btn" onclick="showTab('m5',this)">05 · Asamblea Ordinaria</button>
+  <button class="tab-btn" onclick="showTab('m6',this)">06 · Resolución Social</button>
+  <button class="tab-btn" onclick="showTab('m7',this)">07 · Designación Autoridades</button>
+  <button class="tab-btn" onclick="showTab('m8',this)">08 · Registro Accionistas</button>
+  <button class="tab-btn" onclick="showTab('m9',this)">09 · Poder/Autorización</button>
+  <button class="tab-btn" onclick="showTab('m10',this)">10 · Modificación Estatutaria</button>
+</div>
+
+<div class="panels">
+
+<!-- ===== INTRO ===== -->
+<div id="tab-intro" class="panel active">
+
+  <div class="notice-info">
+    <b>📌 Cómo usar este documento:</b> Los campos en <span class="f">amarillo</span> son obligatorios — completalos con los datos reales. Los campos en <span class="f-optional">azul</span> son opcionales o alternativos. Todos los modelos están adaptados a TMC y a la Ley 27.349 de Argentina.
+  </div>
+
+  <div class="intro-grid">
+    <div class="intro-card" style="border-left-color:#f59e0b">
+      <h3>⚡ ¿Qué es una SAS?</h3>
+      <ul>
+        <li>Sociedad por Acciones Simplificada (Ley 27.349)</li>
+        <li>Se puede constituir con 1 o más socios</li>
+        <li>Constitución 100% digital — sin escribanía</li>
+        <li>Firma digital del instrumento constitutivo</li>
+        <li>Capital mínimo: 2 salarios mínimos (~$800.000 ARS aprox.)</li>
+        <li>Duración máxima: 99 años</li>
+        <li>Objeto social puede ser plural y amplio</li>
+      </ul>
+    </div>
+    <div class="intro-card" style="border-left-color:#3B82F6">
+      <h3>📋 Los 10 documentos</h3>
+      <ul>
+        <li><b>01</b> Instrumento Constitutivo (para registrar la SAS)</li>
+        <li><b>02</b> Estatuto Social (reglas internas)</li>
+        <li><b>03</b> Libro de Actas Digital (estructura base)</li>
+        <li><b>04</b> Acta Fundacional (primera reunión)</li>
+        <li><b>05</b> Asamblea Ordinaria Anual</li>
+        <li><b>06</b> Resolución Social (decisiones)</li>
+        <li><b>07</b> Designación de Autoridades</li>
+        <li><b>08</b> Registro de Accionistas</li>
+        <li><b>09</b> Poder / Autorización</li>
+        <li><b>10</b> Modificación Estatutaria</li>
+      </ul>
+    </div>
+    <div class="intro-card" style="border-left-color:#16A34A">
+      <h3>🚀 Pasos para constituir la SAS</h3>
+      <ol style="list-style:decimal">
+        <li>Acordar datos entre socios (nombre, capital, %)</li>
+        <li>Redactar el Instrumento Constitutivo (Modelo 01)</li>
+        <li>Firmar digitalmente con AFIP (Clave Fiscal Nivel 3)</li>
+        <li>Ingresar al portal del Registro Público de CABA</li>
+        <li>Cargar el instrumento + pagar arancel</li>
+        <li>Recibir el CUIT de la sociedad</li>
+        <li>Abrir cuenta bancaria / billetera virtual</li>
+        <li>Completar el Libro de Actas (Modelo 03)</li>
+      </ol>
+    </div>
+    <div class="intro-card" style="border-left-color:#DC2626">
+      <h3>⚠️ Datos que necesitás tener listos</h3>
+      <ul>
+        <li>Denominación social (nombre de la SAS)</li>
+        <li>CUIL/DNI de cada socio</li>
+        <li>Domicilio real de cada socio</li>
+        <li>Sede social (domicilio legal de la empresa)</li>
+        <li>Capital inicial y % de cada socio</li>
+        <li>Objeto social (qué va a hacer la empresa)</li>
+        <li>Quién será el Gerente/Administrador</li>
+        <li>Duración de la sociedad (recomendado: 99 años)</li>
+      </ul>
+    </div>
+    <div class="intro-card" style="border-left-color:#7C3AED">
+      <h3>🏢 Datos TMC (pre-completados)</h3>
+      <ul>
+        <li><b>Denominación:</b> TODASMISCOSAS.COM S.A.S.</li>
+        <li><b>Actividad:</b> Marketplace de almacenamiento urbano</li>
+        <li><b>Sede:</b> Ciudad Autónoma de Buenos Aires</li>
+        <li><b>País:</b> República Argentina</li>
+        <li><b>Ley aplicable:</b> Ley 27.349 y Ley 19.550</li>
+        <li><b>Web:</b> todasmiscosas.com</li>
+      </ul>
+    </div>
+    <div class="intro-card" style="border-left-color:#0EA5E9">
+      <h3>🔗 Links útiles oficiales</h3>
+      <ul>
+        <li>Registro Público CABA: <b>buenosaires.gob.ar/justicia</b></li>
+        <li>Plataforma SAS nacional: <b>sas.produccion.gob.ar</b></li>
+        <li>AFIP (obtener CUIT): <b>afip.gob.ar</b></li>
+        <li>AGIP (ingresos brutos CABA): <b>agip.gob.ar</b></li>
+        <li>Firma digital AFIP: necesitás Clave Fiscal Nivel 3</li>
+        <li>Costo arancel registro: consultar en el Registro Público vigente</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="notice">
+    <b>⚠️ Aviso legal:</b> Estos modelos son de referencia y están adaptados a la normativa argentina (Ley 27.349 y Ley 19.550). Se recomienda revisarlos con un abogado o contador antes de presentarlos ante el Registro Público. El contenido de este documento no reemplaza el asesoramiento legal profesional.
+  </div>
+
+</div>
+
+<!-- ===== MODELO 1: INSTRUMENTO CONSTITUTIVO ===== -->
+<div id="tab-m1" class="panel">
+  <div class="doc-wrap">
+    <div class="doc-header">
+      <div class="doc-num">Modelo 01 · Documento principal de registro</div>
+      <h2>Instrumento Constitutivo — SAS</h2>
+      <p>Documento para presentar ante el Registro Público · Ley 27.349</p>
+    </div>
+    <div class="doc-body">
+      <div class="notice">Completá todos los campos <span class="f">amarillos</span> antes de firmar digitalmente. Este es el documento que se sube al portal del Registro Público.</div>
+      <div class="legal">
+
+        <p style="text-align:center;font-weight:900;font-size:.95rem;letter-spacing:.03em;margin-bottom:6px">INSTRUMENTO CONSTITUTIVO</p>
+        <p style="text-align:center;font-size:.82rem;color:#555;margin-bottom:24px">Sociedad por Acciones Simplificada — Ley 27.349<br>República Argentina</p>
+
+        <h3>I. DATOS DE LOS SOCIOS FUNDADORES</h3>
+        <p>En la Ciudad Autónoma de Buenos Aires, República Argentina, a los <span class="f">[DÍA]</span> días del mes de <span class="f">[MES]</span> de <span class="f">[AÑO]</span>, comparecen en forma digital los siguientes socios fundadores:</p>
+
+        <p><span class="art">SOCIO 1:</span> <span class="f">[NOMBRE COMPLETO]</span>, argentino/a, <span class="f">[estado civil]</span>, titular del D.N.I. N° <span class="f">[DNI]</span>, CUIL N° <span class="f">[CUIL]</span>, con domicilio real en <span class="f">[DOMICILIO COMPLETO]</span>, Ciudad Autónoma de Buenos Aires.</p>
+
+        <p><span class="art">SOCIO 2:</span> <span class="f">[NOMBRE COMPLETO]</span>, argentino/a, <span class="f">[estado civil]</span>, titular del D.N.I. N° <span class="f">[DNI]</span>, CUIL N° <span class="f">[CUIL]</span>, con domicilio real en <span class="f">[DOMICILIO COMPLETO]</span>, Ciudad Autónoma de Buenos Aires.</p>
+
+        <p>Quienes, de común acuerdo, manifiestan su voluntad de constituir una Sociedad por Acciones Simplificada, al amparo de la Ley N° 27.349, con sujeción a las siguientes cláusulas:</p>
+
+        <h3>II. DENOMINACIÓN SOCIAL</h3>
+        <p><span class="art">ARTÍCULO 1°.</span> La sociedad se denominará <b>TODASMISCOSAS.COM S.A.S.</b> — Sociedad por Acciones Simplificada, en adelante también "la Sociedad".</p>
+
+        <h3>III. DOMICILIO Y SEDE SOCIAL</h3>
+        <p><span class="art">ARTÍCULO 2°.</span> La Sociedad tendrá su domicilio legal en la Ciudad Autónoma de Buenos Aires, República Argentina. La sede social se fija en <span class="f">[DIRECCIÓN COMPLETA, PISO, DEPTO, BARRIO]</span>, Ciudad Autónoma de Buenos Aires. La Sociedad podrá establecer sucursales, agencias o representaciones en cualquier punto del país o del exterior, mediante resolución del órgano de administración.</p>
+
+        <h3>IV. OBJETO SOCIAL</h3>
+        <p><span class="art">ARTÍCULO 3°.</span> La Sociedad tendrá por objeto, en el país y en el exterior, dedicarse por cuenta propia o de terceros, o asociada a terceros, a las siguientes actividades:</p>
+        <ol>
+          <li><b>TECNOLOGÍA Y MARKETPLACE:</b> Desarrollo, operación y comercialización de plataformas digitales, aplicaciones web y móviles, marketplaces de servicios, sistemas de gestión de pagos y reservas en línea, incluyendo la plataforma de almacenamiento urbano todasmiscosas.com.</li>
+          <li><b>SERVICIOS DE ALMACENAMIENTO Y LOGÍSTICA:</b> Intermediación entre personas que ofrecen espacios de almacenamiento (cocheras, depósitos, habitaciones, galpones) y personas que requieren dichos servicios, dentro del mercado de alquiler temporal de espacios privados.</li>
+          <li><b>SERVICIOS DIGITALES:</b> Prestación de servicios de tecnología de la información, software como servicio (SaaS), consultoría tecnológica, marketing digital, y servicios relacionados.</li>
+          <li><b>INVERSIONES Y PARTICIPACIONES:</b> Adquirir participaciones en otras sociedades y entes, otorgar préstamos a los mismos, prestar garantías a favor de ellos y realizar todas las operaciones financieras permitidas por la ley.</li>
+          <li><b>COMPLEMENTARIAS:</b> Realizar todos los actos y contratos necesarios o convenientes para el cumplimiento del objeto social, incluyendo la importación y exportación de bienes y servicios.</li>
+        </ol>
+        <p>Para el cumplimiento de su objeto, la Sociedad tiene plena capacidad jurídica para adquirir derechos, contraer obligaciones y ejercer los actos que no sean prohibidos por las leyes o por este instrumento.</p>
+
+        <h3>V. DURACIÓN</h3>
+        <p><span class="art">ARTÍCULO 4°.</span> La duración de la Sociedad es de <b>NOVENTA Y NUEVE (99) años</b> contados a partir de la fecha de inscripción en el Registro Público, pudiendo prorrogarse por períodos iguales mediante resolución de los socios.</p>
+
+        <h3>VI. CAPITAL SOCIAL</h3>
+        <p><span class="art">ARTÍCULO 5°.</span> El capital social se fija en la suma de <span class="f">[MONTO EN PESOS] ($[NÚMERO])</span>, dividido en <span class="f">[NÚMERO]</span> acciones ordinarias, nominativas no endosables, de valor nominal <span class="f">[VALOR NOMINAL]</span> pesos cada una, con derecho a un voto por acción.</p>
+
+        <p>Las acciones se suscriben e integran de la siguiente forma:</p>
+        <table>
+          <tr><th>Socio</th><th>Acciones</th><th>%</th><th>Integrado</th></tr>
+          <tr><td><span class="f">[NOMBRE SOCIO 1]</span></td><td><span class="f">[N° acciones]</span></td><td><span class="f">[%]</span></td><td>25% al constituir, 75% en 2 años</td></tr>
+          <tr><td><span class="f">[NOMBRE SOCIO 2]</span></td><td><span class="f">[N° acciones]</span></td><td><span class="f">[%]</span></td><td>25% al constituir, 75% en 2 años</td></tr>
+        </table>
+        <p>El capital podrá ser aumentado por resolución del órgano de administración hasta el quíntuplo del capital social inscripto, sin necesidad de reforma del presente instrumento, conforme lo permite el Art. 49 de la Ley 27.349.</p>
+
+        <h3>VII. TRANSMISIÓN DE ACCIONES</h3>
+        <p><span class="art">ARTÍCULO 6°.</span> La transmisión de acciones deberá ser notificada a la Sociedad. Los socios tendrán derecho de preferencia para adquirir las acciones que cualquier socio desee transferir, en proporción a su participación, dentro de los treinta (30) días de notificada la intención de venta. Vencido dicho plazo sin ejercerse el derecho, el socio vendedor podrá transferir libremente sus acciones.</p>
+
+        <h3>VIII. ÓRGANO DE ADMINISTRACIÓN</h3>
+        <p><span class="art">ARTÍCULO 7°.</span> La administración y representación de la Sociedad estará a cargo de una <b>Gerencia</b>, compuesta por uno o más gerentes, socios o no, designados por los socios. Los gerentes durarán en sus funciones por el período que determine la resolución de designación, pudiendo ser reelegidos.</p>
+        <p>El Gerente tiene amplias facultades de administración y disposición de bienes de la Sociedad, pudiendo realizar todos los actos comprendidos en el objeto social, incluyendo la celebración de contratos, apertura y manejo de cuentas bancarias, firma de cheques, contratación y despido de personal, representación judicial y extrajudicial, entre otras.</p>
+        <p>Se designa como Gerente titular a <span class="f">[NOMBRE COMPLETO]</span>, DNI <span class="f">[DNI]</span>, con las facultades descriptas precedentemente.</p>
+        <p>Se designa como Gerente suplente a <span class="f-optional">[NOMBRE COMPLETO — opcional]</span>, DNI <span class="f-optional">[DNI]</span>.</p>
+
+        <h3>IX. REUNIONES DE SOCIOS</h3>
+        <p><span class="art">ARTÍCULO 8°.</span> Las resoluciones sociales se adoptarán por la mayoría absoluta de capital, excepto aquellas que requieran mayoría especial conforme la ley. Podrán realizarse de forma presencial, a distancia o por escrito, conforme lo establece la Ley 27.349. Se labrará acta de cada reunión en el Libro de Actas correspondiente.</p>
+
+        <h3>X. DISTRIBUCIÓN DE UTILIDADES</h3>
+        <p><span class="art">ARTÍCULO 9°.</span> Las utilidades se distribuirán anualmente, una vez aprobado el balance general por los socios, en proporción al capital integrado de cada uno. La asamblea anual podrá resolver la constitución de reservas voluntarias o la reinversión de utilidades.</p>
+
+        <h3>XI. CIERRE DEL EJERCICIO</h3>
+        <p><span class="art">ARTÍCULO 10°.</span> El ejercicio social cerrará el <b>31 de diciembre</b> de cada año. El primer ejercicio cerrará el 31 de diciembre de <span class="f">[AÑO DE CONSTITUCIÓN]</span>.</p>
+
+        <h3>XII. DISOLUCIÓN Y LIQUIDACIÓN</h3>
+        <p><span class="art">ARTÍCULO 11°.</span> La Sociedad se disolverá por las causales previstas en la Ley 19.550 y en la Ley 27.349. La liquidación estará a cargo del órgano de administración, salvo resolución en contrario de los socios.</p>
+
+        <h3>XIII. DISPOSICIONES FINALES</h3>
+        <p><span class="art">ARTÍCULO 12°.</span> Para todo lo no previsto en el presente instrumento, se aplican las disposiciones de la Ley N° 27.349 y, supletoriamente, la Ley N° 19.550 y sus modificatorias.</p>
+
+        <p style="margin-top:24px">En prueba de conformidad, los socios firman el presente instrumento constitutivo en forma digital, en la Ciudad Autónoma de Buenos Aires, a los <span class="f">[DÍA]</span> días del mes de <span class="f">[MES]</span> de <span class="f">[AÑO]</span>.</p>
+
+        <div class="firma-grid">
+          <div class="firma-box">
+            <div class="firma-line"></div>
+            <div class="firma-label"><span class="f">[NOMBRE COMPLETO SOCIO 1]</span><br>DNI: <span class="f">[DNI]</span><br>Socio Fundador</div>
+          </div>
+          <div class="firma-box">
+            <div class="firma-line"></div>
+            <div class="firma-label"><span class="f">[NOMBRE COMPLETO SOCIO 2]</span><br>DNI: <span class="f">[DNI]</span><br>Socio Fundador</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODELO 2: ESTATUTO SOCIAL ===== -->
+<div id="tab-m2" class="panel">
+  <div class="doc-wrap">
+    <div class="doc-header">
+      <div class="doc-num">Modelo 02 · Reglamento interno de la sociedad</div>
+      <h2>Estatuto Social — TODASMISCOSAS.COM S.A.S.</h2>
+      <p>Complementa el Instrumento Constitutivo con reglas operativas internas</p>
+    </div>
+    <div class="doc-body">
+      <div class="notice-info">El Estatuto puede ir incluido en el Instrumento Constitutivo o como documento separado. Para una SAS, habitualmente se integra al mismo instrumento.</div>
+      <div class="legal">
+
+        <p style="text-align:center;font-weight:900;font-size:.95rem;margin-bottom:24px">ESTATUTO SOCIAL<br>TODASMISCOSAS.COM S.A.S.</p>
+
+        <h3>CAPÍTULO I — NOMBRE, SEDE Y DURACIÓN</h3>
+        <p><span class="art">Art. 1° — Denominación.</span> La sociedad se denomina <b>TODASMISCOSAS.COM S.A.S.</b> La denominación deberá ir acompañada de las siglas "S.A.S." en toda su documentación y comunicaciones.</p>
+        <p><span class="art">Art. 2° — Sede.</span> La sede social se ubica en la Ciudad Autónoma de Buenos Aires. Toda notificación a la sociedad en dicha sede tendrá plena validez legal.</p>
+        <p><span class="art">Art. 3° — Duración.</span> La sociedad tendrá una duración de noventa y nueve (99) años desde su inscripción registral.</p>
+
+        <h3>CAPÍTULO II — CAPITAL Y ACCIONES</h3>
+        <p><span class="art">Art. 4° — Capital.</span> El capital social es de <span class="f">[MONTO]</span> pesos, representado en <span class="f">[N°]</span> acciones ordinarias de $<span class="f">[valor]</span> c/u, con un (1) voto por acción.</p>
+        <p><span class="art">Art. 5° — Clases de acciones.</span> Las acciones son nominativas no endosables. Podrán existir distintas clases con diferentes derechos económicos y políticos, previa resolución de socios.</p>
+        <p><span class="art">Art. 6° — Aumento de capital.</span> El órgano de administración podrá aumentar el capital hasta el quíntuplo del inscripto, sin reformar el estatuto. Los aumentos superiores requerirán resolución de socios y modificación estatutaria.</p>
+        <p><span class="art">Art. 7° — Derecho de preferencia.</span> Ante cualquier nueva emisión de acciones, los socios tendrán derecho de suscripción preferente en proporción a su tenencia, dentro de los treinta (30) días de notificada la emisión.</p>
+
+        <h3>CAPÍTULO III — TRANSFERENCIA DE ACCIONES</h3>
+        <p><span class="art">Art. 8° — Limitaciones.</span> La transferencia de acciones a terceros ajenos a la sociedad requiere la notificación previa al órgano de administración. Los socios existentes tienen derecho de preferencia para adquirir las acciones a transferir, en las mismas condiciones ofrecidas al tercero, dentro de los treinta (30) días hábiles siguientes a la notificación.</p>
+        <p><span class="art">Art. 9° — Registro.</span> Toda transferencia deberá inscribirse en el Libro de Registro de Accionistas para ser oponible a la sociedad y a terceros.</p>
+
+        <h3>CAPÍTULO IV — ÓRGANO DE ADMINISTRACIÓN</h3>
+        <p><span class="art">Art. 10° — Gerencia.</span> La administración estará a cargo de uno o más gerentes, socios o no, con mandato de <span class="f">[1 / 2 / 3]</span> años, renovable. El gerente tendrá las siguientes facultades no limitativas:</p>
+        <ul>
+          <li>Representar a la sociedad judicial y extrajudicialmente</li>
+          <li>Celebrar, modificar y extinguir contratos de todo tipo</li>
+          <li>Abrir, operar y cerrar cuentas bancarias y billeteras virtuales</li>
+          <li>Emitir, aceptar y endosar títulos de crédito hasta <span class="f">[MONTO LÍMITE]</span></li>
+          <li>Contratar y despedir personal, fijar remuneraciones</li>
+          <li>Adquirir y enajenar bienes muebles hasta <span class="f">[MONTO LÍMITE]</span></li>
+          <li>Otorgar poderes especiales y revocarlos</li>
+          <li>Presentar declaraciones impositivas y actuar ante organismos públicos</li>
+          <li>Realizar todas las operaciones comprendidas en el objeto social</li>
+        </ul>
+        <p><span class="art">Art. 11° — Remuneración.</span> Los gerentes tendrán derecho a remuneración, cuyo monto y forma de pago determinará la resolución de socios anualmente.</p>
+        <p><span class="art">Art. 12° — Remoción.</span> Los gerentes podrán ser removidos con o sin causa en cualquier momento mediante resolución de socios por mayoría simple.</p>
+
+        <h3>CAPÍTULO V — REUNIONES DE SOCIOS</h3>
+        <p><span class="art">Art. 13° — Convocatoria.</span> Las reuniones de socios serán convocadas por el órgano de administración con un mínimo de cinco (5) días hábiles de anticipación, por cualquier medio fehaciente incluyendo correo electrónico.</p>
+        <p><span class="art">Art. 14° — Quórum y mayorías.</span> Las reuniones se celebrarán válidamente con la presencia de socios que representen más del cincuenta por ciento (50%) del capital social. Las resoluciones se adoptarán por mayoría simple de votos presentes, salvo:</p>
+        <ul>
+          <li>Modificación del estatuto: mayoría de <span class="f">[60 / 75]</span>% del capital</li>
+          <li>Disolución anticipada: unanimidad</li>
+          <li>Fusión o escisión: unanimidad o mayoría calificada</li>
+        </ul>
+        <p><span class="art">Art. 15° — Modalidad.</span> Las reuniones podrán celebrarse de forma presencial, por videoconferencia, o mediante consulta por escrito (correo electrónico o plataforma digital), conforme al Art. 54 de la Ley 27.349. Las resoluciones escritas son válidas cuando todos los socios las suscriben.</p>
+        <p><span class="art">Art. 16° — Asamblea Ordinaria.</span> Se celebrará una asamblea ordinaria anual dentro de los cuatro (4) meses siguientes al cierre del ejercicio para: a) Considerar el balance y estado de resultados; b) Distribuir utilidades o absorber pérdidas; c) Fijar remuneración de gerentes; d) Tratar los demás asuntos del orden del día.</p>
+
+        <h3>CAPÍTULO VI — EJERCICIO ECONÓMICO</h3>
+        <p><span class="art">Art. 17° — Cierre.</span> El ejercicio económico cerrará el treinta y uno (31) de diciembre de cada año. Dentro de los noventa (90) días siguientes, el gerente presentará a los socios el balance general, estado de resultados, y propuesta de distribución de utilidades.</p>
+        <p><span class="art">Art. 18° — Reserva legal.</span> De las utilidades netas se destinará el cinco por ciento (5%) a la reserva legal hasta alcanzar el veinte por ciento (20%) del capital social. Superado ese límite, podrá distribuirse el cien por ciento de las utilidades.</p>
+
+        <h3>CAPÍTULO VII — DISOLUCIÓN</h3>
+        <p><span class="art">Art. 19° — Causales.</span> La sociedad se disolverá por: a) vencimiento del plazo; b) resolución de los socios; c) quiebra; d) reducción del capital a uno solo de los socios y no regularización; e) demás causales legales.</p>
+        <p><span class="art">Art. 20° — Liquidación.</span> En caso de disolución, la liquidación estará a cargo del gerente actuante, salvo designación especial por los socios. El remanente, después de pagadas las deudas, se distribuirá entre los socios en proporción a sus tenencias.</p>
+
+        <h3>CAPÍTULO VIII — DISPOSICIONES VARIAS</h3>
+        <p><span class="art">Art. 21° — Libros.</span> La sociedad llevará los libros societarios y contables conforme a la ley. En forma digital, cuando la normativa lo permita.</p>
+        <p><span class="art">Art. 22° — Domicilio especial.</span> A todos los efectos legales, los socios constituyen domicilio especial en sus respectivos domicilios denunciados en este instrumento.</p>
+        <p><span class="art">Art. 23° — Ley aplicable.</span> El presente estatuto se rige por las Leyes N° 27.349 y 19.550 de la República Argentina y sus decretos reglamentarios.</p>
+
+        <div class="firma-grid">
+          <div class="firma-box">
+            <div class="firma-line"></div>
+            <div class="firma-label"><span class="f">[NOMBRE SOCIO 1]</span></div>
+          </div>
+          <div class="firma-box">
+            <div class="firma-line"></div>
+            <div class="firma-label"><span class="f">[NOMBRE SOCIO 2]</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODELO 3: LIBRO DE ACTAS ===== -->
+<div id="tab-m3" class="panel">
+  <div class="doc-wrap">
+    <div class="doc-header">
+      <div class="doc-num">Modelo 03 · Registro obligatorio</div>
+      <h2>Libro de Actas Digital — Estructura Base</h2>
+      <p>Formato y carátula del Libro de Actas de TODASMISCOSAS.COM S.A.S.</p>
+    </div>
+    <div class="doc-body">
+      <div class="notice-info">La Ley 27.349 permite llevar los libros societarios en formato digital. Cada acta debe tener: número correlativo, fecha, participantes, orden del día, deliberaciones y resoluciones, firmas.</div>
+      <div class="legal">
+
+        <p style="text-align:center;font-weight:900;font-size:1rem;margin-bottom:4px;border:2px solid #0f172a;padding:16px;border-radius:8px">
+          LIBRO DE ACTAS Nº 1<br>
+          <span style="font-size:.82rem;font-weight:400">TODASMISCOSAS.COM S.A.S.</span><br>
+          <span style="font-size:.75rem;color:#555;font-weight:400">Reuniones de Socios y Resoluciones Sociales<br>
+          Inscripta en el Registro Público de CABA<br>
+          Matrícula N° <span class="f">[NÚMERO]</span> — Folio <span class="f">[N°]</span></span>
+        </p>
+
+        <h3>ÍNDICE DEL LIBRO</h3>
+        <table>
+          <tr><th>N° Acta</th><th>Tipo</th><th>Fecha</th><th>Asunto principal</th><th>Folio</th></tr>
+          <tr><td>001</td><td>Fundacional</td><td><span class="f">[FECHA]</span></td><td>Constitución / Primera reunión</td><td>1</td></tr>
+          <tr><td>002</td><td>Asamblea Ord.</td><td><span class="f">[FECHA]</span></td><td>Balance y distribución de utilidades</td><td><span class="f">[N°]</span></td></tr>
+          <tr><td>003</td><td>Resolución</td><td><span class="f">[FECHA]</span></td><td><span class="f">[ASUNTO]</span></td><td><span class="f">[N°]</span></td></tr>
+        </table>
+
+        <h3>ESTRUCTURA DE CADA ACTA</h3>
+        <p>Toda acta deberá contener los siguientes elementos:</p>
+        <ol>
+          <li><b>Encabezado:</b> Número de acta, tipo de reunión, lugar, fecha y hora</li>
+          <li><b>Participantes:</b> Nombre, DNI, carácter (socio/gerente/invitado), capital representado</li>
+          <li><b>Quórum:</b> Verificación de que se alcanzó el quórum requerido</li>
+          <li><b>Orden del día:</b> Listado de los puntos a tratar</li>
+          <li><b>Deliberaciones:</b> Resumen de los debates y posiciones</li>
+          <li><b>Resoluciones:</b> Texto exacto de cada resolución adoptada y votación</li>
+          <li><b>Cierre:</b> Hora de finalización</li>
+          <li><b>Firmas:</b> De todos los participantes o de quien presida</li>
+        </ol>
+
+        <h3>MODELO DE ENCABEZADO ESTÁNDAR</h3>
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:16px;font-family:monospace;font-size:.79rem;line-height:1.8">
+          ACTA N° [___]<br>
+          Tipo: [Reunión de Socios / Asamblea Ordinaria / Resolución Social]<br>
+          Sociedad: TODASMISCOSAS.COM S.A.S.<br>
+          Sede Social: [DOMICILIO]<br>
+          Fecha: [DD/MM/AAAA]<br>
+          Hora de inicio: [HH:MM]<br>
+          Modalidad: [Presencial / Videoconferencia / Consulta escrita]<br>
+          Presidida por: [NOMBRE Y CARGO]<br>
+          Actuó como secretario: [NOMBRE]<br><br>
+          PARTICIPANTES:<br>
+          - [NOMBRE], DNI [___], [N°] acciones ([%]%), presente<br>
+          - [NOMBRE], DNI [___], [N°] acciones ([%]%), presente<br><br>
+          Capital total: [___] acciones → Capital presente: [___] acciones ([___]%)<br>
+          QUÓRUM: [Suficiente / Insuficiente] para sesionar válidamente.<br>
+        </div>
+
+        <h3>REGLAS DE CONSERVACIÓN</h3>
+        <ul>
+          <li>Los libros digitales deben tener firma digital de todos los participantes</li>
+          <li>Conservar copia de respaldo en al menos dos medios/ubicaciones distintas</li>
+          <li>El Libro de Actas no puede contener enmiendas ni borrados — los errores se salvan en el acta siguiente</li>
+          <li>Foliar correlativamente cada hoja o pantalla del libro digital</li>
+          <li>Conservar por un mínimo de 10 años desde la última inscripción</li>
+        </ul>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODELO 4: ACTA FUNDACIONAL ===== -->
+<div id="tab-m4" class="panel">
+  <div class="doc-wrap">
+    <div class="doc-header">
+      <div class="doc-num">Modelo 04 · Primera reunión post-constitución</div>
+      <h2>Acta Fundacional — Primera Reunión de Socios</h2>
+      <p>Se labra inmediatamente después de inscripta la SAS en el Registro Público</p>
+    </div>
+    <div class="doc-body">
+      <div class="legal">
+        <p style="text-align:center;font-weight:900;font-size:.92rem;margin-bottom:20px">ACTA N° 001 — REUNIÓN FUNDACIONAL DE SOCIOS<br>TODASMISCOSAS.COM S.A.S.</p>
+
+        <p>En la Ciudad Autónoma de Buenos Aires, a los <span class="f">[DÍA]</span> días del mes de <span class="f">[MES]</span> de <span class="f">[AÑO]</span>, siendo las <span class="f">[HORA]</span> horas, se reúnen los socios de <b>TODASMISCOSAS.COM S.A.S.</b> en el domicilio social sito en <span class="f">[DOMICILIO]</span>, o de manera virtual mediante <span class="f-optional">[plataforma de videoconferencia]</span>, a fin de celebrar la Primera Reunión de Socios posterior a la inscripción de la Sociedad en el Registro Público de la Ciudad Autónoma de Buenos Aires.</p>
+
+        <h3>PARTICIPANTES</h3>
+        <table>
+          <tr><th>Nombre</th><th>DNI</th><th>Acciones</th><th>%</th><th>Carácter</th></tr>
+          <tr><td><span class="f">[NOMBRE 1]</span></td><td><span class="f">[DNI]</span></td><td><span class="f">[N°]</span></td><td><span class="f">[%]</span></td><td>Socio fundador</td></tr>
+          <tr><td><span class="f">[NOMBRE 2]</span></td><td><span class="f">[DNI]</span></td><td><span class="f">[N°]</span></td><td><span class="f">[%]</span></td><td>Socio fundador</td></tr>
+        </table>
+        <p>Capital total: <span class="f">[N°]</span> acciones. Capital presente: <span class="f">[N°]</span> acciones (<span class="f">[%]</span>%). <b>Quórum suficiente.</b></p>
+        <p>Presidió la reunión: <span class="f">[NOMBRE]</span>. Actuó como Secretario: <span class="f">[NOMBRE]</span>.</p>
+
+        <h3>ORDEN DEL DÍA</h3>
+        <ol>
+          <li>Confirmación de la inscripción de la Sociedad en el Registro Público</li>
+          <li>Ratificación de la designación de Gerente</li>
+          <li>Apertura de cuenta bancaria / billetera virtual</li>
+          <li>Obtención de CUIT e inscripción en AFIP</li>
+          <li>Inscripción en AGIP (Ingresos Brutos CABA)</li>
+          <li>Aprobación del plan de negocios inicial</li>
+          <li>Varios</li>
+        </ol>
+
+        <h3>DELIBERACIONES Y RESOLUCIONES</h3>
+
+        <h4>PUNTO 1 — Inscripción</h4>
+        <p>El socio <span class="f">[NOMBRE]</span> informa que la Sociedad fue inscripta en el Registro Público de CABA con fecha <span class="f">[FECHA]</span>, Matrícula N° <span class="f">[N°]</span>, Folio <span class="f">[N°]</span>, Tomo <span class="f">[N°]</span>. Los socios toman conocimiento. <b>Sin observaciones.</b></p>
+
+        <h4>PUNTO 2 — Ratificación de Gerente</h4>
+        <p>Se ratifica en el cargo de Gerente de la Sociedad a <span class="f">[NOMBRE COMPLETO]</span>, DNI <span class="f">[DNI]</span>, con todas las facultades establecidas en el estatuto social, por el término de <span class="f">[N°]</span> años. <b>Aprobado por unanimidad.</b></p>
+
+        <h4>PUNTO 3 — Cuenta bancaria</h4>
+        <p>Se autoriza al Gerente a gestionar la apertura de una cuenta bancaria a nombre de la Sociedad en el banco <span class="f">[NOMBRE DEL BANCO]</span> y/o billeteras virtuales (Mercado Pago, Ualá, u otras), como así también a suscribir todos los documentos necesarios para su apertura y operación. <b>Aprobado por unanimidad.</b></p>
+
+        <h4>PUNTO 4 — AFIP y AGIP</h4>
+        <p>Se autoriza al Gerente a gestionar la inscripción ante AFIP (CUIT societario, régimen impositivo, actividades) y ante AGIP (Ingresos Brutos CABA), suscribiendo todos los formularios y documentos necesarios. <b>Aprobado por unanimidad.</b></p>
+
+        <h4>PUNTO 5 — Plan de negocios</h4>
+        <p>Los socios analizan el plan de negocios de la plataforma TodasMisCosas.com, consistente en un marketplace de almacenamiento urbano en CABA y AMBA, aprobando los lineamientos generales y autorizando al Gerente a suscribir contratos de tecnología, hosting, y servicios necesarios para la operación del negocio hasta un monto de <span class="f">[MONTO LÍMITE MENSUAL]</span> mensuales sin requerir nueva aprobación de socios. <b>Aprobado por unanimidad.</b></p>
+
+        <p>Sin más asuntos que tratar, siendo las <span class="f">[HORA]</span> horas, se da por finalizada la reunión, labrándose la presente acta que es leída, aprobada y firmada por todos los presentes.</p>
+
+        <div class="firma-grid">
+          <div class="firma-box">
+            <div class="firma-line"></div>
+            <div class="firma-label"><span class="f">[NOMBRE]</span><br>Presidente de reunión</div>
+          </div>
+          <div class="firma-box">
+            <div class="firma-line"></div>
+            <div class="firma-label"><span class="f">[NOMBRE]</span><br>Secretario</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODELO 5: ASAMBLEA ORDINARIA ===== -->
+<div id="tab-m5" class="panel">
+  <div class="doc-wrap">
+    <div class="doc-header">
+      <div class="doc-num">Modelo 05 · Reunión anual obligatoria</div>
+      <h2>Acta de Asamblea Ordinaria Anual</h2>
+      <p>A realizar dentro de los 4 meses del cierre del ejercicio (antes del 30 de abril)</p>
+    </div>
+    <div class="doc-body">
+      <div class="legal">
+        <p style="text-align:center;font-weight:900;font-size:.92rem;margin-bottom:20px">ACTA N° <span class="f">[N°]</span> — ASAMBLEA ORDINARIA ANUAL<br>TODASMISCOSAS.COM S.A.S.<br>Ejercicio cerrado el 31/12/<span class="f">[AÑO]</span></p>
+
+        <p>En la Ciudad Autónoma de Buenos Aires, a los <span class="f">[DÍA]</span> días del mes de <span class="f">[MES]</span> de <span class="f">[AÑO]</span>, siendo las <span class="f">[HORA]</span> horas, se reúnen los socios de <b>TODASMISCOSAS.COM S.A.S.</b> en Asamblea Ordinaria para considerar los temas del orden del día.</p>
+
+        <h3>PARTICIPANTES</h3>
+        <table>
+          <tr><th>Nombre</th><th>Acciones</th><th>%</th><th>Presente/Representado</th></tr>
+          <tr><td><span class="f">[NOMBRE 1]</span></td><td><span class="f">[N°]</span></td><td><span class="f">[%]</span></td><td>Presente</td></tr>
+          <tr><td><span class="f">[NOMBRE 2]</span></td><td><span class="f">[N°]</span></td><td><span class="f">[%]</span></td><td>Presente</td></tr>
+        </table>
+        <p><b>Quórum:</b> <span class="f">[%]</span>% del capital social. Quórum suficiente para deliberar y resolver.</p>
+
+        <h3>ORDEN DEL DÍA</h3>
+        <ol>
+          <li>Consideración del Balance General, Estado de Resultados y Memoria del ejercicio cerrado el 31/12/<span class="f">[AÑO]</span></li>
+          <li>Distribución de utilidades o absorción de pérdidas</li>
+          <li>Gestión de los administradores — aprobación o no</li>
+          <li>Fijación de la remuneración de la Gerencia</li>
+          <li>Reelección o sustitución de autoridades</li>
+          <li>Varios</li>
+        </ol>
+
+        <h3>RESOLUCIONES</h3>
+
+        <h4>PUNTO 1 — Balance y Estados Contables</h4>
+        <p>Se pone a consideración de los socios el Balance General al 31/12/<span class="f">[AÑO]</span>, el Estado de Resultados, el Estado de Evolución del Patrimonio Neto, y la Memoria del ejercicio, confeccionados por la Gerencia. El resultado del ejercicio arroja: <span class="f">[GANANCIA/PÉRDIDA]</span> de <span class="f">$ [MONTO]</span>. <b>Aprobado por mayoría de <span class="f">[%]</span>%.</b></p>
+
+        <h4>PUNTO 2 — Distribución de utilidades</h4>
+        <p><span class="f-optional">Opción A — Distribución:</span> Se resuelve distribuir el <span class="f">[%]</span>% de las utilidades netas del ejercicio, en proporción a las tenencias de cada socio, reservando el <span class="f">[%]</span>% como reserva voluntaria para inversión tecnológica. <b>Aprobado por unanimidad.</b></p>
+        <p><span class="f-optional">Opción B — Reinversión:</span> Considerando la etapa de crecimiento de la Sociedad, se resuelve no distribuir dividendos y destinar la totalidad de las utilidades a reservas voluntarias para financiar el plan de expansión. <b>Aprobado por unanimidad.</b></p>
+
+        <h4>PUNTO 3 — Gestión de administradores</h4>
+        <p>Los socios aprueban la gestión de la Gerencia durante el ejercicio cerrado. <b>Aprobado por unanimidad.</b></p>
+
+        <h4>PUNTO 4 — Remuneración</h4>
+        <p>Se fija la remuneración mensual del Gerente en la suma de <span class="f">$ [MONTO]</span> netos, a partir del 1° de <span class="f">[MES/AÑO]</span>. <b>Aprobado por unanimidad.</b></p>
+
+        <h4>PUNTO 5 — Autoridades</h4>
+        <p>Se resuelve renovar el mandato del Gerente, <span class="f">[NOMBRE]</span>, por un nuevo período de <span class="f">[N°]</span> años. <b>Aprobado por unanimidad.</b></p>
+
+        <p>Sin más asuntos, siendo las <span class="f">[HORA]</span> hs, se cierra la asamblea.</p>
+
+        <div class="firma-grid">
+          <div class="firma-box"><div class="firma-line"></div><div class="firma-label"><span class="f">[NOMBRE]</span><br>Presidente</div></div>
+          <div class="firma-box"><div class="firma-line"></div><div class="firma-label"><span class="f">[NOMBRE]</span><br>Secretario</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODELO 6: RESOLUCIÓN SOCIAL ===== -->
+<div id="tab-m6" class="panel">
+  <div class="doc-wrap">
+    <div class="doc-header">
+      <div class="doc-num">Modelo 06 · Decisión entre asambleas</div>
+      <h2>Resolución Social — Decisión de Socios</h2>
+      <p>Para tomar decisiones sin convocar asamblea formal (por consulta escrita)</p>
+    </div>
+    <div class="doc-body">
+      <div class="notice-info">Este modelo es muy útil para una SAS con pocos socios. Permite tomar decisiones válidas por email o documento digital firmado, sin reunión formal.</div>
+      <div class="legal">
+
+        <p style="text-align:center;font-weight:900;font-size:.92rem;margin-bottom:20px">RESOLUCIÓN SOCIAL N° <span class="f">[N°]</span><br>TODASMISCOSAS.COM S.A.S.<br>Por Consulta Escrita — Art. 54 Ley 27.349</p>
+
+        <p>En la Ciudad Autónoma de Buenos Aires, el día <span class="f">[FECHA]</span>, los socios de <b>TODASMISCOSAS.COM S.A.S.</b> que se detallan a continuación, representando el <span class="f">[%]</span>% del capital social, adoptan por consulta escrita la siguiente resolución:</p>
+
+        <h3>SOCIOS INTERVINIENTES</h3>
+        <table>
+          <tr><th>Nombre</th><th>%</th><th>Voto</th></tr>
+          <tr><td><span class="f">[NOMBRE 1]</span></td><td><span class="f">[%]</span></td><td><span class="f">[A FAVOR / EN CONTRA / ABSTENCIÓN]</span></td></tr>
+          <tr><td><span class="f">[NOMBRE 2]</span></td><td><span class="f">[%]</span></td><td><span class="f">[A FAVOR / EN CONTRA / ABSTENCIÓN]</span></td></tr>
+        </table>
+
+        <h3>OBJETO DE LA RESOLUCIÓN</h3>
+        <p><span class="f">[Describir claramente el asunto a resolver, ej: "Contratación de servicios de hosting en AWS por un monto de USD 500 mensuales"]</span></p>
+
+        <h3>FUNDAMENTOS</h3>
+        <p><span class="f">[Explicar brevemente los motivos que justifican la decisión]</span></p>
+
+        <h3>TEXTO DE LA RESOLUCIÓN</h3>
+        <div style="background:#F8FAFC;border-left:4px solid #0f172a;padding:16px;border-radius:0 8px 8px 0;margin:12px 0">
+          <p><b>SE RESUELVE:</b> <span class="f">[TEXTO EXACTO DE LO QUE SE RESUELVE]</span></p>
+          <p style="margin-top:8px"><b>RESULTADO:</b> Votos a favor: <span class="f">[N°]</span> (<span class="f">[%]</span>%). Votos en contra: <span class="f">[N°]</span>. Abstenciones: <span class="f">[N°]</span>.</p>
+          <p style="margin-top:8px"><b>RESOLUCIÓN: APROBADA / RECHAZADA</b></p>
+        </div>
+
+        <p>La presente resolución es válida y tiene plena fuerza legal conforme al Art. 54 de la Ley 27.349, suscripta por todos los socios en forma digital.</p>
+
+        <div class="firma-grid">
+          <div class="firma-box"><div class="firma-line"></div><div class="firma-label"><span class="f">[NOMBRE SOCIO 1]</span></div></div>
+          <div class="firma-box"><div class="firma-line"></div><div class="firma-label"><span class="f">[NOMBRE SOCIO 2]</span></div></div>
+        </div>
+
+        <h3 style="margin-top:24px">EJEMPLOS DE USO FRECUENTE</h3>
+        <ul>
+          <li>Contratación de un proveedor o servicio nuevo</li>
+          <li>Aprobación del presupuesto anual</li>
+          <li>Incorporación de un nuevo socio o inversor</li>
+          <li>Otorgamiento de un poder especial</li>
+          <li>Aprobación de un contrato relevante</li>
+          <li>Cambio de sede social</li>
+          <li>Apertura de nueva cuenta bancaria</li>
+          <li>Aumento de capital dentro del quíntuplo</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODELO 7: DESIGNACIÓN DE AUTORIDADES ===== -->
+<div id="tab-m7" class="panel">
+  <div class="doc-wrap">
+    <div class="doc-header">
+      <div class="doc-num">Modelo 07 · Nombramiento de cargos</div>
+      <h2>Acta de Designación de Autoridades</h2>
+      <p>Para nombrar o renovar gerentes y representantes de la SAS</p>
+    </div>
+    <div class="doc-body">
+      <div class="legal">
+        <p style="text-align:center;font-weight:900;font-size:.92rem;margin-bottom:20px">ACTA N° <span class="f">[N°]</span> — DESIGNACIÓN DE AUTORIDADES<br>TODASMISCOSAS.COM S.A.S.</p>
+
+        <p>En la Ciudad Autónoma de Buenos Aires, a los <span class="f">[DÍA]</span> días del mes de <span class="f">[MES]</span> de <span class="f">[AÑO]</span>, siendo las <span class="f">[HORA]</span> horas, se reúnen los socios de <b>TODASMISCOSAS.COM S.A.S.</b></p>
+
+        <h3>RESOLUCIÓN DE DESIGNACIÓN</h3>
+
+        <p>Los socios, en ejercicio de las facultades estatutarias, por unanimidad/mayoría de <span class="f">[%]</span>%, <b>RESUELVEN DESIGNAR</b> las siguientes autoridades:</p>
+
+        <table>
+          <tr><th>Cargo</th><th>Nombre completo</th><th>DNI</th><th>Mandato</th></tr>
+          <tr><td><b>Gerente General</b></td><td><span class="f">[NOMBRE]</span></td><td><span class="f">[DNI]</span></td><td><span class="f">[N°]</span> años</td></tr>
+          <tr><td><b>Gerente Técnico</b> <span class="tag tag-opt">Optativo</span></td><td><span class="f-optional">[NOMBRE]</span></td><td><span class="f-optional">[DNI]</span></td><td><span class="f-optional">[N°]</span> años</td></tr>
+          <tr><td><b>Gerente Suplente</b> <span class="tag tag-opt">Optativo</span></td><td><span class="f-optional">[NOMBRE]</span></td><td><span class="f-optional">[DNI]</span></td><td><span class="f-optional">[N°]</span> años</td></tr>
+        </table>
+
+        <h3>ACEPTACIÓN DEL CARGO</h3>
+        <p>El/Los designado/s aceptan el cargo en este acto, constituyen domicilio especial en <span class="f">[DOMICILIO]</span>, declaran no estar incursos en ninguna de las inhabilitaciones previstas por la Ley 19.550, y manifiestan que no existe causa que les impida el ejercicio del cargo.</p>
+
+        <h3>FACULTADES CONFERIDAS AL GERENTE GENERAL</h3>
+        <p>El Gerente General tendrá las siguientes facultades, de conformidad con el estatuto social:</p>
+        <ul>
+          <li>Representar a la Sociedad ante toda clase de personas físicas y jurídicas, públicas y privadas</li>
+          <li>Celebrar, modificar y rescindir contratos de toda naturaleza</li>
+          <li>Administrar y disponer de fondos de la Sociedad</li>
+          <li>Abrir, operar y cerrar cuentas bancarias y virtuales</li>
+          <li>Contratar y despedir personal, fijar remuneraciones</li>
+          <li>Firmar toda documentación societaria, comercial e impositiva</li>
+          <li>Otorgar poderes especiales y revocarlos</li>
+          <li>Representar a la Sociedad en juicio, como actor o demandado</li>
+          <li>Suscribir y administrar contratos de tecnología, SaaS, APIs y servicios digitales</li>
+        </ul>
+
+        <h3>ANOTACIÓN REGISTRAL</h3>
+        <p>Se autoriza al Gerente General a gestionar la inscripción de la presente designación ante el Registro Público de CABA y ante todos los organismos que corresponda.</p>
+
+        <div class="firma-grid">
+          <div class="firma-box"><div class="firma-line"></div><div class="firma-label"><span class="f">[SOCIO 1]</span></div></div>
+          <div class="firma-box"><div class="firma-line"></div><div class="firma-label"><span class="f">[SOCIO 2]</span></div></div>
+        </div>
+        <div style="margin-top:16px;text-align:center">
+          <div class="firma-box" style="max-width:300px;margin:0 auto"><div class="firma-line"></div><div class="firma-label"><span class="f">[GERENTE DESIGNADO]</span><br>Acepto el cargo</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODELO 8: REGISTRO DE ACCIONISTAS ===== -->
+<div id="tab-m8" class="panel">
+  <div class="doc-wrap">
+    <div class="doc-header">
+      <div class="doc-num">Modelo 08 · Libro obligatorio</div>
+      <h2>Libro de Registro de Accionistas</h2>
+      <p>Registro obligatorio de todos los titulares de acciones · Ley 27.349 Art. 56</p>
+    </div>
+    <div class="doc-body">
+      <div class="notice-info">Este libro es obligatorio. Debe actualizarse ante toda transferencia, emisión o modificación de acciones. Su actualización hace oponible la tenencia ante la sociedad y terceros.</div>
+      <div class="legal">
+
+        <p style="text-align:center;font-weight:900;font-size:.92rem;margin-bottom:20px">LIBRO DE REGISTRO DE ACCIONISTAS<br>TODASMISCOSAS.COM S.A.S.<br>Libro N° 1 · Inscripto ante el Registro Público de CABA</p>
+
+        <h3>SECCIÓN A — ACCIONISTAS ACTUALES</h3>
+        <table>
+          <tr>
+            <th>N°</th><th>Titular</th><th>DNI/CUIL</th><th>Domicilio</th>
+            <th>Acciones</th><th>% Capital</th><th>Serie</th><th>Desde</th>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td><span class="f">[NOMBRE COMPLETO]</span></td>
+            <td><span class="f">[DNI/CUIL]</span></td>
+            <td><span class="f">[DOMICILIO]</span></td>
+            <td><span class="f">[N°]</span></td>
+            <td><span class="f">[%]</span>%</td>
+            <td>A</td>
+            <td><span class="f">[FECHA]</span></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><span class="f">[NOMBRE COMPLETO]</span></td>
+            <td><span class="f">[DNI/CUIL]</span></td>
+            <td><span class="f">[DOMICILIO]</span></td>
+            <td><span class="f">[N°]</span></td>
+            <td><span class="f">[%]</span>%</td>
+            <td>A</td>
+            <td><span class="f">[FECHA]</span></td>
+          </tr>
+          <tr>
+            <td colspan="4" style="font-weight:800;color:#0f172a">TOTAL</td>
+            <td><span class="f">[N° TOTAL]</span></td>
+            <td>100%</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+        </table>
+
+        <h3>SECCIÓN B — HISTORIAL DE TRANSFERENCIAS</h3>
+        <table>
+          <tr><th>Fecha</th><th>Vendedor</th><th>Comprador</th><th>Acciones</th><th>Precio</th><th>Acta N°</th></tr>
+          <tr><td colspan="6" style="text-align:center;color:#888;font-style:italic">Sin movimientos</td></tr>
+        </table>
+
+        <h3>SECCIÓN C — HISTORIAL DE EMISIONES</h3>
+        <table>
+          <tr><th>Fecha</th><th>Tipo</th><th>Acciones emitidas</th><th>Precio emisión</th><th>Resolución N°</th></tr>
+          <tr>
+            <td><span class="f">[FECHA CONSTITUCIÓN]</span></td>
+            <td>Emisión inicial</td>
+            <td><span class="f">[N°]</span></td>
+            <td>$<span class="f">[VALOR]</span> c/u</td>
+            <td>Instrumento Constitutivo</td>
+          </tr>
+        </table>
+
+        <h3>SECCIÓN D — INSTRUCCIONES DE USO</h3>
+        <ul>
+          <li>Toda transferencia de acciones debe inscribirse dentro de los 5 días hábiles de producida</li>
+          <li>Adjuntar copia del contrato de transferencia a cada asiento</li>
+          <li>Las nuevas emisiones deben inscribirse con la resolución que las aprueba</li>
+          <li>El Gerente es responsable de la actualización del Registro</li>
+          <li>Los socios tienen derecho a consultar el Registro en cualquier momento</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODELO 9: PODER / AUTORIZACIÓN ===== -->
+<div id="tab-m9" class="panel">
+  <div class="doc-wrap">
+    <div class="doc-header">
+      <div class="doc-num">Modelo 09 · Delegación de facultades</div>
+      <h2>Poder / Autorización Societaria</h2>
+      <p>Para delegar representación ante organismos, bancos y terceros</p>
+    </div>
+    <div class="doc-body">
+      <div class="legal">
+
+        <p style="text-align:center;font-weight:900;font-size:.92rem;margin-bottom:20px">PODER ESPECIAL<br>TODASMISCOSAS.COM S.A.S.</p>
+
+        <p><b>TODASMISCOSAS.COM S.A.S.</b>, representada en este acto por su Gerente General, <span class="f">[NOMBRE DEL GERENTE]</span>, DNI <span class="f">[DNI]</span>, en ejercicio de las facultades que le confiere el Estatuto Social, <b>OTORGA PODER ESPECIAL</b> a favor de:</p>
+
+        <p><b>APODERADO:</b> <span class="f">[NOMBRE COMPLETO]</span>, DNI N° <span class="f">[DNI]</span>, CUIL N° <span class="f">[CUIL]</span>, con domicilio en <span class="f">[DOMICILIO]</span>.</p>
+
+        <h3>FACULTADES CONFERIDAS</h3>
+        <p>El apoderado queda autorizado para:</p>
+
+        <p><span class="f-optional">— Poder BANCARIO:</span></p>
+        <ul>
+          <li>Abrir, operar y cerrar cuentas corrientes y cajas de ahorro en <span class="f">[BANCO]</span></li>
+          <li>Realizar depósitos, extracciones y transferencias</li>
+          <li>Firmar cheques y solicitar chequeras</li>
+          <li>Contratar y operar servicios de banca electrónica</li>
+        </ul>
+
+        <p><span class="f-optional">— Poder ante AFIP/AGIP:</span></p>
+        <ul>
+          <li>Presentar declaraciones juradas impositivas</li>
+          <li>Gestionar el CUIT societario</li>
+          <li>Inscribir, modificar y dar de baja actividades</li>
+          <li>Responder intimaciones y requerimientos</li>
+        </ul>
+
+        <p><span class="f-optional">— Poder GENERAL de administración:</span></p>
+        <ul>
+          <li>Celebrar contratos en nombre de la Sociedad hasta $<span class="f">[MONTO]</span></li>
+          <li>Representar a la Sociedad ante cualquier persona física o jurídica</li>
+          <li>Cobrar y otorgar recibos</li>
+        </ul>
+
+        <h3>VIGENCIA</h3>
+        <p>El presente poder tendrá vigencia <span class="f">[por tiempo indeterminado / hasta el día DD/MM/AAAA]</span>, pudiendo ser revocado en cualquier momento por el otorgante mediante notificación fehaciente al apoderado.</p>
+
+        <h3>ACEPTACIÓN</h3>
+        <p>El apoderado acepta el mandato en este acto, comprometiéndose a rendir cuentas de su gestión cuando le sea requerido.</p>
+
+        <p>Ciudad Autónoma de Buenos Aires, <span class="f">[FECHA]</span>.</p>
+
+        <div class="firma-grid">
+          <div class="firma-box">
+            <div class="firma-line"></div>
+            <div class="firma-label"><span class="f">[GERENTE]</span><br>Por TODASMISCOSAS.COM S.A.S.<br>Otorgante</div>
+          </div>
+          <div class="firma-box">
+            <div class="firma-line"></div>
+            <div class="firma-label"><span class="f">[APODERADO]</span><br>Aceptante</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODELO 10: MODIFICACIÓN ESTATUTARIA ===== -->
+<div id="tab-m10" class="panel">
+  <div class="doc-wrap">
+    <div class="doc-header">
+      <div class="doc-num">Modelo 10 · Reforma del estatuto</div>
+      <h2>Acta de Modificación Estatutaria</h2>
+      <p>Para cambiar nombre, sede, capital, objeto u otras cláusulas del estatuto</p>
+    </div>
+    <div class="doc-body">
+      <div class="notice">Las modificaciones estatutarias deben inscribirse en el Registro Público para ser oponibles a terceros. Requieren mayoría calificada según lo definido en el estatuto.</div>
+      <div class="legal">
+
+        <p style="text-align:center;font-weight:900;font-size:.92rem;margin-bottom:20px">ACTA N° <span class="f">[N°]</span> — MODIFICACIÓN ESTATUTARIA<br>TODASMISCOSAS.COM S.A.S.</p>
+
+        <p>En la Ciudad Autónoma de Buenos Aires, a los <span class="f">[DÍA]</span> días del mes de <span class="f">[MES]</span> de <span class="f">[AÑO]</span>, siendo las <span class="f">[HORA]</span> horas, se reúnen los socios de <b>TODASMISCOSAS.COM S.A.S.</b> con el quórum necesario para la modificación del estatuto social.</p>
+
+        <h3>MAYORÍA REQUERIDA</h3>
+        <p>Conforme el Art. <span class="f">[N°]</span> del estatuto, la modificación requiere el voto afirmativo de socios que representen el <span class="f">[60/75/100]</span>% del capital social.</p>
+        <p>Capital presente: <span class="f">[%]</span>%. Votos a favor: <span class="f">[%]</span>%. <b>Mayoría requerida: alcanzada.</b></p>
+
+        <h3>MODIFICACIONES RESUELTAS</h3>
+
+        <h4>TEXTO ANTERIOR</h4>
+        <div style="background:#FFF5F5;border:1px solid #FECDD3;border-radius:8px;padding:14px;font-size:.79rem;line-height:1.7;text-decoration:line-through;color:#9A0000">
+          <span class="f">[Transcribir el texto actual del artículo a modificar]</span>
+        </div>
+
+        <h4>NUEVO TEXTO</h4>
+        <div style="background:#F0FFF4;border:1px solid #BBF7D0;border-radius:8px;padding:14px;font-size:.79rem;line-height:1.7;color:#14532D">
+          <span class="f">[Transcribir el nuevo texto del artículo]</span>
+        </div>
+
+        <h3>TIPOS COMUNES DE MODIFICACIÓN</h3>
+        <table>
+          <tr><th>Tipo</th><th>Artículo afectado</th><th>Trámite adicional</th></tr>
+          <tr><td>Cambio de denominación</td><td>Art. 1°</td><td>Registro Público + AFIP + bancos</td></tr>
+          <tr><td>Cambio de sede</td><td>Art. 2°</td><td>Registro Público + AFIP + AGIP</td></tr>
+          <tr><td>Cambio de objeto</td><td>Art. 3°</td><td>Registro Público</td></tr>
+          <tr><td>Aumento de capital</td><td>Art. 5°</td><td>Registro Público</td></tr>
+          <tr><td>Prórroga de duración</td><td>Art. 4°</td><td>Registro Público (con antelación)</td></tr>
+          <tr><td>Modificación de mayorías</td><td>Art. 8°</td><td>Registro Público</td></tr>
+        </table>
+
+        <h3>INSCRIPCIÓN REGISTRAL</h3>
+        <p>Se autoriza al Gerente General a gestionar la inscripción de la presente modificación ante el Registro Público de CABA, suscribiendo toda la documentación necesaria y abonando los aranceles correspondientes.</p>
+
+        <p>Ciudad Autónoma de Buenos Aires, <span class="f">[FECHA]</span>.</p>
+
+        <div class="firma-grid">
+          <div class="firma-box"><div class="firma-line"></div><div class="firma-label"><span class="f">[SOCIO 1]</span></div></div>
+          <div class="firma-box"><div class="firma-line"></div><div class="firma-label"><span class="f">[SOCIO 2]</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECKLIST FINAL -->
+  <div class="doc-wrap">
+    <div class="doc-header" style="background:linear-gradient(135deg,#064e3b,#065f46)">
+      <div class="doc-num" style="color:#6EE7B7">Checklist final de constitución</div>
+      <h2>Todo lo necesario para lanzar la SAS</h2>
+      <p>Ir tachando cada ítem a medida que se completa</p>
+    </div>
+    <div class="doc-body">
+      <ul class="check-list" id="checklist">
+        <li><div class="chk-box" onclick="toggleCheck(this)"></div><div><b>Acordar datos entre socios</b> — nombre, DNI, domicilios, capital, porcentajes</div></li>
+        <li><div class="chk-box" onclick="toggleCheck(this)"></div><div><b>Redactar Instrumento Constitutivo</b> (Modelo 01) con todos los campos completados</div></li>
+        <li><div class="chk-box" onclick="toggleCheck(this)"></div><div><b>Obtener Clave Fiscal Nivel 3</b> en AFIP para firma digital</div></li>
+        <li><div class="chk-box" onclick="toggleCheck(this)"></div><div><b>Ingresar al portal de SAS</b> — sas.produccion.gob.ar — y cargar el instrumento</div></li>
+        <li><div class="chk-box" onclick="toggleCheck(this)"></div><div><b>Firmar digitalmente</b> el instrumento constitutivo (todos los socios)</div></li>
+        <li><div class="chk-box" onclick="toggleCheck(this)"></div><div><b>Pagar arancel de registro</b> ante el Registro Público de CABA</div></li>
+        <li><div class="chk-box" onclick="toggleCheck(this)"></div><div><b>Recibir matrícula de inscripción</b> del Registro Público</div></li>
+        <li><div class="chk-box" onclick="toggleCheck(this)"></div><div><b>Obtener CUIT de la SAS</b> en AFIP</div></li>
+        <li><div class="chk-box" onclick="toggleCheck(this)"></div><div><b>Inscribirse en AGIP</b> (Ingresos Brutos CABA) — elegir régimen simplificado o general</div></li>
+        <li><div class="chk-box" onclick="toggleCheck(this)"></div><div><b>Abrir cuenta bancaria o Mercado Pago</b> a nombre de la SAS</div></li>
+        <li><div class="chk-box" onclick="toggleCheck(this)"></div><div><b>Labrar Acta Fundacional</b> (Modelo 04) y comenzar el Libro de Actas</div></li>
+        <li><div class="chk-box" onclick="toggleCheck(this)"></div><div><b>Completar Registro de Accionistas</b> (Modelo 08)</div></li>
+        <li><div class="chk-box" onclick="toggleCheck(this)"></div><div><b>Configurar facturación electrónica</b> en AFIP (Punto de venta)</div></li>
+        <li><div class="chk-box" onclick="toggleCheck(this)"></div><div><b>Registrar dominio y marca</b> "TodasMisCosas" en INPI si corresponde</div></li>
+        <li><div class="chk-box" onclick="toggleCheck(this)"></div><div><b>Contratar contador</b> para presentación de declaraciones juradas y balance anual</div></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div><!-- /panels -->
+
+<footer>
+  <strong>TodasMisCosas.com S.A.S. — Modelos Legales · Julio 2026</strong><br>
+  Ley 27.349 · República Argentina · Registro Público CABA<br>
+  <span style="font-size:.68rem;color:#1e293b;margin-top:3px;display:block;">Documento de referencia — Consultar con profesional legal antes de presentar · Claude Sonnet 4.6</span>
+</footer>
+
+<script>
+function showTab(name,btn){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleCheck(el){
+  el.classList.toggle('done');
+  el.textContent = el.classList.contains('done') ? '✓' : '';
+  // Persist to localStorage
+  var items = document.querySelectorAll('.chk-box');
+  var state = Array.from(items).map(function(x){return x.classList.contains('done')?'1':'0'});
+  localStorage.setItem('sas_checklist', state.join(','));
+}
+
+(function(){
+  var saved = localStorage.getItem('sas_checklist');
+  if(!saved) return;
+  var vals = saved.split(',');
+  var items = document.querySelectorAll('.chk-box');
+  items.forEach(function(el,i){
+    if(vals[i]==='1'){ el.classList.add('done'); el.textContent='✓'; }
+  });
+})();
+</script>
+</body>
+</html>
