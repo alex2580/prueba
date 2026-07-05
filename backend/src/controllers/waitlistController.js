@@ -1,5 +1,7 @@
 const { query } = require('../db/connection');
-const { sendWaitlistBienvenidaProveedor, sendWaitlistBienvenidaCliente } = require('../services/emailService');
+const { sendWaitlistBienvenidaProveedor, sendWaitlistBienvenidaCliente, sendWaitlistNotificacionAdmin } = require('../services/emailService');
+
+const ADMIN_EMAIL = process.env.WAITLIST_NOTIFY_EMAIL || process.env.ADMIN_EMAILS?.split(',')[0]?.trim();
 
 // POST /api/waitlist — público, sin auth
 async function registrar(req, res) {
@@ -35,7 +37,23 @@ async function registrar(req, res) {
         await sendWaitlistBienvenidaCliente(email.trim().toLowerCase(), nombre.trim());
       }
     } catch (emailErr) {
-      console.error('[waitlist] email error:', emailErr.message);
+      console.error('[waitlist] email bienvenida error:', emailErr.message);
+    }
+
+    try {
+      if (ADMIN_EMAIL) {
+        await sendWaitlistNotificacionAdmin(ADMIN_EMAIL, {
+          tipo, nombre: nombre.trim(), email: email.trim().toLowerCase(),
+          whatsapp: whatsapp?.trim() || null,
+          barrio: barrio?.trim() || null,
+          tipo_espacio: tipo_espacio?.trim() || null,
+          descripcion: descripcion?.trim() || null,
+          para_que: para_que?.trim() || null,
+          duracion: duracion?.trim() || null,
+        });
+      }
+    } catch (notifErr) {
+      console.error('[waitlist] email admin error:', notifErr.message);
     }
 
     res.status(201).json({ ok: true });

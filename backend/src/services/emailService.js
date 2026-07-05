@@ -998,6 +998,46 @@ async function sendNewsletter(toEmail, nombre, { asunto, cuerpoHtml }) {
   await transporter.sendMail({ from: FROM, to: toEmail, subject: asunto, html });
 }
 
+// ── Waitlist: notificación al admin ─────────────────────────────
+async function sendWaitlistNotificacionAdmin(toEmail, { tipo, nombre, email, whatsapp, barrio, tipo_espacio, descripcion, para_que, duracion }) {
+  const esProveedor = tipo === 'proveedor';
+  const detalles = esProveedor
+    ? [tipo_espacio, descripcion].filter(Boolean).join(' · ') || '—'
+    : [para_que, duracion].filter(Boolean).join(' · ') || '—';
+
+  const html = baseTemplate('Nueva inscripción en la Waitlist', `
+    <h2>📋 Nueva inscripción — ${esProveedor ? '🏠 Proveedor' : '📦 Cliente'}</h2>
+    <div class="info-row">
+      <span class="info-label">Nombre</span>
+      <span class="info-val">${nombre}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Email</span>
+      <span class="info-val">${email}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">WhatsApp</span>
+      <span class="info-val">${whatsapp || '—'}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Barrio</span>
+      <span class="info-val">${barrio || '—'}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">${esProveedor ? 'Espacio / descripción' : 'Para qué / duración'}</span>
+      <span class="info-val">${detalles}</span>
+    </div>
+    <a class="btn" href="${process.env.FRONTEND_URL}/es/admin">Ver en el panel →</a>
+  `);
+
+  await transporter.sendMail({
+    from: FROM,
+    to: toEmail,
+    subject: `📋 Nueva inscripción waitlist — ${esProveedor ? 'Proveedor' : 'Cliente'}: ${nombre}`,
+    html,
+  });
+}
+
 // ── Waitlist: bienvenida proveedor ───────────────────────────────
 async function sendWaitlistBienvenidaProveedor(toEmail, nombre) {
   const html = baseTemplate('¡Estás en la lista! — TodasMisCosas', `
@@ -1088,4 +1128,5 @@ module.exports = {
   sendRespuestaConsultaPublica,
   sendWaitlistBienvenidaProveedor,
   sendWaitlistBienvenidaCliente,
+  sendWaitlistNotificacionAdmin,
 };
