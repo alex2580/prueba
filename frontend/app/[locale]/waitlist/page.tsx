@@ -1,16 +1,34 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { SiteHeader } from '@/components/ui/SiteHeader';
 import { waitlistAPI } from '@/lib/api';
 import type { WaitlistTipo, WaitlistPayload } from '@/types';
+
+function useContador() {
+  const [data, setData] = useState<{ total: number; proveedores: number; clientes: number } | null>(null);
+  useEffect(() => {
+    waitlistAPI.contador().then(setData).catch(() => {});
+  }, []);
+  return data;
+}
 
 type Paso = 'selector' | 'form' | 'confirmacion';
 
 const TIPOS_ESPACIO = ['Cochera / Garage', 'Habitación', 'Depósito / Sótano', 'Galpón', 'Otro'];
 const PARA_QUE = ['Muebles / mudanza', 'Cosas del trabajo', 'Bicicleta / moto', 'Auto', 'Otro'];
 const DURACIONES = ['Menos de 1 mes', '1 a 3 meses', '3 a 6 meses', 'Indefinido'];
+
+function Contador({ style }: { style?: React.CSSProperties }) {
+  const data = useContador();
+  if (!data || data.total === 0) return null;
+  return (
+    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '.5rem', background: '#FFF7ED', border: '1.5px solid #FDBA74', borderRadius: 99, padding: '.35rem 1rem', fontSize: '.82rem', fontWeight: 700, color: '#92400E', ...style }}>
+      🔥 {data.total} personas anotadas · {data.proveedores} proveedores · {data.clientes} clientes
+    </div>
+  );
+}
 
 function YaAnotado() {
   return (
@@ -32,6 +50,7 @@ function YaAnotado() {
             <span style={{ fontSize: '.85rem', color: 'var(--text3)' }}>🔗 </span>
             <span style={{ fontSize: '.85rem', fontWeight: 700, color: 'var(--orange)' }}>todasmiscosas.com/es/waitlist</span>
           </div>
+          <Contador style={{ marginBottom: '1.5rem' }} />
           <p style={{ fontSize: '.8rem', color: 'var(--text3)' }}>— El equipo de TodasMisCosas.com</p>
           <a href="/es" style={{ display: 'inline-block', marginTop: '2rem', color: 'var(--orange)', fontWeight: 700, fontSize: '.9rem', textDecoration: 'none' }}>
             ← Volver a la home
@@ -111,9 +130,10 @@ export default function WaitlistPage() {
                 <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: 'clamp(1.8rem,4vw,2.4rem)', color: 'var(--text)', marginBottom: '.75rem' }}>
                   Lista de espera
                 </h1>
-                <p style={{ color: 'var(--text2)', fontSize: '.95rem', maxWidth: 400, margin: '0 auto' }}>
+                <p style={{ color: 'var(--text2)', fontSize: '.95rem', maxWidth: 400, margin: '0 auto 1.25rem' }}>
                   Estamos en lanzamiento. Anotate y te avisamos en cuanto el servicio esté disponible en tu zona.
                 </p>
+                <Contador />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
@@ -326,6 +346,7 @@ export default function WaitlistPage() {
                 </div>
               )}
 
+              <Contador style={{ marginBottom: '.75rem' }} />
               <p style={{ color: 'var(--text3)', fontSize: '.83rem' }}>
                 ¿Conocés a alguien que pueda sumarse? Compartí el link 👇
               </p>

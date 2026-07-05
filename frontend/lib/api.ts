@@ -265,6 +265,9 @@ export const favoritosAPI = {
 };
 
 export const waitlistAPI = {
+  contador: () =>
+    fetchAPI<{ total: number; proveedores: number; clientes: number }>('/api/waitlist/contador'),
+
   registrar: (data: WaitlistPayload) =>
     fetchAPI<{ ok: boolean }>('/api/waitlist', { method: 'POST', body: JSON.stringify(data) }),
 

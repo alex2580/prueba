@@ -63,6 +63,19 @@ async function registrar(req, res) {
   }
 }
 
+// GET /api/waitlist/contador — público
+async function contador(req, res) {
+  try {
+    const [{ total }]       = await query('SELECT COUNT(*) AS total FROM waitlist');
+    const [{ proveedores }] = await query("SELECT COUNT(*) AS proveedores FROM waitlist WHERE tipo = 'proveedor'");
+    const [{ clientes }]    = await query("SELECT COUNT(*) AS clientes FROM waitlist WHERE tipo = 'cliente'");
+    res.json({ total, proveedores, clientes });
+  } catch (e) {
+    console.error('[waitlist] contador:', e.message);
+    res.status(500).json({ error: 'Error interno' });
+  }
+}
+
 // GET /api/admin/waitlist — requireAdmin
 async function listar(req, res) {
   try {
@@ -94,4 +107,4 @@ async function listar(req, res) {
   }
 }
 
-module.exports = { registrar, listar };
+module.exports = { registrar, contador, listar };
