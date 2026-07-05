@@ -154,10 +154,11 @@ footer b{color:#FFD5A0}
 <div class="hero">
   <div class="hero-badge">📋 ESTRATEGIA · TMC · JULIO 2026</div>
   <h1>🚀 Waiting List — Plan de Lanzamiento</h1>
-  <p>Post Friends &amp; Family · Previo al lanzamiento oficial · TodasMisCosas.com</p>
+  <p>Post Friends &amp; Family · Implementada en todasmiscosas.com · Previo al lanzamiento oficial</p>
   <div class="hero-chips">
     <div class="hero-chip">✅ F&amp;F Testing completado</div>
     <div class="hero-chip">⚖️ SAS en trámite</div>
+    <div class="hero-chip">🏠 Plataforma: todasmiscosas.com</div>
     <div class="hero-chip">🎯 Dos segmentos: Proveedor + Cliente</div>
     <div class="hero-chip">📍 CABA · AMBA</div>
   </div>
@@ -166,8 +167,8 @@ footer b{color:#FFD5A0}
 <div class="tab-nav">
   <button class="tab-btn active" onclick="showTab('contexto',this)">🎯 Contexto</button>
   <button class="tab-btn" onclick="showTab('plataformas',this)">🛠️ Plataformas</button>
-  <button class="tab-btn" onclick="showTab('recomendacion',this)">⭐ Recomendación TMC</button>
-  <button class="tab-btn" onclick="showTab('pasos',this)">🚀 Paso a Paso Hoy</button>
+  <button class="tab-btn" onclick="showTab('recomendacion',this)">🏠 Decisión: usar TMC</button>
+  <button class="tab-btn" onclick="showTab('pasos',this)">🏗️ Implementación Dev</button>
   <button class="tab-btn" onclick="showTab('formularios',this)">📝 Formularios</button>
   <button class="tab-btn" onclick="showTab('scripts',this)">💬 Scripts &amp; Mensajes</button>
   <button class="tab-btn" onclick="showTab('metricas',this)">📊 Métricas</button>
@@ -250,14 +251,14 @@ footer b{color:#FFD5A0}
 <div id="tab-plataformas" class="panel">
   <div class="stitle"><div class="sdot" style="background:#FFD5A0">🛠️</div><span style="color:#C84B00">Comparativa de plataformas para waiting list</span></div>
 
-  <div class="notice-orange">Todas las plataformas de abajo tienen <b>plan gratuito suficiente para arrancar</b>. No necesitás pagar nada hoy. La recomendación específica para TMC está en la pestaña ⭐ Recomendación.</div>
+  <div class="notice-green"><b>✅ Decisión tomada:</b> La waiting list se implementa directamente en <b>todasmiscosas.com/es/waitlist</b>. Esta pestaña documenta el análisis que llevó a esa decisión — útil como referencia si en el futuro se evalúan herramientas externas.</div>
 
   <!-- TALLY -->
   <div class="plat-card" style="border-color:#FF6B00">
     <div class="plat-head">
       <div class="plat-ico">📋</div>
       <div>
-        <div class="plat-name">Tally.so <span class="plat-badge badge-rec">⭐ TOP para TMC</span></div>
+        <div class="plat-name">Tally.so <span class="plat-badge badge-free">Alternativa rápida</span></div>
         <div class="plat-sub">Constructor de formularios moderno — tally.so</div>
       </div>
     </div>
@@ -428,8 +429,8 @@ footer b{color:#FFD5A0}
     <div class="plat-head">
       <div class="plat-ico">🏠</div>
       <div>
-        <div class="plat-name">todasmiscosas.com/es/waitlist <span class="plat-badge" style="background:#DCFCE7;color:#15803D">Mejor a mediano plazo</span></div>
-        <div class="plat-sub">Página propia en la plataforma TMC ya existente</div>
+        <div class="plat-name">todasmiscosas.com/es/waitlist <span class="plat-badge" style="background:#FF6B00;color:#fff">✅ DECISIÓN TOMADA</span></div>
+        <div class="plat-sub">Implementada en la plataforma TMC — stack existente Next.js + Express + MySQL + Resend</div>
       </div>
     </div>
     <div class="plat-body">
@@ -455,56 +456,60 @@ footer b{color:#FFD5A0}
         </ul>
       </div>
     </div>
-    <div class="plat-precio">💰 Precio: Solo tiempo de desarrollo · Recomendado implementar en Semana 2</div>
+    <div class="plat-precio">💰 Precio: Solo tiempo de desarrollo · Stack ya disponible · Sin dependencias externas adicionales</div>
   </div>
 
   <h3 style="font-size:.9rem;font-weight:800;margin-bottom:12px;color:#C84B00">📊 Resumen comparativo</h3>
   <table>
     <tr><th>Plataforma</th><th>Costo inicial</th><th>Listo hoy</th><th>Email auto</th><th>Segmenta 2 listas</th><th>Rating TMC</th></tr>
-    <tr><td><b>Tally.so</b></td><td>$0</td><td>✅ 45 min</td><td>⚠️ via Mailchimp</td><td>✅ 2 forms</td><td>⭐⭐⭐⭐⭐</td></tr>
+    <tr><td><b>Tally.so</b></td><td>$0</td><td>✅ 45 min</td><td>⚠️ via Mailchimp</td><td>✅ 2 forms</td><td>⭐⭐⭐⭐</td></tr>
     <tr><td><b>Mailchimp</b></td><td>$0</td><td>✅ 1-2 hs</td><td>✅ nativo</td><td>✅ 2 listas</td><td>⭐⭐⭐⭐</td></tr>
     <tr><td><b>Beehiiv</b></td><td>$0</td><td>✅ 1 hs</td><td>✅ nativo</td><td>⚠️ manual</td><td>⭐⭐⭐</td></tr>
     <tr><td><b>Typeform</b></td><td>USD 25/mes</td><td>✅ 1 hs</td><td>✅ integración</td><td>✅ 2 forms</td><td>⭐⭐⭐</td></tr>
     <tr><td><b>Google Forms</b></td><td>$0</td><td>✅ 20 min</td><td>❌ no</td><td>⚠️ manual</td><td>⭐⭐</td></tr>
-    <tr><td><b>TMC /waitlist</b></td><td>$0 (dev)</td><td>❌ 1-2 días</td><td>✅ Resend</td><td>✅ nativo</td><td>⭐⭐⭐⭐⭐ (semana 2)</td></tr>
+    <tr style="background:#FFF3E0"><td><b>✅ TMC /waitlist</b></td><td>$0 (dev)</td><td>½–1 día dev</td><td>✅ Resend</td><td>✅ nativo DB</td><td><b>⭐⭐⭐⭐⭐ ELEGIDA</b></td></tr>
   </table>
 </div>
 
 <!-- ===== RECOMENDACIÓN ===== -->
 <div id="tab-recomendacion" class="panel">
-  <div class="stitle"><div class="sdot" style="background:#FF9840">⭐</div><span style="color:#C84B00">Recomendación específica para TMC</span></div>
+  <div class="stitle"><div class="sdot" style="background:#FF9840">🏠</div><span style="color:#C84B00">Decisión: la waiting list se implementa en TMC</span></div>
 
   <div class="rec-box">
-    <h3>⭐ Stack recomendado — Estrategia en dos fases</h3>
-    <p>TMC tiene una ventaja única: la plataforma ya está funcionando. La estrategia es arrancar rápido con herramientas externas (hoy) y migrar a la plataforma propia en la semana 2.</p>
+    <h3>✅ Una sola plataforma — todasmiscosas.com/es/waitlist</h3>
+    <p>Con la plataforma funcionando end-to-end, el stack ya disponible (Next.js + Express + MySQL + Resend) y el tiempo para hacerlo bien, la decisión es implementar la waiting list directamente en TMC. Sin herramientas externas, sin doble gestión, sin migración posterior.</p>
   </div>
 
   <div class="grid">
-    <div class="card c-naranja" style="border-width:3px">
-      <h3>🏃 FASE 1 — HOY (0 a 2 horas)</h3>
+    <div class="card c-kiwi" style="border-width:3px">
+      <h3>✅ Por qué TMC y no una herramienta externa</h3>
       <ul>
-        <li><b>Tally.so</b> — 2 formularios (proveedor + cliente)</li>
-        <li><b>Mailchimp</b> — 2 listas + email de bienvenida automático</li>
-        <li>Conectar Tally → Mailchimp via integración nativa</li>
-        <li>Compartir links por WhatsApp de inmediato</li>
-        <li>Publicar en IG Stories + LinkedIn</li>
+        <li><b>Branding consistente:</b> quien se anota ya ve el producto real</li>
+        <li><b>Datos en la DB propia:</b> sin exportar ni importar nunca</li>
+        <li><b>Resend ya configurado:</b> el email de bienvenida sale igual que los emails del sistema</li>
+        <li><b>Panel admin:</b> los registros se ven en el mismo panel que todo lo demás</li>
+        <li><b>Sin límites:</b> no hay cap de contactos ni de features</li>
+        <li><b>SEO:</b> todasmiscosas.com ya tiene dominio y posicionamiento</li>
+        <li><b>Sin deuda técnica:</b> no hay nada que migrar después</li>
+        <li><b>Costo cero:</b> solo tiempo de desarrollo</li>
       </ul>
     </div>
-    <div class="card c-kiwi" style="border-width:3px">
-      <h3>🏗️ FASE 2 — Semana 2 (½ día dev)</h3>
+    <div class="card c-naranja" style="border-width:3px">
+      <h3>🏗️ Qué hay que construir</h3>
       <ul>
-        <li>Crear <code>/es/waitlist</code> en todasmiscosas.com</li>
-        <li>Formulario propio con dos flujos (provider/client)</li>
-        <li>Email de confirmación via Resend (ya tienen)</li>
-        <li>Contador público de registros ("ya somos X")</li>
-        <li>Redirigir el link de Tally a todasmiscosas.com/es/waitlist</li>
-        <li>Importar registros de Tally/Mailchimp a la DB</li>
+        <li>Tabla <code>waitlist</code> en MySQL (migración)</li>
+        <li>Endpoint <code>POST /api/waitlist</code> en Express (sin auth)</li>
+        <li>2 templates de email en <code>emailService.js</code> (proveedor + cliente)</li>
+        <li>Página <code>/es/waitlist/page.tsx</code> con selector de tipo y lógica condicional</li>
+        <li>Tab "Waitlist" en el panel admin con tabla de registros</li>
+        <li>Contador público opcional ("ya somos X")</li>
       </ul>
+      <p style="margin-top:10px;font-size:.77rem;color:#7A3200"><b>Estimado:</b> ½ día a 1 día de desarrollo según disponibilidad del equipo.</p>
     </div>
   </div>
 
   <div class="notice-green">
-    <b>🎯 Por qué esta combinación:</b> Tally da velocidad (online en 45 minutos), Mailchimp da el email automático de bienvenida (profesionalismo inmediato) y la página propia en todasmiscosas.com da credibilidad y control a largo plazo. Los tres juntos cuestan $0.
+    <b>🎯 El flujo completo:</b> El usuario llega a <code>todasmiscosas.com/es/waitlist</code> → elige "Soy proveedor" o "Busco espacio" → completa el formulario → recibe email de bienvenida vía Resend → el registro queda en la DB → visible en el panel admin → cuando se lance, se le envía el acceso prioritario por email.
   </div>
 
   <h3 style="font-size:.9rem;font-weight:800;margin:18px 0 12px;color:#C84B00">🎁 Propuesta de valor para cada segmento</h3>
@@ -541,107 +546,106 @@ footer b{color:#FFD5A0}
   </table>
 </div>
 
-<!-- ===== PASO A PASO ===== -->
+<!-- ===== IMPLEMENTACIÓN DEV ===== -->
 <div id="tab-pasos" class="panel">
-  <div class="stitle"><div class="sdot" style="background:#FFB347">🚀</div><span style="color:#C84B00">Paso a paso — Lo que hacés HOY</span></div>
+  <div class="stitle"><div class="sdot" style="background:#FFB347">🏗️</div><span style="color:#C84B00">Implementación en TMC — Plan de desarrollo</span></div>
 
-  <div class="notice"><b>⏱️ Tiempo total estimado:</b> 2 horas para tener la waiting list completamente operativa y la primera difusión lanzada. Sin escribir código.</div>
+  <div class="notice-green"><b>Stack disponible:</b> Next.js 14 App Router · Express · MySQL · Resend · Supabase Auth. Todo ya instalado y funcionando en producción. La waiting list no requiere ninguna dependencia nueva.</div>
 
   <div class="step">
     <div class="step-num">1</div>
     <div class="step-body">
-      <h4>Crear cuenta en Tally.so <span class="step-time">15 min</span></h4>
-      <p>Ir a <a href="https://tally.so" target="_blank">tally.so</a> → Sign up con email o Google → Gratis, sin tarjeta.</p>
+      <h4>Migración de base de datos <span class="step-time">Backend · 20 min</span></h4>
+      <p>Crear <code>backend/src/db/add-waitlist.js</code> con la tabla:</p>
+      <ul>
+        <li><code>id</code> INT AUTO_INCREMENT PK</li>
+        <li><code>tipo</code> ENUM('proveedor','cliente') NOT NULL</li>
+        <li><code>nombre</code> VARCHAR(120) NOT NULL</li>
+        <li><code>email</code> VARCHAR(180) NOT NULL</li>
+        <li><code>whatsapp</code> VARCHAR(30)</li>
+        <li><code>barrio</code> VARCHAR(100)</li>
+        <li><code>tipo_espacio</code> VARCHAR(60) — solo proveedores</li>
+        <li><code>m2</code> INT — solo proveedores</li>
+        <li><code>para_que</code> VARCHAR(80) — solo clientes</li>
+        <li><code>duracion</code> VARCHAR(40) — solo clientes</li>
+        <li><code>created_at</code> DATETIME DEFAULT NOW()</li>
+      </ul>
+      <p style="margin-top:6px">Avisar a Guille para que corra la migración en VPS.</p>
     </div>
   </div>
 
   <div class="step">
     <div class="step-num">2</div>
     <div class="step-body">
-      <h4>Crear Formulario PROVEEDOR <span class="step-time">20 min</span></h4>
-      <p>Nuevo formulario → Nombre: "TMC Waiting List — Tengo Espacio". Campos sugeridos:</p>
+      <h4>Endpoint Express <span class="step-time">Backend · 30 min</span></h4>
+      <p>Crear <code>backend/src/routes/waitlist.js</code> y <code>controllers/waitlistController.js</code>:</p>
       <ul>
-        <li>Nombre completo</li>
-        <li>WhatsApp / Teléfono</li>
-        <li>Email</li>
-        <li>Barrio / Localidad</li>
-        <li>Tipo de espacio: cochera / habitación / depósito / galpón / otro</li>
-        <li>Superficie aproximada (m²) — condicional al tipo</li>
-        <li>¿Disponibilidad? 24hs / Horaria / Flexible</li>
+        <li><code>POST /api/waitlist</code> — sin auth (público), valida campos requeridos, inserta en DB, dispara email de bienvenida</li>
+        <li><code>GET /api/admin/waitlist</code> — con auth admin, devuelve todos los registros paginados con filtro por tipo</li>
       </ul>
-      <p style="margin-top:8px"><b>Pantalla final:</b> "¡Perfecto! Te avisamos en cuanto abramos. Sos de los primeros 🎉"</p>
+      <p style="margin-top:6px">Conectar la ruta en <code>backend/src/app.js</code>.</p>
     </div>
   </div>
 
   <div class="step">
     <div class="step-num">3</div>
     <div class="step-body">
-      <h4>Crear Formulario CLIENTE <span class="step-time">15 min</span></h4>
-      <p>Nuevo formulario → Nombre: "TMC Waiting List — Busco Espacio". Campos:</p>
+      <h4>Templates de email en emailService.js <span class="step-time">Backend · 30 min</span></h4>
+      <p>Agregar dos funciones en <code>backend/src/services/emailService.js</code>:</p>
       <ul>
-        <li>Nombre completo</li>
-        <li>WhatsApp / Teléfono</li>
-        <li>Email</li>
-        <li>Barrio donde buscás espacio</li>
-        <li>Para qué: mudanza temporaria / guardado mensual / uso comercial / otro</li>
-        <li>¿Cuántos m² necesitás? (aprox.)</li>
-        <li>¿Cuánto tiempo? 1 mes / 3 meses / 6 meses / indefinido</li>
+        <li><code>sendWaitlistBienvenidaProveedor(email, nombre)</code> — con el copy del tab 💬 Scripts</li>
+        <li><code>sendWaitlistBienvenidaCliente(email, nombre)</code> — con el copy del tab 💬 Scripts</li>
       </ul>
-      <p style="margin-top:8px"><b>Pantalla final:</b> "¡Listo! Te avisamos cuando haya espacios en tu zona 🏠"</p>
+      <p style="margin-top:6px">Usar el mismo patrón HTML de los emails existentes. Remitente: el ya configurado en RESEND_API_KEY.</p>
     </div>
   </div>
 
   <div class="step">
     <div class="step-num">4</div>
     <div class="step-body">
-      <h4>Crear cuenta en Mailchimp y conectar <span class="step-time">20 min</span></h4>
-      <p>Ir a <a href="https://mailchimp.com" target="_blank">mailchimp.com</a> → Registrarse gratis → Crear dos Audiences (listas):</p>
+      <h4>Tipo TypeScript <span class="step-time">Frontend · 5 min</span></h4>
+      <p>Agregar en <code>frontend/types/index.ts</code>:</p>
       <ul>
-        <li>Audience 1: "TMC Proveedores Waitlist"</li>
-        <li>Audience 2: "TMC Clientes Waitlist"</li>
+        <li><code>WaitlistTipo: 'proveedor' | 'cliente'</code></li>
+        <li><code>WaitlistPayload</code> — con todos los campos del formulario tipados</li>
       </ul>
-      <p style="margin-top:6px">En cada Audience → <b>Automation → Welcome email</b> → activar el email de bienvenida automático con el texto de los Scripts (pestaña 💬).</p>
-      <p style="margin-top:6px">En Tally → Integrations → Mailchimp → conectar cada formulario a su Audience correspondiente.</p>
+      <p style="margin-top:6px">Agregar <code>submitWaitlist(data: WaitlistPayload)</code> en <code>frontend/lib/api.ts</code>.</p>
     </div>
   </div>
 
   <div class="step">
     <div class="step-num">5</div>
     <div class="step-body">
-      <h4>Armar los links finales <span class="step-time">5 min</span></h4>
-      <p>Tally genera dos links directos para compartir:</p>
+      <h4>Página /es/waitlist <span class="step-time">Frontend · 2-3 hs</span></h4>
+      <p>Crear <code>frontend/app/[locale]/waitlist/page.tsx</code>. Flujo:</p>
       <ul>
-        <li><b>Link Proveedor:</b> tally.so/r/[tu-id-proveedor]</li>
-        <li><b>Link Cliente:</b> tally.so/r/[tu-id-cliente]</li>
+        <li><b>Paso 1:</b> selector visual — dos cards grandes "Tengo un espacio" / "Busco dónde guardar"</li>
+        <li><b>Paso 2:</b> formulario condicional según el tipo elegido (campos del tab 📝 Formularios)</li>
+        <li><b>Paso 3:</b> pantalla de confirmación con mensaje personalizado y propuesta de valor</li>
+        <li>No requiere login — acceso público, sin Supabase auth</li>
+        <li>Manejo de estado con <code>useState</code>, submit via <code>api.ts</code></li>
       </ul>
-      <p style="margin-top:6px">Shortenerlos si querés: <a href="https://bitly.com" target="_blank">bit.ly</a> o <a href="https://dub.co" target="_blank">dub.co</a> → ej: <b>bit.ly/tmc-proveedor</b> y <b>bit.ly/tmc-cliente</b></p>
     </div>
   </div>
 
   <div class="step">
     <div class="step-num">6</div>
     <div class="step-body">
-      <h4>Primera ola de difusión — WhatsApp <span class="step-time">30 min</span></h4>
-      <ul>
-        <li>Mensaje personal a los testers de F&F (pedir que reenvíen a conocidos)</li>
-        <li>Grupos de vecinos y consorcio de CABA</li>
-        <li>Grupos de emprendedores y networking</li>
-        <li>Grupos de inmobiliarias</li>
-        <li>Mensaje a Agustina y Daniel para difundir desde su red</li>
-      </ul>
-      <p style="margin-top:6px">Ver los scripts exactos en la pestaña 💬 Scripts.</p>
+      <h4>Textos i18n <span class="step-time">Frontend · 20 min</span></h4>
+      <p>Agregar las keys de la página waitlist en <code>messages/es.json</code>. El portugués (<code>messages/pt.json</code>) se puede dejar en español por ahora o traducir si hay demanda de Brasil.</p>
     </div>
   </div>
 
   <div class="step">
     <div class="step-num">7</div>
     <div class="step-body">
-      <h4>Publicar en Instagram + LinkedIn <span class="step-time">15 min</span></h4>
+      <h4>Tab Waitlist en el panel admin <span class="step-time">Frontend · 1 hs</span></h4>
+      <p>En el panel de administración, agregar un tab "Waitlist" que muestre:</p>
       <ul>
-        <li><b>IG Story:</b> imagen con el link — "¡Abrimos la lista de espera! Swipe up 👆"</li>
-        <li><b>IG Feed:</b> post con propuesta de valor — ver copy en Scripts</li>
-        <li><b>LinkedIn:</b> post personal de Alejandro como fundador — ver copy en Scripts</li>
-        <li><b>Link en Bio de IG:</b> usar Linktree o Bento con ambos links (proveedor + cliente)</li>
+        <li>Tabla de registros con columnas: tipo, nombre, email, WhatsApp, barrio, tipo espacio / para qué, fecha</li>
+        <li>Filtro por tipo (proveedor / cliente)</li>
+        <li>Contador total: X proveedores · Y clientes</li>
+        <li>Botón "Exportar CSV" (opcional, para análisis externo)</li>
       </ul>
     </div>
   </div>
@@ -649,18 +653,42 @@ footer b{color:#FFD5A0}
   <div class="step">
     <div class="step-num">8</div>
     <div class="step-body">
-      <h4>Monitoreo diario (de acá en adelante) <span class="step-time">5 min/día</span></h4>
+      <h4>Enlazar desde la home <span class="step-time">Frontend · 15 min</span></h4>
+      <p>Agregar en la home de todasmiscosas.com un banner o sección visible con CTA a la waiting list. Opciones:</p>
       <ul>
-        <li>Revisar respuestas en Tally Dashboard</li>
-        <li>Ver contactos nuevos en Mailchimp</li>
-        <li>Contestar WhatsApps de interesados el mismo día</li>
-        <li>Anotar los barrios más pedidos para priorizar</li>
+        <li>Banner superior tipo "Estamos en lanzamiento — ¡Anotate!"</li>
+        <li>Sección dedicada en el medio de la home</li>
+        <li>Link en el footer</li>
       </ul>
     </div>
   </div>
 
-  <div class="notice-green">
-    <b>🗓️ Semana 2:</b> Con la waiting list funcionando, implementar <code>/es/waitlist</code> en todasmiscosas.com. Mismo flujo pero con el branding completo de TMC, contador público de registros y datos en la DB propia.
+  <div class="step">
+    <div class="step-num">9</div>
+    <div class="step-body">
+      <h4>Testing y deploy <span class="step-time">Dev · 30 min</span></h4>
+      <ul>
+        <li>Probar el flujo completo: submit proveedor → email bienvenida → aparece en admin</li>
+        <li>Probar flujo cliente con los mismos pasos</li>
+        <li>Verificar que el endpoint rechaza datos inválidos (email vacío, tipo inválido)</li>
+        <li>Commit + push → CI/CD despliega automáticamente en VPS</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">10</div>
+    <div class="step-body">
+      <h4>Difusión — cuando esté online <span class="step-time">Marketing</span></h4>
+      <ul>
+        <li>Testers de F&F: mensaje personal pidiendo que reenvíen</li>
+        <li>Grupos de WhatsApp: vecinos, consorcios, inmobiliarias</li>
+        <li>Instagram: Story + post de feed con el link</li>
+        <li>LinkedIn: post de Alejandro como fundador</li>
+        <li>Agustina y Daniel: difusión desde su red y podcast</li>
+      </ul>
+      <p style="margin-top:6px">Ver scripts listos en la pestaña 💬.</p>
+    </div>
   </div>
 </div>
 
@@ -722,7 +750,7 @@ footer b{color:#FFD5A0}
 <div id="tab-scripts" class="panel">
   <div class="stitle"><div class="sdot" style="background:#CE93D8">💬</div><span style="color:#C84B00">Scripts y mensajes listos para usar</span></div>
 
-  <div class="notice-orange">Todos los scripts son editables. Personalizalos con el nombre de quien los envía y el link real del formulario de Tally. Los <b>[corchetes]</b> son los campos a completar.</div>
+  <div class="notice-orange">Todos los scripts son editables. Personalizalos con el nombre de quien los envía. El link es siempre <b>todasmiscosas.com/es/waitlist</b> — una sola URL para ambos tipos (el usuario elige dentro de la página). Los <b>[corchetes]</b> son los campos a completar.</div>
 
   <p style="font-size:.82rem;font-weight:800;color:#7A3200;margin-bottom:12px;text-transform:uppercase;letter-spacing:.05em">▸ WhatsApp — Para PROVEEDORES (contacto personal)</p>
   <div class="script-box">
@@ -733,7 +761,7 @@ Estoy lanzando TodasMisCosas.com — un marketplace para alquilar espacios vací
 
 Si tenés algún espacio libre y querés convertirlo en un ingreso mensual sin complicarte, anotate en la lista de espera 👇
 
-🔗 [LINK FORMULARIO PROVEEDOR]
+🔗 todasmiscosas.com/es/waitlist
 
 Los primeros proveedores que se sumen van a tener 0% de comisión los primeros 3 meses. Son 2 minutos para anotarse.</p>
   </div>
@@ -747,7 +775,7 @@ Estoy lanzando TodasMisCosas.com — una plataforma para encontrar espacios de g
 
 Si en algún momento necesitás guardar muebles, cosas de mudanza o lo que sea, anotate en la lista de espera 👇
 
-🔗 [LINK FORMULARIO CLIENTE]
+🔗 todasmiscosas.com/es/waitlist
 
 Los primeros en anotarse tienen un 20% de descuento en el primer mes. ¡Son 2 minutos!</p>
   </div>
@@ -825,7 +853,7 @@ TodasMisCosas.com es el primer marketplace donde podés:
 🏠 Alquilar tu espacio vacío → y ganar plata sin complicarte
 📦 Encontrar dónde guardar → en tu barrio, a precio de vecino
 
-🚨 Abrimos la lista de espera HOY.
+Abrimos la lista de espera.
 Los primeros que se anoten tienen beneficios exclusivos de early adopter.
 
 Link en bio 👆 o escribinos por DM.
@@ -865,10 +893,10 @@ Link en bio 👆 o escribinos por DM.
   <h3 style="font-size:.9rem;font-weight:800;margin:18px 0 12px;color:#C84B00">📋 Qué trackear semanalmente</h3>
   <table>
     <tr><th>Métrica</th><th>Cómo medirla</th><th>Semáforo</th></tr>
-    <tr><td>Nuevos registros/semana</td><td>Tally Dashboard</td><td>🟢 +20 · 🟡 10-20 · 🔴 -10</td></tr>
-    <tr><td>Ratio proveedor/cliente</td><td>Tally (por form)</td><td>🟢 1:3 · 🟡 1:5 · 🔴 1:10+</td></tr>
-    <tr><td>Barrio más solicitado</td><td>Export CSV → análisis</td><td>Identifica dónde activar primero</td></tr>
-    <tr><td>Apertura email bienvenida</td><td>Mailchimp Analytics</td><td>🟢 40%+ · 🟡 25-40% · 🔴 -25%</td></tr>
+    <tr><td>Nuevos registros/semana</td><td>Tab Waitlist — Panel Admin TMC</td><td>🟢 +20 · 🟡 10-20 · 🔴 -10</td></tr>
+    <tr><td>Ratio proveedor/cliente</td><td>Contador en el Panel Admin</td><td>🟢 1:3 · 🟡 1:5 · 🔴 1:10+</td></tr>
+    <tr><td>Barrio más solicitado</td><td>Query directo a MySQL o Export CSV del admin</td><td>Identifica dónde activar primero</td></tr>
+    <tr><td>Apertura email bienvenida</td><td>Dashboard de Resend</td><td>🟢 40%+ · 🟡 25-40% · 🔴 -25%</td></tr>
     <tr><td>Conversaciones de WhatsApp</td><td>Conteo manual</td><td>Señal de interés real caliente</td></tr>
   </table>
 
@@ -876,43 +904,44 @@ Link en bio 👆 o escribinos por DM.
   <div class="timeline">
     <div class="tl-item">
       <div class="tl-dot"></div>
-      <h4>HOY <span class="tl-tag">5 jul 2026</span></h4>
-      <p>Tally + Mailchimp online. Primera ola de difusión: contactos F&F + grupos WhatsApp + IG + LinkedIn.</p>
+      <h4>Fase dev — Implementación <span class="tl-tag">½–1 día</span></h4>
+      <p>Migración DB → endpoint Express → templates Resend → página Next.js → tab admin. Deploy automático vía CI/CD al pushear a master.</p>
     </div>
     <div class="tl-item">
       <div class="tl-dot"></div>
-      <h4>Semana 2 <span class="tl-tag">8-12 jul</span></h4>
-      <p>Implementar /es/waitlist en todasmiscosas.com. Primer análisis de barrios y tipos de espacio. Activar contenido RRSS del calendario de julio.</p>
+      <h4>Lanzamiento de la waiting list <span class="tl-tag">Cuando esté online</span></h4>
+      <p>Primera ola de difusión: testers F&F + grupos WhatsApp (vecinos, consorcios, inmobiliarias) + IG Stories + post LinkedIn. Agustina y Daniel difunden desde su red.</p>
     </div>
     <div class="tl-item">
       <div class="tl-dot"></div>
-      <h4>Semana 3-4 <span class="tl-tag">14-26 jul</span></h4>
-      <p>Email de actualización a la lista ("estamos avanzando, pronto abrimos"). Incorporación de inmobiliarias y consorcios como canal de proveedores. Primer episodio de podcast con mención a la waiting list.</p>
+      <h4>Semanas siguientes <span class="tl-tag">Crecimiento orgánico</span></h4>
+      <p>Primer análisis de datos (barrios, tipos). Email de actualización a la lista ("estamos avanzando"). Incorporación de inmobiliarias y consorcios. Podcast TMC con mención a la waiting list.</p>
     </div>
     <div class="tl-item">
       <div class="tl-dot"></div>
-      <h4>Fin de Julio / Agosto <span class="tl-tag">Post-SAS inscripta</span></h4>
-      <p>Con la SAS inscripta y la plataforma lista: email a toda la lista con acceso prioritario. Lanzamiento público con los datos de tracción de la waiting list como argumento.</p>
+      <h4>Lanzamiento oficial <span class="tl-tag">Post-SAS inscripta</span></h4>
+      <p>Con la SAS inscripta: email a toda la lista con acceso prioritario. Lanzamiento público con los datos de tracción como argumento ante inversores y prensa.</p>
     </div>
   </div>
 
   <h3 style="font-size:.9rem;font-weight:800;margin:18px 0 12px;color:#C84B00">✅ Checklist de arranque</h3>
   <ul class="check-list" id="wl_checklist">
-    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Crear cuenta Tally.so</div></li>
-    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Crear formulario PROVEEDOR en Tally con todos los campos</div></li>
-    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Crear formulario CLIENTE en Tally con todos los campos</div></li>
-    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Crear cuenta Mailchimp + 2 listas (proveedores / clientes)</div></li>
-    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Conectar Tally → Mailchimp (integración nativa)</div></li>
-    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Configurar email de bienvenida en Mailchimp (proveedor + cliente)</div></li>
-    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Shortener de links (bit.ly/tmc-proveedor y bit.ly/tmc-cliente)</div></li>
-    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Enviar mensajes de WhatsApp a los testers de F&F</div></li>
-    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Post en LinkedIn personal (Alejandro)</div></li>
-    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Story + post en Instagram TMC</div></li>
-    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Actualizar link en bio de Instagram (Linktree/Bento)</div></li>
-    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Compartir en grupos de WhatsApp de vecinos/consorcios</div></li>
-    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Avisar a Agustina y Daniel para difundir desde su red</div></li>
-    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Semana 2: implementar /es/waitlist en todasmiscosas.com</div></li>
-    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Primer análisis de datos (barrios, tipos de espacio) al fin de semana 1</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div><b>[Dev]</b> Crear migración <code>add-waitlist.js</code> y avisar a Guille para correrla en VPS</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div><b>[Dev]</b> Crear <code>waitlistController.js</code> + ruta <code>POST /api/waitlist</code> (sin auth)</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div><b>[Dev]</b> Crear <code>GET /api/admin/waitlist</code> con auth admin</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div><b>[Dev]</b> Agregar <code>sendWaitlistBienvenidaProveedor</code> y <code>sendWaitlistBienvenidaCliente</code> en emailService.js</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div><b>[Dev]</b> Crear tipos TS <code>WaitlistTipo</code> y <code>WaitlistPayload</code> en types/index.ts</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div><b>[Dev]</b> Agregar <code>submitWaitlist()</code> en frontend/lib/api.ts</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div><b>[Dev]</b> Crear <code>frontend/app/[locale]/waitlist/page.tsx</code> con selector + formulario + confirmación</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div><b>[Dev]</b> Agregar keys en messages/es.json</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div><b>[Dev]</b> Agregar tab Waitlist en el panel admin con tabla y contadores</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div><b>[Dev]</b> Agregar CTA / banner a la waiting list en la home</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div><b>[Dev]</b> Probar flujo E2E (submit → email → aparece en admin) y hacer deploy</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div><b>[Mkt]</b> Difusión inicial: mensajes de WhatsApp a testers de F&F</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div><b>[Mkt]</b> Post en LinkedIn personal (Alejandro) + Story/post IG</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div><b>[Mkt]</b> Compartir en grupos de WhatsApp de vecinos y consorcios</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div><b>[Mkt]</b> Avisar a Agustina y Daniel para difundir desde su red</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div><b>[Análisis]</b> Primera lectura de datos (barrios, tipos de espacio) a la semana de estar online</div></li>
   </ul>
 </div>
 
