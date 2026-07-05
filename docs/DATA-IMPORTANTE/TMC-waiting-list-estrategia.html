@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC — Waiting List · Estrategia de Lanzamiento · Julio 2026</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#FFFBF5;color:#1A1A1A;min-height:100vh}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#7B2D00 0%,#C84B00 40%,#FF6B00 75%,#FFB347 100%);padding:38px 24px 30px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'🥝 🍑 🍊 🍋 🍓 🥭 🍇 🥝 🍑 🍊 🍋 🍓';position:absolute;top:6px;left:0;right:0;font-size:16px;letter-spacing:6px;opacity:.18;white-space:nowrap}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.4);color:#fff;border-radius:20px;padding:4px 18px;font-size:.72rem;font-weight:800;letter-spacing:.07em;margin-bottom:12px}
+.hero h1{font-size:clamp(1.5rem,4.5vw,2.4rem);font-weight:900;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.3);letter-spacing:-.3px}
+.hero p{margin-top:8px;font-size:.88rem;color:rgba(255,255,255,.9);font-weight:500}
+.hero-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:14px}
+.hero-chip{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:20px;padding:4px 14px;font-size:.71rem;font-weight:700}
+
+/* TABS */
+.tab-nav{display:flex;flex-wrap:wrap;gap:6px;background:#1A1A1A;padding:12px 14px;border-bottom:3px solid #FF6B00;position:sticky;top:0;z-index:100;box-shadow:0 3px 14px rgba(0,0,0,.3)}
+.tab-btn{padding:10px 16px;border:2px solid #CC5500;background:#FF7A00;font-size:.88rem;font-weight:800;cursor:pointer;border-radius:10px;color:#000;transition:all .15s;white-space:nowrap;letter-spacing:.01em}
+.tab-btn:hover{background:#FF5C00;border-color:#AA3A00;color:#000}
+.tab-btn.active{background:#FF3D00;border-color:#AA2200;color:#000;box-shadow:0 0 0 3px rgba(255,61,0,.3)}
+
+/* PANELS */
+.panels{padding:24px 16px 60px;max-width:940px;margin:0 auto}
+.panel{display:none}.panel.active{display:block}
+
+/* SECTION TITLE */
+.stitle{font-size:1.05rem;font-weight:900;margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.sdot{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+
+/* CARDS */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:22px}
+.card{border-radius:16px;padding:18px 16px;border:2px solid transparent;box-shadow:0 3px 12px rgba(0,0,0,.07);transition:transform .15s}
+.card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.12)}
+.card h3{font-size:.9rem;font-weight:800;margin-bottom:8px}
+.card p,.card li{font-size:.79rem;color:#555;line-height:1.6}
+.card ul{padding-left:17px}.card li{margin-bottom:3px}
+
+/* FRUTAS Y VERDURAS */
+.c-naranja {background:#FFF3E0;border-color:#FFA726}
+.c-mango   {background:#FFF8E1;border-color:#FFCA28}
+.c-fresa   {background:#FFF0F4;border-color:#F48FB1}
+.c-kiwi    {background:#F1F8E9;border-color:#9CCC65}
+.c-tomate  {background:#FFF5F5;border-color:#EF9A9A}
+.c-limon   {background:#FFFFF0;border-color:#F9E04B}
+.c-uva     {background:#F5F0FF;border-color:#CE93D8}
+.c-pepino  {background:#E8F5E9;border-color:#66BB6A}
+.c-zanahoria{background:#FFF4E8;border-color:#FFA040}
+.c-brocoli {background:#E8F5EE;border-color:#4CAF7D}
+.c-mora    {background:#FCE4EC;border-color:#F06292}
+.c-pera    {background:#F9FBE7;border-color:#CDDC39}
+
+/* PLATFORM CARDS */
+.plat-card{background:#fff;border-radius:16px;padding:0;overflow:hidden;box-shadow:0 3px 14px rgba(0,0,0,.08);margin-bottom:14px;border:2px solid #FFE0B2}
+.plat-card:hover{box-shadow:0 6px 22px rgba(0,0,0,.13)}
+.plat-head{padding:16px 20px;display:flex;align-items:center;gap:14px}
+.plat-ico{font-size:1.8rem;flex-shrink:0}
+.plat-name{font-size:1rem;font-weight:900;color:#1A1A1A}
+.plat-sub{font-size:.73rem;color:#888;margin-top:2px}
+.plat-badge{margin-left:auto;font-size:.68rem;font-weight:800;padding:4px 12px;border-radius:20px;white-space:nowrap}
+.badge-free{background:#DCFCE7;color:#15803D}
+.badge-paid{background:#FEF3C7;color:#92400E}
+.badge-rec{background:#FF6B00;color:#fff}
+.plat-body{padding:0 20px 18px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.plat-col h4{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.pro-col h4{color:#15803D}.con-col h4{color:#DC2626}
+.plat-col ul{list-style:none;padding:0}
+.plat-col li{font-size:.77rem;color:#444;padding:3px 0;display:flex;gap:7px;align-items:flex-start;line-height:1.45}
+.plat-col li::before{flex-shrink:0;margin-top:1px}
+.pro-col li::before{content:'✓';color:#15803D;font-weight:700}
+.con-col li::before{content:'✗';color:#DC2626;font-weight:700}
+.plat-precio{font-size:.72rem;color:#888;padding:0 20px 14px}
+
+/* STEPS */
+.step{display:flex;gap:14px;align-items:flex-start;background:#fff;border-radius:14px;padding:16px 16px;box-shadow:0 2px 10px rgba(0,0,0,.06);margin-bottom:12px;border:2px solid #FFE0B2}
+.step-num{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:900;flex-shrink:0;color:#fff;background:#FF6B00}
+.step-body h4{font-size:.9rem;font-weight:800;margin-bottom:5px}
+.step-body p,.step-body li{font-size:.79rem;color:#555;line-height:1.55}
+.step-body ul{padding-left:16px;margin-top:5px}
+.step-body a{color:#C84B00;font-weight:700}
+.step-time{font-size:.68rem;font-weight:700;color:#FF6B00;background:#FFF3E0;border-radius:20px;padding:2px 10px;margin-left:8px}
+
+/* NOTICE */
+.notice{background:#FFF9C4;border:2px solid #FFD600;border-radius:12px;padding:13px 16px;font-size:.79rem;color:#7A6000;margin-bottom:18px;line-height:1.65}
+.notice b{color:#5A4000}
+.notice-green{background:#F0FFF4;border:2px solid #6EE7B7;border-radius:12px;padding:13px 16px;font-size:.79rem;color:#065F46;margin-bottom:18px;line-height:1.65}
+.notice-orange{background:#FFF3E0;border:2px solid #FF9800;border-radius:12px;padding:13px 16px;font-size:.79rem;color:#7A3200;margin-bottom:18px;line-height:1.65}
+
+/* RECOMMENDATION BOX */
+.rec-box{background:linear-gradient(135deg,#FFF3E0,#FFF8E1);border:3px solid #FF6B00;border-radius:18px;padding:22px 20px;margin-bottom:22px;box-shadow:0 4px 20px rgba(255,107,0,.15)}
+.rec-box h3{font-size:1rem;font-weight:900;color:#C84B00;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.rec-box p,.rec-box li{font-size:.81rem;color:#4A2800;line-height:1.65}
+.rec-box ul{padding-left:18px;margin-top:8px}
+
+/* FORM PREVIEW */
+.form-preview{background:#fff;border-radius:14px;padding:18px;border:2px solid #FFD5A0;box-shadow:0 2px 10px rgba(0,0,0,.06);margin-bottom:14px}
+.form-preview h4{font-size:.88rem;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.form-field{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 13px;margin-bottom:8px;font-size:.78rem;color:#888}
+.form-field span{display:block;font-size:.68rem;font-weight:700;color:#FF6B00;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+
+/* SCRIPT BOX */
+.script-box{background:#1A1A1A;border-radius:14px;padding:18px 18px;margin-bottom:14px}
+.script-box .script-label{font-size:.68rem;font-weight:800;color:#FF9840;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.script-box p{font-size:.82rem;color:#F0F0F0;line-height:1.75;white-space:pre-wrap}
+.script-box a{color:#FF9840}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:28px;margin-bottom:22px}
+.timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,#FF6B00,#FFD5A0)}
+.tl-item{position:relative;margin-bottom:18px}
+.tl-dot{position:absolute;left:-24px;width:16px;height:16px;border-radius:50%;background:#FF6B00;border:2px solid #fff;box-shadow:0 0 0 2px #FF6B00;top:2px}
+.tl-item h4{font-size:.88rem;font-weight:800;margin-bottom:5px;color:#1A1A1A}
+.tl-item p{font-size:.78rem;color:#555;line-height:1.55}
+.tl-tag{font-size:.65rem;font-weight:700;padding:2px 9px;border-radius:10px;background:#FFE0B2;color:#7A3200;margin-left:8px}
+
+/* METRIC CARDS */
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+.metric-card{background:#fff;border-radius:14px;padding:16px 14px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.07);border-top:4px solid}
+.metric-n{font-size:1.8rem;font-weight:900;line-height:1;margin-bottom:4px}
+.metric-l{font-size:.68rem;color:#888;text-transform:uppercase;letter-spacing:.05em}
+.metric-sub{font-size:.7rem;color:#555;margin-top:5px}
+
+/* CHECKLIST */
+.check-list{list-style:none;padding:0}
+.check-list li{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #FFF3E0;font-size:.8rem;line-height:1.5;color:#333}
+.check-list li:last-child{border-bottom:none}
+.chk-box{width:19px;height:19px;border:2px solid #FFB347;border-radius:5px;flex-shrink:0;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.7rem;background:#fff;transition:all .15s}
+.chk-box.done{background:#FF6B00;border-color:#FF6B00;color:#fff}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.79rem;margin:12px 0 18px}
+th{background:#FF6B00;color:#fff;padding:9px 12px;text-align:left;font-size:.71rem;font-weight:800;letter-spacing:.04em}
+td{padding:9px 12px;border-bottom:1px solid #FFE0B2;vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:nth-child(even) td{background:#FFFAF5}
+td b{color:#7A3200}
+
+footer{text-align:center;padding:22px;background:linear-gradient(135deg,#7B2D00,#C84B00);font-size:.72rem;color:rgba(255,255,255,.6);line-height:1.8}
+footer b{color:#FFD5A0}
+
+@media(max-width:520px){
+  .tab-btn{padding:7px 10px;font-size:.75rem}
+  .grid,.metric-grid{grid-template-columns:1fr}
+  .plat-body{grid-template-columns:1fr}
+  .panels{padding:16px 12px 50px}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">📋 ESTRATEGIA · TMC · JULIO 2026</div>
+  <h1>🚀 Waiting List — Plan de Lanzamiento</h1>
+  <p>Post Friends &amp; Family · Previo al lanzamiento oficial · TodasMisCosas.com</p>
+  <div class="hero-chips">
+    <div class="hero-chip">✅ F&amp;F Testing completado</div>
+    <div class="hero-chip">⚖️ SAS en trámite</div>
+    <div class="hero-chip">🎯 Dos segmentos: Proveedor + Cliente</div>
+    <div class="hero-chip">📍 CABA · AMBA</div>
+  </div>
+</div>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="showTab('contexto',this)">🎯 Contexto</button>
+  <button class="tab-btn" onclick="showTab('plataformas',this)">🛠️ Plataformas</button>
+  <button class="tab-btn" onclick="showTab('recomendacion',this)">⭐ Recomendación TMC</button>
+  <button class="tab-btn" onclick="showTab('pasos',this)">🚀 Paso a Paso Hoy</button>
+  <button class="tab-btn" onclick="showTab('formularios',this)">📝 Formularios</button>
+  <button class="tab-btn" onclick="showTab('scripts',this)">💬 Scripts &amp; Mensajes</button>
+  <button class="tab-btn" onclick="showTab('metricas',this)">📊 Métricas</button>
+</div>
+
+<div class="panels">
+
+<!-- ===== CONTEXTO ===== -->
+<div id="tab-contexto" class="panel active">
+  <div class="stitle"><div class="sdot" style="background:#FFE0B2">🎯</div><span style="color:#C84B00">¿Por qué una waiting list ahora?</span></div>
+
+  <div class="notice-green">
+    <b>📍 Momento exacto:</b> Terminaron la segunda ronda de testing (Friends &amp; Family). La plataforma funciona de punta a punta. La SAS está en trámite. Es el momento ideal para capturar interés real antes del lanzamiento público — sin asumir compromisos comerciales prematuros.
+  </div>
+
+  <div class="grid">
+    <div class="card c-naranja">
+      <h3>⚡ La oportunidad ahora</h3>
+      <ul>
+        <li>El momentum post-testing es el momento de mayor energía del equipo</li>
+        <li>Los testers F&F se convierten en los primeros promotores</li>
+        <li>Capturás interés antes de que lo haga la competencia</li>
+        <li>Validás demanda real por zona/tipo de espacio antes de invertir más</li>
+        <li>Creás urgencia y exclusividad ("primeros en entrar")</li>
+      </ul>
+    </div>
+    <div class="card c-kiwi">
+      <h3>✅ Qué te da una waiting list</h3>
+      <ul>
+        <li>Base de datos segmentada: <b>Proveedores vs Clientes</b></li>
+        <li>Datos cualitativos: qué barrio, qué espacio, para qué</li>
+        <li>Pipeline de usuarios para el día 1 del lanzamiento</li>
+        <li>Prueba de tracción para inversores y el trámite SAS</li>
+        <li>Canal de comunicación directa (email/WhatsApp) propio</li>
+        <li>Feedback adicional antes del lanzamiento</li>
+      </ul>
+    </div>
+    <div class="card c-limon">
+      <h3>🧠 Clave: dos listas separadas</h3>
+      <p>TMC es un marketplace <b>de dos lados</b>. La espera de un proveedor es diferente a la de un cliente. Necesitás:</p>
+      <ul style="margin-top:8px">
+        <li><b>Lista Proveedores:</b> los que tienen espacio y quieren alquilarlo</li>
+        <li><b>Lista Clientes:</b> los que buscan espacio para guardar cosas</li>
+      </ul>
+      <p style="margin-top:8px">Nunca mezclarlos: el mensaje, la propuesta de valor y los datos que pedís son distintos.</p>
+    </div>
+    <div class="card c-tomate">
+      <h3>⚠️ Lo que NO debés hacer</h3>
+      <ul>
+        <li>Cobrar antes de que la SAS esté inscripta</li>
+        <li>Prometer fechas exactas de lanzamiento</li>
+        <li>Pedir demasiados datos (más de 5-6 campos = abandono)</li>
+        <li>Usar una sola lista genérica sin segmentar</li>
+        <li>No confirmar la suscripción (la gente olvida que se anotó)</li>
+        <li>Dejar pasar más de 48hs sin comunicarte con quien se anotó</li>
+      </ul>
+    </div>
+    <div class="card c-uva">
+      <h3>📣 El mensaje central</h3>
+      <p style="font-style:italic;font-weight:700;margin-bottom:8px">"Somos el primer marketplace de almacenamiento urbano de Argentina. Si tenés espacio libre o necesitás guardar algo, sumate a la lista de espera. Los primeros acceden antes que nadie."</p>
+      <p>Simple. Sin promesas de fechas. Sin mencionar que la SAS está en trámite.</p>
+    </div>
+    <div class="card c-zanahoria">
+      <h3>🗓️ Timing recomendado</h3>
+      <ul>
+        <li><b>Semana 1 (hoy):</b> Montar formularios + empezar difusión</li>
+        <li><b>Semana 2-3:</b> Contenido en RRSS + WhatsApp activo</li>
+        <li><b>Semana 4+:</b> Primer email de actualización a la lista</li>
+        <li><b>Cuando SAS esté inscripta:</b> Lanzamiento oficial con invitaciones</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="notice">
+    <b>💡 Argumento para inversores:</b> Tener 200+ registros en la waiting list en 30 días es un dato de tracción concreto. Mucho más convincente que decir "tenemos una plataforma lista". Es demanda pre-capturada sin haber gastado un peso en ads.
+  </div>
+</div>
+
+<!-- ===== PLATAFORMAS ===== -->
+<div id="tab-plataformas" class="panel">
+  <div class="stitle"><div class="sdot" style="background:#FFD5A0">🛠️</div><span style="color:#C84B00">Comparativa de plataformas para waiting list</span></div>
+
+  <div class="notice-orange">Todas las plataformas de abajo tienen <b>plan gratuito suficiente para arrancar</b>. No necesitás pagar nada hoy. La recomendación específica para TMC está en la pestaña ⭐ Recomendación.</div>
+
+  <!-- TALLY -->
+  <div class="plat-card" style="border-color:#FF6B00">
+    <div class="plat-head">
+      <div class="plat-ico">📋</div>
+      <div>
+        <div class="plat-name">Tally.so <span class="plat-badge badge-rec">⭐ TOP para TMC</span></div>
+        <div class="plat-sub">Constructor de formularios moderno — tally.so</div>
+      </div>
+    </div>
+    <div class="plat-body">
+      <div class="plat-col pro-col">
+        <h4>✓ Pros</h4>
+        <ul>
+          <li>100% gratuito sin límite de respuestas</li>
+          <li>Diseño muy limpio y moderno</li>
+          <li>Dos formularios distintos (proveedor + cliente) en minutos</li>
+          <li>Link directo compartible por WhatsApp</li>
+          <li>Exportar respuestas a Google Sheets o CSV</li>
+          <li>Embed en cualquier web (todasmiscosas.com)</li>
+          <li>Notificaciones por email en cada respuesta</li>
+          <li>Lógica condicional (si dice "cochera", pregunta m²)</li>
+          <li>Pantalla de agradecimiento personalizable</li>
+        </ul>
+      </div>
+      <div class="plat-col con-col">
+        <h4>✗ Cons</h4>
+        <ul>
+          <li>No tiene email automation nativo (necesitás conectar Mailchimp)</li>
+          <li>No tiene landing page propia (solo el formulario)</li>
+          <li>Branding de Tally en el free (discreto)</li>
+          <li>No tiene CRM integrado</li>
+        </ul>
+      </div>
+    </div>
+    <div class="plat-precio">💰 Precio: <b>Gratis</b> para uso ilimitado · Pro opcional: USD 29/mes (no necesario)</div>
+  </div>
+
+  <!-- TYPEFORM -->
+  <div class="plat-card">
+    <div class="plat-head">
+      <div class="plat-ico">✨</div>
+      <div>
+        <div class="plat-name">Typeform <span class="plat-badge badge-paid">Limitado gratis</span></div>
+        <div class="plat-sub">Formularios conversacionales premium — typeform.com</div>
+      </div>
+    </div>
+    <div class="plat-body">
+      <div class="plat-col pro-col">
+        <h4>✓ Pros</h4>
+        <ul>
+          <li>UX excepcional — experiencia de "conversación"</li>
+          <li>Muy bonito visualmente</li>
+          <li>Lógica condicional avanzada</li>
+          <li>Integración nativa con Mailchimp, HubSpot, Slack</li>
+          <li>Analíticas detalladas de abandono</li>
+        </ul>
+      </div>
+      <div class="plat-col con-col">
+        <h4>✗ Cons</h4>
+        <ul>
+          <li>Plan gratis: solo 10 respuestas/mes (inútil para WL)</li>
+          <li>Necesitás pagar desde el primer mes útil</li>
+          <li>Más caro que Tally para las mismas funciones</li>
+          <li>Puede ser lento en mobile con conexión débil</li>
+        </ul>
+      </div>
+    </div>
+    <div class="plat-precio">💰 Precio: Free hasta 10 resp/mes · Basic: USD 25/mes · Growth: USD 59/mes</div>
+  </div>
+
+  <!-- MAILCHIMP -->
+  <div class="plat-card">
+    <div class="plat-head">
+      <div class="plat-ico">📧</div>
+      <div>
+        <div class="plat-name">Mailchimp <span class="plat-badge badge-free">Gratis 500 contactos</span></div>
+        <div class="plat-sub">Email marketing + landing page + listas — mailchimp.com</div>
+      </div>
+    </div>
+    <div class="plat-body">
+      <div class="plat-col pro-col">
+        <h4>✓ Pros</h4>
+        <ul>
+          <li>Gratis hasta 500 contactos y 1000 emails/mes</li>
+          <li>Email de bienvenida automático al suscribirse</li>
+          <li>Landing page integrada con formulario</li>
+          <li>Dos listas separadas (proveedor + cliente)</li>
+          <li>Analytics de apertura y clicks</li>
+          <li>Muy conocido — integra con todo</li>
+        </ul>
+      </div>
+      <div class="plat-col con-col">
+        <h4>✗ Cons</h4>
+        <ul>
+          <li>Las landing pages del plan gratis son básicas</li>
+          <li>La UX del formulario no es tan bonita como Tally</li>
+          <li>Interfaz algo compleja para empezar rápido</li>
+          <li>500 contactos se llenan rápido si va bien</li>
+        </ul>
+      </div>
+    </div>
+    <div class="plat-precio">💰 Precio: Free hasta 500 contactos · Essentials: USD 13/mes</div>
+  </div>
+
+  <!-- GOOGLE FORMS -->
+  <div class="plat-card">
+    <div class="plat-head">
+      <div class="plat-ico">📝</div>
+      <div>
+        <div class="plat-name">Google Forms <span class="plat-badge badge-free">100% gratis</span></div>
+        <div class="plat-sub">Formularios de Google — forms.google.com</div>
+      </div>
+    </div>
+    <div class="plat-body">
+      <div class="plat-col pro-col">
+        <h4>✓ Pros</h4>
+        <ul>
+          <li>Totalmente gratuito, sin límites</li>
+          <li>Respuestas van directo a Google Sheets</li>
+          <li>Fácil de crear en minutos</li>
+          <li>No requiere cuenta especial (Google ya tienen)</li>
+        </ul>
+      </div>
+      <div class="plat-col con-col">
+        <h4>✗ Cons</h4>
+        <ul>
+          <li>Diseño muy básico — poca credibilidad de marca</li>
+          <li>No tiene email automático al suscriptor</li>
+          <li>No puede segmentar/etiquetar automáticamente</li>
+          <li>No tiene landing page — solo el form</li>
+          <li>No integra bien con email marketing</li>
+          <li>Da imagen poco profesional para un launch</li>
+        </ul>
+      </div>
+    </div>
+    <div class="plat-precio">💰 Precio: Gratis · Ideal solo para validación interna inicial</div>
+  </div>
+
+  <!-- BEEHIIV -->
+  <div class="plat-card">
+    <div class="plat-head">
+      <div class="plat-ico">🐝</div>
+      <div>
+        <div class="plat-name">Beehiiv <span class="plat-badge badge-free">Gratis 2500 subs</span></div>
+        <div class="plat-sub">Newsletter + waiting list — beehiiv.com</div>
+      </div>
+    </div>
+    <div class="plat-body">
+      <div class="plat-col pro-col">
+        <h4>✓ Pros</h4>
+        <ul>
+          <li>Gratis hasta 2.500 suscriptores (muy generoso)</li>
+          <li>Incluye landing page propia con dominio personalizable</li>
+          <li>Email de bienvenida automático</li>
+          <li>Referral system nativo ("compartí y subí en la lista")</li>
+          <li>Analytics muy completas</li>
+        </ul>
+      </div>
+      <div class="plat-col con-col">
+        <h4>✗ Cons</h4>
+        <ul>
+          <li>Orientado a newsletter, no a marketplace</li>
+          <li>No tiene lógica condicional por tipo de usuario</li>
+          <li>Segmentar proveedor vs cliente es manual</li>
+          <li>Más complejo para una waiting list simple</li>
+        </ul>
+      </div>
+    </div>
+    <div class="plat-precio">💰 Precio: Free hasta 2.500 subs · Scale: USD 42/mes</div>
+  </div>
+
+  <!-- todasmiscosas.com/waitlist -->
+  <div class="plat-card" style="border-color:#9CCC65">
+    <div class="plat-head">
+      <div class="plat-ico">🏠</div>
+      <div>
+        <div class="plat-name">todasmiscosas.com/es/waitlist <span class="plat-badge" style="background:#DCFCE7;color:#15803D">Mejor a mediano plazo</span></div>
+        <div class="plat-sub">Página propia en la plataforma TMC ya existente</div>
+      </div>
+    </div>
+    <div class="plat-body">
+      <div class="plat-col pro-col">
+        <h4>✓ Pros</h4>
+        <ul>
+          <li>Branding 100% TMC — máxima credibilidad</li>
+          <li>Datos van directo a la DB MySQL propia</li>
+          <li>Segmentación proveedor/cliente en el mismo flujo</li>
+          <li>Control total — sin límites de contactos</li>
+          <li>Puede mostrar counter de registros ("ya somos 150")</li>
+          <li>Cero costo de plataforma externa</li>
+          <li>SEO propio de todasmiscosas.com</li>
+        </ul>
+      </div>
+      <div class="plat-col con-col">
+        <h4>✗ Cons</h4>
+        <ul>
+          <li>Requiere desarrollo (½ día a 1 día de trabajo)</li>
+          <li>No disponible HOY — necesita implementación</li>
+          <li>Necesita email transaccional de confirmación</li>
+          <li>No tiene analytics avanzadas sin instrumentar</li>
+        </ul>
+      </div>
+    </div>
+    <div class="plat-precio">💰 Precio: Solo tiempo de desarrollo · Recomendado implementar en Semana 2</div>
+  </div>
+
+  <h3 style="font-size:.9rem;font-weight:800;margin-bottom:12px;color:#C84B00">📊 Resumen comparativo</h3>
+  <table>
+    <tr><th>Plataforma</th><th>Costo inicial</th><th>Listo hoy</th><th>Email auto</th><th>Segmenta 2 listas</th><th>Rating TMC</th></tr>
+    <tr><td><b>Tally.so</b></td><td>$0</td><td>✅ 45 min</td><td>⚠️ via Mailchimp</td><td>✅ 2 forms</td><td>⭐⭐⭐⭐⭐</td></tr>
+    <tr><td><b>Mailchimp</b></td><td>$0</td><td>✅ 1-2 hs</td><td>✅ nativo</td><td>✅ 2 listas</td><td>⭐⭐⭐⭐</td></tr>
+    <tr><td><b>Beehiiv</b></td><td>$0</td><td>✅ 1 hs</td><td>✅ nativo</td><td>⚠️ manual</td><td>⭐⭐⭐</td></tr>
+    <tr><td><b>Typeform</b></td><td>USD 25/mes</td><td>✅ 1 hs</td><td>✅ integración</td><td>✅ 2 forms</td><td>⭐⭐⭐</td></tr>
+    <tr><td><b>Google Forms</b></td><td>$0</td><td>✅ 20 min</td><td>❌ no</td><td>⚠️ manual</td><td>⭐⭐</td></tr>
+    <tr><td><b>TMC /waitlist</b></td><td>$0 (dev)</td><td>❌ 1-2 días</td><td>✅ Resend</td><td>✅ nativo</td><td>⭐⭐⭐⭐⭐ (semana 2)</td></tr>
+  </table>
+</div>
+
+<!-- ===== RECOMENDACIÓN ===== -->
+<div id="tab-recomendacion" class="panel">
+  <div class="stitle"><div class="sdot" style="background:#FF9840">⭐</div><span style="color:#C84B00">Recomendación específica para TMC</span></div>
+
+  <div class="rec-box">
+    <h3>⭐ Stack recomendado — Estrategia en dos fases</h3>
+    <p>TMC tiene una ventaja única: la plataforma ya está funcionando. La estrategia es arrancar rápido con herramientas externas (hoy) y migrar a la plataforma propia en la semana 2.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card c-naranja" style="border-width:3px">
+      <h3>🏃 FASE 1 — HOY (0 a 2 horas)</h3>
+      <ul>
+        <li><b>Tally.so</b> — 2 formularios (proveedor + cliente)</li>
+        <li><b>Mailchimp</b> — 2 listas + email de bienvenida automático</li>
+        <li>Conectar Tally → Mailchimp via integración nativa</li>
+        <li>Compartir links por WhatsApp de inmediato</li>
+        <li>Publicar en IG Stories + LinkedIn</li>
+      </ul>
+    </div>
+    <div class="card c-kiwi" style="border-width:3px">
+      <h3>🏗️ FASE 2 — Semana 2 (½ día dev)</h3>
+      <ul>
+        <li>Crear <code>/es/waitlist</code> en todasmiscosas.com</li>
+        <li>Formulario propio con dos flujos (provider/client)</li>
+        <li>Email de confirmación via Resend (ya tienen)</li>
+        <li>Contador público de registros ("ya somos X")</li>
+        <li>Redirigir el link de Tally a todasmiscosas.com/es/waitlist</li>
+        <li>Importar registros de Tally/Mailchimp a la DB</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="notice-green">
+    <b>🎯 Por qué esta combinación:</b> Tally da velocidad (online en 45 minutos), Mailchimp da el email automático de bienvenida (profesionalismo inmediato) y la página propia en todasmiscosas.com da credibilidad y control a largo plazo. Los tres juntos cuestan $0.
+  </div>
+
+  <h3 style="font-size:.9rem;font-weight:800;margin:18px 0 12px;color:#C84B00">🎁 Propuesta de valor para cada segmento</h3>
+  <div class="grid">
+    <div class="card c-uva">
+      <h3>🏠 Para PROVEEDORES</h3>
+      <p style="font-weight:700;margin-bottom:8px">"Convertí tu espacio libre en ingresos mensuales"</p>
+      <ul>
+        <li>Cochera, habitación, depósito, galpón</li>
+        <li>Vos ponés el precio, nosotros traemos los clientes</li>
+        <li>Pago garantizado con escrow digital</li>
+        <li>Sin riesgo: vos aprobás a cada cliente antes</li>
+        <li>Los primeros proveedores: <b>0% comisión los primeros 3 meses</b></li>
+      </ul>
+    </div>
+    <div class="card c-pepino">
+      <h3>📦 Para CLIENTES</h3>
+      <p style="font-weight:700;margin-bottom:8px">"Guardá tus cosas sin pagar precios de depósito comercial"</p>
+      <ul>
+        <li>Espacios en tu barrio, a precio de vecino</li>
+        <li>Desde la mudanza hasta el guardado mensual</li>
+        <li>Plataforma con pago seguro y contrato digital</li>
+        <li>Los primeros clientes: <b>primer mes con 20% de descuento</b></li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="font-size:.9rem;font-weight:800;margin:18px 0 12px;color:#C84B00">🌍 Segmentación geográfica inicial — dónde enfocarse</h3>
+  <table>
+    <tr><th>Prioridad</th><th>Zona</th><th>Razón</th></tr>
+    <tr><td><b>🥇 Alta</b></td><td>Palermo, Belgrano, Recoleta, Caballito</td><td>Alta densidad, espacios disponibles, poder adquisitivo</td></tr>
+    <tr><td><b>🥈 Media</b></td><td>Almagro, Villa Urquiza, Flores, San Telmo</td><td>Buena densidad, precio más accesible para clientes</td></tr>
+    <tr><td><b>🥉 Expansión</b></td><td>Vicente López, San Isidro, Quilmes</td><td>AMBA con potencial de cocheras y galpones</td></tr>
+  </table>
+</div>
+
+<!-- ===== PASO A PASO ===== -->
+<div id="tab-pasos" class="panel">
+  <div class="stitle"><div class="sdot" style="background:#FFB347">🚀</div><span style="color:#C84B00">Paso a paso — Lo que hacés HOY</span></div>
+
+  <div class="notice"><b>⏱️ Tiempo total estimado:</b> 2 horas para tener la waiting list completamente operativa y la primera difusión lanzada. Sin escribir código.</div>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <h4>Crear cuenta en Tally.so <span class="step-time">15 min</span></h4>
+      <p>Ir a <a href="https://tally.so" target="_blank">tally.so</a> → Sign up con email o Google → Gratis, sin tarjeta.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <h4>Crear Formulario PROVEEDOR <span class="step-time">20 min</span></h4>
+      <p>Nuevo formulario → Nombre: "TMC Waiting List — Tengo Espacio". Campos sugeridos:</p>
+      <ul>
+        <li>Nombre completo</li>
+        <li>WhatsApp / Teléfono</li>
+        <li>Email</li>
+        <li>Barrio / Localidad</li>
+        <li>Tipo de espacio: cochera / habitación / depósito / galpón / otro</li>
+        <li>Superficie aproximada (m²) — condicional al tipo</li>
+        <li>¿Disponibilidad? 24hs / Horaria / Flexible</li>
+      </ul>
+      <p style="margin-top:8px"><b>Pantalla final:</b> "¡Perfecto! Te avisamos en cuanto abramos. Sos de los primeros 🎉"</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <h4>Crear Formulario CLIENTE <span class="step-time">15 min</span></h4>
+      <p>Nuevo formulario → Nombre: "TMC Waiting List — Busco Espacio". Campos:</p>
+      <ul>
+        <li>Nombre completo</li>
+        <li>WhatsApp / Teléfono</li>
+        <li>Email</li>
+        <li>Barrio donde buscás espacio</li>
+        <li>Para qué: mudanza temporaria / guardado mensual / uso comercial / otro</li>
+        <li>¿Cuántos m² necesitás? (aprox.)</li>
+        <li>¿Cuánto tiempo? 1 mes / 3 meses / 6 meses / indefinido</li>
+      </ul>
+      <p style="margin-top:8px"><b>Pantalla final:</b> "¡Listo! Te avisamos cuando haya espacios en tu zona 🏠"</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <h4>Crear cuenta en Mailchimp y conectar <span class="step-time">20 min</span></h4>
+      <p>Ir a <a href="https://mailchimp.com" target="_blank">mailchimp.com</a> → Registrarse gratis → Crear dos Audiences (listas):</p>
+      <ul>
+        <li>Audience 1: "TMC Proveedores Waitlist"</li>
+        <li>Audience 2: "TMC Clientes Waitlist"</li>
+      </ul>
+      <p style="margin-top:6px">En cada Audience → <b>Automation → Welcome email</b> → activar el email de bienvenida automático con el texto de los Scripts (pestaña 💬).</p>
+      <p style="margin-top:6px">En Tally → Integrations → Mailchimp → conectar cada formulario a su Audience correspondiente.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">5</div>
+    <div class="step-body">
+      <h4>Armar los links finales <span class="step-time">5 min</span></h4>
+      <p>Tally genera dos links directos para compartir:</p>
+      <ul>
+        <li><b>Link Proveedor:</b> tally.so/r/[tu-id-proveedor]</li>
+        <li><b>Link Cliente:</b> tally.so/r/[tu-id-cliente]</li>
+      </ul>
+      <p style="margin-top:6px">Shortenerlos si querés: <a href="https://bitly.com" target="_blank">bit.ly</a> o <a href="https://dub.co" target="_blank">dub.co</a> → ej: <b>bit.ly/tmc-proveedor</b> y <b>bit.ly/tmc-cliente</b></p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">6</div>
+    <div class="step-body">
+      <h4>Primera ola de difusión — WhatsApp <span class="step-time">30 min</span></h4>
+      <ul>
+        <li>Mensaje personal a los testers de F&F (pedir que reenvíen a conocidos)</li>
+        <li>Grupos de vecinos y consorcio de CABA</li>
+        <li>Grupos de emprendedores y networking</li>
+        <li>Grupos de inmobiliarias</li>
+        <li>Mensaje a Agustina y Daniel para difundir desde su red</li>
+      </ul>
+      <p style="margin-top:6px">Ver los scripts exactos en la pestaña 💬 Scripts.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">7</div>
+    <div class="step-body">
+      <h4>Publicar en Instagram + LinkedIn <span class="step-time">15 min</span></h4>
+      <ul>
+        <li><b>IG Story:</b> imagen con el link — "¡Abrimos la lista de espera! Swipe up 👆"</li>
+        <li><b>IG Feed:</b> post con propuesta de valor — ver copy en Scripts</li>
+        <li><b>LinkedIn:</b> post personal de Alejandro como fundador — ver copy en Scripts</li>
+        <li><b>Link en Bio de IG:</b> usar Linktree o Bento con ambos links (proveedor + cliente)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">8</div>
+    <div class="step-body">
+      <h4>Monitoreo diario (de acá en adelante) <span class="step-time">5 min/día</span></h4>
+      <ul>
+        <li>Revisar respuestas en Tally Dashboard</li>
+        <li>Ver contactos nuevos en Mailchimp</li>
+        <li>Contestar WhatsApps de interesados el mismo día</li>
+        <li>Anotar los barrios más pedidos para priorizar</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="notice-green">
+    <b>🗓️ Semana 2:</b> Con la waiting list funcionando, implementar <code>/es/waitlist</code> en todasmiscosas.com. Mismo flujo pero con el branding completo de TMC, contador público de registros y datos en la DB propia.
+  </div>
+</div>
+
+<!-- ===== FORMULARIOS ===== -->
+<div id="tab-formularios" class="panel">
+  <div class="stitle"><div class="sdot" style="background:#F48FB1">📝</div><span style="color:#C84B00">Diseño de los formularios — Qué preguntar</span></div>
+
+  <div class="notice"><b>Regla de oro:</b> Máximo 6-7 campos por formulario. Cada campo extra reduce la tasa de conversión un 10-15%. Si dudás entre pedir o no un dato, no lo pidas.</div>
+
+  <div class="form-preview">
+    <h4>🏠 Formulario PROVEEDOR — "Tengo espacio libre"</h4>
+
+    <div class="form-field"><span>Campo 1 · Obligatorio</span>¿Cómo te llamás? (nombre y apellido)</div>
+    <div class="form-field"><span>Campo 2 · Obligatorio</span>Tu WhatsApp o teléfono</div>
+    <div class="form-field"><span>Campo 3 · Obligatorio</span>Tu email</div>
+    <div class="form-field"><span>Campo 4 · Obligatorio</span>¿En qué barrio o localidad está el espacio?</div>
+    <div class="form-field"><span>Campo 5 · Opción múltiple</span>¿Qué tipo de espacio tenés?<br>○ Cochera / Garage &nbsp; ○ Habitación &nbsp; ○ Depósito / Sótano &nbsp; ○ Galpón &nbsp; ○ Otro</div>
+    <div class="form-field"><span>Campo 6 · Condicional si dice Galpón/Depósito</span>¿Cuántos m² aproximados tiene?</div>
+    <div class="form-field"><span>Campo 7 · Opcional</span>¿Disponibilidad? ○ 24hs &nbsp; ○ Solo de lunes a viernes &nbsp; ○ Flexible</div>
+
+    <div style="background:#FF6B00;color:#fff;border-radius:8px;padding:12px 16px;margin-top:12px;font-size:.78rem;font-weight:700;text-align:center">
+      BOTÓN: "¡Quiero ser Proveedor! →"
+    </div>
+    <div style="background:#F0FFF4;border:1px solid #6EE7B7;border-radius:8px;padding:12px 16px;margin-top:8px;font-size:.78rem;color:#065F46;text-align:center">
+      <b>Pantalla de confirmación:</b> "¡Genial, [Nombre]! 🎉 Sos de los primeros proveedores de TodasMisCosas.com. Te avisamos en cuanto abramos en tu zona. También te mandamos un email de confirmación."
+    </div>
+  </div>
+
+  <div class="form-preview">
+    <h4>📦 Formulario CLIENTE — "Busco dónde guardar"</h4>
+
+    <div class="form-field"><span>Campo 1 · Obligatorio</span>¿Cómo te llamás? (nombre y apellido)</div>
+    <div class="form-field"><span>Campo 2 · Obligatorio</span>Tu WhatsApp o teléfono</div>
+    <div class="form-field"><span>Campo 3 · Obligatorio</span>Tu email</div>
+    <div class="form-field"><span>Campo 4 · Obligatorio</span>¿En qué barrio querés encontrar espacio?</div>
+    <div class="form-field"><span>Campo 5 · Opción múltiple</span>¿Para qué necesitás el espacio?<br>○ Guardar muebles / mudanza &nbsp; ○ Guardar cosas del trabajo &nbsp; ○ Bicicleta / moto &nbsp; ○ Auto &nbsp; ○ Otro</div>
+    <div class="form-field"><span>Campo 6 · Opción múltiple</span>¿Por cuánto tiempo?<br>○ Menos de 1 mes &nbsp; ○ 1 a 3 meses &nbsp; ○ 3 a 6 meses &nbsp; ○ Indefinido</div>
+
+    <div style="background:#FF6B00;color:#fff;border-radius:8px;padding:12px 16px;margin-top:12px;font-size:.78rem;font-weight:700;text-align:center">
+      BOTÓN: "¡Anotarme! →"
+    </div>
+    <div style="background:#F0FFF4;border:1px solid #6EE7B7;border-radius:8px;padding:12px 16px;margin-top:8px;font-size:.78rem;color:#065F46;text-align:center">
+      <b>Pantalla de confirmación:</b> "¡Listo, [Nombre]! 🏠 Estamos buscando espacios en tu zona. Te avisamos en cuanto tengamos opciones disponibles. Revisá tu email para la confirmación."
+    </div>
+  </div>
+
+  <h3 style="font-size:.9rem;font-weight:800;margin:18px 0 12px;color:#C84B00">📊 Datos a cruzar después (insights)</h3>
+  <table>
+    <tr><th>Dato que capturás</th><th>Para qué sirve</th></tr>
+    <tr><td>Barrio del proveedor</td><td>Saber dónde hay oferta — priorizar esos barrios para conseguir demanda</td></tr>
+    <tr><td>Barrio que busca el cliente</td><td>Validar si coincide con la oferta disponible</td></tr>
+    <tr><td>Tipo de espacio</td><td>¿Qué formato domina? ¿Cocheras o depósitos?</td></tr>
+    <tr><td>Tiempo que busca el cliente</td><td>Definir si el producto es "mensual" o "corto plazo"</td></tr>
+    <tr><td>WhatsApp / Teléfono</td><td>Contacto directo — más efectivo que email para Argentina</td></tr>
+  </table>
+</div>
+
+<!-- ===== SCRIPTS ===== -->
+<div id="tab-scripts" class="panel">
+  <div class="stitle"><div class="sdot" style="background:#CE93D8">💬</div><span style="color:#C84B00">Scripts y mensajes listos para usar</span></div>
+
+  <div class="notice-orange">Todos los scripts son editables. Personalizalos con el nombre de quien los envía y el link real del formulario de Tally. Los <b>[corchetes]</b> son los campos a completar.</div>
+
+  <p style="font-size:.82rem;font-weight:800;color:#7A3200;margin-bottom:12px;text-transform:uppercase;letter-spacing:.05em">▸ WhatsApp — Para PROVEEDORES (contacto personal)</p>
+  <div class="script-box">
+    <div class="script-label">📱 Mensaje directo — Proveedor</div>
+    <p>Hola [Nombre]! 👋
+
+Estoy lanzando TodasMisCosas.com — un marketplace para alquilar espacios vacíos (cocheras, habitaciones, depósitos) a personas que necesitan guardar cosas.
+
+Si tenés algún espacio libre y querés convertirlo en un ingreso mensual sin complicarte, anotate en la lista de espera 👇
+
+🔗 [LINK FORMULARIO PROVEEDOR]
+
+Los primeros proveedores que se sumen van a tener 0% de comisión los primeros 3 meses. Son 2 minutos para anotarse.</p>
+  </div>
+
+  <p style="font-size:.82rem;font-weight:800;color:#7A3200;margin-bottom:12px;text-transform:uppercase;letter-spacing:.05em">▸ WhatsApp — Para CLIENTES (contacto personal)</p>
+  <div class="script-box">
+    <div class="script-label">📱 Mensaje directo — Cliente</div>
+    <p>Hola [Nombre]! 👋
+
+Estoy lanzando TodasMisCosas.com — una plataforma para encontrar espacios de guardado en tu barrio a precios de vecino, sin pagar los precios de un depósito comercial.
+
+Si en algún momento necesitás guardar muebles, cosas de mudanza o lo que sea, anotate en la lista de espera 👇
+
+🔗 [LINK FORMULARIO CLIENTE]
+
+Los primeros en anotarse tienen un 20% de descuento en el primer mes. ¡Son 2 minutos!</p>
+  </div>
+
+  <p style="font-size:.82rem;font-weight:800;color:#7A3200;margin-bottom:12px;text-transform:uppercase;letter-spacing:.05em">▸ WhatsApp — Grupo de vecinos / consorcio</p>
+  <div class="script-box">
+    <div class="script-label">📱 Mensaje para grupos</div>
+    <p>Hola a todos! 🙌
+
+Quería compartirles algo que estamos lanzando en el barrio: TodasMisCosas.com
+
+La idea es simple: si tenés una cochera, un cuarto libre o un depósito sin usar → lo alquilás y generás plata extra. Si necesitás guardar cosas → encontrás espacio cerca de tu casa sin pagar precios de depósito.
+
+Estamos abriendo la lista de espera ahora:
+
+🏠 Tengo espacio libre → [LINK PROVEEDOR]
+📦 Busco dónde guardar → [LINK CLIENTE]
+
+¡Les mando! 🙏</p>
+  </div>
+
+  <p style="font-size:.82rem;font-weight:800;color:#7A3200;margin-bottom:12px;text-transform:uppercase;letter-spacing:.05em">▸ Email de bienvenida automático — Proveedores (Mailchimp)</p>
+  <div class="script-box">
+    <div class="script-label">📧 Email bienvenida — Proveedor</div>
+    <p>Asunto: ¡Ya estás en la lista! 🎉 TodasMisCosas.com
+
+Hola [Nombre],
+
+¡Gracias por anotarte como proveedor en TodasMisCosas.com!
+
+Somos el primer marketplace de almacenamiento urbano de Argentina. La idea es simple: vos ponés tu espacio, nosotros traemos los clientes, y el pago siempre está garantizado por nuestra plataforma.
+
+¿Qué pasa ahora?
+→ Estamos completando los últimos detalles del lanzamiento
+→ Vas a ser de los primeros en recibir el acceso
+→ Como early adopter: 0% de comisión tus primeros 3 meses
+
+Mientras tanto, si tenés preguntas o querés contarnos más sobre tu espacio, respondé este email o escribinos al WhatsApp: [WHATSAPP DE TMC]
+
+¡Nos vemos en el lanzamiento!
+
+— El equipo de TodasMisCosas.com
+todasmiscosas.com</p>
+  </div>
+
+  <p style="font-size:.82rem;font-weight:800;color:#7A3200;margin-bottom:12px;text-transform:uppercase;letter-spacing:.05em">▸ Post LinkedIn — Alejandro como fundador</p>
+  <div class="script-box">
+    <div class="script-label">💼 LinkedIn — Post personal del fundador</div>
+    <p>Después de meses de desarrollo y dos rondas de testing con usuarios reales, hoy abrimos la lista de espera de TodasMisCosas.com.
+
+La idea surgió de una pregunta simple: ¿por qué hay tantas cocheras vacías en CABA mientras la gente paga fortunas en depósitos comerciales?
+
+Construimos un marketplace que conecta a quienes tienen espacios sin usar (cocheras, habitaciones, depósitos) con quienes necesitan guardar cosas, con pago garantizado y contrato digital.
+
+Ya validamos el flujo completo de punta a punta. Ahora queremos conocer la demanda real antes del lanzamiento oficial.
+
+Si tenés espacio libre o necesitás guardar algo en CABA o GBA, sumate:
+
+🔗 [LINK PROVEEDOR o LINK CLIENTE]
+
+Son 2 minutos. Y si conocés a alguien que encaje, te agradezco el RT. 🙏
+
+#startup #proptech #marketplace #argentina #emprendimiento</p>
+  </div>
+
+  <p style="font-size:.82rem;font-weight:800;color:#7A3200;margin-bottom:12px;text-transform:uppercase;letter-spacing:.05em">▸ Caption Instagram — Feed</p>
+  <div class="script-box">
+    <div class="script-label">📸 Instagram — Post de feed</div>
+    <p>¿Sabías que en CABA hay miles de cocheras y depósitos vacíos mientras la gente paga precios de locura en depósitos comerciales? 🤔
+
+Eso lo estamos cambiando.
+
+TodasMisCosas.com es el primer marketplace donde podés:
+
+🏠 Alquilar tu espacio vacío → y ganar plata sin complicarte
+📦 Encontrar dónde guardar → en tu barrio, a precio de vecino
+
+🚨 Abrimos la lista de espera HOY.
+Los primeros que se anoten tienen beneficios exclusivos de early adopter.
+
+Link en bio 👆 o escribinos por DM.
+
+#todasmiscosas #marketplace #almacenamiento #CABA #startup #proptech #emprendimientoargentino</p>
+  </div>
+</div>
+
+<!-- ===== MÉTRICAS ===== -->
+<div id="tab-metricas" class="panel">
+  <div class="stitle"><div class="sdot" style="background:#9CCC65">📊</div><span style="color:#C84B00">Métricas, objetivos y próximos pasos</span></div>
+
+  <h3 style="font-size:.9rem;font-weight:800;margin-bottom:14px;color:#C84B00">🎯 Objetivos — Primeros 30 días de waiting list</h3>
+  <div class="metric-grid">
+    <div class="metric-card" style="border-color:#FF6B00">
+      <div class="metric-n" style="color:#C84B00">50</div>
+      <div class="metric-l">Proveedores</div>
+      <div class="metric-sub">Meta mínima mes 1</div>
+    </div>
+    <div class="metric-card" style="border-color:#9CCC65">
+      <div class="metric-n" style="color:#5A8A00">150</div>
+      <div class="metric-l">Clientes</div>
+      <div class="metric-sub">Meta mínima mes 1</div>
+    </div>
+    <div class="metric-card" style="border-color:#F48FB1">
+      <div class="metric-n" style="color:#9A0060">6+</div>
+      <div class="metric-l">Barrios cubiertos</div>
+      <div class="metric-sub">Con ≥5 proveedores c/u</div>
+    </div>
+    <div class="metric-card" style="border-color:#FFCA28">
+      <div class="metric-n" style="color:#7A5A00">30%</div>
+      <div class="metric-l">Conversión WL→Registro</div>
+      <div class="metric-sub">Al abrir la plataforma</div>
+    </div>
+  </div>
+
+  <h3 style="font-size:.9rem;font-weight:800;margin:18px 0 12px;color:#C84B00">📋 Qué trackear semanalmente</h3>
+  <table>
+    <tr><th>Métrica</th><th>Cómo medirla</th><th>Semáforo</th></tr>
+    <tr><td>Nuevos registros/semana</td><td>Tally Dashboard</td><td>🟢 +20 · 🟡 10-20 · 🔴 -10</td></tr>
+    <tr><td>Ratio proveedor/cliente</td><td>Tally (por form)</td><td>🟢 1:3 · 🟡 1:5 · 🔴 1:10+</td></tr>
+    <tr><td>Barrio más solicitado</td><td>Export CSV → análisis</td><td>Identifica dónde activar primero</td></tr>
+    <tr><td>Apertura email bienvenida</td><td>Mailchimp Analytics</td><td>🟢 40%+ · 🟡 25-40% · 🔴 -25%</td></tr>
+    <tr><td>Conversaciones de WhatsApp</td><td>Conteo manual</td><td>Señal de interés real caliente</td></tr>
+  </table>
+
+  <h3 style="font-size:.9rem;font-weight:800;margin:18px 0 12px;color:#C84B00">🗓️ Timeline — De la waiting list al lanzamiento</h3>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <h4>HOY <span class="tl-tag">5 jul 2026</span></h4>
+      <p>Tally + Mailchimp online. Primera ola de difusión: contactos F&F + grupos WhatsApp + IG + LinkedIn.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <h4>Semana 2 <span class="tl-tag">8-12 jul</span></h4>
+      <p>Implementar /es/waitlist en todasmiscosas.com. Primer análisis de barrios y tipos de espacio. Activar contenido RRSS del calendario de julio.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <h4>Semana 3-4 <span class="tl-tag">14-26 jul</span></h4>
+      <p>Email de actualización a la lista ("estamos avanzando, pronto abrimos"). Incorporación de inmobiliarias y consorcios como canal de proveedores. Primer episodio de podcast con mención a la waiting list.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <h4>Fin de Julio / Agosto <span class="tl-tag">Post-SAS inscripta</span></h4>
+      <p>Con la SAS inscripta y la plataforma lista: email a toda la lista con acceso prioritario. Lanzamiento público con los datos de tracción de la waiting list como argumento.</p>
+    </div>
+  </div>
+
+  <h3 style="font-size:.9rem;font-weight:800;margin:18px 0 12px;color:#C84B00">✅ Checklist de arranque</h3>
+  <ul class="check-list" id="wl_checklist">
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Crear cuenta Tally.so</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Crear formulario PROVEEDOR en Tally con todos los campos</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Crear formulario CLIENTE en Tally con todos los campos</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Crear cuenta Mailchimp + 2 listas (proveedores / clientes)</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Conectar Tally → Mailchimp (integración nativa)</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Configurar email de bienvenida en Mailchimp (proveedor + cliente)</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Shortener de links (bit.ly/tmc-proveedor y bit.ly/tmc-cliente)</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Enviar mensajes de WhatsApp a los testers de F&F</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Post en LinkedIn personal (Alejandro)</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Story + post en Instagram TMC</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Actualizar link en bio de Instagram (Linktree/Bento)</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Compartir en grupos de WhatsApp de vecinos/consorcios</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Avisar a Agustina y Daniel para difundir desde su red</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Semana 2: implementar /es/waitlist en todasmiscosas.com</div></li>
+    <li><div class="chk-box" onclick="toggleWL(this)"></div><div>Primer análisis de datos (barrios, tipos de espacio) al fin de semana 1</div></li>
+  </ul>
+</div>
+
+</div><!-- /panels -->
+
+<footer>
+  <b>TodasMisCosas.com — Estrategia Waiting List · Julio 2026</b><br>
+  Post Friends &amp; Family Testing · Pre-lanzamiento oficial · CABA · Argentina<br>
+  <span style="font-size:.68rem;opacity:.6;display:block;margin-top:4px">Documento independiente · Sin dependencias externas · Claude Sonnet 4.6</span>
+</footer>
+
+<script>
+function showTab(name,btn){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function toggleWL(el){
+  el.classList.toggle('done');
+  el.textContent=el.classList.contains('done')?'✓':'';
+  var items=document.querySelectorAll('#wl_checklist .chk-box');
+  var state=Array.from(items).map(function(x){return x.classList.contains('done')?'1':'0'});
+  localStorage.setItem('wl_check',state.join(','));
+}
+(function(){
+  var saved=localStorage.getItem('wl_check');
+  if(!saved)return;
+  var vals=saved.split(',');
+  var items=document.querySelectorAll('#wl_checklist .chk-box');
+  items.forEach(function(el,i){if(vals[i]==='1'){el.classList.add('done');el.textContent='✓';}});
+})();
+</script>
+</body>
+</html>
