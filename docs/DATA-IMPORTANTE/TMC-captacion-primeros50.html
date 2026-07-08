@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC — Plan Captación Primeros 50 Proveedores</title>
+<style>
+  :root {
+    --coral:    #FF8FAB;
+    --mint:     #A8EDCB;
+    --sky:      #9BF6FF;
+    --peach:    #FFD6A5;
+    --lavender: #C5B8FF;
+    --lilac:    #FFC6FF;
+    --lemon:    #FDFFB6;
+    --sage:     #B7E4C7;
+    --powder:   #D0E8FF;
+    --rose:     #FFB3C6;
+    --bg:       #F7F8FC;
+    --surface:  #FFFFFF;
+    --text:     #1A202C;
+    --text2:    #4A5568;
+    --text3:    #718096;
+    --border:   #E2E8F0;
+    --orange:   #E8622A;
+    --shadow:   0 4px 24px rgba(0,0,0,.08);
+    --r:        14px;
+    --r2:       10px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ───────────────────────────── */
+  .doc-header {
+    background: linear-gradient(135deg, #FF8FAB 0%, #C5B8FF 40%, #9BF6FF 100%);
+    padding: 48px 40px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .doc-header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .doc-header-badge {
+    display: inline-block;
+    background: rgba(255,255,255,.35);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.5);
+    border-radius: 999px;
+    padding: 4px 16px;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: 16px;
+  }
+  .doc-header h1 {
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 2px 12px rgba(0,0,0,.15);
+    margin-bottom: 10px;
+  }
+  .doc-header p {
+    font-size: 1.05rem;
+    color: rgba(255,255,255,.92);
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .doc-meta {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+  .doc-meta span {
+    background: rgba(255,255,255,.28);
+    border-radius: 999px;
+    padding: 4px 14px;
+    font-size: .8rem;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  /* ── TABS ─────────────────────────────── */
+  .tabs-wrap {
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  }
+  .tabs {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 16px;
+    gap: 2px;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex-shrink: 0;
+    padding: 14px 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--text3);
+    border-bottom: 3px solid transparent;
+    transition: all .18s;
+    white-space: nowrap;
+    position: relative;
+    bottom: -2px;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+  /* ── CONTENT ──────────────────────────── */
+  .content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── CARDS ────────────────────────────── */
+  .card {
+    background: var(--surface);
+    border-radius: var(--r);
+    box-shadow: var(--shadow);
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    border-left: 5px solid transparent;
+  }
+  .card-coral    { border-left-color: var(--coral); }
+  .card-mint     { border-left-color: var(--mint); }
+  .card-sky      { border-left-color: var(--sky); }
+  .card-peach    { border-left-color: var(--peach); }
+  .card-lavender { border-left-color: var(--lavender); }
+  .card-lilac    { border-left-color: var(--lilac); }
+  .card-lemon    { border-left-color: var(--lemon); }
+  .card-rose     { border-left-color: var(--rose); }
+
+  .card h3 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+  .card p { color: var(--text2); font-size: .95rem; margin-bottom: 8px; }
+  .card p:last-child { margin-bottom: 0; }
+
+  /* ── PILL CHIPS ───────────────────────── */
+  .chip {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 999px;
+    font-size: .78rem;
+    font-weight: 700;
+    margin: 3px;
+  }
+  .chip-coral    { background: #FFE0E8; color: #C1436A; }
+  .chip-mint     { background: #D4F5E4; color: #1A6E42; }
+  .chip-sky      { background: #D6F5FA; color: #0D6E7A; }
+  .chip-peach    { background: #FEEBD4; color: #9B5800; }
+  .chip-lavender { background: #EAE6FF; color: #5A3FC0; }
+  .chip-lemon    { background: #FFFBD4; color: #7A6800; }
+  .chip-rose     { background: #FFE0EA; color: #8B2444; }
+
+  /* ── GRID 2-COL ───────────────────────── */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+  @media (max-width: 768px) {
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+    .doc-header h1 { font-size: 1.7rem; }
+  }
+
+  /* ── SECTION HEADER ───────────────────── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .section-icon {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--text);
+  }
+  .section-header p { color: var(--text2); font-size: .9rem; }
+
+  /* ── STEP LIST ────────────────────────── */
+  .steps { list-style: none; counter-reset: step; }
+  .steps li {
+    counter-increment: step;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .steps li:last-child { border-bottom: none; }
+  .steps li::before {
+    content: counter(step);
+    min-width: 32px; height: 32px;
+    background: var(--orange);
+    color: #fff;
+    font-weight: 900;
+    font-size: .85rem;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .steps li strong { display: block; font-weight: 800; margin-bottom: 3px; color: var(--text); }
+  .steps li span { font-size: .9rem; color: var(--text2); }
+
+  /* ── HIGHLIGHT BOX ────────────────────── */
+  .highlight-box {
+    border-radius: var(--r2);
+    padding: 20px 24px;
+    margin: 16px 0;
+    font-size: .95rem;
+  }
+  .hb-coral    { background: #FFF0F4; border: 1.5px solid var(--coral); }
+  .hb-mint     { background: #F0FBF5; border: 1.5px solid var(--mint); }
+  .hb-sky      { background: #F0FBFF; border: 1.5px solid var(--sky); }
+  .hb-peach    { background: #FFF8F0; border: 1.5px solid var(--peach); }
+  .hb-lavender { background: #F4F1FF; border: 1.5px solid var(--lavender); }
+  .hb-lemon    { background: #FFFEF0; border: 1.5px solid var(--lemon); }
+
+  /* ── TIER CARDS ───────────────────────── */
+  .tier {
+    border-radius: var(--r);
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .tier::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    opacity: .18;
+  }
+  .tier-gold { background: linear-gradient(135deg, #FFF8D6, #FEEAAC); border: 2px solid #F5C842; }
+  .tier-gold::before { background: #F5C842; }
+  .tier-silver { background: linear-gradient(135deg, #F4F4F4, #E8E8F0); border: 2px solid #A0A8B8; }
+  .tier-silver::before { background: #A0A8B8; }
+  .tier-bronze { background: linear-gradient(135deg, #FFF2E8, #FDDFC8); border: 2px solid #E88A42; }
+  .tier-bronze::before { background: #E88A42; }
+  .tier-label {
+    font-size: .7rem;
+    font-weight: 900;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .tier-name {
+    font-size: 1.4rem;
+    font-weight: 900;
+    margin-bottom: 4px;
+  }
+  .tier-sub { font-size: .85rem; color: var(--text2); margin-bottom: 14px; }
+  .tier ul { list-style: none; }
+  .tier ul li {
+    padding: 6px 0;
+    font-size: .9rem;
+    color: var(--text);
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .tier ul li::before { content: '✓'; color: #27AE60; font-weight: 900; margin-top: 1px; }
+
+  /* ── TABLE ────────────────────────────── */
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    background: #F1F3F9;
+    font-weight: 700;
+    font-size: .82rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--text2);
+  }
+  td { padding: 11px 14px; border-bottom: 1px solid var(--border); color: var(--text2); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #FAFBFF; }
+
+  /* ── QUOTE BOX ────────────────────────── */
+  .quote {
+    border-left: 4px solid var(--coral);
+    padding: 16px 20px;
+    background: #FFF5F7;
+    border-radius: 0 var(--r2) var(--r2) 0;
+    font-style: italic;
+    color: var(--text2);
+    margin: 16px 0;
+    font-size: .95rem;
+  }
+
+  /* ── TIMELINE ─────────────────────────── */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px; top: 8px; bottom: 8px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--coral), var(--lavender), var(--sky));
+    border-radius: 2px;
+  }
+  .tl-item {
+    position: relative;
+    margin-bottom: 28px;
+  }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -28px; top: 6px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 2px var(--coral);
+  }
+  .tl-item:nth-child(2)::before { box-shadow: 0 0 0 2px var(--peach); }
+  .tl-item:nth-child(3)::before { box-shadow: 0 0 0 2px var(--mint); }
+  .tl-item:nth-child(4)::before { box-shadow: 0 0 0 2px var(--lavender); }
+  .tl-week {
+    font-size: .72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: var(--orange);
+    margin-bottom: 4px;
+  }
+  .tl-title { font-weight: 800; font-size: 1rem; margin-bottom: 6px; }
+  .tl-body { font-size: .9rem; color: var(--text2); }
+  .tl-body ul { padding-left: 18px; margin-top: 6px; }
+  .tl-body li { margin-bottom: 4px; }
+
+  /* ── FORMAT BADGE ─────────────────────── */
+  .format-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .format-card {
+    background: var(--surface);
+    border-radius: var(--r2);
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,.07);
+    transition: transform .15s;
+  }
+  .format-card:hover { transform: translateY(-3px); }
+  .format-icon { font-size: 2.2rem; margin-bottom: 10px; }
+  .format-card h4 { font-size: .92rem; font-weight: 800; margin-bottom: 6px; }
+  .format-card p { font-size: .8rem; color: var(--text3); }
+
+  /* ── DISRUPTIVE IDEAS ─────────────────── */
+  .idea-card {
+    border-radius: var(--r);
+    padding: 22px 26px;
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .idea-card .idea-num {
+    position: absolute;
+    top: -10px; left: 20px;
+    background: var(--orange);
+    color: #fff;
+    font-size: .7rem;
+    font-weight: 900;
+    padding: 2px 10px;
+    border-radius: 999px;
+    letter-spacing: .08em;
+  }
+  .idea-card h4 { font-size: 1.05rem; font-weight: 800; margin-bottom: 8px; margin-top: 6px; }
+  .idea-card p { font-size: .9rem; color: var(--text2); margin-bottom: 6px; }
+  .idea-card p:last-child { margin-bottom: 0; }
+
+  /* ── DIVIDER ──────────────────────────── */
+  .divider { border: none; border-top: 2px solid var(--border); margin: 32px 0; }
+
+  /* ── PRINT ────────────────────────────── */
+  @media print {
+    .tabs-wrap { position: static; }
+    .tab-btn { display: none; }
+    .tab-panel { display: block !important; page-break-before: always; }
+    .tab-panel:first-child { page-break-before: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="doc-header">
+  <div class="doc-header-badge">📦 TodasMisCosas.com — Documento Estratégico Interno</div>
+  <h1>Plan de Captación — Primeros 50 Proveedores</h1>
+  <p>Estrategia disruptiva para llenar el marketplace con proveedores reales en los primeros 60 días de lanzamiento comercial</p>
+  <div class="doc-meta">
+    <span>📅 Julio 2026</span>
+    <span>🎯 Meta: 50 espacios publicados</span>
+    <span>⏱ Horizonte: 60 días</span>
+    <span>👥 Alejandro · Guille</span>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('vision')">🎯 Visión General</button>
+    <button class="tab-btn" onclick="showTab('inmobiliarias')">🏢 Inmobiliarias</button>
+    <button class="tab-btn" onclick="showTab('beneficios')">🏆 Programa Socios Fundadores</button>
+    <button class="tab-btn" onclick="showTab('otros-canales')">🔀 Otros Canales</button>
+    <button class="tab-btn" onclick="showTab('formatos')">📣 Formatos y Materiales</button>
+    <button class="tab-btn" onclick="showTab('disruptivas')">💡 Ideas Disruptivas</button>
+    <button class="tab-btn" onclick="showTab('plan30')">📆 Plan 30 Días</button>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 1 — VISIÓN GENERAL
+═══════════════════════════════════════════════════════ -->
+<div id="tab-vision" class="tab-panel active">
+
+  <div class="section-header">
+    <div class="section-icon" style="background:#FFE0E8;">🎯</div>
+    <div>
+      <h2>Visión General — El Problema del Huevo y la Gallina</h2>
+      <p>Por qué primero los proveedores, y cómo resolverlo de forma inteligente</p>
+    </div>
+  </div>
+
+  <div class="highlight-box hb-coral">
+    <strong>💡 Insight clave:</strong> Un marketplace vacío no atrae a nadie. El cliente que busca un depósito en TMC necesita ver opciones reales, con fotos, precios y ubicaciones. La prioridad absoluta de las próximas 8 semanas es <strong>publicar los primeros 50 espacios</strong> antes de invertir un peso en marketing a clientes.
+  </div>
+
+  <div class="grid2" style="margin-top:24px;">
+    <div class="card card-coral">
+      <h3>🐓 El problema clásico</h3>
+      <p>Sin proveedores no hay oferta → sin oferta no vienen clientes → sin clientes los proveedores no ven valor → sin valor no se publican.</p>
+      <p><strong>Solución:</strong> Saltar la trampa con proveedores que tengan incentivo propio para publicar <em>aunque no haya clientes todavía</em>.</p>
+    </div>
+    <div class="card card-mint">
+      <h3>🥚 La solución TMC</h3>
+      <p>Ofrecer a los primeros proveedores beneficios tan atractivos que publicar valga la pena <em>antes de la primera reserva</em>. El valor no es la reserva: es la visibilidad, el status y la ventaja sobre futuros competidores.</p>
+    </div>
+  </div>
+
+  <div class="card card-sky" style="margin-top:8px;">
+    <h3>🗺️ Los 4 segmentos que nos llevan a 50 espacios</h3>
+    <div style="overflow-x:auto;margin-top:12px;">
+    <table>
+      <tr>
+        <th>Segmento</th><th>Objetivo</th><th>Por qué los quieren</th><th>Dificultad de entrada</th><th>Tiempo estimado</th>
+      </tr>
+      <tr>
+        <td><strong>🏢 Inmobiliarias</strong></td>
+        <td>15–20 espacios</td>
+        <td>Tienen inventario listo, acceso a propietarios, quieren diferenciarse</td>
+        <td>⭐⭐⭐ Media (hay que convencer a alguien con poder de decisión)</td>
+        <td>1–3 semanas</td>
+      </tr>
+      <tr>
+        <td><strong>🏗️ Consorcios / Adm. de edificios</strong></td>
+        <td>10–15 espacios</td>
+        <td>Bauleras y cuartos de servicio sin usar = plata que no están cobrando</td>
+        <td>⭐⭐ Fácil (el beneficio económico es obvio)</td>
+        <td>2–3 semanas</td>
+      </tr>
+      <tr>
+        <td><strong>🚚 Empresas con depósitos</strong></td>
+        <td>8–10 espacios</td>
+        <td>M² ociosos que son costo puro; TMC los convierte en ingreso</td>
+        <td>⭐⭐⭐⭐ Alta (burocracia, decisión gerencial)</td>
+        <td>3–4 semanas</td>
+      </tr>
+      <tr>
+        <td><strong>👤 Particulares</strong></td>
+        <td>10–15 espacios</td>
+        <td>Cocheras libres, cuartos sin uso, depósitos propios</td>
+        <td>⭐ Muy fácil (decisión personal inmediata)</td>
+        <td>1–2 semanas</td>
+      </tr>
+    </table>
+    </div>
+  </div>
+
+  <div class="card card-peach">
+    <h3>💰 El argumento de ventas universal</h3>
+    <div class="quote">"Tenés un espacio que no está usando. Cada mes que pasa sin alquilarlo es dinero que estás dejando sobre la mesa. TMC te conecta con personas que necesitan ese espacio exacto. La publicación es gratuita y tardás 10 minutos."</div>
+    <p>Este argumento no vende tecnología: vende la transformación de un costo en un ingreso. Eso es lo que abre puertas.</p>
+  </div>
+
+  <div class="card card-lavender">
+    <h3>📊 Métricas de éxito — Las 3 que importan</h3>
+    <div class="grid3" style="margin-top:12px;">
+      <div style="text-align:center;padding:16px;background:#F4F1FF;border-radius:var(--r2);">
+        <div style="font-size:2rem;font-weight:900;color:#5A3FC0;">50</div>
+        <div style="font-size:.85rem;color:var(--text2);">Espacios publicados<br>en 60 días</div>
+      </div>
+      <div style="text-align:center;padding:16px;background:#FFF0F4;border-radius:var(--r2);">
+        <div style="font-size:2rem;font-weight:900;color:#C1436A;">5</div>
+        <div style="font-size:.85rem;color:var(--text2);">Primera reserva<br>pagada antes del día 30</div>
+      </div>
+      <div style="text-align:center;padding:16px;background:#F0FBF5;border-radius:var(--r2);">
+        <div style="font-size:2rem;font-weight:900;color:#1A6E42;">3</div>
+        <div style="font-size:.85rem;color:var(--text2);">Inmobiliarias firmadas<br>como Socias Fundadoras</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 2 — INMOBILIARIAS
+═══════════════════════════════════════════════════════ -->
+<div id="tab-inmobiliarias" class="tab-panel">
+
+  <div class="section-header">
+    <div class="section-icon" style="background:#FFE0E8;">🏢</div>
+    <div>
+      <h2>Estrategia Inmobiliarias</h2>
+      <p>El segmento más escalable: una sola reunión puede traer 5–10 espacios publicados</p>
+    </div>
+  </div>
+
+  <div class="highlight-box hb-coral">
+    <strong>¿Por qué las inmobiliarias son el objetivo #1?</strong><br>
+    Una inmobiliaria administra decenas de propiedades. Si un solo encargado decide usar TMC, puede publicar múltiples espacios de sus propietarios clientes <em>en una tarde</em>. El leverage es brutal comparado con captar particulares uno a uno.
+  </div>
+
+  <div class="grid2">
+    <div class="card card-coral">
+      <h3>🎯 Por qué les conviene a ELLAS</h3>
+      <ul style="padding-left:18px;color:var(--text2);font-size:.9rem;">
+        <li style="padding:5px 0;">Tienen bauleras, cocheras y depósitos de propietarios <strong>que no se alquilan solos</strong> — esto les soluciona el problema</li>
+        <li style="padding:5px 0;">Diferenciación frente a otras inmobiliarias: "nosotros también gestionamos almacenamiento"</li>
+        <li style="padding:5px 0;">Nuevo ingreso sin nuevo personal — TMC maneja el match, el pago y el chat</li>
+        <li style="padding:5px 0;">El banner/badge en TMC es <strong>publicidad gratuita</strong> que ven miles de usuarios de BsAs</li>
+        <li style="padding:5px 0;">Posicionamiento como empresa tech-forward en el sector inmobiliario</li>
+        <li style="padding:5px 0;">Potencial de cross-venta: el cliente que guarda cosas puede después buscar departamento</li>
+      </ul>
+    </div>
+    <div class="card card-peach">
+      <h3>🧩 Qué problema les resolvemos</h3>
+      <ul style="padding-left:18px;color:var(--text2);font-size:.9rem;">
+        <li style="padding:5px 0;"><strong>Bauleras vacías de propietarios</strong> que pagan expensas sin recuperar nada</li>
+        <li style="padding:5px 0;"><strong>Cocheras sin ocupar</strong> en propiedades deshabitadas o en venta</li>
+        <li style="padding:5px 0;"><strong>Propietarios que piden "hacer algo más" con su propiedad</strong> mientras esperan un inquilino</li>
+        <li style="padding:5px 0;"><strong>Depósitos comerciales a medio usar</strong> en propiedades de clientes empresa</li>
+        <li style="padding:5px 0;">La imagen de "solo hacemos alquiler residencial" les limita su portafolio de servicios</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card card-mint">
+    <h3>📋 Lista de inmobiliarias objetivo — Cómo construirla</h3>
+    <ul class="steps">
+      <li>
+        <strong>Google Maps "inmobiliaria" + barrios clave</strong>
+        <span>Buscar en Palermo, Belgrano, Villa Crespo, San Telmo, Almagro, Caballito, Flores, Ramos Mejía. Extraer nombre + teléfono + email. Meta: lista de 80 inmobiliarias.</span>
+      </li>
+      <li>
+        <strong>LinkedIn — "inmobiliaria Buenos Aires"</strong>
+        <span>Conectar con dueños y gerentes comerciales. Message directo. No pedir la venta todavía — pedir 15 minutos para "mostrar algo que les puede generar ingresos desde ya".</span>
+      </li>
+      <li>
+        <strong>Cámara Inmobiliaria Argentina (CIA)</strong>
+        <span>Tienen directorio público de miembros. Goldmine de 300+ inmobiliarias AMBA con contacto directo. Ver cia.com.ar</span>
+      </li>
+      <li>
+        <strong>Zonaprop y Argenprop — Perfil vendedores</strong>
+        <span>Los portales muestran el nombre de la inmobiliaria en cada publicación. En un rato de scraping manual podés extraer 100+ inmobiliarias con perfil activo en BsAs.</span>
+      </li>
+      <li>
+        <strong>Referidos — "¿A quién más conocés?"</strong>
+        <span>Cada inmobiliaria que firme debe recibir 3 tarjetas físicas de TMC y el pedido explícito de presentarnos con una colega. El sector es chico y se conocen todos.</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="card card-sky">
+    <h3>📧 Script de primer contacto — Email/WhatsApp</h3>
+    <div class="highlight-box hb-sky">
+      <strong>Asunto:</strong> Bauleras y cocheras de tus clientes que hoy no generan nada — te cuento<br><br>
+      Hola [Nombre],<br><br>
+      Te escribo de <strong>TodasMisCosas.com</strong>, el primer marketplace de almacenamiento urbano de Buenos Aires.<br><br>
+      Estamos convocando a las primeras 10 inmobiliarias de BsAs como <strong>Socias Fundadoras</strong> — un programa con beneficios exclusivos que no vamos a repetir una vez que crezcamos.<br><br>
+      La propuesta en una línea: <em>publicamos las bauleras, cocheras y depósitos de tus propietarios de forma gratuita, y ellos empiezan a cobrar por el espacio que hoy tienen vacío.</em><br><br>
+      ¿Tenés 20 minutos esta semana para que te muestre cómo funciona?<br><br>
+      Saludos,<br>
+      Alejandro — TodasMisCosas.com
+    </div>
+    <p>⚠️ <strong>Regla:</strong> No enviar PDFs ni links en el primer contacto. El objetivo del primer mensaje es conseguir la reunión, no explicar el producto.</p>
+  </div>
+
+  <div class="card card-lavender">
+    <h3>🤝 El pitch en la reunión — Estructura de 20 minutos</h3>
+    <ul class="steps">
+      <li>
+        <strong>Min 0–3: El gancho</strong>
+        <span>Abrir con una pregunta: "¿Cuántas bauleras o cocheras de propietarios tienen hoy que no están alquiladas?" Dejar que respondan. Luego: "Eso es dinero que está parado. Te mostramos cómo activarlo."</span>
+      </li>
+      <li>
+        <strong>Min 3–8: Demo en vivo</strong>
+        <span>Abrir todasmiscosas.com en la computadora o en el celular. Mostrar cómo se publica un espacio (tiempo real: 3 minutos). Mostrar cómo el cliente reserva y paga. Mostrar el depósito de garantía y el pago automático.</span>
+      </li>
+      <li>
+        <strong>Min 8–14: Los números</strong>
+        <span>Una cochera en Palermo a $50.000/mes = $600.000/año. Con TMC: $510.000/año neto para el propietario (sin hacer nada extra). La inmobiliaria puede cobrar honorarios de gestión sobre eso si quiere.</span>
+      </li>
+      <li>
+        <strong>Min 14–18: El programa Socio Fundador</strong>
+        <span>Presentar los beneficios exclusivos del programa (ver tab siguiente). Hay SOLO 10 lugares. Los primeros en firmar tienen ventaja sobre las que firmen después.</span>
+      </li>
+      <li>
+        <strong>Min 18–20: El siguiente paso</strong>
+        <span>No cerrar en la reunión. Proponer: "Arrancamos con 2 o 3 propiedades de prueba esta semana. Eso nos permite configurar todo y medimos resultados juntos." Bajar la barrera de entrada.</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="card card-lemon">
+    <h3>💛 Objeciones frecuentes y cómo manejarlas</h3>
+    <div style="overflow-x:auto;">
+    <table>
+      <tr><th>Objeción</th><th>Respuesta</th></tr>
+      <tr>
+        <td>"¿Y si no llegan clientes?"</td>
+        <td>La publicación no tiene costo. Si no llega nadie, no pierden nada. Pero si llega, ganan plata que hoy no estaban ganando.</td>
+      </tr>
+      <tr>
+        <td>"¿Cómo cobran?"</td>
+        <td>MercadoPago. Directo a la cuenta del propietario (o de la inmobiliaria, si prefieren gestionarlo). TMC retiene el 15% recién cuando se hace una reserva pagada.</td>
+      </tr>
+      <tr>
+        <td>"¿Es seguro? ¿Qué pasa si dañan el espacio?"</td>
+        <td>El sistema de escrow retiene el pago hasta que el propietario confirma que el acceso fue correcto. Tenemos sistema de reseñas y historial del cliente.</td>
+      </tr>
+      <tr>
+        <td>"No tenemos tiempo de publicar"</td>
+        <td>Nosotros lo hacemos por ustedes. Necesitamos las fotos y el precio — el resto lo cargamos nosotros.</td>
+      </tr>
+      <tr>
+        <td>"Somos chicos, eso es para grandes"</td>
+        <td>Exactamente por eso los llamamos a ustedes primero. Las grandes van a llegar después — ustedes son los que se benefician de estar primero.</td>
+      </tr>
+    </table>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 3 — PROGRAMA SOCIOS FUNDADORES
+═══════════════════════════════════════════════════════ -->
+<div id="tab-beneficios" class="tab-panel">
+
+  <div class="section-header">
+    <div class="section-icon" style="background:#FEEAAC;">🏆</div>
+    <div>
+      <h2>Programa Socios Fundadores</h2>
+      <p>Un sistema de 3 niveles que recompensa a quienes lleguen primero, de forma permanente</p>
+    </div>
+  </div>
+
+  <div class="highlight-box hb-peach">
+    <strong>🔑 Principio del programa:</strong> El beneficio más valioso no es el descuento — es la <strong>escasez creíble</strong>. Solo hay 10 lugares Platinum. Solo hay 20 Gold. Una vez que se llenan, se terminaron para siempre. Esto crea urgencia genuina, no artificial.
+  </div>
+
+  <!-- TIER PLATINUM -->
+  <div class="tier tier-gold">
+    <div class="tier-label" style="color:#8B6914;">✦ Nivel Máximo</div>
+    <div class="tier-name">🏆 Socio Fundador Platinum</div>
+    <div class="tier-sub">Primeras <strong>10 inmobiliarias o empresas</strong> que publiquen mínimo 5 espacios</div>
+    <ul>
+      <li><strong>Comisión 0% de por vida</strong> — La plataforma no cobra el 15% de sus espacios nunca más. El proveedor se queda con el 100% de cada reserva. Para siempre.</li>
+      <li><strong>Banner de marca premium</strong> en la home de TMC — Logo e imagen de la inmobiliaria visible para todos los visitantes del sitio (posición rotativa top)</li>
+      <li><strong>Página de marca propia</strong> — Una URL exclusiva como todasmiscosas.com/inmobiliaria-xxx que muestra todos sus espacios juntos</li>
+      <li><strong>Badge "Socio Fundador Platinum"</strong> visible en cada publicación y perfil del proveedor</li>
+      <li><strong>Prioridad en resultados de búsqueda</strong> — Sus espacios aparecen antes que los de proveedores sin categoría</li>
+      <li><strong>Dashboard analytics exclusivo</strong> — Métricas de visitas, reservas y conversión de todos sus espacios en un panel privado</li>
+      <li><strong>Acceso anticipado a funcionalidades nuevas</strong> — Beta testers de todo lo que se desarrolle</li>
+      <li><strong>Reunión mensual 1:1</strong> con el equipo TMC para revisar performance y estrategia</li>
+      <li><strong>Mención en todas las comunicaciones de lanzamiento</strong> — Prensa, redes sociales, newsletter</li>
+    </ul>
+  </div>
+
+  <!-- TIER GOLD -->
+  <div class="tier tier-silver">
+    <div class="tier-label" style="color:#4A5568;">★ Nivel Alto</div>
+    <div class="tier-name">⭐ Socio Fundador Gold</div>
+    <div class="tier-sub">Siguientes <strong>20 proveedores</strong> que publiquen mínimo 3 espacios</div>
+    <ul>
+      <li><strong>Comisión 5% por 1 año</strong> — Descuento del 67% respecto al 15% estándar durante los primeros 12 meses</li>
+      <li><strong>Logo en sección "Socios Fundadores"</strong> en la página de inicio y en /como-funciona</li>
+      <li><strong>Badge "Socio Fundador Gold"</strong> en cada publicación y perfil</li>
+      <li><strong>Boost de visibilidad</strong> — Sus espacios aparecen primero dentro de su zona/tipo durante 6 meses</li>
+      <li><strong>Soporte prioritario</strong> — Canal de WhatsApp directo con el equipo (respuesta en menos de 2 horas)</li>
+      <li><strong>Invitación a evento de lanzamiento</strong> — Acceso VIP con presentación del producto</li>
+      <li><strong>Publicación de caso de éxito</strong> — TMC publica su historia en blog y redes sociales</li>
+    </ul>
+  </div>
+
+  <!-- TIER SILVER -->
+  <div class="tier tier-bronze">
+    <div class="tier-label" style="color:#8B4513;">● Early Adopter</div>
+    <div class="tier-name">🥉 Early Adopter</div>
+    <div class="tier-sub">Siguientes <strong>20 proveedores</strong> que publiquen al menos 1 espacio</div>
+    <ul>
+      <li><strong>Comisión 10% por 6 meses</strong> — Descuento del 33% durante el primer semestre</li>
+      <li><strong>Badge "Early Adopter"</strong> permanente en su perfil</li>
+      <li><strong>Acceso a reportes de demanda</strong> — Mapa de calor de búsquedas por zona (solo disponible para esta categoría y superiores)</li>
+      <li><strong>Newsletter mensual</strong> con estadísticas del mercado de almacenamiento en BsAs</li>
+    </ul>
+  </div>
+
+  <div class="card card-coral" style="margin-top:24px;">
+    <h3>🎨 El Banner Premium — Diseño propuesto</h3>
+    <p>El banner no es un simple logo. Para que sea un incentivo real, tiene que verse <strong>aspiracional</strong>. Propuesta de posicionamiento:</p>
+    <div class="highlight-box hb-coral">
+      <strong>Ubicación:</strong> Sección fija debajo del hero en la home, con título "Socios Fundadores de TMC — Las inmobiliarias que apostaron primero"<br><br>
+      <strong>Contenido por socio:</strong> Logo + nombre + tagline corto + cantidad de espacios disponibles (vivo, actualizado automáticamente) + badge dorado de categoría<br><br>
+      <strong>CTA:</strong> Click en el logo lleva a la página de marca propia del socio (ver item de Platinum)<br><br>
+      <strong>Visualmente:</strong> Fila horizontal de logos con sutil fondo crema, sin contraste agresivo — que sea elegante, no publicitario
+    </div>
+    <p><strong>Por qué funciona:</strong> Cuando la segunda inmobiliaria vea que la primera tiene su logo visible en la home, va a querer estar ahí también. La visibilidad se vende sola.</p>
+  </div>
+
+  <div class="card card-mint">
+    <h3>📝 El Acuerdo — Simple por diseño</h3>
+    <p>El acuerdo con los Socios Fundadores <strong>no debe ser un contrato de 10 páginas</strong>. Tiene que ser una carta de una hoja que diga:</p>
+    <ul style="padding-left:18px;margin-top:8px;color:var(--text2);font-size:.9rem;">
+      <li style="padding:4px 0;">Nombre del socio y categoría obtenida</li>
+      <li style="padding:4px 0;">Compromiso de publicar X espacios en los próximos 30 días</li>
+      <li style="padding:4px 0;">Lista de beneficios garantizados (con duración explícita)</li>
+      <li style="padding:4px 0;">Condición de mantenimiento: si en algún momento tienen 0 espacios activos por más de 90 días, el acuerdo se suspende temporalmente</li>
+      <li style="padding:4px 0;">Firma de ambas partes + fecha</li>
+    </ul>
+    <p style="margin-top:12px;">La simplicidad genera confianza. Un contrato largo genera dudas.</p>
+  </div>
+
+  <div class="card card-lavender">
+    <h3>💜 Implementación en la plataforma — Lo que hay que construir</h3>
+    <div style="overflow-x:auto;">
+    <table>
+      <tr><th>Funcionalidad</th><th>Descripción técnica</th><th>Prioridad</th></tr>
+      <tr>
+        <td>Campo <code>categoria_socio</code> en tabla <code>usuarios</code></td>
+        <td>ENUM: 'platinum', 'gold', 'early_adopter', null. Editable desde panel admin.</td>
+        <td><span class="chip chip-coral">Alta</span></td>
+      </tr>
+      <tr>
+        <td>Badge visual en publicaciones</td>
+        <td>Si el proveedor tiene categoría, mostrar badge bajo el nombre del espacio en la home y en el detalle.</td>
+        <td><span class="chip chip-coral">Alta</span></td>
+      </tr>
+      <tr>
+        <td>Boost en resultados de búsqueda</td>
+        <td>ORDER BY: primero publicaciones de socios (platinum → gold → early), luego el resto.</td>
+        <td><span class="chip chip-peach">Media</span></td>
+      </tr>
+      <tr>
+        <td>Comisión diferencial</td>
+        <td>Campo <code>comision_override</code> en <code>usuarios</code>. Si != null, usar ese % en vez del 15% estándar.</td>
+        <td><span class="chip chip-coral">Alta</span></td>
+      </tr>
+      <tr>
+        <td>Página de marca propia (Platinum)</td>
+        <td>Ruta /socio/:slug que muestra todos los espacios del proveedor con su branding.</td>
+        <td><span class="chip chip-mint">Media-baja</span></td>
+      </tr>
+      <tr>
+        <td>Sección "Socios Fundadores" en la home</td>
+        <td>Componente estático (en un inicio) con logos de los primeros socios. Puede ser hardcoded al principio.</td>
+        <td><span class="chip chip-peach">Media</span></td>
+      </tr>
+    </table>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 4 — OTROS CANALES
+═══════════════════════════════════════════════════════ -->
+<div id="tab-otros-canales" class="tab-panel">
+
+  <div class="section-header">
+    <div class="section-icon" style="background:#D6F5FA;">🔀</div>
+    <div>
+      <h2>Otros Canales de Captación</h2>
+      <p>Más allá de las inmobiliarias: cómo llegar a los 50 espacios usando múltiples frentes</p>
+    </div>
+  </div>
+
+  <div class="card card-sky">
+    <h3>🏗️ Consorcios y Administradores de Edificios</h3>
+    <div class="highlight-box hb-sky" style="margin-bottom:12px;">
+      <strong>El dato clave:</strong> Buenos Aires tiene ~30.000 edificios con consorcio. La mayoría tiene bauleras compartidas o individuales que están semi-vacías o sin uso comercial. El administrador tiene acceso a decenas de propietarios de una sola vez.
+    </div>
+    <p><strong>Cómo contactarlos:</strong></p>
+    <ul style="padding-left:18px;color:var(--text2);font-size:.9rem;margin-top:8px;">
+      <li style="padding:4px 0;"><strong>Cámara Argentina de la Propiedad Horizontal (CAPH)</strong> — directorio de administradores</li>
+      <li style="padding:4px 0;">Grupos de WhatsApp de administradores en LinkedIn y Facebook</li>
+      <li style="padding:4px 0;">El aviso en el pizarrón del edificio: "¿Baulera sin uso? Podés alquilarla por TMC" — puede ser un sticker o volante</li>
+      <li style="padding:4px 0;">Proponer al administrador una comisión de gestión si publican las bauleras del edificio</li>
+    </ul>
+    <p style="margin-top:12px;"><strong>Argumento:</strong> Una baulera de 4m² en Palermo alquilada a $25.000/mes = $300.000/año para el propietario. El administrador puede cobrar el 5–10% de gestión sobre eso.</p>
+  </div>
+
+  <div class="card card-mint">
+    <h3>🚚 Empresas de Mudanzas y Logística</h3>
+    <div class="highlight-box hb-mint" style="margin-bottom:12px;">
+      El negocio de las mudanzas y logística last-mile tiene un problema constante: <strong>espacio vacío entre contratos</strong>. Un depósito que a veces está al 40% de capacidad es dinero que no están cobrando.
+    </div>
+    <p><strong>Propuesta específica:</strong></p>
+    <ul style="padding-left:18px;color:var(--text2);font-size:.9rem;margin-top:8px;">
+      <li style="padding:4px 0;">Publicar su capacidad disponible en TMC como espacio compartido con cupo variable</li>
+      <li style="padding:4px 0;">Ellos ya tienen el espacio habilitado, asegurado y con infraestructura — solo falta el cliente</li>
+      <li style="padding:4px 0;">Cross-venta directa: el cliente que reserva espacio de almacenamiento también puede necesitar mudanza</li>
+      <li style="padding:4px 0;">Posible acuerdo de "servicio de transporte": la empresa de mudanza aparece como opción de traslado en el paso 2 del checkout de TMC</li>
+    </ul>
+  </div>
+
+  <div class="card card-peach">
+    <h3>🏪 Locales Comerciales con Depósito</h3>
+    <p>Almacenes, fereterías, dietéticas, y todo tipo de comercio barrrial tienen depósitos traseros que a ciertas horas o ciertos días están sin uso. El dueño del local raramente piensa en eso como un activo monetizable.</p>
+    <div class="highlight-box hb-peach" style="margin-top:12px;">
+      <strong>Pitch directo:</strong> "¿Ese cuarto del fondo que no usás los fines de semana? Podría estar ganando $15.000 por mes sin que hagas nada."
+    </div>
+    <p style="margin-top:10px;"><strong>Canal de entrada:</strong> Visita presencial barrio por barrio. Empezar por los barrios con más demanda proyectada: Palermo, Belgrano, Villa Crespo, San Telmo, Caballito.</p>
+  </div>
+
+  <div class="card card-lavender">
+    <h3>👤 Particulares — El canal más rápido</h3>
+    <div class="grid2" style="margin-top:8px;">
+      <div>
+        <p><strong>Dónde encontrarlos:</strong></p>
+        <ul style="padding-left:18px;color:var(--text2);font-size:.9rem;">
+          <li style="padding:4px 0;">Grupos de Facebook de barrios porteños ("Palermo Soho", "Belgrano te ayuda") — un post simple puede traer 5–10 respuestas</li>
+          <li style="padding:4px 0;">Reddit r/argentina y r/buenosaires</li>
+          <li style="padding:4px 0;">El contacto personal directo: amigos y conocidos con cochera libre</li>
+          <li style="padding:4px 0;">Vecinos del edificio propio donde viven Ale y Guille</li>
+        </ul>
+      </div>
+      <div>
+        <p><strong>Argumento por tipo:</strong></p>
+        <ul style="padding-left:18px;color:var(--text2);font-size:.9rem;">
+          <li style="padding:4px 0;"><strong>Cochera:</strong> "Salís de vacaciones? Tu cochera puede pagar el viaje"</li>
+          <li style="padding:4px 0;"><strong>Cuarto libre:</strong> "Ese cuarto de servicio vacío puede generar $200.000/año"</li>
+          <li style="padding:4px 0;"><strong>Terraza/patio:</strong> "Dejamos guardar cosas que no sean perecederas, todo asegurado"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-rose">
+    <h3>🤝 Canal Alianzas Estratégicas</h3>
+    <div class="grid2" style="margin-top:8px;">
+      <div class="highlight-box hb-coral" style="margin:0;">
+        <strong>🏦 Bancos y Fintech</strong><br>
+        <span style="font-size:.88rem;color:var(--text2);">Naranja X, Mercado Pago, Brubank. Tienen millones de usuarios PyME y autónomos en BsAs. Un artículo en su blog o newsletter puede traer 500 visitas en un día. Propuesta: "tu PyME no está usando ese depósito — generá plata extra con TMC". Comisión por referido activado.</span>
+      </div>
+      <div class="highlight-box hb-mint" style="margin:0;">
+        <strong>📦 Self-storage y Guardamuebles</strong><br>
+        <span style="font-size:.88rem;color:var(--text2);">Espacios como Cubik, BoxBo, etc. son competencia lejana pero también potencial socio. Si se llenan, pueden derivar a TMC. Si TMC crece, podemos ofrecerles tráfico. Win-win en zona gris.</span>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:12px;">
+      <div class="highlight-box hb-sky" style="margin:0;">
+        <strong>🚗 OLX / Marketplace de Autos</strong><br>
+        <span style="font-size:.88rem;color:var(--text2);">Quienes venden un auto a veces liberan una cochera. Publicidad cruzada: banner en "publicaste tu auto? tu cochera ahora puede generar plata extra en TMC".</span>
+      </div>
+      <div class="highlight-box hb-lavender" style="margin:0;">
+        <strong>💼 Coworkings</strong><br>
+        <span style="font-size:.88rem;color:var(--text2);">Los coworkings tienen storerooms y depósitos que no usan en horarios nocturnos y fines de semana. Propuesta: "el espacio que vacía de noche puede generar ingresos".</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 5 — FORMATOS Y MATERIALES
+═══════════════════════════════════════════════════════ -->
+<div id="tab-formatos" class="tab-panel">
+
+  <div class="section-header">
+    <div class="section-icon" style="background:#D4F5E4;">📣</div>
+    <div>
+      <h2>Formatos y Materiales de Comunicación</h2>
+      <p>Qué producir, cómo distribuirlo y para quién</p>
+    </div>
+  </div>
+
+  <div class="highlight-box hb-mint">
+    <strong>Principio rector:</strong> El primer contacto tiene que ser <em>liviano</em>. No mandar un PDF de 10 páginas. El objetivo es abrir la conversación, no cerrar la venta. Los materiales gráficos pesados son para la reunión, no para el primer mensaje.
+  </div>
+
+  <div class="format-grid" style="margin:24px 0;">
+    <div class="format-card" style="border-top:4px solid var(--coral);">
+      <div class="format-icon">📱</div>
+      <h4>WhatsApp Business</h4>
+      <p>Canal principal de primer contacto. Mensaje de 3 líneas con hook claro y una pregunta simple para abrir diálogo.</p>
+    </div>
+    <div class="format-card" style="border-top:4px solid var(--sky);">
+      <div class="format-icon">📧</div>
+      <h4>Email Frío</h4>
+      <p>Para prospectos identificados en LinkedIn o directorios. Asunto personalizado, cuerpo de 5 líneas máximo.</p>
+    </div>
+    <div class="format-card" style="border-top:4px solid var(--lavender);">
+      <div class="format-icon">🤝</div>
+      <h4>Reunión Presencial</h4>
+      <p>El cierre real. Demo en vivo + propuesta de beneficios + mini-contrato de una hoja. Duración ideal: 20 minutos.</p>
+    </div>
+    <div class="format-card" style="border-top:4px solid var(--peach);">
+      <div class="format-icon">📄</div>
+      <h4>One-Pager PDF</h4>
+      <p>Para dejar después de la reunión. Una sola hoja, dos caras: producto + programa Socios Fundadores. Diseño premium.</p>
+    </div>
+    <div class="format-card" style="border-top:4px solid var(--mint);">
+      <div class="format-icon">🎥</div>
+      <h4>Video Demo 90 seg.</h4>
+      <p>Screen recording del flujo completo (publicar → reservar → cobrar). Se comparte por WhatsApp antes de la reunión.</p>
+    </div>
+    <div class="format-card" style="border-top:4px solid var(--rose);">
+      <div class="format-icon">📲</div>
+      <h4>QR Físico</h4>
+      <p>Sticker para pegar en el vidrio de la inmobiliaria o en el pizarrón del edificio: "¿Tenés espacio sin usar? Entrá aquí".</p>
+    </div>
+    <div class="format-card" style="border-top:4px solid var(--lemon);">
+      <div class="format-icon">💼</div>
+      <h4>LinkedIn Directo</h4>
+      <p>InMail o mensaje de conexión a dueños de inmobiliarias. Perfil de TMC activo con posts de valor previos a la prospección.</p>
+    </div>
+    <div class="format-card" style="border-top:4px solid var(--sage);">
+      <div class="format-icon">📸</div>
+      <h4>Instagram / Reels</h4>
+      <p>"Esta cochera vacía en Palermo está generando $80K por mes con TMC." Contenido de prueba social para amplificar alcance orgánico.</p>
+    </div>
+  </div>
+
+  <div class="card card-coral">
+    <h3>📄 One-Pager — Contenido recomendado</h3>
+    <div class="grid2">
+      <div>
+        <p><strong>Cara A — El producto:</strong></p>
+        <ul style="padding-left:16px;color:var(--text2);font-size:.88rem;margin-top:8px;">
+          <li style="padding:3px 0;">Logo TMC grande + tagline</li>
+          <li style="padding:3px 0;">"El Airbnb del almacenamiento en Buenos Aires"</li>
+          <li style="padding:3px 0;">3 íconos: Publicá gratis · Reservas seguras · Cobro automático</li>
+          <li style="padding:3px 0;">QR al sitio web + mención del escrow y MercadoPago</li>
+          <li style="padding:3px 0;">Ejemplo numérico: "Cochera 12m² Palermo = $720.000/año"</li>
+        </ul>
+      </div>
+      <div>
+        <p><strong>Cara B — Programa Socios Fundadores:</strong></p>
+        <ul style="padding-left:16px;color:var(--text2);font-size:.88rem;margin-top:8px;">
+          <li style="padding:3px 0;">Tabla de 3 niveles (Platinum / Gold / Early Adopter)</li>
+          <li style="padding:3px 0;">Beneficios clave de cada nivel</li>
+          <li style="padding:3px 0;">Contador: "Quedan X lugares Platinum"</li>
+          <li style="padding:3px 0;">Contacto directo: número de WhatsApp + email</li>
+          <li style="padding:3px 0;">Urgencia: "Las primeras 10 empresas que firmen antes del 31/07/2026"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-sky">
+    <h3>🎥 Video Demo — Guión en 90 segundos</h3>
+    <ul class="steps">
+      <li><strong>0–10 seg: Hook</strong><span>Pantalla: cochera vacía. Voz: "Esta cochera en Palermo estaba generando cero pesos. Hoy genera $80.000 por mes. Te cuento cómo."</span></li>
+      <li><strong>10–35 seg: Demo publicar</strong><span>Screen recording real del formulario de publicación en TMC. Voz: "Tres minutos, unas fotos y un precio. Eso es todo lo que hay que hacer."</span></li>
+      <li><strong>35–60 seg: Demo reservar y cobrar</strong><span>Vista del cliente reservando, el pago en MercadoPago, el dinero llegando. "El dinero llega automáticamente. TMC retiene el pago hasta que el cliente confirma el acceso."</span></li>
+      <li><strong>60–90 seg: CTA</strong><span>"Somos el primer marketplace de almacenamiento de Buenos Aires. Los primeros proveedores que se sumen tienen condiciones especiales que no repetiremos. Te esperamos en todasmiscosas.com"</span></li>
+    </ul>
+  </div>
+
+  <div class="card card-peach">
+    <h3>📲 QR Físico — Casos de uso</h3>
+    <div class="grid3" style="margin-top:12px;">
+      <div class="highlight-box hb-peach" style="margin:0;text-align:center;">
+        <div style="font-size:1.8rem;margin-bottom:6px;">🏢</div>
+        <strong>Vidrio de inmobiliaria</strong><br>
+        <span style="font-size:.82rem;color:var(--text2);">"¿Tu propiedad tiene espacio sin uso? QR → todasmiscosas.com"</span>
+      </div>
+      <div class="highlight-box hb-peach" style="margin:0;text-align:center;">
+        <div style="font-size:1.8rem;margin-bottom:6px;">📋</div>
+        <strong>Pizarrón de edificio</strong><br>
+        <span style="font-size:.82rem;color:var(--text2);">"¿Baulera sin usar? Alquilala online en TMC — Gratis para publicar"</span>
+      </div>
+      <div class="highlight-box hb-peach" style="margin:0;text-align:center;">
+        <div style="font-size:1.8rem;margin-bottom:6px;">🏪</div>
+        <strong>Depósito de comercio</strong><br>
+        <span style="font-size:.82rem;color:var(--text2);">"Este espacio puede generar ingresos. Consultá en TMC"</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 6 — IDEAS DISRUPTIVAS
+═══════════════════════════════════════════════════════ -->
+<div id="tab-disruptivas" class="tab-panel">
+
+  <div class="section-header">
+    <div class="section-icon" style="background:#EAE6FF;">💡</div>
+    <div>
+      <h2>Ideas Disruptivas</h2>
+      <p>Las jugadas que nos diferencian de cualquier catálogo de "ideas para conseguir clientes"</p>
+    </div>
+  </div>
+
+  <div class="idea-card" style="background:#FFF0F4;">
+    <div class="idea-num">IDEA 01</div>
+    <h4>🗺️ "La Noche de los Proveedores" — Evento presencial de lanzamiento</h4>
+    <p>Convocar a 30–40 potenciales proveedores (inmobiliarias, consorcios, empresas) a un evento gratuito en un bar o coworking de Palermo. Formato: cocktail de 90 minutos con presentación de 20 minutos en el medio.</p>
+    <p><strong>¿Por qué es disruptivo?</strong> La mayoría de los startups hacen lanzamientos para consumidores. Este evento es para <em>proveedores</em> — los que generan la oferta. Nadie lo hace así.</p>
+    <p><strong>Efecto esperado:</strong> 40 invitados → 15 se registran en el evento → 8 publican en las 72 hs siguientes. Plus: fotos del evento para redes sociales que generan prueba social inmediata.</p>
+    <p><strong>Costo estimado:</strong> $80.000–$120.000 en catering + espacio. ROI potencial: 8 espacios publicados × comisiones futuras.</p>
+  </div>
+
+  <div class="idea-card" style="background:#F0FBF5;">
+    <div class="idea-num">IDEA 02</div>
+    <h4>📍 "Mapeá Tu Barrio" — Campaña de guerrilla hiperlocal</h4>
+    <p>Salir a los barrios de mayor demanda (Palermo, Belgrano, Villa Crespo) y tocar de puerta en puerta ofreciendo publicar el espacio en el momento, con tablet en mano. El proveedor da las fotos del celular y queda publicado en 10 minutos.</p>
+    <p><strong>¿Por qué funciona?</strong> La fricción de "voy a entrar a una web y publicar" es enorme. Hacerlo en persona en tiempo real elimina esa fricción completamente.</p>
+    <p><strong>Mecánica:</strong> 1 persona + tablet + impresora portátil para entregar el "acuerdo de socio" firmado en papel en el momento. 3 horas de recorrida = 5–8 publicaciones potenciales.</p>
+  </div>
+
+  <div class="idea-card" style="background:#F4F1FF;">
+    <div class="idea-num">IDEA 03</div>
+    <h4>🏆 "Puntaje de Seguridad Certificado" — Diferenciador de valor</h4>
+    <p>Los proveedores que tengan alta puntuación de seguridad en TMC reciben un <strong>sello digital imprimible</strong> para poner en su inmobiliaria, en sus anuncios de Zonaprop, y en sus redes sociales: <em>"Espacio certificado por TMC — Seguridad ★★★★★"</em>.</p>
+    <p><strong>¿Por qué es disruptivo?</strong> Convierte al proveedor en embajador. Cada vez que pone el sello en otro lado, está hablando de TMC. Y el sello solo se consigue siendo un proveedor activo.</p>
+    <p><strong>Implementación técnica:</strong> Badge dinámico en SVG que se genera desde el perfil del proveedor, incluye su nombre y la puntuación en tiempo real.</p>
+  </div>
+
+  <div class="idea-card" style="background:#FFF8F0;">
+    <div class="idea-num">IDEA 04</div>
+    <h4>💰 "Referido que Publica, Comisión que Baja" — Programa de referidos de proveedores</h4>
+    <p>Si un proveedor activo refiere a otro proveedor que publica al menos 1 espacio, el proveedor que refirió recibe <strong>un mes de comisión 0%</strong>. Por cada referido que se activa, suma un mes adicional.</p>
+    <p><strong>¿Por qué es disruptivo?</strong> La mayoría de los programas de referidos recompensan en cash. Este recompensa reduciendo el costo futuro — que es lo que más le importa a un proveedor activo.</p>
+    <p><strong>Efecto red:</strong> Si los primeros 10 proveedores cada uno trae 2 más, llegamos a 30 en automático. Con 30 que traen 1, llegamos a 60.</p>
+  </div>
+
+  <div class="idea-card" style="background:#F0FBFF;">
+    <div class="idea-num">IDEA 05</div>
+    <h4>📊 "El Informe del Barrio" — Lead magnet de alto valor</h4>
+    <p>Crear un reporte mensual gratuito: <em>"Cuánto se cobra por almacenamiento en [barrio] en julio 2026"</em>. Una página HTML pública con datos reales de TMC (precios promedio, tipos de espacios más buscados, demanda por zona).</p>
+    <p><strong>¿Por qué es disruptivo?</strong> Es contenido de valor para dueños de inmuebles, inmobiliarias y consorcios. Nadie más tiene este dato. Los medios locales (La Nación, Infobae, Clarín) son potenciales compradores de la historia: <em>"¿Cuánto cuesta guardar cosas en BsAs? El primer estudio"</em>.</p>
+    <p><strong>CTA natural:</strong> Al final del informe: "¿Tenés un espacio en [barrio]? Publicalo gratis en TMC y empezá a generar ingresos este mes".</p>
+  </div>
+
+  <div class="idea-card" style="background:#FFF0F4;">
+    <div class="idea-num">IDEA 06</div>
+    <h4>🎙️ "El Proveedor del Mes" — Serie de contenido en RRSS</h4>
+    <p>Cada mes, entrevistar a un proveedor (inmobiliaria o particular) sobre su experiencia con TMC. Video corto de 3 minutos + post de Instagram + mención en el newsletter. El proveedor gana visibilidad; TMC gana prueba social auténtica.</p>
+    <p><strong>¿Por qué funciona?</strong> Los otros proveedores potenciales ven a alguien real contando resultados reales. Es más poderoso que cualquier publicidad pagada.</p>
+    <p><strong>Coordinación:</strong> Agustina (entrevistadora) y Daniel (productor) ya son parte del equipo de contenido. Este formato encaja perfecto con el podcast TMC.</p>
+  </div>
+
+  <div class="idea-card" style="background:#F0FBF5;">
+    <div class="idea-num">IDEA 07</div>
+    <h4>📱 "Publicalo En Vivo" — Instagram Live de publicación en tiempo real</h4>
+    <p>Hacer un Instagram Live donde Alejandro, junto a una inmobiliaria amiga, publican 3 espacios en tiempo real. La audiencia ve el proceso completo. El objetivo no es la cantidad de views — es tener el video grabado para compartirlo como demo.</p>
+    <p><strong>¿Por qué es disruptivo?</strong> Un demo en video pre-producido se ve como publicidad. Un Live se ve como real. La audiencia de la inmobiliaria + la audiencia de TMC se suman.</p>
+  </div>
+
+  <div class="idea-card" style="background:#FFFEF0;">
+    <div class="idea-num">IDEA 08</div>
+    <h4>🤝 "La Red de Mudanzas" — Integración de servicios complementarios</h4>
+    <p>Crear una red de empresas de mudanza que sean "Transportistas Recomendados TMC". Cuando un cliente reserva un espacio, puede contratar el traslado desde la misma plataforma. Las mudanzas pagan una comisión por cada derivación.</p>
+    <p><strong>¿Por qué es disruptivo para la captación?</strong> Las empresas de mudanza tienen relación directa con gente que acaba de mudarse — o sea, gente que potencialmente necesita almacenamiento. Con el acuerdo correcto, se convierten en referidores de clientes.</p>
+    <p><strong>Segmentos Mud.:</strong> Mudanzas Colosas, Flete Express, cualquier empresa con ruta habitual en CABA/AMBA.</p>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 7 — PLAN 30 DÍAS
+═══════════════════════════════════════════════════════ -->
+<div id="tab-plan30" class="tab-panel">
+
+  <div class="section-header">
+    <div class="section-icon" style="background:#FFE0EA;">📆</div>
+    <div>
+      <h2>Plan de 30 Días — Ejecución</h2>
+      <p>De cero a los primeros 50 espacios publicados, semana por semana</p>
+    </div>
+  </div>
+
+  <div class="highlight-box hb-coral">
+    <strong>Premisa:</strong> Este plan es para ejecutar Alejandro principalmente, con soporte de Guille en lo técnico. No hay que hacer todo a la vez — la secuencia importa. Primero crear el programa y los materiales, después salir a prospectar.
+  </div>
+
+  <div class="timeline" style="margin-top:28px;">
+
+    <div class="tl-item">
+      <div class="tl-week">Semana 1 — 1 al 7 de julio</div>
+      <div class="tl-title">🛠️ Preparar el arsenal</div>
+      <div class="tl-body">
+        <ul>
+          <li><strong>Ale:</strong> Formalizar el programa Socios Fundadores — definir los 3 niveles y los beneficios exactos (adaptados de este documento)</li>
+          <li><strong>Guille:</strong> Implementar en DB el campo <code>categoria_socio</code> y la comisión diferencial — cambio técnico pequeño pero esencial</li>
+          <li><strong>Ale:</strong> Diseñar el one-pager PDF (puede ser en Canva) — cara A: producto, cara B: programa</li>
+          <li><strong>Ale:</strong> Armar la lista de 80 inmobiliarias objetivo (Google Maps + Cámara Inmobiliaria Argentina + Zonaprop)</li>
+          <li><strong>Ale:</strong> Grabar el video demo de 90 segundos del flujo completo</li>
+          <li><strong>Ale:</strong> Configurar WhatsApp Business con perfil de TMC completo (foto, descripción, link al sitio)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-week">Semana 2 — 8 al 14 de julio</div>
+      <div class="tl-title">🚀 Primera oleada — Contacto masivo</div>
+      <div class="tl-body">
+        <ul>
+          <li>Enviar mensaje de primer contacto a las 80 inmobiliarias de la lista (mezcla de WhatsApp + email). Meta: 20 respuestas positivas.</li>
+          <li>Publicar post en LinkedIn anunciando el programa Socios Fundadores. Tag a inmobiliarias conocidas.</li>
+          <li>Contactar 10 administradores de consorcios con la propuesta específica para bauleras.</li>
+          <li>Publicar en 3 grupos de Facebook de barrios el mensaje para particulares con cocheras/cuartos libres.</li>
+          <li>Coordinar las primeras 5–8 reuniones presenciales para la semana siguiente.</li>
+          <li>🎯 Meta de publicaciones al fin de semana 2: <strong>5–8 espacios</strong> (de contactos cercanos + red personal)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-week">Semana 3 — 15 al 21 de julio</div>
+      <div class="tl-title">🤝 Reuniones y cierres</div>
+      <div class="tl-body">
+        <ul>
+          <li>Realizar las 5–8 reuniones presenciales con inmobiliarias interesadas. Demo + one-pager + acuerdo Socio Fundador.</li>
+          <li>Follow-up a todos los que respondieron positivamente pero no se reunieron todavía. El video demo como herramienta de conversión.</li>
+          <li>Evento "Noche de Proveedores" (si se puede organizar en este plazo, perfecto). Si no, semana 4.</li>
+          <li>Publicar en Instagram el primer "Proveedor del Mes" — puede ser alguien del círculo cercano que ya publicó.</li>
+          <li>Implementar el boost de resultados de búsqueda para socios (mejora técnica de Guille)</li>
+          <li>🎯 Meta de publicaciones al fin de semana 3: <strong>20–25 espacios</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-week">Semana 4 — 22 al 31 de julio</div>
+      <div class="tl-title">📈 Escalar y primera reserva</div>
+      <div class="tl-body">
+        <ul>
+          <li>Segunda oleada de contactos: 40 nuevas inmobiliarias + 5 empresas de mudanzas + 5 coworkings.</li>
+          <li>Activar el programa de referidos: los socios ya confirmados reciben el incentivo de referir a otro proveedor.</li>
+          <li>Publicar el "Informe del Barrio" — dato real de precios de almacenamiento en CABA con los espacios ya publicados.</li>
+          <li>Objetivo interno: conseguir la <strong>primera reserva pagada</strong>. Puede ser facilitada (traer un conocido que necesita guardar cosas y lo conectamos con un proveedor ya activo).</li>
+          <li>Publicar caso de éxito de uno de los primeros socios firmados.</li>
+          <li>🎯 Meta de publicaciones al fin de semana 4: <strong>40–50 espacios</strong> ✅</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card card-mint" style="margin-top:32px;">
+    <h3>📊 KPIs para medir semanalmente</h3>
+    <div style="overflow-x:auto;">
+    <table>
+      <tr><th>Métrica</th><th>Sem. 1</th><th>Sem. 2</th><th>Sem. 3</th><th>Sem. 4</th></tr>
+      <tr><td>Espacios publicados</td><td>0–3</td><td>5–8</td><td>20–25</td><td>40–50</td></tr>
+      <tr><td>Contactos enviados</td><td>0</td><td>80</td><td>30 (follow-up)</td><td>50 (2da oleada)</td></tr>
+      <tr><td>Reuniones realizadas</td><td>0</td><td>0–2</td><td>5–8</td><td>8–12</td></tr>
+      <tr><td>Socios Fundadores firmados</td><td>0</td><td>0–1</td><td>2–4</td><td>5–8</td></tr>
+      <tr><td>Reservas pagadas</td><td>0</td><td>0</td><td>0–1</td><td>1–3</td></tr>
+    </table>
+    </div>
+  </div>
+
+  <div class="card card-lavender">
+    <h3>⚠️ Los 3 errores que matan este plan</h3>
+    <div class="grid3" style="margin-top:12px;">
+      <div class="highlight-box hb-coral" style="margin:0;">
+        <strong>Error 1: Explicar demasiado</strong><br>
+        <span style="font-size:.88rem;color:var(--text2);">El primer contacto tiene que ser de 3 líneas. Si mandamos un PDF de 5 páginas en el primer mensaje, nadie lo abre. La información se da en la reunión.</span>
+      </div>
+      <div class="highlight-box hb-peach" style="margin:0;">
+        <strong>Error 2: No hacer seguimiento</strong><br>
+        <span style="font-size:.88rem;color:var(--text2);">El 80% de las ventas B2B se cierran después del 5to contacto. Si alguien no responde, no es un no — es que hay que volver. Una vez por semana está bien.</span>
+      </div>
+      <div class="highlight-box hb-lavender" style="margin:0;">
+        <strong>Error 3: Esperar perfección técnica</strong><br>
+        <span style="font-size:.88rem;color:var(--text2);">El badge en la home puede ser un PNG hardcoded mientras Guille desarrolla la versión dinámica. No esperar que todo esté perfecto para empezar a prospectar.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-sky">
+    <h3>🛠️ Herramientas para gestionar el pipeline</h3>
+    <div class="grid2" style="margin-top:8px;">
+      <div>
+        <p><strong>Opción simple (recomendada para arrancar):</strong></p>
+        <ul style="padding-left:16px;color:var(--text2);font-size:.9rem;margin-top:8px;">
+          <li style="padding:4px 0;">Google Sheets con columnas: Nombre · Contacto · Estado (No contactado / Contactado / Interesado / Reunión agendada / Cerrado / Descartado) · Fecha próximo follow-up · Notas</li>
+          <li style="padding:4px 0;">WhatsApp Business para seguimiento de conversaciones</li>
+          <li style="padding:4px 0;">Google Calendar para las reuniones</li>
+        </ul>
+      </div>
+      <div>
+        <p><strong>Opción escalable (cuando tengan 3+ prospectos activos por día):</strong></p>
+        <ul style="padding-left:16px;color:var(--text2);font-size:.9rem;margin-top:8px;">
+          <li style="padding:4px 0;"><strong>HubSpot Free CRM</strong> — gratis, tiene pipeline visual, email tracking y reminder automático de follow-up</li>
+          <li style="padding:4px 0;"><strong>Notion CRM template</strong> — para tener todo en un lugar integrado con los demás docs del proyecto</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</div> <!-- /content -->
+
+<!-- FOOTER -->
+<div style="background:#1A202C;color:#718096;text-align:center;padding:24px;font-size:.8rem;margin-top:0;">
+  TodasMisCosas.com — Documento estratégico interno · Julio 2026 · Confidencial · Alejandro Laporte · Guillermo Domínguez
+</div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.target.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
