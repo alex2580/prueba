@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demanda Orgánica Reprimida — Negocios · TMC 2026</title>
+<style>
+:root{
+  --bg:#fafaf8;--white:#ffffff;--text:#1c1917;--text2:#57534e;--text3:#a8a29e;
+  --border:#e7e5e4;--navy:#1c1917;
+  /* Paleta por tab */
+  --c1a:#fef2f2;--c1b:#fca5a5;--c1c:#991b1b;   /* concepto — salmón */
+  --c2a:#fffbeb;--c2b:#fcd34d;--c2c:#78350f;   /* argentina — vainilla */
+  --c3a:#f0fdf4;--c3b:#86efac;--c3c:#14532d;   /* referentes — mint */
+  --c4a:#eff6ff;--c4b:#93c5fd;--c4c:#1e3a8a;   /* autoridad — cielo */
+  --c5a:#fdf4ff;--c5b:#d8b4fe;--c5c:#581c87;   /* tmc/tme — lavanda */
+  --act:var(--c1c);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.7;}
+
+/* ── HERO ── */
+.hero{
+  background:linear-gradient(140deg,#1c1917 0%,#292524 40%,#3c1f1f 70%,#44200f 100%);
+  padding:52px 48px 44px;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;
+  border-radius:50%;background:radial-gradient(circle,rgba(252,165,165,.18) 0%,transparent 70%);
+}
+.hero::after{
+  content:'';position:absolute;bottom:-60px;left:10%;width:220px;height:220px;
+  border-radius:50%;background:radial-gradient(circle,rgba(253,186,116,.12) 0%,transparent 70%);
+}
+.hero-tag{font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#fca5a5;margin-bottom:10px;}
+.hero-title{font-size:2.2rem;font-weight:900;color:#fafaf8;line-height:1.18;letter-spacing:-.5px;max-width:680px;}
+.hero-title em{font-style:normal;color:#fcd34d;}
+.hero-sub{color:#a8a29e;font-size:.9rem;margin-top:14px;max-width:560px;}
+.hero-pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px;}
+.hp{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:4px 14px;font-size:.72rem;color:#d6d3d1;}
+.hp strong{color:#fafaf8;}
+
+/* ── TABS ── */
+.tabs-nav{display:flex;gap:0;border-bottom:2px solid var(--border);background:var(--white);overflow-x:auto;padding:0 48px;}
+.tab-btn{padding:14px 22px;font-size:.8rem;font-weight:700;color:var(--text3);border:none;background:none;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-2px;transition:color .2s,border-color .2s;}
+.tab-btn:hover{color:var(--text2);}
+.tab-btn.active{color:var(--act);border-bottom-color:var(--act);}
+
+.tab-pane{display:none;padding:40px 48px 80px;max-width:980px;margin:0 auto;}
+.tab-pane.active{display:block;}
+
+/* ── TYPOGRAPHY ── */
+.sec-label{font-size:.68rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:4px;}
+.sec-title{font-size:1.4rem;font-weight:900;color:var(--text);margin-bottom:6px;}
+.sec-desc{font-size:.87rem;color:var(--text2);line-height:1.75;margin-bottom:28px;}
+
+h3{font-size:1rem;font-weight:800;color:var(--text);margin-bottom:6px;}
+
+/* ── CARDS ── */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:28px;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:20px 22px;border-left:4px solid var(--border);}
+.card-ico{font-size:1.6rem;margin-bottom:10px;}
+.card-t{font-size:.88rem;font-weight:800;color:var(--text);margin-bottom:6px;}
+.card-d{font-size:.79rem;color:var(--text2);line-height:1.7;}
+
+/* ── DEFINICIÓN CONCEPTO ── */
+.def-box{background:linear-gradient(135deg,#fef2f2 0%,#fff7f0 100%);border:1px solid #fca5a5;border-radius:18px;padding:28px 32px;margin-bottom:28px;}
+.def-q{font-size:1.5rem;font-weight:900;color:#7f1d1d;line-height:1.25;margin-bottom:12px;}
+.def-p{font-size:.9rem;color:#78350f;line-height:1.8;}
+.def-p strong{color:#7f1d1d;}
+
+.formula{background:#1c1917;border-radius:14px;padding:22px 28px;margin:20px 0 28px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.f-term{background:rgba(252,165,165,.15);border:1px solid rgba(252,165,165,.3);border-radius:10px;padding:8px 18px;font-size:.88rem;font-weight:700;color:#fca5a5;text-align:center;}
+.f-op{color:#57534e;font-size:1.1rem;font-weight:700;}
+.f-result{background:rgba(253,186,116,.15);border:1px solid rgba(253,186,116,.3);border-radius:10px;padding:8px 18px;font-size:.88rem;font-weight:700;color:#fdba74;}
+
+.obstaculos{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:28px;}
+.obs{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
+.obs-ico{font-size:1.2rem;margin-bottom:6px;}
+.obs-t{font-size:.8rem;font-weight:800;color:var(--text);margin-bottom:4px;}
+.obs-d{font-size:.75rem;color:var(--text2);line-height:1.6;}
+
+.senales{background:var(--c1a);border:1px solid var(--c1b);border-radius:14px;padding:22px 26px;margin-bottom:28px;}
+.sena-t{font-size:.88rem;font-weight:800;color:var(--c1c);margin-bottom:14px;}
+.sena-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.sena-list li{display:flex;align-items:flex-start;gap:10px;font-size:.82rem;color:#78350f;}
+.sena-list li::before{content:'🚨';flex-shrink:0;}
+
+/* ── TIMELINE ── */
+.timeline{position:relative;padding-left:32px;margin-bottom:28px;}
+.timeline::before{content:'';position:absolute;left:12px;top:8px;bottom:8px;width:2px;background:linear-gradient(to bottom,var(--c2b),var(--c2c));}
+.tl-item{position:relative;margin-bottom:32px;}
+.tl-dot{position:absolute;left:-26px;top:4px;width:16px;height:16px;border-radius:50%;background:var(--c2b);border:3px solid var(--c2c);z-index:1;}
+.tl-year{font-size:.68rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--c2c);margin-bottom:4px;}
+.tl-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px 22px;border-left:4px solid var(--c2b);}
+.tl-name{font-size:.96rem;font-weight:900;color:var(--text);margin-bottom:2px;}
+.tl-tagline{font-size:.76rem;color:var(--c2c);font-weight:700;margin-bottom:8px;}
+.tl-txt{font-size:.81rem;color:var(--text2);line-height:1.7;margin-bottom:10px;}
+.tl-stat{display:inline-flex;align-items:center;gap:6px;background:var(--c2a);border:1px solid var(--c2b);border-radius:8px;padding:4px 12px;font-size:.73rem;font-weight:700;color:var(--c2c);margin:2px 4px 2px 0;}
+.tl-social{font-size:.73rem;color:#2563eb;text-decoration:none;font-weight:600;}
+.tl-social:hover{text-decoration:underline;}
+
+/* ── REFERENTES ── */
+.ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin-bottom:28px;}
+.ref-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:22px;border-top:4px solid var(--c3b);}
+.ref-header{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.ref-ava{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--c3a),var(--c3b));display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.ref-name{font-size:.92rem;font-weight:900;color:var(--text);}
+.ref-role{font-size:.73rem;color:var(--text3);}
+.ref-desc{font-size:.79rem;color:var(--text2);line-height:1.7;margin-bottom:12px;}
+.ref-pills{display:flex;flex-wrap:wrap;gap:6px;}
+.ref-pill{font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:6px;background:var(--c3a);color:var(--c3c);}
+.ref-links{margin-top:12px;display:flex;flex-direction:column;gap:4px;}
+.ref-link{font-size:.73rem;color:#2563eb;text-decoration:none;}
+.ref-link:hover{text-decoration:underline;}
+
+.libros{background:var(--c3a);border:1px solid var(--c3b);border-radius:14px;padding:20px 24px;margin-bottom:28px;}
+.libros-t{font-size:.88rem;font-weight:800;color:var(--c3c);margin-bottom:14px;}
+.libro-list{display:flex;flex-direction:column;gap:10px;}
+.libro{display:flex;align-items:flex-start;gap:12px;}
+.libro-ico{font-size:1.1rem;flex-shrink:0;margin-top:2px;}
+.libro-name{font-size:.82rem;font-weight:700;color:var(--text);}
+.libro-auth{font-size:.74rem;color:var(--text3);}
+.libro-d{font-size:.76rem;color:var(--text2);margin-top:2px;line-height:1.6;}
+
+/* ── AUTORIDAD ── */
+.aut-hero{background:linear-gradient(135deg,var(--c4a),#dbeafe);border:1px solid var(--c4b);border-radius:18px;padding:28px 32px;margin-bottom:28px;}
+.aut-q{font-size:1.3rem;font-weight:900;color:var(--c4c);line-height:1.3;margin-bottom:10px;}
+.aut-p{font-size:.87rem;color:#1e3a8a;line-height:1.8;}
+
+.piramide{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:28px;}
+.pir-header{background:var(--c4c);padding:14px 22px;font-size:.85rem;font-weight:800;color:#fff;}
+.pir-row{display:flex;align-items:center;gap:16px;padding:14px 22px;border-bottom:1px solid var(--border);}
+.pir-row:last-child{border-bottom:none;}
+.pir-n{width:30px;height:30px;border-radius:50%;background:var(--c4a);border:2px solid var(--c4b);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:900;color:var(--c4c);flex-shrink:0;}
+.pir-t{font-size:.83rem;font-weight:800;color:var(--text);min-width:160px;}
+.pir-d{font-size:.77rem;color:var(--text2);line-height:1.6;flex:1;}
+
+.claves-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-bottom:28px;}
+.clave{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px 20px;}
+.clave-n{font-size:1.8rem;font-weight:900;color:var(--c4b);line-height:1;margin-bottom:6px;font-variant-numeric:tabular-nums;}
+.clave-t{font-size:.82rem;font-weight:800;color:var(--text);}
+.clave-d{font-size:.75rem;color:var(--text2);margin-top:4px;line-height:1.6;}
+
+/* ── TMC/TME ── */
+.apl-box{background:linear-gradient(135deg,var(--c5a),#ede9fe);border:1px solid var(--c5b);border-radius:18px;padding:26px 30px;margin-bottom:24px;}
+.apl-tag{font-size:.68rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--c5c);margin-bottom:6px;}
+.apl-title{font-size:1.1rem;font-weight:900;color:var(--c5c);margin-bottom:10px;}
+.apl-p{font-size:.85rem;color:#4c1d95;line-height:1.78;}
+
+.checklist{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+.ck-item{display:flex;align-items:flex-start;gap:12px;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:14px 16px;}
+.ck-ico{font-size:.95rem;flex-shrink:0;margin-top:2px;}
+.ck-t{font-size:.82rem;font-weight:800;color:var(--text);margin-bottom:2px;}
+.ck-d{font-size:.76rem;color:var(--text2);line-height:1.6;}
+
+.oportunidad{background:var(--c5c);border-radius:16px;padding:24px 28px;color:#f3e8ff;margin-bottom:24px;}
+.oport-t{font-size:1rem;font-weight:900;margin-bottom:10px;}
+.oport-p{font-size:.83rem;line-height:1.8;color:#e9d5ff;}
+
+/* ── PRINT ── */
+.export-btn{position:fixed;bottom:24px;right:24px;background:#1c1917;color:#fafaf8;border:none;border-radius:50px;padding:12px 22px;font-size:.8rem;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:999;letter-spacing:.03em;}
+.export-btn:hover{background:#292524;}
+
+@media print{.export-btn,.tabs-nav,.hero-pills{display:none!important;}.tab-pane{display:block!important;page-break-before:always;}}
+@media(max-width:600px){
+  .hero{padding:28px 18px 22px;}
+  .hero-title{font-size:1.5rem;}
+  .tabs-nav{padding:0 4px;}
+  .tab-btn{padding:12px 14px;font-size:.74rem;}
+  .tab-pane{padding:28px 16px 60px;}
+  .def-box{padding:18px 16px;}
+  .formula{flex-direction:column;align-items:flex-start;}
+}
+
+/* dark mode */
+@media(prefers-color-scheme:dark){
+  :root{--bg:#1c1917;--white:#292524;--text:#fafaf8;--text2:#d6d3d1;--text3:#78716c;--border:#44403c;}
+  .tabs-nav{background:#1c1917;}
+  .tl-card,.card,.obs,.ref-card,.piramide,.ck-item,.clave{background:#292524;border-color:#44403c;}
+  .piramide .pir-header{background:#1e3a8a;}
+}
+:root[data-theme="dark"]{--bg:#1c1917;--white:#292524;--text:#fafaf8;--text2:#d6d3d1;--text3:#78716c;--border:#44403c;}
+:root[data-theme="dark"] .tabs-nav{background:#1c1917;}
+:root[data-theme="dark"] .tl-card,:root[data-theme="dark"] .card,:root[data-theme="dark"] .obs,:root[data-theme="dark"] .ref-card,:root[data-theme="dark"] .piramide,:root[data-theme="dark"] .ck-item,:root[data-theme="dark"] .clave{background:#292524;border-color:#44403c;}
+:root[data-theme="light"]{--bg:#fafaf8;--white:#ffffff;--text:#1c1917;--text2:#57534e;--text3:#a8a29e;--border:#e7e5e4;}
+</style>
+</head>
+<body>
+
+<button class="export-btn" onclick="window.print()">🖨️ Exportar / Imprimir</button>
+
+<div class="hero">
+  <div class="hero-tag">Estrategia de Negocios · Investigación</div>
+  <div class="hero-title">La <em>demanda orgánica reprimida</em> y cómo construir autoridad cuando explota</div>
+  <div class="hero-sub">Concepto, casos reales en Argentina con fechas y redes sociales, referentes que lo trabajan, y conexión con posicionamiento de mercado.</div>
+  <div class="hero-pills">
+    <div class="hp"><strong>5 tabs</strong></div>
+    <div class="hp"><strong>5 casos</strong> argentinos reales</div>
+    <div class="hp"><strong>6 referentes</strong> con social media</div>
+    <div class="hp">Aplicación a <strong>TMC &amp; TME</strong></div>
+    <div class="hp">🗓️ 24 jul 2026</div>
+  </div>
+</div>
+
+<div class="tabs-nav">
+  <button class="tab-btn active" onclick="switchTab('concepto',this,'#991b1b')">🧠 Concepto</button>
+  <button class="tab-btn" onclick="switchTab('argentina',this,'#78350f')">🇦🇷 Casos Argentina</button>
+  <button class="tab-btn" onclick="switchTab('referentes',this,'#14532d')">👁️ Referentes</button>
+  <button class="tab-btn" onclick="switchTab('autoridad',this,'#1e3a8a')">🏆 Autoridad de Mercado</button>
+  <button class="tab-btn" onclick="switchTab('tmc',this,'#581c87')">🚀 TMC &amp; TME</button>
+</div>
+
+<!-- ─── TAB 1: CONCEPTO ─── -->
+<div class="tab-pane active" id="tab-concepto">
+
+  <div class="sec-label">Definición</div>
+  <div class="sec-title">¿Qué es la demanda orgánica reprimida?</div>
+  <div class="sec-desc">Un mercado donde existe una necesidad real y urgente, pero algo externo impide que se concrete la compra. No es falta de deseo — es falta de acceso, confianza, oferta o posibilidad.</div>
+
+  <div class="def-box">
+    <div class="def-q">"Hay gente queriendo comprar, y nada para comprarle."</div>
+    <div class="def-p">La demanda <strong>orgánica</strong> significa que surge sola, sin publicidad que la fuerce — es una necesidad pre-existente en el mercado. La demanda <strong>reprimida</strong> significa que no se puede satisfacer por algún obstáculo. Cuando ese obstáculo se elimina, la demanda no aparece gradualmente: <strong>explota</strong>. El negocio que llega primero se lleva todo.</div>
+  </div>
+
+  <div class="formula">
+    <div class="f-term">Necesidad real<br><small style="font-weight:400;color:#a8a29e">existe en la gente</small></div>
+    <div class="f-op">+</div>
+    <div class="f-term">Obstáculo de mercado<br><small style="font-weight:400;color:#a8a29e">impide la compra</small></div>
+    <div class="f-op">+</div>
+    <div class="f-term">Solución que lo elimina<br><small style="font-weight:400;color:#a8a29e">tu negocio</small></div>
+    <div class="f-op">=</div>
+    <div class="f-result">Explosión de demanda<br><small style="font-weight:400;color:#d97706">crecimiento inmediato</small></div>
+  </div>
+
+  <div class="sec-label">Los 5 obstáculos clásicos</div>
+  <div class="sec-title" style="margin-bottom:16px;">Por qué la gente quiere pero no puede comprar</div>
+  <div class="obstaculos">
+    <div class="obs">
+      <div class="obs-ico">🏦</div>
+      <div class="obs-t">Falta de acceso</div>
+      <div class="obs-d">El producto/servicio no existe cerca del cliente o no está disponible en su idioma, país o plataforma.</div>
+    </div>
+    <div class="obs">
+      <div class="obs-ico">💸</div>
+      <div class="obs-t">Precio prohibitivo</div>
+      <div class="obs-d">El mercado formal cobra precios que la mayoría no puede pagar. Quedan excluidos.</div>
+    </div>
+    <div class="obs">
+      <div class="obs-ico">🤝</div>
+      <div class="obs-t">Falta de confianza</div>
+      <div class="obs-d">El sector tiene mala reputación histórica (autos usados, alquileres) — la gente quiere pero no se anima.</div>
+    </div>
+    <div class="obs">
+      <div class="obs-ico">🗂️</div>
+      <div class="obs-t">Fricción operativa</div>
+      <div class="obs-d">El proceso de compra es tan complicado (burocracia, filas, formularios) que la gente desiste.</div>
+    </div>
+    <div class="obs">
+      <div class="obs-ico">💡</div>
+      <div class="obs-t">Desconocimiento de la solución</div>
+      <div class="obs-d">La necesidad existe pero la gente no sabe que ya hay algo que la resuelve. El obstáculo es informativo.</div>
+    </div>
+  </div>
+
+  <div class="senales">
+    <div class="sena-t">🔍 Señales de que estás frente a demanda reprimida</div>
+    <ul class="sena-list">
+      <li>El producto se agota en horas cuando aparece disponible (listas de espera espontáneas)</li>
+      <li>La gente busca soluciones informales/piratas porque no hay solución formal (WhatsApp para reservar, Excel para organizar)</li>
+      <li>Cuando sale algo nuevo del rubro, la respuesta en redes es "¡al fin!" y no "¿para qué sirve esto?"</li>
+      <li>El boca a boca crece sin publicidad — el cliente atrae al siguiente cliente solo</li>
+      <li>Los competidores tienen demanda que no pueden absorber — la queja no es "no hay clientes" sino "no damos abasto"</li>
+      <li>El sector tiene baja tasa de satisfacción histórica (reviews malas, muchos intermediarios, poca transparencia)</li>
+    </ul>
+  </div>
+
+  <div class="card-grid">
+    <div class="card" style="border-left-color:#fca5a5;">
+      <div class="card-ico">⚡</div>
+      <div class="card-t">Por qué crece tan rápido</div>
+      <div class="card-d">La demanda reprimida no necesita que te la construyas. Ya está ahí, esperando. En negocios normales pagás para convencer. Acá pagás para aparecer — el mercado hace el resto.</div>
+    </div>
+    <div class="card" style="border-left-color:#fca5a5;">
+      <div class="card-ico">⏱️</div>
+      <div class="card-t">La ventana de primera entrada</div>
+      <div class="card-d">El obstáculo tarde o temprano se cae solo (tecnología, regulación, cambio de hábito). Quien llega primero cuando cae el muro captura la lealtad de los primeros adoptantes y el boca a boca inicial. La segunda empresa en llegar siempre va cuesta arriba.</div>
+    </div>
+    <div class="card" style="border-left-color:#fca5a5;">
+      <div class="card-ico">🎯</div>
+      <div class="card-t">Diferencia con demanda creada</div>
+      <div class="card-d">La demanda creada requiere millones en marketing para convencer a la gente de que necesita algo. La demanda reprimida es lo opuesto: el cliente ya sabe que lo necesita, solo le faltás vos.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ─── TAB 2: ARGENTINA ─── -->
+<div class="tab-pane" id="tab-argentina">
+
+  <div class="sec-label">Casos Documentados</div>
+  <div class="sec-title">5 empresas que explotaron la demanda reprimida en Argentina</div>
+  <div class="sec-desc">Con fechas, datos de arranque y contexto del obstáculo que resolvieron. Todos llegaron a un mercado que ya tenía la demanda — ellos solo quitaron el obstáculo.</div>
+
+  <div class="timeline">
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">🗓️ 2003 — Buenos Aires</div>
+      <div class="tl-card">
+        <div class="tl-name">Mercado Pago</div>
+        <div class="tl-tagline">Obstáculo eliminado: "Para hacer e-commerce necesitás tarjeta bancaria"</div>
+        <div class="tl-txt">Mercado Libre detectó que la mitad de los argentinos no tenían cuenta bancaria ni tarjeta de crédito, pero sí querían comprar online. La demanda de consumo digital ya existía — el obstáculo era la exclusión financiera. Mercado Pago se lanzó en 2003 como el primer medio de pago que permitía comprar online <em>sin estar bancarizado</em>, aceptando efectivo en redes de cobranza. La adopción fue inmediata: millones de argentinos que nunca habían accedido al crédito formal ahora podían participar del e-commerce.</div>
+        <div>
+          <span class="tl-stat">📊 50% de argentinos sin cuenta bancaria en 2003</span>
+          <span class="tl-stat">💬 "El primer medio de pago de la región para bancarizados Y no bancarizados"</span>
+        </div>
+        <div style="margin-top:10px;">
+          <span style="font-size:.75rem;color:var(--text3);">Fundador: </span>
+          <a href="https://x.com/mgalperin" target="_blank" class="tl-social">@mgalperin (X/Twitter)</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">🗓️ 2010 — Buenos Aires (llegada desde Uruguay, fundada 2009)</div>
+      <div class="tl-card">
+        <div class="tl-name">PedidosYa</div>
+        <div class="tl-tagline">Obstáculo eliminado: "Para pedir comida a domicilio hay que llamar por teléfono"</div>
+        <div class="tl-txt">Fundada en octubre de 2009 en Uruguay por Ariel Burschtin, Álvaro García y Rubén Sosenke (como proyecto universitario en ORT), comenzó con solo 40 restaurantes. En 2010 cruzaron el Río de la Plata hacia Buenos Aires. La demanda reprimida era enorme: millones de porteños pedían delivery pero la experiencia era frustrante (teléfono ocupado, equivocaciones, sin rastreo). Kaszek Ventures los descubrió ese año — Nico Berman, ex-VP Marketing de MercadoLibre, hizo la conexión. En 2014, Delivery Hero los compró por varios cientos de millones.</div>
+        <div>
+          <span class="tl-stat">🍕 40 restaurantes → operación en 15 países LatAm</span>
+          <span class="tl-stat">💰 Valuación ~USD 2.000M en 2019</span>
+          <span class="tl-stat">🤝 Adquirida por Delivery Hero en 2014</span>
+        </div>
+        <div style="margin-top:10px;">
+          <span style="font-size:.75rem;color:var(--text3);">Seguir: </span>
+          <a href="https://www.instagram.com/pedidosya_ar" target="_blank" class="tl-social">@pedidosya_ar (Instagram)</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">🗓️ 4 de octubre de 2017 — Buenos Aires (hora de lanzamiento: tarde/noche)</div>
+      <div class="tl-card">
+        <div class="tl-name">Ualá</div>
+        <div class="tl-tagline">Obstáculo eliminado: "Para tener tarjeta necesitás ir al banco, tener recibo de sueldo y esperar semanas"</div>
+        <div class="tl-txt">Pierpaolo Barbieri lanzó Ualá el <strong>4 de octubre de 2017</strong> con un equipo de solo 20 personas. El día del lanzamiento recibieron <strong>más de 1.500 solicitudes de alta</strong> — en pocas horas. El obstáculo era la exclusión bancaria: para tener una tarjeta Mastercard en Argentina, la banca tradicional exigía empleo formal, documentación y hasta 30 días de espera. Ualá eliminó todo eso: descarga la app, cargá el DNI, recibís la tarjeta en días. La respuesta fue inmediata porque la necesidad ya existía en millones de personas sin acceso. Hoy: más de 8 millones de usuarios en Argentina, Colombia y México.</div>
+        <div>
+          <span class="tl-stat">📲 +1.500 solicitudes el primer día</span>
+          <span class="tl-stat">👥 +8 millones de usuarios actuales</span>
+          <span class="tl-stat">🦄 Unicornio ($1.000M+ en valuación)</span>
+          <span class="tl-stat">💼 Inversores iniciales: George Soros, Kevin Ryan (Business Insider)</span>
+        </div>
+        <div style="margin-top:10px;">
+          <span style="font-size:.75rem;color:var(--text3);">Fundador: </span>
+          <a href="https://x.com/pbbarbieri" target="_blank" class="tl-social">@pbbarbieri (X/Twitter)</a>
+          <span style="margin:0 6px;color:var(--text3)">·</span>
+          <a href="https://x.com/uala_arg" target="_blank" class="tl-social">@uala_arg (X/Twitter)</a>
+          <span style="margin:0 6px;color:var(--text3)">·</span>
+          <a href="https://www.instagram.com/uala_arg" target="_blank" class="tl-social">@uala_arg (Instagram)</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">🗓️ Agosto 2018 — Buenos Aires</div>
+      <div class="tl-card">
+        <div class="tl-name">Rappi Argentina</div>
+        <div class="tl-tagline">Obstáculo eliminado: "El delivery online solo sirve para comida y llega cuando quiere"</div>
+        <div class="tl-txt">Rappi llegó a Argentina en 2018 prometiendo delivery en menos de 35 minutos de <em>cualquier cosa</em> — no solo comida, también supermercado, farmacia, efectivo. La demanda ya existía: los porteños querían conveniencia radical. El primer año fue un "récord absoluto para un país nuevo": <strong>USD 30 millones facturados, 2,5 millones de pedidos</strong>. Proyectaron 100 empleados y terminaron con 200. Algunos comercios <strong>duplicaron sus ventas y abrieron nuevos locales</strong> por la demanda extra que trajo Rappi. Matías Casoy (Director Argentina) lo confirmó en entrevista con Infobae el 9 de febrero de 2019.</div>
+        <div>
+          <span class="tl-stat">💵 USD 30M facturados en 2018 (primer año)</span>
+          <span class="tl-stat">📦 2,5 millones de pedidos</span>
+          <span class="tl-stat">👤 100 empleados proyectados → 200 reales</span>
+          <span class="tl-stat">🏪 Comercios que duplicaron ventas al sumarse</span>
+        </div>
+        <div style="margin-top:10px;">
+          <span style="font-size:.75rem;color:var(--text3);">Seguir: </span>
+          <a href="https://x.com/rappiar" target="_blank" class="tl-social">@rappiar (X/Twitter)</a>
+          <span style="margin:0 6px;color:var(--text3)">·</span>
+          <a href="https://www.instagram.com/rappi.argentina" target="_blank" class="tl-social">@rappi.argentina (Instagram)</a>
+          <span style="margin:0 6px;color:var(--text3)">·</span>
+          <span style="font-size:.72rem;color:var(--text3);">Fuente: Infobae, 9 feb 2019</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">🗓️ 2020 — Buenos Aires (Kavak llegó a Argentina en 2020)</div>
+      <div class="tl-card">
+        <div class="tl-name">Kavak</div>
+        <div class="tl-tagline">Obstáculo eliminado: "Comprar un auto usado en Argentina es una ruleta rusa"</div>
+        <div class="tl-txt">Kavak llegó a Argentina en 2020 adquiriendo Checkars.com (empresa argentina fundada en 2018) con una inversión inicial de USD 10 millones. El mercado de autos usados argentino tenía demanda enorme pero el obstáculo era la <strong>desconfianza</strong>: precios opacos, sin historial verificado, riesgo de fraude. El CEO de Kavak lo dijo sin rodeos: <em>"El negocio de la compraventa de autos tiene malas mañas y pésimas calificaciones de los usuarios."</em> Kavak trajo precios basados en datos, revisión técnica, garantía y financiamiento. El resultado: <strong>cada auto disponible se reservaba dos veces</strong>. Pasaron de 100 autos disponibles a 2.500 en poco tiempo.</div>
+        <div>
+          <span class="tl-stat">🚗 Cada auto disponible = reservado 2 veces</span>
+          <span class="tl-stat">📈 100 autos → 2.500 en stock</span>
+          <span class="tl-stat">💰 Empresa más valiosa de LatAm en su momento</span>
+          <span class="tl-stat">🏢 Oficinas en Saavedra, Abasto, San Martín y Malvinas Argentinas</span>
+        </div>
+        <div style="margin-top:10px;">
+          <span style="font-size:.75rem;color:var(--text3);">Fundador: Carlos García Ottati · </span>
+          <a href="https://x.com/kavakargentina" target="_blank" class="tl-social">@kavakargentina (X/Twitter)</a>
+          <span style="margin:0 6px;color:var(--text3)">·</span>
+          <a href="https://www.instagram.com/kavakargentina" target="_blank" class="tl-social">@kavakargentina (Instagram)</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="background:var(--c2a);border:1px solid var(--c2b);border-radius:14px;padding:20px 24px;">
+    <div class="tl-name" style="margin-bottom:8px;">Patrón común en los 5 casos</div>
+    <div style="font-size:.82rem;color:var(--c2c);line-height:1.8;">
+      1️⃣ Nadie los convocó — la demanda ya existía, reprimida por un obstáculo específico.<br>
+      2️⃣ El crecimiento inicial fue explosivo y orgánico — el boca a boca fue el primer canal.<br>
+      3️⃣ Los inversores llegaron después de ver el arranque — no financiaron la idea, financiaron la prueba.<br>
+      4️⃣ La competencia tardó años en reaccionar — para cuando apareció, el primero ya era el nombre del mercado.
+    </div>
+  </div>
+
+</div>
+
+<!-- ─── TAB 3: REFERENTES ─── -->
+<div class="tab-pane" id="tab-referentes">
+
+  <div class="sec-label">Quiénes lo trabajan</div>
+  <div class="sec-title">Referentes que hablan de demanda reprimida y posicionamiento</div>
+  <div class="sec-desc">Emprendedores, consultores e inversores que analizan públicamente estos conceptos. Con sus redes para seguirlos.</div>
+
+  <div class="ref-grid">
+
+    <div class="ref-card">
+      <div class="ref-header">
+        <div class="ref-ava">👨‍💼</div>
+        <div>
+          <div class="ref-name">Pierpaolo Barbieri</div>
+          <div class="ref-role">Fundador y CEO de Ualá · Buenos Aires</div>
+        </div>
+      </div>
+      <div class="ref-desc">Habla públicamente de cómo detectar mercados subatendidos en Argentina y LatAm. Su frase más citada: <em>"Para la Argentina, la tecnología es la soja digital."</em> Defensor de que la inclusión financiera no es caridad sino la detección más grande de demanda reprimida del siglo.</div>
+      <div class="ref-pills">
+        <span class="ref-pill">Fintech</span>
+        <span class="ref-pill">Inclusión financiera</span>
+        <span class="ref-pill">LatAm</span>
+      </div>
+      <div class="ref-links">
+        <a href="https://x.com/pbbarbieri" target="_blank" class="ref-link">🐦 @pbbarbieri en X/Twitter</a>
+        <a href="https://www.linkedin.com/in/pbbarbieri" target="_blank" class="ref-link">💼 LinkedIn: pbbarbieri</a>
+      </div>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-header">
+        <div class="ref-ava">🛒</div>
+        <div>
+          <div class="ref-name">Marcos Galperin</div>
+          <div class="ref-role">Fundador y CEO de Mercado Libre · Buenos Aires</div>
+        </div>
+      </div>
+      <div class="ref-desc">El caso más estudiado de demanda reprimida en Argentina. En 1999 detectó que millones querían comprar y vender online pero no había infraestructura confiable. Construyó la infraestructura. Hoy Mercado Libre vale más que cualquier banco latinoamericano. Sus declaraciones sobre regulación y e-commerce definen el debate local.</div>
+      <div class="ref-pills">
+        <span class="ref-pill">E-commerce</span>
+        <span class="ref-pill">Pagos digitales</span>
+        <span class="ref-pill">Marketplace</span>
+      </div>
+      <div class="ref-links">
+        <a href="https://x.com/mgalperin" target="_blank" class="ref-link">🐦 @mgalperin en X/Twitter</a>
+        <a href="https://www.linkedin.com/in/marcosgalperin" target="_blank" class="ref-link">💼 LinkedIn: marcosgalperin</a>
+      </div>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-header">
+        <div class="ref-ava">📈</div>
+        <div>
+          <div class="ref-name">Hernán Litvac</div>
+          <div class="ref-role">Co-fundador icomm · Consultor eCommerce Argentina</div>
+        </div>
+      </div>
+      <div class="ref-desc">Referente en estrategia digital y e-commerce en Argentina. Analiza regularmente en LinkedIn y conferencias los sectores donde hay "vacíos de oferta" — que es su forma de llamar a la demanda reprimida. Participa en eventos como eCommerce Day Argentina. Muy activo en LinkedIn con análisis del mercado local.</div>
+      <div class="ref-pills">
+        <span class="ref-pill">eCommerce</span>
+        <span class="ref-pill">Estrategia digital</span>
+        <span class="ref-pill">Argentina</span>
+      </div>
+      <div class="ref-links">
+        <a href="https://www.linkedin.com/in/hernanlitvac" target="_blank" class="ref-link">💼 @hernanlitvac en LinkedIn</a>
+      </div>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-header">
+        <div class="ref-ava">🎯</div>
+        <div>
+          <div class="ref-name">Andrés Pérez Ortega</div>
+          <div class="ref-role">Consultor de Posicionamiento · España/LatAm</div>
+        </div>
+      </div>
+      <div class="ref-desc">Principal referente hispanohablante en <strong>branding personal y posicionamiento</strong>. Creador de brandingpersonal.com. Sus conceptos sobre "ser el primero en la mente del cliente" son el marco teórico detrás de cómo convertir demanda reprimida en autoridad de mercado. Muy activo en LinkedIn.</div>
+      <div class="ref-pills">
+        <span class="ref-pill">Posicionamiento</span>
+        <span class="ref-pill">Branding personal</span>
+        <span class="ref-pill">Autoridad</span>
+      </div>
+      <div class="ref-links">
+        <a href="https://www.andresperezortega.com" target="_blank" class="ref-link">🌐 andresperezortega.com</a>
+        <a href="https://www.linkedin.com/in/andresperezortega" target="_blank" class="ref-link">💼 LinkedIn: andresperezortega</a>
+      </div>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-header">
+        <div class="ref-ava">🏎️</div>
+        <div>
+          <div class="ref-name">Carlos García Ottati</div>
+          <div class="ref-role">Co-fundador y CEO de Kavak · México/Argentina</div>
+        </div>
+      </div>
+      <div class="ref-desc">Habla abiertamente sobre cómo identificó el mercado de autos usados en LatAm como el mayor caso de demanda reprimida por desconfianza de la región. Sus entrevistas en Forbes y Bloomberg explican el método: encontrar un sector con mala reputación y demanda probada, y atacar el obstáculo (confianza, transparencia, datos).</div>
+      <div class="ref-pills">
+        <span class="ref-pill">Marketplace</span>
+        <span class="ref-pill">Confianza de mercado</span>
+        <span class="ref-pill">LatAm</span>
+      </div>
+      <div class="ref-links">
+        <a href="https://x.com/kavakargentina" target="_blank" class="ref-link">🐦 @kavakargentina en X/Twitter</a>
+        <a href="https://www.linkedin.com/company/kavak-com" target="_blank" class="ref-link">💼 Kavak en LinkedIn</a>
+      </div>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-header">
+        <div class="ref-ava">🚀</div>
+        <div>
+          <div class="ref-name">Kaszek Ventures</div>
+          <div class="ref-role">Fondo de inversión · Buenos Aires / São Paulo</div>
+        </div>
+      </div>
+      <div class="ref-desc">El fondo de VC más influyente de LatAm (fundado por ex-ejecutivos de MercadoLibre). Invirtió en Ualá, PedidosYa, y docenas de startups que explotaron demanda reprimida en Argentina y región. Sus tesis de inversión son manuales abiertos de cómo identificar mercados reprimidos. Su newsletter y publicaciones en LinkedIn son lectura obligatoria.</div>
+      <div class="ref-pills">
+        <span class="ref-pill">Venture Capital</span>
+        <span class="ref-pill">LatAm</span>
+        <span class="ref-pill">Startups</span>
+      </div>
+      <div class="ref-links">
+        <a href="https://x.com/kaszekventures" target="_blank" class="ref-link">🐦 @kaszekventures en X/Twitter</a>
+        <a href="https://www.linkedin.com/company/kaszek" target="_blank" class="ref-link">💼 Kaszek en LinkedIn</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="libros">
+    <div class="libros-t">📚 Lecturas de referencia sobre posicionamiento y demanda latente</div>
+    <div class="libro-list">
+      <div class="libro">
+        <div class="libro-ico">📗</div>
+        <div>
+          <div class="libro-name">Positioning: The Battle for Your Mind</div>
+          <div class="libro-auth">Al Ries &amp; Jack Trout · 1981 (fundacional, sigue vigente)</div>
+          <div class="libro-d">El libro que inventó el concepto de posicionamiento en la mente del consumidor. La base teórica de "ser el primero en X" como ventaja competitiva irreversible. Aplica directamente a capturar demanda reprimida.</div>
+        </div>
+      </div>
+      <div class="libro">
+        <div class="libro-ico">📘</div>
+        <div>
+          <div class="libro-name">Blue Ocean Strategy</div>
+          <div class="libro-auth">W. Chan Kim &amp; Renée Mauborgne · 2005</div>
+          <div class="libro-d">Marco para crear mercados sin competencia ("océanos azules") encontrando necesidades no cubiertas — demanda reprimida formalizada como estrategia de innovación.</div>
+        </div>
+      </div>
+      <div class="libro">
+        <div class="libro-ico">📙</div>
+        <div>
+          <div class="libro-name">Zero to One</div>
+          <div class="libro-auth">Peter Thiel · 2014</div>
+          <div class="libro-d">Tesis de Thiel: los mejores negocios son monopolios secretos — "secreto" = demanda reprimida que nadie más vio todavía. El capítulo sobre "secrets" es el mapa para identificarla.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ─── TAB 4: AUTORIDAD ─── -->
+<div class="tab-pane" id="tab-autoridad">
+
+  <div class="sec-label">Autoridad de Posicionamiento en el Mercado</div>
+  <div class="sec-title">Ser el nombre que le viene a la mente cuando aparece la necesidad</div>
+  <div class="sec-desc">Autoridad de mercado no es fama — es ser la primera opción sin discusión dentro de un nicho específico. Y hay una sola ventana perfecta para construirla: cuando el mercado está reprimido y vos llegás primero.</div>
+
+  <div class="aut-hero">
+    <div class="aut-q">"La autoridad de mercado no se declara — se conquista siendo el primero en nombrar, en resolver o en estar cuando aparece la necesidad."</div>
+    <div class="aut-p">En economías de atención, el mercado tiene memoria de corto plazo para los que llegan tarde y memoria perpetua para el que llegó primero. Cuando Ualá apareció, el 95% de los argentinos sin tarjeta bancaria ya tenía su primera experiencia con fintech. Esos usuarios nunca olvidaron que Ualá los incluyó primero. Eso es autoridad de posicionamiento.</div>
+  </div>
+
+  <div class="sec-label" style="margin-bottom:8px;">Los 5 niveles de autoridad de mercado</div>
+  <div class="piramide">
+    <div class="pir-header">🏆 Pirámide de Autoridad de Mercado — de menos a más duradera</div>
+    <div class="pir-row">
+      <div class="pir-n">5</div>
+      <div class="pir-t">Autoridad de Nombre</div>
+      <div class="pir-d">El mercado usa tu nombre como genérico del producto. "Googlear", "hacer un Rappi", "mandar un PedidosYa". Esto no se busca — pasa cuando se sostiene la autoridad durante años en el nivel 4.</div>
+    </div>
+    <div class="pir-row">
+      <div class="pir-n">4</div>
+      <div class="pir-t">Autoridad de Referencia</div>
+      <div class="pir-d">La prensa, los competidores y los inversores te citan para explicar el mercado. Sos el benchmark. Los otros se posicionan "como vos pero diferente".</div>
+    </div>
+    <div class="pir-row">
+      <div class="pir-n">3</div>
+      <div class="pir-t">Autoridad de Experiencia</div>
+      <div class="pir-d">Los primeros clientes te recomiendan activamente porque vos los resolviste cuando nadie más podía. El boca a boca orgánico te posiciona en el tercer nivel.</div>
+    </div>
+    <div class="pir-row">
+      <div class="pir-n">2</div>
+      <div class="pir-t">Autoridad de Solución</div>
+      <div class="pir-d">Sos conocido por resolver ese problema específico mejor que cualquier alternativa. Los competidores hacen lo mismo pero la gente igual te prefiere.</div>
+    </div>
+    <div class="pir-row">
+      <div class="pir-n">1</div>
+      <div class="pir-t">Autoridad de Llegada</div>
+      <div class="pir-d">Llegaste primero cuando el mercado estaba reprimido. La demanda volcó sobre vos sin que pagues para convencer a nadie. Este es el momento fundacional.</div>
+    </div>
+  </div>
+
+  <div class="sec-label" style="margin-bottom:14px;">Cómo se construye autoridad cuando la demanda explota</div>
+  <div class="claves-grid">
+    <div class="clave">
+      <div class="clave-n">01</div>
+      <div class="clave-t">Nombrar el problema antes que nadie</div>
+      <div class="clave-d">Quien le pone nombre al dolor del cliente se convierte en el propietario del problema. Si vos sos el primero en decir "guardado urbano en CABA", cuando la gente busque eso, te va a encontrar primero.</div>
+    </div>
+    <div class="clave">
+      <div class="clave-n">02</div>
+      <div class="clave-n" style="font-size:1.8rem;color:var(--c4b);"></div>
+      <div class="clave-t">Publicar el contenido que el mercado busca</div>
+      <div class="clave-d">La autoridad orgánica se construye respondiendo en público las preguntas que la gente hace en privado. Blogs, redes, YouTube — el contenido rankea y posiciona antes de que la gente quiera comprar.</div>
+    </div>
+    <div class="clave">
+      <div class="clave-n">03</div>
+      <div class="clave-t">Capturar las primeras reseñas</div>
+      <div class="clave-d">Los primeros clientes de un mercado reprimido son los más agradecidos. Sus testimonios auténticos valen más que cualquier campaña — porque dicen "encontré lo que nadie tenía antes".</div>
+    </div>
+    <div class="clave">
+      <div class="clave-n">04</div>
+      <div class="clave-t">Establecer los estándares del sector</div>
+      <div class="clave-d">Ualá definió cómo es una billetera digital en Argentina. Mercado Pago definió cómo son los pagos online. Los que llegan después tienen que compararse con el estándar que vos fijaste.</div>
+    </div>
+    <div class="clave">
+      <div class="clave-n">05</div>
+      <div class="clave-t">No diluirse cuando escala</div>
+      <div class="clave-d">La tentación al crecer es intentar servir a todos. El error mata la autoridad. Mercado Libre nunca dejó de ser "el lugar para comprar y vender" incluso cuando sumó pagos, envíos y fintech.</div>
+    </div>
+    <div class="clave">
+      <div class="clave-n">06</div>
+      <div class="clave-t">Boca a boca como métrica</div>
+      <div class="clave-d">La demanda reprimida tiene una métrica perfecta: ¿cuántos de tus clientes llegaron por recomendación sin que nadie los pagara? Ese número es tu autoridad de mercado medida en comportamiento.</div>
+    </div>
+  </div>
+
+  <div style="background:var(--c4a);border:1px solid var(--c4b);border-radius:14px;padding:20px 24px;">
+    <div style="font-size:.88rem;font-weight:800;color:var(--c4c);margin-bottom:10px;">⚠️ La trampa de la autoridad tardía</div>
+    <div style="font-size:.82rem;color:#1e3a8a;line-height:1.78;">Cuando el mercado reprimido explota y hay ganadores visibles, muchos competidores entran al mismo tiempo. La carrera no es de velocidad de producto — es de velocidad de posicionamiento mental. El competidor que llega segundo puede ganar si entra con una <strong>diferenciación de posicionamiento</strong> muy clara. Pero el que llega quinto tiene que gastar 10 veces más para desplazar al primero. Por eso el timing dentro de un mercado reprimido es la decisión estratégica más importante.</div>
+  </div>
+
+</div>
+
+<!-- ─── TAB 5: TMC & TME ─── -->
+<div class="tab-pane" id="tab-tmc">
+
+  <div class="sec-label">Aplicación Práctica</div>
+  <div class="sec-title">TodasMisCosas y TodosMisEventos frente a la demanda reprimida</div>
+  <div class="sec-desc">Los dos proyectos de Alejandro atacan mercados con demanda orgánica reprimida evidente. Acá el análisis de cada uno y cómo construir autoridad antes de que el mercado explote.</div>
+
+  <div class="apl-box">
+    <div class="apl-tag">🏠 TMC — TodasMisCosas.com</div>
+    <div class="apl-title">El mercado de guardado urbano en CABA/AMBA: demanda probada, oferta fragmentada</div>
+    <div class="apl-p">
+      La demanda existe y es enorme: personas que se mudan, parejas que se separan, emprendedores con stock, estudiantes, personas en transición que necesitan guardar cosas por semanas o meses. Hoy resuelven esto de forma informal — pidiendo al tío, alquilando un garage caro, llenando el balcón o pagando un self-storage caro y lejos. El obstáculo no es que no quieran pagar — es que no tienen una plataforma confiable y simple que les conecte con espacios disponibles cerca.<br><br>
+      <strong>Ese es exactamente el obstáculo de demanda reprimida que TMC elimina.</strong>
+    </div>
+  </div>
+
+  <div class="sec-label" style="margin-bottom:12px;">Checklist de demanda reprimida TMC</div>
+  <div class="checklist">
+    <div class="ck-item">
+      <div class="ck-ico">✅</div>
+      <div>
+        <div class="ck-t">Necesidad real y urgente</div>
+        <div class="ck-d">Millones de porteños necesitan guardar cosas temporalmente. No es un capricho — es un problema cotidiano en una ciudad densa donde el espacio escasea.</div>
+      </div>
+    </div>
+    <div class="ck-item">
+      <div class="ck-ico">✅</div>
+      <div>
+        <div class="ck-t">Soluciones actuales son malas o caras</div>
+        <div class="ck-d">Self-storage formal (Gurda, Box Storage) es caro y lejos. La solución informal (pedir favores) no escala y tiene fricción social. El mercado está partido: o muy caro o muy incómodo.</div>
+      </div>
+    </div>
+    <div class="ck-item">
+      <div class="ck-ico">✅</div>
+      <div>
+        <div class="ck-t">Oferta disponible que nadie conecta</div>
+        <div class="ck-d">Hay miles de habitaciones vacías, cocheras sin uso, fondos de casas en AMBA. Esa oferta existe pero no tiene canal. TMC es el canal.</div>
+      </div>
+    </div>
+    <div class="ck-item">
+      <div class="ck-ico">✅</div>
+      <div>
+        <div class="ck-t">El boca a boca ya existe sin producto</div>
+        <div class="ck-d">La gente ya pregunta en grupos de WhatsApp "¿alguien tiene un lugarcito para guardar X?". Eso es demanda reprimida buscando solución informal. TMC la formaliza.</div>
+      </div>
+    </div>
+    <div class="ck-item">
+      <div class="ck-ico">⚡</div>
+      <div>
+        <div class="ck-t">Ventana de autoridad todavía abierta</div>
+        <div class="ck-d">No hay un jugador dominante en guardado urbano P2P en Argentina. La ventana para convertirse en "el Airbnb del guardado en Buenos Aires" sigue abierta.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="oportunidad">
+    <div class="oport-t">🎯 Estrategia de autoridad recomendada para TMC</div>
+    <div class="oport-p">
+      <strong style="color:#f3e8ff;">Nombrar el nicho antes que nadie:</strong> "Guardado urbano colaborativo en Buenos Aires" — si TMC publica ese contenido consistentemente en LinkedIn, Instagram y SEO antes de que aparezca competencia, va a ser el nombre que aparece cuando la gente busca.<br><br>
+      <strong style="color:#f3e8ff;">Capturar los primeros testimonios auténticos:</strong> Los primeros 50 usuarios que guardaron o alquilaron exitosamente son oro. Sus historias reales son la prueba de que la demanda existe y el sistema funciona.<br><br>
+      <strong style="color:#f3e8ff;">Convertir el equipo en referentes:</strong> Alejandro y Guille deberían aparecer en medios locales (Infotechnology, iProUP, Cronista Pymes) como "los que crearon el mercado de guardado urbano en Argentina". La cobertura temprana es posicionamiento que el dinero no puede comprar después.
+    </div>
+  </div>
+
+  <div class="apl-box" style="background:linear-gradient(135deg,#fdf4ff,#ede9fe);border-color:#d8b4fe;margin-top:28px;">
+    <div class="apl-tag" style="color:#581c87;">🎭 TME — TodosMisEventos</div>
+    <div class="apl-title" style="color:#581c87;">El mercado de eventos pequeños y privados: todavía más reprimido</div>
+    <div class="apl-p" style="color:#4c1d95;">
+      En Argentina hay millones de cumpleaños, casamientos chicos, reuniones corporativas, shows íntimos y fiestas privadas que se organizan sin plataforma — todo por WhatsApp, recomendación boca a boca y Excel. Los organizadores de eventos pequeños no tienen un lugar para mostrar su oferta, y los que buscan no tienen un lugar centralizado para encontrarla.<br><br>
+      El obstáculo es doble: falta de discovery (no sé qué existe) y falta de confianza (no conozco al proveedor). TME puede eliminar ambos. El timing es especialmente favorable: post-pandemia la demanda de eventos presenciales está en un momento alto histórico mientras la oferta digital sigue fragmentada.<br><br>
+      <strong style="color:#3b0764;">Autoridad a construir: ser "el lugar donde encontrás todo para tu evento en Argentina".</strong> Un posicionamiento que tiene espacio porque no existe hoy.
+    </div>
+  </div>
+
+  <div class="card-grid" style="margin-top:0;">
+    <div class="card" style="border-left-color:#d8b4fe;">
+      <div class="card-ico">📊</div>
+      <div class="card-t">Señal de demanda en TME</div>
+      <div class="card-d">La gente busca en Instagram y Google "salones de eventos pequeños CABA" y encuentra resultados fragmentados y desactualizados. Eso es una señal clásica de mercado reprimido.</div>
+    </div>
+    <div class="card" style="border-left-color:#d8b4fe;">
+      <div class="card-ico">🎯</div>
+      <div class="card-t">Diferenciación de posicionamiento</div>
+      <div class="card-d">Mientras Eventbrite y Tickets.ar apuntan a eventos masivos, TME puede dominar el nicho de eventos íntimos (10 a 200 personas). Un nicho sin nombre es un nicho sin dueño — hasta que alguien lo nombra.</div>
+    </div>
+    <div class="card" style="border-left-color:#d8b4fe;">
+      <div class="card-ico">⏩</div>
+      <div class="card-t">Efecto de primera entrada</div>
+      <div class="card-d">El primer marketplace serio de eventos privados en Argentina va a recibir cobertura espontánea de medios. Los clientes iniciales van a ser los más leales porque "fueron los primeros en poder hacerlo bien".</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function switchTab(id, btn, color){
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>{b.classList.remove('active');b.style.color='';b.style.borderBottomColor='';});
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+  btn.style.color=color;
+  btn.style.borderBottomColor=color;
+}
+</script>
+
+</body>
+</html>
