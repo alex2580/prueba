@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Development Kit · Análisis de Stack · TMC/TME 2026</title>
+<style>
+:root{
+  --navy:#0F172A;--navy2:#1E293B;--navy3:#334155;
+  --canvas:#F7F6F3;--white:#FFFFFF;
+  --text:#1A1917;--text2:#57534E;--text3:#A8A29E;
+  --border:#E7E5E0;--border2:#D6D3CE;
+
+  /* Layer colors */
+  --l1-lt:#BBF7D0;--l1-md:#34D399;--l1-dp:#065F46;--l1-bg:#F0FDF4;
+  --l2-lt:#BAE6FD;--l2-md:#38BDF8;--l2-dp:#0C4A6E;--l2-bg:#F0F9FF;
+  --l3-lt:#FED7AA;--l3-md:#F97316;--l3-dp:#7C2D12;--l3-bg:#FFF7ED;
+  --l4-lt:#DDD5F8;--l4-md:#A78BFA;--l4-dp:#4C1D95;--l4-bg:#F5F3FF;
+  --l5-lt:#FBCFE8;--l5-md:#F472B6;--l5-dp:#831843;--l5-bg:#FDF2F8;
+
+  /* Status */
+  --ok-bg:#DCFCE7;--ok-c:#166534;
+  --warn-bg:#FEF9C3;--warn-c:#854D0E;
+  --miss-bg:#FEE2E2;--miss-c:#991B1B;
+
+  --r1:6px;--r2:14px;--r3:22px;--t:.16s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--canvas);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased}
+
+/* ── HERO ── */
+.hero{background:var(--navy);padding:52px 0 0;overflow:hidden;position:relative}
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--l1-md),var(--l2-md),var(--l3-md),var(--l4-md),var(--l5-md))}
+.hero-inner{max-width:960px;margin:0 auto;padding:0 32px 48px}
+.hero-eye{font-size:.68rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#475569;margin-bottom:.9rem}
+.hero-title{font-size:2.4rem;font-weight:900;letter-spacing:-.05em;line-height:1.1;color:#F1F5F9;margin-bottom:.5rem}
+.hero-title span{background:linear-gradient(90deg,var(--l1-md),var(--l2-md),var(--l3-md));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:.9rem;color:#64748B;max-width:540px;margin-bottom:2.5rem;line-height:1.6}
+
+/* STATUS STRIP */
+.status-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:rgba(255,255,255,.06);border-radius:var(--r2);overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+.ss-cell{padding:.9rem .8rem;background:rgba(255,255,255,.03);transition:background var(--t);cursor:default}
+.ss-cell:hover{background:rgba(255,255,255,.07)}
+.ss-lnum{font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.25rem}
+.ss-l1 .ss-lnum{color:var(--l1-md)}
+.ss-l2 .ss-lnum{color:var(--l2-md)}
+.ss-l3 .ss-lnum{color:var(--l3-md)}
+.ss-l4 .ss-lnum{color:var(--l4-md)}
+.ss-l5 .ss-lnum{color:var(--l5-md)}
+.ss-name{font-size:.78rem;font-weight:700;color:#E2E8F0;margin-bottom:.3rem}
+.ss-badge{display:inline-flex;align-items:center;gap:.3rem;font-size:.62rem;font-weight:700;padding:.15rem .5rem;border-radius:99px}
+.sb-ok{background:rgba(74,222,128,.15);color:#4ADE80}
+.sb-warn{background:rgba(251,191,36,.15);color:#FCD34D}
+.sb-miss{background:rgba(248,113,113,.15);color:#F87171}
+
+/* ── CONTENT ── */
+.content{max-width:960px;margin:0 auto;padding:40px 32px 72px}
+
+.export-bar{display:flex;justify-content:flex-end;margin-bottom:1.5rem}
+.btn-export{display:inline-flex;align-items:center;gap:.4rem;background:var(--white);border:1.5px solid var(--border2);border-radius:var(--r1);padding:.35rem .9rem;font-size:.72rem;font-weight:700;color:var(--text2);cursor:pointer;transition:all var(--t)}
+.btn-export:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+/* SECTION HEADER */
+.sec-hdr{margin:2.5rem 0 1.25rem;display:flex;align-items:center;gap:12px}
+.sec-hdr:first-of-type{margin-top:0}
+.sec-hdr-txt{font-size:.62rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--text3)}
+.sec-hdr-line{flex:1;height:1px;background:var(--border)}
+
+/* ── LAYER CARDS ── */
+.layer-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r2);overflow:hidden;margin-bottom:1rem;transition:box-shadow var(--t)}
+.layer-card:hover{box-shadow:0 6px 24px rgba(0,0,0,.07)}
+
+.lc-header{display:flex;align-items:stretch;gap:0}
+.lc-num{display:flex;align-items:center;justify-content:center;writing-mode:horizontal-tb;min-width:72px;font-size:1.6rem;font-weight:900;letter-spacing:-.04em;border-right:1.5px solid var(--border);flex-shrink:0;padding:.6rem}
+.lc-l1 .lc-num{background:var(--l1-bg);color:var(--l1-dp)}
+.lc-l2 .lc-num{background:var(--l2-bg);color:var(--l2-dp)}
+.lc-l3 .lc-num{background:var(--l3-bg);color:var(--l3-dp)}
+.lc-l4 .lc-num{background:var(--l4-bg);color:var(--l4-dp)}
+.lc-l5 .lc-num{background:var(--l5-bg);color:var(--l5-dp)}
+
+.lc-title-block{flex:1;padding:.9rem 1.2rem;display:flex;flex-direction:column;justify-content:center}
+.lc-layer-label{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;margin-bottom:.15rem}
+.lc-l1 .lc-layer-label{color:var(--l1-dp)}
+.lc-l2 .lc-layer-label{color:var(--l2-dp)}
+.lc-l3 .lc-layer-label{color:var(--l3-dp)}
+.lc-l4 .lc-layer-label{color:var(--l4-dp)}
+.lc-l5 .lc-layer-label{color:var(--l5-dp)}
+.lc-name{font-size:1rem;font-weight:900;letter-spacing:-.02em;color:var(--text);margin-bottom:.2rem}
+.lc-desc{font-size:.78rem;color:var(--text2);line-height:1.5}
+.lc-status-area{display:flex;align-items:center;gap:.5rem;padding:.9rem 1.2rem;flex-shrink:0}
+
+.status-pill{font-size:.65rem;font-weight:800;padding:.3rem .75rem;border-radius:99px;letter-spacing:.03em;white-space:nowrap}
+.sp-ok{background:var(--ok-bg);color:var(--ok-c)}
+.sp-warn{background:var(--warn-bg);color:var(--warn-c)}
+.sp-miss{background:var(--miss-bg);color:var(--miss-c)}
+
+.lc-body{display:grid;grid-template-columns:1fr 1fr;border-top:1.5px solid var(--border)}
+.lc-col{padding:1.1rem 1.3rem}
+.lc-col+.lc-col{border-left:1.5px solid var(--border)}
+.lc-col-label{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:.65rem}
+
+.check-list{display:flex;flex-direction:column;gap:.35rem}
+.check-item{display:flex;align-items:flex-start;gap:.5rem;font-size:.77rem;color:var(--text2);line-height:1.5}
+.ci-ok::before{content:'✓';font-weight:900;color:#16A34A;flex-shrink:0;margin-top:.05rem}
+.ci-miss::before{content:'✗';font-weight:900;color:#DC2626;flex-shrink:0;margin-top:.05rem}
+.ci-warn::before{content:'~';font-weight:900;color:#CA8A04;flex-shrink:0;margin-top:.05rem;font-size:.9rem}
+
+code{background:var(--canvas);border:1px solid var(--border);border-radius:4px;padding:0 5px;font-size:.72rem;font-family:'SF Mono',Consolas,'Liberation Mono',monospace;color:var(--text)}
+
+/* ACCENT BAR at bottom of each card */
+.lc-accent{height:3px}
+.lc-l1 .lc-accent{background:linear-gradient(90deg,var(--l1-md),var(--l1-lt))}
+.lc-l2 .lc-accent{background:linear-gradient(90deg,var(--l2-md),var(--l2-lt))}
+.lc-l3 .lc-accent{background:linear-gradient(90deg,var(--l3-md),var(--l3-lt))}
+.lc-l4 .lc-accent{background:linear-gradient(90deg,var(--l4-md),var(--l4-lt))}
+.lc-l5 .lc-accent{background:linear-gradient(90deg,var(--l5-md),var(--l5-lt))}
+
+/* ── PRIORITY CARDS ── */
+.priority-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.85rem}
+.prio-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r2);padding:1.2rem 1.3rem;position:relative;overflow:hidden}
+.prio-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px}
+.pc-high::before{background:linear-gradient(90deg,#F97316,#FED7AA)}
+.pc-med::before{background:linear-gradient(90deg,var(--l2-md),var(--l2-lt))}
+.pc-med2::before{background:linear-gradient(90deg,var(--l5-md),var(--l5-lt))}
+.prio-rank{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem}
+.pr-high{color:#C2410C}
+.pr-med{color:var(--l2-dp)}
+.pr-med2{color:var(--l5-dp)}
+.prio-title{font-size:.95rem;font-weight:900;color:var(--text);margin-bottom:.4rem;letter-spacing:-.02em}
+.prio-desc{font-size:.76rem;color:var(--text2);line-height:1.6;margin-bottom:.75rem}
+.prio-items{display:flex;flex-direction:column;gap:.3rem}
+.prio-item{font-size:.73rem;color:var(--text2);padding:.3rem .6rem;border-radius:var(--r1);border:1px solid var(--border);background:var(--canvas)}
+
+/* ── ROADMAP ── */
+.roadmap{display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:var(--white);border:1.5px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.rm-step{padding:1.2rem 1.3rem;position:relative}
+.rm-step+.rm-step{border-left:1.5px solid var(--border)}
+.rm-when{font-size:.62rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:.3rem}
+.rm-title{font-size:.9rem;font-weight:900;color:var(--text);margin-bottom:.4rem;letter-spacing:-.02em}
+.rm-list{display:flex;flex-direction:column;gap:.25rem}
+.rm-item{font-size:.73rem;color:var(--text2);display:flex;align-items:flex-start;gap:.4rem}
+.rm-item::before{content:'→';color:var(--text3);flex-shrink:0;font-weight:700}
+
+/* ── SUMMARY BAR ── */
+.summary-bar{display:grid;grid-template-columns:repeat(4,1fr);background:var(--white);border:1.5px solid var(--border);border-radius:var(--r2);overflow:hidden;margin-bottom:1.5rem}
+.sb-item{padding:1rem 1.2rem;text-align:center}
+.sb-item+.sb-item{border-left:1.5px solid var(--border)}
+.sb-n{font-size:1.7rem;font-weight:900;letter-spacing:-.04em;color:var(--text);line-height:1}
+.sb-l{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-top:.2rem}
+
+/* FOOTER */
+footer{border-top:1.5px solid var(--border);padding:1.5rem;text-align:center;font-size:.7rem;color:var(--text3);margin-top:3rem}
+
+@media print{
+  .export-bar,.btn-export{display:none!important}
+  .layer-card,.prio-card{box-shadow:none!important;page-break-inside:avoid}
+}
+@media(max-width:720px){
+  .hero-title{font-size:1.6rem}
+  .status-strip{grid-template-columns:1fr 1fr}
+  .lc-body{grid-template-columns:1fr}
+  .lc-col+.lc-col{border-left:none;border-top:1.5px solid var(--border)}
+  .priority-grid{grid-template-columns:1fr}
+  .roadmap{grid-template-columns:1fr}
+  .rm-step+.rm-step{border-left:none;border-top:1.5px solid var(--border)}
+  .summary-bar{grid-template-columns:1fr 1fr}
+  .lc-status-area{flex-direction:column;align-items:flex-start;padding:.6rem .9rem}
+  .hero-inner{padding:0 16px 40px}
+  .content{padding:28px 14px 48px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ HERO ══════════ -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eye">Arquitectura de entorno · Julio 2026 · TMC / TME</div>
+    <div class="hero-title">Agent <span>Development Kit</span></div>
+    <div class="hero-sub">Análisis completo del stack de Claude Code — qué tenés implementado, qué falta y qué vale la pena construir. Cinco capas, un sistema. Para que Claude Code funcione como un equipo completo.</div>
+
+    <div class="status-strip">
+      <div class="ss-cell ss-l1">
+        <div class="ss-lnum">Capa 1</div>
+        <div class="ss-name">CLAUDE.md</div>
+        <span class="ss-badge sb-warn">⚠ Parcial</span>
+      </div>
+      <div class="ss-cell ss-l2">
+        <div class="ss-lnum">Capa 2</div>
+        <div class="ss-name">Skills</div>
+        <span class="ss-badge sb-warn">⚠ Parcial</span>
+      </div>
+      <div class="ss-cell ss-l3">
+        <div class="ss-lnum">Capa 3</div>
+        <div class="ss-name">Hooks</div>
+        <span class="ss-badge sb-miss">✗ No existe</span>
+      </div>
+      <div class="ss-cell ss-l4">
+        <div class="ss-lnum">Capa 4</div>
+        <div class="ss-name">Subagents</div>
+        <span class="ss-badge sb-warn">⚠ Básico</span>
+      </div>
+      <div class="ss-cell ss-l5">
+        <div class="ss-lnum">Capa 5</div>
+        <div class="ss-name">Plugins</div>
+        <span class="ss-badge sb-ok">✓ Completo</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ CONTENT ══════════ -->
+<div class="content">
+
+  <div class="export-bar">
+    <button class="btn-export" onclick="window.print()">⬇ Exportar / Imprimir</button>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="summary-bar">
+    <div class="sb-item"><div class="sb-n" style="color:#16A34A">1</div><div class="sb-l">Capa completa</div></div>
+    <div class="sb-item"><div class="sb-n" style="color:#CA8A04">3</div><div class="sb-l">Capas parciales</div></div>
+    <div class="sb-item"><div class="sb-n" style="color:#DC2626">1</div><div class="sb-l">Capa faltante</div></div>
+    <div class="sb-item"><div class="sb-n">3</div><div class="sb-l">Prioridades claras</div></div>
+  </div>
+
+  <!-- LAYERS -->
+  <div class="sec-hdr">
+    <span class="sec-hdr-txt">Las cinco capas — estado actual</span>
+    <div class="sec-hdr-line"></div>
+  </div>
+
+  <!-- L1: CLAUDE.md -->
+  <div class="layer-card lc-l1">
+    <div class="lc-header">
+      <div class="lc-num">L1</div>
+      <div class="lc-title-block">
+        <div class="lc-layer-label">Memory Layer</div>
+        <div class="lc-name">CLAUDE.md — La Memoria</div>
+        <div class="lc-desc">La constitución del repo. Reglas de nombres, estructura, expectativas. Un archivo global para todos los proyectos y uno local por repo.</div>
+      </div>
+      <div class="lc-status-area">
+        <span class="status-pill sp-warn">⚠ Parcial</span>
+      </div>
+    </div>
+    <div class="lc-body">
+      <div class="lc-col">
+        <div class="lc-col-label">Lo que ADK propone</div>
+        <div class="check-list">
+          <div class="check-item ci-ok">Un <code>CLAUDE.md</code> global en <code>~/.claude/</code> para todos los proyectos</div>
+          <div class="check-item ci-ok">Un <code>CLAUDE.md</code> por repo con reglas específicas del proyecto</div>
+          <div class="check-item ci-ok">Archivo <code>architecture.rules</code> separado con convenciones de código</div>
+          <div class="check-item ci-warn">Un sistema de memoria persistente para contexto entre sesiones</div>
+        </div>
+      </div>
+      <div class="lc-col">
+        <div class="lc-col-label">Tu estado actual</div>
+        <div class="check-list">
+          <div class="check-item ci-ok"><code>CLAUDE.md</code> completo en TMC: stack, roles, arquitectura, reglas de código, plugins, deploy</div>
+          <div class="check-item ci-ok"><code>CLAUDE.md</code> iniciado en TME con config básica</div>
+          <div class="check-item ci-ok">Sistema de memoria persistente en <code>~/.claude/projects/</code> con 30+ archivos activos</div>
+          <div class="check-item ci-miss">Falta <code>~/.claude/CLAUDE.md</code> global que aplique a TODOS los proyectos sin repetir reglas en cada repo</div>
+        </div>
+      </div>
+    </div>
+    <div class="lc-accent"></div>
+  </div>
+
+  <!-- L2: Skills -->
+  <div class="layer-card lc-l2">
+    <div class="lc-header">
+      <div class="lc-num">L2</div>
+      <div class="lc-title-block">
+        <div class="lc-layer-label">Knowledge Layer</div>
+        <div class="lc-name">Skills — El Conocimiento</div>
+        <div class="lc-desc">Workflows reutilizables que Claude auto-invoca al detectar coincidencia con la descripción de la tarea. Sin slash commands — simplemente sabe.</div>
+      </div>
+      <div class="lc-status-area">
+        <span class="status-pill sp-warn">⚠ Parcial</span>
+      </div>
+    </div>
+    <div class="lc-body">
+      <div class="lc-col">
+        <div class="lc-col-label">Lo que ADK propone</div>
+        <div class="check-list">
+          <div class="check-item ci-ok">Archivos <code>.md</code> en <code>skills/</code> o <code>.claude/agents/</code> que Claude invoca por similitud semántica</div>
+          <div class="check-item ci-ok">Scripts de referencia y plantillas en <code>scripts/</code></div>
+          <div class="check-item ci-ok">Skills compartidas entre todo el equipo (distribuidas vía plugins)</div>
+          <div class="check-item ci-warn">Skills project-specific para flujos únicos de cada repo</div>
+        </div>
+      </div>
+      <div class="lc-col">
+        <div class="lc-col-label">Tu estado actual</div>
+        <div class="check-list">
+          <div class="check-item ci-ok">7 plugins instalados = 55 skills activas (engineering, marketing, sales, product-management, legal, desktop-commander, productivity)</div>
+          <div class="check-item ci-ok">Skills de alcance global disponibles en cualquier sesión</div>
+          <div class="check-item ci-miss">Faltan skills <em>específicas de TMC/TME</em>: cómo deployar TMC, cómo correr una migración, cómo revisar un PR del stack propio</div>
+          <div class="check-item ci-miss">No existe carpeta <code>.claude/agents/</code> en el repo con workflows propios</div>
+        </div>
+      </div>
+    </div>
+    <div class="lc-accent"></div>
+  </div>
+
+  <!-- L3: Hooks -->
+  <div class="layer-card lc-l3">
+    <div class="lc-header">
+      <div class="lc-num">L3</div>
+      <div class="lc-title-block">
+        <div class="lc-layer-label">Guardrail Layer · 🔴 La mayor brecha</div>
+        <div class="lc-name">Hooks — Los Guardianes</div>
+        <div class="lc-desc">Shell scripts que corren antes y después de cada tool call. Bloquean comandos peligrosos, auto-lintean al guardar, pingean Slack en deploy. Determinísticos. No AI. No dependen de que Claude lo recuerde.</div>
+      </div>
+      <div class="lc-status-area">
+        <span class="status-pill sp-miss">✗ No existe</span>
+      </div>
+    </div>
+    <div class="lc-body">
+      <div class="lc-col">
+        <div class="lc-col-label">Lo que ADK propone</div>
+        <div class="check-list">
+          <div class="check-item ci-ok"><code>PreToolUse.sh</code> — valida y bloquea antes de ejecutar cualquier herramienta</div>
+          <div class="check-item ci-ok"><code>PostToolUse.sh</code> — auto-lint, auto-format, notificaciones después de cada acción</div>
+          <div class="check-item ci-ok"><code>SessionStart.sh</code> — contexto automático al arrancar: estado del repo, pendientes, salud del sistema</div>
+          <div class="check-item ci-ok">Son shell puro — predecibles, auditables, sin costo de tokens</div>
+        </div>
+      </div>
+      <div class="lc-col">
+        <div class="lc-col-label">Lo que te haría falta a vos</div>
+        <div class="check-list">
+          <div class="check-item ci-miss">Nada de esto existe hoy en el entorno</div>
+          <div class="check-item ci-warn"><strong>PreToolUse:</strong> bloquear <code>rm -rf</code> en rutas de prod, alertar al tocar <code>emailService.js</code> o controllers de MercadoPago, bloquear force-push a master</div>
+          <div class="check-item ci-warn"><strong>PostToolUse:</strong> <code>tsc --noEmit</code> automático después de editar cualquier <code>.ts/.tsx</code> de TMC — los errores de TypeScript ya no llegan al push</div>
+          <div class="check-item ci-warn"><strong>SessionStart:</strong> estado de git TMC/TME, verificar que <code>servidor.py</code> corre en 8765, mostrar migraciones pendientes desde CLAUDE.md</div>
+        </div>
+      </div>
+    </div>
+    <div class="lc-accent"></div>
+  </div>
+
+  <!-- L4: Subagents -->
+  <div class="layer-card lc-l4">
+    <div class="lc-header">
+      <div class="lc-num">L4</div>
+      <div class="lc-title-block">
+        <div class="lc-layer-label">Delegation Layer</div>
+        <div class="lc-name">Subagents — La Delegación</div>
+        <div class="lc-desc">Agentes aislados con su propio contexto. Un code reviewer que solo ve el diff. Un test runner con permisos propios. Mantiene la sesión principal limpia.</div>
+      </div>
+      <div class="lc-status-area">
+        <span class="status-pill sp-warn">⚠ Básico</span>
+      </div>
+    </div>
+    <div class="lc-body">
+      <div class="lc-col">
+        <div class="lc-col-label">Lo que ADK propone</div>
+        <div class="check-list">
+          <div class="check-item ci-ok">Archivos <code>.md</code> en <code>subagents/</code> que definen agentes especializados con permisos y contexto propios</div>
+          <div class="check-item ci-ok"><code>code-reviewer.md</code> — solo ve el diff, solo devuelve hallazgos</div>
+          <div class="check-item ci-ok"><code>test-runner.md</code> — puede correr tests, no puede modificar código</div>
+          <div class="check-item ci-ok"><code>explorer.md</code> — solo lectura, para explorar el codebase sin contaminar la sesión principal</div>
+        </div>
+      </div>
+      <div class="lc-col">
+        <div class="lc-col-label">Tu estado actual</div>
+        <div class="check-list">
+          <div class="check-item ci-ok">Usás el Agent tool para delegar tareas (Explore, code-reviewer built-in)</div>
+          <div class="check-item ci-ok">La sesión principal se mantiene razonablemente limpia</div>
+          <div class="check-item ci-warn">Sin definiciones formales de subagentes con permisos específicos</div>
+          <div class="check-item ci-warn">El valor real escala con el equipo — para un setup de 1-2 personas, el Agent tool actual es suficiente</div>
+        </div>
+      </div>
+    </div>
+    <div class="lc-accent"></div>
+  </div>
+
+  <!-- L5: Plugins -->
+  <div class="layer-card lc-l5">
+    <div class="lc-header">
+      <div class="lc-num">L5</div>
+      <div class="lc-title-block">
+        <div class="lc-layer-label">Distribution Layer</div>
+        <div class="lc-name">Plugins — La Distribución</div>
+        <div class="lc-desc">Empaqueta todo el sistema en una instalación. Cada integrante del equipo recibe los mismos skills, hooks y agentes. Alineados desde el primer día.</div>
+      </div>
+      <div class="lc-status-area">
+        <span class="status-pill sp-ok">✓ Completo</span>
+      </div>
+    </div>
+    <div class="lc-body">
+      <div class="lc-col">
+        <div class="lc-col-label">Lo que ADK propone</div>
+        <div class="check-list">
+          <div class="check-item ci-ok"><code>manifest.json</code> — lista de skills, agents, hooks y comandos a instalar</div>
+          <div class="check-item ci-ok"><code>marketplace.url</code> — paquetes npm para capacidades de agentes</div>
+          <div class="check-item ci-ok"><code>team.install</code> — un comando, todo el equipo alineado</div>
+        </div>
+      </div>
+      <div class="lc-col">
+        <div class="lc-col-label">Tu estado actual</div>
+        <div class="check-list">
+          <div class="check-item ci-ok">7 plugins instalados: engineering · marketing · sales · product-management · legal · desktop-commander · productivity</div>
+          <div class="check-item ci-ok">55 skills activas · ~3,326 tok siempre activos</div>
+          <div class="check-item ci-ok">14 plugins pendientes identificados y priorizados en memoria</div>
+          <div class="check-item ci-miss">No existe un <code>team.install</code> para que Guille replique el mismo setup con un comando</div>
+        </div>
+      </div>
+    </div>
+    <div class="lc-accent"></div>
+  </div>
+
+  <!-- PRIORITIES -->
+  <div class="sec-hdr">
+    <span class="sec-hdr-txt">3 prioridades de implementación</span>
+    <div class="sec-hdr-line"></div>
+  </div>
+
+  <div class="priority-grid">
+
+    <div class="prio-card pc-high">
+      <div class="prio-rank pr-high">🔴 Prioridad 1 · Mayor valor</div>
+      <div class="prio-title">Hooks — Los Guardianes</div>
+      <div class="prio-desc">Shell scripts determinísticos que corren en cada sesión. No dependen de la memoria de Claude. Previenen errores en producción antes de que ocurran. El mayor ROI de las 5 capas.</div>
+      <div class="prio-items">
+        <div class="prio-item"><code>PreToolUse.sh</code> — bloquear rm -rf en prod, alertar archivos críticos</div>
+        <div class="prio-item"><code>PostToolUse.sh</code> — tsc --noEmit automático al guardar .ts</div>
+        <div class="prio-item"><code>SessionStart.sh</code> — estado git + servidor.py + migraciones pendientes</div>
+      </div>
+    </div>
+
+    <div class="prio-card pc-med">
+      <div class="prio-rank pr-med">🟡 Prioridad 2 · Medio plazo</div>
+      <div class="prio-title">CLAUDE.md global</div>
+      <div class="prio-desc">Un archivo en <code>~/.claude/CLAUDE.md</code> que aplica a todos los proyectos sin repetir reglas en cada repo. Las convenciones cross-proyecto dejan de vivir solo en memoria.</div>
+      <div class="prio-items">
+        <div class="prio-item">Docs con tabs → siempre HTML en repo, nunca artifacts</div>
+        <div class="prio-item">Links siempre localhost o htmlpreview, nunca file://</div>
+        <div class="prio-item">Español rioplatense, sin emojis salvo pedido explícito</div>
+      </div>
+    </div>
+
+    <div class="prio-card pc-med2">
+      <div class="prio-rank pr-med2">🟡 Prioridad 3 · Cuando Guille use Claude</div>
+      <div class="prio-title">team.install para Guille</div>
+      <div class="prio-desc">Un script o archivo de config que Guille ejecuta una vez y queda con el mismo entorno: mismos plugins, mismo CLAUDE.md, mismos hooks. Alineados desde el primer prompt.</div>
+      <div class="prio-items">
+        <div class="prio-item">Instalar los 7 plugins del marketplace en su sesión</div>
+        <div class="prio-item">Copiar CLAUDE.md de TMC/TME a su entorno global</div>
+        <div class="prio-item">Configurar hooks básicos (PreToolUse de seguridad)</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ROADMAP -->
+  <div class="sec-hdr">
+    <span class="sec-hdr-txt">Roadmap de implementación</span>
+    <div class="sec-hdr-line"></div>
+  </div>
+
+  <div class="roadmap">
+    <div class="rm-step">
+      <div class="rm-when">Fase 1 · Cuando Ale decida</div>
+      <div class="rm-title">Hooks básicos</div>
+      <div class="rm-list">
+        <div class="rm-item">Crear <code>~/.claude/hooks/</code></div>
+        <div class="rm-item">PreToolUse: bloquear rm -rf en prod</div>
+        <div class="rm-item">PostToolUse: tsc automático en .ts</div>
+        <div class="rm-item">SessionStart: contexto al arrancar</div>
+      </div>
+    </div>
+    <div class="rm-step">
+      <div class="rm-when">Fase 2 · Siguiente</div>
+      <div class="rm-title">CLAUDE.md global + Skills propias</div>
+      <div class="rm-list">
+        <div class="rm-item">Crear <code>~/.claude/CLAUDE.md</code> con reglas cross-proyecto</div>
+        <div class="rm-item">Crear <code>.claude/agents/deploy-tmc.md</code></div>
+        <div class="rm-item">Crear <code>.claude/agents/run-migration.md</code></div>
+      </div>
+    </div>
+    <div class="rm-step">
+      <div class="rm-when">Fase 3 · Cuando Guille entre a Claude Code</div>
+      <div class="rm-title">team.install + Subagents</div>
+      <div class="rm-list">
+        <div class="rm-item">Script de instalación para Guille</div>
+        <div class="rm-item">Definir <code>code-reviewer.md</code> para PRs</div>
+        <div class="rm-item">Compartir config vía repo o GitHub Gist</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <strong>Agent Development Kit · Análisis de Stack · TMC/TME</strong> · Generado jul 2026 · Alejandro Laporte<br>
+    Basado en el ADK de 5 capas: CLAUDE.md + Skills + Hooks + Subagents + Plugins<br>
+    Ver detalle completo en memoria: <code>project_adk_mejoras_futuras.md</code>
+  </footer>
+
+</div>
+</body>
+</html>
