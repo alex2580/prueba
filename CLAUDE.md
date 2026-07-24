@@ -93,6 +93,25 @@ frontend/
 - `FRONTEND_URL` — debe ser `https://todasmiscosas.com`
 - `DB_*` — credenciales MySQL Hostinger
 
+## Claude Code Plugins instalados
+
+El entorno de Claude Code tiene 7 plugins activos. No tocan el código — son skills invocables por prompt en cualquier sesión. Total: **55 skills · ~3,326 tok siempre activos**.
+
+| Plugin | Versión | Tokens | Skills clave |
+|---|---|---|---|
+| `engineering` | v1.2 | ~609 | code-review, debug, deploy-checklist, architecture, incident-response, standup, tech-debt, testing-strategy |
+| `marketing` | v1.2 | ~563 | campaign-plan, draft-content, email-sequence, seo-audit, brand-review, competitive-brief |
+| `sales` | v1.3 | ~654 | draft-outreach, account-research, call-prep, create-an-asset, pipeline-review, competitive-intelligence |
+| `product-management` | v1.2 | ~560 | write-spec, roadmap-update, sprint-planning, stakeholder-update, synthesize-research, brainstorm |
+| `legal` | v1.3 | ~646 | review-contract, triage-nda, compliance-check, legal-risk-assessment, vendor-check |
+| `desktop-commander` | v0.2 | ~1,064 | terminal, knowledge-base, obsidian-vault, ai-tools-setup, computer-health-check |
+| `productivity` | v1.3 | ~231 | start, task-management, memory-management, update |
+
+**Pendientes de instalar (14):** `langfuse`, `apollo`, `postiz`, `brand-voice` (alta prioridad), + 10 más. Ver `project_plugins_pendientes.md` en memoria.
+**Instalar:** `claude plugin install [nombre]`
+**Guía completa (21 plugins):** `docs/DATA-IMPORTANTE/claude-plugins-guia-21.html`
+**Referencia por tabs (7 instalados):** `docs/DATA-IMPORTANTE/claude-plugins-engineering-marketing-sales.html`
+
 ## Decisiones de arquitectura
 
 - **Fotos → Supabase Storage** (no filesystem local): multer usa `memoryStorage`

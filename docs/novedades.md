@@ -2700,3 +2700,46 @@ Formulario autocontenido para distribución a testers de la plataforma. Disponib
   - Nueva sección 16: Propuesta v2.0 (4 pilares + roadmap Q3 2026 → Q2 2027)
 - `CLAUDE.md` actualizado: migraciones corridas marcadas, arquitectura chat corregida
 - Memoria persistente: 8 archivos en `/home/dellnotee/.claude/projects/-home-dellnotee/memory/`
+
+---
+
+## Claude Code Plugins — Stack de IA expandido · 24 Jul 2026
+
+### Plugins instalados en el entorno de Claude Code
+
+Se incorporaron 3 plugins oficiales del marketplace `knowledge-work-plugins` al stack de desarrollo y operaciones de TMC/TME. Los plugins no modifican código — extienden las capacidades de Claude Code con skills especializadas invocables por prompt.
+
+**Instalados:**
+- `engineering` v1.2 — 10 skills: code-review, debug, deploy-checklist, architecture, incident-response, standup, system-design, tech-debt, testing-strategy, documentation. 10 MCP servers (GitHub, Linear, Datadog, PagerDuty, etc.)
+- `marketing` v1.2 — 8 skills: brand-review, campaign-plan, competitive-brief, content-creation, draft-content, email-sequence, performance-report, seo-audit. 13 MCP servers (Canva, Figma, HubSpot, Amplitude, Ahrefs, etc.)
+- `sales` v1.3 — 9 skills: account-research, call-prep, call-summary, competitive-intelligence, create-an-asset, daily-briefing, draft-outreach, forecast, pipeline-review. 14 MCP servers (Apollo, HubSpot, Clay, ZoomInfo, etc.)
+
+**Pendientes de instalar (18 plugins priorizados):**
+- 🔴 Alta: `langfuse`, `apollo`, `postiz`, `brand-voice`
+- 🟡 Media: `product-management`, `legal`, `operations`, `productivity`, `searchfit-seo`, `browser-use`, `customer-support`
+- 🟢 Baja: `finance`, `pdf-viewer`, `human-resources`, `small-business`, `enterprise-search`, `desktop-commander`, `qdrant-skills`
+
+**Cómo instalar cualquiera:** `claude plugin install [nombre]`
+
+**Documentación:** `docs/DATA-IMPORTANTE/claude-plugins-engineering-marketing-sales.html`
+
+---
+
+## Claude Code Plugins — 4 nuevos instalados · Total 7 plugins · 24 Jul 2026
+
+Se completó la segunda ronda de instalación de plugins. El stack pasó de 3 a **7 plugins activos con 55 skills** en total.
+
+**Instalados en esta sesión:**
+- `product-management` v1.2 — 9 skills: write-spec, roadmap-update, sprint-planning, stakeholder-update, synthesize-research, metrics-review, brainstorm, product-brainstorming, competitive-brief · 16 MCP servers · ~560 tok
+- `legal` v1.3 — 9 skills: review-contract, triage-nda, compliance-check, legal-risk-assessment, brief, legal-response, meeting-briefing, signature-request, vendor-check · 7 MCP servers · ~646 tok
+- `desktop-commander` v0.2 — 6 skills: terminal, knowledge-base, obsidian-vault, ai-tools-setup, computer-health-check, desktop-commander-overview · MCP propio · ~1,064 tok
+- `productivity` v1.3 — 4 skills: start, task-management, memory-management, update · 9 MCP servers · ~231 tok
+
+**Stack completo (7 plugins · ~3,326 tok siempre activos):**
+engineering + marketing + sales + product-management + legal + desktop-commander + productivity
+
+**Documentación generada:**
+- Guía completa 21 plugins (instalados + pendientes): `docs/DATA-IMPORTANTE/claude-plugins-guia-21.html`
+- Referencia por tabs (7 instalados): `docs/DATA-IMPORTANTE/claude-plugins-engineering-marketing-sales.html` (actualizado a 7 tabs)
+
+**Pendientes (14):** `langfuse`, `apollo`, `postiz`, `brand-voice` (alta prioridad) + 10 más. Ver memoria `project_plugins_pendientes.md`.

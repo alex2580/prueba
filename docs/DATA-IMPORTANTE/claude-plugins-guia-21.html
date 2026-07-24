@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Plugins · Guía Completa 21 Plugins</title>
+<style>
+:root{
+  --bg:#F7F6F3;--white:#fff;--text:#1A1917;--text2:#57534E;--text3:#A8A29E;
+  --border:#E7E5E0;--border2:#D6D3CE;
+  --navy:#0F172A;--r1:8px;--r2:14px;--r3:20px;--t:.16s ease;
+  /* installed accents */
+  --eng-c:#7DD3B8;--eng-bg:#F0FBF7;--eng-d:#166554;
+  --mkt-c:#FB923C;--mkt-bg:#FFF7EE;--mkt-d:#92400E;
+  --sal-c:#A78BFA;--sal-bg:#F5F3FF;--sal-d:#4C1D95;
+  --pm-c:#38BDF8;--pm-bg:#F0F9FF;--pm-d:#0C4A6E;
+  --leg-c:#FBBF24;--leg-bg:#FFFBEB;--leg-d:#78350F;
+  --dc-c:#64748B;--dc-bg:#F8FAFC;--dc-d:#1E293B;
+  --prd-c:#F472B6;--prd-bg:#FDF2F8;--prd-d:#831843;
+  /* pending */
+  --pnd-c:#CBD5E1;--pnd-bg:#F8FAFC;--pnd-d:#475569;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:13.5px;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#0F172A 0%,#1E3A5F 55%,#1E293B 100%);padding:40px 48px 32px;color:#F1F5F9}
+.hdr-eye{font-size:.7rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:#94A3B8;margin-bottom:.6rem}
+.hdr-title{font-size:1.9rem;font-weight:900;letter-spacing:-.04em;line-height:1.15;margin-bottom:.5rem;color:#F1F5F9}
+.hdr-sub{font-size:.85rem;color:#64748B;max-width:560px;margin-bottom:1.6rem}
+.hdr-stats{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:1.6rem}
+.stat{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--r2);padding:.7rem 1.2rem;text-align:center;min-width:90px}
+.stat-n{font-size:1.5rem;font-weight:900;color:#F1F5F9;line-height:1}
+.stat-l{font-size:.62rem;color:#64748B;text-transform:uppercase;letter-spacing:.07em;margin-top:2px}
+.hdr-note{font-size:.75rem;color:#475569;display:flex;align-items:center;gap:.4rem}
+
+/* CONTENT */
+.content{max-width:980px;margin:0 auto;padding:32px 24px 60px}
+
+/* EXPORT + FILTER */
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:.75rem}
+.filter-group{display:flex;gap:.3rem;background:var(--white);border:1.5px solid var(--border);border-radius:99px;padding:.25rem}
+.filter-btn{padding:.3rem .9rem;border:none;background:transparent;border-radius:99px;font-size:.73rem;font-weight:700;cursor:pointer;color:var(--text2);transition:all var(--t)}
+.filter-btn.active,.filter-btn:hover{background:var(--navy);color:#fff}
+.btn-export{display:inline-flex;align-items:center;gap:.35rem;background:var(--white);border:1.5px solid var(--border2);border-radius:var(--r1);padding:.3rem .85rem;font-size:.72rem;font-weight:700;color:var(--text2);cursor:pointer;transition:all var(--t)}
+.btn-export:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+/* SECTION HEADERS */
+.section-hdr{display:flex;align-items:center;gap:10px;margin-bottom:1rem;margin-top:2rem}
+.section-hdr:first-of-type{margin-top:0}
+.section-badge{font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:.3rem .7rem;border-radius:99px}
+.sb-inst{background:#DCFCE7;color:#166534}
+.sb-pnd{background:#F1F5F9;color:#475569}
+.section-line{flex:1;height:1px;background:var(--border)}
+.section-count{font-size:.7rem;color:var(--text3)}
+
+/* PLUGIN CARDS */
+.plugins-grid{display:flex;flex-direction:column;gap:.75rem}
+.plugin-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r2);overflow:hidden;transition:box-shadow var(--t)}
+.plugin-card:hover{box-shadow:0 4px 18px rgba(0,0,0,.07)}
+
+.pc-header{padding:1rem 1.2rem;display:flex;align-items:flex-start;gap:.9rem;border-bottom:1px solid var(--border)}
+.pc-emoji{font-size:1.8rem;flex-shrink:0;width:2.4rem;text-align:center}
+.pc-meta{flex:1}
+.pc-name{font-size:1rem;font-weight:900;letter-spacing:-.02em;margin-bottom:.15rem}
+.pc-ver{font-size:.66rem;color:var(--text3);margin-bottom:.3rem}
+.pc-desc{font-size:.78rem;color:var(--text2);line-height:1.55}
+.pc-badges{display:flex;gap:.35rem;align-items:center;margin-top:.45rem;flex-wrap:wrap}
+.badge{font-size:.62rem;font-weight:700;padding:.2rem .55rem;border-radius:99px;border:1px solid}
+.badge-inst{background:#DCFCE7;border-color:#86EFAC;color:#166534}
+.badge-pnd{background:#F1F5F9;border-color:#CBD5E1;color:#475569}
+.badge-tok{background:var(--bg);border-color:var(--border2);color:var(--text2)}
+.badge-src{background:var(--bg);border-color:var(--border2);color:var(--text3)}
+
+.pc-body{padding:1rem 1.2rem;display:grid;grid-template-columns:1fr 2fr;gap:1rem}
+
+/* SKILLS */
+.skills-block{}
+.block-label{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:.45rem}
+.skills-chips{display:flex;flex-wrap:wrap;gap:.25rem}
+.skill-chip{font-size:.67rem;font-weight:600;padding:.2rem .5rem;border-radius:4px;background:var(--bg);border:1px solid var(--border2);color:var(--text2)}
+
+/* USE CASES */
+.use-block{}
+.use-trio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem}
+.use-box{border-radius:var(--r1);padding:.65rem .8rem;border:1px solid var(--border)}
+.ub-tmc{background:#EFF6FF;border-color:#BFDBFE}
+.ub-tme{background:#F0FDF4;border-color:#BBF7D0}
+.ub-per{background:#FFF7ED;border-color:#FED7AA}
+.ub-label{font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.09em;margin-bottom:.2rem}
+.ub-tmc .ub-label{color:#1D4ED8}
+.ub-tme .ub-label{color:#15803D}
+.ub-per .ub-label{color:#C2410C}
+.ub-text{font-size:.71rem;color:var(--text2);line-height:1.5}
+
+/* PENDING placeholder */
+.pnd-note{font-size:.73rem;color:var(--text3);font-style:italic;padding:.3rem 0}
+
+/* ACCENT BARS */
+.plugin-card.inst-eng .pc-header{border-left:4px solid var(--eng-c)}
+.plugin-card.inst-mkt .pc-header{border-left:4px solid var(--mkt-c)}
+.plugin-card.inst-sal .pc-header{border-left:4px solid var(--sal-c)}
+.plugin-card.inst-pm .pc-header{border-left:4px solid var(--pm-c)}
+.plugin-card.inst-leg .pc-header{border-left:4px solid var(--leg-c)}
+.plugin-card.inst-dc .pc-header{border-left:4px solid var(--dc-c)}
+.plugin-card.inst-prd .pc-header{border-left:4px solid var(--prd-c)}
+.plugin-card.pending .pc-header{border-left:4px solid var(--pnd-c)}
+
+/* NAME COLORS */
+.inst-eng .pc-name{color:var(--eng-d)}
+.inst-mkt .pc-name{color:var(--mkt-d)}
+.inst-sal .pc-name{color:var(--sal-d)}
+.inst-pm .pc-name{color:var(--pm-d)}
+.inst-leg .pc-name{color:var(--leg-d)}
+.inst-dc .pc-name{color:var(--dc-d)}
+.inst-prd .pc-name{color:var(--prd-d)}
+.pending .pc-name{color:var(--pnd-d)}
+
+.hidden{display:none!important}
+
+footer{margin-top:3rem;border-top:1.5px solid var(--border);padding:1.5rem;text-align:center;font-size:.7rem;color:var(--text3)}
+
+@media print{
+  .toolbar,.hdr-note{display:none!important}
+  .plugin-card{box-shadow:none!important;page-break-inside:avoid}
+  .pc-body{grid-template-columns:1fr!important}
+  .use-trio{grid-template-columns:1fr!important}
+}
+@media(max-width:700px){
+  .hdr{padding:24px 16px 20px}
+  .content{padding:20px 12px 40px}
+  .pc-body{grid-template-columns:1fr}
+  .use-trio{grid-template-columns:1fr}
+  .hdr-stats{gap:10px}
+  .stat{min-width:70px;padding:.5rem .8rem}
+  .stat-n{font-size:1.2rem}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-eye">Guía de referencia · Julio 2026</div>
+  <div class="hdr-title">Claude Code Plugins<br>Guía Completa · 21 Plugins</div>
+  <div class="hdr-sub">Qué hace cada plugin, cómo usarlo en TMC, TME y proyectos personales. Instalados y pendientes en un solo documento.</div>
+  <div class="hdr-stats">
+    <div class="stat"><div class="stat-n">21</div><div class="stat-l">Plugins totales</div></div>
+    <div class="stat"><div class="stat-n">7</div><div class="stat-l">Instalados</div></div>
+    <div class="stat"><div class="stat-n">14</div><div class="stat-l">Pendientes</div></div>
+    <div class="stat"><div class="stat-n">55</div><div class="stat-l">Skills activas</div></div>
+  </div>
+  <div class="hdr-note">⚡ Token overhead instalados: ~3,326 tok por sesión · instalar más = mayor costo siempre activo</div>
+</div>
+
+<div class="content">
+
+  <div class="toolbar">
+    <div class="filter-group">
+      <button class="filter-btn active" id="f-all" onclick="filter('all')">Todos (21)</button>
+      <button class="filter-btn" id="f-inst" onclick="filter('inst')">Instalados (7)</button>
+      <button class="filter-btn" id="f-pnd" onclick="filter('pnd')">Pendientes (14)</button>
+    </div>
+    <button class="btn-export" onclick="window.print()">⬇ Exportar / Imprimir</button>
+  </div>
+
+  <!-- ── INSTALADOS ── -->
+  <div class="section-hdr" id="sec-inst">
+    <span class="section-badge sb-inst">✅ Instalados</span>
+    <div class="section-line"></div>
+    <span class="section-count">7 plugins activos en todas las sesiones</span>
+  </div>
+
+  <div class="plugins-grid">
+
+    <!-- 1. ENGINEERING -->
+    <div class="plugin-card inst-eng" data-group="inst">
+      <div class="pc-header">
+        <div class="pc-emoji">🛠</div>
+        <div class="pc-meta">
+          <div class="pc-name">Engineering</div>
+          <div class="pc-ver">v1.2.0 · knowledge-work-plugins</div>
+          <div class="pc-desc">Streamline engineering workflows — standups, code review, architecture decisions, incident response y documentación técnica. El plugin de ingeniería de software del stack.</div>
+          <div class="pc-badges">
+            <span class="badge badge-inst">✅ Instalado</span>
+            <span class="badge badge-tok">~609 tok siempre</span>
+            <span class="badge badge-src">knowledge-work-plugins</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="skills-block">
+          <div class="block-label">10 Skills</div>
+          <div class="skills-chips">
+            <span class="skill-chip">architecture</span><span class="skill-chip">code-review</span><span class="skill-chip">debug</span><span class="skill-chip">deploy-checklist</span><span class="skill-chip">documentation</span><span class="skill-chip">incident-response</span><span class="skill-chip">standup</span><span class="skill-chip">system-design</span><span class="skill-chip">tech-debt</span><span class="skill-chip">testing-strategy</span>
+          </div>
+          <div class="block-label" style="margin-top:.65rem">10 MCP servers</div>
+          <div class="skills-chips">
+            <span class="skill-chip">Slack</span><span class="skill-chip">Linear</span><span class="skill-chip">GitHub</span><span class="skill-chip">Jira</span><span class="skill-chip">Notion</span><span class="skill-chip">PagerDuty</span><span class="skill-chip">Datadog</span><span class="skill-chip">Asana</span><span class="skill-chip">GCal</span><span class="skill-chip">Gmail</span>
+          </div>
+        </div>
+        <div class="use-block">
+          <div class="block-label">Casos de uso</div>
+          <div class="use-trio">
+            <div class="use-box ub-tmc"><div class="ub-label">TMC</div><div class="ub-text">Code-review del controller de MercadoPago antes de hacer push. Genera deploy-checklist para Next.js + PM2 + VPS.</div></div>
+            <div class="use-box ub-tme"><div class="ub-label">TME</div><div class="ub-text">Diseñar la arquitectura del sistema de tickets de eventos. Debug de errores de WebSocket en el chat de venues.</div></div>
+            <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Documentar la API de Patas Protegidas. Testing-strategy para el motor de turntables de Música Ochentosa.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. MARKETING -->
+    <div class="plugin-card inst-mkt" data-group="inst">
+      <div class="pc-header">
+        <div class="pc-emoji">📣</div>
+        <div class="pc-meta">
+          <div class="pc-name">Marketing</div>
+          <div class="pc-ver">v1.2.0 · knowledge-work-plugins</div>
+          <div class="pc-desc">Crear contenido, planificar campañas y analizar performance en canales de marketing. Mantiene consistencia de marca, monitorea competidores y reporta resultados.</div>
+          <div class="pc-badges">
+            <span class="badge badge-inst">✅ Instalado</span>
+            <span class="badge badge-tok">~563 tok siempre</span>
+            <span class="badge badge-src">knowledge-work-plugins</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="skills-block">
+          <div class="block-label">8 Skills</div>
+          <div class="skills-chips">
+            <span class="skill-chip">brand-review</span><span class="skill-chip">campaign-plan</span><span class="skill-chip">competitive-brief</span><span class="skill-chip">content-creation</span><span class="skill-chip">draft-content</span><span class="skill-chip">email-sequence</span><span class="skill-chip">performance-report</span><span class="skill-chip">seo-audit</span>
+          </div>
+          <div class="block-label" style="margin-top:.65rem">13 MCP servers</div>
+          <div class="skills-chips">
+            <span class="skill-chip">Slack</span><span class="skill-chip">Canva</span><span class="skill-chip">Figma</span><span class="skill-chip">HubSpot</span><span class="skill-chip">Amplitude</span><span class="skill-chip">Notion</span><span class="skill-chip">Ahrefs</span><span class="skill-chip">SimilarWeb</span><span class="skill-chip">Klaviyo</span><span class="skill-chip">Supermetrics</span><span class="skill-chip">GCal</span><span class="skill-chip">Gmail</span><span class="skill-chip">+1</span>
+          </div>
+        </div>
+        <div class="use-block">
+          <div class="block-label">Casos de uso</div>
+          <div class="use-trio">
+            <div class="use-box ub-tmc"><div class="ub-label">TMC</div><div class="ub-text">Secuencia de 4 emails para consorcios registrados que no publicaron su espacio. SEO-audit de todasmiscosas.com.</div></div>
+            <div class="use-box ub-tme"><div class="ub-label">TME</div><div class="ub-text">Campaign-plan de lanzamiento TME en BsAs orientado a venues y organizadores de eventos.</div></div>
+            <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Posts de Instagram para Patas Protegidas. Contenido de lanzamiento de Música Ochentosa en redes.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. SALES -->
+    <div class="plugin-card inst-sal" data-group="inst">
+      <div class="pc-header">
+        <div class="pc-emoji">🤝</div>
+        <div class="pc-meta">
+          <div class="pc-name">Sales</div>
+          <div class="pc-ver">v1.3.0 · knowledge-work-plugins</div>
+          <div class="pc-desc">Prospección, outreach y estrategia de deals. Preparar llamadas, gestionar pipeline y escribir mensajes personalizados que mueven conversaciones hacia el cierre.</div>
+          <div class="pc-badges">
+            <span class="badge badge-inst">✅ Instalado</span>
+            <span class="badge badge-tok">~654 tok siempre</span>
+            <span class="badge badge-src">knowledge-work-plugins</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="skills-block">
+          <div class="block-label">9 Skills</div>
+          <div class="skills-chips">
+            <span class="skill-chip">account-research</span><span class="skill-chip">call-prep</span><span class="skill-chip">call-summary</span><span class="skill-chip">competitive-intelligence</span><span class="skill-chip">create-an-asset</span><span class="skill-chip">daily-briefing</span><span class="skill-chip">draft-outreach</span><span class="skill-chip">forecast</span><span class="skill-chip">pipeline-review</span>
+          </div>
+          <div class="block-label" style="margin-top:.65rem">14 MCP servers</div>
+          <div class="skills-chips">
+            <span class="skill-chip">HubSpot</span><span class="skill-chip">Close</span><span class="skill-chip">Apollo</span><span class="skill-chip">ZoomInfo</span><span class="skill-chip">Clay</span><span class="skill-chip">Outreach</span><span class="skill-chip">Fireflies</span><span class="skill-chip">Monday</span><span class="skill-chip">Notion</span><span class="skill-chip">Atlassian</span><span class="skill-chip">Slack</span><span class="skill-chip">SimilarWeb</span><span class="skill-chip">GCal</span><span class="skill-chip">Gmail</span>
+          </div>
+        </div>
+        <div class="use-block">
+          <div class="block-label">Casos de uso</div>
+          <div class="use-trio">
+            <div class="use-box ub-tmc"><div class="ub-label">TMC</div><div class="ub-text">Draft-outreach para WhatsApp a administradoras de consorcios. One-pager de TMC para proveedores de depósitos.</div></div>
+            <div class="use-box ub-tme"><div class="ub-label">TME</div><div class="ub-text">Call-prep para reunión con un venue de BsAs. Competitive-intelligence de otras plataformas de eventos.</div></div>
+            <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Account-research de empresas antes de una reunión de negocio. Deck de propuesta para proyectos freelance.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. PRODUCT MANAGEMENT -->
+    <div class="plugin-card inst-pm" data-group="inst">
+      <div class="pc-header">
+        <div class="pc-emoji">📋</div>
+        <div class="pc-meta">
+          <div class="pc-name">Product Management</div>
+          <div class="pc-ver">v1.2.0 · knowledge-work-plugins</div>
+          <div class="pc-desc">Escribir specs de features, planificar roadmaps y sintetizar investigación de usuarios. Mantener a los stakeholders actualizados y anticipar el panorama competitivo desde la perspectiva de producto.</div>
+          <div class="pc-badges">
+            <span class="badge badge-inst">✅ Instalado</span>
+            <span class="badge badge-tok">~560 tok siempre</span>
+            <span class="badge badge-src">knowledge-work-plugins</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="skills-block">
+          <div class="block-label">9 Skills</div>
+          <div class="skills-chips">
+            <span class="skill-chip">brainstorm</span><span class="skill-chip">competitive-brief</span><span class="skill-chip">metrics-review</span><span class="skill-chip">product-brainstorming</span><span class="skill-chip">roadmap-update</span><span class="skill-chip">sprint-planning</span><span class="skill-chip">stakeholder-update</span><span class="skill-chip">synthesize-research</span><span class="skill-chip">write-spec</span>
+          </div>
+          <div class="block-label" style="margin-top:.65rem">16 MCP servers</div>
+          <div class="skills-chips">
+            <span class="skill-chip">Slack</span><span class="skill-chip">Linear</span><span class="skill-chip">Asana</span><span class="skill-chip">Monday</span><span class="skill-chip">ClickUp</span><span class="skill-chip">Atlassian</span><span class="skill-chip">Notion</span><span class="skill-chip">Figma</span><span class="skill-chip">Amplitude</span><span class="skill-chip">Pendo</span><span class="skill-chip">Intercom</span><span class="skill-chip">Fireflies</span><span class="skill-chip">SimilarWeb</span><span class="skill-chip">GCal</span><span class="skill-chip">Gmail</span><span class="skill-chip">+1</span>
+          </div>
+        </div>
+        <div class="use-block">
+          <div class="block-label">Casos de uso</div>
+          <div class="use-trio">
+            <div class="use-box ub-tmc"><div class="ub-label">TMC</div><div class="ub-text">Write-spec del sistema de calificaciones de proveedores. Roadmap-update con los 26 items de TMC v2 priorizados.</div></div>
+            <div class="use-box ub-tme"><div class="ub-label">TME</div><div class="ub-text">Sprint-planning del módulo de tickets de eventos. Stakeholder-update mensual para inversores de TME.</div></div>
+            <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Sintetizar feedback de usuarios de Patas Protegidas. Brainstorm de features para Música Ochentosa v2.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. LEGAL -->
+    <div class="plugin-card inst-leg" data-group="inst">
+      <div class="pc-header">
+        <div class="pc-emoji">⚖️</div>
+        <div class="pc-meta">
+          <div class="pc-name">Legal</div>
+          <div class="pc-ver">v1.3.0 · knowledge-work-plugins</div>
+          <div class="pc-desc">Acelerar la revisión de contratos, triage de NDAs y workflows de compliance. Redactar briefs legales, organizar investigación de precedentes y gestionar conocimiento institucional.</div>
+          <div class="pc-badges">
+            <span class="badge badge-inst">✅ Instalado</span>
+            <span class="badge badge-tok">~646 tok siempre</span>
+            <span class="badge badge-src">knowledge-work-plugins</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="skills-block">
+          <div class="block-label">9 Skills</div>
+          <div class="skills-chips">
+            <span class="skill-chip">brief</span><span class="skill-chip">compliance-check</span><span class="skill-chip">legal-response</span><span class="skill-chip">legal-risk-assessment</span><span class="skill-chip">meeting-briefing</span><span class="skill-chip">review-contract</span><span class="skill-chip">signature-request</span><span class="skill-chip">triage-nda</span><span class="skill-chip">vendor-check</span>
+          </div>
+          <div class="block-label" style="margin-top:.65rem">7 MCP servers</div>
+          <div class="skills-chips">
+            <span class="skill-chip">Slack</span><span class="skill-chip">Box</span><span class="skill-chip">Egnyte</span><span class="skill-chip">Atlassian</span><span class="skill-chip">DocuSign</span><span class="skill-chip">GCal</span><span class="skill-chip">Gmail</span>
+          </div>
+        </div>
+        <div class="use-block">
+          <div class="block-label">Casos de uso</div>
+          <div class="use-trio">
+            <div class="use-box ub-tmc"><div class="ub-label">TMC</div><div class="ub-text">Review de T&C de TMC para detectar riesgos legales. Compliance-check del flujo de escrow vs. regulaciones BCRA.</div></div>
+            <div class="use-box ub-tme"><div class="ub-label">TME</div><div class="ub-text">Revisar el contrato de responsabilidad para venues de TME. Brief legal sobre regulaciones de eventos públicos en CABA.</div></div>
+            <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Triage de NDAs antes de firmar. Vendor-check de proveedores de servicios antes de contratar. Legal-risk de decisiones de negocio.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. DESKTOP COMMANDER -->
+    <div class="plugin-card inst-dc" data-group="inst">
+      <div class="pc-header">
+        <div class="pc-emoji">💻</div>
+        <div class="pc-meta">
+          <div class="pc-name">Desktop Commander</div>
+          <div class="pc-ver">v0.2.0 · claude-plugins-official</div>
+          <div class="pc-desc">MCP server para comandos de terminal, gestión de procesos y operaciones de archivos en texto, código, PDF, DOCX, Excel, imágenes y datos estructurados. El único del stack oficial (no knowledge-work). El más pesado en tokens.</div>
+          <div class="pc-badges">
+            <span class="badge badge-inst">✅ Instalado</span>
+            <span class="badge badge-tok">~1,064 tok siempre · el mayor</span>
+            <span class="badge badge-src">claude-plugins-official</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="skills-block">
+          <div class="block-label">6 Skills</div>
+          <div class="skills-chips">
+            <span class="skill-chip">ai-tools-setup</span><span class="skill-chip">computer-health-check</span><span class="skill-chip">desktop-commander-overview</span><span class="skill-chip">knowledge-base</span><span class="skill-chip">obsidian-vault</span><span class="skill-chip">terminal</span>
+          </div>
+          <div class="block-label" style="margin-top:.65rem">MCP integrado (sin externos)</div>
+          <div class="skills-chips">
+            <span class="skill-chip" style="background:#F0F9FF;border-color:#BAE6FD;color:#0C4A6E;">Provee su propio MCP server directo</span>
+          </div>
+        </div>
+        <div class="use-block">
+          <div class="block-label">Casos de uso</div>
+          <div class="use-trio">
+            <div class="use-box ub-tmc"><div class="ub-label">TMC / Local</div><div class="ub-text">Verificar que servidor.py corre en puerto 8765 vía terminal. Indexar los docs de TMC en una knowledge-base local buscable.</div></div>
+            <div class="use-box ub-tme"><div class="ub-label">TME / Sistema</div><div class="ub-text">Health-check del Chromebook/Penguin. Ai-tools-setup para verificar N8N en localhost:5678 y Ollama con llama3.2/gemma4.</div></div>
+            <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Leer el vault de Obsidian y buscar notas de proyectos personales. Ejecutar scripts de backup y mantenimiento automáticamente.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. PRODUCTIVITY -->
+    <div class="plugin-card inst-prd" data-group="inst">
+      <div class="pc-header">
+        <div class="pc-emoji">⚡</div>
+        <div class="pc-meta">
+          <div class="pc-name">Productivity</div>
+          <div class="pc-ver">v1.3.0 · knowledge-work-plugins</div>
+          <div class="pc-desc">Gestionar tareas, planificar el día y construir memoria del contexto de trabajo. Sincroniza con calendario, email y chat para tenerlo todo organizado. El más liviano en tokens.</div>
+          <div class="pc-badges">
+            <span class="badge badge-inst">✅ Instalado</span>
+            <span class="badge badge-tok">~231 tok siempre · el menor</span>
+            <span class="badge badge-src">knowledge-work-plugins</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="skills-block">
+          <div class="block-label">4 Skills</div>
+          <div class="skills-chips">
+            <span class="skill-chip">memory-management</span><span class="skill-chip">start</span><span class="skill-chip">task-management</span><span class="skill-chip">update</span>
+          </div>
+          <div class="block-label" style="margin-top:.65rem">9 MCP servers</div>
+          <div class="skills-chips">
+            <span class="skill-chip">Slack</span><span class="skill-chip">Notion</span><span class="skill-chip">Asana</span><span class="skill-chip">Linear</span><span class="skill-chip">Atlassian</span><span class="skill-chip">Monday</span><span class="skill-chip">ClickUp</span><span class="skill-chip">GCal</span><span class="skill-chip">Gmail</span>
+          </div>
+        </div>
+        <div class="use-block">
+          <div class="block-label">Casos de uso</div>
+          <div class="use-trio">
+            <div class="use-box ub-tmc"><div class="ub-label">TMC</div><div class="ub-text">Start del día: calendario + pendientes de TMC. Guardar en memoria el próximo paso de la migración de DB para Guille.</div></div>
+            <div class="use-box ub-tme"><div class="ub-label">TME</div><div class="ub-text">Task-management de las tareas del sprint de TME. Update de fin de jornada con lo hecho y lo que sigue mañana.</div></div>
+            <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Memoria entre sesiones de ideas de Música Ochentosa. Gestión de tareas de todos los proyectos desde un solo prompt.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /instalados -->
+
+  <!-- ── PENDIENTES ── -->
+  <div class="section-hdr" id="sec-pnd">
+    <span class="section-badge sb-pnd">⏳ Pendientes</span>
+    <div class="section-line"></div>
+    <span class="section-count">14 plugins identificados · instalar según necesidad · cada uno agrega tokens siempre activos</span>
+  </div>
+
+  <div class="plugins-grid">
+
+    <!-- 8. LANGFUSE -->
+    <div class="plugin-card pending" data-group="pnd">
+      <div class="pc-header">
+        <div class="pc-emoji">🔬</div>
+        <div class="pc-meta">
+          <div class="pc-name">Langfuse</div>
+          <div class="pc-ver">Pendiente · knowledge-work-plugins · 🔴 Prioridad alta</div>
+          <div class="pc-desc">Observabilidad y trazabilidad para sistemas de IA. Loguea prompts, respuestas, latencias y costos de N8N, Ollama y OpenAI. La pieza de monitoreo del stack AI $0 analizado. Indispensable cuando los agentes estén en producción.</div>
+          <div class="pc-badges">
+            <span class="badge badge-pnd">⏳ No instalado</span>
+            <span class="badge badge-src">Instalar: claude plugin install langfuse</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="skills-block">
+          <div class="block-label">Skills (estimadas)</div>
+          <div class="skills-chips"><span class="skill-chip">trace-session</span><span class="skill-chip">cost-report</span><span class="skill-chip">latency-review</span><span class="skill-chip">error-analysis</span></div>
+        </div>
+        <div class="use-block">
+          <div class="block-label">Por qué instalarlo</div>
+          <div class="use-trio">
+            <div class="use-box ub-tmc"><div class="ub-label">TMC</div><div class="ub-text">Trazabilidad del bot de respuesta automática a consultas: cada prompt enviado a Ollama, latencia, decisión de escalado.</div></div>
+            <div class="use-box ub-tme"><div class="ub-label">TME</div><div class="ub-text">Monitorear el agente de matching de eventos — detectar cuando da respuestas erróneas o lentas.</div></div>
+            <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Dashboard de todos los workflows de N8N + Ollama corriendo en el Chromebook: costos reales, errores, uso.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. APOLLO -->
+    <div class="plugin-card pending" data-group="pnd">
+      <div class="pc-header">
+        <div class="pc-emoji">🚀</div>
+        <div class="pc-meta">
+          <div class="pc-name">Apollo</div>
+          <div class="pc-ver">Pendiente · knowledge-work-plugins · 🔴 Prioridad alta</div>
+          <div class="pc-desc">Prospección B2B con Apollo.io: buscar leads por industria, cargo y ubicación; enriquecer datos de contacto; cargar secuencias de outreach. Conecta directamente con el plan Maps→Sheets→Gmail del sistema de campañas.</div>
+          <div class="pc-badges">
+            <span class="badge badge-pnd">⏳ No instalado</span>
+            <span class="badge badge-src">Instalar: claude plugin install apollo</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="skills-block">
+          <div class="block-label">Skills (estimadas)</div>
+          <div class="skills-chips"><span class="skill-chip">prospect-search</span><span class="skill-chip">enrich-contact</span><span class="skill-chip">sequence-create</span><span class="skill-chip">list-export</span></div>
+        </div>
+        <div class="use-block">
+          <div class="block-label">Por qué instalarlo</div>
+          <div class="use-trio">
+            <div class="use-box ub-tmc"><div class="ub-label">TMC</div><div class="ub-text">Buscar los 100 consorcios más grandes de CABA con teléfono y email del administrador. Base del sistema de campañas.</div></div>
+            <div class="use-box ub-tme"><div class="ub-label">TME</div><div class="ub-text">Enriquecer la lista de venues y organizadores de eventos de BsAs con datos de contacto verificados.</div></div>
+            <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Prospectar empresas B2B para proyectos freelance o partnerships de los proyectos personales.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. POSTIZ -->
+    <div class="plugin-card pending" data-group="pnd">
+      <div class="pc-header">
+        <div class="pc-emoji">📅</div>
+        <div class="pc-meta">
+          <div class="pc-name">Postiz</div>
+          <div class="pc-ver">Pendiente · knowledge-work-plugins · 🔴 Prioridad alta</div>
+          <div class="pc-desc">Scheduling de redes sociales: programar posts para Instagram, Facebook, LinkedIn y X desde Claude. Disponible en versión self-hosted. Complementa el skill draft-content de Marketing con publicación automatizada.</div>
+          <div class="pc-badges">
+            <span class="badge badge-pnd">⏳ No instalado</span>
+            <span class="badge badge-src">Instalar: claude plugin install postiz</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="skills-block">
+          <div class="block-label">Skills (estimadas)</div>
+          <div class="skills-chips"><span class="skill-chip">schedule-post</span><span class="skill-chip">content-calendar</span><span class="skill-chip">bulk-schedule</span><span class="skill-chip">analytics</span></div>
+        </div>
+        <div class="use-block">
+          <div class="block-label">Por qué instalarlo</div>
+          <div class="use-trio">
+            <div class="use-box ub-tmc"><div class="ub-label">TMC</div><div class="ub-text">Programar los 5 posts de Instagram/Facebook de TMC de la próxima semana directamente desde Claude.</div></div>
+            <div class="use-box ub-tme"><div class="ub-label">TME</div><div class="ub-text">Schedulear el contenido del lanzamiento de TME en todos los canales con semanas de anticipación.</div></div>
+            <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Calendario de redes para Patas Protegidas o Música Ochentosa sin tener que entrar manualmente a cada red.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11. BRAND-VOICE -->
+    <div class="plugin-card pending" data-group="pnd">
+      <div class="pc-header">
+        <div class="pc-emoji">🎙</div>
+        <div class="pc-meta">
+          <div class="pc-name">Brand Voice</div>
+          <div class="pc-ver">Pendiente · knowledge-work-plugins · 🔴 Prioridad alta</div>
+          <div class="pc-desc">Analiza documentos existentes para detectar y documentar la voz de marca. Una vez definida, verifica que todo el contenido nuevo la respete. Útil para que TMC y TME hablen consistente en todos los canales.</div>
+          <div class="pc-badges">
+            <span class="badge badge-pnd">⏳ No instalado</span>
+            <span class="badge badge-src">Instalar: claude plugin install brand-voice</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="skills-block">
+          <div class="block-label">Skills (estimadas)</div>
+          <div class="skills-chips"><span class="skill-chip">detect-voice</span><span class="skill-chip">document-voice</span><span class="skill-chip">check-content</span><span class="skill-chip">tone-guide</span></div>
+        </div>
+        <div class="use-block">
+          <div class="block-label">Por qué instalarlo</div>
+          <div class="use-trio">
+            <div class="use-box ub-tmc"><div class="ub-label">TMC</div><div class="ub-text">Detectar la voz de marca de TMC desde los T&C, emails de Resend y posts existentes. Definir el tono para escalar.</div></div>
+            <div class="use-box ub-tme"><div class="ub-label">TME</div><div class="ub-text">Definir la voz de marca de TME antes del lanzamiento para que todos los textos suenen consistentes desde el día 1.</div></div>
+            <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Aplicar brand-voice a Patas Protegidas para que la app hable de forma consistente en todos sus textos.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12. OPERATIONS -->
+    <div class="plugin-card pending" data-group="pnd">
+      <div class="pc-header">
+        <div class="pc-emoji">⚙️</div>
+        <div class="pc-meta">
+          <div class="pc-name">Operations</div>
+          <div class="pc-ver">Pendiente · knowledge-work-plugins · 🟡 Prioridad media</div>
+          <div class="pc-desc">Runbooks, compliance operacional y vetting de vendors. Para operaciones de TMC y TME cuando escalen: documentar procedimientos, verificar proveedores y asegurar que los procesos se ejecuten bien.</div>
+          <div class="pc-badges">
+            <span class="badge badge-pnd">⏳ No instalado</span>
+            <span class="badge badge-src">Instalar: claude plugin install operations</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="skills-block">
+          <div class="block-label">Skills (estimadas)</div>
+          <div class="skills-chips"><span class="skill-chip">create-runbook</span><span class="skill-chip">compliance-ops</span><span class="skill-chip">vendor-vetting</span><span class="skill-chip">process-review</span></div>
+        </div>
+        <div class="use-block">
+          <div class="block-label">Por qué instalarlo</div>
+          <div class="use-trio">
+            <div class="use-box ub-tmc"><div class="ub-label">TMC</div><div class="ub-text">Runbook del proceso de onboarding de nuevos proveedores. Checklist de compliance para el proceso de pagos.</div></div>
+            <div class="use-box ub-tme"><div class="ub-label">TME</div><div class="ub-text">Procedimiento de alta de un venue en TME. Runbook del proceso de verificación de eventos publicados.</div></div>
+            <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Checklist de deploy manual cuando CI/CD falla. Vetting de proveedores de hosting antes de contratar.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 13. SEARCHFIT-SEO -->
+    <div class="plugin-card pending" data-group="pnd">
+      <div class="pc-header">
+        <div class="pc-emoji">🔎</div>
+        <div class="pc-meta">
+          <div class="pc-name">Searchfit SEO</div>
+          <div class="pc-ver">Pendiente · knowledge-work-plugins · 🟡 Prioridad media</div>
+          <div class="pc-desc">Auditoría SEO con datos en tiempo real. Complementa el skill seo-audit de Marketing con información actualizada de posicionamiento, competencia de keywords y oportunidades de contenido.</div>
+          <div class="pc-badges">
+            <span class="badge badge-pnd">⏳ No instalado</span>
+            <span class="badge badge-src">Instalar: claude plugin install searchfit-seo</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="skills-block">
+          <div class="block-label">Skills (estimadas)</div>
+          <div class="skills-chips"><span class="skill-chip">keyword-research</span><span class="skill-chip">competitor-seo</span><span class="skill-chip">content-gaps</span><span class="skill-chip">rank-tracking</span></div>
+        </div>
+        <div class="use-block">
+          <div class="block-label">Por qué instalarlo</div>
+          <div class="use-trio">
+            <div class="use-box ub-tmc"><div class="ub-label">TMC</div><div class="ub-text">Auditoría SEO con datos reales de todasmiscosas.com vs. competidores para keywords de guardado y almacenamiento en CABA.</div></div>
+            <div class="use-box ub-tme"><div class="ub-label">TME</div><div class="ub-text">Análisis del perfil SEO de todosmiseventos.com antes del lanzamiento. Oportunidades de keywords en el nicho de eventos.</div></div>
+            <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Evaluar el potencial SEO de un nuevo proyecto o dominio antes de invertir tiempo en contenido.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 14. BROWSER-USE -->
+    <div class="plugin-card pending" data-group="pnd">
+      <div class="pc-header">
+        <div class="pc-emoji">🌐</div>
+        <div class="pc-meta">
+          <div class="pc-name">Browser Use</div>
+          <div class="pc-ver">Pendiente · knowledge-work-plugins · 🟡 Prioridad media</div>
+          <div class="pc-desc">Browser real (Chrome) controlado por Claude. Navegar sitios, llenar formularios, extraer datos, automatizar flujos web. La herramienta de scraping sin API key. Ideal para la extracción de Google Maps del sistema de campañas.</div>
+          <div class="pc-badges">
+            <span class="badge badge-pnd">⏳ No instalado</span>
+            <span class="badge badge-src">Instalar: claude plugin install browser-use</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="skills-block">
+          <div class="block-label">Skills (estimadas)</div>
+          <div class="skills-chips"><span class="skill-chip">browse-url</span><span class="skill-chip">extract-data</span><span class="skill-chip">fill-form</span><span class="skill-chip">automate-flow</span></div>
+        </div>
+        <div class="use-block">
+          <div class="block-label">Por qué instalarlo</div>
+          <div class="use-trio">
+            <div class="use-box ub-tmc"><div class="ub-label">TMC</div><div class="ub-text">Extraer los 100 consorcios de CABA de Google Maps con nombre, dirección y teléfono sin necesitar API key de Google.</div></div>
+            <div class="use-box ub-tme"><div class="ub-label">TME</div><div class="ub-text">Visitar los sitios de los 20 principales venues de BsAs y extraer contacto, precio y capacidad automáticamente.</div></div>
+            <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Automatizar búsquedas en webs sin API. Extraer información de sitios que no exponen sus datos públicamente.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 15. CUSTOMER-SUPPORT -->
+    <div class="plugin-card pending" data-group="pnd">
+      <div class="pc-header">
+        <div class="pc-emoji">🎧</div>
+        <div class="pc-meta">
+          <div class="pc-name">Customer Support</div>
+          <div class="pc-ver">Pendiente · knowledge-work-plugins · 🟡 Prioridad media</div>
+          <div class="pc-desc">Triage de tickets de soporte, borradores de respuesta y clasificación por urgencia y categoría. Para cuando TMC y TME tengan volumen de consultas de usuarios que requiera un proceso de soporte estructurado.</div>
+          <div class="pc-badges">
+            <span class="badge badge-pnd">⏳ No instalado</span>
+            <span class="badge badge-src">Instalar: claude plugin install customer-support</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="skills-block">
+          <div class="block-label">Skills (estimadas)</div>
+          <div class="skills-chips"><span class="skill-chip">triage-ticket</span><span class="skill-chip">draft-reply</span><span class="skill-chip">classify-issue</span><span class="skill-chip">escalation</span></div>
+        </div>
+        <div class="use-block">
+          <div class="block-label">Por qué instalarlo</div>
+          <div class="use-trio">
+            <div class="use-box ub-tmc"><div class="ub-label">TMC</div><div class="ub-text">Clasificar emails de soporte de TMC por categoría y urgencia. Generar borradores de respuesta para los casos más frecuentes.</div></div>
+            <div class="use-box ub-tme"><div class="ub-label">TME</div><div class="ub-text">Triage de consultas de venues y organizadores. Escalar automáticamente los casos de disputa o cancelación.</div></div>
+            <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Responder reportes de Patas Protegidas con acuse de recibo automático y clasificación por tipo de caso.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 16. FINANCE -->
+    <div class="plugin-card pending" data-group="pnd">
+      <div class="pc-header">
+        <div class="pc-emoji">💰</div>
+        <div class="pc-meta">
+          <div class="pc-name">Finance</div>
+          <div class="pc-ver">Pendiente · knowledge-work-plugins · 🟢 Prioridad baja</div>
+          <div class="pc-desc">Contabilidad, conciliación de pagos y reportes financieros. Para reconciliar el ledger de comisiones de TMC/TME con los pagos de MercadoPago y generar reportes de rentabilidad por período.</div>
+          <div class="pc-badges">
+            <span class="badge badge-pnd">⏳ No instalado</span>
+            <span class="badge badge-src">Instalar: claude plugin install finance</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="skills-block">
+          <div class="block-label">Skills (estimadas)</div>
+          <div class="skills-chips"><span class="skill-chip">reconcile</span><span class="skill-chip">financial-report</span><span class="skill-chip">expense-analysis</span><span class="skill-chip">forecast</span></div>
+        </div>
+        <div class="use-block">
+          <div class="block-label">Por qué instalarlo</div>
+          <div class="use-trio">
+            <div class="use-box ub-tmc"><div class="ub-label">TMC</div><div class="ub-text">Reporte mensual de comisiones (15%) cobradas sobre reservas cerradas. Conciliación con movimientos de MercadoPago.</div></div>
+            <div class="use-box ub-tme"><div class="ub-label">TME</div><div class="ub-text">Reporte de comisiones de TME por tipo de evento. Balance de ingresos vs. costos operativos del marketplace.</div></div>
+            <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Balance mensual de ingresos y gastos de proyectos freelance. Seguimiento de facturación y cobros pendientes.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 17. PDF-VIEWER -->
+    <div class="plugin-card pending" data-group="pnd">
+      <div class="pc-header">
+        <div class="pc-emoji">📑</div>
+        <div class="pc-meta">
+          <div class="pc-name">PDF Viewer</div>
+          <div class="pc-ver">Pendiente · knowledge-work-plugins · 🟢 Prioridad baja</div>
+          <div class="pc-desc">Visualizar, anotar y firmar PDFs sin Acrobat. Útil para revisar contratos, presupuestos y documentos legales directamente desde Claude sin abrir aplicaciones externas.</div>
+          <div class="pc-badges">
+            <span class="badge badge-pnd">⏳ No instalado</span>
+            <span class="badge badge-src">Instalar: claude plugin install pdf-viewer</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="skills-block">
+          <div class="block-label">Skills (estimadas)</div>
+          <div class="skills-chips"><span class="skill-chip">view-pdf</span><span class="skill-chip">annotate</span><span class="skill-chip">sign-pdf</span><span class="skill-chip">extract-text</span></div>
+        </div>
+        <div class="use-block">
+          <div class="block-label">Por qué instalarlo</div>
+          <div class="use-trio">
+            <div class="use-box ub-tmc"><div class="ub-label">TMC</div><div class="ub-text">Revisar el PDF de incorporación de la SAS de TMC. Anotar cláusulas clave de contratos con proveedores.</div></div>
+            <div class="use-box ub-tme"><div class="ub-label">TME</div><div class="ub-text">Anotar el PDF del permiso de evento y marcar los puntos que necesitan acción antes de publicar.</div></div>
+            <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Firmar digitalmente PDFs de clientes sin salir de Claude. Revisar y anotar presupuestos recibidos.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 18. HUMAN-RESOURCES -->
+    <div class="plugin-card pending" data-group="pnd">
+      <div class="pc-header">
+        <div class="pc-emoji">👥</div>
+        <div class="pc-meta">
+          <div class="pc-name">Human Resources</div>
+          <div class="pc-ver">Pendiente · knowledge-work-plugins · 🟢 Prioridad baja</div>
+          <div class="pc-desc">Recruiting, onboarding y performance reviews. Para cuando TMC o TME escalen el equipo y necesiten un proceso estructurado de incorporación y gestión de personas.</div>
+          <div class="pc-badges">
+            <span class="badge badge-pnd">⏳ No instalado</span>
+            <span class="badge badge-src">Instalar: claude plugin install human-resources</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="skills-block">
+          <div class="block-label">Skills (estimadas)</div>
+          <div class="skills-chips"><span class="skill-chip">job-posting</span><span class="skill-chip">onboarding-plan</span><span class="skill-chip">performance-review</span><span class="skill-chip">offer-letter</span></div>
+        </div>
+        <div class="use-block">
+          <div class="block-label">Por qué instalarlo</div>
+          <div class="use-trio">
+            <div class="use-box ub-tmc"><div class="ub-label">TMC</div><div class="ub-text">Proceso de onboarding para el primer desarrollador junior. Job posting para el puesto de soporte al cliente de TMC.</div></div>
+            <div class="use-box ub-tme"><div class="ub-label">TME</div><div class="ub-text">Job posting de community manager de TME. Plan de onboarding para el equipo de marketing (Agustina, Daniel).</div></div>
+            <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Prepararse para una entrevista de trabajo con brief de la empresa y lista de preguntas esperadas.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 19. SMALL-BUSINESS -->
+    <div class="plugin-card pending" data-group="pnd">
+      <div class="pc-header">
+        <div class="pc-emoji">🏪</div>
+        <div class="pc-meta">
+          <div class="pc-name">Small Business</div>
+          <div class="pc-ver">Pendiente · knowledge-work-plugins · 🟢 Prioridad baja</div>
+          <div class="pc-desc">Workflows combinados para dueños de negocio: dinero, clientes y admin en un solo plugin. Pensado para solopreneurs y pequeñas empresas. Potencialmente útil como alternativa todo-en-uno a instalar múltiples plugins separados.</div>
+          <div class="pc-badges">
+            <span class="badge badge-pnd">⏳ No instalado</span>
+            <span class="badge badge-src">Instalar: claude plugin install small-business</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="skills-block">
+          <div class="block-label">Skills (estimadas)</div>
+          <div class="skills-chips"><span class="skill-chip">weekly-review</span><span class="skill-chip">client-management</span><span class="skill-chip">cash-flow</span><span class="skill-chip">admin-tasks</span></div>
+        </div>
+        <div class="use-block">
+          <div class="block-label">Por qué instalarlo</div>
+          <div class="use-trio">
+            <div class="use-box ub-tmc"><div class="ub-label">TMC</div><div class="ub-text">Dashboard semanal de TMC: reservas, ingresos, nuevos proveedores y tickets abiertos en un solo reporte.</div></div>
+            <div class="use-box ub-tme"><div class="ub-label">TME</div><div class="ub-text">Workflows combinados de clientes, pagos y admin de TME para gestionar la plataforma como pequeño negocio.</div></div>
+            <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Gestión de la semana como solopreneur: dinero, tareas y contactos desde un solo flujo de trabajo integrado.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 20. ENTERPRISE-SEARCH -->
+    <div class="plugin-card pending" data-group="pnd">
+      <div class="pc-header">
+        <div class="pc-emoji">🔭</div>
+        <div class="pc-meta">
+          <div class="pc-name">Enterprise Search</div>
+          <div class="pc-ver">Pendiente · knowledge-work-plugins · 🟢 Prioridad baja</div>
+          <div class="pc-desc">Búsqueda cross-herramienta desde un solo prompt: encuentra cosas en Notion, Google Drive, Slack y email al mismo tiempo. El "Google interno" de la organización. Útil cuando TMC/TME tengan docs distribuidos en múltiples herramientas.</div>
+          <div class="pc-badges">
+            <span class="badge badge-pnd">⏳ No instalado</span>
+            <span class="badge badge-src">Instalar: claude plugin install enterprise-search</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="skills-block">
+          <div class="block-label">Skills (estimadas)</div>
+          <div class="skills-chips"><span class="skill-chip">unified-search</span><span class="skill-chip">cross-tool-find</span><span class="skill-chip">knowledge-graph</span><span class="skill-chip">search-index</span></div>
+        </div>
+        <div class="use-block">
+          <div class="block-label">Por qué instalarlo</div>
+          <div class="use-trio">
+            <div class="use-box ub-tmc"><div class="ub-label">TMC</div><div class="ub-text">Buscar "contrato de consorcio" en Google Drive, Notion y Gmail al mismo tiempo desde un solo prompt.</div></div>
+            <div class="use-box ub-tme"><div class="ub-label">TME</div><div class="ub-text">Encontrar todas las conversaciones sobre el lanzamiento de TME en Slack, email y docs en segundos.</div></div>
+            <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Buscar en todos los proyectos personales, documentos y herramientas de trabajo desde un prompt unificado.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 21. QDRANT-SKILLS -->
+    <div class="plugin-card pending" data-group="pnd">
+      <div class="pc-header">
+        <div class="pc-emoji">🧲</div>
+        <div class="pc-meta">
+          <div class="pc-name">Qdrant Skills</div>
+          <div class="pc-ver">Pendiente · knowledge-work-plugins · 🟢 Prioridad baja</div>
+          <div class="pc-desc">Skills para vector search con Qdrant. Parte del stack AI $0 analizado: permite búsqueda semántica sobre embeddings propios sin pagar APIs externas. Para implementar cuando ChromaDB/Qdrant esté configurado localmente.</div>
+          <div class="pc-badges">
+            <span class="badge badge-pnd">⏳ No instalado</span>
+            <span class="badge badge-src">Instalar: claude plugin install qdrant-skills</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="skills-block">
+          <div class="block-label">Skills (estimadas)</div>
+          <div class="skills-chips"><span class="skill-chip">semantic-search</span><span class="skill-chip">embed-document</span><span class="skill-chip">similarity-query</span><span class="skill-chip">collection-manage</span></div>
+        </div>
+        <div class="use-block">
+          <div class="block-label">Por qué instalarlo</div>
+          <div class="use-trio">
+            <div class="use-box ub-tmc"><div class="ub-label">TMC</div><div class="ub-text">Búsqueda semántica de espacios en TMC: "necesito algo luminoso y grande cerca de Palermo" — sin keywords exactas.</div></div>
+            <div class="use-box ub-tme"><div class="ub-label">TME</div><div class="ub-text">Motor de recomendación de eventos en TME basado en historial del usuario y preferencias inferidas.</div></div>
+            <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Indexar y buscar en la knowledge base local de proyectos y notas con búsqueda semántica sin depender de APIs.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /pendientes -->
+
+  <footer>
+    <strong>Claude Code Plugins · Guía Completa 21 Plugins</strong> · Generado jul 2026 · Alejandro Laporte<br>
+    Instalados: engineering · marketing · sales · product-management · legal · desktop-commander · productivity<br>
+    Pendientes: 14 plugins identificados · instalar según necesidad · <code>claude plugin install [nombre]</code>
+  </footer>
+
+</div>
+
+<script>
+function filter(group){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('f-'+group).classList.add('active');
+  document.querySelectorAll('.plugin-card').forEach(card=>{
+    if(group==='all'||card.dataset.group===group){
+      card.classList.remove('hidden');
+    }else{
+      card.classList.add('hidden');
+    }
+  });
+  document.getElementById('sec-inst').style.display=(group==='pnd')?'none':'';
+  document.getElementById('sec-pnd').style.display=(group==='inst')?'none':'';
+}
+</script>
+</body>
+</html>

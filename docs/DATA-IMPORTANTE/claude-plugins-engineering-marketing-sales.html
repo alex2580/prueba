@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Plugins · 7 Instalados · Stack Activo</title>
+<style>
+:root{
+  --bg:#F9F8F5;--white:#FFFFFF;--text:#1C1917;--text2:#57534E;--text3:#A8A29E;
+  --border:#E7E5E0;--border2:#D6D3CE;
+  /* Engineering — mint */
+  --eng:#BDEFDB;--eng-mid:#7DD3B8;--eng-deep:#166554;--eng-bg:#F0FBF7;--eng-tag:#D1FAE5;--eng-tag-tx:#065F46;
+  /* Marketing — peach */
+  --mkt:#FECBA1;--mkt-mid:#FB923C;--mkt-deep:#92400E;--mkt-bg:#FFF7EE;--mkt-tag:#FED7AA;--mkt-tag-tx:#7C2D12;
+  /* Sales — lavender */
+  --sal:#DDD5F8;--sal-mid:#A78BFA;--sal-deep:#4C1D95;--sal-bg:#F5F3FF;--sal-tag:#EDE9FE;--sal-tag-tx:#4C1D95;
+  /* Product Management — sky blue */
+  --pm:#BAE6FD;--pm-mid:#38BDF8;--pm-deep:#0C4A6E;--pm-bg:#F0F9FF;--pm-tag:#E0F2FE;--pm-tag-tx:#0C4A6E;
+  /* Legal — amber */
+  --leg:#FDE68A;--leg-mid:#FBBF24;--leg-deep:#78350F;--leg-bg:#FFFBEB;--leg-tag:#FEF3C7;--leg-tag-tx:#78350F;
+  /* Desktop Commander — slate */
+  --dc:#CBD5E1;--dc-mid:#64748B;--dc-deep:#1E293B;--dc-bg:#F8FAFC;--dc-tag:#E2E8F0;--dc-tag-tx:#334155;
+  /* Productivity — rose */
+  --prd:#FBCFE8;--prd-mid:#F472B6;--prd-deep:#831843;--prd-bg:#FDF2F8;--prd-tag:#FCE7F3;--prd-tag-tx:#831843;
+  --r1:8px;--r2:14px;--r3:20px;--t:.18s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+.hdr{padding:48px 0 0;text-align:center;margin-bottom:0}
+.hdr-eyebrow{font-size:.7rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem}
+.hdr-title{font-size:2rem;font-weight:900;color:var(--text);letter-spacing:-.04em;line-height:1.15;margin-bottom:.6rem}
+.hdr-sub{font-size:.88rem;color:var(--text2);max-width:540px;margin:0 auto 1.8rem}
+.hdr-pills{display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;margin-bottom:2.5rem}
+.hdr-pill{padding:.25rem .75rem;border-radius:99px;font-size:.68rem;font-weight:700;border:1.5px solid}
+.hp-eng{background:var(--eng-bg);border-color:var(--eng-mid);color:var(--eng-deep)}
+.hp-mkt{background:var(--mkt-bg);border-color:var(--mkt-mid);color:var(--mkt-deep)}
+.hp-sal{background:var(--sal-bg);border-color:var(--sal-mid);color:var(--sal-deep)}
+.hp-pm{background:var(--pm-bg);border-color:var(--pm-mid);color:var(--pm-deep)}
+.hp-leg{background:var(--leg-bg);border-color:var(--leg-mid);color:var(--leg-deep)}
+.hp-dc{background:var(--dc-bg);border-color:var(--dc-mid);color:var(--dc-deep)}
+.hp-prd{background:var(--prd-bg);border-color:var(--prd-mid);color:var(--prd-deep)}
+.hp-neu{background:var(--white);border-color:var(--border2);color:var(--text2)}
+
+.export-bar{display:flex;justify-content:flex-end;max-width:960px;margin:0 auto 1rem;padding:0 1.5rem}
+.btn-export{display:inline-flex;align-items:center;gap:.35rem;background:var(--white);border:1.5px solid var(--border2);border-radius:var(--r1);padding:.3rem .8rem;font-size:.72rem;font-weight:700;color:var(--text2);cursor:pointer;transition:all var(--t)}
+.btn-export:hover{border-color:var(--text3);color:var(--text)}
+
+.tabs-wrap{max-width:960px;margin:0 auto;padding:0 1.5rem}
+.tabs-nav{display:flex;gap:.3rem;background:var(--white);border:1.5px solid var(--border);border-radius:var(--r3);padding:.35rem;margin-bottom:1.5rem;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab-btn{flex-shrink:0;padding:.5rem .7rem;border:none;background:transparent;border-radius:calc(var(--r3) - 4px);font-size:.75rem;font-weight:700;cursor:pointer;transition:all var(--t);color:var(--text2);display:flex;align-items:center;gap:.3rem;white-space:nowrap}
+.tab-btn:hover{background:var(--bg)}
+.tab-btn.active-eng{background:var(--eng-bg);color:var(--eng-deep);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.tab-btn.active-mkt{background:var(--mkt-bg);color:var(--mkt-deep);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.tab-btn.active-sal{background:var(--sal-bg);color:var(--sal-deep);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.tab-btn.active-pm{background:var(--pm-bg);color:var(--pm-deep);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.tab-btn.active-leg{background:var(--leg-bg);color:var(--leg-deep);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.tab-btn.active-dc{background:var(--dc-bg);color:var(--dc-deep);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.tab-btn.active-prd{background:var(--prd-bg);color:var(--prd-deep);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+
+.tab-panel{display:none;animation:fadeUp .22s ease}
+.tab-panel.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.plugin-hero{border-radius:var(--r2);padding:1.5rem 1.75rem;margin-bottom:1.25rem;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.ph-eng{background:linear-gradient(135deg,var(--eng-bg) 0%,#E0F7F0 100%);border:1.5px solid var(--eng)}
+.ph-mkt{background:linear-gradient(135deg,var(--mkt-bg) 0%,#FFF0E0 100%);border:1.5px solid var(--mkt)}
+.ph-sal{background:linear-gradient(135deg,var(--sal-bg) 0%,#EDE9FF 100%);border:1.5px solid var(--sal)}
+.ph-pm{background:linear-gradient(135deg,var(--pm-bg) 0%,#DBEAFE 100%);border:1.5px solid var(--pm)}
+.ph-leg{background:linear-gradient(135deg,var(--leg-bg) 0%,#FEF9C3 100%);border:1.5px solid var(--leg)}
+.ph-dc{background:linear-gradient(135deg,var(--dc-bg) 0%,#E8ECF1 100%);border:1.5px solid var(--dc)}
+.ph-prd{background:linear-gradient(135deg,var(--prd-bg) 0%,#FCE7F3 100%);border:1.5px solid var(--prd)}
+.ph-emoji{font-size:2.2rem;margin-bottom:.5rem}
+.ph-name{font-size:1.2rem;font-weight:900;letter-spacing:-.03em;margin-bottom:.2rem}
+.ph-eng .ph-name{color:var(--eng-deep)}
+.ph-mkt .ph-name{color:var(--mkt-deep)}
+.ph-sal .ph-name{color:var(--sal-deep)}
+.ph-pm .ph-name{color:var(--pm-deep)}
+.ph-leg .ph-name{color:var(--leg-deep)}
+.ph-dc .ph-name{color:var(--dc-deep)}
+.ph-prd .ph-name{color:var(--prd-deep)}
+.ph-ver{font-size:.68rem;font-weight:700;color:var(--text3);margin-bottom:.5rem}
+.ph-desc{font-size:.82rem;color:var(--text2);max-width:500px;line-height:1.6}
+.ph-right{display:flex;flex-direction:column;gap:.5rem;align-items:flex-end;flex-shrink:0}
+.ph-stat{text-align:right}
+.ph-stat-n{font-size:1.6rem;font-weight:900;color:var(--text);line-height:1}
+.ph-stat-l{font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+.token-pill{padding:.2rem .6rem;border-radius:99px;font-size:.66rem;font-weight:700;background:rgba(0,0,0,.05);color:var(--text2)}
+
+.section{margin-bottom:1.25rem}
+.section-title{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:.65rem;padding-bottom:.35rem;border-bottom:1px solid var(--border)}
+
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.65rem}
+.skill-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r2);padding:1rem 1.1rem;transition:box-shadow var(--t),border-color var(--t)}
+.skill-card:hover{box-shadow:0 3px 14px rgba(0,0,0,.07)}
+.sc-eng:hover{border-color:var(--eng-mid)}
+.sc-mkt:hover{border-color:var(--mkt-mid)}
+.sc-sal:hover{border-color:var(--sal-mid)}
+.sc-pm:hover{border-color:var(--pm-mid)}
+.sc-leg:hover{border-color:var(--leg-mid)}
+.sc-dc:hover{border-color:var(--dc-mid)}
+.sc-prd:hover{border-color:var(--prd-mid)}
+.skill-icon{font-size:1.1rem;margin-bottom:.4rem}
+.skill-name{font-size:.82rem;font-weight:800;color:var(--text);margin-bottom:.25rem;text-transform:capitalize}
+.skill-desc{font-size:.73rem;color:var(--text2);line-height:1.55;margin-bottom:.55rem}
+.skill-token{display:flex;align-items:center;gap:.3rem;font-size:.66rem;color:var(--text3)}
+.skill-token span{background:var(--bg);border:1px solid var(--border);border-radius:99px;padding:1px 7px}
+
+.mcp-wrap{display:flex;flex-wrap:wrap;gap:.3rem}
+.mcp-chip{font-size:.66rem;font-weight:600;padding:.2rem .55rem;border-radius:99px;background:var(--bg);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;gap:.25rem}
+.mcp-chip::before{content:'⚡';font-size:.6rem}
+
+.use-grid{display:grid;grid-template-columns:1fr 1fr;gap:.65rem}
+.use-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r2);padding:1rem 1.1rem}
+.use-num{font-size:.62rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.3rem}
+.use-eng .use-num{color:var(--eng-deep)}
+.use-mkt .use-num{color:var(--mkt-deep)}
+.use-sal .use-num{color:var(--sal-deep)}
+.use-pm .use-num{color:var(--pm-deep)}
+.use-leg .use-num{color:var(--leg-deep)}
+.use-dc .use-num{color:var(--dc-deep)}
+.use-prd .use-num{color:var(--prd-deep)}
+.use-title{font-size:.82rem;font-weight:800;color:var(--text);margin-bottom:.25rem}
+.use-desc{font-size:.73rem;color:var(--text2);line-height:1.55}
+
+.invoke-box{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r2);padding:1rem 1.2rem}
+.invoke-label{font-size:.65rem;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem}
+.invoke-list{display:flex;flex-direction:column;gap:.35rem}
+.invoke-item{display:flex;align-items:flex-start;gap:.5rem;font-size:.75rem;color:var(--text2)}
+.invoke-item::before{content:'→';color:var(--text3);flex-shrink:0;margin-top:.05rem;font-weight:700}
+
+.cost-table{width:100%;border-collapse:collapse;font-size:.74rem}
+.cost-table th{text-align:left;font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);padding:.4rem .6rem;border-bottom:1.5px solid var(--border)}
+.cost-table td{padding:.45rem .6rem;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle}
+.cost-table tr:last-child td{border-bottom:none}
+
+footer{margin-top:3rem;border-top:1.5px solid var(--border);padding:1.5rem;text-align:center;font-size:.7rem;color:var(--text3)}
+
+@media print{
+  body{font-size:12px;background:#fff}
+  .tabs-nav,.export-bar,.btn-export{display:none!important}
+  .tab-panel{display:block!important}
+  .tab-panel+.tab-panel{page-break-before:always}
+  .plugin-hero,.skill-card,.use-card,.invoke-box{box-shadow:none!important}
+  .skills-grid,.use-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .hdr-title{font-size:1.5rem}
+  .skills-grid,.use-grid{grid-template-columns:1fr}
+  .ph-right{align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-eyebrow">Documentación técnica · Julio 2026</div>
+  <div class="hdr-title">Claude Code Plugins<br>7 Instalados · Stack Activo</div>
+  <div class="hdr-sub">Guía de referencia de los siete plugins instalados en el stack de Alejandro: qué hacen, cómo invocarlos y para qué sirven en TMC, TME y proyectos personales.</div>
+  <div class="hdr-pills">
+    <span class="hdr-pill hp-eng">🛠 Engineering v1.2</span>
+    <span class="hdr-pill hp-mkt">📣 Marketing v1.2</span>
+    <span class="hdr-pill hp-sal">🤝 Sales v1.3</span>
+    <span class="hdr-pill hp-pm">📋 Product Mgmt v1.2</span>
+    <span class="hdr-pill hp-leg">⚖️ Legal v1.3</span>
+    <span class="hdr-pill hp-dc">💻 Desktop Cmd v0.2</span>
+    <span class="hdr-pill hp-prd">⚡ Productivity v1.3</span>
+    <span class="hdr-pill hp-neu">55 skills totales</span>
+  </div>
+</div>
+
+<div class="export-bar">
+  <button class="btn-export" onclick="window.print()">⬇ Exportar / Imprimir</button>
+</div>
+
+<div class="tabs-wrap">
+
+  <div class="tabs-nav">
+    <button class="tab-btn active-eng" id="tab-eng" onclick="switchTab('eng')">🛠 Engineering</button>
+    <button class="tab-btn" id="tab-mkt" onclick="switchTab('mkt')">📣 Marketing</button>
+    <button class="tab-btn" id="tab-sal" onclick="switchTab('sal')">🤝 Sales</button>
+    <button class="tab-btn" id="tab-pm" onclick="switchTab('pm')">📋 Product Mgmt</button>
+    <button class="tab-btn" id="tab-leg" onclick="switchTab('leg')">⚖️ Legal</button>
+    <button class="tab-btn" id="tab-dc" onclick="switchTab('dc')">💻 Desktop Cmd</button>
+    <button class="tab-btn" id="tab-prd" onclick="switchTab('prd')">⚡ Productivity</button>
+  </div>
+
+  <!-- TAB 1: ENGINEERING -->
+  <div class="tab-panel active" id="panel-eng">
+    <div class="plugin-hero ph-eng">
+      <div class="ph-left">
+        <div class="ph-emoji">🛠</div>
+        <div class="ph-name">Engineering</div>
+        <div class="ph-ver">v1.2.0 · knowledge-work-plugins</div>
+        <div class="ph-desc">Streamline engineering workflows — standups, code review, architecture decisions, incident response, and technical documentation. Works with your existing tools or standalone.</div>
+      </div>
+      <div class="ph-right">
+        <div class="ph-stat"><div class="ph-stat-n">10</div><div class="ph-stat-l">Skills</div></div>
+        <div class="ph-stat"><div class="ph-stat-n">10</div><div class="ph-stat-l">MCP servers</div></div>
+        <div class="token-pill">~609 tok siempre activos</div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Skills disponibles</div>
+      <div class="skills-grid">
+        <div class="skill-card sc-eng"><div class="skill-icon">🏗</div><div class="skill-name">architecture</div><div class="skill-desc">Evalúa decisiones arquitectónicas, compara patrones, documenta trade-offs. Útil para decidir entre opciones en TMC/TME.</div><div class="skill-token"><span>~70 siempre</span><span>~530 al invocar</span></div></div>
+        <div class="skill-card sc-eng"><div class="skill-icon">🔍</div><div class="skill-name">code-review</div><div class="skill-desc">Revisión exhaustiva del código: bugs, seguridad, performance, legibilidad. Devuelve un reporte estructurado con severidad por hallazgo.</div><div class="skill-token"><span>~60 siempre</span><span>~880 al invocar</span></div></div>
+        <div class="skill-card sc-eng"><div class="skill-icon">🐛</div><div class="skill-name">debug</div><div class="skill-desc">Investiga errores con método: hipótesis, reproduce, aísla, propone fix. No adivina — analiza y explica la causa raíz.</div><div class="skill-token"><span>~60 siempre</span><span>~840 al invocar</span></div></div>
+        <div class="skill-card sc-eng"><div class="skill-icon">🚀</div><div class="skill-name">deploy-checklist</div><div class="skill-desc">Genera un checklist de deploy adaptado al stack del proyecto. Para TMC/TME: Next.js + PM2 + VPS Hostinger.</div><div class="skill-token"><span>~60 siempre</span><span>~540 al invocar</span></div></div>
+        <div class="skill-card sc-eng"><div class="skill-icon">📄</div><div class="skill-name">documentation</div><div class="skill-desc">Genera documentación técnica de funciones, APIs, flujos y decisiones de diseño. Exportable como HTML o Markdown.</div><div class="skill-token"><span>~60 siempre</span><span>~310 al invocar</span></div></div>
+        <div class="skill-card sc-eng"><div class="skill-icon">🚨</div><div class="skill-name">incident-response</div><div class="skill-desc">Guía la respuesta ante incidentes en producción: triage, comunicación, mitigación, postmortem.</div><div class="skill-token"><span>~60 siempre</span><span>~1.3k al invocar</span></div></div>
+        <div class="skill-card sc-eng"><div class="skill-icon">☀️</div><div class="skill-name">standup</div><div class="skill-desc">Genera el texto del standup diario del equipo desde commits, PRs y tareas abiertas. Conecta con GitHub y Linear.</div><div class="skill-token"><span>~60 siempre</span><span>~630 al invocar</span></div></div>
+        <div class="skill-card sc-eng"><div class="skill-icon">🗺</div><div class="skill-name">system-design</div><div class="skill-desc">Diseña sistemas desde cero: componentes, APIs, bases de datos, flujos de datos. Ideal para planificar features grandes.</div><div class="skill-token"><span>~60 siempre</span><span>~270 al invocar</span></div></div>
+        <div class="skill-card sc-eng"><div class="skill-icon">🧹</div><div class="skill-name">tech-debt</div><div class="skill-desc">Identifica y prioriza deuda técnica en el codebase. Ordena por impacto y esfuerzo para incluir en el roadmap.</div><div class="skill-token"><span>~60 siempre</span><span>~310 al invocar</span></div></div>
+        <div class="skill-card sc-eng"><div class="skill-icon">🧪</div><div class="skill-name">testing-strategy</div><div class="skill-desc">Define qué testear, qué tipo de tests usar y cómo distribuir el coverage. Más eficiente que escribir tests sin plan.</div><div class="skill-token"><span>~60 siempre</span><span>~260 al invocar</span></div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">MCP servers disponibles</div>
+      <div class="mcp-wrap">
+        <span class="mcp-chip">Slack</span><span class="mcp-chip">Linear</span><span class="mcp-chip">Asana</span><span class="mcp-chip">Atlassian / Jira</span><span class="mcp-chip">Notion</span><span class="mcp-chip">GitHub</span><span class="mcp-chip">PagerDuty</span><span class="mcp-chip">Datadog</span><span class="mcp-chip">Google Calendar</span><span class="mcp-chip">Gmail</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Cómo usarlo en TMC y TME</div>
+      <div class="use-grid">
+        <div class="use-card use-eng"><div class="use-num">Caso 01</div><div class="use-title">Code review antes de un deploy crítico</div><div class="use-desc">"Hacé un code-review del controller de pagos de MercadoPago antes de hacer push." Devuelve hallazgos ordenados por severidad.</div></div>
+        <div class="use-card use-eng"><div class="use-num">Caso 02</div><div class="use-title">Checklist de deploy TMC</div><div class="use-desc">"Generá el deploy-checklist para Next.js + PM2 + VPS Hostinger." Evita olvidar pasos en deploys de producción.</div></div>
+        <div class="use-card use-eng"><div class="use-num">Caso 03</div><div class="use-title">Debug de un error en prod</div><div class="use-desc">"El endpoint /api/reservas devuelve 500 solo en prod, no en local. Ayudame a debuguearlo." Sigue metodología estructurada.</div></div>
+        <div class="use-card use-eng"><div class="use-num">Caso 04</div><div class="use-title">Diseñar la arquitectura del agente bot</div><div class="use-desc">"Diseñá la arquitectura del bot de respuesta automática TMC usando N8N + Ollama." Ya documentado, pero útil para revisar.</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Cómo invocar cada skill</div>
+      <div class="invoke-box">
+        <div class="invoke-label">Ejemplos de prompts que activan las skills</div>
+        <div class="invoke-list">
+          <div class="invoke-item">Hacé un <strong>code-review</strong> de este archivo: [pegar código]</div>
+          <div class="invoke-item">Generá el <strong>deploy-checklist</strong> para el stack de TMC</div>
+          <div class="invoke-item">Ayudame a <strong>debuguear</strong> este error: [pegar stacktrace]</div>
+          <div class="invoke-item">Escribí la <strong>documentación técnica</strong> de este endpoint</div>
+          <div class="invoke-item">Identificá la <strong>deuda técnica</strong> en este módulo</div>
+          <div class="invoke-item">Diseñá una <strong>estrategia de tests</strong> para el flujo de pagos</div>
+          <div class="invoke-item">Generá el <strong>standup</strong> de hoy para el equipo</div>
+          <div class="invoke-item">Tenemos un <strong>incidente</strong> en producción — guiame</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: MARKETING -->
+  <div class="tab-panel" id="panel-mkt">
+    <div class="plugin-hero ph-mkt">
+      <div class="ph-left">
+        <div class="ph-emoji">📣</div>
+        <div class="ph-name">Marketing</div>
+        <div class="ph-ver">v1.2.0 · knowledge-work-plugins</div>
+        <div class="ph-desc">Create content, plan campaigns, and analyze performance across marketing channels. Maintain brand voice consistency, track competitors, and report on what's working.</div>
+      </div>
+      <div class="ph-right">
+        <div class="ph-stat"><div class="ph-stat-n">8</div><div class="ph-stat-l">Skills</div></div>
+        <div class="ph-stat"><div class="ph-stat-n">13</div><div class="ph-stat-l">MCP servers</div></div>
+        <div class="token-pill">~563 tok siempre activos</div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Skills disponibles</div>
+      <div class="skills-grid">
+        <div class="skill-card sc-mkt"><div class="skill-icon">🎙</div><div class="skill-name">brand-review</div><div class="skill-desc">Evalúa si un contenido respeta la voz de marca definida. Detecta inconsistencias de tono, terminología o posicionamiento.</div><div class="skill-token"><span>~70 siempre</span><span>~3k al invocar</span></div></div>
+        <div class="skill-card sc-mkt"><div class="skill-icon">🗓</div><div class="skill-name">campaign-plan</div><div class="skill-desc">Diseña una campaña completa: objetivo, segmento, mensajes clave, canales, calendario y KPIs. El más completo.</div><div class="skill-token"><span>~70 siempre</span><span>~3.4k al invocar</span></div></div>
+        <div class="skill-card sc-mkt"><div class="skill-icon">🔭</div><div class="skill-name">competitive-brief</div><div class="skill-desc">Analiza a un competidor: propuesta de valor, posicionamiento, canales, mensajes. Genera un brief estructurado listo para usar.</div><div class="skill-token"><span>~70 siempre</span><span>~3.1k al invocar</span></div></div>
+        <div class="skill-card sc-mkt"><div class="skill-icon">✍️</div><div class="skill-name">content-creation</div><div class="skill-desc">Crea contenido de forma estructurada: define objetivo, formato y tono antes de producir. Más metódico que pedir texto directamente.</div><div class="skill-token"><span>~60 siempre</span><span>~2.1k al invocar</span></div></div>
+        <div class="skill-card sc-mkt"><div class="skill-icon">📝</div><div class="skill-name">draft-content</div><div class="skill-desc">Redacta un borrador rápido de cualquier pieza: post, caption, email, story, copy de landing. Más liviano que content-creation.</div><div class="skill-token"><span>~70 siempre</span><span>~1k al invocar</span></div></div>
+        <div class="skill-card sc-mkt"><div class="skill-icon">📧</div><div class="skill-name">email-sequence</div><div class="skill-desc">Diseña una secuencia completa de emails: bienvenida, nurturing, conversión. Define asuntos, timings y CTA por email.</div><div class="skill-token"><span>~80 siempre</span><span>~2.5k al invocar</span></div></div>
+        <div class="skill-card sc-mkt"><div class="skill-icon">📊</div><div class="skill-name">performance-report</div><div class="skill-desc">Analiza métricas de campañas y genera un informe de desempeño con conclusiones y recomendaciones. Conecta con Amplitude, HubSpot.</div><div class="skill-token"><span>~70 siempre</span><span>~4.6k al invocar</span></div></div>
+        <div class="skill-card sc-mkt"><div class="skill-icon">🔎</div><div class="skill-name">seo-audit</div><div class="skill-desc">Audita el SEO de una página o sitio: keywords, meta tags, estructura, velocidad, backlinks. Conecta con Ahrefs y SimilarWeb.</div><div class="skill-token"><span>~70 siempre</span><span>~2.2k al invocar</span></div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">MCP servers disponibles</div>
+      <div class="mcp-wrap">
+        <span class="mcp-chip">Slack</span><span class="mcp-chip">Canva</span><span class="mcp-chip">Figma</span><span class="mcp-chip">HubSpot</span><span class="mcp-chip">Amplitude</span><span class="mcp-chip">Amplitude EU</span><span class="mcp-chip">Notion</span><span class="mcp-chip">Ahrefs</span><span class="mcp-chip">SimilarWeb</span><span class="mcp-chip">Klaviyo</span><span class="mcp-chip">Supermetrics</span><span class="mcp-chip">Google Calendar</span><span class="mcp-chip">Gmail</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Cómo usarlo en TMC y TME</div>
+      <div class="use-grid">
+        <div class="use-card use-mkt"><div class="use-num">Caso 01</div><div class="use-title">Plan de campaña de lanzamiento TME</div><div class="use-desc">"Diseñá una campaign-plan para el lanzamiento de TodosMisEventos en BsAs, orientada a venues y organizadores." Devuelve plan completo.</div></div>
+        <div class="use-card use-mkt"><div class="use-num">Caso 02</div><div class="use-title">Secuencia de emails para proveedores TMC</div><div class="use-desc">"Creá una email-sequence de 4 mails para convertir a un consorcio que se registró en TMC pero no publicó su espacio."</div></div>
+        <div class="use-card use-mkt"><div class="use-num">Caso 03</div><div class="use-title">Contenido para Instagram y Facebook</div><div class="use-desc">"Usá draft-content para generar 5 posts de Instagram para TMC con el ángulo de proveedor, tono cercano, en español rioplatense."</div></div>
+        <div class="use-card use-mkt"><div class="use-num">Caso 04</div><div class="use-title">Auditoría SEO de todasmiscosas.com</div><div class="use-desc">"Hacé un seo-audit de todasmiscosas.com y decime qué keywords deberían trabajarse para aparecer en 'alquiler de espacios CABA'."</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Cómo invocar cada skill</div>
+      <div class="invoke-box">
+        <div class="invoke-label">Ejemplos de prompts que activan las skills</div>
+        <div class="invoke-list">
+          <div class="invoke-item">Diseñá una <strong>campaign-plan</strong> para [objetivo] en [canal] dirigida a [segmento]</div>
+          <div class="invoke-item">Creá una <strong>email-sequence</strong> de [N] emails para [objetivo]</div>
+          <div class="invoke-item">Generá un <strong>draft-content</strong> para [formato]: [descripción breve]</div>
+          <div class="invoke-item">Hacé un <strong>competitive-brief</strong> sobre [competidor o plataforma similar]</div>
+          <div class="invoke-item">Auditá el <strong>SEO</strong> de [URL o página]</div>
+          <div class="invoke-item">Revisá si este contenido respeta la <strong>brand voice</strong> de TMC: [pegar texto]</div>
+          <div class="invoke-item">Generá un <strong>performance-report</strong> de la campaña del mes [con datos]</div>
+          <div class="invoke-item">Creá <strong>contenido</strong> para [Instagram / Facebook / LinkedIn] con tono [cercano / formal]</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: SALES -->
+  <div class="tab-panel" id="panel-sal">
+    <div class="plugin-hero ph-sal">
+      <div class="ph-left">
+        <div class="ph-emoji">🤝</div>
+        <div class="ph-name">Sales</div>
+        <div class="ph-ver">v1.3.0 · knowledge-work-plugins</div>
+        <div class="ph-desc">Prospect, craft outreach, and build deal strategy faster. Prep for calls, manage your pipeline, and write personalized messaging that moves deals forward.</div>
+      </div>
+      <div class="ph-right">
+        <div class="ph-stat"><div class="ph-stat-n">9</div><div class="ph-stat-l">Skills</div></div>
+        <div class="ph-stat"><div class="ph-stat-n">14</div><div class="ph-stat-l">MCP servers</div></div>
+        <div class="token-pill">~654 tok siempre activos</div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Skills disponibles</div>
+      <div class="skills-grid">
+        <div class="skill-card sc-sal"><div class="skill-icon">🔍</div><div class="skill-name">account-research</div><div class="skill-desc">Investiga una empresa o cuenta objetivo en profundidad: tamaño, señales de dolor, contactos clave, noticias recientes. Conecta con ZoomInfo y Apollo.</div><div class="skill-token"><span>~70 siempre</span><span>~2k al invocar</span></div></div>
+        <div class="skill-card sc-sal"><div class="skill-icon">📞</div><div class="skill-name">call-prep</div><div class="skill-desc">Prepara una llamada de ventas: contexto del prospecto, objeciones probables, preguntas de descubrimiento y propuesta de valor personalizada.</div><div class="skill-token"><span>~90 siempre</span><span>~2.1k al invocar</span></div></div>
+        <div class="skill-card sc-sal"><div class="skill-icon">📋</div><div class="skill-name">call-summary</div><div class="skill-desc">Genera el resumen de una llamada: acuerdos, próximos pasos, compromisos de cada parte y fecha de seguimiento.</div><div class="skill-token"><span>~80 siempre</span><span>~1.4k al invocar</span></div></div>
+        <div class="skill-card sc-sal"><div class="skill-icon">⚔️</div><div class="skill-name">competitive-intelligence</div><div class="skill-desc">Analiza el panorama competitivo desde la perspectiva de ventas: fortalezas del competidor, argumentos de diferenciación, posibles objeciones.</div><div class="skill-token"><span>~80 siempre</span><span>~3.4k al invocar</span></div></div>
+        <div class="skill-card sc-sal"><div class="skill-icon">📦</div><div class="skill-name">create-an-asset</div><div class="skill-desc">Crea un material de ventas: one-pager, deck de propuesta, case study, ficha de producto. El de mayor costo en tokens — el más elaborado.</div><div class="skill-token"><span>~60 siempre</span><span>~6.9k al invocar</span></div></div>
+        <div class="skill-card sc-sal"><div class="skill-icon">🌅</div><div class="skill-name">daily-briefing</div><div class="skill-desc">Resumen diario del pipeline: qué deals tienen actividad, cuáles están en riesgo, qué acciones tomar hoy. Conecta con HubSpot y Close.</div><div class="skill-token"><span>~70 siempre</span><span>~1.8k al invocar</span></div></div>
+        <div class="skill-card sc-sal"><div class="skill-icon">✉️</div><div class="skill-name">draft-outreach</div><div class="skill-desc">Redacta mensajes de prospección personalizados para WhatsApp, email o LinkedIn. Breves, directos, sin frases genéricas de vendedor.</div><div class="skill-token"><span>~60 siempre</span><span>~2.8k al invocar</span></div></div>
+        <div class="skill-card sc-sal"><div class="skill-icon">📈</div><div class="skill-name">forecast</div><div class="skill-desc">Proyecta el cierre de deals en el pipeline: probabilidad por etapa, monto esperado del mes, alertas de deals estancados.</div><div class="skill-token"><span>~80 siempre</span><span>~1.7k al invocar</span></div></div>
+        <div class="skill-card sc-sal"><div class="skill-icon">🗂</div><div class="skill-name">pipeline-review</div><div class="skill-desc">Revisión completa del pipeline: salud por etapa, velocidad de avance, deals en riesgo y recomendaciones de acción para cada uno.</div><div class="skill-token"><span>~80 siempre</span><span>~2k al invocar</span></div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">MCP servers disponibles</div>
+      <div class="mcp-wrap">
+        <span class="mcp-chip">Slack</span><span class="mcp-chip">HubSpot</span><span class="mcp-chip">Close</span><span class="mcp-chip">Monday</span><span class="mcp-chip">Clay</span><span class="mcp-chip">ZoomInfo</span><span class="mcp-chip">Notion</span><span class="mcp-chip">Atlassian</span><span class="mcp-chip">Fireflies</span><span class="mcp-chip">Apollo</span><span class="mcp-chip">Outreach</span><span class="mcp-chip">Google Calendar</span><span class="mcp-chip">Gmail</span><span class="mcp-chip">SimilarWeb</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Cómo usarlo en TMC y TME</div>
+      <div class="use-grid">
+        <div class="use-card use-sal"><div class="use-num">Caso 01</div><div class="use-title">Prospección de consorcios y administradoras</div><div class="use-desc">"Usá draft-outreach para escribir un mensaje de WhatsApp para una administradora de consorcio en Palermo que tiene espacio en el subsuelo."</div></div>
+        <div class="use-card use-sal"><div class="use-num">Caso 02</div><div class="use-title">Preparación de una reunión con una inmobiliaria</div><div class="use-desc">"Prepará el call-prep para la reunión de mañana con RE/MAX Belgrano para ofrecerles ser proveedores de TMC."</div></div>
+        <div class="use-card use-sal"><div class="use-num">Caso 03</div><div class="use-title">One-pager de TMC para proveedores</div><div class="use-desc">"Creá un asset tipo one-pager para presentar TMC a dueños de depósitos: beneficios, comisión, proceso de alta y contacto."</div></div>
+        <div class="use-card use-sal"><div class="use-num">Caso 04</div><div class="use-title">Inteligencia competitiva vs. otros marketplaces</div><div class="use-desc">"Hacé un competitive-intelligence de GuardaBox y BoxFul para identificar qué argumentos usar cuando un prospecto los mencione."</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Cómo invocar cada skill</div>
+      <div class="invoke-box">
+        <div class="invoke-label">Ejemplos de prompts que activan las skills</div>
+        <div class="invoke-list">
+          <div class="invoke-item">Investigá la cuenta <strong>[empresa/persona]</strong> antes de contactarla</div>
+          <div class="invoke-item">Prepará el <strong>call-prep</strong> para la reunión con [nombre/empresa] el [día]</div>
+          <div class="invoke-item">Escribí un <strong>draft-outreach</strong> para [canal] dirigido a [segmento]: [contexto]</div>
+          <div class="invoke-item">Creá un <strong>one-pager</strong> de TMC para [tipo de prospecto]</div>
+          <div class="invoke-item">Dame el <strong>briefing diario</strong> del pipeline de TMC</div>
+          <div class="invoke-item">Hacé la <strong>revisión del pipeline</strong>: qué deals hay, cuáles están trabados</div>
+          <div class="invoke-item">Generá el <strong>forecast</strong> de cierres para este mes</div>
+          <div class="invoke-item">Analizá la competencia de <strong>[nombre]</strong> para preparar mis argumentos</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: PRODUCT MANAGEMENT -->
+  <div class="tab-panel" id="panel-pm">
+    <div class="plugin-hero ph-pm">
+      <div class="ph-left">
+        <div class="ph-emoji">📋</div>
+        <div class="ph-name">Product Management</div>
+        <div class="ph-ver">v1.2.0 · knowledge-work-plugins</div>
+        <div class="ph-desc">Write feature specs, plan roadmaps, and synthesize user research faster. Keep stakeholders updated and stay ahead of the competitive landscape.</div>
+      </div>
+      <div class="ph-right">
+        <div class="ph-stat"><div class="ph-stat-n">9</div><div class="ph-stat-l">Skills</div></div>
+        <div class="ph-stat"><div class="ph-stat-n">16</div><div class="ph-stat-l">MCP servers</div></div>
+        <div class="token-pill">~560 tok siempre activos</div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Skills disponibles</div>
+      <div class="skills-grid">
+        <div class="skill-card sc-pm"><div class="skill-icon">💡</div><div class="skill-name">brainstorm</div><div class="skill-desc">Genera ideas amplias de features, mejoras o soluciones ante un desafío de producto. Rápido, amplio, no filtrado.</div><div class="skill-token"><span>~30 siempre</span><span>~1.5k al invocar</span></div></div>
+        <div class="skill-card sc-pm"><div class="skill-icon">🔭</div><div class="skill-name">competitive-brief</div><div class="skill-desc">Analiza un competidor desde la perspectiva de producto: propuesta de valor, diferenciación y ventajas que tienen sobre nosotros.</div><div class="skill-token"><span>~60 siempre</span><span>~3.4k al invocar</span></div></div>
+        <div class="skill-card sc-pm"><div class="skill-icon">📊</div><div class="skill-name">metrics-review</div><div class="skill-desc">Revisa métricas de producto — retención, conversión, DAU, NPS — e identifica con conclusiones accionables qué necesita atención.</div><div class="skill-token"><span>~70 siempre</span><span>~4.2k al invocar</span></div></div>
+        <div class="skill-card sc-pm"><div class="skill-icon">🎯</div><div class="skill-name">product-brainstorming</div><div class="skill-desc">Sesión estructurada de ideación de producto con user stories, validación de hipótesis y criterios de éxito definidos.</div><div class="skill-token"><span>~70 siempre</span><span>~3.7k al invocar</span></div></div>
+        <div class="skill-card sc-pm"><div class="skill-icon">🗺</div><div class="skill-name">roadmap-update</div><div class="skill-desc">Actualiza o genera el roadmap del producto con prioridades, fechas estimadas y dependencias entre features.</div><div class="skill-token"><span>~60 siempre</span><span>~2.9k al invocar</span></div></div>
+        <div class="skill-card sc-pm"><div class="skill-icon">⚡</div><div class="skill-name">sprint-planning</div><div class="skill-desc">Planifica un sprint: selección de tareas, estimaciones, objetivo del sprint y criterios de aceptación. El más rápido de los 9.</div><div class="skill-token"><span>~60 siempre</span><span>~760 al invocar</span></div></div>
+        <div class="skill-card sc-pm"><div class="skill-icon">📢</div><div class="skill-name">stakeholder-update</div><div class="skill-desc">Genera el update para inversores, dirección o equipo: qué se hizo, qué está en progreso, próximos hitos y riesgos.</div><div class="skill-token"><span>~70 siempre</span><span>~3.4k al invocar</span></div></div>
+        <div class="skill-card sc-pm"><div class="skill-icon">🧬</div><div class="skill-name">synthesize-research</div><div class="skill-desc">Procesa entrevistas de usuarios, encuestas y feedback en insights accionables y prioridades claras de producto.</div><div class="skill-token"><span>~70 siempre</span><span>~3.8k al invocar</span></div></div>
+        <div class="skill-card sc-pm"><div class="skill-icon">📝</div><div class="skill-name">write-spec</div><div class="skill-desc">Escribe specs funcionales o técnicas de features: problema que resuelve, propuesta, casos de uso y criterios de aceptación.</div><div class="skill-token"><span>~70 siempre</span><span>~2.9k al invocar</span></div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">MCP servers disponibles</div>
+      <div class="mcp-wrap">
+        <span class="mcp-chip">Slack</span><span class="mcp-chip">Linear</span><span class="mcp-chip">Asana</span><span class="mcp-chip">Monday</span><span class="mcp-chip">ClickUp</span><span class="mcp-chip">Atlassian</span><span class="mcp-chip">Notion</span><span class="mcp-chip">Figma</span><span class="mcp-chip">Amplitude</span><span class="mcp-chip">Amplitude EU</span><span class="mcp-chip">Pendo</span><span class="mcp-chip">Intercom</span><span class="mcp-chip">Fireflies</span><span class="mcp-chip">Google Calendar</span><span class="mcp-chip">Gmail</span><span class="mcp-chip">SimilarWeb</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Cómo usarlo en TMC, TME y proyectos propios</div>
+      <div class="use-grid">
+        <div class="use-card use-pm"><div class="use-num">Caso 01 · TMC</div><div class="use-title">Spec del sistema de reviews de proveedores</div><div class="use-desc">"Escribí la write-spec para el módulo de calificaciones de proveedores de TMC: 5 estrellas, respuesta obligatoria, visible en el perfil."</div></div>
+        <div class="use-card use-pm"><div class="use-num">Caso 02 · TMC</div><div class="use-title">Actualizar el roadmap TMC v2</div><div class="use-desc">"Actualizá el roadmap de TMC v2 con los 26 items del backlog, ordenados por impacto y esfuerzo estimado."</div></div>
+        <div class="use-card use-pm"><div class="use-num">Caso 03 · TME</div><div class="use-title">Sprint planning del módulo de tickets</div><div class="use-desc">"Planificá el sprint 1 de TME para el módulo de gestión de tickets de eventos: tareas, estimaciones y objetivo del sprint."</div></div>
+        <div class="use-card use-pm"><div class="use-num">Caso 04 · Personal</div><div class="use-title">Sintetizar feedback de Patas Protegidas</div><div class="use-desc">"Procesá las 15 respuestas del form de feedback de Patas Protegidas y dame los 5 insights más importantes para priorizar."</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Cómo invocar cada skill</div>
+      <div class="invoke-box">
+        <div class="invoke-label">Ejemplos de prompts que activan las skills</div>
+        <div class="invoke-list">
+          <div class="invoke-item">Escribí la <strong>spec</strong> de [feature]: problema, propuesta, casos de uso, criterios de aceptación</div>
+          <div class="invoke-item">Actualizá el <strong>roadmap</strong> con [lista de items] ordenados por impacto</div>
+          <div class="invoke-item">Planificá el <strong>sprint</strong> de [proyecto] con estas tareas: [lista]</div>
+          <div class="invoke-item">Generá el <strong>stakeholder-update</strong> del mes para [proyecto]</div>
+          <div class="invoke-item">Analizá estas <strong>métricas</strong> y dame conclusiones: [datos]</div>
+          <div class="invoke-item">Hacé un <strong>brainstorm</strong> de soluciones para [problema de producto]</div>
+          <div class="invoke-item">Sintetizá este <strong>feedback</strong> de usuarios y dame los insights principales</div>
+          <div class="invoke-item">Analizá al <strong>competidor</strong> [nombre] desde la perspectiva de nuestro producto</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 5: LEGAL -->
+  <div class="tab-panel" id="panel-leg">
+    <div class="plugin-hero ph-leg">
+      <div class="ph-left">
+        <div class="ph-emoji">⚖️</div>
+        <div class="ph-name">Legal</div>
+        <div class="ph-ver">v1.3.0 · knowledge-work-plugins</div>
+        <div class="ph-desc">Speed up contract review, NDA triage, and compliance workflows. Draft legal briefs, organize precedent research, and manage institutional knowledge.</div>
+      </div>
+      <div class="ph-right">
+        <div class="ph-stat"><div class="ph-stat-n">9</div><div class="ph-stat-l">Skills</div></div>
+        <div class="ph-stat"><div class="ph-stat-n">7</div><div class="ph-stat-l">MCP servers</div></div>
+        <div class="token-pill">~646 tok siempre activos</div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Skills disponibles</div>
+      <div class="skills-grid">
+        <div class="skill-card sc-leg"><div class="skill-icon">📋</div><div class="skill-name">brief</div><div class="skill-desc">Genera un brief legal sobre un tema específico: contexto, marco regulatorio aplicable y riesgos identificados.</div><div class="skill-token"><span>~80 siempre</span><span>~1.5k al invocar</span></div></div>
+        <div class="skill-card sc-leg"><div class="skill-icon">✅</div><div class="skill-name">compliance-check</div><div class="skill-desc">Verifica si un proceso, práctica o documento cumple con regulaciones aplicables (GDPR, AFIP, PCI DSS, regulaciones locales).</div><div class="skill-token"><span>~80 siempre</span><span>~3.3k al invocar</span></div></div>
+        <div class="skill-card sc-leg"><div class="skill-icon">⚡</div><div class="skill-name">legal-response</div><div class="skill-desc">Redacta una respuesta formal a un reclamo, intimación o comunicación adversarial. Tono legal, preciso y sin concesiones innecesarias.</div><div class="skill-token"><span>~70 siempre</span><span>~3.7k al invocar</span></div></div>
+        <div class="skill-card sc-leg"><div class="skill-icon">⚠️</div><div class="skill-name">legal-risk-assessment</div><div class="skill-desc">Evalúa el riesgo legal de una acción, contrato o situación, ordenando los riesgos por probabilidad e impacto.</div><div class="skill-token"><span>~60 siempre</span><span>~2.9k al invocar</span></div></div>
+        <div class="skill-card sc-leg"><div class="skill-icon">📞</div><div class="skill-name">meeting-briefing</div><div class="skill-desc">Prepara el briefing para una reunión legal: contexto de las partes, historial relevante, puntos a discutir y posición sugerida.</div><div class="skill-token"><span>~60 siempre</span><span>~2k al invocar</span></div></div>
+        <div class="skill-card sc-leg"><div class="skill-icon">📜</div><div class="skill-name">review-contract</div><div class="skill-desc">Revisa un contrato en detalle: identifica cláusulas problemáticas, gaps de protección y puntos clave de negociación.</div><div class="skill-token"><span>~80 siempre</span><span>~3.8k al invocar</span></div></div>
+        <div class="skill-card sc-leg"><div class="skill-icon">✍️</div><div class="skill-name">signature-request</div><div class="skill-desc">Prepara un pedido formal de firma con resumen del documento y los puntos clave que quien firma debe conocer.</div><div class="skill-token"><span>~70 siempre</span><span>~700 al invocar</span></div></div>
+        <div class="skill-card sc-leg"><div class="skill-icon">🔍</div><div class="skill-name">triage-nda</div><div class="skill-desc">Revisa un NDA rápidamente: detecta cláusulas críticas, restricciones inusuales y recomienda aceptar / negociar / rechazar.</div><div class="skill-token"><span>~70 siempre</span><span>~3.3k al invocar</span></div></div>
+        <div class="skill-card sc-leg"><div class="skill-icon">🏢</div><div class="skill-name">vendor-check</div><div class="skill-desc">Due diligence básica de un proveedor o socio: verifica consistencia legal, antecedentes y detecta red flags antes de firmar.</div><div class="skill-token"><span>~80 siempre</span><span>~1.2k al invocar</span></div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">MCP servers disponibles</div>
+      <div class="mcp-wrap">
+        <span class="mcp-chip">Slack</span><span class="mcp-chip">Box</span><span class="mcp-chip">Egnyte</span><span class="mcp-chip">Atlassian</span><span class="mcp-chip">DocuSign</span><span class="mcp-chip">Google Calendar</span><span class="mcp-chip">Gmail</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Cómo usarlo en TMC, TME y contratos personales</div>
+      <div class="use-grid">
+        <div class="use-card use-leg"><div class="use-num">Caso 01 · TMC</div><div class="use-title">Review de Términos y Condiciones</div><div class="use-desc">"Revisá los T&C de TMC para detectar cláusulas que podrían ser problemáticas con usuarios o proveedores de Buenos Aires."</div></div>
+        <div class="use-card use-leg"><div class="use-num">Caso 02 · TMC</div><div class="use-title">Compliance del flujo de pagos (MP)</div><div class="use-desc">"Hacé un compliance-check del flujo de escrow de MercadoPago en TMC vs. regulaciones del BCRA y PCI DSS."</div></div>
+        <div class="use-card use-leg"><div class="use-num">Caso 03 · TME</div><div class="use-title">Contrato de responsabilidad para venues</div><div class="use-desc">"Revisá el borrador de contrato de responsabilidad para organizadores de eventos en TME y marcá los puntos de riesgo."</div></div>
+        <div class="use-card use-leg"><div class="use-num">Caso 04 · Personal</div><div class="use-title">Triage de un NDA de proveedor</div><div class="use-desc">"Hacé el triage del NDA que me mandó [empresa] antes de firmarlo: qué cláusulas son críticas, qué negociar."</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Cómo invocar cada skill</div>
+      <div class="invoke-box">
+        <div class="invoke-label">Ejemplos de prompts que activan las skills</div>
+        <div class="invoke-list">
+          <div class="invoke-item">Revisá este <strong>contrato</strong> y marcá las cláusulas problemáticas: [pegar texto]</div>
+          <div class="invoke-item">Hacé un <strong>compliance-check</strong> de [proceso/práctica] vs. [regulación]</div>
+          <div class="invoke-item">Hacé el <strong>triage de este NDA</strong>: [pegar texto del NDA]</div>
+          <div class="invoke-item">Evaluá el <strong>riesgo legal</strong> de [acción o decisión de negocio]</div>
+          <div class="invoke-item">Redactá la <strong>respuesta al reclamo</strong> de [parte]: [contexto]</div>
+          <div class="invoke-item">Preparame el <strong>briefing</strong> para la reunión legal con [contraparte] sobre [tema]</div>
+          <div class="invoke-item">Prepareme la <strong>solicitud de firma</strong> de [documento] para enviar a [persona]</div>
+          <div class="invoke-item">Hacé el <strong>vendor-check</strong> de [empresa/proveedor] antes de firmar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 6: DESKTOP COMMANDER -->
+  <div class="tab-panel" id="panel-dc">
+    <div class="plugin-hero ph-dc">
+      <div class="ph-left">
+        <div class="ph-emoji">💻</div>
+        <div class="ph-name">Desktop Commander</div>
+        <div class="ph-ver">v0.2.0 · claude-plugins-official</div>
+        <div class="ph-desc">MCP server for terminal commands, process management, and file operations across text files, code, PDF, DOCX, Excel, images, and structured data. El único plugin del stack oficial (no knowledge-work).</div>
+      </div>
+      <div class="ph-right">
+        <div class="ph-stat"><div class="ph-stat-n">6</div><div class="ph-stat-l">Skills</div></div>
+        <div class="ph-stat"><div class="ph-stat-n">0</div><div class="ph-stat-l">MCP externos</div></div>
+        <div class="token-pill">~1,064 tok · el más alto</div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Skills disponibles</div>
+      <div class="skills-grid">
+        <div class="skill-card sc-dc"><div class="skill-icon">🤖</div><div class="skill-name">ai-tools-setup</div><div class="skill-desc">Configura y verifica herramientas de IA locales: N8N, Ollama, Claude Code. Diagnostica problemas de instalación y configuración.</div><div class="skill-token"><span>~190 siempre</span><span>~1.4k al invocar</span></div></div>
+        <div class="skill-card sc-dc"><div class="skill-icon">💊</div><div class="skill-name">computer-health-check</div><div class="skill-desc">Diagnóstico completo del sistema: CPU, RAM, disco, procesos activos, puertos abiertos. El skill con mayor overhead siempre activo.</div><div class="skill-token"><span>~240 siempre</span><span>~2.1k al invocar</span></div></div>
+        <div class="skill-card sc-dc"><div class="skill-icon">📖</div><div class="skill-name">desktop-commander-overview</div><div class="skill-desc">Overview completo de Desktop Commander y todo lo que puede hacer. El punto de entrada para entender el plugin.</div><div class="skill-token"><span>~80 siempre</span><span>~3.3k al invocar</span></div></div>
+        <div class="skill-card sc-dc"><div class="skill-icon">📚</div><div class="skill-name">knowledge-base</div><div class="skill-desc">Gestiona una base de conocimiento local: indexa archivos, busca contenido en texto/código, mantiene el índice actualizado.</div><div class="skill-token"><span>~120 siempre</span><span>~2.3k al invocar</span></div></div>
+        <div class="skill-card sc-dc"><div class="skill-icon">💎</div><div class="skill-name">obsidian-vault</div><div class="skill-desc">Conecta con el vault de Obsidian: lee notas, busca contexto entre archivos y agrega nuevas entradas desde Claude.</div><div class="skill-token"><span>~190 siempre</span><span>~2.2k al invocar</span></div></div>
+        <div class="skill-card sc-dc"><div class="skill-icon">⌨️</div><div class="skill-name">terminal</div><div class="skill-desc">Ejecuta comandos de terminal, gestiona procesos, lee/escribe archivos. El skill más potente — acceso completo al sistema operativo.</div><div class="skill-token"><span>~250 siempre</span><span>~2.7k al invocar</span></div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Nota sobre MCP servers</div>
+      <div class="mcp-wrap">
+        <span class="mcp-chip" style="background:#F0F9FF;border-color:#BAE6FD;color:#0C4A6E;">Desktop Commander incluye su propio MCP server — no necesita externos</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Cómo usarlo en TMC, TME y entorno local</div>
+      <div class="use-grid">
+        <div class="use-card use-dc"><div class="use-num">Caso 01 · Local</div><div class="use-title">Gestionar el entorno de IA local</div><div class="use-desc">"Usá ai-tools-setup para verificar que N8N en localhost:5678 y Ollama con llama3.2/gemma4 estén correctamente configurados."</div></div>
+        <div class="use-card use-dc"><div class="use-num">Caso 02 · Sistema</div><div class="use-title">Health check del Chromebook/Penguin</div><div class="use-desc">"Hacé un computer-health-check y decime qué procesos están usando más recursos y qué puertos están escuchando."</div></div>
+        <div class="use-card use-dc"><div class="use-num">Caso 03 · Terminal</div><div class="use-title">Automatización de terminal y scripts</div><div class="use-desc">"Usá terminal para verificar que servidor.py está corriendo en puerto 8765 y mostrarme los logs recientes."</div></div>
+        <div class="use-card use-dc"><div class="use-num">Caso 04 · Conocimiento</div><div class="use-title">Base de conocimiento local buscable</div><div class="use-desc">"Indexá mis proyectos en ~/dev y haceme searchable todo el contenido desde Claude sin tener que abrir archivos manualmente."</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Cómo invocar cada skill</div>
+      <div class="invoke-box">
+        <div class="invoke-label">Ejemplos de prompts que activan las skills</div>
+        <div class="invoke-list">
+          <div class="invoke-item">Ejecutá este <strong>comando en terminal</strong>: [comando]</div>
+          <div class="invoke-item">Hacé un <strong>health-check</strong> de mi sistema / de mi Chromebook</div>
+          <div class="invoke-item">Configurá / verificá mis <strong>herramientas de IA locales</strong> (N8N, Ollama)</div>
+          <div class="invoke-item">Buscá <strong>[término]</strong> en mi base de conocimiento local</div>
+          <div class="invoke-item">Leé mi <strong>vault de Obsidian</strong> y buscá notas sobre [tema]</div>
+          <div class="invoke-item">Dame el <strong>overview</strong> de Desktop Commander — qué puede hacer</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 7: PRODUCTIVITY -->
+  <div class="tab-panel" id="panel-prd">
+    <div class="plugin-hero ph-prd">
+      <div class="ph-left">
+        <div class="ph-emoji">⚡</div>
+        <div class="ph-name">Productivity</div>
+        <div class="ph-ver">v1.3.0 · knowledge-work-plugins</div>
+        <div class="ph-desc">Manage tasks, plan your day, and build up memory of important context about your work. Syncs with your calendar, email, and chat to keep everything organized.</div>
+      </div>
+      <div class="ph-right">
+        <div class="ph-stat"><div class="ph-stat-n">4</div><div class="ph-stat-l">Skills</div></div>
+        <div class="ph-stat"><div class="ph-stat-n">9</div><div class="ph-stat-l">MCP servers</div></div>
+        <div class="token-pill">~231 tok · el más bajo</div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Skills disponibles</div>
+      <div class="skills-grid">
+        <div class="skill-card sc-prd"><div class="skill-icon">🧠</div><div class="skill-name">memory-management</div><div class="skill-desc">Guarda y recupera contexto importante entre sesiones de Claude. La memoria persistente del trabajo — lo que no debe olvidarse entre conversaciones.</div><div class="skill-token"><span>~60 siempre</span><span>~2.3k al invocar</span></div></div>
+        <div class="skill-card sc-prd"><div class="skill-icon">☀️</div><div class="skill-name">start</div><div class="skill-desc">Arranca el día: resumen del calendario, pendientes sin cerrar, mensajes sin leer y prioridades sugeridas para la jornada.</div><div class="skill-token"><span>~60 siempre</span><span>~1.3k al invocar</span></div></div>
+        <div class="skill-card sc-prd"><div class="skill-icon">📋</div><div class="skill-name">task-management</div><div class="skill-desc">Crea, actualiza y cierra tareas. Conecta con Linear, Asana, ClickUp, Monday y otras herramientas de gestión de proyectos.</div><div class="skill-token"><span>~40 siempre</span><span>~670 al invocar</span></div></div>
+        <div class="skill-card sc-prd"><div class="skill-icon">🌙</div><div class="skill-name">update</div><div class="skill-desc">Resumen de fin de jornada: qué se hizo, qué quedó pendiente, qué se bloqueó hoy y qué sigue mañana.</div><div class="skill-token"><span>~70 siempre</span><span>~1.3k al invocar</span></div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">MCP servers disponibles</div>
+      <div class="mcp-wrap">
+        <span class="mcp-chip">Slack</span><span class="mcp-chip">Notion</span><span class="mcp-chip">Asana</span><span class="mcp-chip">Linear</span><span class="mcp-chip">Atlassian</span><span class="mcp-chip">Monday</span><span class="mcp-chip">ClickUp</span><span class="mcp-chip">Google Calendar</span><span class="mcp-chip">Gmail</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Cómo usarlo en el día a día</div>
+      <div class="use-grid">
+        <div class="use-card use-prd"><div class="use-num">Caso 01 · Día a día</div><div class="use-title">Start del día integrado</div><div class="use-desc">"Arrancá el día: qué tengo en el calendario de hoy, qué quedó pendiente de ayer en TMC/TME y qué emails hay sin leer."</div></div>
+        <div class="use-card use-prd"><div class="use-num">Caso 02 · TMC / TME</div><div class="use-title">Gestión de tareas inter-proyecto</div><div class="use-desc">"Creá una tarea en Linear: 'Reunión con Guille sobre migración DB de TMC' para el viernes con prioridad alta."</div></div>
+        <div class="use-card use-prd"><div class="use-num">Caso 03 · Contexto</div><div class="use-title">Guardar contexto entre sesiones</div><div class="use-desc">"Guardá en memoria que el próximo paso de TME es verificar/escribir el schema.sql de la base de datos en Hostinger."</div></div>
+        <div class="use-card use-prd"><div class="use-num">Caso 04 · Cierre</div><div class="use-title">Update de fin de jornada</div><div class="use-desc">"Generá el update de hoy: instalé 4 plugins nuevos de Claude Code, actualicé toda la documentación. Queda pendiente el deploy a GitHub."</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Cómo invocar cada skill</div>
+      <div class="invoke-box">
+        <div class="invoke-label">Ejemplos de prompts que activan las skills</div>
+        <div class="invoke-list">
+          <div class="invoke-item">Arrancá el día / <strong>start del día</strong> — qué tengo hoy</div>
+          <div class="invoke-item">Creá una <strong>tarea</strong>: [descripción] con prioridad [alta/media/baja] para [fecha]</div>
+          <div class="invoke-item">Guardá en <strong>memoria</strong> que [contexto importante que no debe olvidarse]</div>
+          <div class="invoke-item">Generá el <strong>update de hoy</strong>: [qué hice] — qué quedó pendiente</div>
+          <div class="invoke-item">Recuperá el <strong>contexto</strong> de la última sesión sobre [proyecto]</div>
+          <div class="invoke-item">Marcá como completada la tarea de <strong>[descripción]</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <strong>Claude Code Plugins · 7 Instalados · Stack Activo</strong> · Generado jul 2026 · Alejandro Laporte<br>
+    Fuente: <code>claude plugin details [nombre]</code> · knowledge-work-plugins + claude-plugins-official marketplace<br>
+    Total: 55 skills · 7 plugins · ~3,326 tok siempre activos combinados
+  </footer>
+
+</div>
+
+<script>
+function switchTab(id){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>{b.className='tab-btn';});
+  document.getElementById('panel-'+id).classList.add('active');
+  const btn=document.getElementById('tab-'+id);
+  btn.classList.add('active-'+id);
+}
+</script>
+</body>
+</html>
