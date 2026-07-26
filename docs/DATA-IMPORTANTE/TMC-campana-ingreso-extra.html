@@ -328,6 +328,7 @@
     <button class="tab-btn" onclick="showTab('canales')">📡 Canales</button>
     <button class="tab-btn" onclick="showTab('calendario')">📆 Calendario</button>
     <button class="tab-btn" onclick="showTab('piezas')">🎨 Piezas de Contenido</button>
+    <button class="tab-btn" onclick="showTab('funnel')">🔄 Funnel de Conversión</button>
     <button class="tab-btn" onclick="showTab('metricas')">📊 Métricas</button>
     <button class="tab-btn" onclick="showTab('riesgos')">⚠️ Riesgos y Próximos Pasos</button>
   </div>
@@ -740,9 +741,14 @@
 
   <div class="format-grid">
     <div class="format-card">
+      <div class="format-icon">🧮</div>
+      <h4>Calculadora de ingreso estimado</h4>
+      <p>"¿Qué tipo de espacio tenés? → cuánto podrías ganar" — sin login, primero en el funnel. Must-have, mayor apalancamiento de conversión de toda la campaña</p>
+    </div>
+    <div class="format-card">
       <div class="format-icon">📝</div>
       <h4>Landing / artículo SEO</h4>
-      <p>"Convertí tu espacio ocioso en ingreso extra" — must-have, primero en producirse</p>
+      <p>"Convertí tu espacio ocioso en ingreso extra" — must-have, primero en producirse. Debe embeber la calculadora, no solo texto</p>
     </div>
     <div class="format-card">
       <div class="format-icon">🎬</div>
@@ -779,6 +785,75 @@
 </div>
 
 <!-- ══════════════════════════════════════
+     TAB — FUNNEL DE CONVERSIÓN
+═══════════════════════════════════════ -->
+<div id="tab-funnel" class="tab-panel">
+
+  <div class="section-header">
+    <div class="section-icon" style="background:#D6F5FA;">🔄</div>
+    <div>
+      <h2>Funnel de Conversión — De Vista a Proveedor</h2>
+      <p>Dónde se pierde la gente en cada salto, y qué palanca usar en cada uno</p>
+    </div>
+  </div>
+
+  <div class="highlight-box hb-sky">
+    <strong>💡 Principio central:</strong> la palanca de mayor impacto para este segmento es reducir la fricción <em>antes</em> del compromiso, no después. La gente está motivada por una cifra concreta de ingreso — dejarla ver esa cifra sin pedirle nada a cambio es lo que más convierte.
+  </div>
+
+  <h3 style="margin:24px 0 14px;">🗺️ El funnel completo</h3>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-week">Paso 1</div>
+      <div class="tl-title">👁️ Vista (Reel / post / ad)</div>
+      <div class="tl-body">La persona ve la pieza en su feed. Palanca: gancho con cifra concreta ("tu baulera puede rendir $XX.XXX/mes"), no promesa vaga.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-week">Paso 2</div>
+      <div class="tl-title">👆 Clic</div>
+      <div class="tl-body">Decide entrar. Palanca: <strong>message match</strong> — el link debe prometer exactamente lo que la landing cumple, mismo ángulo y misma cifra que la pieza de origen.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-week">Paso 3</div>
+      <div class="tl-title">🧮 Landing + calculadora (sin login)</div>
+      <div class="tl-body">Elige su tipo de espacio y ve una cifra estimada de ingreso, sin registrarse. Palanca: cero fricción en este paso — es donde la curiosidad se convierte en intención real.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-week">Paso 4</div>
+      <div class="tl-title">🚀 Inicio de publicación</div>
+      <div class="tl-body">Recién acá se pide login (magic link) y datos del espacio. Palanca: mostrar el incentivo de <strong>0% comisión 3 meses (early adopter)</strong> como CTA explícito, y minimizar campos obligatorios (foto puede completarse después).</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-week">Paso 5</div>
+      <div class="tl-title">✅ Espacio publicado</div>
+      <div class="tl-body">Si abandona a mitad de camino: recuperar con un mensaje de WhatsApp/email 24hs después ("te faltó completar tu espacio, tardás 2 minutos") — es el punto de fuga más común y el más barato de arreglar.</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="grid2">
+    <div class="card card-coral">
+      <h3>🧮 #1 palanca: calculadora antes del registro</h3>
+      <p>En vez de mandar directo a "publicá tu espacio" (exige compromiso), mostrar primero "podrías ganar ~$XX.XXX/mes" sin pedir nada. Convierte curiosidad en intención concreta antes de pedir cualquier dato.</p>
+    </div>
+    <div class="card card-mint">
+      <h3>🗣️ Prueba social específica del segmento</h3>
+      <p>"Ya se publicaron X espacios este mes" o testimonio real de alguien que monetizó una baulera — no genérico de TMC, sino de alguien que se identifique con "necesitaba un ingreso extra".</p>
+    </div>
+    <div class="card card-peach">
+      <h3>⚡ Incentivo real como CTA explícito</h3>
+      <p>TMC ya tiene 0% comisión por 3 meses para early adopters de la waitlist — tiene que estar visible en la landing y repetirse en el flujo de publicación, no mencionarse una sola vez.</p>
+    </div>
+    <div class="card card-lavender">
+      <h3>💬 Recuperación de abandono</h3>
+      <p>Mensaje de seguimiento a quien empezó a publicar y no terminó — es el punto de fuga más común del funnel y el que menos esfuerzo cuesta arreglar, porque esa persona ya mostró intención real.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════
      TAB 7 — MÉTRICAS
 ═══════════════════════════════════════ -->
 <div id="tab-metricas" class="tab-panel">
@@ -797,13 +872,26 @@
     <p><strong>Cómo se rastrea:</strong> parámetro UTM propio (<code>utm_campaign=ingreso-extra</code>) en todos los links + pregunta opcional "¿cómo nos encontraste?" en el flujo de publicación.</p>
   </div>
 
+  <div class="card card-sky" style="margin-top:20px;">
+    <h3>🔄 KPIs por salto del funnel</h3>
+    <p>Ver detalle de cada paso en la pestaña <strong>Funnel de Conversión</strong>. Trackear cada salto por separado para saber exactamente dónde se pierde la gente:</p>
+    <div style="overflow-x:auto;margin-top:12px;">
+    <table>
+      <tr><th>Salto</th><th>Métrica</th><th>Cómo se mide</th></tr>
+      <tr><td>Vista → Clic</td><td>CTR (benchmark &gt;1.5%)</td><td>Meta/Google Ads Manager, insights orgánicos de Reels/posts</td></tr>
+      <tr><td>Clic → Landing</td><td>Visitas a la landing, tiempo en página</td><td>Analytics de la landing + UTM propio</td></tr>
+      <tr><td>Landing → Uso de calculadora</td><td>% de visitantes que interactúan con la calculadora</td><td>Evento de analytics en el componente</td></tr>
+      <tr><td>Calculadora → Inicio de publicación</td><td>% que hace clic en "publicar" tras ver su cifra</td><td>Evento de analytics + UTM</td></tr>
+      <tr><td>Inicio → Publicación completa</td><td>Tasa de abandono a mitad de flujo</td><td>Estado del registro en backend TMC</td></tr>
+    </table>
+    </div>
+  </div>
+
   <div class="grid2" style="margin-top:20px;">
-    <div class="card card-sky">
-      <h3>📈 KPIs secundarios</h3>
-      <p>• CTR de los anuncios de Meta/Google (benchmark: &gt;1.5%)</p>
+    <div class="card card-mint">
+      <h3>📈 KPIs generales</h3>
       <p>• Costo por clic y costo por proveedor publicado</p>
-      <p>• Visitas a la landing SEO y tiempo en página</p>
-      <p>• Tasa de conversión landing → inicio de publicación de espacio</p>
+      <p>• Tasa de conversión global landing → espacio publicado</p>
     </div>
     <div class="card card-lavender">
       <h3>🗓️ Cadencia de reporte</h3>
