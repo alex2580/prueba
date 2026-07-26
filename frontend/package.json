@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.6",
-    "@mercadopago/sdk-react": "^0.0.18",
+    "@mercadopago/sdk-react": "^1.0.7",
     "@supabase/auth-helpers-nextjs": "^0.15.0",
     "@supabase/supabase-js": "^2.106.2",
     "@types/qrcode": "^1.5.6",
