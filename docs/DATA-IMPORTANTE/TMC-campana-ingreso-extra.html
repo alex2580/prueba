@@ -323,6 +323,7 @@
   <div class="tabs">
     <button class="tab-btn active" onclick="showTab('resumen')">🎯 Resumen</button>
     <button class="tab-btn" onclick="showTab('audiencia')">👤 Audiencia</button>
+    <button class="tab-btn" onclick="showTab('tam')">📊 Tamaño de Mercado</button>
     <button class="tab-btn" onclick="showTab('mensajes')">💬 Mensajes</button>
     <button class="tab-btn" onclick="showTab('canales')">📡 Canales</button>
     <button class="tab-btn" onclick="showTab('calendario')">📆 Calendario</button>
@@ -458,6 +459,84 @@
 
   <div class="highlight-box hb-lemon" style="margin-top:20px;">
     <strong>📌 Etapa del funnel:</strong> Consideración → Decisión. Esta persona ya está buscando activamente una solución a su necesidad de ingreso — no hay que crear el problema, hay que aparecer en el momento en que lo está resolviendo.
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB — TAMAÑO DE MERCADO (TAM)
+═══════════════════════════════════════ -->
+<div id="tab-tam" class="tab-panel">
+
+  <div class="section-header">
+    <div class="section-icon" style="background:#EAE6FF;">📊</div>
+    <div>
+      <h2>Tamaño de Mercado — Situación 3 en AMBA/CABA</h2>
+      <p>Estimación agregada a partir de estadísticas públicas del BCRA — sin ningún dato individual de terceros</p>
+    </div>
+  </div>
+
+  <div class="highlight-box hb-lavender">
+    <strong>📌 Qué es y qué no es este número:</strong> es una estimación de <em>tamaño de mercado</em> (cuánta gente podría estar en esta situación, en conjunto y de forma anónima), construida sobre estadísticas agregadas y públicas del BCRA/CEPA. <strong>No identifica a ninguna persona</strong> y no puede usarse para targeting directo — sirve para dimensionar el potencial del segmento "ingreso extra" de la campaña, no para armar una lista de contactos. Ver [[feedback-no-datos-crediticios-marketing]].
+  </div>
+
+  <h3 style="margin:24px 0 14px;">🧮 El cálculo, paso a paso</h3>
+
+  <div class="card card-sky">
+    <h3>1️⃣ Punto de partida nacional</h3>
+    <p><strong>5,8 millones de personas</strong> tienen deuda en situación irregular (situaciones 2 a 6), sobre un total de 20,9 millones con algún financiamiento en el sistema financiero. Dato de mayo 2026 — análisis de CEPA sobre información del BCRA.</p>
+    <p>De la cartera irregular, <strong>situación 3 representa el 26,7%</strong> (situación 2: 28,2% · situación 4: 30,9% · situación 5: 14,2%). Dato de febrero 2026, BCRA.</p>
+    <p><strong>5,8M × 26,7% ≈ 1,55 millones de personas</strong> en situación 3 a nivel país. <em>(El 26,7% es porcentaje de cartera/monto en mora, usado como proxy de personas por ser el dato público más fino disponible — no es una equivalencia exacta 1:1.)</em></p>
+  </div>
+
+  <div class="card card-peach" style="margin-top:8px;">
+    <h3>2️⃣ El ajuste que cambia el cálculo: CABA no es representativa del promedio</h3>
+    <p>CABA tiene una morosidad de apenas <strong>~5%</strong>, muy por debajo del promedio nacional de hogares (<strong>12,8%</strong>) — es uno de los 6 distritos con mejores números del país. Por eso <strong>no se puede estimar por proporción poblacional simple</strong>: hay que corregir por la tasa de mora real de cada zona, no solo por cuánta gente vive ahí.</p>
+  </div>
+
+  <div class="card card-mint" style="margin-top:8px;">
+    <h3>📐 Resultado por zona</h3>
+    <div style="overflow-x:auto;margin-top:12px;">
+    <table>
+      <tr><th>Zona</th><th>Población (censo 2022)</th><th>% pob. nacional</th><th>Ajuste aplicado</th><th>Estimación situación 3</th></tr>
+      <tr>
+        <td><strong>CABA</strong></td>
+        <td>3.095.454</td>
+        <td>~6,7%</td>
+        <td>Mora real ~39% del promedio nacional (5% vs 12,8%)</td>
+        <td><strong>~40.000 personas</strong></td>
+      </tr>
+      <tr>
+        <td><strong>GBA / Conurbano</strong><br><span style="font-size:.78rem;color:var(--text3);">(resto de AMBA)</span></td>
+        <td>13.271.187</td>
+        <td>~28,8%</td>
+        <td>Sin dato propio — se asume en línea con el promedio nacional</td>
+        <td><strong>~450.000 personas</strong><br><span style="font-size:.78rem;color:var(--text3);">(mucho menos confiable)</span></td>
+      </tr>
+      <tr>
+        <td><strong>Total AMBA</strong></td>
+        <td>16.366.641</td>
+        <td>~35,6%</td>
+        <td>—</td>
+        <td><strong>~450.000–500.000</strong><br><span style="font-size:.78rem;color:var(--text3);">(orden de magnitud)</span></td>
+      </tr>
+    </table>
+    </div>
+  </div>
+
+  <div class="highlight-box hb-red" style="margin-top:20px;">
+    <strong>⚠️ Nivel de confianza — desigual entre CABA y GBA:</strong> el número de <strong>CABA (~40.000)</strong> tiene un dato real de mora detrás y es razonablemente sólido. El número de <strong>GBA/Conurbano (~450.000)</strong> asume que la mora ahí es igual al promedio nacional, supuesto no verificado — no encontramos ningún desglose oficial de morosidad específico para el conurbano bonaerense. Los artículos consultados solo identifican como peores distritos a provincias del norte (La Rioja, San Luis, Catamarca), sin dato propio de GBA. El total AMBA debe leerse como <strong>orden de magnitud</strong>, no como cifra precisa.
+  </div>
+
+  <h3 style="margin:24px 0 14px;">📚 Fuentes consultadas</h3>
+  <ul class="steps">
+    <li><strong>CEPA / BCRA — mayo 2026</strong> <span>5,8M de personas en situación irregular sobre 20,9M con financiamiento. Vía Infobae y Actualidad a Diario, 24 jul 2026.</span></li>
+    <li><strong>Fidelitas / BCRA — febrero 2026</strong> <span>Desglose de cartera irregular por situación (2 a 5) y morosidad de CABA (~5%). Vía El Cronista.</span></li>
+    <li><strong>Censo Nacional 2022 (INDEC)</strong> <span>Población de CABA (3.095.454), GBA/Conurbano (13.271.187) y AMBA total (16.366.641).</span></li>
+  </ul>
+
+  <div class="highlight-box hb-sky" style="margin-top:20px;">
+    <strong>💡 Para qué sirve este número en la campaña:</strong> dimensiona el potencial del segmento "ingreso extra" — confirma que hay una audiencia de escala relevante (decenas a cientos de miles de personas) sin necesidad de identificar a nadie individualmente. El foco sigue siendo captación por intención de búsqueda e interés declarado (ver pestaña Canales), no contacto directo basado en este número.
   </div>
 
 </div>
