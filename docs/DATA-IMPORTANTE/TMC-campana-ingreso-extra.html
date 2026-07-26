@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC — Campaña "Lo que no usás, rinde" (Segmento Ingreso Extra)</title>
+<style>
+  :root {
+    --coral:    #FF8FAB;
+    --mint:     #A8EDCB;
+    --sky:      #9BF6FF;
+    --peach:    #FFD6A5;
+    --lavender: #C5B8FF;
+    --lilac:    #FFC6FF;
+    --lemon:    #FDFFB6;
+    --sage:     #B7E4C7;
+    --powder:   #D0E8FF;
+    --rose:     #FFB3C6;
+    --bg:       #F7F8FC;
+    --surface:  #FFFFFF;
+    --text:     #1A202C;
+    --text2:    #4A5568;
+    --text3:    #718096;
+    --border:   #E2E8F0;
+    --orange:   #E8622A;
+    --shadow:   0 4px 24px rgba(0,0,0,.08);
+    --r:        14px;
+    --r2:       10px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  .doc-header {
+    background: linear-gradient(135deg, #FF8FAB 0%, #C5B8FF 40%, #9BF6FF 100%);
+    padding: 48px 40px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .doc-header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .doc-header-badge {
+    display: inline-block;
+    background: rgba(255,255,255,.35);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.5);
+    border-radius: 999px;
+    padding: 4px 16px;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: 16px;
+  }
+  .doc-header h1 {
+    font-size: 2.3rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 2px 12px rgba(0,0,0,.15);
+    margin-bottom: 10px;
+  }
+  .doc-header p {
+    font-size: 1.05rem;
+    color: rgba(255,255,255,.92);
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .doc-meta {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+  .doc-meta span {
+    background: rgba(255,255,255,.28);
+    border-radius: 999px;
+    padding: 4px 14px;
+    font-size: .8rem;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .tabs-wrap {
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  }
+  .tabs {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 16px;
+    gap: 2px;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex-shrink: 0;
+    padding: 14px 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--text3);
+    border-bottom: 3px solid transparent;
+    transition: all .18s;
+    white-space: nowrap;
+    position: relative;
+    bottom: -2px;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+  .content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .card {
+    background: var(--surface);
+    border-radius: var(--r);
+    box-shadow: var(--shadow);
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    border-left: 5px solid transparent;
+  }
+  .card-coral    { border-left-color: var(--coral); }
+  .card-mint     { border-left-color: var(--mint); }
+  .card-sky      { border-left-color: var(--sky); }
+  .card-peach    { border-left-color: var(--peach); }
+  .card-lavender { border-left-color: var(--lavender); }
+  .card-lilac    { border-left-color: var(--lilac); }
+  .card-lemon    { border-left-color: var(--lemon); }
+  .card-rose     { border-left-color: var(--rose); }
+
+  .card h3 { font-size: 1.15rem; font-weight: 800; margin-bottom: 10px; color: var(--text); }
+  .card p { color: var(--text2); font-size: .95rem; margin-bottom: 8px; }
+  .card p:last-child { margin-bottom: 0; }
+
+  .chip {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 999px;
+    font-size: .78rem;
+    font-weight: 700;
+    margin: 3px;
+  }
+  .chip-coral    { background: #FFE0E8; color: #C1436A; }
+  .chip-mint     { background: #D4F5E4; color: #1A6E42; }
+  .chip-sky      { background: #D6F5FA; color: #0D6E7A; }
+  .chip-peach    { background: #FEEBD4; color: #9B5800; }
+  .chip-lavender { background: #EAE6FF; color: #5A3FC0; }
+  .chip-lemon    { background: #FFFBD4; color: #7A6800; }
+  .chip-rose     { background: #FFE0EA; color: #8B2444; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+  @media (max-width: 768px) {
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+    .doc-header h1 { font-size: 1.6rem; }
+  }
+
+  .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+  .section-icon {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  .section-header h2 { font-size: 1.5rem; font-weight: 900; color: var(--text); }
+  .section-header p { color: var(--text2); font-size: .9rem; }
+
+  .steps { list-style: none; counter-reset: step; }
+  .steps li {
+    counter-increment: step;
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .steps li:last-child { border-bottom: none; }
+  .steps li::before {
+    content: counter(step);
+    min-width: 32px; height: 32px;
+    background: var(--orange);
+    color: #fff; font-weight: 900; font-size: .85rem;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .steps li strong { display: block; font-weight: 800; margin-bottom: 3px; color: var(--text); }
+  .steps li span { font-size: .9rem; color: var(--text2); }
+
+  .highlight-box { border-radius: var(--r2); padding: 20px 24px; margin: 16px 0; font-size: .95rem; }
+  .hb-coral    { background: #FFF0F4; border: 1.5px solid var(--coral); }
+  .hb-mint     { background: #F0FBF5; border: 1.5px solid var(--mint); }
+  .hb-sky      { background: #F0FBFF; border: 1.5px solid var(--sky); }
+  .hb-peach    { background: #FFF8F0; border: 1.5px solid var(--peach); }
+  .hb-lavender { background: #F4F1FF; border: 1.5px solid var(--lavender); }
+  .hb-lemon    { background: #FFFEF0; border: 1.5px solid var(--lemon); }
+  .hb-red      { background: #FFF1F0; border: 1.5px solid #F55555; }
+
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th {
+    text-align: left; padding: 10px 14px;
+    background: #F1F3F9;
+    font-weight: 700; font-size: .82rem;
+    text-transform: uppercase; letter-spacing: .05em;
+    color: var(--text2);
+  }
+  td { padding: 11px 14px; border-bottom: 1px solid var(--border); color: var(--text2); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #FAFBFF; }
+
+  .quote {
+    border-left: 4px solid var(--coral);
+    padding: 16px 20px;
+    background: #FFF5F7;
+    border-radius: 0 var(--r2) var(--r2) 0;
+    font-style: italic;
+    color: var(--text2);
+    margin: 16px 0;
+    font-size: .95rem;
+  }
+
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 10px; top: 8px; bottom: 8px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--coral), var(--lavender), var(--sky));
+    border-radius: 2px;
+  }
+  .tl-item { position: relative; margin-bottom: 28px; }
+  .tl-item::before {
+    content: '';
+    position: absolute; left: -28px; top: 6px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 2px var(--coral);
+  }
+  .tl-item:nth-child(2)::before { box-shadow: 0 0 0 2px var(--peach); }
+  .tl-item:nth-child(3)::before { box-shadow: 0 0 0 2px var(--mint); }
+  .tl-item:nth-child(4)::before { box-shadow: 0 0 0 2px var(--lavender); }
+  .tl-week {
+    font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .12em;
+    color: var(--orange); margin-bottom: 4px;
+  }
+  .tl-title { font-weight: 800; font-size: 1rem; margin-bottom: 6px; }
+  .tl-body { font-size: .9rem; color: var(--text2); }
+  .tl-body ul { padding-left: 18px; margin-top: 6px; }
+  .tl-body li { margin-bottom: 4px; }
+
+  .format-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+  .format-card {
+    background: var(--surface); border-radius: var(--r2); padding: 20px; text-align: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,.07); transition: transform .15s;
+  }
+  .format-card:hover { transform: translateY(-3px); }
+  .format-icon { font-size: 2.2rem; margin-bottom: 10px; }
+  .format-card h4 { font-size: .92rem; font-weight: 800; margin-bottom: 6px; }
+  .format-card p { font-size: .8rem; color: var(--text3); }
+
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .compare-bad { background: #FFF1F0; border: 2px solid #F55555; border-radius: var(--r); padding: 22px 26px; }
+  .compare-good { background: #F0FBF5; border: 2px solid #27AE60; border-radius: var(--r); padding: 22px 26px; }
+  .compare h4 { font-size: 1rem; font-weight: 900; margin-bottom: 10px; }
+  .compare-bad h4 { color: #C0392B; }
+  .compare-good h4 { color: #1A6E42; }
+  .compare ul { list-style: none; }
+  .compare li { padding: 5px 0; font-size: .88rem; color: var(--text2); display: flex; gap: 8px; align-items: flex-start; }
+  .compare-bad li::before { content: '✕'; color: #E74C3C; font-weight: 900; }
+  .compare-good li::before { content: '✓'; color: #27AE60; font-weight: 900; }
+  @media (max-width: 768px) { .compare { grid-template-columns: 1fr; } }
+
+  .divider { border: none; border-top: 2px solid var(--border); margin: 32px 0; }
+
+  @media print {
+    .tabs-wrap { position: static; }
+    .tab-btn { display: none; }
+    .tab-panel { display: block !important; page-break-before: always; }
+    .tab-panel:first-child { page-break-before: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="doc-header">
+  <div class="doc-header-badge">📦 TodasMisCosas.com — Documento Estratégico Interno</div>
+  <h1>Campaña "Lo que no usás, rinde"</h1>
+  <p>Segmento de captación de proveedores: personas que buscan un ingreso extra para llegar a fin de mes o cubrir deudas, monetizando el espacio ocioso que ya tienen (baulera, cochera, habitación, depósito)</p>
+  <div class="doc-meta">
+    <span>📅 27 jul – 19 ago 2026</span>
+    <span>📍 AMBA / CABA</span>
+    <span>🎯 Captación por intención, no por dato crediticio</span>
+    <span>👥 Alejandro · Guille · Agustina · Daniel</span>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('resumen')">🎯 Resumen</button>
+    <button class="tab-btn" onclick="showTab('audiencia')">👤 Audiencia</button>
+    <button class="tab-btn" onclick="showTab('mensajes')">💬 Mensajes</button>
+    <button class="tab-btn" onclick="showTab('canales')">📡 Canales</button>
+    <button class="tab-btn" onclick="showTab('calendario')">📆 Calendario</button>
+    <button class="tab-btn" onclick="showTab('piezas')">🎨 Piezas de Contenido</button>
+    <button class="tab-btn" onclick="showTab('metricas')">📊 Métricas</button>
+    <button class="tab-btn" onclick="showTab('riesgos')">⚠️ Riesgos y Próximos Pasos</button>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ══════════════════════════════════════
+     TAB 1 — RESUMEN
+═══════════════════════════════════════ -->
+<div id="tab-resumen" class="tab-panel active">
+
+  <div class="section-header">
+    <div class="section-icon" style="background:#FFE0E8;">🎯</div>
+    <div>
+      <h2>Resumen de la Campaña</h2>
+      <p>Por qué este segmento, cómo se lo aborda, y qué lo diferencia del resto de la captación de proveedores</p>
+    </div>
+  </div>
+
+  <div class="highlight-box hb-coral">
+    <strong>💡 Idea central:</strong> Hay personas en AMBA/CABA con una necesidad de ingreso extra real (para cubrir gastos, deudas, imprevistos) y un activo ocioso que no saben que pueden monetizar: una baulera, una cochera libre, un cuarto sin uso, un galpón. TMC conecta esas dos cosas. La campaña no vende "guardado de cosas" — vende <strong>"convertí lo que no usás en plata que sí necesitás"</strong>.
+  </div>
+
+  <div class="grid2" style="margin-top:24px;">
+    <div class="card card-coral">
+      <h3>🎯 Objetivo primario</h3>
+      <p>Sumar <strong>15 nuevos proveedores</strong> de este segmento al marketplace entre el 27 de julio y el 19 de agosto (dentro de la meta general de 50 proveedores de la campaña de lanzamiento).</p>
+      <p><strong>Medido por:</strong> espacios publicados con el UTM/código de esta campaña.</p>
+    </div>
+    <div class="card card-mint">
+      <h3>🎯 Objetivo secundario</h3>
+      <p>Generar un banco de mensajes y creativos reutilizables sobre "ingreso extra" que sirvan para toda futura campaña de captación de proveedores, no solo para este sprint.</p>
+    </div>
+  </div>
+
+  <div class="card card-sky" style="margin-top:8px;">
+    <h3>🧭 Cómo se integra con lo que ya está corriendo</h3>
+    <p>Esta campaña <strong>no es un canal nuevo ni un presupuesto aparte</strong> — es un ángulo de mensaje adicional que se suma a la campaña de lanzamiento RRSS jul–ago 2026 ya en curso (ver <code>TMC-calendario-campanas-rrss-jul2026.html</code>), que va del lunes 20 de julio al miércoles 19 de agosto. Se inserta a partir de la <strong>Semana 2 (27 jul)</strong>, en paralelo a las piezas ya calendarizadas, usando los mismos canales (LinkedIn, Facebook, Instagram, TikTok) más SEO/SEM como agregado nuevo.</p>
+  </div>
+
+  <hr class="divider">
+
+  <h3 style="margin-bottom:16px;">⚖️ Principio no negociable de esta campaña</h3>
+  <div class="compare">
+    <div class="compare-bad">
+      <h4>✕ Lo que NO se hace</h4>
+      <ul>
+        <li>Comprar o scrapear listados de personas por su situación crediticia (BCRA, Veraz, Nosis o similares)</li>
+        <li>Segmentar o mensajear identificando a alguien como "moroso" o "en situación 3"</li>
+        <li>Usar cualquier dato de terceros que no haya sido entregado voluntariamente a TMC</li>
+      </ul>
+    </div>
+    <div class="compare-good">
+      <h4>✓ Lo que SÍ se hace</h4>
+      <ul>
+        <li>Captar por <strong>intención de búsqueda</strong> ("ingreso extra", "monetizar espacio", "cómo generar plata extra")</li>
+        <li>Segmentar por <strong>interés declarado</strong> en Meta/Google Ads (finanzas personales, segundo ingreso) — agregado y anónimo, no identifica personas</li>
+        <li>Dejar que la persona se autoseleccione al hacer clic o escribir, nunca identificarla nosotros primero</li>
+      </ul>
+    </div>
+  </div>
+  <p style="margin-top:12px;color:var(--text3);font-size:.85rem;">Ver detalle completo de la discusión y del marco legal (Ley 25.326, Central de Deudores BCRA) en la conversación que originó este documento — 26 jul 2026.</p>
+
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 2 — AUDIENCIA
+═══════════════════════════════════════ -->
+<div id="tab-audiencia" class="tab-panel">
+
+  <div class="section-header">
+    <div class="section-icon" style="background:#D4F5E4;">👤</div>
+    <div>
+      <h2>Audiencia</h2>
+      <p>A quién le hablamos y qué la mueve</p>
+    </div>
+  </div>
+
+  <div class="quote">
+    "Persona de 28–55 años en AMBA/CABA que siente presión financiera mensual (cuotas, tarjeta, alquiler, imprevistos) y busca activamente una forma de generar un ingreso extra sin un segundo trabajo formal ni inversión de plata. Tiene un espacio sin usar en su casa, edificio o negocio, pero nunca pensó en él como un activo que puede rentar."
+  </div>
+
+  <div class="grid2" style="margin-top:20px;">
+    <div class="card card-peach">
+      <h3>😣 Dolores</h3>
+      <p>• Cuotas o tarjeta que no cierran a fin de mes</p>
+      <p>• Sensación de que "no queda tiempo" para un segundo trabajo</p>
+      <p>• Desconfianza de propuestas de "generar dinero fácil" (mucho ruido de estafas en este espacio)</p>
+      <p>• No se le ocurrió que el garage vacío o la baulera "valen algo"</p>
+    </div>
+    <div class="card card-mint">
+      <h3>✨ Motivaciones</h3>
+      <p>• Ingreso pasivo: publicar una vez y cobrar todos los meses</p>
+      <p>• No requiere renunciar a nada que ya usa — es literalmente espacio ocioso</p>
+      <p>• Sensación de control: ella pone el precio y las condiciones</p>
+      <p>• Plata en pesos, disponible rápido (no es una inversión a largo plazo)</p>
+    </div>
+  </div>
+
+  <div class="card card-lavender" style="margin-top:8px;">
+    <h3>🗺️ Dónde está esta audiencia</h3>
+    <div style="overflow-x:auto;margin-top:12px;">
+    <table>
+      <tr><th>Dónde</th><th>Qué hace ahí</th><th>Cómo la alcanzamos</th></tr>
+      <tr>
+        <td>Google / búsqueda</td>
+        <td>Busca "ingreso extra", "cómo pagar la tarjeta", "trabajo desde casa"</td>
+        <td>SEO en contenido propio + Google Ads en esas keywords</td>
+      </tr>
+      <tr>
+        <td>Grupos de Facebook de barrio/consorcio</td>
+        <td>Pregunta y comparte tips de ahorro, changas, alquileres</td>
+        <td>Participación orgánica + posts en grupos permitidos + Facebook Ads por interés</td>
+      </tr>
+      <tr>
+        <td>Instagram / TikTok de finanzas personales</td>
+        <td>Sigue "finfluencers" argentinos, consume contenido de presupuesto y ahorro</td>
+        <td>Reels/TikToks propios con el ángulo + eventual colaboración con creador de nicho</td>
+      </tr>
+      <tr>
+        <td>WhatsApp / boca a boca vecinal</td>
+        <td>Recibe y reenvía recomendaciones de vecinos</td>
+        <td>Pieza "compartible" simple (flyer digital) pensada para reenvío</td>
+      </tr>
+    </table>
+    </div>
+  </div>
+
+  <div class="highlight-box hb-lemon" style="margin-top:20px;">
+    <strong>📌 Etapa del funnel:</strong> Consideración → Decisión. Esta persona ya está buscando activamente una solución a su necesidad de ingreso — no hay que crear el problema, hay que aparecer en el momento en que lo está resolviendo.
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 3 — MENSAJES
+═══════════════════════════════════════ -->
+<div id="tab-mensajes" class="tab-panel">
+
+  <div class="section-header">
+    <div class="section-icon" style="background:#D6F5FA;">💬</div>
+    <div>
+      <h2>Mensajes</h2>
+      <p>Qué decimos, en qué orden y con qué tono</p>
+    </div>
+  </div>
+
+  <div class="card card-sky">
+    <h3>🎯 Mensaje central</h3>
+    <p style="font-size:1.1rem;font-weight:700;color:var(--text);">"Lo que no usás, puede pagar lo que sí necesitás."</p>
+  </div>
+
+  <div class="grid2" style="margin-top:20px;">
+    <div class="card card-coral">
+      <h3>1️⃣ El gancho (¿por qué me importa?)</h3>
+      <p>"Esa baulera, ese garage, ese cuarto vacío — hoy no te dan nada. Podrían darte un ingreso todos los meses."</p>
+    </div>
+    <div class="card card-mint">
+      <h3>2️⃣ La solución (¿qué es TMC?)</h3>
+      <p>"TMC conecta a quien tiene espacio de sobra con quien necesita guardar algo. Publicás gratis, vos ponés el precio, cobrás por MercadoPago."</p>
+    </div>
+    <div class="card card-peach">
+      <h3>3️⃣ Por qué confiar (diferenciación)</h3>
+      <p>"Depósito de garantía y chat dentro de la plataforma — no cobrás en efectivo con un desconocido en la puerta de tu casa sin respaldo."</p>
+    </div>
+    <div class="card card-lavender">
+      <h3>4️⃣ El llamado a la acción</h3>
+      <p>"Publicá tu espacio hoy — no cuesta nada, y podés dar de baja cuando quieras."</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <h3 style="margin-bottom:14px;">🎨 Reglas de tono para este segmento</h3>
+  <ul class="steps">
+    <li><strong>Hablar de oportunidad, no de carencia.</strong> <span>Nunca "sabemos que te cuesta llegar a fin de mes" — sí "convertí lo que tenés en lo que necesitás". El mensaje se autoselecciona: quien tiene la urgencia va a sentir el gancho solo.</span></li>
+    <li><strong>Cifras concretas, no promesas vagas.</strong> <span>"Una baulera de 4m² puede rendir $XX.XXX/mes" convence más y genera menos desconfianza que "generá ingresos extra ¡fácil y rápido!" (frase asociada a estafas).</span></li>
+    <li><strong>Mostrar personas reales, no íconos de billetes.</strong> <span>Fotos/testimonios de proveedores reales de TMC alquilando espacios genuinos — refuerza que es un servicio real, no un esquema.</span></li>
+    <li><strong>Nunca mencionar deuda, mora o situación crediticia en la pieza publicitaria.</strong> <span>El mensaje habla de "ingreso extra" en términos generales — la persona con presión financiera hace la conexión sola; nombrarlo explícitamente sería invasivo y además reduciría el alcance a solo quienes se auto-identifican públicamente con esa situación.</span></li>
+  </ul>
+
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 4 — CANALES
+═══════════════════════════════════════ -->
+<div id="tab-canales" class="tab-panel">
+
+  <div class="section-header">
+    <div class="section-icon" style="background:#FEEBD4;">📡</div>
+    <div>
+      <h2>Estrategia de Canales</h2>
+      <p>Dónde invertimos esfuerzo y presupuesto, y por qué</p>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card card-coral">
+      <h3>🔍 SEO + Google Ads (Search)</h3>
+      <p><strong>Por qué:</strong> Es el canal de mayor intención — la persona ya está buscando la solución.</p>
+      <p><strong>Keywords objetivo:</strong> "ingreso extra sin invertir", "cómo generar plata extra en Buenos Aires", "alquilar baulera", "monetizar cochera", "qué hacer con espacio libre"</p>
+      <p><strong>Formato:</strong> 1 artículo de blog/landing SEO + campaña de Google Search Ads acotada al inicio (presupuesto de prueba)</p>
+      <p><strong>Esfuerzo:</strong> Medio &nbsp;|&nbsp; <strong>Owner:</strong> Guille (SEO técnico) + Alejandro (copy)</p>
+    </div>
+    <div class="card card-mint">
+      <h3>📱 Meta Ads (Facebook + Instagram)</h3>
+      <p><strong>Por qué:</strong> Permite segmentar por interés (finanzas personales, segundo ingreso, ahorro) sin acceder a ningún dato personal sensible — la plataforma lo hace de forma agregada.</p>
+      <p><strong>Formato:</strong> 1 video corto + 1 carrusel de "ejemplos de espacios que rinden" (baulera, cochera, cuarto, galpón) con cifra estimada de ingreso mensual por tipo</p>
+      <p><strong>Geo:</strong> AMBA/CABA &nbsp;|&nbsp; <strong>Esfuerzo:</strong> Medio &nbsp;|&nbsp; <strong>Owner:</strong> Agustina</p>
+    </div>
+    <div class="card card-sky">
+      <h3>🎵 TikTok / Reels orgánico</h3>
+      <p><strong>Por qué:</strong> El contenido de finanzas personales/"dinero fácil honesto" tiene tracción alta en el público 25-40 de AMBA.</p>
+      <p><strong>Formato:</strong> 2-3 piezas cortas mostrando el "antes/después" de un espacio ocioso convertido en publicación TMC, con el número estimado de ingreso</p>
+      <p><strong>Esfuerzo:</strong> Medio &nbsp;|&nbsp; <strong>Owner:</strong> Daniel</p>
+    </div>
+    <div class="card card-peach">
+      <h3>👥 Grupos de Facebook / comunidad de barrio</h3>
+      <p><strong>Por qué:</strong> Canal orgánico, costo bajo, alta credibilidad (recomendación entre vecinos en vez de publicidad directa).</p>
+      <p><strong>Formato:</strong> Post simple + flyer digital pensado para reenvío por WhatsApp, publicado en grupos de consorcios/barrios donde esté permitido</p>
+      <p><strong>Esfuerzo:</strong> Bajo &nbsp;|&nbsp; <strong>Owner:</strong> Ale / Guille</p>
+    </div>
+  </div>
+
+  <div class="highlight-box hb-lavender" style="margin-top:20px;">
+    <strong>🤝 Canal a futuro (no en este sprint):</strong> Partnership con fintechs de refinanciación de deudas o estudios de asesoramiento financiero, que podrían ofrecer TMC como alternativa de ingreso a su propia cartera de clientes (con consentimiento del titular, sin que TMC vea ningún dato crediticio). Evaluar después de este sprint si el volumen justifica la conversación.
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 5 — CALENDARIO
+═══════════════════════════════════════ -->
+<div id="tab-calendario" class="tab-panel">
+
+  <div class="section-header">
+    <div class="section-icon" style="background:#EAE6FF;">📆</div>
+    <div>
+      <h2>Calendario — Integrado al Cronograma General</h2>
+      <p>Del 27 de julio al 19 de agosto, en paralelo a la campaña de lanzamiento ya en curso</p>
+    </div>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-week">Semana 2 · 27 jul – 2 ago</div>
+      <div class="tl-title">Preparación + primer disparo</div>
+      <div class="tl-body">
+        <ul>
+          <li>Publicar landing/artículo SEO "Convertí tu espacio ocioso en ingreso extra"</li>
+          <li>Grabar y publicar 1er Reel/TikTok con el ángulo (Daniel)</li>
+          <li>Lanzar campaña de Meta Ads en modo prueba, presupuesto acotado</li>
+          <li>Primer post en 2-3 grupos de Facebook de barrio/consorcio</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-week">Semana 3 · 3–9 ago</div>
+      <div class="tl-title">Escalado según primeros datos</div>
+      <div class="tl-body">
+        <ul>
+          <li>Revisar CTR/costo por clic de Meta Ads y Google Ads, ajustar creativos</li>
+          <li>2do Reel/TikTok con testimonio real de un proveedor TMC (si ya hay alguno del segmento)</li>
+          <li>Activar Google Search Ads sobre las keywords de mejor intención detectadas</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-week">Semana 4 · 10–16 ago</div>
+      <div class="tl-title">Refuerzo y ampliación de grupos</div>
+      <div class="tl-body">
+        <ul>
+          <li>Sumar más grupos de Facebook / comunidades de barrio</li>
+          <li>Carrusel de Instagram con 4 ejemplos de espacios y su ingreso estimado</li>
+          <li>Revisar objetivo parcial: ¿vamos camino a los 15 proveedores del segmento?</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-week">Semana 5 · Cierre · 17–19 ago</div>
+      <div class="tl-title">Cierre + balance</div>
+      <div class="tl-body">
+        <ul>
+          <li>Última pieza de urgencia ("quedan pocos días para sumarte con beneficio de lanzamiento")</li>
+          <li>Balance de resultados: proveedores sumados, costo por proveedor, mejor canal</li>
+          <li>Decisión: ¿este ángulo se vuelve permanente o fue un sprint puntual?</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 6 — PIEZAS DE CONTENIDO
+═══════════════════════════════════════ -->
+<div id="tab-piezas" class="tab-panel">
+
+  <div class="section-header">
+    <div class="section-icon" style="background:#FFFBD4;">🎨</div>
+    <div>
+      <h2>Piezas de Contenido Necesarias</h2>
+      <p>Todo lo que hay que producir para esta campaña</p>
+    </div>
+  </div>
+
+  <div class="format-grid">
+    <div class="format-card">
+      <div class="format-icon">📝</div>
+      <h4>Landing / artículo SEO</h4>
+      <p>"Convertí tu espacio ocioso en ingreso extra" — must-have, primero en producirse</p>
+    </div>
+    <div class="format-card">
+      <div class="format-icon">🎬</div>
+      <h4>2-3 Reels/TikToks</h4>
+      <p>Antes/después de espacio ocioso → publicado en TMC, con cifra estimada</p>
+    </div>
+    <div class="format-card">
+      <div class="format-icon">🖼️</div>
+      <h4>Carrusel Instagram/Meta Ads</h4>
+      <p>4 ejemplos de espacios (baulera, cochera, cuarto, galpón) + ingreso estimado por tipo</p>
+    </div>
+    <div class="format-card">
+      <div class="format-icon">📄</div>
+      <h4>Flyer digital para WhatsApp</h4>
+      <p>Pieza simple, pensada para reenvío entre vecinos — nice-to-have</p>
+    </div>
+    <div class="format-card">
+      <div class="format-icon">💬</div>
+      <h4>Copy de Meta/Google Ads</h4>
+      <p>3-4 variantes de titular + descripción para test A/B</p>
+    </div>
+    <div class="format-card">
+      <div class="format-icon">🗣️</div>
+      <h4>Testimonio de proveedor real</h4>
+      <p>Nice-to-have — depende de tener un caso real del segmento antes de semana 3</p>
+    </div>
+  </div>
+
+  <div class="card card-rose" style="margin-top:24px;">
+    <h3>🧮 Insumo clave: cifras de ingreso estimado por tipo de espacio</h3>
+    <p>Antes de producir el carrusel y los Reels, calcular con datos reales de TMC (precios promedio publicados hoy) cuánto puede rendir por mes cada tipo de espacio: baulera, cochera, habitación, depósito/galpón. Estas cifras son el corazón del mensaje — sin ellas el ángulo pierde credibilidad.</p>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 7 — MÉTRICAS
+═══════════════════════════════════════ -->
+<div id="tab-metricas" class="tab-panel">
+
+  <div class="section-header">
+    <div class="section-icon" style="background:#D4F5E4;">📊</div>
+    <div>
+      <h2>Métricas de Éxito</h2>
+      <p>Cómo sabemos si funcionó</p>
+    </div>
+  </div>
+
+  <div class="card card-mint">
+    <h3>🎯 KPI primario</h3>
+    <p style="font-size:1.05rem;font-weight:700;">15 espacios publicados por proveedores captados vía esta campaña, entre el 27 jul y el 19 ago.</p>
+    <p><strong>Cómo se rastrea:</strong> parámetro UTM propio (<code>utm_campaign=ingreso-extra</code>) en todos los links + pregunta opcional "¿cómo nos encontraste?" en el flujo de publicación.</p>
+  </div>
+
+  <div class="grid2" style="margin-top:20px;">
+    <div class="card card-sky">
+      <h3>📈 KPIs secundarios</h3>
+      <p>• CTR de los anuncios de Meta/Google (benchmark: &gt;1.5%)</p>
+      <p>• Costo por clic y costo por proveedor publicado</p>
+      <p>• Visitas a la landing SEO y tiempo en página</p>
+      <p>• Tasa de conversión landing → inicio de publicación de espacio</p>
+    </div>
+    <div class="card card-lavender">
+      <h3>🗓️ Cadencia de reporte</h3>
+      <p>Chequeo rápido cada lunes (inicio de semana del cronograma general) para decidir si se reasigna presupuesto entre canales.</p>
+      <p>Balance completo en el cierre del 19 de agosto, junto con el resto de la campaña de lanzamiento.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 8 — RIESGOS Y PRÓXIMOS PASOS
+═══════════════════════════════════════ -->
+<div id="tab-riesgos" class="tab-panel">
+
+  <div class="section-header">
+    <div class="section-icon" style="background:#FFE0EA;">⚠️</div>
+    <div>
+      <h2>Riesgos y Próximos Pasos</h2>
+      <p>Qué puede salir mal y qué hacer primero</p>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card card-rose">
+      <h3>⚠️ Riesgo: mensaje mal calibrado se siente invasivo</h3>
+      <p>Si el copy suena a "sabemos que te falta plata" en vez de "tenés una oportunidad", genera rechazo en vez de interés.</p>
+      <p><strong>Mitigación:</strong> testear el copy con 2-3 personas del equipo antes de publicar; nunca mencionar deuda/mora explícitamente (ver reglas de tono en la pestaña Mensajes).</p>
+    </div>
+    <div class="card card-peach">
+      <h3>⚠️ Riesgo: se confunde con esquemas de "dinero fácil"</h3>
+      <p>El público está saturado de publicidad de préstamos y "trabajá desde casa" fraudulentos — puede generar desconfianza inicial.</p>
+      <p><strong>Mitigación:</strong> cifras concretas y verificables, mostrar el depósito de garantía y el chat como respaldo, usar casos reales en vez de promesas genéricas.</p>
+    </div>
+    <div class="card card-lemon">
+      <h3>⚠️ Riesgo: volumen bajo por ser un segmento nuevo sin testear</h3>
+      <p>Es la primera vez que se prueba este ángulo — puede que la conversión sea menor a la esperada.</p>
+      <p><strong>Mitigación:</strong> presupuesto de prueba acotado en semana 2, con checkpoint en semana 3 para escalar o pivotar antes de comprometer más presupuesto.</p>
+    </div>
+    <div class="card card-lavender">
+      <h3>⚠️ Riesgo: falta de cifras reales de ingreso por tipo de espacio</h3>
+      <p>Sin ese dato el mensaje pierde su gancho más fuerte (la cifra concreta).</p>
+      <p><strong>Mitigación:</strong> es el primer paso a resolver, antes de producir cualquier pieza — ver pestaña Piezas de Contenido.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <h3 style="margin-bottom:16px;">✅ Próximos pasos inmediatos</h3>
+  <ul class="steps">
+    <li><strong>Calcular las cifras de ingreso estimado por tipo de espacio</strong> <span>usando precios reales publicados en TMC hoy — insumo para todo el resto de la campaña</span></li>
+    <li><strong>Aprobar el mensaje central y las 4 reglas de tono</strong> <span>con Alejandro antes de producir cualquier pieza</span></li>
+    <li><strong>Producir la landing/artículo SEO</strong> <span>primera pieza, must-have, base para el resto del funnel</span></li>
+    <li><strong>Armar el copy de Meta/Google Ads (3-4 variantes)</strong> <span>para arrancar el test A/B apenas esté la landing</span></li>
+    <li><strong>Definir presupuesto de prueba para Semana 2</strong> <span>con Alejandro — monto acotado, a revisar en checkpoint de semana 3</span></li>
+  </ul>
+
+</div>
+
+</div>
+
+<div style="background:#1A202C;color:#718096;text-align:center;padding:24px;font-size:.8rem;margin-top:0;">
+  TodasMisCosas.com — Documento estratégico interno · Julio 2026 · Confidencial · Alejandro Laporte · Guillermo Domínguez
+</div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.target.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
