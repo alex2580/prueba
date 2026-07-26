@@ -65,8 +65,10 @@ export default function WaitlistPage() {
   const searchParams = useSearchParams();
   if (searchParams.get('ya') === '1') return <YaAnotado />;
 
-  const [paso, setPaso] = useState<Paso>('selector');
-  const [tipo, setTipo] = useState<WaitlistTipo | null>(null);
+  const tipoParam = searchParams.get('tipo');
+  const tipoInicial: WaitlistTipo | null = tipoParam === 'proveedor' || tipoParam === 'cliente' ? tipoParam : null;
+  const [paso, setPaso] = useState<Paso>(tipoInicial ? 'form' : 'selector');
+  const [tipo, setTipo] = useState<WaitlistTipo | null>(tipoInicial);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
