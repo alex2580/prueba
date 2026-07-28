@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4 Perfiles Virtuales — Finanzas, Administrativo, Facturación, Arquitectura/Seguridad</title>
+<style>
+  :root {
+    --coral:    #FF8FAB;
+    --mint:     #A8EDCB;
+    --sky:      #9BF6FF;
+    --peach:    #FFD6A5;
+    --lavender: #C5B8FF;
+    --lilac:    #FFC6FF;
+    --lemon:    #FDFFB6;
+    --sage:     #B7E4C7;
+    --powder:   #D0E8FF;
+    --rose:     #FFB3C6;
+    --bg:       #F7F8FC;
+    --surface:  #FFFFFF;
+    --text:     #1A202C;
+    --text2:    #4A5568;
+    --text3:    #718096;
+    --border:   #E2E8F0;
+    --orange:   #E8622A;
+    --shadow:   0 4px 24px rgba(0,0,0,.08);
+    --r:        14px;
+    --r2:       10px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+  .doc-header {
+    background: linear-gradient(135deg, #C5B8FF 0%, #9BF6FF 40%, #A8EDCB 100%);
+    padding: 48px 40px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .doc-header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .doc-header-badge {
+    display: inline-block; background: rgba(255,255,255,.35); backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.5); border-radius: 999px; padding: 4px 16px;
+    font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: #fff; margin-bottom: 16px;
+  }
+  .doc-header h1 { font-size: 2.3rem; font-weight: 900; color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,.15); margin-bottom: 10px; }
+  .doc-header p { font-size: 1.05rem; color: rgba(255,255,255,.92); max-width: 680px; margin: 0 auto; }
+  .doc-meta { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+  .doc-meta span { background: rgba(255,255,255,.28); border-radius: 999px; padding: 4px 14px; font-size: .8rem; color: #fff; font-weight: 600; }
+
+  .tabs-wrap { background: var(--surface); border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+  .tabs { display: flex; overflow-x: auto; scrollbar-width: none; max-width: 1100px; margin: 0 auto; padding: 0 16px; gap: 2px; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex-shrink: 0; padding: 14px 20px; border: none; background: none; cursor: pointer;
+    font-size: .85rem; font-weight: 600; color: var(--text3); border-bottom: 3px solid transparent;
+    transition: all .18s; white-space: nowrap; position: relative; bottom: -2px;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+  .content { max-width: 1100px; margin: 0 auto; padding: 40px 20px 80px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .card { background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow); padding: 28px 32px; margin-bottom: 24px; border-left: 5px solid transparent; }
+  .card-coral    { border-left-color: var(--coral); }
+  .card-mint     { border-left-color: var(--mint); }
+  .card-sky      { border-left-color: var(--sky); }
+  .card-peach    { border-left-color: var(--peach); }
+  .card-lavender { border-left-color: var(--lavender); }
+  .card-rose     { border-left-color: var(--rose); }
+  .card h3 { font-size: 1.15rem; font-weight: 800; margin-bottom: 10px; color: var(--text); }
+  .card p { color: var(--text2); font-size: .95rem; margin-bottom: 8px; }
+  .card p:last-child { margin-bottom: 0; }
+
+  .chip { display: inline-block; padding: 3px 12px; border-radius: 999px; font-size: .78rem; font-weight: 700; margin: 3px; }
+  .chip-coral    { background: #FFE0E8; color: #C1436A; }
+  .chip-mint     { background: #D4F5E4; color: #1A6E42; }
+  .chip-sky      { background: #D6F5FA; color: #0D6E7A; }
+  .chip-peach    { background: #FEEBD4; color: #9B5800; }
+  .chip-lavender { background: #EAE6FF; color: #5A3FC0; }
+  .chip-rose     { background: #FFE0EA; color: #8B2444; }
+  .chip-red      { background: #FEE2E2; color: #B91C1C; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 768px) { .grid2 { grid-template-columns: 1fr; } .doc-header h1 { font-size: 1.6rem; } }
+
+  .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+  .section-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+  .section-header h2 { font-size: 1.5rem; font-weight: 900; color: var(--text); }
+  .section-header p { color: var(--text2); font-size: .9rem; }
+
+  .highlight-box { border-radius: var(--r2); padding: 20px 24px; margin: 16px 0; font-size: .95rem; }
+  .hb-coral    { background: #FFF0F4; border: 1.5px solid var(--coral); }
+  .hb-mint     { background: #F0FBF5; border: 1.5px solid var(--mint); }
+  .hb-sky      { background: #F0FBFF; border: 1.5px solid var(--sky); }
+  .hb-lavender { background: #F4F1FF; border: 1.5px solid var(--lavender); }
+
+  pre {
+    background: #1A202C; color: #E2E8F0; border-radius: var(--r2); padding: 20px;
+    font-size: .82rem; overflow-x: auto; line-height: 1.6; margin: 12px 0;
+    font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+  }
+  code { font-family: 'SF Mono', Monaco, 'Courier New', monospace; background: #F1F3F9; padding: 2px 6px; border-radius: 5px; font-size: .88em; }
+  pre code { background: none; padding: 0; }
+
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th { text-align: left; padding: 10px 14px; background: #F1F3F9; font-weight: 700; font-size: .82rem; text-transform: uppercase; letter-spacing: .05em; color: var(--text2); }
+  td { padding: 11px 14px; border-bottom: 1px solid var(--border); color: var(--text2); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #FAFBFF; }
+
+  .steps { list-style: none; counter-reset: step; }
+  .steps li { counter-increment: step; display: flex; gap: 16px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .steps li:last-child { border-bottom: none; }
+  .steps li::before {
+    content: counter(step); min-width: 32px; height: 32px; background: var(--orange); color: #fff;
+    font-weight: 900; font-size: .85rem; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .steps li strong { display: block; font-weight: 800; margin-bottom: 3px; color: var(--text); }
+  .steps li span { font-size: .9rem; color: var(--text2); }
+
+  .divider { border: none; border-top: 2px solid var(--border); margin: 32px 0; }
+
+  @media print {
+    .tabs-wrap { position: static; } .tab-btn { display: none; }
+    .tab-panel { display: block !important; page-break-before: always; }
+    .tab-panel:first-child { page-break-before: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="doc-header">
+  <div class="doc-header-badge">🤖 TodasMisCosas.com — Herramientas de Claude Code</div>
+  <h1>4 Perfiles Virtuales</h1>
+  <p>Finanzas · Administrativo · Facturación · Arquitectura/Seguridad — subagentes personalizados de Claude Code, disponibles en cualquier proyecto</p>
+  <div class="doc-meta">
+    <span>📅 27 jul 2026</span>
+    <span>🌍 Instalación global — no vive en ningún repo</span>
+    <span>🔒 Cada perfil con su propio alcance de herramientas</span>
+  </div>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('que-es')">🎯 Qué es esto</button>
+    <button class="tab-btn" onclick="showTab('finanzas')">💰 Finanzas</button>
+    <button class="tab-btn" onclick="showTab('administrativo')">🗂️ Administrativo</button>
+    <button class="tab-btn" onclick="showTab('facturacion')">🧾 Facturación</button>
+    <button class="tab-btn" onclick="showTab('arquitectura')">🏗️ Arquitectura/Seguridad</button>
+    <button class="tab-btn" onclick="showTab('uso')">🚀 Cómo usarlos</button>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- TAB: QUÉ ES ESTO -->
+<div id="tab-que-es" class="tab-panel active">
+  <div class="section-header">
+    <div class="section-icon" style="background:#EAE6FF;">🎯</div>
+    <div>
+      <h2>Qué es esto</h2>
+      <p>Cuatro "empleados virtuales" con rol, criterio y límites propios</p>
+    </div>
+  </div>
+
+  <div class="highlight-box hb-lavender">
+    <strong>💡 La idea:</strong> Claude Code permite definir <strong>subagentes personalizados</strong> — perfiles con su propio system prompt (cómo piensa), su propio set de herramientas permitidas (qué puede tocar), y opcionalmente su propio modelo. Es el equivalente a tener distintos miembros de equipo especializados, cada uno con su propio criterio y sus propios límites, invocables dentro de cualquier proyecto.
+  </div>
+
+  <div class="grid2" style="margin-top:24px;">
+    <div class="card card-coral">
+      <h3>🌍 Instalación global, no por proyecto</h3>
+      <p>Los 4 perfiles viven en <code>~/.claude/agents/</code> — la carpeta personal de Claude Code, no dentro de ningún repo.</p>
+      <p><strong>Esto significa:</strong> no se agregó ni un solo archivo a los repos de TMC o TME. No hay nada para commitear, pushear, ni que afecte el deploy. Están disponibles en cualquier proyecto que abras, incluyendo futuros.</p>
+    </div>
+    <div class="card card-mint">
+      <h3>🔒 Cada uno con su propio alcance</h3>
+      <p>No todos tienen acceso a lo mismo. Facturación y Finanzas son de <em>solo lectura y análisis</em> (no pueden modificar código). Administrativo ni siquiera tiene acceso a la terminal. Arquitectura/Seguridad es el único con permiso para editar código y ejecutar cambios.</p>
+    </div>
+  </div>
+
+  <div class="card card-sky" style="margin-top:8px;">
+    <h3>📋 Resumen de los 4 perfiles</h3>
+    <div style="overflow-x:auto;margin-top:12px;">
+    <table>
+      <tr><th>Perfil</th><th>Para qué</th><th>Herramientas</th><th>Puede editar código</th></tr>
+      <tr>
+        <td><strong>💰 Finanzas</strong></td>
+        <td>Presupuestos, proyecciones, comisiones, costos de infraestructura</td>
+        <td>Lectura + consultas</td>
+        <td><span class="chip chip-red">No</span></td>
+      </tr>
+      <tr>
+        <td><strong>🗂️ Administrativo</strong></td>
+        <td>Comunicaciones, organización, investigación general</td>
+        <td>Lectura + búsqueda web</td>
+        <td><span class="chip chip-red">No</span></td>
+      </tr>
+      <tr>
+        <td><strong>🧾 Facturación</strong></td>
+        <td>Cobros, conciliación de pagos, estados de MercadoPago/escrow</td>
+        <td>Lectura + consultas</td>
+        <td><span class="chip chip-red">No</span></td>
+      </tr>
+      <tr>
+        <td><strong>🏗️ Arquitectura/Seguridad</strong></td>
+        <td>Auditoría de seguridad, decisiones de arquitectura, hardening</td>
+        <td>Acceso completo</td>
+        <td><span class="chip chip-mint">Sí</span></td>
+      </tr>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: FINANZAS -->
+<div id="tab-finanzas" class="tab-panel">
+  <div class="section-header">
+    <div class="section-icon" style="background:#D4F5E4;">💰</div>
+    <div><h2>Finanzas</h2><p>Análisis, no decisión — los números para que Alejandro decida</p></div>
+  </div>
+
+  <div class="card card-mint">
+    <h3>Alcance</h3>
+    <p>Presupuestos, proyecciones de ingresos, análisis de rentabilidad, estructura de comisiones y su impacto en márgenes, costos de infraestructura (VPS, Supabase, Resend, MercadoPago), métricas como ARPU/LTV/punto de equilibrio.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card card-sky">
+      <h3>Reglas clave</h3>
+      <p>• Nunca inventa cifras — si necesita un número real, lo consulta en la DB o el código</p>
+      <p>• Muestra los cálculos paso a paso, no solo el resultado</p>
+      <p>• Marca explícitamente estimación vs. dato real medido</p>
+    </div>
+    <div class="card card-peach">
+      <h3>Herramientas y límites</h3>
+      <p><code>Read, Grep, Glob, Bash</code> — de solo lectura y análisis. No modifica código ni toma decisiones de precios; las propone con su razonamiento.</p>
+    </div>
+  </div>
+
+  <h3 style="margin:20px 0 10px;">Archivo completo</h3>
+  <pre><code>~/.claude/agents/finanzas.md</code></pre>
+</div>
+
+<!-- TAB: ADMINISTRATIVO -->
+<div id="tab-administrativo" class="tab-panel">
+  <div class="section-header">
+    <div class="section-icon" style="background:#D6F5FA;">🗂️</div>
+    <div><h2>Administrativo</h2><p>Organiza, redacta y coordina — nunca toca código</p></div>
+  </div>
+
+  <div class="card card-sky">
+    <h3>Alcance</h3>
+    <p>Redacción de comunicaciones (emails, mensajes, resúmenes), organización de tareas y pendientes, investigación general (trámites, proveedores, información pública), agendas y checklists.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card card-mint">
+      <h3>Reglas clave</h3>
+      <p>• Tono según destinatario — formal para trámites externos, directo para uso interno</p>
+      <p>• Si necesita info externa, la busca y cita la fuente</p>
+      <p>• Ante tarea ambigua, completa lo que se puede y marca qué falta definir</p>
+    </div>
+    <div class="card card-peach">
+      <h3>Herramientas y límites</h3>
+      <p><code>Read, Grep, Glob, WebSearch, WebFetch</code> — sin Bash, Edit ni Write. Si una tarea termina requiriendo tocar código, lo señala para derivarla al perfil que corresponda.</p>
+    </div>
+  </div>
+
+  <h3 style="margin:20px 0 10px;">Archivo completo</h3>
+  <pre><code>~/.claude/agents/administrativo.md</code></pre>
+</div>
+
+<!-- TAB: FACTURACIÓN -->
+<div id="tab-facturacion" class="tab-panel">
+  <div class="section-header">
+    <div class="section-icon" style="background:#FEEBD4;">🧾</div>
+    <div><h2>Facturación</h2><p>Rastrea el dinero — de dónde vino, en qué estado está, y por qué</p></div>
+  </div>
+
+  <div class="card card-peach">
+    <h3>Alcance</h3>
+    <p>Conciliación de pagos (cobrado, comisión, neto liberado), estados de escrow/depósito de garantía y sus transiciones, webhooks de MercadoPago (aprobados, rechazados, faltantes), casos puntuales como "¿por qué no se liberó este pago?".</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card card-mint">
+      <h3>Reglas clave</h3>
+      <p>• Sigue el rastro completo: reserva → pago → webhook → estado en DB, no se queda en un solo punto</p>
+      <p>• Cuando algo no cierra, lo dice explícitamente en vez de suponer que está bien</p>
+      <p>• Nunca ejecuta cambios sobre pagos reales sin confirmación explícita — diagnostica, no corrige por su cuenta</p>
+    </div>
+    <div class="card card-sky">
+      <h3>Herramientas y límites</h3>
+      <p><code>Read, Grep, Glob, Bash</code> — Bash es solo para consultas de lectura sobre DB y logs, nunca para escribir o revertir transacciones. Sin Edit/Write.</p>
+    </div>
+  </div>
+
+  <h3 style="margin:20px 0 10px;">Archivo completo</h3>
+  <pre><code>~/.claude/agents/facturacion.md</code></pre>
+</div>
+
+<!-- TAB: ARQUITECTURA/SEGURIDAD -->
+<div id="tab-arquitectura" class="tab-panel">
+  <div class="section-header">
+    <div class="section-icon" style="background:#FFE0EA;">🏗️</div>
+    <div><h2>Arquitectura / Seguridad</h2><p>El único perfil con permiso para tocar código — diagnostica y corrige</p></div>
+  </div>
+
+  <div class="highlight-box hb-coral">
+    <strong>⚠️ Distinto a los otros tres:</strong> este es el único perfil con acceso completo (incluyendo <code>Edit</code> y <code>Write</code>) y con modelo <strong>Opus</strong> en vez de Sonnet, pensado para el razonamiento más profundo que requiere seguridad/arquitectura.
+  </div>
+
+  <div class="card card-rose" style="margin-top:16px;">
+    <h3>Alcance</h3>
+    <p>Revisión de seguridad (inyección SQL, XSS, manejo de secretos, dependencias vulnerables), decisiones de arquitectura, auditoría de infraestructura (deploy, CI/CD, nginx, variables de entorno), hardening reactivo ante incidentes.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card card-mint">
+      <h3>Reglas clave</h3>
+      <p>• Prioriza causa raíz sobre parche rápido</p>
+      <p>• Verifica el fix localmente antes de tocar producción cuando es posible</p>
+      <p>• Revisa si un bug/vulnerabilidad se repite en otros lugares del código, no solo donde se lo detectó primero</p>
+      <p>• Nunca usa <code>--force</code> ni operaciones destructivas sin confirmación explícita</p>
+    </div>
+    <div class="card card-peach">
+      <h3>Herramientas</h3>
+      <p><code>Read, Bash, Grep, Glob, Edit, Write</code> — acceso completo. Modelo: <strong>Opus</strong>.</p>
+    </div>
+  </div>
+
+  <h3 style="margin:20px 0 10px;">Archivo completo</h3>
+  <pre><code>~/.claude/agents/arquitectura-seguridad.md</code></pre>
+</div>
+
+<!-- TAB: CÓMO USARLOS -->
+<div id="tab-uso" class="tab-panel">
+  <div class="section-header">
+    <div class="section-icon" style="background:#F0FBFF;">🚀</div>
+    <div><h2>Cómo usarlos</h2><p>Automático o explícito, en cualquier proyecto</p></div>
+  </div>
+
+  <ul class="steps">
+    <li><strong>Automático</strong><span>Claude detecta según la tarea cuál perfil corresponde y lo delega solo — no hace falta pedirlo explícitamente.</span></li>
+    <li><strong>Explícito, para garantizar cuál se usa</strong><span>Mencionás el perfil por nombre al pedir la tarea, por ejemplo: "Usando el perfil de facturación, revisá por qué no se liberó el pago del ticket 42".</span></li>
+  </ul>
+
+  <div class="card card-sky" style="margin-top:20px;">
+    <h3>Corren en su propio contexto</h3>
+    <p>Cada invocación de un perfil arranca con memoria limpia — no arrastra el historial de la conversación principal, solo lo que se le pasa en el pedido puntual. Al terminar, devuelve un resumen a la conversación principal, no comparte todo su proceso interno.</p>
+  </div>
+
+  <div class="highlight-box hb-mint" style="margin-top:20px;">
+    <strong>✅ Ya están activos.</strong> No hace falta instalar nada más — al estar en <code>~/.claude/agents/</code>, estos 4 perfiles están disponibles ahora mismo en cualquier sesión de Claude Code, sea en TMC, TME, o cualquier proyecto nuevo.
+  </div>
+</div>
+
+</div>
+
+<div style="background:#1A202C;color:#718096;text-align:center;padding:24px;font-size:.8rem;margin-top:0;">
+  TodasMisCosas.com — Documento estratégico interno · Julio 2026 · Confidencial · Alejandro Laporte · Guillermo Domínguez
+</div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.target.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
