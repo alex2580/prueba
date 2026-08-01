@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expo Real Estate Argentina 2026 · Guía de Networking TMC</title>
+<style>
+:root{
+  --navy:#0F172A;--navy2:#1E293B;--navy3:#334155;
+  --canvas:#F7F6F3;--white:#FFFFFF;
+  --text:#1A1917;--text2:#57534E;--text3:#A8A29E;
+  --border:#E7E5E0;--border2:#D6D3CE;
+
+  --melon-lt:#BBF7D0;--melon-md:#34D399;--melon-dp:#065F46;--melon-bg:#F0FDF4;
+  --durazno-lt:#FED7AA;--durazno-md:#F97316;--durazno-dp:#7C2D12;--durazno-bg:#FFF7ED;
+  --frutilla-lt:#FBCFE8;--frutilla-md:#F472B6;--frutilla-dp:#831843;--frutilla-bg:#FDF2F8;
+  --uva-lt:#DDD5F8;--uva-md:#A78BFA;--uva-dp:#4C1D95;--uva-bg:#F5F3FF;
+  --cielo-lt:#BAE6FD;--cielo-md:#38BDF8;--cielo-dp:#0C4A6E;--cielo-bg:#F0F9FF;
+
+  --ok-bg:#DCFCE7;--ok-c:#166534;
+  --warn-bg:#FEF9C3;--warn-c:#854D0E;
+  --miss-bg:#FEE2E2;--miss-c:#991B1B;
+
+  --r1:6px;--r2:14px;--r3:22px;--t:.16s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--canvas);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased}
+
+.hero{background:var(--navy);padding:52px 0 0;overflow:hidden;position:relative}
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--melon-md),var(--cielo-md),var(--durazno-md),var(--uva-md),var(--frutilla-md))}
+.hero-inner{max-width:960px;margin:0 auto;padding:0 32px 48px}
+.hero-eye{font-size:.68rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#475569;margin-bottom:.9rem}
+.hero-title{font-size:2.2rem;font-weight:900;letter-spacing:-.05em;line-height:1.15;color:#F1F5F9;margin-bottom:.6rem}
+.hero-title span{background:linear-gradient(90deg,var(--melon-md),var(--cielo-md),var(--durazno-md));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:.92rem;color:#94A3B8;max-width:640px;margin-bottom:2.2rem;line-height:1.6}
+
+.status-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.06);border-radius:var(--r2);overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+.ss-cell{padding:.9rem .8rem;background:rgba(255,255,255,.03)}
+.ss-lnum{font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.25rem;color:#64748B}
+.ss-name{font-size:.78rem;font-weight:700;color:#E2E8F0;margin-bottom:.3rem}
+.ss-badge{display:inline-flex;align-items:center;gap:.3rem;font-size:.62rem;font-weight:700;padding:.15rem .5rem;border-radius:99px}
+.sb-ok{background:rgba(74,222,128,.15);color:#4ADE80}
+.sb-warn{background:rgba(251,191,36,.15);color:#FCD34D}
+.sb-miss{background:rgba(248,113,113,.15);color:#F87171}
+
+.content{max-width:960px;margin:0 auto;padding:40px 32px 72px}
+
+.export-bar{display:flex;justify-content:flex-end;margin-bottom:1.5rem}
+.btn-export{display:inline-flex;align-items:center;gap:.4rem;background:var(--white);border:1.5px solid var(--border2);border-radius:var(--r1);padding:.35rem .9rem;font-size:.72rem;font-weight:700;color:var(--text2);cursor:pointer;transition:all var(--t)}
+.btn-export:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+.summary-bar{display:grid;grid-template-columns:repeat(4,1fr);background:var(--white);border:1.5px solid var(--border);border-radius:var(--r2);overflow:hidden;margin-bottom:2rem}
+.sb-item{padding:1rem 1.2rem;text-align:center}
+.sb-item+.sb-item{border-left:1.5px solid var(--border)}
+.sb-n{font-size:1.5rem;font-weight:900;letter-spacing:-.04em;color:var(--text);line-height:1}
+.sb-l{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-top:.25rem}
+
+.sec-hdr{margin:2.5rem 0 1.25rem;display:flex;align-items:center;gap:12px}
+.sec-hdr:first-of-type{margin-top:0}
+.sec-hdr-txt{font-size:.62rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--text3)}
+.sec-hdr-line{flex:1;height:1px;background:var(--border)}
+
+.card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r2);padding:1.3rem 1.4rem;margin-bottom:1rem}
+.card h3{font-size:.95rem;font-weight:800;margin-bottom:.7rem;display:flex;align-items:center;gap:.5rem;color:var(--text)}
+.card p{font-size:.85rem;color:var(--text2);margin-bottom:.5rem}
+.card ul{padding-left:1.1rem}
+.card ul li{margin-bottom:.45rem;font-size:.83rem;color:var(--text2);line-height:1.6}
+.card ul li strong{color:var(--text)}
+.card.melon{border-left:4px solid var(--melon-md);background:var(--melon-bg)}
+.card.durazno{border-left:4px solid var(--durazno-md);background:var(--durazno-bg)}
+.card.cielo{border-left:4px solid var(--cielo-md);background:var(--cielo-bg)}
+.card.uva{border-left:4px solid var(--uva-md);background:var(--uva-bg)}
+.card.frutilla{border-left:4px solid var(--frutilla-md);background:var(--frutilla-bg)}
+.card.plain{border-left:4px solid var(--border2)}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+
+.pitch-box{background:var(--navy);color:#E2E8F0;border-radius:var(--r2);padding:1.3rem 1.5rem;margin-bottom:1rem}
+.pitch-box .label{font-size:.62rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#64748B;margin-bottom:.6rem}
+.pitch-box p{font-size:.92rem;color:#F1F5F9;line-height:1.75;font-style:italic}
+
+.tag-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem}
+.tag{font-size:.68rem;font-weight:700;padding:.3rem .7rem;border-radius:99px}
+.tag-si{background:var(--ok-bg);color:var(--ok-c)}
+.tag-no{background:var(--miss-bg);color:var(--miss-c)}
+
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;align-items:flex-start;gap:.6rem;font-size:.85rem;color:var(--text2);margin-bottom:.6rem;line-height:1.5}
+.checklist li::before{content:'☐';font-size:1rem;color:var(--melon-md);flex-shrink:0;line-height:1.3}
+
+.sources{font-size:.75rem;color:var(--text3);margin-top:.5rem}
+.sources a{color:var(--cielo-dp)}
+
+footer{border-top:1.5px solid var(--border);padding:1.5rem;text-align:center;font-size:.7rem;color:var(--text3);margin-top:3rem}
+
+@media print{
+  .export-bar,.btn-export{display:none!important}
+  .card,.pitch-box{box-shadow:none!important;page-break-inside:avoid}
+}
+@media(max-width:720px){
+  .hero-title{font-size:1.5rem}
+  .status-strip{grid-template-columns:1fr 1fr}
+  .summary-bar{grid-template-columns:1fr 1fr}
+  .grid-2{grid-template-columns:1fr}
+  .hero-inner{padding:0 16px 40px}
+  .content{padding:28px 14px 48px}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eye">Guía de networking · sin stand propio · 31 julio 2026</div>
+    <div class="hero-title">Expo Real Estate <span>Argentina 2026</span></div>
+    <div class="hero-sub">Guille y Ale van sin stand — esta guía es sobre qué decir, qué preguntar y qué cartas guardarse en las conversaciones de piso, no sobre logística de stand.</div>
+
+    <div class="status-strip">
+      <div class="ss-cell">
+        <div class="ss-lnum">Cuándo</div>
+        <div class="ss-name">12-13 ago, 9 a 20hs</div>
+        <span class="ss-badge sb-ok">✓ Confirmado</span>
+      </div>
+      <div class="ss-cell">
+        <div class="ss-lnum">Dónde</div>
+        <div class="ss-name">Hilton Buenos Aires</div>
+        <span class="ss-badge sb-ok">✓ Macacha Güemes 351</span>
+      </div>
+      <div class="ss-cell">
+        <div class="ss-lnum">Escala</div>
+        <div class="ss-name">150+ stands, 90+ speakers</div>
+        <span class="ss-badge sb-ok">✓ 16ª edición</span>
+      </div>
+      <div class="ss-cell">
+        <div class="ss-lnum">Acceso</div>
+        <div class="ss-name">Muestra gratis / Congreso pago</div>
+        <span class="ss-badge sb-warn">⚠ Verificar inscripción</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <div class="export-bar">
+    <button class="btn-export" onclick="window.print()">⬇ Exportar / Imprimir</button>
+  </div>
+
+  <div class="sec-hdr">
+    <span class="sec-hdr-txt">El evento en números</span>
+    <div class="sec-hdr-line"></div>
+  </div>
+  <div class="summary-bar">
+    <div class="sb-item"><div class="sb-n">150+</div><div class="sb-l">Stands</div></div>
+    <div class="sb-item"><div class="sb-n">300</div><div class="sb-l">Opciones de inversión</div></div>
+    <div class="sb-item"><div class="sb-n">60</div><div class="sb-l">Workshops</div></div>
+    <div class="sb-item"><div class="sb-n">90+</div><div class="sb-l">Speakers confirmados</div></div>
+  </div>
+  <div class="card plain">
+    <p><strong>Expo Real Estate Argentina 2026</strong> — 16° Congreso de Desarrollos e Inversiones Inmobiliarias Argentinas, organizado por Grupo SG. Es la muestra inmobiliaria de negocios más grande de la región, con presencia internacional confirmada (Miami, Dubai, Panamá, España, Uruguay, fuerte presencia de Punta del Este). Incluye un Foro de Inversión Vaca Muerta (real estate ligado al sector energético). La exposición y los workshops son gratuitos con inscripción previa; el Congreso (las disertaciones formales) tiene entrada paga aparte — conviene confirmar si van a inscribirse al Congreso o solo recorrer la muestra.</p>
+  </div>
+
+  <div class="sec-hdr">
+    <span class="sec-hdr-txt">Por qué nos importa, sin tener stand</span>
+    <div class="sec-hdr-line"></div>
+  </div>
+  <div class="card melon">
+    <h3>🎯 El objetivo real de ir</h3>
+    <p>No van a vender TMC desde un mostrador — van a <strong>generar contactos calificados de proveedores de espacio</strong> caminando el piso y hablando con la gente correcta. Este evento es prácticamente el mismo público que la campaña <strong>"Lo que no usás, rinde"</strong> (consorcios, inmobiliarias, desarrolladoras) — ver <code>TMC-campana-ingreso-extra.html</code> y <code>TMC-prospecting-automatizacion.html</code> — pero acá los tenés a todos en un mismo salón durante dos días.</p>
+    <p>Métrica de éxito realista para dos días de piso: <strong>15-20 conversaciones de calidad</strong> y <strong>5-8 contactos con seguimiento concreto</strong> (no “tarjetas juntadas”, sino gente que dijo que sí a algo específico).</p>
+  </div>
+
+  <div class="sec-hdr">
+    <span class="sec-hdr-txt">El pitch — qué decir</span>
+    <div class="sec-hdr-line"></div>
+  </div>
+
+  <div class="pitch-box">
+    <div class="label">Versión 15 segundos — cuando alguien pregunta "¿y ustedes qué hacen?"</div>
+    <p>"Armamos un marketplace para que cualquiera con espacio de guardado ocioso —una cochera, un galpón, una baulera— lo alquile de forma segura, con pago protegido hasta que el cliente confirma el acceso. Es como un Airbnb para guardado."</p>
+  </div>
+
+  <div class="pitch-box">
+    <div class="label">Versión 2 minutos — si hay interés real</div>
+    <p>"El problema que resolvemos es doble: por un lado, mucha gente y muchas empresas tienen espacio que no usan — un galpón medio vacío, cocheras de un edificio que sobran, un depósito fuera de temporada. Por el otro, hay demanda constante de guardado de corto y mediano plazo: mudanzas, e-commerce que necesita stock cerca del cliente, empresas con archivo. Conectamos esas dos puntas con pago seguro por MercadoPago —el dinero queda retenido hasta que el cliente confirma que accedió al espacio— y nos quedamos con una comisión solo cuando se concreta una reserva. Publicar y buscar es gratis. Para alguien acá en real estate, el ángulo que más nos interesa es: si administrás un edificio, un consorcio o tenés unidades con cocheras o bauleras sin uso, eso es ingreso pasivo con cero esfuerzo de tu lado."</p>
+  </div>
+
+  <div class="sec-hdr">
+    <span class="sec-hdr-txt">Qué cartas guardarnos</span>
+    <div class="sec-hdr-line"></div>
+  </div>
+  <div class="grid-2">
+    <div class="card durazno">
+      <h3>🤐 No decir</h3>
+      <ul>
+        <li>Números duros de facturación, cantidad exacta de usuarios activos o volumen de reservas — si preguntan, respuesta genérica tipo "estamos en fase de escalado" o "crecimiento sostenido mes a mes", sin cifra.</li>
+        <li>Que el modelo de KYC/verificación de identidad (Didit vs MetaMap) todavía no está resuelto — si preguntan por seguridad/verificación, hablar de lo que YA está implementado (escrow, PIN de acceso, chat), no de lo que falta decidir.</li>
+        <li>Roadmap de expansión a otros países de LatAm como si fuera un plan confirmado — está en evaluación, no anunciado. Se puede decir "lo estamos evaluando" si preguntan directamente, nunca como noticia propia.</li>
+        <li>Cualquier compromiso verbal de partnership, integración o exclusividad en el momento — siempre "lo charlamos con calma después del evento", nunca un sí de piso.</li>
+        <li>Nombres de proveedores/clientes actuales sin su permiso explícito, ni detalles de comisión de un caso puntual real.</li>
+      </ul>
+    </div>
+    <div class="card cielo">
+      <h3>💬 Sí decir, sin problema</h3>
+      <ul>
+        <li>Que el proyecto está operativo, en producción, con reservas reales concretándose.</li>
+        <li>Cómo funciona el escrow (MercadoPago retiene el pago hasta confirmar acceso) — es un diferencial fuerte de confianza, mostrarlo con orgullo.</li>
+        <li>Que publicar y buscar es 100% gratis, comisión solo si se concreta.</li>
+        <li>Que están abiertos a conversar con administradores de consorcios, desarrolladoras e inmobiliarias sobre volumen (varias unidades a la vez).</li>
+        <li>Pedir el contacto para seguir la charla después del evento — siempre es un pedido razonable y no compromete nada.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sec-hdr">
+    <span class="sec-hdr-txt">A quién buscar en el piso</span>
+    <div class="sec-hdr-line"></div>
+  </div>
+  <div class="card plain">
+    <ul>
+      <li><strong>Administradores de consorcios y property managers</strong> — el target más directo: cocheras y bauleras sin uso en edificios que administran, decisión rápida porque no es su plata personal en juego.</li>
+      <li><strong>Desarrolladoras con stock sin vender/alquilar</strong> — unidades de pozo o entregadas sin uso inmediato, cocheras/bauleras que no se vendieron junto con la unidad.</li>
+      <li><strong>Inmobiliarias tradicionales</strong> — buscan diferenciarse ofreciendo algo más a sus clientes propietarios; TMC puede ser "un servicio más" que les sugieren a sus dueños.</li>
+      <li><strong>Empresas de mudanzas y logística presentes</strong> — público con necesidad de guardado transitorio en ambos sentidos (oferta y demanda).</li>
+      <li><strong>Proptech e inversores</strong> — con cuidado: interesante para validar el modelo o conseguir feedback, pero sin abrir conversación de inversión en el piso (ver "no decir").</li>
+    </ul>
+  </div>
+
+  <div class="sec-hdr">
+    <span class="sec-hdr-txt">Preguntas para calificar rápido</span>
+    <div class="sec-hdr-line"></div>
+  </div>
+  <div class="card frutilla">
+    <p>Antes de tirar el pitch largo, 2-3 preguntas cortas para saber si vale la pena seguir la charla:</p>
+    <ul>
+      <li>"¿Manejás uno o varios edificios/propiedades?" — volumen.</li>
+      <li>"¿Tenés cocheras o bauleras que hoy no se usan?" — dolor concreto, no genérico.</li>
+      <li>"¿Quién decide este tipo de cosas — vos o hay que hablarlo con el consorcio/dueño?" — identifica si es el decisor o un intermediario.</li>
+    </ul>
+  </div>
+
+  <div class="sec-hdr">
+    <span class="sec-hdr-txt">Checklist antes de ir</span>
+    <div class="sec-hdr-line"></div>
+  </div>
+  <div class="card melon">
+    <ul class="checklist">
+      <li>Inscribirse gratis a la muestra/workshops (y decidir si además pagan entrada al Congreso)</li>
+      <li>Llevar las tarjetas de presentación con QR (carpeta <code>iniciativas-alejandro</code>)</li>
+      <li>Definir quién de los dos lidera la conversación y quién anota contactos/notas</li>
+      <li>Tener el teléfono con batería y espacio — van a sacar fotos de tarjetas y anotar notas rápidas por contacto</li>
+      <li>Acordar entre Guille y Ale la respuesta común a "¿cuánto cobran de comisión?" y "¿cuántos usuarios tienen?" antes de que se las pregunten en el piso</li>
+    </ul>
+  </div>
+
+  <div class="sec-hdr">
+    <span class="sec-hdr-txt">Después del evento</span>
+    <div class="sec-hdr-line"></div>
+  </div>
+  <div class="card plain">
+    <p>El seguimiento importa más que la charla en el piso. Contactar dentro de las <strong>48 horas</strong> a cada persona con seguimiento concreto, mencionando algo específico de la conversación (no un mensaje genérico). Cargar los contactos calificados como leads del segmento "consorcios/inmobiliarias/mudanzas" para conectarlos con el flujo de captación que ya existe (ver <code>TMC-prospecting-automatizacion.html</code>).</p>
+  </div>
+
+  <div class="sec-hdr">
+    <span class="sec-hdr-txt">Fuentes</span>
+    <div class="sec-hdr-line"></div>
+  </div>
+  <div class="card plain">
+    <div class="sources">
+      <p>• <a href="https://exporealestate.com.ar/" target="_blank">exporealestate.com.ar</a> — sitio oficial, fechas/lugar/escala verificados directo</p>
+      <p>• <a href="https://mercado.com.ar/agenda/expo-real-estate-argentina-realizara-su-16-a-edicion-en-el-hilton-buenos-aires" target="_blank">Revista Mercado — cobertura de la 16ª edición</a></p>
+    </div>
+  </div>
+
+  <footer>
+    TodasMisCosas.com · Guía interna para Guille y Ale · Generado 31 julio 2026<br>
+    No requiere acción del equipo de desarrollo — es material de preparación para el evento.
+  </footer>
+
+</div>
+</body>
+</html>
