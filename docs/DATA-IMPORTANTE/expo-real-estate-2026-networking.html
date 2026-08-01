@@ -44,6 +44,16 @@ body{background:var(--canvas);color:var(--text);font-family:-apple-system,BlinkM
 .sb-warn{background:rgba(251,191,36,.15);color:#FCD34D}
 .sb-miss{background:rgba(248,113,113,.15);color:#F87171}
 
+/* ── Tabs ── */
+.tabs-wrap{background:var(--white);border-bottom:2px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.tabs{display:flex;overflow-x:auto;scrollbar-width:none;max-width:960px;margin:0 auto;padding:0 32px;gap:2px}
+.tabs::-webkit-scrollbar{display:none}
+.tab-btn{flex-shrink:0;padding:14px 18px;border:none;background:none;cursor:pointer;font-size:.82rem;font-weight:700;color:var(--text3);border-bottom:3px solid transparent;transition:all var(--t);white-space:nowrap;position:relative;bottom:-2px;display:inline-flex;align-items:center;gap:.4rem}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--durazno-md);border-bottom-color:var(--durazno-md)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
 .content{max-width:960px;margin:0 auto;padding:40px 32px 72px}
 
 .export-bar{display:flex;justify-content:flex-end;margin-bottom:1.5rem}
@@ -80,11 +90,6 @@ body{background:var(--canvas);color:var(--text);font-family:-apple-system,BlinkM
 .pitch-box .label{font-size:.62rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#64748B;margin-bottom:.6rem}
 .pitch-box p{font-size:.92rem;color:#F1F5F9;line-height:1.75;font-style:italic}
 
-.tag-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem}
-.tag{font-size:.68rem;font-weight:700;padding:.3rem .7rem;border-radius:99px}
-.tag-si{background:var(--ok-bg);color:var(--ok-c)}
-.tag-no{background:var(--miss-bg);color:var(--miss-c)}
-
 .checklist{list-style:none;padding:0}
 .checklist li{display:flex;align-items:flex-start;gap:.6rem;font-size:.85rem;color:var(--text2);margin-bottom:.6rem;line-height:1.5}
 .checklist li::before{content:'☐';font-size:1rem;color:var(--melon-md);flex-shrink:0;line-height:1.3}
@@ -92,10 +97,11 @@ body{background:var(--canvas);color:var(--text);font-family:-apple-system,BlinkM
 .sources{font-size:.75rem;color:var(--text3);margin-top:.5rem}
 .sources a{color:var(--cielo-dp)}
 
-footer{border-top:1.5px solid var(--border);padding:1.5rem;text-align:center;font-size:.7rem;color:var(--text3);margin-top:3rem}
+footer{border-top:1.5px solid var(--border);padding:1.5rem;text-align:center;font-size:.7rem;color:var(--text3);margin-top:1rem}
 
 @media print{
-  .export-bar,.btn-export{display:none!important}
+  .export-bar,.btn-export,.tabs-wrap{display:none!important}
+  .tab-panel{display:block!important;page-break-before:always}
   .card,.pitch-box{box-shadow:none!important;page-break-inside:avoid}
 }
 @media(max-width:720px){
@@ -105,6 +111,7 @@ footer{border-top:1.5px solid var(--border);padding:1.5rem;text-align:center;fon
   .grid-2{grid-template-columns:1fr}
   .hero-inner{padding:0 16px 40px}
   .content{padding:28px 14px 48px}
+  .tabs{padding:0 12px}
 }
 </style>
 </head>
@@ -141,203 +148,261 @@ footer{border-top:1.5px solid var(--border);padding:1.5rem;text-align:center;fon
   </div>
 </div>
 
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('resumen')">📊 Resumen</button>
+    <button class="tab-btn" onclick="showTab('pitch')">🗣️ Pitch corto</button>
+    <button class="tab-btn" onclick="showTab('speech')">🎤 Speech</button>
+    <button class="tab-btn" onclick="showTab('cartas')">🤐 Qué decir</button>
+    <button class="tab-btn" onclick="showTab('quien')">🎯 A quién buscar</button>
+    <button class="tab-btn" onclick="showTab('checklist')">✅ Checklist</button>
+  </div>
+</div>
+
 <div class="content">
 
   <div class="export-bar">
     <button class="btn-export" onclick="window.print()">⬇ Exportar / Imprimir</button>
   </div>
 
-  <div class="sec-hdr">
-    <span class="sec-hdr-txt">El evento en números</span>
-    <div class="sec-hdr-line"></div>
-  </div>
-  <div class="summary-bar">
-    <div class="sb-item"><div class="sb-n">150+</div><div class="sb-l">Stands</div></div>
-    <div class="sb-item"><div class="sb-n">300</div><div class="sb-l">Opciones de inversión</div></div>
-    <div class="sb-item"><div class="sb-n">60</div><div class="sb-l">Workshops</div></div>
-    <div class="sb-item"><div class="sb-n">+100</div><div class="sb-l">Speakers confirmados</div></div>
-  </div>
-  <div class="card plain">
-    <p><strong>Expo Real Estate Argentina 2026</strong> — 16° Congreso de Desarrollos e Inversiones Inmobiliarias Argentinas, organizado por Grupo SG. Es la muestra inmobiliaria de negocios más grande de la región, con presencia internacional confirmada (Miami, Dubai, Panamá, España, Uruguay, fuerte presencia de Punta del Este). Incluye un Foro de Inversión Vaca Muerta (real estate ligado al sector energético). La exposición y los workshops son gratuitos con inscripción previa; el Congreso (las disertaciones formales) tiene entrada paga aparte — conviene confirmar si van a inscribirse al Congreso o solo recorrer la muestra.</p>
-    <p style="font-size:.78rem;color:var(--text3)"><strong>Sobre las "300 opciones de inversión":</strong> es una cifra de marketing del propio evento — no encontramos, ni en el sitio oficial ni en el material de prensa, un desglose público de a qué corresponde exactamente. No hay lista de proyectos/unidades específicas para citar como dato duro.</p>
+  <!-- ═══════════ TAB 1: RESUMEN ═══════════ -->
+  <div id="tab-resumen" class="tab-panel active">
+
+    <div class="sec-hdr">
+      <span class="sec-hdr-txt">El evento en números</span>
+      <div class="sec-hdr-line"></div>
+    </div>
+    <div class="summary-bar">
+      <div class="sb-item"><div class="sb-n">150+</div><div class="sb-l">Stands</div></div>
+      <div class="sb-item"><div class="sb-n">300</div><div class="sb-l">Opciones de inversión</div></div>
+      <div class="sb-item"><div class="sb-n">60</div><div class="sb-l">Workshops</div></div>
+      <div class="sb-item"><div class="sb-n">+100</div><div class="sb-l">Speakers confirmados</div></div>
+    </div>
+    <div class="card plain">
+      <p><strong>Expo Real Estate Argentina 2026</strong> — 16° Congreso de Desarrollos e Inversiones Inmobiliarias Argentinas, organizado por Grupo SG. Es la muestra inmobiliaria de negocios más grande de la región, con presencia internacional confirmada (Miami, Dubai, Panamá, España, Uruguay, fuerte presencia de Punta del Este). Incluye un Foro de Inversión Vaca Muerta (real estate ligado al sector energético). La exposición y los workshops son gratuitos con inscripción previa; el Congreso (las disertaciones formales) tiene entrada paga aparte — conviene confirmar si van a inscribirse al Congreso o solo recorrer la muestra.</p>
+      <p style="font-size:.78rem;color:var(--text3)"><strong>Sobre las "300 opciones de inversión":</strong> es una cifra de marketing del propio evento — no encontramos, ni en el sitio oficial ni en el material de prensa, un desglose público de a qué corresponde exactamente. No hay lista de proyectos/unidades específicas para citar como dato duro.</p>
+    </div>
+
+    <div class="sec-hdr">
+      <span class="sec-hdr-txt">Por qué nos importa, sin tener stand</span>
+      <div class="sec-hdr-line"></div>
+    </div>
+    <div class="card melon">
+      <h3>🎯 El objetivo real de ir</h3>
+      <p>No van a vender TMC desde un mostrador — van a <strong>generar contactos calificados de proveedores de espacio</strong> caminando el piso y hablando con la gente correcta. Este evento es prácticamente el mismo público que la campaña <strong>"Lo que no usás, rinde"</strong> (consorcios, inmobiliarias, desarrolladoras) — ver <code>TMC-campana-ingreso-extra.html</code> y <code>TMC-prospecting-automatizacion.html</code> — pero acá los tenés a todos en un mismo salón durante dos días.</p>
+      <p>Métrica de éxito realista para dos días de piso: <strong>15-20 conversaciones de calidad</strong> y <strong>5-8 contactos con seguimiento concreto</strong> (no "tarjetas juntadas", sino gente que dijo que sí a algo específico).</p>
+    </div>
+
+    <div class="sec-hdr">
+      <span class="sec-hdr-txt">Fuentes</span>
+      <div class="sec-hdr-line"></div>
+    </div>
+    <div class="card plain">
+      <div class="sources">
+        <p>• <a href="https://exporealestate.com.ar/" target="_blank">exporealestate.com.ar</a> — sitio oficial, fechas/lugar/escala verificados directo</p>
+        <p>• <a href="https://exporealestate.com.ar/2026/Speakers2026.pdf" target="_blank">Speakers2026.pdf</a> — pieza oficial con el listado completo de speakers confirmados y sponsors por categoría (Main/Gold/Silver/Sinergy) y partners institucionales</p>
+        <p>• <a href="https://mercado.com.ar/agenda/expo-real-estate-argentina-realizara-su-16-a-edicion-en-el-hilton-buenos-aires" target="_blank">Revista Mercado — cobertura de la 16ª edición</a></p>
+      </div>
+    </div>
+
   </div>
 
-  <div class="sec-hdr">
-    <span class="sec-hdr-txt">Por qué nos importa, sin tener stand</span>
-    <div class="sec-hdr-line"></div>
-  </div>
-  <div class="card melon">
-    <h3>🎯 El objetivo real de ir</h3>
-    <p>No van a vender TMC desde un mostrador — van a <strong>generar contactos calificados de proveedores de espacio</strong> caminando el piso y hablando con la gente correcta. Este evento es prácticamente el mismo público que la campaña <strong>"Lo que no usás, rinde"</strong> (consorcios, inmobiliarias, desarrolladoras) — ver <code>TMC-campana-ingreso-extra.html</code> y <code>TMC-prospecting-automatizacion.html</code> — pero acá los tenés a todos en un mismo salón durante dos días.</p>
-    <p>Métrica de éxito realista para dos días de piso: <strong>15-20 conversaciones de calidad</strong> y <strong>5-8 contactos con seguimiento concreto</strong> (no “tarjetas juntadas”, sino gente que dijo que sí a algo específico).</p>
+  <!-- ═══════════ TAB 2: PITCH CORTO ═══════════ -->
+  <div id="tab-pitch" class="tab-panel">
+
+    <div class="sec-hdr">
+      <span class="sec-hdr-txt">El pitch — qué decir</span>
+      <div class="sec-hdr-line"></div>
+    </div>
+
+    <div class="pitch-box">
+      <div class="label">Versión 15 segundos — cuando alguien pregunta "¿y ustedes qué hacen?"</div>
+      <p>"Armamos un marketplace para que cualquiera con espacio de guardado ocioso —una cochera, un galpón, una baulera— lo alquile de forma segura, con pago protegido hasta que el cliente confirma el acceso. Es como un Airbnb para guardado."</p>
+    </div>
+
+    <div class="pitch-box">
+      <div class="label">Versión 2 minutos — si hay interés real</div>
+      <p>"El problema que resolvemos es doble: por un lado, mucha gente y muchas empresas tienen espacio que no usan — un galpón medio vacío, cocheras de un edificio que sobran, un depósito fuera de temporada. Por el otro, hay demanda constante de guardado de corto y mediano plazo: mudanzas, e-commerce que necesita stock cerca del cliente, empresas con archivo. Conectamos esas dos puntas con pago seguro por MercadoPago —el dinero queda retenido hasta que el cliente confirma que accedió al espacio— y nos quedamos con una comisión solo cuando se concreta una reserva. Publicar y buscar es gratis. Para alguien acá en real estate, el ángulo que más nos interesa es: si administrás un edificio, un consorcio o tenés unidades con cocheras o bauleras sin uso, eso es ingreso pasivo con cero esfuerzo de tu lado."</p>
+    </div>
+
   </div>
 
-  <div class="sec-hdr">
-    <span class="sec-hdr-txt">El pitch — qué decir</span>
-    <div class="sec-hdr-line"></div>
-  </div>
+  <!-- ═══════════ TAB 3: SPEECH ═══════════ -->
+  <div id="tab-speech" class="tab-panel">
 
-  <div class="pitch-box">
-    <div class="label">Versión 15 segundos — cuando alguien pregunta "¿y ustedes qué hacen?"</div>
-    <p>"Armamos un marketplace para que cualquiera con espacio de guardado ocioso —una cochera, un galpón, una baulera— lo alquile de forma segura, con pago protegido hasta que el cliente confirma el acceso. Es como un Airbnb para guardado."</p>
-  </div>
+    <div class="sec-hdr">
+      <span class="sec-hdr-txt">El speech completo — para practicar en voz alta</span>
+      <div class="sec-hdr-line"></div>
+    </div>
+    <div class="card uva">
+      <p style="font-size:.8rem;color:var(--text3);margin-bottom:0">~60-70 segundos hablado. Está escrito para <strong>decirlo</strong>, no para leerlo — practicalo un par de veces antes del 12, en voz alta, no solo en la cabeza.</p>
+    </div>
 
-  <div class="pitch-box">
-    <div class="label">Versión 2 minutos — si hay interés real</div>
-    <p>"El problema que resolvemos es doble: por un lado, mucha gente y muchas empresas tienen espacio que no usan — un galpón medio vacío, cocheras de un edificio que sobran, un depósito fuera de temporada. Por el otro, hay demanda constante de guardado de corto y mediano plazo: mudanzas, e-commerce que necesita stock cerca del cliente, empresas con archivo. Conectamos esas dos puntas con pago seguro por MercadoPago —el dinero queda retenido hasta que el cliente confirma que accedió al espacio— y nos quedamos con una comisión solo cuando se concreta una reserva. Publicar y buscar es gratis. Para alguien acá en real estate, el ángulo que más nos interesa es: si administrás un edificio, un consorcio o tenés unidades con cocheras o bauleras sin uso, eso es ingreso pasivo con cero esfuerzo de tu lado."</p>
-  </div>
-
-  <div class="card uva">
-    <h3>🎤 El speech completo — para practicar en voz alta</h3>
-    <p style="font-size:.78rem;color:var(--text3);margin-bottom:.9rem">~60-70 segundos hablado. Está escrito para <strong>decirlo</strong>, no para leerlo — practicalo un par de veces antes del 12, en voz alta, no solo en la cabeza.</p>
-    <div class="pitch-box" style="margin-bottom:0">
+    <div class="pitch-box">
       <p>"¿Sabías que en cualquier edificio de más de veinte unidades, seguro hay cocheras o bauleras que nadie usa? Eso es plata parada.</p>
       <p style="margin-top:.9rem">Nosotros armamos TodasMisCosas — un marketplace donde cualquiera con espacio ocioso, una cochera, un galpón, una baulera, lo publica y lo alquila a alguien que necesita guardar algo por un tiempo: una mudanza, stock de un local, lo que sea. Todo con el pago protegido por MercadoPago: el dinero queda retenido hasta que el que alquila confirma que accedió al espacio, así que nadie se queda esperando cobrar, y nadie paga por algo que no recibió.</p>
       <p style="margin-top:.9rem">Publicar y buscar es gratis. Cobramos comisión solo cuando el alquiler se concreta.</p>
       <p style="margin-top:.9rem">Para ustedes acá en real estate esto es directo: si administrás un consorcio, un edificio, o tenés unidades con cocheras que no se vendieron, es ingreso extra sin hacer nada de tu lado — vos publicás, nosotros nos encargamos del resto.</p>
       <p style="margin-top:.9rem">¿Te interesa que te muestre cómo funciona? Te dejo mi contacto y lo charlamos con calma."</p>
     </div>
-    <p style="font-size:.8rem;margin-top:1rem"><strong>Tips para decirlo:</strong></p>
-    <ul>
-      <li>La pregunta inicial ("¿sabías que...?") se dice <strong>despacio</strong>, con una pausa antes de "eso es plata parada" — es el gancho, no la apures.</li>
-      <li>"El dinero queda retenido hasta que..." es la parte que genera confianza — bajá un cambio el ritmo ahí, no la digas de pasada.</li>
-      <li>El cierre ("¿te interesa que te muestre...?") es una pregunta real, no retórica — hacé silencio después y dejá que conteste. No sigas hablando para llenar el silencio.</li>
-      <li>Si la persona ya te cortó antes de terminar porque tiene apuro, priorizá decir hasta "...así que nadie se queda esperando cobrar" y saltá directo al cierre — ese tramo del medio (ingresos extra) se puede resumir en una frase si hace falta.</li>
-    </ul>
+
+    <div class="card plain">
+      <h3>🎬 Tips para decirlo</h3>
+      <ul>
+        <li>La pregunta inicial ("¿sabías que...?") se dice <strong>despacio</strong>, con una pausa antes de "eso es plata parada" — es el gancho, no la apures.</li>
+        <li>"El dinero queda retenido hasta que..." es la parte que genera confianza — bajá un cambio el ritmo ahí, no la digas de pasada.</li>
+        <li>El cierre ("¿te interesa que te muestre...?") es una pregunta real, no retórica — hacé silencio después y dejá que conteste. No sigas hablando para llenar el silencio.</li>
+        <li>Si la persona ya te cortó antes de terminar porque tiene apuro, priorizá decir hasta "...así que nadie se queda esperando cobrar" y saltá directo al cierre — ese tramo del medio (ingresos extra) se puede resumir en una frase si hace falta.</li>
+      </ul>
+    </div>
+
   </div>
 
-  <div class="sec-hdr">
-    <span class="sec-hdr-txt">Qué cartas guardarnos</span>
-    <div class="sec-hdr-line"></div>
+  <!-- ═══════════ TAB 4: QUÉ DECIR / NO DECIR ═══════════ -->
+  <div id="tab-cartas" class="tab-panel">
+
+    <div class="sec-hdr">
+      <span class="sec-hdr-txt">Qué cartas guardarnos</span>
+      <div class="sec-hdr-line"></div>
+    </div>
+    <div class="grid-2">
+      <div class="card durazno">
+        <h3>🤐 No decir</h3>
+        <ul>
+          <li>Números duros de facturación, cantidad exacta de usuarios activos o volumen de reservas — si preguntan, respuesta genérica tipo "estamos en fase de escalado" o "crecimiento sostenido mes a mes", sin cifra.</li>
+          <li>Que el modelo de KYC/verificación de identidad (Didit vs MetaMap) todavía no está resuelto — si preguntan por seguridad/verificación, hablar de lo que YA está implementado (escrow, PIN de acceso, chat), no de lo que falta decidir.</li>
+          <li>Roadmap de expansión a otros países de LatAm como si fuera un plan confirmado — está en evaluación, no anunciado. Se puede decir "lo estamos evaluando" si preguntan directamente, nunca como noticia propia.</li>
+          <li>Cualquier compromiso verbal de partnership, integración o exclusividad en el momento — siempre "lo charlamos con calma después del evento", nunca un sí de piso.</li>
+          <li>Nombres de proveedores/clientes actuales sin su permiso explícito, ni detalles de comisión de un caso puntual real.</li>
+        </ul>
+      </div>
+      <div class="card cielo">
+        <h3>💬 Sí decir, sin problema</h3>
+        <ul>
+          <li>Que el proyecto está operativo, en producción, con reservas reales concretándose.</li>
+          <li>Cómo funciona el escrow (MercadoPago retiene el pago hasta confirmar acceso) — es un diferencial fuerte de confianza, mostrarlo con orgullo.</li>
+          <li>Que publicar y buscar es 100% gratis, comisión solo si se concreta.</li>
+          <li>Que están abiertos a conversar con administradores de consorcios, desarrolladoras e inmobiliarias sobre volumen (varias unidades a la vez).</li>
+          <li>Pedir el contacto para seguir la charla después del evento — siempre es un pedido razonable y no compromete nada.</li>
+        </ul>
+      </div>
+    </div>
+
   </div>
-  <div class="grid-2">
-    <div class="card durazno">
-      <h3>🤐 No decir</h3>
+
+  <!-- ═══════════ TAB 5: A QUIÉN BUSCAR ═══════════ -->
+  <div id="tab-quien" class="tab-panel">
+
+    <div class="sec-hdr">
+      <span class="sec-hdr-txt">A quién buscar en el piso — por tipo</span>
+      <div class="sec-hdr-line"></div>
+    </div>
+    <div class="card plain">
       <ul>
-        <li>Números duros de facturación, cantidad exacta de usuarios activos o volumen de reservas — si preguntan, respuesta genérica tipo "estamos en fase de escalado" o "crecimiento sostenido mes a mes", sin cifra.</li>
-        <li>Que el modelo de KYC/verificación de identidad (Didit vs MetaMap) todavía no está resuelto — si preguntan por seguridad/verificación, hablar de lo que YA está implementado (escrow, PIN de acceso, chat), no de lo que falta decidir.</li>
-        <li>Roadmap de expansión a otros países de LatAm como si fuera un plan confirmado — está en evaluación, no anunciado. Se puede decir "lo estamos evaluando" si preguntan directamente, nunca como noticia propia.</li>
-        <li>Cualquier compromiso verbal de partnership, integración o exclusividad en el momento — siempre "lo charlamos con calma después del evento", nunca un sí de piso.</li>
-        <li>Nombres de proveedores/clientes actuales sin su permiso explícito, ni detalles de comisión de un caso puntual real.</li>
+        <li><strong>Administradores de consorcios y property managers</strong> — el target más directo: cocheras y bauleras sin uso en edificios que administran, decisión rápida porque no es su plata personal en juego.</li>
+        <li><strong>Desarrolladoras con stock sin vender/alquilar</strong> — unidades de pozo o entregadas sin uso inmediato, cocheras/bauleras que no se vendieron junto con la unidad.</li>
+        <li><strong>Inmobiliarias tradicionales</strong> — buscan diferenciarse ofreciendo algo más a sus clientes propietarios; TMC puede ser "un servicio más" que les sugieren a sus dueños.</li>
+        <li><strong>Empresas de mudanzas y logística presentes</strong> — público con necesidad de guardado transitorio en ambos sentidos (oferta y demanda).</li>
+        <li><strong>Proptech e inversores</strong> — con cuidado: interesante para validar el modelo o conseguir feedback, pero sin abrir conversación de inversión en el piso (ver tab "Qué decir").</li>
       </ul>
+    </div>
+
+    <div class="sec-hdr">
+      <span class="sec-hdr-txt">Sponsors y expositores confirmados</span>
+      <div class="sec-hdr-line"></div>
     </div>
     <div class="card cielo">
-      <h3>💬 Sí decir, sin problema</h3>
+      <h3>⭐ Prioridad — cámaras e instituciones</h3>
+      <p>Hablar con una cámara/asociación es acceso a <strong>muchos</strong> potenciales proveedores de una sola conversación, no a uno solo. Estas cuatro tienen acuerdo firmado con el evento (10% descuento en entradas para sus miembros, lo que confirma que van a tener presencia activa):</p>
       <ul>
-        <li>Que el proyecto está operativo, en producción, con reservas reales concretándose.</li>
-        <li>Cómo funciona el escrow (MercadoPago retiene el pago hasta confirmar acceso) — es un diferencial fuerte de confianza, mostrarlo con orgullo.</li>
-        <li>Que publicar y buscar es 100% gratis, comisión solo si se concreta.</li>
-        <li>Que están abiertos a conversar con administradores de consorcios, desarrolladoras e inmobiliarias sobre volumen (varias unidades a la vez).</li>
-        <li>Pedir el contacto para seguir la charla después del evento — siempre es un pedido razonable y no compromete nada.</li>
+        <li><strong>CEDU</strong> — Cámara Empresaria de Desarrolladores Urbanos (presidida por Damián Tabakman, confirmado como speaker)</li>
+        <li><strong>Federación Inmobiliaria de la República Argentina</strong></li>
+        <li><strong>CIA</strong> — Cámara Inmobiliaria Argentina</li>
+        <li><strong>Colegio de Corredores Inmobiliarios de la Ciudad de Buenos Aires</strong></li>
       </ul>
     </div>
+    <div class="grid-2">
+      <div class="card melon">
+        <h3>🏆 Sponsors Main</h3>
+        <ul>
+          <li>Finaer, Dypsa Group, Spider, House of Wellness, Domus Flats, Pecam, Re/Max, Argenprop, Grupo Visca, Roca, Riva, IDERO, LDG (Land Developers Group), Respaldar, Dproperty, Criba, Newmark, JLL</li>
+        </ul>
+        <p style="font-size:.78rem">Newmark, JLL y Criba son consultoras de real estate corporativo — buen perfil para hablar de espacio ocioso en propiedades que gestionan para terceros.</p>
+      </div>
+      <div class="card durazno">
+        <h3>🥇 Sponsors Gold</h3>
+        <ul>
+          <li>Lebane, Constructora Sudamericana, Grupo (a)², Waves inMovement, Grupo MDAY, TotalFianza, MIR Fitness, Garantina, Inmotools, MCL Studio, National Brokers, Torre Puerto</li>
+        </ul>
+        <p style="font-size:.78rem">Garantina y TotalFianza son garantías de alquiler — canal de referido cruzado interesante (sus clientes inquilinos a veces necesitan guardado en mudanzas).</p>
+      </div>
+    </div>
+    <div class="card plain">
+      <h3>🥈 Sponsors Silver</h3>
+      <p>Nordheimer, LB, Zenodro, Maresia, Urbania+, Flipping Master</p>
+      <h3 style="margin-top:1rem">🤝 Sinergy Sponsors</h3>
+      <p>EN Real Estate (Escuela de Negocios), Market de Inversiones, RE LAB, Real Estate Business Tour, Bienes Raíces Ediciones BRE, Foro de Inversiones Vaca Muerta</p>
+      <h3 style="margin-top:1rem">🏛️ Otros partners institucionales</h3>
+      <p>CCPIM, CIC (Cámara Inmobiliaria de Córdoba), AACCMA, AEV, CAPIN, CILA, SCA (Sociedad Central de Arquitectos), CIER (Colegio Inmobiliario Entre Ríos), entre otros.</p>
+    </div>
+
+    <div class="sec-hdr">
+      <span class="sec-hdr-txt">Preguntas para calificar rápido</span>
+      <div class="sec-hdr-line"></div>
+    </div>
+    <div class="card frutilla">
+      <p>Antes de tirar el pitch largo, 2-3 preguntas cortas para saber si vale la pena seguir la charla:</p>
+      <ul>
+        <li>"¿Manejás uno o varios edificios/propiedades?" — volumen.</li>
+        <li>"¿Tenés cocheras o bauleras que hoy no se usan?" — dolor concreto, no genérico.</li>
+        <li>"¿Quién decide este tipo de cosas — vos o hay que hablarlo con el consorcio/dueño?" — identifica si es el decisor o un intermediario.</li>
+      </ul>
+    </div>
+
   </div>
 
-  <div class="sec-hdr">
-    <span class="sec-hdr-txt">A quién buscar en el piso — por tipo</span>
-    <div class="sec-hdr-line"></div>
-  </div>
-  <div class="card plain">
-    <ul>
-      <li><strong>Administradores de consorcios y property managers</strong> — el target más directo: cocheras y bauleras sin uso en edificios que administran, decisión rápida porque no es su plata personal en juego.</li>
-      <li><strong>Desarrolladoras con stock sin vender/alquilar</strong> — unidades de pozo o entregadas sin uso inmediato, cocheras/bauleras que no se vendieron junto con la unidad.</li>
-      <li><strong>Inmobiliarias tradicionales</strong> — buscan diferenciarse ofreciendo algo más a sus clientes propietarios; TMC puede ser "un servicio más" que les sugieren a sus dueños.</li>
-      <li><strong>Empresas de mudanzas y logística presentes</strong> — público con necesidad de guardado transitorio en ambos sentidos (oferta y demanda).</li>
-      <li><strong>Proptech e inversores</strong> — con cuidado: interesante para validar el modelo o conseguir feedback, pero sin abrir conversación de inversión en el piso (ver "no decir").</li>
-    </ul>
-  </div>
+  <!-- ═══════════ TAB 6: CHECKLIST ═══════════ -->
+  <div id="tab-checklist" class="tab-panel">
 
-  <div class="sec-hdr">
-    <span class="sec-hdr-txt">Sponsors y expositores confirmados</span>
-    <div class="sec-hdr-line"></div>
-  </div>
-  <div class="card cielo">
-    <h3>⭐ Prioridad — cámaras e instituciones</h3>
-    <p>Hablar con una cámara/asociación es acceso a <strong>muchos</strong> potenciales proveedores de una sola conversación, no a uno solo. Estas cuatro tienen acuerdo firmado con el evento (10% descuento en entradas para sus miembros, lo que confirma que van a tener presencia activa):</p>
-    <ul>
-      <li><strong>CEDU</strong> — Cámara Empresaria de Desarrolladores Urbanos (presidida por Damián Tabakman, confirmado como speaker)</li>
-      <li><strong>Federación Inmobiliaria de la República Argentina</strong></li>
-      <li><strong>CIA</strong> — Cámara Inmobiliaria Argentina</li>
-      <li><strong>Colegio de Corredores Inmobiliarios de la Ciudad de Buenos Aires</strong></li>
-    </ul>
-  </div>
-  <div class="grid-2">
+    <div class="sec-hdr">
+      <span class="sec-hdr-txt">Checklist antes de ir</span>
+      <div class="sec-hdr-line"></div>
+    </div>
     <div class="card melon">
-      <h3>🏆 Sponsors Main</h3>
-      <ul>
-        <li>Finaer, Dypsa Group, Spider, House of Wellness, Domus Flats, Pecam, Re/Max, Argenprop, Grupo Visca, Roca, Riva, IDERO, LDG (Land Developers Group), Respaldar, Dproperty, Criba, Newmark, JLL</li>
+      <ul class="checklist">
+        <li>Inscribirse gratis a la muestra/workshops (y decidir si además pagan entrada al Congreso)</li>
+        <li>Llevar las tarjetas de presentación con QR (carpeta <code>iniciativas-alejandro</code>)</li>
+        <li>Definir quién de los dos lidera la conversación y quién anota contactos/notas</li>
+        <li>Tener el teléfono con batería y espacio — van a sacar fotos de tarjetas y anotar notas rápidas por contacto</li>
+        <li>Acordar entre Guille y Ale la respuesta común a "¿cuánto cobran de comisión?" y "¿cuántos usuarios tienen?" antes de que se las pregunten en el piso</li>
       </ul>
-      <p style="font-size:.78rem">Newmark, JLL y Criba son consultoras de real estate corporativo — buen perfil para hablar de espacio ocioso en propiedades que gestionan para terceros.</p>
     </div>
-    <div class="card durazno">
-      <h3>🥇 Sponsors Gold</h3>
-      <ul>
-        <li>Lebane, Constructora Sudamericana, Grupo (a)², Waves inMovement, Grupo MDAY, TotalFianza, MIR Fitness, Garantina, Inmotools, MCL Studio, National Brokers, Torre Puerto</li>
-      </ul>
-      <p style="font-size:.78rem">Garantina y TotalFianza son garantías de alquiler — canal de referido cruzado interesante (sus clientes inquilinos a veces necesitan guardado en mudanzas).</p>
+
+    <div class="sec-hdr">
+      <span class="sec-hdr-txt">Después del evento</span>
+      <div class="sec-hdr-line"></div>
     </div>
-  </div>
-  <div class="card plain">
-    <h3>🥈 Sponsors Silver</h3>
-    <p>Nordheimer, LB, Zenodro, Maresia, Urbania+, Flipping Master</p>
-    <h3 style="margin-top:1rem">🤝 Sinergy Sponsors</h3>
-    <p>EN Real Estate (Escuela de Negocios), Market de Inversiones, RE LAB, Real Estate Business Tour, Bienes Raíces Ediciones BRE, Foro de Inversiones Vaca Muerta</p>
-    <h3 style="margin-top:1rem">🏛️ Otros partners institucionales</h3>
-    <p>CCPIM, CIC (Cámara Inmobiliaria de Córdoba), AACCMA, AEV, CAPIN, CILA, SCA (Sociedad Central de Arquitectos), CIER (Colegio Inmobiliario Entre Ríos), entre otros.</p>
-  </div>
-
-  <div class="sec-hdr">
-    <span class="sec-hdr-txt">Preguntas para calificar rápido</span>
-    <div class="sec-hdr-line"></div>
-  </div>
-  <div class="card frutilla">
-    <p>Antes de tirar el pitch largo, 2-3 preguntas cortas para saber si vale la pena seguir la charla:</p>
-    <ul>
-      <li>"¿Manejás uno o varios edificios/propiedades?" — volumen.</li>
-      <li>"¿Tenés cocheras o bauleras que hoy no se usan?" — dolor concreto, no genérico.</li>
-      <li>"¿Quién decide este tipo de cosas — vos o hay que hablarlo con el consorcio/dueño?" — identifica si es el decisor o un intermediario.</li>
-    </ul>
-  </div>
-
-  <div class="sec-hdr">
-    <span class="sec-hdr-txt">Checklist antes de ir</span>
-    <div class="sec-hdr-line"></div>
-  </div>
-  <div class="card melon">
-    <ul class="checklist">
-      <li>Inscribirse gratis a la muestra/workshops (y decidir si además pagan entrada al Congreso)</li>
-      <li>Llevar las tarjetas de presentación con QR (carpeta <code>iniciativas-alejandro</code>)</li>
-      <li>Definir quién de los dos lidera la conversación y quién anota contactos/notas</li>
-      <li>Tener el teléfono con batería y espacio — van a sacar fotos de tarjetas y anotar notas rápidas por contacto</li>
-      <li>Acordar entre Guille y Ale la respuesta común a "¿cuánto cobran de comisión?" y "¿cuántos usuarios tienen?" antes de que se las pregunten en el piso</li>
-    </ul>
-  </div>
-
-  <div class="sec-hdr">
-    <span class="sec-hdr-txt">Después del evento</span>
-    <div class="sec-hdr-line"></div>
-  </div>
-  <div class="card plain">
-    <p>El seguimiento importa más que la charla en el piso. Contactar dentro de las <strong>48 horas</strong> a cada persona con seguimiento concreto, mencionando algo específico de la conversación (no un mensaje genérico). Cargar los contactos calificados como leads del segmento "consorcios/inmobiliarias/mudanzas" para conectarlos con el flujo de captación que ya existe (ver <code>TMC-prospecting-automatizacion.html</code>).</p>
-  </div>
-
-  <div class="sec-hdr">
-    <span class="sec-hdr-txt">Fuentes</span>
-    <div class="sec-hdr-line"></div>
-  </div>
-  <div class="card plain">
-    <div class="sources">
-      <p>• <a href="https://exporealestate.com.ar/" target="_blank">exporealestate.com.ar</a> — sitio oficial, fechas/lugar/escala verificados directo</p>
-      <p>• <a href="https://exporealestate.com.ar/2026/Speakers2026.pdf" target="_blank">Speakers2026.pdf</a> — pieza oficial con el listado completo de speakers confirmados y sponsors por categoría (Main/Gold/Silver/Sinergy) y partners institucionales</p>
-      <p>• <a href="https://mercado.com.ar/agenda/expo-real-estate-argentina-realizara-su-16-a-edicion-en-el-hilton-buenos-aires" target="_blank">Revista Mercado — cobertura de la 16ª edición</a></p>
+    <div class="card plain">
+      <p>El seguimiento importa más que la charla en el piso. Contactar dentro de las <strong>48 horas</strong> a cada persona con seguimiento concreto, mencionando algo específico de la conversación (no un mensaje genérico). Cargar los contactos calificados como leads del segmento "consorcios/inmobiliarias/mudanzas" para conectarlos con el flujo de captación que ya existe (ver <code>TMC-prospecting-automatizacion.html</code>).</p>
     </div>
+
   </div>
 
   <footer>
-    TodasMisCosas.com · Guía interna para Guille y Ale · Generado 31 julio 2026<br>
+    TodasMisCosas.com · Guía interna para Guille y Ale · Generado 31 julio 2026, actualizado 1 agosto 2026<br>
     No requiere acción del equipo de desarrollo — es material de preparación para el evento.
   </footer>
 
 </div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.target.closest('.tab-btn').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
 </body>
 </html>
