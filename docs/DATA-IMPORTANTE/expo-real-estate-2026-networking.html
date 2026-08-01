@@ -86,6 +86,20 @@ body{background:var(--canvas);color:var(--text);font-family:-apple-system,BlinkM
 
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
 
+.spco-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:1.4rem}
+.spco{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r1);padding:.85rem .95rem}
+.spco.melon{border-left:4px solid var(--melon-md)}
+.spco.durazno{border-left:4px solid var(--durazno-md)}
+.spco.cielo{border-left:4px solid var(--cielo-md)}
+.spco.uva{border-left:4px solid var(--uva-md)}
+.spco.frutilla{border-left:4px solid var(--frutilla-md)}
+.spco h4{font-size:.85rem;font-weight:800;margin-bottom:.35rem;color:var(--text)}
+.spco p{font-size:.76rem;color:var(--text2);margin-bottom:.28rem;line-height:1.5}
+.spco p strong{color:var(--text)}
+.spco p.warn{color:var(--warn-c)}
+.cat-lbl{font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin:1.6rem 0 .6rem}
+.cat-lbl:first-child{margin-top:0}
+
 .pitch-box{background:var(--navy);color:#E2E8F0;border-radius:var(--r2);padding:1.3rem 1.5rem;margin-bottom:1rem}
 .pitch-box .label{font-size:.62rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#64748B;margin-bottom:.6rem}
 .pitch-box p{font-size:.92rem;color:#F1F5F9;line-height:1.75;font-style:italic}
@@ -109,6 +123,7 @@ footer{border-top:1.5px solid var(--border);padding:1.5rem;text-align:center;fon
   .status-strip{grid-template-columns:1fr 1fr}
   .summary-bar{grid-template-columns:1fr 1fr}
   .grid-2{grid-template-columns:1fr}
+  .spco-grid{grid-template-columns:1fr}
   .hero-inner{padding:0 16px 40px}
   .content{padding:28px 14px 48px}
   .tabs{padding:0 12px}
@@ -155,6 +170,7 @@ footer{border-top:1.5px solid var(--border);padding:1.5rem;text-align:center;fon
     <button class="tab-btn" onclick="showTab('speech')">🎤 Speech</button>
     <button class="tab-btn" onclick="showTab('cartas')">🤐 Qué decir</button>
     <button class="tab-btn" onclick="showTab('quien')">🎯 A quién buscar</button>
+    <button class="tab-btn" onclick="showTab('sponsors')">🏢 Sponsors (54)</button>
     <button class="tab-btn" onclick="showTab('checklist')">✅ Checklist</button>
   </div>
 </div>
@@ -361,6 +377,325 @@ footer{border-top:1.5px solid var(--border);padding:1.5rem;text-align:center;fon
 
   </div>
 
+  <!-- ═══════════ TAB SPONSORS: DIRECTORIO ═══════════ -->
+  <div id="tab-sponsors" class="tab-panel">
+
+    <div class="sec-hdr">
+      <span class="sec-hdr-txt">Directorio completo · 54 sponsors, expositores y partners</span>
+      <div class="sec-hdr-line"></div>
+    </div>
+    <div class="card plain">
+      <p>Ficha por empresa/institución: qué hace, contacto oficial (nunca celular personal), personas clave con LinkedIn público cuando se encontró, e inversiones/proyectos en curso o anunciados. Investigado por 3 agentes en paralelo sobre fuentes públicas (sitios oficiales, LinkedIn, prensa). Donde dice <strong>"No encontrado"</strong> es honesto — no se inventó ningún dato.</p>
+    </div>
+    <div class="card durazno">
+      <h3>⚠️ Confirmar antes de armar el guion de acercamiento</h3>
+      <ul>
+        <li><strong>Dproperty</strong> — no se pudo identificar con certeza qué empresa es.</li>
+        <li><strong>Zenodro</strong> — sin coincidencia argentina confirmada (solo un homebuilder de Florida sin vínculo verificado).</li>
+        <li><strong>Urbania+</strong> — al menos 4 empresas "Urbania" posibles (inmobiliaria, constructora, o software 3D) — cambia totalmente el enfoque.</li>
+        <li><strong>Maresia</strong> — 2 candidatas (desarrollo costero argentino vs. constructora brasileña).</li>
+        <li><strong>LB</strong> — probablemente LB Company (Pilar), no confirmado 100%.</li>
+        <li><strong>Inmotools</strong> — dos empresas casi homónimas (agencia de marketing española vs. CRM inmobiliario) — confirmar cuál.</li>
+        <li><strong>AACCMA</strong> — la única coincidencia es una cámara de carpintería/construcción en madera; no confirmado que sea el partner institucional del evento.</li>
+        <li><strong>CAPIN</strong> — presidencia contradictoria entre fuentes (Marysol Rodríguez vs. Marcos Fernando Garín).</li>
+        <li><strong>CIC/CaCIC Córdoba</strong> — presidencia contradictoria (Pedro Cámara Correa vs. Tea Funes).</li>
+        <li><strong>SCA</strong> — no confirmado si Rita Comando sigue como presidenta tras elecciones de oct. 2025.</li>
+        <li><strong>CILA</strong> — presidencia rotativa sin confirmar; mejor punto de entrada real es Josefina Pantano (FIRA).</li>
+      </ul>
+    </div>
+
+    <div class="cat-lbl">🏆 Sponsors Main (18)</div>
+    <div class="spco-grid">
+      <div class="spco melon"><h4>Finaer</h4>
+        <p><strong>Qué hace:</strong> Garantías de alquiler — reemplaza la garantía propietaria, aprobación en 24hs.</p>
+        <p><strong>Contacto:</strong> (011) 6842-5100 · finaersa.com.ar</p>
+        <p><strong>Clave:</strong> No encontrado con LinkedIn público verificable.</p>
+        <p><strong>Inversión:</strong> No encontrado.</p></div>
+      <div class="spco melon"><h4>Dypsa Group</h4>
+        <p><strong>Qué hace:</strong> Desarrolladora +40 años — residencial, oficinas, countries, hoteles (Torres Renoir en Puerto Madero).</p>
+        <p><strong>Contacto:</strong> +54 9 11 4468-7285 · dypsagroup.com</p>
+        <p><strong>Clave:</strong> Nicolás Kiperszmid, Project Leader (LinkedIn).</p>
+        <p><strong>Inversión:</strong> Wenelen Suites III, Añelo/Vaca Muerta, entrega 15/11/2026.</p></div>
+      <div class="spco melon"><h4>Spider</h4>
+        <p><strong>Qué hace:</strong> Proptech+fintech — inversión remota en propiedades de renta en EE.UU. vía app.</p>
+        <p><strong>Contacto:</strong> +1 (305) 744-4377 · info@spider-investments.com</p>
+        <p><strong>Clave:</strong> Andrés Goldenberg, Founder &amp; CEO (LinkedIn).</p>
+        <p><strong>Inversión:</strong> No encontrado lanzamiento/ronda reciente.</p></div>
+      <div class="spco melon"><h4>House of Wellness</h4>
+        <p><strong>Qué hace:</strong> Marca de North Development — torre residencial "wellness" de 34 pisos en Miami.</p>
+        <p><strong>Contacto:</strong> northdevelopment.com (solo formulario)</p>
+        <p><strong>Clave:</strong> Juan Carlos Tassara (disertó en la Expo 12/8 16:20hs), Ricardo Dunin, Eduardo Vargas.</p>
+        <p><strong>Inversión:</strong> Preventa desde feb. 2026, unidades desde USD 390.000.</p></div>
+      <div class="spco melon"><h4>Domus Flats</h4>
+        <p><strong>Qué hace:</strong> Otra marca de North Development — torre de flats amueblados en Brickell, Miami.</p>
+        <p><strong>Contacto:</strong> northdevelopment.com (solo formulario)</p>
+        <p><strong>Clave:</strong> Mismos socios de North Development (ver House of Wellness).</p>
+        <p><strong>Inversión:</strong> En preventa, unidades desde USD 590.000.</p></div>
+      <div class="spco melon"><h4>Pecam</h4>
+        <p><strong>Qué hace:</strong> Grupo constructor/desarrollador +50 años, Rosario — residencial, comercial, industrial.</p>
+        <p><strong>Contacto:</strong> 0341 558-8899 · pecam@pecam.com.ar</p>
+        <p><strong>Clave:</strong> Ricardo Griot, Presidente y Fundador (LinkedIn).</p>
+        <p><strong>Inversión:</strong> Expansión en Buenos Aires (AVA Palpa, Pueblo Buenavista, Hospital Austral).</p></div>
+      <div class="spco melon"><h4>Re/Max (Argentina y Uruguay)</h4>
+        <p><strong>Qué hace:</strong> Master franquicia RE/MAX — soporta 180+ oficinas asociadas.</p>
+        <p><strong>Contacto:</strong> Av. Callao 1515 1°B, CABA · propiedades@remax.com.ar</p>
+        <p><strong>Clave:</strong> Dotti Peñate, CEO AR-UY; Sebastián Sosa, Presidente de marca.</p>
+        <p><strong>Inversión:</strong> Expansión activa en Uruguay (Punta del Este, Montevideo).</p></div>
+      <div class="spco melon"><h4>Argenprop</h4>
+        <p><strong>Qué hace:</strong> Portal líder de propiedades AR, +550.000 publicaciones activas, CRM gratuito.</p>
+        <p><strong>Contacto:</strong> comercial@argenprop.com · argenprop.com</p>
+        <p><strong>Clave:</strong> Gonzalo Villanustre (CEO, sin LinkedIn verificado).</p>
+        <p><strong>Inversión:</strong> No encontrado.</p></div>
+      <div class="spco melon"><h4>Grupo Visca</h4>
+        <p><strong>Qué hace:</strong> Estudio de arquitectura/urbanismo, La Plata, expandiendo a Vaca Muerta.</p>
+        <p><strong>Contacto:</strong> 011 15-4043-7104 · grupovisca@gmail.com</p>
+        <p><strong>Clave:</strong> Gabriela Visca, propietaria/arquitecta (LinkedIn).</p>
+        <p><strong>Inversión:</strong> Edificio Calle 6 en La Plata, en desarrollo.</p></div>
+      <div class="spco melon"><h4>Roca</h4>
+        <p><strong>Qué hace:</strong> Roca Sanitario S.A. — fabricante global de sanitarios/griferías (proveedor, no desarrolladora).</p>
+        <p><strong>Contacto:</strong> 0810-222-7622 · roca.com.ar</p>
+        <p><strong>Clave:</strong> No encontrado director país con LinkedIn público.</p>
+        <p><strong>Inversión:</strong> Sin novedades específicas para Argentina.</p></div>
+      <div class="spco melon"><h4>Riva</h4>
+        <p><strong>Qué hace:</strong> Constructora/desarrolladora +50 años (desde 1926) — obra civil, industrial, inmobiliaria.</p>
+        <p><strong>Contacto:</strong> (54 011) 4312-9229 · info@riva.com.ar</p>
+        <p><strong>Clave:</strong> No confirmado director actual con LinkedIn.</p>
+        <p><strong>Inversión:</strong> Barrio privado Santa Bárbara, en comercialización.</p></div>
+      <div class="spco melon"><h4>IDERO</h4>
+        <p><strong>Qué hace:</strong> Constructora en steel frame (Grupo Salvatore) + IDERO Modular (viviendas en 90 días).</p>
+        <p><strong>Contacto:</strong> ventas@idero.com.ar</p>
+        <p><strong>Clave:</strong> No encontrado directivo con LinkedIn público.</p>
+        <p><strong>Inversión:</strong> "Casa Propia" (acceso a vivienda por fracciones), sin fecha.</p></div>
+      <div class="spco melon"><h4>LDG (Land Developers Group)</h4>
+        <p><strong>Qué hace:</strong> Desarrollo global +30 años — townhouses/oficinas en Miami, Uruguay y Argentina.</p>
+        <p><strong>Contacto:</strong> +54 11 5263-3596 · landdevelopersgroup.com</p>
+        <p><strong>Clave:</strong> Gabriel Rojchman, CEO; Michel Leibovich; Hernán Comisarenco.</p>
+        <p><strong>Inversión:</strong> Sin proyecto puntual confirmado — preguntar en el stand.</p></div>
+      <div class="spco melon"><h4>Respaldar</h4>
+        <p><strong>Qué hace:</strong> Garantía de alquiler — preaprobación en &lt;2hs, final en &lt;24hs.</p>
+        <p><strong>Contacto:</strong> (011) 4551-3338 · respaldar.com.ar</p>
+        <p><strong>Clave:</strong> No encontrado.</p>
+        <p><strong>Inversión:</strong> No encontrado.</p></div>
+      <div class="spco melon"><h4>Dproperty</h4>
+        <p class="warn"><strong>Qué hace:</strong> No identificado con certeza — ver aviso arriba.</p>
+        <p><strong>Contacto:</strong> No encontrado.</p>
+        <p><strong>Clave:</strong> No encontrado.</p>
+        <p><strong>Inversión:</strong> No encontrado.</p></div>
+      <div class="spco melon"><h4>Criba</h4>
+        <p><strong>Qué hace:</strong> Constructora desde 1952 — 400.000 m²/año en hormigón armado (AR+UY).</p>
+        <p><strong>Contacto:</strong> (+5411) 3984-7200 · criba.com.ar</p>
+        <p><strong>Clave:</strong> Santiago Tarasido, CEO y Presidente desde 2016.</p>
+        <p><strong>Inversión:</strong> Vesta (Mendoza); Cipriani Ocean Resort (Uruguay).</p></div>
+      <div class="spco melon"><h4>Newmark (Argentina)</h4>
+        <p><strong>Qué hace:</strong> Consultora boutique de real estate corporativo, +25 años en AR.</p>
+        <p><strong>Contacto:</strong> +5411-4311-9500 · Torre IRSA, Retiro</p>
+        <p><strong>Clave:</strong> Fernando Novoa Uriarte, Partner &amp; Transaction Mgmt Director.</p>
+        <p><strong>Inversión:</strong> No es desarrolladora — sin proyecto propio.</p></div>
+      <div class="spco melon"><h4>JLL</h4>
+        <p><strong>Qué hace:</strong> Consultora global de real estate corporativo — leasing, project/facility management.</p>
+        <p><strong>Contacto:</strong> +54 11 3984-8600 · jll.com.ar</p>
+        <p><strong>Clave:</strong> No confirmado country manager actual con LinkedIn.</p>
+        <p><strong>Inversión:</strong> No es desarrolladora.</p></div>
+    </div>
+
+    <div class="cat-lbl">🥇 Sponsors Gold (12)</div>
+    <div class="spco-grid">
+      <div class="spco durazno"><h4>Lebane</h4>
+        <p><strong>Qué hace:</strong> SaaS con IA para desarrolladoras — control de obra, presupuestos, cobranzas.</p>
+        <p><strong>Contacto:</strong> WhatsApp +54 9 11 5803-9855 · lebane.app/ar</p>
+        <p><strong>Clave:</strong> Lucas Glustman, CEO/cofundador; Bruno Lerer, CCO/cofundador (LinkedIn).</p>
+        <p><strong>Inversión:</strong> Ronda seed US$4M (feb. 2026, Atlántico + Zacua Ventures), expansión a México.</p></div>
+      <div class="spco durazno"><h4>Constructora Sudamericana</h4>
+        <p><strong>Qué hace:</strong> Constructora desde 1970 — torres, hoteles, shoppings, industria (AR/CL/UY).</p>
+        <p><strong>Contacto:</strong> +54 (11) 4313-2008 · cosud.com</p>
+        <p><strong>Clave:</strong> Martín Cittadini, CEO &amp; Board member (LinkedIn).</p>
+        <p><strong>Inversión:</strong> Sin anuncio 2026 nuevo — antecedentes: Estación BA, Harbour Tower.</p></div>
+      <div class="spco durazno"><h4>Grupo (a)²</h4>
+        <p><strong>Qué hace:</strong> Mobiliario de oficina (Teknion, A2, Interstuhl, Actiu) — fit-out corporativo.</p>
+        <p><strong>Contacto:</strong> 11 4138-3000 · grupoa2.com</p>
+        <p><strong>Clave:</strong> Daniel Cwirenbaum, Fundador y CEO (LinkedIn).</p>
+        <p><strong>Inversión:</strong> Nuevo showroom experiencial en Puerto Madero.</p></div>
+      <div class="spco durazno"><h4>Waves inMovement</h4>
+        <p><strong>Qué hace:</strong> Gestión/operación de oficinas Clase A/A+ en CABA y hubs de LatAm.</p>
+        <p><strong>Contacto:</strong> Solo formulario · wavesinmovement.com</p>
+        <p><strong>Clave:</strong> Marcos Villanueva, Co-fundador y CEO (LinkedIn).</p>
+        <p><strong>Inversión:</strong> Felicità (Flex Living) con Trademark Collection by Wyndham, AR/UY/PY.</p></div>
+      <div class="spco durazno"><h4>Grupo MDAY</h4>
+        <p><strong>Qué hace:</strong> Desarrolladora de Salta, 20 años — "real estate wellness", proyectos mixtos.</p>
+        <p><strong>Contacto:</strong> +54 9 387 4395456 · info@grupomday.com.ar</p>
+        <p><strong>Clave:</strong> Magdalena Day, Fundadora y Presidenta (LinkedIn).</p>
+        <p><strong>Inversión:</strong> WA Sinérgico con Reental — US$958.800 tokenizados en 24hs (abr. 2026).</p></div>
+      <div class="spco durazno"><h4>TotalFianza</h4>
+        <p><strong>Qué hace:</strong> Garantía de alquiler online (detalle no accesible — sitio con bloqueo anti-bot).</p>
+        <p><strong>Contacto:</strong> totalfianza.com.ar · IG @totalfianza</p>
+        <p><strong>Clave:</strong> No encontrado.</p>
+        <p><strong>Inversión:</strong> No encontrado. <em>Pedir folleto en el stand.</em></p></div>
+      <div class="spco durazno"><h4>MIR Fitness</h4>
+        <p><strong>Qué hace:</strong> Fabricante/comercializador de equipamiento de gimnasio (34+ años) — amenities de edificios.</p>
+        <p><strong>Contacto:</strong> Solo formulario · mirfitness.com.ar</p>
+        <p><strong>Clave:</strong> No encontrado.</p>
+        <p><strong>Inversión:</strong> No encontrado.</p></div>
+      <div class="spco durazno"><h4>Garantina</h4>
+        <p><strong>Qué hace:</strong> Garantía de alquiler 100% online, &lt;24hs, con línea B2B corporativa.</p>
+        <p><strong>Contacto:</strong> 11-3991-1088 · info@garantina.com.ar</p>
+        <p><strong>Clave:</strong> No confirmado.</p>
+        <p><strong>Inversión:</strong> No encontrado.</p></div>
+      <div class="spco durazno"><h4>Inmotools</h4>
+        <p class="warn"><strong>Qué hace:</strong> Ambiguo — agencia de marketing inmobiliario (España) o CRM inmobiliario (Inmotool) — confirmar cuál.</p>
+        <p><strong>Contacto:</strong> Inmotools ES: 968 122 981 · info@inmotools.es</p>
+        <p><strong>Clave:</strong> Dionisio Escarabajal, Director General (España, sin LinkedIn confirmado).</p>
+        <p><strong>Inversión:</strong> No encontrado.</p></div>
+      <div class="spco durazno"><h4>MCL Studio</h4>
+        <p><strong>Qué hace:</strong> Estudio de arquitectura/desarrollo, 13+ años, especializado en BIM.</p>
+        <p><strong>Contacto:</strong> Cerviño 4491, CABA · mcl-studio.com</p>
+        <p><strong>Clave:</strong> Juan Micieli (proyectos) y Manuel Micieli (finanzas), codirectores.</p>
+        <p><strong>Inversión:</strong> Edificio COPA (Moreno); Casa HK.</p></div>
+      <div class="spco durazno"><h4>National Brokers</h4>
+        <p><strong>Qué hace:</strong> Bróker de seguros 30+ años (ART, comercio, flota) — proveedor para el sector.</p>
+        <p><strong>Contacto:</strong> 0810-444-5550 · nationalbrokers.com.ar</p>
+        <p><strong>Clave:</strong> No encontrado.</p>
+        <p><strong>Inversión:</strong> Unidades asociadas: National Med, National Safety, ClickSeguros.</p></div>
+      <div class="spco durazno"><h4>Torre Puerto</h4>
+        <p><strong>Qué hace:</strong> Desarrollo/gerenciamiento integral (centros comerciales, oficinas), Santa Fe.</p>
+        <p><strong>Contacto:</strong> +54 9 342 635 8428 · administracion.tp@torrepuerto.com.ar</p>
+        <p><strong>Clave:</strong> María José Correa Savoia, CEO.</p>
+        <p><strong>Inversión:</strong> Master Plan Puerto Santa Fe, Corporate Towers, Puerto Plaza.</p></div>
+    </div>
+
+    <div class="cat-lbl">🥈 Sponsors Silver (6)</div>
+    <div class="spco-grid">
+      <div class="spco cielo"><h4>Nordheimer (Campos y Estancias)</h4>
+        <p><strong>Qué hace:</strong> Inmobiliaria rural desde 1976 — 500+ campos, red en AR/UY/PY/BO/CL/EE.UU.</p>
+        <p><strong>Contacto:</strong> 0810-777-CAMPOS · nordheimer@nordheimer.com</p>
+        <p><strong>Clave:</strong> Federico Nordheimer, Director (LinkedIn).</p>
+        <p><strong>Inversión:</strong> Brokerage, sin desarrollo propio anunciado.</p></div>
+      <div class="spco cielo"><h4>LB</h4>
+        <p class="warn"><strong>Qué hace:</strong> Probable LB Company (Pilar) — desarrolladora/constructora residencial y comercial, no 100% confirmado.</p>
+        <p><strong>Contacto:</strong> +54 9 11 7120 0001 · ventas@lbcompany.com.ar</p>
+        <p><strong>Clave:</strong> Pablo Batalla y Alejandro Loraschi, socios fundadores.</p>
+        <p><strong>Inversión:</strong> Cardinal Residence, Bari, K41 Polo Empresarial, entre otros (AR+BR).</p></div>
+      <div class="spco cielo"><h4>Zenodro</h4>
+        <p class="warn"><strong>Qué hace:</strong> Sin coincidencia argentina confirmada — solo un homebuilder de Florida sin vínculo verificado.</p>
+        <p><strong>Contacto:</strong> No encontrado.</p>
+        <p><strong>Clave:</strong> No encontrado.</p>
+        <p><strong>Inversión:</strong> No encontrado. <em>Confirmar razón social en el stand.</em></p></div>
+      <div class="spco cielo"><h4>Maresia</h4>
+        <p class="warn"><strong>Qué hace:</strong> Ambiguo — desarrollo costero (Cariló/Valeria del Mar, 22 unidades) o constructora brasileña.</p>
+        <p><strong>Contacto:</strong> EPIC Real Estate (comercializadora del proyecto costero)</p>
+        <p><strong>Clave:</strong> No encontrado.</p>
+        <p><strong>Inversión:</strong> Proyecto costero con entrega estimada oct. 2026.</p></div>
+      <div class="spco cielo"><h4>Urbania+</h4>
+        <p class="warn"><strong>Qué hace:</strong> Ambiguo — 4 empresas "Urbania" posibles (inmobiliaria, constructora o software 3D).</p>
+        <p><strong>Contacto:</strong> No encontrado con certeza.</p>
+        <p><strong>Clave:</strong> No encontrado.</p>
+        <p><strong>Inversión:</strong> No encontrado. <em>Alta prioridad de confirmar en el stand.</em></p></div>
+      <div class="spco cielo"><h4>Flipping Master</h4>
+        <p><strong>Qué hace:</strong> Escuela de negocios de flipping inmobiliario — mentorías, comunidad, IA.</p>
+        <p><strong>Contacto:</strong> WhatsApp +54 9 11 3004 1151 · flipping-master.com</p>
+        <p><strong>Clave:</strong> Virgilio Raiden, Fundador y Director; Presidente de CAFI (LinkedIn).</p>
+        <p><strong>Inversión:</strong> Impulsó la creación de la Cámara Argentina de Flipping Inmobiliario.</p></div>
+    </div>
+
+    <div class="cat-lbl">🤝 Sinergy Sponsors (6)</div>
+    <div class="spco-grid">
+      <div class="spco uva"><h4>EN Real Estate (Escuela de Negocios)</h4>
+        <p><strong>Qué hace:</strong> Escuela de negocios de real estate en español, +20 años, marca de Grupo SG.</p>
+        <p><strong>Contacto:</strong> +54 9 11 3060 4746 · enrealestate.org</p>
+        <p><strong>Clave:</strong> Damián Tabakman, Rector — también presidente CEDU+AEV (LinkedIn).</p>
+        <p><strong>Inversión:</strong> N/A — institución educativa.</p></div>
+      <div class="spco uva"><h4>Market de Inversiones</h4>
+        <p><strong>Qué hace:</strong> Plataforma de Grupo SG que conecta inversores LatAm con proyectos inmobiliarios.</p>
+        <p><strong>Contacto:</strong> Canal general Grupo SG — info@gruposyg.com</p>
+        <p><strong>Clave:</strong> Silvano Geler, Director General de Grupo SG (LinkedIn).</p>
+        <p><strong>Inversión:</strong> Perfil bajo, sin notas de prensa específicas encontradas.</p></div>
+      <div class="spco uva"><h4>RE LAB (Real Estate Podcast)</h4>
+        <p><strong>Qué hace:</strong> Podcast de real estate de Grupo SG, con EN Real Estate.</p>
+        <p><strong>Contacto:</strong> Spotify/YouTube/IG @gruposyg</p>
+        <p><strong>Clave:</strong> Herman Faigenbaum (CEO Cushman &amp; Wakefield South America) y Damián Tabakman, co-conductores.</p>
+        <p><strong>Inversión:</strong> N/A — canal editorial.</p></div>
+      <div class="spco uva"><h4>Real Estate Business Tour</h4>
+        <p><strong>Qué hace:</strong> Viajes de negocios inmobiliarios (Grupo SG) a BA, Miami, España, México, Mendoza.</p>
+        <p><strong>Contacto:</strong> Canal general Grupo SG</p>
+        <p><strong>Clave:</strong> Perfil de fundador coincide en todo con Damián Tabakman (no nombrado explícitamente en el sitio).</p>
+        <p><strong>Inversión:</strong> Edición BA sept. 2025; Mendoza dic. 2025; sin fecha 2026 confirmada.</p></div>
+      <div class="spco uva"><h4>Bienes Raíces Ediciones (BRE)</h4>
+        <p><strong>Qué hace:</strong> Editorial de real estate de Grupo SG, libros técnicos de desarrollo/gestión.</p>
+        <p><strong>Contacto:</strong> +54 9 11 3368-2959 · info@brediciones.com</p>
+        <p><strong>Clave:</strong> Sin director editorial distinto identificado.</p>
+        <p><strong>Inversión:</strong> N/A — catálogo editorial activo.</p></div>
+      <div class="spco uva"><h4>Foro de Inversiones Vaca Muerta</h4>
+        <p><strong>Qué hace:</strong> Foro de real estate ligado a energía — oportunidades inmobiliarias en Neuquén.</p>
+        <p><strong>Contacto:</strong> Canal general Grupo SG · forovacamuerta.com</p>
+        <p><strong>Clave:</strong> Sin directores propios distintos de Grupo SG.</p>
+        <p><strong>Inversión:</strong> Contexto: ~US$47.000M invertidos en Vaca Muerta 2013-2023.</p></div>
+    </div>
+
+    <div class="cat-lbl">🏛️ Partners institucionales (12)</div>
+    <div class="spco-grid">
+      <div class="spco frutilla"><h4>CEDU+AEV</h4>
+        <p><strong>Qué hace:</strong> Cámara de 130+ desarrolladoras urbanas, fusionada con AEV en abril 2026.</p>
+        <p><strong>Contacto:</strong> cedu.com.ar</p>
+        <p><strong>Clave:</strong> Damián Tabakman, Presidente (confirmado vigente 2026, orador de apertura del Congreso).</p>
+        <p><strong>Inversión:</strong> N/A — cámara empresaria.</p></div>
+      <div class="spco frutilla"><h4>FIRA</h4>
+        <p><strong>Qué hace:</strong> Federa 25 colegios/cámaras inmobiliarias provinciales, ~30.000 matriculados.</p>
+        <p><strong>Contacto:</strong> +54 (011) 71 144163 · secretaria@fira.org.ar</p>
+        <p><strong>Clave:</strong> Josefina Pantano, Presidenta (primera mujer en el cargo).</p>
+        <p><strong>Inversión:</strong> N/A — vínculo activo con CILA a nivel regional.</p></div>
+      <div class="spco frutilla"><h4>CIA (Cámara Inmobiliaria Argentina)</h4>
+        <p><strong>Qué hace:</strong> Entidad no lucrativa desde 1980, "la más federal del sector".</p>
+        <p><strong>Contacto:</strong> +54 9 11 4199-8299 · secretaria@cia.org.ar</p>
+        <p><strong>Clave:</strong> Iván Ginevra, Presidente (desde mayo 2026).</p>
+        <p><strong>Inversión:</strong> N/A — expuso ante Diputados sobre regulación de alquileres.</p></div>
+      <div class="spco frutilla"><h4>CUCICBA</h4>
+        <p><strong>Qué hace:</strong> Colegio que matricula/regula corredores inmobiliarios de CABA.</p>
+        <p><strong>Contacto:</strong> (011) 4124-6060 · info@colegioinmobiliario.org.ar</p>
+        <p><strong>Clave:</strong> Marta Liotto, Presidenta (reelecta sept. 2025, período 2025-2027).</p>
+        <p><strong>Inversión:</strong> N/A — colegio profesional.</p></div>
+      <div class="spco frutilla"><h4>CCPIM (Misiones)</h4>
+        <p><strong>Qué hace:</strong> Colegio de corredores públicos inmobiliarios de Misiones.</p>
+        <p><strong>Contacto:</strong> IG @ccpimisiones</p>
+        <p><strong>Clave:</strong> Mariela Amarilla, Presidenta (período 2024-2026).</p>
+        <p><strong>Inversión:</strong> N/A — participación anual confirmada en la Expo.</p></div>
+      <div class="spco frutilla"><h4>CIC / CaCIC (Córdoba)</h4>
+        <p class="warn"><strong>Qué hace:</strong> Cámara de Corredores Inmobiliarios de Córdoba desde 1985 — presidencia contradictoria entre fuentes.</p>
+        <p><strong>Contacto:</strong> +54 351 421-6161 · cacic.org.ar</p>
+        <p><strong>Clave:</strong> Pedro Cámara Correa (o Tea Funes según otra fuente) — confirmar.</p>
+        <p><strong>Inversión:</strong> N/A.</p></div>
+      <div class="spco frutilla"><h4>AACCMA</h4>
+        <p class="warn"><strong>Qué hace:</strong> Asociación de carpinterías/construcción en madera — no confirmado que sea el partner del evento.</p>
+        <p><strong>Contacto:</strong> IG @aaccma_arg · aaccma.com</p>
+        <p><strong>Clave:</strong> No encontrado.</p>
+        <p><strong>Inversión:</strong> N/A.</p></div>
+      <div class="spco frutilla"><h4>AEV</h4>
+        <p><strong>Qué hace:</strong> Asociación empresaria de vivienda, fusionada con CEDU en abril 2026.</p>
+        <p><strong>Contacto:</strong> aevivienda.org.ar</p>
+        <p><strong>Clave:</strong> Damián Tabakman, Presidente (post-fusión); Mali Vázquez, Directora Ejecutiva.</p>
+        <p><strong>Inversión:</strong> N/A — coloquio de acceso a vivienda en BATEV 2026.</p></div>
+      <div class="spco frutilla"><h4>CAPIN</h4>
+        <p class="warn"><strong>Qué hace:</strong> Cámara Argentina de Pinturerías — no es cámara inmobiliaria, sí ligada a la cadena de construcción.</p>
+        <p><strong>Contacto:</strong> camara@capin.org.ar · (011) 6009-0778</p>
+        <p><strong>Clave:</strong> Presidencia contradictoria (Marysol Rodríguez vs. Marcos Fernando Garín) — confirmar.</p>
+        <p><strong>Inversión:</strong> N/A.</p></div>
+      <div class="spco frutilla"><h4>CILA</h4>
+        <p><strong>Qué hace:</strong> Confederación Inmobiliaria Latinoamericana — 18 países, fundada 2012.</p>
+        <p><strong>Contacto:</strong> secretaria@cila.la · cila.la</p>
+        <p><strong>Clave:</strong> Presidencia rotativa sin confirmar — mejor entrada: Josefina Pantano (FIRA).</p>
+        <p><strong>Inversión:</strong> N/A — programas CILA Academy/Young/Women activos.</p></div>
+      <div class="spco frutilla"><h4>SCA (Sociedad Central de Arquitectos)</h4>
+        <p><strong>Qué hace:</strong> Entidad gremial de arquitectos desde 1886.</p>
+        <p><strong>Contacto:</strong> (54-11) 4812-5856 · socearq.org</p>
+        <p><strong>Clave:</strong> Rita Comando (presidenta 2022-2025) — no confirmado si continúa tras elecciones oct. 2025.</p>
+        <p><strong>Inversión:</strong> N/A.</p></div>
+      <div class="spco frutilla"><h4>CIER (Colegio Inmobiliario Entre Ríos)</h4>
+        <p><strong>Qué hace:</strong> Matricula/regula corredores públicos inmobiliarios de Entre Ríos.</p>
+        <p><strong>Contacto:</strong> secretaria@colegiocorredoreser.org.ar · Paraná</p>
+        <p><strong>Clave:</strong> Germán Solari Lacorazza, Presidente (desde dic. 2025).</p>
+        <p><strong>Inversión:</strong> N/A — postura pública contra la desregulación inmobiliaria nacional (jun. 2026).</p></div>
+    </div>
+
+  </div>
+
   <!-- ═══════════ TAB 6: CHECKLIST ═══════════ -->
   <div id="tab-checklist" class="tab-panel">
 
@@ -389,7 +724,7 @@ footer{border-top:1.5px solid var(--border);padding:1.5rem;text-align:center;fon
   </div>
 
   <footer>
-    TodasMisCosas.com · Guía interna para Guille y Ale · Generado 31 julio 2026, actualizado 1 agosto 2026<br>
+    TodasMisCosas.com · Guía interna para Guille y Ale · Generado 31 julio 2026, actualizado 1 agosto 2026 con directorio de 54 sponsors/partners<br>
     No requiere acción del equipo de desarrollo — es material de preparación para el evento.
   </footer>
 
