@@ -100,6 +100,19 @@ body{background:var(--canvas);color:var(--text);font-family:-apple-system,BlinkM
 .cat-lbl{font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin:1.6rem 0 .6rem}
 .cat-lbl:first-child{margin-top:0}
 
+.step{position:relative;padding:.95rem 1.2rem .95rem 3.3rem;background:var(--white);border:1.5px solid var(--border);border-radius:var(--r2);margin-bottom:.7rem}
+.step-n{position:absolute;left:.9rem;top:.95rem;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--navy);color:#fff;font-size:.78rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step h4{font-size:.88rem;font-weight:800;margin-bottom:.35rem;color:var(--text)}
+.step p{font-size:.8rem;color:var(--text2);margin-bottom:.25rem;line-height:1.55}
+.step p strong{color:var(--text)}
+.step-time{display:inline-block;font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);background:var(--canvas);padding:.15rem .55rem;border-radius:99px;margin-bottom:.5rem}
+
+.pack-item{display:flex;gap:.7rem;padding:.8rem 0;border-bottom:1px solid var(--border)}
+.pack-item:last-child{border-bottom:none}
+.pack-ic{font-size:1.1rem;flex-shrink:0;width:1.6rem;text-align:center}
+.pack-item h4{font-size:.85rem;font-weight:800;margin-bottom:.25rem;color:var(--text)}
+.pack-item p{font-size:.8rem;color:var(--text2);line-height:1.55}
+
 .pitch-box{background:var(--navy);color:#E2E8F0;border-radius:var(--r2);padding:1.3rem 1.5rem;margin-bottom:1rem}
 .pitch-box .label{font-size:.62rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#64748B;margin-bottom:.6rem}
 .pitch-box p{font-size:.92rem;color:#F1F5F9;line-height:1.75;font-style:italic}
@@ -171,6 +184,8 @@ footer{border-top:1.5px solid var(--border);padding:1.5rem;text-align:center;fon
     <button class="tab-btn" onclick="showTab('cartas')">🤐 Qué decir</button>
     <button class="tab-btn" onclick="showTab('quien')">🎯 A quién buscar</button>
     <button class="tab-btn" onclick="showTab('sponsors')">🏢 Sponsors (54)</button>
+    <button class="tab-btn" onclick="showTab('pasoapaso')">🗺️ Paso a paso</button>
+    <button class="tab-btn" onclick="showTab('llevar')">🎒 Qué llevar</button>
     <button class="tab-btn" onclick="showTab('checklist')">✅ Checklist</button>
   </div>
 </div>
@@ -696,6 +711,207 @@ footer{border-top:1.5px solid var(--border);padding:1.5rem;text-align:center;fon
 
   </div>
 
+  <!-- ═══════════ TAB PASO A PASO ═══════════ -->
+  <div id="tab-pasoapaso" class="tab-panel">
+
+    <div class="sec-hdr">
+      <span class="sec-hdr-txt">Agenda del salón — recorrido con rumbo, no al azar</span>
+      <div class="sec-hdr-line"></div>
+    </div>
+    <div class="card plain">
+      <p><strong>Importante:</strong> no tenemos el mapa físico de stands con su numeración exacta — eso lo entregan en la acreditación el mismo día. Lo que sí podemos definir de antemano es el <strong>orden de prioridad</strong>: a quién conviene buscar primero, con qué mensaje, y por qué. Al llegar, ubiquen cada nombre de esta lista en el mapa real y arme el trayecto físico en ese orden. Eso ya les ahorra el 90% de la deriva sin rumbo.</p>
+      <p style="font-size:.78rem;color:var(--text3)"><strong>Lógica del orden:</strong> primero las cámaras/instituciones (acceso a muchos proveedores por una sola charla), después los sponsors con mayor volumen o mejor fit de negocio, dejando lo secundario para si sobra tiempo. Día 1 se carga más pesado que el día 2 porque van a llegar frescos.</p>
+    </div>
+
+    <div class="cat-lbl">Antes de entrar</div>
+    <div class="step"><span class="step-n">1</span>
+      <h4>En casa, la noche antes</h4>
+      <p>Repasar en voz alta el <strong>speech de 60-70s</strong> (tab Speech) y el <strong>pitch de 15s</strong> (tab Pitch corto) hasta decirlos sin leer. Definir quién de los dos abre la charla en cada tipo de stand — sugerido: el que tenga más feeling con el interlocutor según el perfil (institucional vs. sponsor chico).</p>
+    </div>
+    <div class="step"><span class="step-n">2</span>
+      <h4>Acreditación, al llegar</h4>
+      <p>Retirar credencial + <strong>mapa de stands</strong> + cronograma de charlas del día impreso. Ubicar en el mapa dónde están CEDU+AEV, FIRA, CIA y CUCICBA — son la primera parada. Confirmar en el cronograma el horario de la charla de apertura de <strong>Damián Tabakman</strong> (CEDU+AEV) — ese dato cambia el orden de los primeros pasos si coincide con la mañana.</p>
+    </div>
+
+    <div class="cat-lbl">Día 1 — mañana: cámaras e instituciones (acceso multiplicador)</div>
+    <div class="step"><span class="step-n">3</span>
+      <span class="step-time">Stand CEDU+AEV</span>
+      <h4>Buscar a alguien del staff de CEDU+AEV</h4>
+      <p>Preguntar quién de los presentes puede hablar por las 130+ desarrolladoras asociadas. Usar el <strong>speech de 2 minutos</strong> (más largo porque acá el objetivo es abrir puerta institucional, no cerrar algo en el momento). Pedir: "¿a quién le sugerirían que hablemos primero?" — dejá que ellos mismos prioricen dentro de su red.</p>
+    </div>
+    <div class="step"><span class="step-n">4</span>
+      <span class="step-time">Congreso, si el horario coincide</span>
+      <h4>Ver la charla de apertura de Tabakman</h4>
+      <p>Vale la pena estar presente aunque no se hable con él ahí — buen lugar para cruzarlo informalmente al salir y decir "lo escuchamos recién, buenísimo" como apertura natural de charla, mucho mejor que un pitch en frío.</p>
+    </div>
+    <div class="step"><span class="step-n">5</span>
+      <span class="step-time">Stand FIRA</span>
+      <h4>Buscar a Josefina Pantano o a quien la represente</h4>
+      <p>FIRA federa 25 colegios/cámaras provinciales (~30.000 matriculados) — el mensaje clave acá es "nos interesa llegar a colegios de otras provincias, no solo CABA".</p>
+    </div>
+    <div class="step"><span class="step-n">6</span>
+      <span class="step-time">Stand CIA</span>
+      <h4>Buscar a Iván Ginevra o representante</h4>
+      <p>Cámara Inmobiliaria Argentina — mismo enfoque de red, buena candidata para preguntar por administradores de consorcios asociados.</p>
+    </div>
+    <div class="step"><span class="step-n">7</span>
+      <span class="step-time">Stand CUCICBA</span>
+      <h4>Buscar a Marta Liotto o representante</h4>
+      <p>Corredores matriculados de CABA — acá el ángulo es directo a inmobiliarias tradicionales que buscan ofrecerle algo más a sus propietarios.</p>
+    </div>
+    <div class="step"><span class="step-n">8</span>
+      <h4>Pausa café de media mañana</h4>
+      <p>Sentarse 5 minutos, repasar qué contactos institucionales salieron mejor, y decidir si conviene ajustar el orden de la tarde según lo que dijeron (por ejemplo, si alguna cámara les dio un nombre puntual, ir a buscarlo antes de seguir con la lista original).</p>
+    </div>
+
+    <div class="cat-lbl">Día 1 — tarde: sponsors Main (mayor volumen/fit)</div>
+    <div class="step"><span class="step-n">9</span>
+      <span class="step-time">Dypsa Group</span>
+      <h4>Buscar a Nicolás Kiperszmid si está en el stand</h4>
+      <p>Proyecto activo (Wenelen Suites III), buen gancho: preguntar directo si el edificio nuevo tiene cocheras/bauleras sobrantes.</p>
+    </div>
+    <div class="step"><span class="step-n">10</span>
+      <h4>Pecam, Riva y Criba (agrupar, son del mismo perfil)</h4>
+      <p>Constructoras grandes con obra activa — edificios nuevos entregándose significan inquilinos mudándose <em>ahora</em>. Pitch corto + pregunta calificadora directa: "¿tienen cocheras o bauleras que no se vendieron con la unidad?"</p>
+    </div>
+    <div class="step"><span class="step-n">11</span>
+      <h4>Finaer y Respaldar (garantías de alquiler)</h4>
+      <p>Ángulo distinto acá: no son competencia ni cliente directo, son <strong>canal de referido cruzado</strong> — sus clientes inquilinos suelen estar mudándose justo cuando sacan la garantía. Proponer intercambiar contacto para evaluarlo con calma después, no cerrar nada en el piso.</p>
+    </div>
+    <div class="step"><span class="step-n">12</span>
+      <h4>Argenprop y Re/Max</h4>
+      <p>Portales/redes con alcance masivo de propietarios — el pitch acá es "sugerirle esto a sus propietarios como servicio adicional", no venderles a ellos directamente.</p>
+    </div>
+    <div class="step"><span class="step-n">13</span>
+      <h4>Newmark y JLL (si queda tiempo)</h4>
+      <p>Consultoras de real estate corporativo — prioridad media, útiles para partnerships grandes (mudanzas de oficinas) más que para volumen masivo. Ir con esa expectativa, conversación más larga y menos inmediata.</p>
+    </div>
+    <div class="step"><span class="step-n">14</span>
+      <h4>Grupo Visca, IDERO, LDG — solo si sobra tiempo</h4>
+      <p>Prioridad menor del día 1; no forzarlos si el reloj no da.</p>
+    </div>
+    <div class="step"><span class="step-n">15</span>
+      <h4>Cierre del día 1 — antes de irse, no en casa a la noche</h4>
+      <p>Sentados 10 minutos, revisar las tarjetas/fotos del día y marcar los 3-5 contactos más calientes. Anotar algo específico de cada charla mientras está fresco — el mensaje de seguimiento de 48hs depende de esto.</p>
+    </div>
+
+    <div class="cat-lbl">Día 2 — mañana: sponsors Gold y Silver</div>
+    <div class="step"><span class="step-n">16</span>
+      <span class="step-time">Lebane — prioridad alta</span>
+      <h4>Buscar a Lucas Glustman o Bruno Lerer</h4>
+      <p>Startup con ronda reciente (US$4M, feb. 2026) y producto tecnológico — público sofisticado, buena charla de pares más que de venta. Interesante también para feedback sobre cómo armaron su ronda/GTM en LatAm.</p>
+    </div>
+    <div class="step"><span class="step-n">17</span>
+      <h4>Garantina y TotalFianza</h4>
+      <p>Mismo ángulo de referido cruzado que Finaer/Respaldar el día 1.</p>
+    </div>
+    <div class="step"><span class="step-n">18</span>
+      <h4>Grupo MDAY, Waves inMovement, Torre Puerto</h4>
+      <p>Desarrolladoras/operadores con proyectos activos — mismo pitch de constructoras del día 1.</p>
+    </div>
+    <div class="step"><span class="step-n">19</span>
+      <h4>Constructora Sudamericana y MCL Studio</h4>
+      <p>Constructoras — prioridad media.</p>
+    </div>
+    <div class="step"><span class="step-n">20</span>
+      <h4>National Brokers y Grupo (a)² — prioridad baja</h4>
+      <p>Proveedores B2B (seguros, mobiliario de oficina) — ángulo distinto, menos fit directo. Charla corta si cruzan camino, no ir especialmente a buscarlos.</p>
+    </div>
+    <div class="step"><span class="step-n">21</span>
+      <h4>Nordheimer y Flipping Master — oportunistas</h4>
+      <p>Silver, solo si están cerca de donde ya están parados.</p>
+    </div>
+    <div class="step"><span class="step-n">22</span>
+      <h4>Llevar la lista de "a confirmar" de la pestaña Sponsors</h4>
+      <p>Si cruzan los stands de Dproperty, Urbania+, Zenodro, Maresia, LB o Inmotools, primero preguntar la razón social exacta antes de tirar el pitch — son los que tienen identidad ambigua en la investigación previa.</p>
+    </div>
+
+    <div class="cat-lbl">Día 2 — tarde: Sinergy y cierre</div>
+    <div class="step"><span class="step-n">23</span>
+      <h4>Stand de Grupo SG (EN Real Estate / RE LAB / BRE)</h4>
+      <p>Probablemente compartan un mismo espacio — si no se pudo hablar con alguien del ecosistema de Tabakman el día 1, esta es la segunda oportunidad.</p>
+    </div>
+    <div class="step"><span class="step-n">24</span>
+      <h4>Recorrido libre por lo que falta</h4>
+      <p>Pasillos no cubiertos, sponsors que aparezcan sin estar en la lista, cualquier panel de cierre interesante.</p>
+    </div>
+    <div class="step"><span class="step-n">25</span>
+      <h4>30 minutos antes del cierre del evento</h4>
+      <p>Sentados los dos juntos, repasar la lista completa de 2 días y marcar los <strong>5-8 contactos de seguimiento prioritario</strong> — la métrica de éxito ya definida en el Resumen.</p>
+    </div>
+    <div class="step"><span class="step-n">26</span>
+      <h4>Dentro de las 48hs siguientes</h4>
+      <p>Enviar el mensaje de seguimiento a cada contacto marcado, mencionando algo puntual de la charla (ver tab Checklist). No dejar pasar el fin de semana.</p>
+    </div>
+
+  </div>
+
+  <!-- ═══════════ TAB QUÉ LLEVAR ═══════════ -->
+  <div id="tab-llevar" class="tab-panel">
+
+    <div class="sec-hdr">
+      <span class="sec-hdr-txt">Vestimenta — Hilton Buenos Aires, evento corporativo top</span>
+      <div class="sec-hdr-line"></div>
+    </div>
+    <div class="card plain">
+      <p style="font-size:.78rem;color:var(--text3)">Esto no es un dress code oficial del evento (no publican uno) — es una recomendación armada en base al tipo de lugar (Hilton) y de público (consultoras corporativas como JLL/Newmark mezcladas con desarrolladoras). Es criterio, no una regla escrita.</p>
+    </div>
+    <div class="card cielo">
+      <h3>👔 Sugerido: business casual / smart casual</h3>
+      <ul>
+        <li><strong>Blazer o saco sport</strong> + camisa (sin corbata obligatoria) + pantalón de vestir o chino prolijo. No hace falta traje completo — el evento es de piso y networking, no una gala.</li>
+        <li><strong>Zapatos de cuero</strong>, no zapatillas deportivas ni jean roto/desgastado. Este es el punto que más se nota a simple vista en un salón así.</li>
+        <li>Si deciden entrar a alguna sesión formal del Congreso (no solo la muestra), el nivel de la sala sube un poco — un blazer prolijo ya alcanza, no hace falta corbata igual.</li>
+      </ul>
+    </div>
+    <div class="card durazno">
+      <h3>👟 El otro lado: son 2 días de pie, 9 a 20hs</h3>
+      <p>Priorizar zapatos <strong>cómodos pero prolijos</strong> — de cuero con buena suela, no los mismos que usarían para una reunión de una hora sentados. Un zapato lindo que duele a la hora 6 arruina el día.</p>
+    </div>
+    <div class="card melon">
+      <h3>🤝 Coherencia entre los dos</h3>
+      <p>No hace falta "uniforme" idéntico, pero sí que el registro sea parecido entre Guille y Ale — los dos de blazer, o los dos casual prolijo. Que no se vea que uno fue de traje y el otro de jean y remera: como dupla, transmite más solidez si están alineados.</p>
+    </div>
+
+    <div class="sec-hdr">
+      <span class="sec-hdr-txt">Qué llevar encima</span>
+      <div class="sec-hdr-line"></div>
+    </div>
+    <div class="card plain">
+      <div class="pack-item">
+        <div class="pack-ic">🪪</div>
+        <div><h4>Tarjetas de presentación con QR</h4>
+        <p>Las que ya tienen armadas (carpeta <code>iniciativas-alejandro</code>). Llevar una buena cantidad para 2 días de piso — mejor que sobren a que se corten a mitad del día 1.</p></div>
+      </div>
+      <div class="pack-item">
+        <div class="pack-ic">🔋</div>
+        <div><h4>Celular a full + cargador portátil (powerbank)</h4>
+        <p>Van a sacar fotos de tarjetas, anotar notas y usar el mapa/agenda todo el día — la batería se va a consumir rápido. El powerbank es más importante que cualquier otra cosa de esta lista.</p></div>
+      </div>
+      <div class="pack-item">
+        <div class="pack-ic">📝</div>
+        <div><h4>Notas del celular (o libretita chica)</h4>
+        <p>Para anotar rápido después de cada charla: nombre, empresa, algo puntual que dijo, y si es seguimiento sí/no. Ese detalle puntual es lo que hace que el mensaje de las 48hs no suene genérico.</p></div>
+      </div>
+      <div class="pack-item">
+        <div class="pack-ic">📱</div>
+        <div><h4>Tablet — mejor dejarla, salvo excepción puntual</h4>
+        <p>Suma peso e incomodidad caminando 2 días sin stand propio, y el wifi del piso no es confiable para garantizar una demo en vivo fluida. El celular alcanza para mostrar algo rápido si un contacto muy caliente lo pide — es más ágil y menos riesgo de quedar mal si falla la conexión.</p></div>
+      </div>
+      <div class="pack-item">
+        <div class="pack-ic">🏷️</div>
+        <div><h4>El "scanner" QR impreso, como complemento — no como reemplazo de la tarjeta</h4>
+        <p>Buena idea armar un badge chico (tamaño pin, prendido en el blazer) con el QR + una frase corta tipo "Escaneá y mirá cómo funciona". Reduce fricción para quien no quiere llevarse un papel. Que sea chico y prolijo — nada de cartel grande tipo stand de feria, achica el efecto en vez de sumarlo.</p></div>
+      </div>
+      <div class="pack-item">
+        <div class="pack-ic">💧</div>
+        <div><h4>Agua y algo liviano para picar</h4>
+        <p>2 días largos de pie sin base fija — no depender de que haya catering cerca en el momento que da hambre.</p></div>
+      </div>
+    </div>
+
+  </div>
+
   <!-- ═══════════ TAB 6: CHECKLIST ═══════════ -->
   <div id="tab-checklist" class="tab-panel">
 
@@ -724,7 +940,7 @@ footer{border-top:1.5px solid var(--border);padding:1.5rem;text-align:center;fon
   </div>
 
   <footer>
-    TodasMisCosas.com · Guía interna para Guille y Ale · Generado 31 julio 2026, actualizado 1 agosto 2026 con directorio de 54 sponsors/partners<br>
+    TodasMisCosas.com · Guía interna para Guille y Ale · Generado 31 julio 2026, actualizado 1 agosto 2026 con directorio de 54 sponsors/partners, agenda paso a paso y qué llevar<br>
     No requiere acción del equipo de desarrollo — es material de preparación para el evento.
   </footer>
 
