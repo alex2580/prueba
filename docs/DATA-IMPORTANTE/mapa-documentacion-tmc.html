@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa de Documentación TMC — INDEX</title>
+<style>
+:root{
+  --bg:#F9F8F5;--white:#FFFFFF;--text:#1C1917;--text2:#57534E;--text3:#A8A29E;
+  --border:#E7E5E0;--border2:#D6D3CE;
+  /* Resumen — coral */
+  --res:#FCA5A5;--res-mid:#F87171;--res-deep:#991B1B;--res-bg:#FEF2F2;
+  /* Secciones — violeta */
+  --sec:#DDD5F8;--sec-mid:#A78BFA;--sec-deep:#4C1D95;--sec-bg:#F5F3FF;
+  /* Categorías — mint */
+  --cat:#BDEFDB;--cat-mid:#7DD3B8;--cat-deep:#166554;--cat-bg:#F0FBF7;
+  /* Timeline — sky */
+  --tim:#BAE6FD;--tim-mid:#38BDF8;--tim-deep:#0C4A6E;--tim-bg:#F0F9FF;
+  --r1:8px;--r2:14px;--r3:20px;--t:.18s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+.hdr{padding:48px 0 0;text-align:center}
+.hdr-eyebrow{font-size:.7rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem}
+.hdr-title{font-size:2rem;font-weight:900;color:var(--text);letter-spacing:-.04em;line-height:1.15;margin-bottom:.6rem}
+.hdr-sub{font-size:.88rem;color:var(--text2);max-width:560px;margin:0 auto 1.8rem}
+.hdr-pills{display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;margin-bottom:2.5rem}
+.hdr-pill{padding:.25rem .75rem;border-radius:99px;font-size:.68rem;font-weight:700;border:1.5px solid;background:var(--white);border-color:var(--border2);color:var(--text2)}
+
+.export-bar{display:flex;justify-content:flex-end;max-width:980px;margin:0 auto 1rem;padding:0 1.5rem}
+.btn-export{display:inline-flex;align-items:center;gap:.35rem;background:var(--white);border:1.5px solid var(--border2);border-radius:var(--r1);padding:.3rem .8rem;font-size:.72rem;font-weight:700;color:var(--text2);cursor:pointer;transition:all var(--t)}
+.btn-export:hover{border-color:var(--text3);color:var(--text)}
+
+.tabs-wrap{max-width:980px;margin:0 auto;padding:0 1.5rem 3rem}
+.tabs-nav{display:flex;gap:.3rem;background:var(--white);border:1.5px solid var(--border);border-radius:var(--r3);padding:.35rem;margin-bottom:1.5rem;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab-btn{flex-shrink:0;padding:.5rem .7rem;border:none;background:transparent;border-radius:calc(var(--r3) - 4px);font-size:.75rem;font-weight:700;cursor:pointer;transition:all var(--t);color:var(--text2);display:flex;align-items:center;gap:.3rem;white-space:nowrap}
+.tab-btn:hover{background:var(--bg)}
+.tab-btn.active-res{background:var(--res-bg);color:var(--res-deep);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.tab-btn.active-sec{background:var(--sec-bg);color:var(--sec-deep);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.tab-btn.active-cat{background:var(--cat-bg);color:var(--cat-deep);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.tab-btn.active-tim{background:var(--tim-bg);color:var(--tim-deep);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+
+.tab-panel{display:none;animation:fadeUp .22s ease}
+.tab-panel.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.section-title{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin:1.5rem 0 .65rem;padding-bottom:.35rem;border-bottom:1px solid var(--border)}
+.section-title:first-child{margin-top:0}
+
+/* ---- big stat grid ---- */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem}
+.stat-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r2);padding:1.2rem 1rem;text-align:center}
+.stat-n{font-size:2rem;font-weight:900;color:var(--res-deep);line-height:1}
+.stat-l{font-size:.68rem;color:var(--text2);margin-top:.4rem;font-weight:600}
+
+/* ---- donut (conic-gradient) ---- */
+.donut-wrap{display:flex;align-items:center;gap:2rem;flex-wrap:wrap;background:var(--white);border:1.5px solid var(--border);border-radius:var(--r2);padding:1.5rem;margin-top:1rem}
+.donut{width:170px;height:170px;border-radius:50%;flex-shrink:0;background:conic-gradient(
+  #A78BFA 0% 2%,
+  #F472B6 2% 20.8%,
+  #7DD3B8 20.8% 77%,
+  #FB923C 77% 93.7%,
+  #38BDF8 93.7% 100%
+);position:relative}
+.donut::after{content:'';position:absolute;inset:24px;background:var(--white);border-radius:50%;display:flex}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.donut-center-n{font-size:1.5rem;font-weight:900;color:var(--text);z-index:1}
+.donut-center-l{font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;z-index:1}
+.donut-legend{display:flex;flex-direction:column;gap:.5rem;flex:1;min-width:200px}
+.dl-item{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--text2)}
+.dl-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.dl-item strong{color:var(--text);margin-left:auto}
+
+/* ---- section hierarchy blocks ---- */
+.hier{display:flex;flex-direction:column;gap:.6rem}
+.hier-item{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r2);padding:1rem 1.2rem;display:flex;align-items:center;gap:1rem}
+.hier-bar-wrap{flex:1}
+.hier-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.4rem}
+.hier-name{font-weight:800;font-size:.85rem;color:var(--text)}
+.hier-range{font-size:.68rem;color:var(--text3)}
+.hier-count{font-size:.9rem;font-weight:900;color:var(--sec-deep);flex-shrink:0;min-width:60px;text-align:right}
+.hier-bar-bg{background:var(--bg);border-radius:99px;height:10px;overflow:hidden}
+.hier-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--sec-mid),var(--sec-deep))}
+
+/* ---- category bars ---- */
+.cat-bars{display:flex;flex-direction:column;gap:.55rem}
+.cat-row{display:flex;align-items:center;gap:.8rem}
+.cat-label{width:110px;font-size:.76rem;font-weight:700;color:var(--text);flex-shrink:0;text-align:right}
+.cat-bar-bg{flex:1;background:var(--white);border:1px solid var(--border);border-radius:99px;height:22px;overflow:hidden;position:relative}
+.cat-bar-fill{height:100%;border-radius:99px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px}
+.cat-bar-fill span{font-size:.68rem;font-weight:800;color:var(--white)}
+
+/* ---- timeline ---- */
+.timeline{position:relative;padding-left:28px}
+.timeline::before{content:'';position:absolute;left:9px;top:6px;bottom:6px;width:2px;background:var(--border2)}
+.tl-item{position:relative;margin-bottom:1.1rem}
+.tl-dot{position:absolute;left:-28px;top:3px;width:18px;height:18px;border-radius:50%;background:var(--tim-mid);border:3px solid var(--white);box-shadow:0 0 0 2px var(--tim-mid)}
+.tl-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r2);padding:.85rem 1.1rem}
+.tl-period{font-size:.68rem;font-weight:800;color:var(--tim-deep);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.2rem}
+.tl-title{font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:.2rem}
+.tl-desc{font-size:.76rem;color:var(--text2)}
+.tl-badge{display:inline-block;background:var(--tim-bg);color:var(--tim-deep);font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:99px;margin-top:.4rem}
+
+.alert{border-radius:12px;padding:14px 18px;font-size:.8rem;margin-top:1rem;border-left:4px solid;background:var(--tim-bg);border-color:var(--tim-mid);color:var(--tim-deep)}
+
+footer{margin-top:3rem;border-top:1.5px solid var(--border);padding:1.5rem;text-align:center;font-size:.7rem;color:var(--text3)}
+
+@media print{
+  body{font-size:12px;background:#fff}
+  .tabs-nav,.export-bar,.btn-export{display:none!important}
+  .tab-panel{display:block!important}
+  .tab-panel+.tab-panel{page-break-before:always}
+  .stat-card,.hier-item,.tl-card,.donut-wrap{box-shadow:none!important}
+}
+@media(max-width:640px){
+  .hdr-title{font-size:1.5rem}
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .donut-wrap{flex-direction:column;align-items:flex-start}
+  .cat-label{width:88px;font-size:.7rem}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-eyebrow">Meta-documentación · Agosto 2026</div>
+  <div class="hdr-title">Mapa de Documentación TMC<br>Cómo está creciendo el INDEX</div>
+  <div class="hdr-sub">Radiografía de <code>docs/DATA-IMPORTANTE/INDEX.html</code>: 48 documentos acumulados, cómo se agrupan por sección, categoría y en el tiempo — mayo a agosto 2026.</div>
+  <div class="hdr-pills">
+    <span class="hdr-pill">📄 48 documentos</span>
+    <span class="hdr-pill">🗂️ 5 secciones</span>
+    <span class="hdr-pill">🏷️ 6 categorías</span>
+    <span class="hdr-pill">📅 may – ago 2026</span>
+  </div>
+</div>
+
+<div class="export-bar">
+  <button class="btn-export" onclick="window.print()">⬇ Exportar / Imprimir</button>
+</div>
+
+<div class="tabs-wrap">
+
+  <div class="tabs-nav">
+    <button class="tab-btn active-res" id="tab-res" onclick="switchTab('res')">📊 Resumen</button>
+    <button class="tab-btn" id="tab-sec" onclick="switchTab('sec')">🗂️ Por sección</button>
+    <button class="tab-btn" id="tab-cat" onclick="switchTab('cat')">🏷️ Por categoría</button>
+    <button class="tab-btn" id="tab-tim" onclick="switchTab('tim')">📅 Línea de tiempo</button>
+  </div>
+
+  <!-- TAB 1: RESUMEN -->
+  <div class="tab-panel active" id="panel-res">
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-n">48</div><div class="stat-l">Documentos totales</div></div>
+      <div class="stat-card"><div class="stat-n">5</div><div class="stat-l">Secciones</div></div>
+      <div class="stat-card"><div class="stat-n">27</div><div class="stat-l">En la sección más grande (jun)</div></div>
+      <div class="stat-card"><div class="stat-n">10</div><div class="stat-l">Con formato tabs interactivo</div></div>
+    </div>
+
+    <div class="section-title">Distribución por sección</div>
+    <div class="donut-wrap">
+      <div class="donut"><div class="donut-center"><div class="donut-center-n">48</div><div class="donut-center-l">docs</div></div></div>
+      <div class="donut-legend">
+        <div class="dl-item"><span class="dl-dot" style="background:#A78BFA"></span>Agosto 2026 <strong>1</strong></div>
+        <div class="dl-item"><span class="dl-dot" style="background:#F472B6"></span>TMC v2 — Julio 2026 <strong>9</strong></div>
+        <div class="dl-item"><span class="dl-dot" style="background:#7DD3B8"></span>Sesión 11–30 jun 2026 <strong>27</strong></div>
+        <div class="dl-item"><span class="dl-dot" style="background:#FB923C"></span>Docs TMC anteriores (may/jun) <strong>8</strong></div>
+        <div class="dl-item"><span class="dl-dot" style="background:#38BDF8"></span>Herramientas &amp; Guías <strong>3</strong></div>
+      </div>
+    </div>
+
+    <div class="alert">
+      💡 Más de la mitad del índice (27/48) quedó generada en una sola ventana de 20 días en junio. Julio-agosto recién están arrancando en volumen — normal dado que el foco pasó a producto/operación post-lanzamiento.
+    </div>
+  </div>
+
+  <!-- TAB 2: POR SECCIÓN -->
+  <div class="tab-panel" id="panel-sec">
+    <div class="section-title">Jerarquía real del INDEX (orden de aparición, más reciente primero)</div>
+    <div class="hier">
+      <div class="hier-item">
+        <div class="hier-bar-wrap">
+          <div class="hier-top"><span class="hier-name">🐙 Agosto 2026</span><span class="hier-range">2 ago 2026</span></div>
+          <div class="hier-bar-bg"><div class="hier-bar-fill" style="width:4%"></div></div>
+        </div>
+        <div class="hier-count">1 doc</div>
+      </div>
+      <div class="hier-item">
+        <div class="hier-bar-wrap">
+          <div class="hier-top"><span class="hier-name">🤖 TMC v2 — Julio 2026</span><span class="hier-range">14 jul → 31 jul 2026</span></div>
+          <div class="hier-bar-bg"><div class="hier-bar-fill" style="width:33%"></div></div>
+        </div>
+        <div class="hier-count">9 docs</div>
+      </div>
+      <div class="hier-item">
+        <div class="hier-bar-wrap">
+          <div class="hier-top"><span class="hier-name">📅 Sesión — 11 jun al 30 jun 2026</span><span class="hier-range">bloque más grande</span></div>
+          <div class="hier-bar-bg"><div class="hier-bar-fill" style="width:100%"></div></div>
+        </div>
+        <div class="hier-count">27 docs</div>
+      </div>
+      <div class="hier-item">
+        <div class="hier-bar-wrap">
+          <div class="hier-top"><span class="hier-name">🏗️ Documentos TMC anteriores</span><span class="hier-range">Mayo / Junio 2026 (sin fecha exacta)</span></div>
+          <div class="hier-bar-bg"><div class="hier-bar-fill" style="width:30%"></div></div>
+        </div>
+        <div class="hier-count">8 docs</div>
+      </div>
+      <div class="hier-item">
+        <div class="hier-bar-wrap">
+          <div class="hier-top"><span class="hier-name">🛠️ Herramientas &amp; Guías</span><span class="hier-range">2 jul → 5 jul 2026</span></div>
+          <div class="hier-bar-bg"><div class="hier-bar-fill" style="width:11%"></div></div>
+        </div>
+        <div class="hier-count">3 docs</div>
+      </div>
+    </div>
+
+    <div class="alert">
+      📌 Las secciones no están ordenadas cronológicamente entre sí: "Herramientas &amp; Guías" (jul) aparece al final del archivo aunque es más reciente que "Documentos TMC anteriores" (may/jun) — quedó así por orden de creación en el HTML, no por fecha.
+    </div>
+  </div>
+
+  <!-- TAB 3: POR CATEGORÍA -->
+  <div class="tab-panel" id="panel-cat">
+    <div class="section-title">Frecuencia de tags en las 48 tarjetas (un doc puede tener varios)</div>
+    <div class="cat-bars">
+      <div class="cat-row"><div class="cat-label">TMC</div><div class="cat-bar-bg"><div class="cat-bar-fill" style="width:100%;background:linear-gradient(90deg,#7DD3B8,#166554)"><span>41</span></div></div></div>
+      <div class="cat-row"><div class="cat-label">Negocio</div><div class="cat-bar-bg"><div class="cat-bar-fill" style="width:70%;background:linear-gradient(90deg,#FB923C,#92400E)"><span>29</span></div></div></div>
+      <div class="cat-row"><div class="cat-label">Marketing</div><div class="cat-bar-bg"><div class="cat-bar-fill" style="width:51%;background:linear-gradient(90deg,#F472B6,#831843)"><span>21</span></div></div></div>
+      <div class="cat-row"><div class="cat-label">Técnico</div><div class="cat-bar-bg"><div class="cat-bar-fill" style="width:49%;background:linear-gradient(90deg,#38BDF8,#0C4A6E)"><span>20</span></div></div></div>
+      <div class="cat-row"><div class="cat-label">Legal</div><div class="cat-bar-bg"><div class="cat-bar-fill" style="width:12%;background:linear-gradient(90deg,#FBBF24,#78350F)"><span>5</span></div></div></div>
+      <div class="cat-row"><div class="cat-label">Global</div><div class="cat-bar-bg"><div class="cat-bar-fill" style="width:7%;background:linear-gradient(90deg,#A78BFA,#4C1D95)"><span>3</span></div></div></div>
+    </div>
+
+    <div class="alert">
+      🏷️ Casi todo el índice (41/48) está etiquetado como TMC — esperable, es la documentación central del proyecto. Legal (5) y Global (3) son las categorías más chicas: instrumento SAS, auditoría legal, y los dos directorios internacionales (Dubai, Embajadas).
+    </div>
+  </div>
+
+  <!-- TAB 4: LÍNEA DE TIEMPO -->
+  <div class="tab-panel" id="panel-tim">
+    <div class="section-title">Evolución del índice, mes a mes</div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-period">Mayo / Junio 2026</div>
+          <div class="tl-title">Base técnica y legal del proyecto</div>
+          <div class="tl-desc">Documentación técnica completa, roadmap v2, instrumento SAS, protección de código y marca — los cimientos antes del lanzamiento.</div>
+          <span class="tl-badge">8 docs</span>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-period">11 – 30 junio 2026</div>
+          <div class="tl-title">Explosión de contenido pre-lanzamiento</div>
+          <div class="tl-desc">Campañas de RRSS por red (LinkedIn, Instagram, Facebook, TikTok), podcast, action list de 36 acciones, plan institucional, prospecting B2B. El mes con más producción de todo el índice.</div>
+          <span class="tl-badge">27 docs</span>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-period">2 – 5 julio 2026</div>
+          <div class="tl-title">Guías de herramientas</div>
+          <div class="tl-desc">CapCut, modelos legales SAS, estrategia de waiting list — documentación de apoyo, no estratégica.</div>
+          <span class="tl-badge">3 docs</span>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-period">14 – 31 julio 2026</div>
+          <div class="tl-title">Foco en producto, IA y operación</div>
+          <div class="tl-desc">BOOT (bot de consultas), guía de plugins Claude Code, ADK, campaña de ingreso extra, oficina virtual, Expo Real Estate — el contenido gira hacia herramientas internas y operación, menos marketing masivo.</div>
+          <span class="tl-badge">9 docs</span>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-period">2 agosto 2026</div>
+          <div class="tl-title">Evaluación de infraestructura IA</div>
+          <div class="tl-desc">Arranca agosto con la evaluación de Hermes Agent — sigue la línea de "herramientas internas" que empezó en julio.</div>
+          <span class="tl-badge">1 doc</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <strong>Mapa de Documentación TMC</strong> · Generado 2 ago 2026 · Alejandro Laporte<br>
+    Fuente: conteo directo de <code>docs/DATA-IMPORTANTE/INDEX.html</code> (48 tarjetas, 5 secciones, 6 categorías de tags)
+  </footer>
+
+</div>
+
+<script>
+function switchTab(id){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>{b.className='tab-btn';});
+  document.getElementById('panel-'+id).classList.add('active');
+  const btn=document.getElementById('tab-'+id);
+  btn.classList.add('active-'+id);
+}
+</script>
+</body>
+</html>
