@@ -17,6 +17,7 @@
   --leg-c:#FBBF24;--leg-bg:#FFFBEB;--leg-d:#78350F;
   --dc-c:#64748B;--dc-bg:#F8FAFC;--dc-d:#1E293B;
   --prd-c:#F472B6;--prd-bg:#FDF2F8;--prd-d:#831843;
+  --dgn-c:#6366F1;--dgn-bg:#EEF2FF;--dgn-d:#312E81;
   /* pending */
   --pnd-c:#CBD5E1;--pnd-bg:#F8FAFC;--pnd-d:#475569;
 }
@@ -105,6 +106,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .plugin-card.inst-leg .pc-header{border-left:4px solid var(--leg-c)}
 .plugin-card.inst-dc .pc-header{border-left:4px solid var(--dc-c)}
 .plugin-card.inst-prd .pc-header{border-left:4px solid var(--prd-c)}
+.plugin-card.inst-dgn .pc-header{border-left:4px solid var(--dgn-c)}
 .plugin-card.pending .pc-header{border-left:4px solid var(--pnd-c)}
 
 /* NAME COLORS */
@@ -115,6 +117,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .inst-leg .pc-name{color:var(--leg-d)}
 .inst-dc .pc-name{color:var(--dc-d)}
 .inst-prd .pc-name{color:var(--prd-d)}
+.inst-dgn .pc-name{color:var(--dgn-d)}
 .pending .pc-name{color:var(--pnd-d)}
 
 .hidden{display:none!important}
@@ -142,23 +145,23 @@ footer{margin-top:3rem;border-top:1.5px solid var(--border);padding:1.5rem;text-
 
 <div class="hdr">
   <div class="hdr-eye">Guía de referencia · Julio 2026</div>
-  <div class="hdr-title">Claude Code Plugins<br>Guía Completa · 21 Plugins</div>
+  <div class="hdr-title">Claude Code Plugins<br>Guía Completa · 22 Plugins</div>
   <div class="hdr-sub">Qué hace cada plugin, cómo usarlo en TMC, TME y proyectos personales. Instalados y pendientes en un solo documento.</div>
   <div class="hdr-stats">
-    <div class="stat"><div class="stat-n">21</div><div class="stat-l">Plugins totales</div></div>
-    <div class="stat"><div class="stat-n">7</div><div class="stat-l">Instalados</div></div>
+    <div class="stat"><div class="stat-n">22</div><div class="stat-l">Plugins totales</div></div>
+    <div class="stat"><div class="stat-n">8</div><div class="stat-l">Instalados</div></div>
     <div class="stat"><div class="stat-n">14</div><div class="stat-l">Pendientes</div></div>
-    <div class="stat"><div class="stat-n">55</div><div class="stat-l">Skills activas</div></div>
+    <div class="stat"><div class="stat-n">59</div><div class="stat-l">Skills activas</div></div>
   </div>
-  <div class="hdr-note">⚡ Token overhead instalados: ~3,326 tok por sesión · instalar más = mayor costo siempre activo</div>
+  <div class="hdr-note">⚡ Token overhead instalados: ~3,705 tok por sesión · instalar más = mayor costo siempre activo</div>
 </div>
 
 <div class="content">
 
   <div class="toolbar">
     <div class="filter-group">
-      <button class="filter-btn active" id="f-all" onclick="filter('all')">Todos (21)</button>
-      <button class="filter-btn" id="f-inst" onclick="filter('inst')">Instalados (7)</button>
+      <button class="filter-btn active" id="f-all" onclick="filter('all')">Todos (22)</button>
+      <button class="filter-btn" id="f-inst" onclick="filter('inst')">Instalados (8)</button>
       <button class="filter-btn" id="f-pnd" onclick="filter('pnd')">Pendientes (14)</button>
     </div>
     <button class="btn-export" onclick="window.print()">⬇ Exportar / Imprimir</button>
@@ -168,7 +171,7 @@ footer{margin-top:3rem;border-top:1.5px solid var(--border);padding:1.5rem;text-
   <div class="section-hdr" id="sec-inst">
     <span class="section-badge sb-inst">✅ Instalados</span>
     <div class="section-line"></div>
-    <span class="section-count">7 plugins activos en todas las sesiones</span>
+    <span class="section-count">8 plugins activos en todas las sesiones</span>
   </div>
 
   <div class="plugins-grid">
@@ -427,6 +430,39 @@ footer{margin-top:3rem;border-top:1.5px solid var(--border);padding:1.5rem;text-
             <div class="use-box ub-tmc"><div class="ub-label">TMC</div><div class="ub-text">Start del día: calendario + pendientes de TMC. Guardar en memoria el próximo paso de la migración de DB para Guille.</div></div>
             <div class="use-box ub-tme"><div class="ub-label">TME</div><div class="ub-text">Task-management de las tareas del sprint de TME. Update de fin de jornada con lo hecho y lo que sigue mañana.</div></div>
             <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Memoria entre sesiones de ideas de Música Ochentosa. Gestión de tareas de todos los proyectos desde un solo prompt.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. DIAGRAM-DESIGN -->
+    <div class="plugin-card inst-dgn" data-group="inst">
+      <div class="pc-header">
+        <div class="pc-emoji">📐</div>
+        <div class="pc-meta">
+          <div class="pc-name">Diagram Design</div>
+          <div class="pc-ver">v2.3.1 · diagram-design (marketplace propio, github.com/cathrynlavery/diagram-design · MIT · 11.2k⭐)</div>
+          <div class="pc-desc">Genera diagramas editoriales (arquitectura, ER, flowchart, timeline, org chart, quadrant, funnel, Gantt y más) como HTML+SVG autocontenido, sin dependencias. Extrae la paleta de color y tipografía de un sitio y la aplica consistente a todos los diagramas. Importa/redibuja archivos .drawio y Mermaid. Instalado 13 ago 2026 tras evaluar un repo compartido por LinkedIn.</div>
+          <div class="pc-badges">
+            <span class="badge badge-inst">✅ Instalado</span>
+            <span class="badge badge-tok">~379 tok siempre · ~14k on-invoke al generar</span>
+            <span class="badge badge-src">diagram-design (marketplace propio)</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="skills-block">
+          <div class="block-label">4 Skills</div>
+          <div class="skills-chips">
+            <span class="skill-chip">diagram-design</span><span class="skill-chip">export-diagram</span><span class="skill-chip">import-drawio</span><span class="skill-chip">import-mermaid</span>
+          </div>
+        </div>
+        <div class="use-block">
+          <div class="block-label">Casos de uso</div>
+          <div class="use-trio">
+            <div class="use-box ub-tmc"><div class="ub-label">TMC</div><div class="ub-text">Diagrama de arquitectura del flujo de escrow, org chart de roles y equipo, funnel de la campaña "Lo que no usás, rinde" — con la identidad visual de TMC en vez de cajas genéricas.</div></div>
+            <div class="use-box ub-tme"><div class="ub-label">TME</div><div class="ub-text">Diagrama de arquitectura de eventos/tickets/escrow, timeline de roadmap para el pitch de inversores del Expo Real Estate.</div></div>
+            <div class="use-box ub-per"><div class="ub-label">Personal</div><div class="ub-text">Redibujar diagramas .drawio o Mermaid ya existentes en un estilo prolijo y consistente para cualquier documento técnico.</div></div>
           </div>
         </div>
       </div>
@@ -866,8 +902,8 @@ footer{margin-top:3rem;border-top:1.5px solid var(--border);padding:1.5rem;text-
   </div><!-- /pendientes -->
 
   <footer>
-    <strong>Claude Code Plugins · Guía Completa 21 Plugins</strong> · Generado jul 2026 · Alejandro Laporte<br>
-    Instalados: engineering · marketing · sales · product-management · legal · desktop-commander · productivity<br>
+    <strong>Claude Code Plugins · Guía Completa 22 Plugins</strong> · Generado jul 2026, actualizado 13 ago 2026 · Alejandro Laporte<br>
+    Instalados: engineering · marketing · sales · product-management · legal · desktop-commander · productivity · diagram-design<br>
     Pendientes: 14 plugins identificados · instalar según necesidad · <code>claude plugin install [nombre]</code>
   </footer>
 

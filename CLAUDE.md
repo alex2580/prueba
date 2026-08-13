@@ -95,7 +95,7 @@ frontend/
 
 ## Claude Code Plugins instalados
 
-El entorno de Claude Code tiene 7 plugins activos. No tocan el código — son skills invocables por prompt en cualquier sesión. Total: **55 skills · ~3,326 tok siempre activos**.
+El entorno de Claude Code tiene 8 plugins activos. No tocan el código — son skills invocables por prompt en cualquier sesión. Total: **59 skills · ~3,705 tok siempre activos**.
 
 | Plugin | Versión | Tokens | Skills clave |
 |---|---|---|---|
@@ -106,10 +106,11 @@ El entorno de Claude Code tiene 7 plugins activos. No tocan el código — son s
 | `legal` | v1.3 | ~646 | review-contract, triage-nda, compliance-check, legal-risk-assessment, vendor-check |
 | `desktop-commander` | v0.2 | ~1,064 | terminal, knowledge-base, obsidian-vault, ai-tools-setup, computer-health-check |
 | `productivity` | v1.3 | ~231 | start, task-management, memory-management, update |
+| `diagram-design` | v2.3.1 | ~379 (~14k on-invoke) | diagram-design, export-diagram, import-drawio, import-mermaid — diagramas editoriales de marca (arquitectura, ER, funnel, org chart) como HTML+SVG autocontenido |
 
 **Pendientes de instalar (14):** `langfuse`, `apollo`, `postiz`, `brand-voice` (alta prioridad), + 10 más. Ver `project_plugins_pendientes.md` en memoria.
 **Instalar:** `claude plugin install [nombre]`
-**Guía completa (21 plugins):** `docs/DATA-IMPORTANTE/claude-plugins-guia-21.html`
+**Guía completa (22 plugins):** `docs/DATA-IMPORTANTE/claude-plugins-guia-21.html`
 **Referencia por tabs (7 instalados):** `docs/DATA-IMPORTANTE/claude-plugins-engineering-marketing-sales.html`
 
 ## Decisiones de arquitectura
