@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC — Resumen Ejecutivo · Expo Real Estate 2026</title>
+<style>
+:root{
+  --gold:#f59e0b;--navy:#0f172a;--text:#1e293b;--text2:#475569;--text3:#94a3b8;
+  --border:#e2e8f0;--bg:#f8fafc;--white:#fff;--orange:#e8622a;--green:#16a34a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.65;}
+
+.banner{background:linear-gradient(90deg,#7c2d12,#c2410c);color:#fff7ed;text-align:center;padding:10px 20px;font-size:.78rem;font-weight:700;letter-spacing:.02em;}
+
+.header{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 55%,#1e293b 100%);padding:36px 48px 28px;}
+.hl{font-size:1.05rem;font-weight:900;color:var(--gold);letter-spacing:.06em;}
+.ht{font-size:1.6rem;font-weight:900;color:#f1f5f9;margin:6px 0 4px;letter-spacing:-.3px;}
+.hs{color:#94a3b8;font-size:.85rem;}
+
+.content{max-width:920px;margin:0 auto;padding:40px 48px 80px;}
+
+.hook{background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);color:#f1f5f9;border-radius:18px;padding:26px 30px;font-size:1.02rem;line-height:1.75;margin-bottom:36px;box-shadow:0 8px 30px rgba(0,0,0,.15);}
+.hook strong{color:var(--gold);}
+
+.sec-title{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:var(--orange);margin-bottom:14px;}
+.section{margin-bottom:42px;}
+
+/* stat tiles */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px;}
+.stat{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px 16px;text-align:center;}
+.stat-num{font-size:1.5rem;font-weight:900;color:var(--navy);letter-spacing:-.5px;}
+.stat-label{font-size:.72rem;color:var(--text2);margin-top:4px;line-height:1.4;}
+.stat-src{font-size:.62rem;color:var(--text3);margin-top:2px;}
+
+.callout{background:#fff4ee;border:1px solid #fbd6bd;border-left:4px solid var(--orange);border-radius:12px;padding:14px 18px;font-size:.85rem;color:#7c2d12;line-height:1.7;margin-bottom:8px;}
+.callout strong{color:#9a3412;}
+
+.sources{font-size:.68rem;color:var(--text3);line-height:1.7;margin-top:10px;}
+
+/* benefit cards */
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:22px 20px;}
+.card-ico{font-size:1.4rem;margin-bottom:10px;}
+.card-title{font-size:.92rem;font-weight:800;color:var(--navy);margin-bottom:8px;}
+.card-text{font-size:.82rem;color:var(--text2);line-height:1.65;}
+.card-num{font-size:1.15rem;font-weight:900;color:var(--green);margin-top:10px;}
+
+/* roadmap */
+.roadmap{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.rm-step{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px 14px;position:relative;}
+.rm-step.active{border-color:var(--orange);background:#fff9f5;}
+.rm-tag{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);}
+.rm-step.active .rm-tag{color:var(--orange);}
+.rm-place{font-size:.95rem;font-weight:800;color:var(--navy);margin:6px 0 4px;}
+.rm-desc{font-size:.72rem;color:var(--text2);}
+
+/* example projection table */
+.proj-note{font-size:.72rem;color:var(--text3);margin-bottom:10px;font-style:italic;}
+table.proj{width:100%;border-collapse:collapse;background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;font-size:.82rem;}
+table.proj th{background:var(--navy);color:#f1f5f9;text-align:left;padding:10px 14px;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;}
+table.proj td{padding:10px 14px;border-top:1px solid var(--border);}
+table.proj tr:nth-child(even) td{background:#f8fafc;}
+table.proj td.num{font-weight:700;color:var(--navy);text-align:right;}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.split .card{margin-bottom:0;}
+
+.close{background:linear-gradient(135deg,#e8622a 0%,#c2410c 100%);color:#fff;border-radius:18px;padding:26px 30px;font-size:.95rem;line-height:1.75;margin-top:8px;box-shadow:0 8px 30px rgba(232,98,42,.25);}
+.close strong{color:#fff7ed;}
+
+.cta{background:var(--white);border:2px dashed #cbd5e1;border-radius:16px;padding:24px 26px;margin-top:36px;text-align:center;}
+.cta-title{font-size:1rem;font-weight:800;color:var(--navy);margin-bottom:6px;}
+.cta-text{font-size:.82rem;color:var(--text2);margin-bottom:14px;}
+.cta-fields{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.cta-field{border:1px solid var(--border);border-radius:8px;padding:8px 16px;font-size:.78rem;color:var(--text3);min-width:150px;}
+.cta-direct{margin-top:16px;padding-top:16px;border-top:1px solid var(--border);font-size:.82rem;color:var(--text2);}
+.cta-direct strong{color:var(--navy);}
+
+footer{background:var(--navy);color:#334155;text-align:center;padding:20px;font-size:.72rem;}
+
+@media(max-width:800px){
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .cards3{grid-template-columns:1fr;}
+  .roadmap{grid-template-columns:repeat(2,1fr);}
+  .split{grid-template-columns:1fr;}
+  .header{padding:24px 18px 20px;}
+  .content{padding:26px 18px 60px;}
+}
+
+@page{size:A4;margin:6mm 9mm;}
+@media print{
+  html{font-size:7.8px;}
+  body{background:#fff;}
+  .banner{padding:3px 10px;}
+  .header{padding:8px 14px 6px;}
+  .content{padding:8px 0 4px;max-width:100%;}
+  .hook{padding:8px 14px;margin-bottom:7px;border-radius:10px;box-shadow:none;}
+  .section{margin-bottom:7px;}
+  .sec-title{margin-bottom:4px;}
+  .stats{gap:5px;margin-bottom:5px;}
+  .stat{padding:6px 6px;border-radius:8px;}
+  .callout{padding:6px 10px;margin-bottom:3px;border-radius:8px;}
+  .sources{margin-top:3px;}
+  .cards3{gap:6px;}
+  .card{padding:7px 10px;border-radius:10px;}
+  .card-ico{margin-bottom:2px;}
+  .card-title{margin-bottom:2px;}
+  .card-num{margin-top:3px;}
+  .roadmap{gap:5px;}
+  .rm-step{padding:6px 8px;border-radius:8px;}
+  .rm-place{margin:2px 0;}
+  table.proj th,table.proj td{padding:4px 8px;}
+  .proj-note{margin-bottom:4px;}
+  .close{padding:8px 14px;margin-top:3px;border-radius:10px;box-shadow:none;}
+  .close br{display:none;}
+  .cta{padding:8px 14px;margin-top:7px;border-radius:10px;}
+  .cta-title{margin-bottom:2px;}
+  .cta-text{margin-bottom:5px;}
+  .cta-field{padding:3px 10px;min-width:100px;}
+  .cta-direct{margin-top:5px;padding-top:5px;}
+  footer{padding:5px;}
+}
+</style>
+</head>
+<body>
+
+<div class="banner">📌 Cifras de mercado citadas con fuente · Ejemplos de ingreso son ilustrativos, no representan datos reales de ningún proveedor.</div>
+
+<div class="header">
+  <div class="hl">🚀 TODASMISCOSAS.COM</div>
+  <div class="ht">El espacio ocioso que gestionás, convertido en ingreso</div>
+  <div class="hs">Resumen ejecutivo · Expo Real Estate 2026 · 12 de agosto</div>
+</div>
+
+<div class="content">
+
+  <div class="hook">
+    En cada edificio, complejo o cartera de propiedades que gestionás hay cocheras, bauleras y depósitos que hoy no generan nada. Al mismo tiempo, tus propios clientes — inquilinos que se mudan, propietarios que achican — necesitan un lugar seguro donde guardar. <strong>TodasMisCosas.com</strong> conecta esas dos puntas con pagos protegidos y sin que vos tengas que operar nada.
+  </div>
+
+  <div class="section">
+    <div class="sec-title">La oportunidad de mercado</div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">USD 65-68B</div>
+        <div class="stat-label">Mercado global de self-storage, 2025</div>
+        <div class="stat-src">Fortune Business Insights / The Business Research Company</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">USD 92-110B</div>
+        <div class="stat-label">Proyección global a 2030-2034</div>
+        <div class="stat-src">CAGR 4,2%-7,7% según fuente</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">~8%</div>
+        <div class="stat-label">Participación de LatAm + MEA en el mercado global — recién arrancando</div>
+        <div class="stat-src">Fortune Business Insights / Mordor Intelligence</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">6-8%</div>
+        <div class="stat-label">Crecimiento anual de LatAm + MEA — más rápido que el promedio global</div>
+        <div class="stat-src">Mordor Intelligence</div>
+      </div>
+    </div>
+    <div class="callout">
+      <strong>Lectura clave:</strong> el mercado de guardado en América Latina está en etapa temprana pero crece más rápido que el promedio mundial. IMARC Group: <em>"el mercado de self-storage en América Latina se encuentra aún en sus inicios, pero está expandiéndose rápidamente, particularmente en Brasil, Argentina y México"</em>. Quien construya primero la infraestructura de confianza en esta región, se queda con la categoría.
+    </div>
+    <div class="sources">
+      Fuentes (verificadas en la página original de cada informe): Fortune Business Insights, The Business Research Company, IMARC Group, Mordor Intelligence — 2025. Los rangos varían entre firmas por metodología.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title">Cómo funciona TMC</div>
+    <div class="card-text" style="margin-bottom:14px;">
+      Marketplace P2P de guardado urbano en CABA/AMBA — como un Airbnb, pero para espacio. El pago del cliente queda en <strong>depósito de garantía</strong> hasta que confirma el acceso; recién ahí se libera al proveedor, con reembolso 100% automático si se arrepiente antes. Ya en producción, validado con 378 pruebas de extremo a extremo (jun 2026).
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title">Qué ganás si te sumás</div>
+    <div class="cards3">
+      <div class="card">
+        <div class="card-ico">🏢</div>
+        <div class="card-title">Publicá el espacio ocioso que gestionás</div>
+        <div class="card-text">Cocheras, bauleras o depósitos sin uso, publicados gratis. Cobrás por cada reserva concretada, sin riesgo de inventario.</div>
+        <div class="card-num">~92,3-92,5% de cada reserva</div>
+      </div>
+      <div class="card">
+        <div class="card-ico">🤝</div>
+        <div class="card-title">Dale a tus clientes una solución real</div>
+        <div class="card-text">Tus clientes que se mudan o achican necesitan guardar ya. Recomendar TMC es valor agregado, sin costo ni carga operativa.</div>
+      </div>
+      <div class="card">
+        <div class="card-ico">💰</div>
+        <div class="card-title">Programa de referidos</div>
+        <div class="card-text">Cada cliente que referís y reserva en TMC te deja una comisión, sin operar nada del proceso.</div>
+        <div class="card-num">2-3 puntos % del valor de cada reserva</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title">Ejemplo ilustrativo de potencial</div>
+    <div class="proj-note">Números de ejemplo para dimensionar el potencial — no son datos reales de ningún cliente ni proveedor de TMC.</div>
+    <table class="proj">
+      <tr><th>Escenario</th><th>Espacios / referidos activos</th><th>Valor promedio mensual</th><th>Ingreso mensual estimado</th></tr>
+      <tr><td>Publicás espacio ocioso propio</td><td>10 cocheras/bauleras</td><td class="num">$60.000</td><td class="num">≈ $554.000</td></tr>
+      <tr><td>Publicás espacio ocioso propio</td><td>30 cocheras/bauleras</td><td class="num">$60.000</td><td class="num">≈ $1.661.000</td></tr>
+      <tr><td>Programa de referidos (2,5 pts)</td><td>20 clientes referidos/mes</td><td class="num">$60.000</td><td class="num">≈ $30.000</td></tr>
+    </table>
+    <div class="proj-note" style="margin-top:8px;">Sobre $60.000/mes de ejemplo por espacio y comisión de plataforma 7,5-7,7%. Referidos: 2,5 puntos porcentuales del valor de la reserva.</div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title">Hacia dónde vamos</div>
+    <div class="roadmap">
+      <div class="rm-step active">
+        <div class="rm-tag">Hoy</div>
+        <div class="rm-place">CABA / AMBA</div>
+        <div class="rm-desc">Operando en producción</div>
+      </div>
+      <div class="rm-step">
+        <div class="rm-tag">Próximo</div>
+        <div class="rm-place">Uruguay · Brasil</div>
+        <div class="rm-desc">Primeros mercados de expansión regional</div>
+      </div>
+      <div class="rm-step">
+        <div class="rm-tag">Después</div>
+        <div class="rm-place">Colombia · México</div>
+        <div class="rm-desc">Mercados con fuerte crecimiento del sector</div>
+      </div>
+      <div class="rm-step">
+        <div class="rm-tag">Visión</div>
+        <div class="rm-place">Resto de América</div>
+        <div class="rm-desc">Misma infraestructura de confianza, nueva geografía</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="close">
+    "No pedimos que confíes en una idea: es una plataforma que ya funciona, con pagos protegidos y reembolsos automáticos en producción, en un mercado de guardado urbano que en Latinoamérica recién empieza a crecer. Si gestionás propiedades, tenés clientes que se mudan, o te interesa participar como inversor — <strong>hablemos.</strong>"
+  </div>
+
+  <div class="cta">
+    <div class="cta-title">📩 Dejanos tu contacto</div>
+    <div class="cta-text">Te escribimos después del evento para coordinar una reunión.</div>
+    <div class="cta-fields">
+      <div class="cta-field">Nombre</div>
+      <div class="cta-field">Empresa</div>
+      <div class="cta-field">Email / WhatsApp</div>
+    </div>
+    <div class="cta-direct">O escribinos directamente: <strong>contacto@todasmiscosas.com</strong> · WhatsApp <strong>11 3948-5712</strong></div>
+  </div>
+
+</div>
+
+<footer>
+  <strong>🚀 TodasMisCosas.com · Resumen Ejecutivo</strong><br>
+  Generado a pedido de Alejandro desde Claude Code · Expo Real Estate 2026 (12 ago 2026)
+</footer>
+</body>
+</html>
