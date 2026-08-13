@@ -155,6 +155,11 @@
     line-height: 2;
   }
 
+  /* ── Diagramas SVG (arquitectura, modelo de datos) ───────────── */
+  figure.diagram { margin: 16px 0 24px; }
+  figure.diagram svg { max-width: 100%; height: auto; display: block; }
+  figure.diagram figcaption { font-size: 9pt; color: #666; margin-top: 10px; line-height: 1.6; }
+
   /* ── Badges ───────────────────────────────────────────────── */
   .badge {
     display: inline-block;
@@ -292,39 +297,87 @@
 <h1 id="s3">3. Arquitectura General</h1>
 
 <h2>Diagrama de capas</h2>
-<div class="flow">
-┌─────────────────────────────────────────────────────────────────────────┐
-│  USUARIO (browser / mobile browser)                                     │
-│  https://todasmiscosas.com                                              │
-└──────────────────────────┬──────────────────────────────────────────────┘
-                           │  HTTPS
-┌──────────────────────────▼──────────────────────────────────────────────┐
-│  FRONTEND — Next.js 14 (App Router)                                     │
-│  Puerto 3000 · VPS Hostinger                                            │
-│  Páginas: Home (mapa), Espacio, Reservar, Panel, Publicar, Admin...     │
-│  Hooks: useAuth, useEspacios, useChat                                   │
-│  Lib: api.ts (HTTP client), supabase.ts (auth), mercadopago.ts (pagos) │
-└────────┬─────────────────────────────────────────┬───────────────────────┘
-         │  REST (fetch + JWT Bearer)              │  WebSocket (Socket.io)
-         │  /api/*                                 │  chat
-┌────────▼─────────────────────────────────────────▼───────────────────────┐
-│  BACKEND — Node.js + Express                                              │
-│  Puerto 4000 · VPS Hostinger · PM2 (tmc-backend)                         │
-│                                                                           │
-│  Middleware:  Helmet · CORS · Morgan · Auth (JWT) · Upload (Multer)       │
-│  Rutas: /api/espacios · /api/reservas · /api/usuarios · /api/pagos        │
-│         /api/auth · /api/chat · /api/reviews · /api/admin · /api/email   │
-│  Cron jobs: recordatorios (09:00 hs) · inactividad (08:00 hs)            │
-└────────┬────────────────────────────────────────────────────────────────┘
-         │
-    ┌────┴──────────────────────────────────────────────────────────────┐
-    │                    SERVICIOS EXTERNOS                              │
-    ├────────────────┬──────────────────┬────────────────┬──────────────┤
-    │   MySQL        │   Supabase Auth  │  MercadoPago   │  Twilio      │
-    │   (Hostinger)  │   (Cloud SaaS)   │  (API + WH)    │  SMS/WA      │
-    │   Datos negocio│   JWT + Usuarios │  Pagos         │  OTP 2FA     │
-    └────────────────┴──────────────────┴────────────────┴──────────────┘
-</div>
+<figure class="diagram">
+<svg viewBox="0 0 900 700" role="img" aria-label="Arquitectura de TMC: usuario via HTTPS al frontend Next.js, que habla REST y WebSocket con el backend Express, que a su vez conecta con MySQL, Supabase Auth, MercadoPago y Twilio" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="tmc-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a1a2e"/>
+    </marker>
+    <marker id="tmc-arrow-pend" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#999"/>
+    </marker>
+  </defs>
+
+  <rect x="300" y="16" width="300" height="60" rx="8" fill="#fff" stroke="#e8622a" stroke-width="2"/>
+  <text x="450" y="40" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a2e">USUARIO</text>
+  <text x="450" y="58" text-anchor="middle" font-size="10" fill="#666">browser / mobile browser</text>
+
+  <line x1="450" y1="76" x2="450" y2="122" stroke="#1a1a2e" stroke-width="1.5" marker-end="url(#tmc-arrow)"/>
+  <text x="465" y="103" font-size="10" fill="#1a1a2e">HTTPS</text>
+
+  <rect x="100" y="122" width="700" height="140" rx="8" fill="#f4f4f8" stroke="#1a1a2e" stroke-width="1.5"/>
+  <text x="450" y="146" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a2e">FRONTEND — Next.js 14 (App Router)</text>
+  <text x="450" y="163" text-anchor="middle" font-size="9.5" fill="#666">Puerto 3000 · VPS Hostinger · PM2 (tmc-frontend)</text>
+  <line x1="130" y1="175" x2="770" y2="175" stroke="#ddd" stroke-width="1"/>
+  <text x="450" y="195" text-anchor="middle" font-size="9.5" fill="#1a1a2e">Páginas: Home (mapa) · Espacio · Reservar · Panel · Publicar · Admin</text>
+  <text x="450" y="215" text-anchor="middle" font-size="9.5" fill="#1a1a2e">Hooks: useAuth · useEspacios · useChat</text>
+  <text x="450" y="235" text-anchor="middle" font-size="9.5" fill="#1a1a2e">Lib: api.ts (HTTP) · supabase.ts (auth) · mercadopago.ts (pagos)</text>
+
+  <line x1="300" y1="262" x2="300" y2="322" stroke="#1a1a2e" stroke-width="1.5" marker-end="url(#tmc-arrow)"/>
+  <text x="230" y="285" font-size="9.5" fill="#1a1a2e">REST · fetch+JWT</text>
+  <text x="230" y="298" font-size="9.5" fill="#1a1a2e">/api/*</text>
+
+  <line x1="600" y1="262" x2="600" y2="322" stroke="#1a1a2e" stroke-width="1.5" marker-end="url(#tmc-arrow)"/>
+  <text x="610" y="285" font-size="9.5" fill="#1a1a2e">WebSocket</text>
+  <text x="610" y="298" font-size="9.5" fill="#1a1a2e">Socket.io · chat</text>
+
+  <rect x="100" y="322" width="700" height="140" rx="8" fill="#f4f4f8" stroke="#1a1a2e" stroke-width="1.5"/>
+  <text x="450" y="346" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a2e">BACKEND — Node.js + Express</text>
+  <text x="450" y="363" text-anchor="middle" font-size="9.5" fill="#666">Puerto 4000 · VPS Hostinger · PM2 (tmc-backend)</text>
+  <line x1="130" y1="375" x2="770" y2="375" stroke="#ddd" stroke-width="1"/>
+  <text x="450" y="395" text-anchor="middle" font-size="9.5" fill="#1a1a2e">Middleware: Helmet · CORS · Morgan · Auth (JWT) · Upload (Multer)</text>
+  <text x="450" y="415" text-anchor="middle" font-size="9.5" fill="#1a1a2e">Rutas: /espacios · /reservas · /usuarios · /pagos · /auth · /chat · /reviews · /admin · /email</text>
+  <text x="450" y="435" text-anchor="middle" font-size="9.5" fill="#1a1a2e">Cron: recordatorios 09:00hs · inactividad 08:00hs</text>
+
+  <line x1="180" y1="462" x2="128" y2="522" stroke="#1a1a2e" stroke-width="1.5" marker-end="url(#tmc-arrow)"/>
+  <line x1="380" y1="462" x2="333" y2="522" stroke="#1a1a2e" stroke-width="1.5" marker-end="url(#tmc-arrow)"/>
+  <line x1="520" y1="462" x2="538" y2="522" stroke="#1a1a2e" stroke-width="1.5" marker-end="url(#tmc-arrow)"/>
+  <line x1="720" y1="462" x2="743" y2="522" stroke="#999" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#tmc-arrow-pend)"/>
+
+  <rect x="30" y="522" width="195" height="110" rx="8" fill="#fff" stroke="#1a1a2e" stroke-width="1.5"/>
+  <text x="127" y="548" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1a1a2e">MySQL</text>
+  <text x="127" y="564" text-anchor="middle" font-size="9" fill="#666">Hostinger</text>
+  <line x1="50" y1="576" x2="205" y2="576" stroke="#ddd"/>
+  <text x="127" y="596" text-anchor="middle" font-size="9.5" fill="#1a1a2e">Datos de negocio</text>
+  <text x="127" y="613" text-anchor="middle" font-size="9.5" fill="#1a1a2e">(usuarios, espacios,</text>
+  <text x="127" y="627" text-anchor="middle" font-size="9.5" fill="#1a1a2e">reservas, chat...)</text>
+
+  <rect x="235" y="522" width="195" height="110" rx="8" fill="#fff" stroke="#1a1a2e" stroke-width="1.5"/>
+  <text x="332" y="548" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1a1a2e">Supabase Auth</text>
+  <text x="332" y="564" text-anchor="middle" font-size="9" fill="#666">Cloud SaaS</text>
+  <line x1="255" y1="576" x2="410" y2="576" stroke="#ddd"/>
+  <text x="332" y="596" text-anchor="middle" font-size="9.5" fill="#1a1a2e">JWT + gestión</text>
+  <text x="332" y="610" text-anchor="middle" font-size="9.5" fill="#1a1a2e">de usuarios</text>
+
+  <rect x="440" y="522" width="195" height="110" rx="8" fill="#fff" stroke="#1a1a2e" stroke-width="1.5"/>
+  <text x="537" y="548" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1a1a2e">MercadoPago</text>
+  <text x="537" y="564" text-anchor="middle" font-size="9" fill="#666">API + Webhook</text>
+  <line x1="460" y1="576" x2="615" y2="576" stroke="#ddd"/>
+  <text x="537" y="596" text-anchor="middle" font-size="9.5" fill="#1a1a2e">Pagos online</text>
+  <text x="537" y="610" text-anchor="middle" font-size="9.5" fill="#1a1a2e">y por QR</text>
+
+  <rect x="645" y="522" width="195" height="110" rx="8" fill="#fafafa" stroke="#999" stroke-width="1.5" stroke-dasharray="5 3"/>
+  <text x="742" y="548" text-anchor="middle" font-size="11.5" font-weight="700" fill="#666">Twilio</text>
+  <text x="742" y="564" text-anchor="middle" font-size="9" fill="#999">SMS / WhatsApp</text>
+  <line x1="665" y1="576" x2="820" y2="576" stroke="#ddd"/>
+  <text x="742" y="596" text-anchor="middle" font-size="9.5" fill="#666">OTP 2FA</text>
+  <text x="742" y="613" text-anchor="middle" font-size="8.5" fill="#c0392b" font-weight="700">pendiente de configurar</text>
+
+  <line x1="30" y1="672" x2="60" y2="672" stroke="#999" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <text x="66" y="676" font-size="9" fill="#666">= servicio pendiente de activar</text>
+</svg>
+<figcaption>Capas de TMC en producción: el navegador habla HTTPS con el frontend Next.js, que reenvía al backend Express por REST (API) y WebSocket (chat); el backend es el único que toca los 4 servicios externos.</figcaption>
+</figure>
 
 <h2>Flujo de una request típica</h2>
 <div class="flow">
@@ -532,6 +585,123 @@ Browser
 <h1 id="s6">6. Base de Datos — Tablas y Relaciones</h1>
 
 <p>Motor: <strong>MySQL InnoDB</strong> · Charset: <strong>utf8mb4</strong> · Nombre de la DB: <code>u713501758_todasmiscosas</code></p>
+
+<h2>Modelo de datos (ER)</h2>
+<figure class="diagram">
+<svg viewBox="0 0 1040 600" role="img" aria-label="Modelo de datos de TMC: usuarios y espacios como entidades centrales, con reservas, reviews, conversaciones, favoritos y consultas conectando ambas, y tablas satélite dependientes de cada una" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="tmc-fk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a1a2e"/>
+    </marker>
+    <marker id="tmc-fk-soft" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#999"/>
+    </marker>
+  </defs>
+
+  <rect x="30" y="14" width="230" height="70" rx="6" fill="#1a1a2e"/>
+  <text x="145" y="36" text-anchor="middle" font-size="12.5" font-weight="700" fill="#fff">usuarios</text>
+  <text x="145" y="54" text-anchor="middle" font-size="8.5" fill="#ddd">PK id · supabase_id · email</text>
+  <text x="145" y="68" text-anchor="middle" font-size="8.5" fill="#ddd">tipo: oferente/demandante/admin</text>
+
+  <rect x="780" y="14" width="230" height="70" rx="6" fill="#1a1a2e"/>
+  <text x="895" y="36" text-anchor="middle" font-size="12.5" font-weight="700" fill="#fff">espacios</text>
+  <text x="895" y="54" text-anchor="middle" font-size="8.5" fill="#ddd">PK id · FK oferente_id → usuarios</text>
+  <text x="895" y="68" text-anchor="middle" font-size="8.5" fill="#ddd">tipo: exclusivo/compartido · precio</text>
+  <line x1="780" y1="49" x2="260" y2="49" stroke="#e8622a" stroke-width="1.5" marker-end="url(#tmc-fk)"/>
+
+  <rect x="30" y="130" width="110" height="62" rx="6" fill="#fff" stroke="#1a1a2e" stroke-width="1.3"/>
+  <text x="85" y="150" text-anchor="middle" font-size="10" font-weight="700" fill="#1a1a2e">auth_otp</text>
+  <text x="85" y="165" text-anchor="middle" font-size="7.5" fill="#666">codigo · expires_at</text>
+  <text x="85" y="177" text-anchor="middle" font-size="7.5" fill="#666">usado · intentos</text>
+
+  <rect x="150" y="130" width="110" height="62" rx="6" fill="#fff" stroke="#1a1a2e" stroke-width="1.3"/>
+  <text x="205" y="150" text-anchor="middle" font-size="10" font-weight="700" fill="#1a1a2e">auth_sesiones</text>
+  <text x="205" y="165" text-anchor="middle" font-size="7.5" fill="#666">ip · user_agent</text>
+  <text x="205" y="177" text-anchor="middle" font-size="7.5" fill="#666">created_at</text>
+
+  <rect x="780" y="130" width="230" height="62" rx="6" fill="#fff" stroke="#1a1a2e" stroke-width="1.3"/>
+  <text x="895" y="150" text-anchor="middle" font-size="10" font-weight="700" fill="#1a1a2e">espacio_fotos</text>
+  <text x="895" y="165" text-anchor="middle" font-size="7.5" fill="#666">url · orden</text>
+
+  <line x1="85" y1="130" x2="140" y2="84" stroke="#1a1a2e" stroke-width="1.3" marker-end="url(#tmc-fk)"/>
+  <line x1="205" y1="130" x2="150" y2="84" stroke="#1a1a2e" stroke-width="1.3" marker-end="url(#tmc-fk)"/>
+  <line x1="895" y1="130" x2="895" y2="84" stroke="#1a1a2e" stroke-width="1.3" marker-end="url(#tmc-fk)"/>
+
+  <rect x="30" y="270" width="176" height="80" rx="6" fill="#fff4ee" stroke="#e8622a" stroke-width="1.5"/>
+  <text x="118" y="292" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1a1a2e">reservas</text>
+  <text x="118" y="307" text-anchor="middle" font-size="7.5" fill="#666">FK espacio_id · usuario_id</text>
+  <text x="118" y="320" text-anchor="middle" font-size="7.5" fill="#666">estado: pend/confirm/pagada/</text>
+  <text x="118" y="332" text-anchor="middle" font-size="7.5" fill="#666">cancelada/finalizada</text>
+  <text x="118" y="344" text-anchor="middle" font-size="7.5" fill="#666">mp_payment_id</text>
+
+  <rect x="226" y="270" width="176" height="80" rx="6" fill="#fff4ee" stroke="#e8622a" stroke-width="1.5"/>
+  <text x="314" y="292" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1a1a2e">conversaciones</text>
+  <text x="314" y="307" text-anchor="middle" font-size="7.5" fill="#666">FK espacio_id</text>
+  <text x="314" y="320" text-anchor="middle" font-size="7.5" fill="#666">FK demandante_id → usuarios</text>
+  <text x="314" y="333" text-anchor="middle" font-size="7.5" fill="#666">FK oferente_id → usuarios</text>
+  <text x="314" y="346" text-anchor="middle" font-size="7.5" fill="#666">ultimo_msg</text>
+
+  <rect x="422" y="270" width="176" height="80" rx="6" fill="#fff4ee" stroke="#e8622a" stroke-width="1.5"/>
+  <text x="510" y="292" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1a1a2e">reviews</text>
+  <text x="510" y="307" text-anchor="middle" font-size="7.5" fill="#666">FK espacio_id · autor_id</text>
+  <text x="510" y="320" text-anchor="middle" font-size="7.5" fill="#666">rating (1-5) · texto</text>
+
+  <rect x="618" y="270" width="176" height="80" rx="6" fill="#fff4ee" stroke="#e8622a" stroke-width="1.5"/>
+  <text x="706" y="292" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1a1a2e">favoritos</text>
+  <text x="706" y="307" text-anchor="middle" font-size="7.5" fill="#666">FK usuario_id · espacio_id</text>
+  <text x="706" y="320" text-anchor="middle" font-size="7.5" fill="#666">UNIQUE(usuario_id, espacio_id)</text>
+
+  <rect x="814" y="270" width="196" height="80" rx="6" fill="#fff4ee" stroke="#e8622a" stroke-width="1.5"/>
+  <text x="912" y="292" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1a1a2e">consultas_espacio</text>
+  <text x="912" y="307" text-anchor="middle" font-size="7.5" fill="#666">FK espacio_id</text>
+  <text x="912" y="320" text-anchor="middle" font-size="7.5" fill="#666">autor_id (sin FK — collation</text>
+  <text x="912" y="333" text-anchor="middle" font-size="7.5" fill="#c0392b">utf8mb4_unicode_ci distinta)</text>
+  <text x="912" y="346" text-anchor="middle" font-size="7.5" fill="#666">pregunta · respuesta</text>
+
+  <line x1="145" y1="84" x2="118" y2="270" stroke="#1a1a2e" stroke-width="1.3" marker-end="url(#tmc-fk)"/>
+  <line x1="160" y1="84" x2="300" y2="270" stroke="#1a1a2e" stroke-width="1.3" marker-end="url(#tmc-fk)"/>
+  <line x1="200" y1="84" x2="490" y2="270" stroke="#1a1a2e" stroke-width="1.3" marker-end="url(#tmc-fk)"/>
+  <line x1="240" y1="84" x2="690" y2="270" stroke="#1a1a2e" stroke-width="1.3" marker-end="url(#tmc-fk)"/>
+  <line x1="258" y1="84" x2="895" y2="270" stroke="#999" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#tmc-fk-soft)"/>
+
+  <line x1="895" y1="84" x2="150" y2="270" stroke="#1a1a2e" stroke-width="1.1" opacity="0.5" marker-end="url(#tmc-fk)"/>
+  <line x1="880" y1="84" x2="340" y2="270" stroke="#1a1a2e" stroke-width="1.1" opacity="0.5" marker-end="url(#tmc-fk)"/>
+  <line x1="850" y1="84" x2="520" y2="270" stroke="#1a1a2e" stroke-width="1.1" opacity="0.5" marker-end="url(#tmc-fk)"/>
+  <line x1="820" y1="84" x2="730" y2="270" stroke="#1a1a2e" stroke-width="1.1" opacity="0.5" marker-end="url(#tmc-fk)"/>
+  <line x1="800" y1="84" x2="930" y2="270" stroke="#1a1a2e" stroke-width="1.3" marker-end="url(#tmc-fk)"/>
+
+  <rect x="10" y="440" width="150" height="60" rx="6" fill="#fff" stroke="#1a1a2e" stroke-width="1.3"/>
+  <text x="85" y="461" text-anchor="middle" font-size="9.5" font-weight="700" fill="#1a1a2e">reserva_extensiones</text>
+  <text x="85" y="476" text-anchor="middle" font-size="7.5" fill="#666">nueva_fecha_hasta</text>
+  <text x="85" y="488" text-anchor="middle" font-size="7.5" fill="#666">precio · estado</text>
+
+  <rect x="176" y="440" width="150" height="60" rx="6" fill="#fff" stroke="#1a1a2e" stroke-width="1.3"/>
+  <text x="251" y="461" text-anchor="middle" font-size="9.5" font-weight="700" fill="#1a1a2e">servicios_adicionales</text>
+  <text x="251" y="476" text-anchor="middle" font-size="7.5" fill="#666">tipo: seguro/embalaje/</text>
+  <text x="251" y="488" text-anchor="middle" font-size="7.5" fill="#666">transporte/limpieza</text>
+
+  <rect x="342" y="440" width="150" height="60" rx="6" fill="#fafafa" stroke="#999" stroke-width="1.3" stroke-dasharray="4 3"/>
+  <text x="417" y="461" text-anchor="middle" font-size="9.5" font-weight="700" fill="#666">movimientos_ledger</text>
+  <text x="417" y="476" text-anchor="middle" font-size="7.5" fill="#999">cuenta_debito/credito</text>
+  <text x="417" y="488" text-anchor="middle" font-size="7.5" fill="#999">monto (sin FK enforced)</text>
+
+  <rect x="524" y="440" width="150" height="60" rx="6" fill="#fff" stroke="#1a1a2e" stroke-width="1.3"/>
+  <text x="599" y="461" text-anchor="middle" font-size="9.5" font-weight="700" fill="#1a1a2e">mensajes</text>
+  <text x="599" y="476" text-anchor="middle" font-size="7.5" fill="#666">FK conversacion_id · autor_id</text>
+  <text x="599" y="488" text-anchor="middle" font-size="7.5" fill="#666">texto · leido</text>
+
+  <line x1="85" y1="350" x2="85" y2="440" stroke="#1a1a2e" stroke-width="1.3" marker-end="url(#tmc-fk)"/>
+  <line x1="140" y1="350" x2="240" y2="440" stroke="#1a1a2e" stroke-width="1.3" marker-end="url(#tmc-fk)"/>
+  <line x1="170" y1="350" x2="400" y2="440" stroke="#999" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#tmc-fk-soft)"/>
+  <line x1="314" y1="350" x2="599" y2="440" stroke="#1a1a2e" stroke-width="1.3" marker-end="url(#tmc-fk)"/>
+
+  <line x1="10" y1="540" x2="42" y2="540" stroke="#1a1a2e" stroke-width="1.3" marker-end="url(#tmc-fk)"/>
+  <text x="48" y="544" font-size="8.5" fill="#666">FK con relación declarada (ON DELETE CASCADE)</text>
+  <line x1="10" y1="558" x2="42" y2="558" stroke="#999" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#tmc-fk-soft)"/>
+  <text x="48" y="562" font-size="8.5" fill="#666">relación lógica sin FK real en el motor (ver notas de cada tabla)</text>
+</svg>
+<figcaption>17 tablas de MySQL. usuarios y espacios son las dos entidades centrales; reservas, conversaciones, reviews, favoritos y consultas_espacio conectan a ambas. No se incluyen waitlist, email_config y auditoria_perfil por ser tablas operativas sin relación con el dominio de reservas.</figcaption>
+</figure>
 
 <h2>Tablas principales</h2>
 
