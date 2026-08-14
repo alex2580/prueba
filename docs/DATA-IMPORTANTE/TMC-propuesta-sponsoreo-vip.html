@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC — Propuesta Sponsoreo VIP</title>
+<style>
+:root{
+  --gold:#f59e0b;--navy:#0f172a;--text:#1e293b;--text2:#475569;--text3:#94a3b8;
+  --border:#e2e8f0;--bg:#f8fafc;--white:#fff;--orange:#e8622a;--green:#16a34a;--red:#dc2626;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.65;}
+
+.banner{background:linear-gradient(90deg,#7c2d12,#c2410c);color:#fff7ed;text-align:center;padding:10px 20px;font-size:.78rem;font-weight:700;letter-spacing:.02em;}
+
+.header{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 55%,#1e293b 100%);padding:36px 48px 28px;}
+.hl{font-size:1.05rem;font-weight:900;color:var(--gold);letter-spacing:.06em;}
+.ht{font-size:1.6rem;font-weight:900;color:#f1f5f9;margin:6px 0 4px;letter-spacing:-.3px;}
+.hs{color:#94a3b8;font-size:.85rem;}
+
+.content{max-width:920px;margin:0 auto;padding:40px 48px 80px;}
+
+.hook{background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);color:#f1f5f9;border-radius:18px;padding:26px 30px;font-size:1.02rem;line-height:1.75;margin-bottom:36px;box-shadow:0 8px 30px rgba(0,0,0,.15);}
+.hook strong{color:var(--gold);}
+
+.sec-title{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:var(--orange);margin-bottom:14px;}
+.section{margin-bottom:42px;page-break-inside:avoid;}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px;}
+.stat{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px 16px;text-align:center;}
+.stat-num{font-size:1.5rem;font-weight:900;color:var(--navy);letter-spacing:-.5px;}
+.stat-label{font-size:.72rem;color:var(--text2);margin-top:4px;line-height:1.4;}
+.stat-src{font-size:.62rem;color:var(--text3);margin-top:2px;}
+
+.callout{background:#fff4ee;border:1px solid #fbd6bd;border-left:4px solid var(--orange);border-radius:12px;padding:14px 18px;font-size:.85rem;color:#7c2d12;line-height:1.7;margin-bottom:8px;}
+.callout strong{color:#9a3412;}
+.callout.red{background:#fef2f2;border-color:#fecaca;border-left-color:var(--red);color:#7f1d1d;}
+.callout.red strong{color:var(--red);}
+.callout.green{background:#f0fdf4;border-color:#bbf7d0;border-left-color:var(--green);color:#14532d;}
+.callout.green strong{color:var(--green);}
+
+.sources{font-size:.68rem;color:var(--text3);line-height:1.7;margin-top:10px;}
+
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:22px 20px;}
+.card-ico{font-size:1.4rem;margin-bottom:10px;}
+.card-title{font-size:.92rem;font-weight:800;color:var(--navy);margin-bottom:8px;}
+.card-text{font-size:.82rem;color:var(--text2);line-height:1.65;}
+.card-num{font-size:1.15rem;font-weight:900;color:var(--green);margin-top:10px;}
+
+.roadmap{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.rm-step{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px 14px;position:relative;}
+.rm-step.active{border-color:var(--orange);background:#fff9f5;}
+.rm-tag{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);}
+.rm-step.active .rm-tag{color:var(--orange);}
+.rm-place{font-size:.95rem;font-weight:800;color:var(--navy);margin:6px 0 4px;}
+.rm-desc{font-size:.72rem;color:var(--text2);}
+
+.proj-note{font-size:.72rem;color:var(--text3);margin-bottom:10px;font-style:italic;}
+table.proj{width:100%;border-collapse:collapse;background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;font-size:.82rem;}
+table.proj th{background:var(--navy);color:#f1f5f9;text-align:left;padding:10px 14px;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;}
+table.proj td{padding:10px 14px;border-top:1px solid var(--border);}
+table.proj tr:nth-child(even) td{background:#f8fafc;}
+table.proj td.num{font-weight:700;color:var(--navy);text-align:right;}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.split .card{margin-bottom:0;}
+.tier-tag{display:inline-block;font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:99px;margin-bottom:10px;}
+.tier-tag.n1{background:#f1f5f9;color:var(--text2);}
+.tier-tag.n2{background:#fff4ee;color:var(--orange);}
+
+.close{background:linear-gradient(135deg,#e8622a 0%,#c2410c 100%);color:#fff;border-radius:18px;padding:26px 30px;font-size:.95rem;line-height:1.75;margin-top:8px;box-shadow:0 8px 30px rgba(232,98,42,.25);}
+.close strong{color:#fff7ed;}
+
+.cta{background:var(--white);border:2px dashed #cbd5e1;border-radius:16px;padding:24px 26px;margin-top:36px;}
+.cta-title{font-size:1rem;font-weight:800;color:var(--navy);margin-bottom:10px;}
+.cta-list{list-style:none;font-size:.85rem;color:var(--text2);line-height:2;}
+.cta-list li::before{content:"→ ";color:var(--orange);font-weight:800;}
+
+footer{background:var(--navy);color:#334155;text-align:center;padding:20px;font-size:.72rem;}
+
+@media(max-width:800px){
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .cards3{grid-template-columns:1fr;}
+  .roadmap{grid-template-columns:1fr;}
+  .split{grid-template-columns:1fr;}
+  .header{padding:24px 18px 20px;}
+  .content{padding:26px 18px 60px;}
+}
+
+@page{size:A4;margin:12mm 14mm;}
+@media print{
+  html{font-size:11px;}
+  body{background:#fff;}
+  .hook{box-shadow:none;}
+  .close{box-shadow:none;}
+  .section{margin-bottom:20px;}
+}
+</style>
+</head>
+<body>
+
+<div class="banner">📌 Propuesta interna — para revisar con Guille antes de imprimir/comprometer presupuesto. Ningún monto en $ está definido todavía.</div>
+
+<div class="header">
+  <div class="hl">🎽 SPONSOREO VIP</div>
+  <div class="ht">Marketing callejero + programa de embajadores para TMC</div>
+  <div class="hs">Propuesta interna · 14 de agosto 2026 · Alejandro Laporte</div>
+</div>
+
+<div class="content">
+
+  <div class="hook">
+    La idea: convertir a gente que ya está parada todo el día en lugares de mucho tránsito — <strong>trapitos que cuidan autos, personal de gimnasios</strong> — en cartel ambulante de TMC, con remeras impresas en doble faz. Y sumar un segundo nivel, para los que además <strong>activamente recomiendan TMC a sus clientes</strong>: un programa de sponsors con referido trackeado y recompensa real, sin tocar el cap table de la empresa.
+  </div>
+
+  <div class="section">
+    <div class="sec-title">Por qué estos lugares</div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">🚗</div>
+        <div class="stat-label">Trapitos — parados horas en zonas de alto tránsito vehicular, visibles para cientos de autos por día</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">🏋️</div>
+        <div class="stat-label">Gimnasios — alta rotación diaria, público con necesidad real de guardar (bicis, equipo, mudanzas)</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">💬</div>
+        <div class="stat-label">Ambos interactúan cara a cara con decenas de personas por día — publicidad con conversación, no solo cartel</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">📍</div>
+        <div class="stat-label">Guille: otros lugares de alta visibilidad a sumar — pendiente de definir la lista completa</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title">Los 2 niveles del programa</div>
+    <div class="split">
+      <div class="card">
+        <span class="tier-tag n1">Nivel 1 — Pasivo</span>
+        <div class="card-title">Trapitos y personal de gimnasio</div>
+        <div class="card-text">
+          Remera impresa doble faz — logo TMC adelante, QR + link corto atrás. Sin login, sin tracking individual: es cartel ambulante puro, igual que un cartel de vía pública pero caminando.<br><br>
+          <strong>Pendiente de definir:</strong> incentivo para que la usen seguido (los trapitos viven de propina — una remera sola puede no alcanzar como incentivo constante).
+        </div>
+      </div>
+      <div class="card">
+        <span class="tier-tag n2">Nivel 2 — Sponsor VIP</span>
+        <div class="card-title">Instructores y gente que refiere activamente</div>
+        <div class="card-text">
+          Además de la remera/casaca, tienen un <strong>código de referido propio</strong> y login en la plataforma. Cuando un cliente que refirieron se convierte (paga su primera reserva o publica un espacio), acumulan crédito TMC — trackeado, visible, auditable.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title">Por qué NO es participación societaria (equity)</div>
+    <div class="callout red">
+      <strong>El riesgo:</strong> dar una fracción de capital por cada cliente cerrado suena inofensivo en el momento, pero si el programa funciona y hay cientos de sponsors activos, TMC termina con un cap table de cientos de personas con fracciones mínimas de acciones — un problema legal y administrativo serio, y una traba real para cualquier inversor que quiera entrar después con una estructura societaria limpia. Ya existe una estructura pensada en <em>TMC-SAS-modelos-legales.html</em>; el programa de sponsoreo no debería contradecirla.
+    </div>
+    <div class="callout green">
+      <strong>La alternativa:</strong> el sponsor igual siente que "tiene algo en juego" con un sistema de crédito acumulable trackeado — logra el mismo efecto psicológico de incentivo sin diluir la empresa ni generar un cap table imposible de administrar.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title">El modelo de recompensa</div>
+    <div class="cards3">
+      <div class="card">
+        <div class="card-ico">💳</div>
+        <div class="card-title">Monto fijo por conversión</div>
+        <div class="card-text">Por cada cliente referido que efectivamente paga su primera reserva o publica un espacio, el sponsor acumula un monto fijo — simple de explicar y de calcular. Monto exacto: a definir.</div>
+      </div>
+      <div class="card">
+        <div class="card-ico">🎟️</div>
+        <div class="card-title">Crédito TMC, no efectivo (por ahora)</div>
+        <div class="card-text">Se usa dentro de la plataforma: descuenta de su propia comisión si publica/reserva, o queda acumulado. Sin integrar pagos/retiros todavía — mucho más simple de lanzar como piloto.</div>
+      </div>
+      <div class="card">
+        <div class="card-ico">🚀</div>
+        <div class="card-title">Fase 2: cash real</div>
+        <div class="card-text">Cuando el volumen lo justifique ("cuando esto explote"), se agrega conversión de crédito a transferencia real vía MercadoPago. No hace falta para el piloto.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title">Cómo el sponsor sabe que no lo vamos a cagar</div>
+    <div class="proj-note">La pregunta que hizo Alejandro directamente — acá la respuesta con los 3 mecanismos de confianza.</div>
+    <table class="proj">
+      <tr><th>Mecanismo</th><th>Qué resuelve</th></tr>
+      <tr><td>Login propio + panel (<code>/es/sponsor/panel</code>)</td><td>Ve su crédito acumulado y su historial en cualquier momento, sin depender de que Alejandro le confirme nada</td></tr>
+      <tr><td>Email automático por conversión</td><td>Apenas se acredita un crédito, le llega un comprobante a su correo — fecha, monto, referencia</td></tr>
+      <tr><td>Ledger inmutable (mismo patrón que <code>movimientos_ledger</code> de reservas)</td><td>Cada acreditación es un registro con fecha e ID propio, no un número editable a mano — trazabilidad real</td></tr>
+    </table>
+    <div class="proj-note" style="margin-top:8px;">El código de referido funciona como identidad del sponsor; no hace falta un token separado.</div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title">Hoja de ruta</div>
+    <div class="roadmap">
+      <div class="rm-step active">
+        <div class="rm-tag">Fase 1 — Ahora</div>
+        <div class="rm-place">Piloto físico</div>
+        <div class="rm-desc">Remeras + distribución. Sin tocar código todavía — decisión de diseño, presupuesto y a quién se le da primero.</div>
+      </div>
+      <div class="rm-step">
+        <div class="rm-tag">Fase 2</div>
+        <div class="rm-place">Sistema de sponsors</div>
+        <div class="rm-desc"><code>/es/sponsor</code> público, alta desde admin, código de referido, panel, email automático, ledger de créditos.</div>
+      </div>
+      <div class="rm-step">
+        <div class="rm-tag">Fase 3</div>
+        <div class="rm-place">Cash real</div>
+        <div class="rm-desc">Conversión de crédito a transferencia vía MercadoPago, cuando el volumen lo justifique.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="close">
+    "Es publicidad que ya está parada en la calle todo el día — solo hace falta ponerle una remera y, para los que además te consiguen clientes, una forma de que sientan que ganan con cada uno sin que a vos se te complique el cap table."
+  </div>
+
+  <div class="cta">
+    <div class="cta-title">📋 Decisiones pendientes para definir con Guille</div>
+    <ul class="cta-list">
+      <li>Monto fijo de crédito por conversión</li>
+      <li>Presupuesto y cantidad de remeras a imprimir (diseño doble faz, color naranja de marca)</li>
+      <li>Qué gimnasios abordar primero, y cómo (¿charla directa con el dueño, algo a cambio para el gimnasio?)</li>
+      <li>Cómo incentivar a los trapitos más allá de la remera — ¿pago inicial, algo semanal?</li>
+      <li>Lista completa de "otros lugares de mucha visibilidad" que propuso Guille</li>
+      <li>Cuándo pasar de piloto físico (Fase 1) a construir el sistema de sponsors (Fase 2)</li>
+    </ul>
+  </div>
+
+</div>
+
+<footer>
+  <strong>🎽 TodasMisCosas.com · Propuesta Sponsoreo VIP</strong><br>
+  Generado a pedido de Alejandro desde Claude Code · 14 ago 2026 · Sin código tocado, solo propuesta
+</footer>
+</body>
+</html>
