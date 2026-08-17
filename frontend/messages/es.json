@@ -56,7 +56,7 @@
       { "q": "¿Cuánto cuesta publicar un espacio?", "a": "Publicar es 100% gratis. TodasMisCosas.com solo cobra una comisión del 15% cuando se concreta una reserva. Si nadie te reserva, no pagás nada." },
       { "q": "¿Qué hago si tengo un problema con el espacio o con quien procedió con el cuidado de mis cosas?", "a": "Podés contactarnos antes de confirmar el acceso desde la misma reserva. Mientras no confirmes, el dinero sigue retenido en garantía y podemos intervenir para resolver cualquier inconveniente." }
     ],
-    "flowReservarTitulo": "El flujo para hacer una reserva",
+    "flowReservarTitulo": "Para hacer una reserva",
     "flowReservarPasos": [
       { "titulo": "Buscás", "desc": "Filtrás por zona, precio y tipo hasta encontrar el espacio ideal." },
       { "titulo": "Reservás", "desc": "Elegís las fechas y confirmás la reserva en minutos." },
@@ -64,7 +64,7 @@
       { "titulo": "Coordinás", "desc": "Chateás directo con quien cuidará tus cosas para acordar el ingreso." },
       { "titulo": "Confirmás", "desc": "Accedés al espacio y ahí se libera el pago — listo." }
     ],
-    "flowPublicarTitulo": "El flujo para publicar tu espacio",
+    "flowPublicarTitulo": "Para publicar tu espacio",
     "flowPublicarPasos": [
       { "titulo": "Publicás", "desc": "Contás qué espacio ofrecés, si es exclusivo o compartido, y marcás los días disponibles." },
       { "titulo": "Subís fotos", "desc": "Sumás hasta 5 fotos para que se vea lo que ofrecés." },
@@ -75,7 +75,6 @@
   "comoFunciona": {
     "heroTitulo1": "Guardá lo que querés",
     "heroTitulo2": "Donde querés.",
-    "heroDesc": "Conectamos personas y empresas que necesitan guardar cosas con quienes tienen espacio disponible.",
     "publicarBtn": "➕ Publicar mi espacio",
     "tiposTitle": "Tipos de espacio",
     "exclusivoTitulo": "Exclusivo",
