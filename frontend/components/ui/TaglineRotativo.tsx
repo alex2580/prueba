@@ -27,7 +27,7 @@ export function TaglineRotativo({ frases }: { frases: string[] }) {
     <p
       style={{
         color: 'var(--text2)', fontSize: '.95rem', lineHeight: 1.7, maxWidth: 560,
-        margin: '1rem auto 0', minHeight: '3.4em',
+        margin: '.5rem auto 0', minHeight: '1.7em',
         opacity: visible ? 1 : 0, transition: 'opacity .25s ease',
       }}
     >

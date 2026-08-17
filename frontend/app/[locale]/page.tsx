@@ -616,7 +616,7 @@ export default function HomePage() {
             <div style={{
               background: 'linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%)',
               borderBottom: '1px solid var(--border)',
-              padding: '3rem 1.5rem 2.5rem',
+              padding: '3rem 1.5rem 1.5rem',
               textAlign: 'center',
             }}>
               <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: 'clamp(2rem, 5vw, 3.2rem)', lineHeight: 1.15, marginBottom: 0 }}>
