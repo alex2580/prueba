@@ -18,6 +18,7 @@ import { OTPStep } from '@/components/auth/OTPStep';
 import { SiteHeader } from '@/components/ui/SiteHeader';
 import { ContactoForm } from '@/components/contacto/ContactoForm';
 import { ComoFuncionaFlow, ICONOS_RESERVAR, ICONOS_PUBLICAR, type Paso } from '@/components/ui/ComoFuncionaFlow';
+import { TaglineRotativo } from '@/components/ui/TaglineRotativo';
 
 const MapaEspacios = dynamic(() => import('@/components/mapa/MapaEspacios').then(m => ({ default: m.MapaEspacios })), { ssr: false });
 const MarkerEspacioCard = dynamic(() => import('@/components/mapa/MarkerEspacio').then(m => ({ default: m.MarkerEspacioCard })), { ssr: false });
@@ -622,6 +623,7 @@ export default function HomePage() {
                 <span style={{ color: 'var(--text)', display: 'block' }}>{tc('heroTitulo1')}</span>
                 <span style={{ color: 'var(--orange)', display: 'block' }}>{tc('heroTitulo2')}</span>
               </h1>
+              <TaglineRotativo frases={tc.raw('taglinesRotativos') as string[]} />
             </div>
 
             {/* Banner Waitlist */}
