@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-const INTERVALO_MS = 2000;
+const INTERVALO_MS = 4000;
 
 export function TaglineRotativo({ frases }: { frases: string[] }) {
   const [idx, setIdx] = useState(0);
