@@ -83,9 +83,7 @@ frontend/
 
 > **Pendiente (25 jun 2026):** `add-retencion-chat.js` — agrega columnas `archivado_at`/`purgar_after` a `conversaciones`, cambia FKs de CASCADE a RESTRICT, y backfill de chats ya cerrados. Guille debe correr: `node backend/src/db/add-retencion-chat.js`
 
-> **Pendiente (17 ago 2026):** `add-destacado-admin.js` — agrega columna `destacado_admin` a `espacios`, para el carrusel de destacados nuevo en la home (portado de TME). Guille debe correr: `node backend/src/db/add-destacado-admin.js`. Hasta entonces no rompe nada: `espaciosController.listar()` y `adminController.getPublicaciones()` tienen fallback si la columna no existe (capturan `ER_BAD_FIELD_ERROR` y reintentan sin ella, con `destacado_admin=0` para todos) — el carrusel simplemente no muestra nada marcado a mano hasta que se corra la migración, cae al fallback automático por `reservas_mes`.
-
-> Corridas en prod: `add-consultas-espacio.js`, `fix-consultas-charset.js` (7 jun), `add-movimientos-ledger.js`, `add-eliminado-por-oferente.js` (8 jun), `fix-consultas-espacio-id-type.js` (20 jun — corrida directo por Claude, no por Guille, vía acceso DB local).
+> Corridas en prod: `add-consultas-espacio.js`, `fix-consultas-charset.js` (7 jun), `add-movimientos-ledger.js`, `add-eliminado-por-oferente.js` (8 jun), `fix-consultas-espacio-id-type.js` (20 jun — corrida directo por Claude, no por Guille, vía acceso DB local), `add-destacado-admin.js` (17 ago — columna `destacado_admin` en `espacios` para el carrusel de destacados; confirmado funcionando, el toggle ⭐ del admin persiste después de refrescar).
 
 ## Variables de entorno críticas (backend .env en VPS)
 
