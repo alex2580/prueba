@@ -57,6 +57,7 @@ router.delete('/solicitudes-puntuacion/:id',               ctrl.eliminarSolicitu
 // Publicaciones (espacios)
 router.get('/publicaciones',                               ctrl.getPublicaciones);
 router.patch('/publicaciones/:id/disponible',              ctrl.toggleDisponibleAdmin);
+router.patch('/publicaciones/:id/destacar',                ctrl.toggleDestacadoAdmin);
 
 // Operaciones / Finanzas
 router.get('/operaciones',                                 ctrl.getOperaciones);

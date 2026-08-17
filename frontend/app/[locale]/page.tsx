@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/navigation';
 import dynamic from 'next/dynamic';
@@ -8,6 +8,7 @@ import type { Espacio, EspacioTipo } from '@/types';
 import { useEspacios } from '@/hooks/useEspacios';
 import { useAuth } from '@/contexts/AuthContext';
 import { GridEspacios } from '@/components/espacios/GridEspacios';
+import { DestacadoCarrusel } from '@/components/espacios/DestacadoCarrusel';
 import { FiltrosEspacios } from '@/components/espacios/FiltrosEspacios';
 import { FiltroFechas } from '@/components/espacios/FiltroFechas';
 import { Modal } from '@/components/ui/Modal';
@@ -190,6 +191,18 @@ export default function HomePage() {
 
   const filtrosActivos = !!(filtros.tipo || filtros.precio_max !== undefined || filtros.barrio || filtros.q || filtros.pais || filtros.seguridad_min || filtros.fecha_desde);
   const hayFiltrosActivos = !!(filtros.tipo || filtros.precio_max !== undefined || userLocation || filtros.q || filtros.pais || filtros.seguridad_min || filtros.fecha_desde);
+
+  const MAX_DESTACADOS = 3;
+  const destacados = useMemo(() => {
+    // Prioridad 1: los que el admin marcó a mano (destacado_admin).
+    // Prioridad 2, si sobra lugar: los más reservados, como ya ordena el
+    // propio listado del backend (reservas_mes DESC).
+    const marcados = espacios.filter(e => !!e.destacado_admin);
+    const conReservas = espacios
+      .filter(e => !e.destacado_admin && e.reservas_mes > 0)
+      .sort((a, b) => b.reservas_mes - a.reservas_mes);
+    return [...marcados, ...conReservas].slice(0, MAX_DESTACADOS);
+  }, [espacios]);
 
   return (
     <div style={{
@@ -621,6 +634,11 @@ export default function HomePage() {
                 </button>
               )}
             </div>
+
+            {/* Destacados */}
+            {destacados.length > 0 && (
+              <DestacadoCarrusel espacios={destacados} />
+            )}
 
             {/* Results grid */}
             <div style={{ maxWidth: 1200, margin: '0 auto', padding: '1.25rem 1.5rem 7rem' }}>

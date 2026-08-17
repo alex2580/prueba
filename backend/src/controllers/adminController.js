@@ -372,7 +372,7 @@ async function getPublicaciones(req, res, next) {
         SELECT e.id, e.nombre, e.barrio, e.pais, e.categoria, e.tipo,
                e.precio_dia, e.precio_mes, e.moneda,
                e.disponible, e.activo, e.inactiva_auto, e.rating, e.reviews_count,
-               e.reservas_mes, e.created_at,
+               e.reservas_mes, e.destacado_admin, e.created_at,
                e.eliminado_por_oferente, e.eliminado_at,
                e.fecha_vencimiento, e.vencida,
                u.id AS oferente_id, u.nombre AS oferente_nombre, u.email AS oferente_email
@@ -414,6 +414,20 @@ async function toggleDisponibleAdmin(req, res, next) {
     const result = await query(
       'UPDATE espacios SET disponible = ?, inactiva_auto = 0, activo = ? WHERE id = ?',
       [nuevoDisponible, nuevoDisponible, req.params.id]
+    );
+    if (!result.affectedRows) return res.status(404).json({ error: 'Espacio no encontrado' });
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function toggleDestacadoAdmin(req, res, next) {
+  try {
+    const { destacado } = req.body;
+    const result = await query(
+      'UPDATE espacios SET destacado_admin = ? WHERE id = ?',
+      [destacado ? 1 : 0, req.params.id]
     );
     if (!result.affectedRows) return res.status(404).json({ error: 'Espacio no encontrado' });
     res.json({ ok: true });
@@ -684,6 +698,7 @@ module.exports = {
   getOperaciones,
   getPublicaciones,
   toggleDisponibleAdmin,
+  toggleDestacadoAdmin,
   getEmailConfig,
   updateEmailConfig,
   sincronizarPendientes,

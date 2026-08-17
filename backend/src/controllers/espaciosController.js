@@ -40,7 +40,7 @@ async function listar(req, res, next) {
       SELECT e.id, e.nombre, e.direccion, e.barrio, e.m2, e.tipo,
              e.precio_dia, e.precio_mes, e.descripcion,
              e.lat, e.lng, e.disponible, e.cupo_disponible, e.rating, e.reviews_count,
-             e.reservas_mes, e.badge, e.created_at, e.disponibilidad, e.fecha_vencimiento,
+             e.reservas_mes, e.destacado_admin, e.badge, e.created_at, e.disponibilidad, e.fecha_vencimiento,
              u.nombre AS oferente_nombre, u.email AS oferente_email, u.tel AS oferente_tel,
              (SELECT url FROM espacio_fotos ef WHERE ef.espacio_id = e.id ORDER BY ef.orden LIMIT 1) AS img_principal
       FROM espacios e
@@ -89,7 +89,17 @@ async function listar(req, res, next) {
 
     sql += ' ORDER BY e.reservas_mes DESC, e.rating DESC';
 
-    let espacios = await query(sql, params);
+    // destacado_admin puede no existir todavía en prod (migración pendiente
+    // de correr) — sin este fallback, un ER_BAD_FIELD_ERROR tira abajo el
+    // listado completo de la home en vez de solo ocultar el flag.
+    let espacios;
+    try {
+      espacios = await query(sql, params);
+    } catch (e) {
+      if (e.code !== 'ER_BAD_FIELD_ERROR') throw e;
+      espacios = await query(sql.replace('e.destacado_admin, ', ''), params);
+      espacios.forEach(e => { e.destacado_admin = 0; });
+    }
 
     {
       // Independientemente de si el visitante eligió fechas o no, un espacio

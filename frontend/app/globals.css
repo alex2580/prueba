@@ -823,6 +823,11 @@ select.filter-pill {
 .alert--info    { background: rgba(59,130,246,.06);  border: 1px solid rgba(59,130,246,.18);  color: #1e40af; }
 .alert--warning { background: rgba(245,158,11,.06);  border: 1px solid rgba(245,158,11,.18);  color: #92400e; }
 
+/* ── Carrusel de destacados (home) — banner full-bleed ───────
+   Mismo componente que TME (DestacadoCarrusel.tsx), portado acá. */
+.destacado-carrusel { height: clamp(320px, 60vw, 420px); }
+@media (min-width: 768px) { .destacado-carrusel { height: clamp(380px, 34vw, 480px); } }
+
 /* ── Grid layouts ─────────────────────────────────────────── */
 /* 2 filas fijas, llena columna por columna y scrollea horizontal
    en vez de agregar más filas — ver .espacios-grid-wrap para los

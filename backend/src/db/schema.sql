@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS espacios (
   rating        DECIMAL(3,2)  NOT NULL DEFAULT 0.00,
   reviews_count INT           NOT NULL DEFAULT 0,
   reservas_mes  INT           NOT NULL DEFAULT 0,
+  destacado_admin TINYINT(1)  NOT NULL DEFAULT 0,
   badge         VARCHAR(100),
   activo        BOOLEAN       NOT NULL DEFAULT TRUE,
   fecha_vencimiento DATE      NULL,

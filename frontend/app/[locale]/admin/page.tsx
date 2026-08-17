@@ -66,6 +66,7 @@ interface PublicacionAdmin {
   rating: number | null;
   reviews_count: number;
   reservas_mes: number;
+  destacado_admin: number;
   created_at: string;
   oferente_id: string;
   oferente_nombre: string;
@@ -2215,6 +2216,25 @@ function TabPublicaciones({ token }: { token: string }) {
     }
   }
 
+  async function toggleDestacado(pub: PublicacionAdmin) {
+    setToggling(pub.id);
+    const nuevoDestacado = pub.destacado_admin ? 0 : 1;
+    try {
+      const res = await fetch(`/api/admin/publicaciones/${pub.id}/destacar`, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ destacado: nuevoDestacado }),
+      });
+      if (res.ok) {
+        setPublicaciones(prev =>
+          prev.map(p => p.id === pub.id ? { ...p, destacado_admin: nuevoDestacado } : p)
+        );
+      }
+    } finally {
+      setToggling(null);
+    }
+  }
+
   const filtradas = publicaciones.filter(p => {
     if (filtro === 'activas')   return p.activo === 1 && p.disponible === 1 && !p.vencida;
     if (filtro === 'inactivas') return (p.activo === 0 || p.disponible === 0) && !p.vencida;
@@ -2347,6 +2367,24 @@ function TabPublicaciones({ token }: { token: string }) {
                 )}
 
                 <div style={{ display: 'flex', gap: '.4rem' }}>
+                  <button
+                    onClick={() => toggleDestacado(pub)}
+                    disabled={toggling === pub.id}
+                    title={pub.destacado_admin ? 'Quitar de destacados' : 'Marcar como destacado'}
+                    style={{
+                      padding: '.35rem .6rem',
+                      borderRadius: 6,
+                      border: 'none',
+                      fontSize: '.78rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      background: pub.destacado_admin ? 'rgba(245,158,11,.15)' : 'var(--surface2)',
+                      color: pub.destacado_admin ? 'var(--amber)' : 'var(--text3)',
+                      opacity: toggling === pub.id ? .6 : 1,
+                    }}
+                  >
+                    {pub.destacado_admin ? '⭐ Destacado' : '☆ Destacar'}
+                  </button>
                   <button
                     onClick={() => toggleDisponible(pub)}
                     disabled={toggling === pub.id}
