@@ -422,15 +422,16 @@ async function toggleDisponibleAdmin(req, res, next) {
   }
 }
 
+// Ciclo de 3 estados: NULL (automático, elegible por reservas_mes) →
+// 1 (forzado destacado) → 0 (forzado excluido, nunca entra por reservas) → NULL → …
 async function toggleDestacadoAdmin(req, res, next) {
   try {
-    const { destacado } = req.body;
-    const result = await query(
-      'UPDATE espacios SET destacado_admin = ? WHERE id = ?',
-      [destacado ? 1 : 0, req.params.id]
-    );
-    if (!result.affectedRows) return res.status(404).json({ error: 'Espacio no encontrado' });
-    res.json({ ok: true });
+    const espacio = await queryOne('SELECT id, destacado_admin FROM espacios WHERE id = ?', [req.params.id]);
+    if (!espacio) return res.status(404).json({ error: 'Espacio no encontrado' });
+
+    const nuevo = espacio.destacado_admin === 1 ? 0 : espacio.destacado_admin === 0 ? null : 1;
+    await query('UPDATE espacios SET destacado_admin = ? WHERE id = ?', [nuevo, req.params.id]);
+    res.json({ destacado_admin: nuevo });
   } catch (err) {
     next(err);
   }

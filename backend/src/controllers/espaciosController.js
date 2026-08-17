@@ -98,7 +98,7 @@ async function listar(req, res, next) {
     } catch (e) {
       if (e.code !== 'ER_BAD_FIELD_ERROR') throw e;
       espacios = await query(sql.replace('e.destacado_admin, ', ''), params);
-      espacios.forEach(e => { e.destacado_admin = 0; });
+      espacios.forEach(e => { e.destacado_admin = null; });
     }
 
     {

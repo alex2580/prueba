@@ -59,7 +59,7 @@ export interface Espacio {
   rating: number;
   reviews_count: number;
   reservas_mes: number;
-  destacado_admin?: boolean | number;
+  destacado_admin?: number | null;
   badge?: string | null;
   imgs: string[];
   img_principal?: string;

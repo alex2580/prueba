@@ -195,12 +195,13 @@ export default function HomePage() {
 
   const MAX_DESTACADOS = 3;
   const destacados = useMemo(() => {
-    // Prioridad 1: los que el admin marcó a mano (destacado_admin).
-    // Prioridad 2, si sobra lugar: los más reservados, como ya ordena el
-    // propio listado del backend (reservas_mes DESC).
-    const marcados = espacios.filter(e => !!e.destacado_admin);
+    // Prioridad 1: los que el admin marcó a mano (destacado_admin === 1).
+    // Prioridad 2, si sobra lugar: los más reservados — pero solo entre los
+    // que el admin nunca tocó (destacado_admin == null). Si el admin lo
+    // excluyó a mano (=== 0), no vuelve a entrar por reservas.
+    const marcados = espacios.filter(e => e.destacado_admin === 1);
     const conReservas = espacios
-      .filter(e => !e.destacado_admin && e.reservas_mes > 0)
+      .filter(e => e.destacado_admin == null && e.reservas_mes > 0)
       .sort((a, b) => b.reservas_mes - a.reservas_mes);
     return [...marcados, ...conReservas].slice(0, MAX_DESTACADOS);
   }, [espacios]);
