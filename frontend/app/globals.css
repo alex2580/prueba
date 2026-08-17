@@ -825,8 +825,18 @@ select.filter-pill {
 
 /* ── Carrusel de destacados (home) — banner full-bleed ───────
    Mismo componente que TME (DestacadoCarrusel.tsx), portado acá. */
-.destacado-carrusel { height: clamp(320px, 60vw, 420px); }
-@media (min-width: 768px) { .destacado-carrusel { height: clamp(380px, 34vw, 480px); } }
+.destacado-carrusel { height: clamp(400px, 68vw, 500px); }
+@media (min-width: 768px) { .destacado-carrusel { height: clamp(440px, 36vw, 540px); } }
+
+/* Filtros flotando sobre el carrusel de destacados: mismos "pills" opacos
+   de siempre, pero sin la barra blanca sólida detrás — el gradiente del
+   carrusel hace de fondo en su lugar. */
+.filter-pills-bar--overlay {
+  background: transparent;
+  border-bottom: none;
+  padding: 0;
+  justify-content: flex-start;
+}
 
 /* ── Grid layouts ─────────────────────────────────────────── */
 /* 2 filas fijas, llena columna por columna y scrollea horizontal

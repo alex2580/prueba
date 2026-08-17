@@ -56,7 +56,7 @@ function armarSlides(espacios: Espacio[]): Slide[] {
   return espacios.map(e => ({ espacio: e, img: e.imgs?.length ? e.imgs[0] : e.img_principal || null }));
 }
 
-export function DestacadoCarrusel({ espacios }: { espacios: Espacio[] }) {
+export function DestacadoCarrusel({ espacios, overlayTop }: { espacios: Espacio[]; overlayTop?: React.ReactNode }) {
   const [idx, setIdx] = useState(0);
   const [pausado, setPausado] = useState(false);
   const [brillos, setBrillos] = useState<Record<string, Brillo>>({});
@@ -144,6 +144,16 @@ export function DestacadoCarrusel({ espacios }: { espacios: Espacio[] }) {
             </Link>
           );
         })}
+
+        {overlayTop && (
+          <div style={{
+            position: 'absolute', top: 0, left: 0, right: 0, zIndex: 3,
+            padding: 'clamp(.85rem,3vw,1.4rem) clamp(1rem,5vw,3.5rem) 2rem',
+            background: 'linear-gradient(to bottom, rgba(0,0,0,.55), rgba(0,0,0,.2) 55%, transparent 100%)',
+          }}>
+            {overlayTop}
+          </div>
+        )}
       </div>
 
       {slides.length > 1 && (
