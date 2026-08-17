@@ -115,7 +115,7 @@ export default function IngresoExtraPage() {
             </p>
 
             <Link
-              href="/waitlist?tipo=proveedor"
+              href="/publicar"
               className="btn-primary"
               style={{ display: 'block', textAlign: 'center', width: '100%', padding: '.9rem', fontSize: '1rem', fontWeight: 800, borderRadius: 12, marginTop: '1.5rem', textDecoration: 'none' }}
             >
