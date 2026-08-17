@@ -13,7 +13,7 @@ const COLUMNAS: Columna[] = [
   {
     titulo: 'Empresa',
     links: [
-      { label: '¿Cómo funciona?', path: '/como-funciona' },
+      { label: 'Cómo funciona', path: '/como-funciona' },
       { label: 'Sobre nosotros', path: '/sobre-nosotros' },
       { label: 'Publicar tu espacio', path: '/publicar' },
     ],
