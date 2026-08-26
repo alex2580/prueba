@@ -574,7 +574,7 @@ export default function PublicarPage() {
           {error && (
             <div className="alert alert--error" style={{ marginBottom: '1rem' }}>
               {error}
-              {error.includes('alias de Mercado Pago') && (
+              {error.includes('Mercado Pago') && (
                 <>
                   {' '}
                   <button

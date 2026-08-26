@@ -176,10 +176,10 @@ async function crearPreferencia(req, res, next) {
       return res.status(409).json({ error: 'Esta reserva está cancelada' });
     }
 
-    // Espacios publicados antes de exigir el alias de MP pueden tener oferente sin declarar.
-    const oferente = await queryOne('SELECT cbu_alias FROM usuarios WHERE id = ?', [reserva.oferente_id]);
-    if (!oferente?.cbu_alias) {
-      return res.status(409).json({ error: 'El proveedor de este espacio todavía no declaró su alias de Mercado Pago' });
+    // Espacios publicados antes de exigir la conexión de MP pueden tener oferente sin conectar.
+    const oferente = await queryOne('SELECT mp_access_token FROM usuarios WHERE id = ?', [reserva.oferente_id]);
+    if (!oferente?.mp_access_token) {
+      return res.status(409).json({ error: 'El proveedor de este espacio todavía no conectó su cuenta de Mercado Pago' });
     }
 
     const preference = await mercadopagoService.crearPreferencia({

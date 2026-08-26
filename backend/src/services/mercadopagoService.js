@@ -1,4 +1,4 @@
-const { MercadoPagoConfig, Preference, Payment, PaymentRefund } = require('mercadopago');
+const { MercadoPagoConfig, Preference, Payment, PaymentRefund, OAuth } = require('mercadopago');
 require('dotenv').config();
 
 const client = new MercadoPagoConfig({
@@ -119,16 +119,21 @@ async function reembolsarPago(paymentId) {
 
 /**
  * Transfiere dinero desde la cuenta de MP de TMC (MP_ACCESS_TOKEN) a la cuenta
- * de MP de un tercero — usada para pagarle al proveedor al liberar el depósito
- * de garantía, en vez de la transferencia manual por CBU/alias.
+ * de MP de un proveedor que conectó su cuenta vía OAuth (mp-connect) — usada
+ * para pagarle al liberar el depósito de garantía, en vez de la transferencia
+ * manual por CBU/alias.
  *
- * Forma del request sin confirmar 100% contra documentación oficial (ver plan
- * de verificación) — probar con un monto simbólico antes de confiar en esto
- * para liberaciones reales. Requiere el scope `money_transfer` habilitado en
- * la app de MP de TMC.
- * @throws si MP rechaza la transferencia (scope no habilitado, alias inválido, fondos insuficientes, etc.)
+ * A diferencia del primer intento (identificar al destinatario por un alias
+ * tipeado a mano), acá se usa `mpUserId` — el ID numérico real que devuelve
+ * MercadoPago al conectar la cuenta por OAuth. Probado el 26 ago 2026 con un
+ * alias suelto (sin OAuth de por medio): rechazado siempre con 401
+ * "Unauthorized use of live credentials", incluso con el permiso "Online
+ * Payout" habilitado — la hipótesis es que MP exige una referencia verificada
+ * (el `user_id` de una cuenta que autorizó explícitamente a la app) en vez de
+ * un alias suelto. Falta confirmar que este cambio efectivamente lo resuelve.
+ * @throws si MP rechaza la transferencia
  */
-async function transferirDinero({ alias, monto, referencia, descripcion }) {
+async function transferirDinero({ mpUserId, monto, referencia, descripcion }) {
   const res = await fetch('https://api.mercadopago.com/v1/payments', {
     method: 'POST',
     headers: {
@@ -140,7 +145,7 @@ async function transferirDinero({ alias, monto, referencia, descripcion }) {
       transaction_amount: Number(monto),
       payment_method_id: 'account_money',
       operation_type: 'money_transfer',
-      collector: { email: alias },
+      collector: { id: mpUserId },
       external_reference: String(referencia),
       description: descripcion,
     }),
@@ -152,7 +157,46 @@ async function transferirDinero({ alias, monto, referencia, descripcion }) {
   return data;
 }
 
+// ── MercadoPago Connect (OAuth) ─────────────────────────────────────
+// El flujo de OAuth (autorizar / intercambiar código / refrescar) siempre
+// corre con las credenciales de la aplicación de la plataforma, no con el
+// token de ningún proveedor.
+function getAuthorizationUrl(state) {
+  const oauth = new OAuth(client);
+  return oauth.getAuthorizationURL({
+    options: {
+      client_id:    process.env.MP_CLIENT_ID,
+      state,
+      redirect_uri: process.env.MP_CONNECT_REDIRECT_URI,
+    },
+  });
+}
+
+async function intercambiarCodigo(code) {
+  const oauth = new OAuth(client);
+  return oauth.create({
+    body: {
+      client_secret: process.env.MP_CLIENT_SECRET,
+      client_id:     process.env.MP_CLIENT_ID,
+      code,
+      redirect_uri:  process.env.MP_CONNECT_REDIRECT_URI,
+    },
+  });
+}
+
+async function refrescarToken(refresh_token) {
+  const oauth = new OAuth(client);
+  return oauth.refresh({
+    body: {
+      client_secret: process.env.MP_CLIENT_SECRET,
+      client_id:     process.env.MP_CLIENT_ID,
+      refresh_token,
+    },
+  });
+}
+
 module.exports = {
   crearPreferencia, crearPreferenciaExtension, obtenerPago, buscarPagoPorReferencia,
   reembolsarPago, transferirDinero,
+  getAuthorizationUrl, intercambiarCodigo, refrescarToken,
 };

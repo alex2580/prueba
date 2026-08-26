@@ -237,9 +237,9 @@ async function crear(req, res, next) {
       return res.status(422).json({ error: 'Datos inválidos', details: errors.array() });
     }
 
-    const oferente = await queryOne('SELECT cbu_alias FROM usuarios WHERE id = ?', [req.user.id]);
-    if (!oferente?.cbu_alias) {
-      return res.status(403).json({ error: 'Necesitás declarar tu alias de Mercado Pago en tu perfil antes de publicar un espacio' });
+    const oferente = await queryOne('SELECT mp_access_token FROM usuarios WHERE id = ?', [req.user.id]);
+    if (!oferente?.mp_access_token) {
+      return res.status(403).json({ error: 'Necesitás conectar tu cuenta de Mercado Pago en tu perfil antes de publicar un espacio' });
     }
 
     const { nombre, direccion, barrio, m2, tipo, categoria, precio_dia, descripcion, lat, lng, disponibilidad, seguridad, moneda } = req.body;

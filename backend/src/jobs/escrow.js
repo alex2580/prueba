@@ -8,7 +8,8 @@ async function procesarEscrowAutorelease() {
       SELECT r.*,
              e.nombre AS espacio_nombre, e.oferente_id AS oferente_id,
              u.nombre  AS usuario_nombre, u.email   AS usuario_email,
-             u2.nombre AS oferente_nombre, u2.email  AS oferente_email, u2.cbu_alias AS oferente_cbu
+             u2.nombre AS oferente_nombre, u2.email  AS oferente_email,
+             u2.cbu_alias AS oferente_cbu, u2.mp_user_id AS oferente_mp_user_id
       FROM reservas r
       JOIN espacios e  ON r.espacio_id   = e.id
       JOIN usuarios u  ON r.usuario_id   = u.id
@@ -51,12 +52,14 @@ async function procesarEscrowAutorelease() {
 
       const neto = Number(reserva.escrow_neto_oferente) || Math.round(Number(reserva.precio_total) * 0.85);
 
-      // Igual que en confirmarAcceso: transferencia automática al alias de MP
-      // del proveedor, con el mismo fallback al aviso manual si falla.
+      // Igual que en confirmarAcceso: transferencia automática a la cuenta de
+      // MP conectada del proveedor, con el mismo fallback al aviso manual si
+      // falla (o si todavía no conectó ninguna cuenta).
       let payoutOk = false;
       try {
+        if (!reserva.oferente_mp_user_id) throw new Error('El proveedor no conectó su cuenta de Mercado Pago');
         const payout = await mercadopagoService.transferirDinero({
-          alias: reserva.oferente_cbu,
+          mpUserId: reserva.oferente_mp_user_id,
           monto: neto,
           referencia: reserva.id,
           descripcion: `Auto-liberación 48hs — ${reserva.espacio_nombre}`,

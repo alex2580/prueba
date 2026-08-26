@@ -22,6 +22,9 @@ export interface Usuario {
   lat?: number;
   lng?: number;
   cbu_alias?: string;
+  mp_user_id?: number | null;
+  mp_connected_at?: string | null;
+  mp_conectado?: boolean;
 }
 
 export interface PerfilPublico {

@@ -3,11 +3,11 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader } from '@googlemaps/js-api-loader';
 import { useAuth } from '@/contexts/AuthContext';
 import { useReservas } from '@/hooks/useReservas';
-import { espaciosAPI, reservasAPI, usuariosAPI, reviewsAPI, favoritosAPI, chatAPI } from '@/lib/api';
+import { espaciosAPI, reservasAPI, usuariosAPI, reviewsAPI, favoritosAPI, chatAPI, mpConnectAPI } from '@/lib/api';
 import { useConversaciones } from '@/hooks/useChat';
 import { ConversacionList } from '@/components/chat/ConversacionList';
 import { MensajesConversacion } from '@/components/chat/MensajesConversacion';
@@ -115,9 +115,46 @@ const CATEGORIAS = [
 
 export default function PanelPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, token, loading: authLoading, refreshUser } = useAuth();
   const isOferente = !!user;
   const isAdmin = user?.tipo === 'admin';
+
+  const [mpConectando, setMpConectando] = useState(false);
+  const [mpError, setMpError] = useState(false);
+
+  useEffect(() => {
+    const mp = searchParams.get('mp');
+    if (mp === 'error') setMpError(true);
+    if (mp === 'connected') { refreshUser(); router.replace('/panel'); }
+  }, [searchParams, refreshUser, router]);
+
+  async function conectarMercadoPago() {
+    if (!token) return;
+    setMpConectando(true);
+    setMpError(false);
+    try {
+      const d = await mpConnectAPI.authorize('/panel', token);
+      window.location.href = d.url;
+    } catch {
+      setMpError(true);
+      setMpConectando(false);
+    }
+  }
+
+  async function desconectarMercadoPago() {
+    if (!token) return;
+    if (!confirm('¿Desconectar tu cuenta de Mercado Pago? No vas a poder publicar espacios nuevos ni cobrar reservas hasta que conectes una cuenta de nuevo.')) return;
+    setMpConectando(true);
+    try {
+      await mpConnectAPI.disconnect(token);
+      await refreshUser();
+    } catch {
+      setMpError(true);
+    } finally {
+      setMpConectando(false);
+    }
+  }
 
   // Reservas propias (as demandante — for all users)
   const { reservas: misReservas, loading: misResLoading, cancelar, ocultar: ocultarReserva } = useReservas(token, 'mias');
@@ -1533,26 +1570,49 @@ export default function PanelPage() {
                 />
               </div>
 
-              {/* Alias de Mercado Pago — solo para oferentes */}
+              {/* Cobros — Mercado Pago — solo para oferentes */}
               {isOferente && (
                 <div>
                   <label className="form-label">
-                    Alias de Mercado Pago
-                    {isOferente && !perfilForm.cbu_alias && (
+                    Cobros — Mercado Pago
+                    {!user?.mp_conectado && (
                       <span style={{ fontSize: '.7rem', color: 'var(--amber)', marginLeft: '.4rem' }}>
                         ⚠️ Obligatorio para publicar y recibir pagos
                       </span>
                     )}
                   </label>
-                  <input
-                    value={perfilForm.cbu_alias}
-                    onChange={e => setPerfilForm(f => ({ ...f, cbu_alias: e.target.value }))}
-                    placeholder="Ej: mi.alias.mp"
-                    maxLength={100}
-                  />
-                  <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginTop: '.3rem' }}>
-                    Tiene que ser el alias de tu propia cuenta de Mercado Pago — ahí te transferimos automáticamente cada pago cuando liberás el depósito de garantía.
-                  </div>
+                  {user?.mp_conectado ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem', flexWrap: 'wrap', marginTop: '.4rem' }}>
+                      <span style={{ fontSize: '.85rem' }}>
+                        ✅ Cuenta conectada
+                        {user.mp_connected_at && (
+                          <span style={{ color: 'var(--text3)' }}> desde el {new Date(user.mp_connected_at).toLocaleDateString('es-AR')}</span>
+                        )}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={desconectarMercadoPago}
+                        disabled={mpConectando}
+                        style={{ fontSize: '.8rem', color: 'var(--red)', background: 'none', border: 'none', textDecoration: 'underline', cursor: 'pointer', padding: 0 }}
+                      >
+                        Desconectar
+                      </button>
+                    </div>
+                  ) : (
+                    <div style={{ marginTop: '.4rem' }}>
+                      <Button type="button" onClick={conectarMercadoPago} disabled={mpConectando} size="sm">
+                        {mpConectando ? 'Redirigiendo…' : 'Conectar con Mercado Pago'}
+                      </Button>
+                      <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginTop: '.3rem' }}>
+                        Conectá tu propia cuenta de Mercado Pago — ahí te transferimos automáticamente cada pago cuando se libera el depósito de garantía.
+                      </div>
+                    </div>
+                  )}
+                  {mpError && (
+                    <div style={{ fontSize: '.75rem', color: 'var(--red)', marginTop: '.3rem' }}>
+                      No se pudo completar la conexión con Mercado Pago. Probá de nuevo.
+                    </div>
+                  )}
                 </div>
               )}
 

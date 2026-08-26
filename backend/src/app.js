@@ -29,6 +29,7 @@ const favoritosRouter   = require('./routes/favoritos');
 const mailingRouter     = require('./routes/mailing');
 const consultasRouter   = require('./routes/consultasEspacio');
 const waitlistRouter    = require('./routes/waitlist');
+const mpConnectRouter   = require('./routes/mpConnect');
 
 const app = express();
 
@@ -85,6 +86,7 @@ app.use('/api/favoritos', favoritosRouter);
 app.use('/api/mailing',  mailingRouter);
 app.use('/api',          consultasRouter);
 app.use('/api',          waitlistRouter);
+app.use('/api/mp-connect', mpConnectRouter);
 
 // ── 404 ────────────────────────────────────────────────────────
 app.use((req, res) => {

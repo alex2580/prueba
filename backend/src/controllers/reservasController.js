@@ -524,7 +524,8 @@ async function confirmarAcceso(req, res, next) {
       `SELECT r.*,
               e.nombre AS espacio_nombre, e.oferente_id,
               u.nombre AS usuario_nombre, u.email AS usuario_email,
-              u2.nombre AS oferente_nombre, u2.email AS oferente_email, u2.cbu_alias AS oferente_cbu
+              u2.nombre AS oferente_nombre, u2.email AS oferente_email,
+              u2.cbu_alias AS oferente_cbu, u2.mp_user_id AS oferente_mp_user_id
        FROM reservas r
        JOIN espacios e ON r.espacio_id = e.id
        JOIN usuarios u ON r.usuario_id = u.id
@@ -573,24 +574,26 @@ async function confirmarAcceso(req, res, next) {
     // no habilitado, alias inválido, etc.) cae al aviso manual de siempre —
     // el admin nunca se queda sin la info necesaria para transferir a mano.
     let payoutOk = false;
-    try {
-      const payout = await mercadopagoService.transferirDinero({
-        alias: reserva.oferente_cbu,
-        monto: neto,
-        referencia: reserva.id,
-        descripcion: `Liberación depósito en garantía — ${reserva.espacio_nombre}`,
-      });
-      await query(
-        `UPDATE reservas SET payout_estado = 'transferido', payout_mp_id = ? WHERE id = ?`,
-        [String(payout.id), reserva.id]
-      );
-      payoutOk = true;
-    } catch (e) {
-      console.warn('Transferencia automática falló:', e.message);
-      await query(
-        `UPDATE reservas SET payout_estado = 'fallido', payout_error = ? WHERE id = ?`,
-        [String(e.message).slice(0, 255), reserva.id]
-      ).catch(() => {});
+    if (reserva.oferente_mp_user_id) {
+      try {
+        const payout = await mercadopagoService.transferirDinero({
+          mpUserId: reserva.oferente_mp_user_id,
+          monto: neto,
+          referencia: reserva.id,
+          descripcion: `Liberación depósito en garantía — ${reserva.espacio_nombre}`,
+        });
+        await query(
+          `UPDATE reservas SET payout_estado = 'transferido', payout_mp_id = ? WHERE id = ?`,
+          [String(payout.id), reserva.id]
+        );
+        payoutOk = true;
+      } catch (e) {
+        console.warn('Transferencia automática falló:', e.message);
+        await query(
+          `UPDATE reservas SET payout_estado = 'fallido', payout_error = ? WHERE id = ?`,
+          [String(e.message).slice(0, 255), reserva.id]
+        ).catch(() => {});
+      }
     }
 
     const adminEmail = process.env.ADMIN_EMAILS || 'contacto@todasmiscosas.com';

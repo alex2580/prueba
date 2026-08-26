@@ -199,6 +199,14 @@ export const adminAPI = {
 
 // ── Usuarios ────────────────────────────────────────────────────
 
+export const mpConnectAPI = {
+  authorize: (next: string, token: string) =>
+    fetchAPI<{ url: string }>(`/api/mp-connect/authorize?next=${encodeURIComponent(next)}`, {}, token),
+
+  disconnect: (token: string) =>
+    fetchAPI<{ ok: boolean }>('/api/mp-connect/disconnect', { method: 'POST' }, token),
+};
+
 export const usuariosAPI = {
   me: (token: string) =>
     fetchAPI<Usuario>('/api/usuarios/me', {}, token),
