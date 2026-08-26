@@ -571,7 +571,23 @@ export default function PublicarPage() {
             ))}
           </div>
 
-          {error && <div className="alert alert--error" style={{ marginBottom: '1rem' }}>{error}</div>}
+          {error && (
+            <div className="alert alert--error" style={{ marginBottom: '1rem' }}>
+              {error}
+              {error.includes('alias de Mercado Pago') && (
+                <>
+                  {' '}
+                  <button
+                    type="button"
+                    onClick={() => router.push('/panel')}
+                    style={{ textDecoration: 'underline', color: 'inherit', background: 'none', border: 'none', padding: 0, cursor: 'pointer', font: 'inherit' }}
+                  >
+                    Completar mi perfil →
+                  </button>
+                </>
+              )}
+            </div>
+          )}
 
           {/* ── PASO 1: DATOS ─────────────────────────────── */}
           {paso === 0 && (

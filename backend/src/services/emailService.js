@@ -855,12 +855,12 @@ async function sendEscrowRetenidoOferente(toEmail, nombre, { demandanteNombre, e
 }
 
 // ── Escrow liberado — admin (instrucción de transferencia) ───────
-async function sendEscrowLiberadoAdmin(toEmail, { reservaId, espacioNombre, oferenteNombre, oferenteCbu, monto, demandanteNombre, autoRelease = false }) {
+async function sendEscrowLiberadoAdmin(toEmail, { reservaId, espacioNombre, oferenteNombre, oferenteCbu, monto, demandanteNombre, autoRelease = false, payoutOk = false }) {
   const motivo = autoRelease
     ? '⏱️ Liberación automática (48 hs desde fecha de inicio sin confirmación del cliente)'
     : '✅ El cliente confirmó el acceso al espacio';
-  const html = baseTemplate('Depósito en garantía liberado — transferir al proveedor', `
-    <h2>💸 Acción requerida: transferir pago al proveedor</h2>
+  const html = baseTemplate('Depósito en garantía liberado', `
+    <h2>${payoutOk ? '✅ Transferencia realizada automáticamente' : '💸 Acción requerida: transferir pago al proveedor'}</h2>
     <p>${motivo}</p>
     <div class="info-row">
       <div><div class="info-label">Reserva ID</div><div class="info-val" style="font-family:monospace;font-size:.85rem;">${reservaId}</div></div>
@@ -874,21 +874,24 @@ async function sendEscrowLiberadoAdmin(toEmail, { reservaId, espacioNombre, ofer
     <div class="info-row">
       <div><div class="info-label">Proveedor</div><div class="info-val">${oferenteNombre}</div></div>
     </div>
-    <div style="margin:20px 0;background:#0f172a;border-radius:12px;padding:16px 20px;border:2px solid #10b981;">
+    <div style="margin:20px 0;background:#0f172a;border-radius:12px;padding:16px 20px;border:2px solid ${payoutOk ? '#3b82f6' : '#10b981'};">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <span style="color:#86efac;font-size:13px;font-weight:700;">CBU / Alias del proveedor</span>
+        <span style="color:#86efac;font-size:13px;font-weight:700;">Alias de MP del proveedor</span>
         <span style="color:#fff;font-family:monospace;font-size:1.1rem;font-weight:800;">${oferenteCbu}</span>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;">
-        <span style="color:#86efac;font-size:13px;font-weight:700;">Monto a transferir</span>
-        <span style="color:#10b981;font-size:1.3rem;font-weight:800;">$${Number(monto).toLocaleString('es-AR')}</span>
+        <span style="color:#86efac;font-size:13px;font-weight:700;">${payoutOk ? 'Monto transferido' : 'Monto a transferir'}</span>
+        <span style="color:${payoutOk ? '#60a5fa' : '#10b981'};font-size:1.3rem;font-weight:800;">$${Number(monto).toLocaleString('es-AR')}</span>
       </div>
     </div>
+    ${payoutOk ? '' : '<p style="color:#f87171;font-weight:600;">La transferencia automática falló — hay que hacerla a mano.</p>'}
     <a class="btn" href="${process.env.FRONTEND_URL}/admin">Ver en panel admin →</a>
   `);
   await transporter.sendMail({
     from: FROM, to: toEmail,
-    subject: `💸 Transferir $${Number(monto).toLocaleString('es-AR')} al proveedor — ${espacioNombre}`,
+    subject: payoutOk
+      ? `✅ Transferencia automática — $${Number(monto).toLocaleString('es-AR')} al proveedor — ${espacioNombre}`
+      : `💸 Transferir $${Number(monto).toLocaleString('es-AR')} al proveedor — ${espacioNombre}`,
     html,
   });
 }

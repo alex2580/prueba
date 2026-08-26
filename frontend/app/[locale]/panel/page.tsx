@@ -1533,25 +1533,25 @@ export default function PanelPage() {
                 />
               </div>
 
-              {/* CBU/Alias — solo para oferentes */}
+              {/* Alias de Mercado Pago — solo para oferentes */}
               {isOferente && (
                 <div>
                   <label className="form-label">
-                    CBU / Alias bancario
+                    Alias de Mercado Pago
                     {isOferente && !perfilForm.cbu_alias && (
                       <span style={{ fontSize: '.7rem', color: 'var(--amber)', marginLeft: '.4rem' }}>
-                        ⚠️ Requerido para recibir pagos
+                        ⚠️ Obligatorio para publicar y recibir pagos
                       </span>
                     )}
                   </label>
                   <input
                     value={perfilForm.cbu_alias}
                     onChange={e => setPerfilForm(f => ({ ...f, cbu_alias: e.target.value }))}
-                    placeholder="Ej: 0000003100012345678901 o mi.alias.banco"
+                    placeholder="Ej: mi.alias.mp"
                     maxLength={100}
                   />
                   <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginTop: '.3rem' }}>
-                    TMC necesita este dato para transferirte los pagos de tus reservas.
+                    Tiene que ser el alias de tu propia cuenta de Mercado Pago — ahí te transferimos automáticamente cada pago cuando liberás el depósito de garantía.
                   </div>
                 </div>
               )}

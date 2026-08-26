@@ -26,8 +26,9 @@ async function procesarEscrowAutorelease() {
 
   console.log(`[escrow] Auto-liberando ${reservas.length} escrow(s) vencidos…`);
 
-  const emailService  = require('../services/emailService');
-  const ledgerService = require('../services/ledgerService');
+  const emailService       = require('../services/emailService');
+  const ledgerService      = require('../services/ledgerService');
+  const mercadopagoService = require('../services/mercadopagoService');
   const { archivarConversacion } = require('../controllers/chatController');
   const adminEmail    = process.env.ADMIN_EMAILS || 'contacto@todasmiscosas.com';
 
@@ -50,6 +51,29 @@ async function procesarEscrowAutorelease() {
 
       const neto = Number(reserva.escrow_neto_oferente) || Math.round(Number(reserva.precio_total) * 0.85);
 
+      // Igual que en confirmarAcceso: transferencia automática al alias de MP
+      // del proveedor, con el mismo fallback al aviso manual si falla.
+      let payoutOk = false;
+      try {
+        const payout = await mercadopagoService.transferirDinero({
+          alias: reserva.oferente_cbu,
+          monto: neto,
+          referencia: reserva.id,
+          descripcion: `Auto-liberación 48hs — ${reserva.espacio_nombre}`,
+        });
+        await query(
+          `UPDATE reservas SET payout_estado = 'transferido', payout_mp_id = ? WHERE id = ?`,
+          [String(payout.id), reserva.id]
+        );
+        payoutOk = true;
+      } catch (e) {
+        console.warn(`[escrow] Transferencia automática falló reserva ${reserva.id}:`, e.message);
+        await query(
+          `UPDATE reservas SET payout_estado = 'fallido', payout_error = ? WHERE id = ?`,
+          [String(e.message).slice(0, 255), reserva.id]
+        ).catch(() => {});
+      }
+
       emailService.sendEscrowLiberadoAdmin(adminEmail, {
         reservaId:      reserva.id,
         espacioNombre:  reserva.espacio_nombre,
@@ -58,6 +82,7 @@ async function procesarEscrowAutorelease() {
         monto:          neto,
         demandanteNombre: reserva.usuario_nombre,
         autoRelease:    true,
+        payoutOk,
       }).catch(e => console.warn(`[escrow] Email admin reserva ${reserva.id}:`, e.message));
 
       emailService.sendAccesoConfirmadoOferente(reserva.oferente_email, reserva.oferente_nombre, {

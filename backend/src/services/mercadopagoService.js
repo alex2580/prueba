@@ -117,7 +117,42 @@ async function reembolsarPago(paymentId) {
   return refundAPI.total({ payment_id: paymentId });
 }
 
+/**
+ * Transfiere dinero desde la cuenta de MP de TMC (MP_ACCESS_TOKEN) a la cuenta
+ * de MP de un tercero — usada para pagarle al proveedor al liberar el depósito
+ * de garantía, en vez de la transferencia manual por CBU/alias.
+ *
+ * Forma del request sin confirmar 100% contra documentación oficial (ver plan
+ * de verificación) — probar con un monto simbólico antes de confiar en esto
+ * para liberaciones reales. Requiere el scope `money_transfer` habilitado en
+ * la app de MP de TMC.
+ * @throws si MP rechaza la transferencia (scope no habilitado, alias inválido, fondos insuficientes, etc.)
+ */
+async function transferirDinero({ alias, monto, referencia, descripcion }) {
+  const res = await fetch('https://api.mercadopago.com/v1/payments', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${process.env.MP_ACCESS_TOKEN}`,
+      'X-Idempotency-Key': `payout-${referencia}`,
+    },
+    body: JSON.stringify({
+      transaction_amount: Number(monto),
+      payment_method_id: 'account_money',
+      operation_type: 'money_transfer',
+      collector: { email: alias },
+      external_reference: String(referencia),
+      description: descripcion,
+    }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data?.message || data?.error || `MP money_transfer falló (HTTP ${res.status})`);
+  }
+  return data;
+}
+
 module.exports = {
   crearPreferencia, crearPreferenciaExtension, obtenerPago, buscarPagoPorReferencia,
-  reembolsarPago,
+  reembolsarPago, transferirDinero,
 };

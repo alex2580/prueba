@@ -156,7 +156,8 @@ async function crearPreferencia(req, res, next) {
     const { reserva_id } = req.body;
 
     const reserva = await queryOne(
-      `SELECT r.*, e.nombre AS espacio_nombre, e.barrio, u.nombre AS usuario_nombre, u.email AS usuario_email
+      `SELECT r.*, e.nombre AS espacio_nombre, e.barrio, e.oferente_id,
+              u.nombre AS usuario_nombre, u.email AS usuario_email
        FROM reservas r
        JOIN espacios e ON r.espacio_id = e.id
        JOIN usuarios u ON r.usuario_id = u.id
@@ -173,6 +174,12 @@ async function crearPreferencia(req, res, next) {
     }
     if (reserva.estado === 'cancelada') {
       return res.status(409).json({ error: 'Esta reserva está cancelada' });
+    }
+
+    // Espacios publicados antes de exigir el alias de MP pueden tener oferente sin declarar.
+    const oferente = await queryOne('SELECT cbu_alias FROM usuarios WHERE id = ?', [reserva.oferente_id]);
+    if (!oferente?.cbu_alias) {
+      return res.status(409).json({ error: 'El proveedor de este espacio todavía no declaró su alias de Mercado Pago' });
     }
 
     const preference = await mercadopagoService.crearPreferencia({

@@ -569,6 +569,30 @@ async function confirmarAcceso(req, res, next) {
       `Acceso confirmado — ${reserva.espacio_nombre}`
     ).catch(e => console.warn('Ledger liberacion:', e.message));
 
+    // Transferencia automática al alias de MP del proveedor. Si falla (scope
+    // no habilitado, alias inválido, etc.) cae al aviso manual de siempre —
+    // el admin nunca se queda sin la info necesaria para transferir a mano.
+    let payoutOk = false;
+    try {
+      const payout = await mercadopagoService.transferirDinero({
+        alias: reserva.oferente_cbu,
+        monto: neto,
+        referencia: reserva.id,
+        descripcion: `Liberación depósito en garantía — ${reserva.espacio_nombre}`,
+      });
+      await query(
+        `UPDATE reservas SET payout_estado = 'transferido', payout_mp_id = ? WHERE id = ?`,
+        [String(payout.id), reserva.id]
+      );
+      payoutOk = true;
+    } catch (e) {
+      console.warn('Transferencia automática falló:', e.message);
+      await query(
+        `UPDATE reservas SET payout_estado = 'fallido', payout_error = ? WHERE id = ?`,
+        [String(e.message).slice(0, 255), reserva.id]
+      ).catch(() => {});
+    }
+
     const adminEmail = process.env.ADMIN_EMAILS || 'contacto@todasmiscosas.com';
     emailService.sendEscrowLiberadoAdmin(adminEmail, {
       reservaId: reserva.id,
@@ -578,6 +602,7 @@ async function confirmarAcceso(req, res, next) {
       monto: neto,
       demandanteNombre: reserva.usuario_nombre,
       autoRelease: false,
+      payoutOk,
     }).catch(e => console.warn('Email escrow admin:', e.message));
 
     emailService.sendAccesoConfirmadoOferente(reserva.oferente_email, reserva.oferente_nombre, {
@@ -592,7 +617,12 @@ async function confirmarAcceso(req, res, next) {
       reservaId: reserva.id,
     }).catch(e => console.warn('Email acceso demandante:', e.message));
 
-    res.json({ ok: true, message: 'Acceso confirmado. El pago será transferido al oferente dentro de las 48 horas hábiles.' });
+    res.json({
+      ok: true,
+      message: payoutOk
+        ? 'Acceso confirmado. El pago ya fue transferido al proveedor.'
+        : 'Acceso confirmado. El pago será transferido al oferente dentro de las 48 horas hábiles.',
+    });
   } catch (err) {
     next(err);
   }
