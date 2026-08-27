@@ -11,6 +11,7 @@ const supabase = createClient(
 
 const authCache = new Map();
 const CACHE_TTL = 30 * 1000;
+const CUPOS_0_COMISION_WAITLIST = 50; // mismo número que CUPOS_0_COMISION en la home (frontend/app/[locale]/page.tsx)
 setInterval(() => {
   const now = Date.now();
   for (const [k, v] of authCache) if (v.expiresAt <= now) authCache.delete(k);
@@ -68,6 +69,27 @@ async function requireAuth(req, res, next) {
         'INSERT INTO usuarios (supabase_id, nombre, email, tipo, tel) VALUES (?, ?, ?, ?, ?)',
         [data.user.id, nombre, data.user.email, tipo, '']
       );
+
+      // Primeros 50 proveedores de la waitlist → 0% de comisión automático
+      // (promesa hecha en la campaña de lanzamiento). El ranking es por orden
+      // de anotación en la waitlist, no por orden de creación de cuenta —
+      // alguien puede anotarse primero y crear la cuenta recién semanas
+      // después, y sigue contando su lugar original en la fila.
+      if (tipo === 'usuario') {
+        const enWaitlist = await queryOne(
+          `SELECT id, created_at FROM waitlist WHERE email = ? AND tipo = 'proveedor' LIMIT 1`,
+          [data.user.email.toLowerCase()]
+        );
+        if (enWaitlist) {
+          const [{ posicion }] = await query(
+            `SELECT COUNT(*) AS posicion FROM waitlist WHERE tipo = 'proveedor' AND created_at <= ?`,
+            [enWaitlist.created_at]
+          );
+          if (posicion <= CUPOS_0_COMISION_WAITLIST) {
+            await query('UPDATE usuarios SET comision_pct = 0 WHERE supabase_id = ?', [data.user.id]);
+          }
+        }
+      }
 
       usuario = await queryOne(
         'SELECT id, nombre, email, tel, tipo, verificado, activo FROM usuarios WHERE supabase_id = ?',
