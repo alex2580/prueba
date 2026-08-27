@@ -1301,6 +1301,176 @@ function TabUsuarios({ token }: { token: string }) {
   );
 }
 
+// ── Tab: Comisiones ────────────────────────────────────────────
+
+interface ComisionUsuario {
+  id: string;
+  nombre: string;
+  email: string;
+  tipo: 'usuario' | 'admin';
+  comision_pct: number;
+  espacios_count: number;
+  reservas_count: number;
+}
+
+function TabComisiones({ token }: { token: string }) {
+  const [usuarios, setUsuarios] = useState<ComisionUsuario[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [busqueda, setBusqueda] = useState('');
+  const [editId, setEditId] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/comisiones', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error('Error al cargar comisiones');
+      setUsuarios(await res.json());
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Error');
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => { load(); }, [load]);
+
+  function empezarEdicion(u: ComisionUsuario) {
+    setEditId(u.id);
+    setEditValue(String(u.comision_pct));
+  }
+
+  async function guardar(u: ComisionUsuario) {
+    const pct = Number(editValue);
+    if (!Number.isFinite(pct) || pct < 0 || pct > 100) {
+      alert('Ingresá un % entre 0 y 100');
+      return;
+    }
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/admin/usuarios/${u.id}/comision`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ comision_pct: pct }),
+      });
+      if (!res.ok) {
+        const d = await res.json();
+        throw new Error(d.error || 'Error');
+      }
+      setUsuarios(prev => prev.map(x => x.id === u.id ? { ...x, comision_pct: pct } : x));
+      setEditId(null);
+    } catch (e: unknown) {
+      alert(e instanceof Error ? e.message : 'Error');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const filtrados = usuarios.filter(u =>
+    !busqueda.trim() ||
+    u.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+    u.email.toLowerCase().includes(busqueda.toLowerCase())
+  );
+
+  if (loading) return <p style={{ color: 'var(--text3)' }}>Cargando comisiones…</p>;
+  if (error) return <p style={{ color: 'var(--red)' }}>{error}</p>;
+
+  return (
+    <>
+      <div style={{ marginBottom: '1rem' }}>
+        <input
+          placeholder="🔍 Buscar por nombre o email…"
+          value={busqueda}
+          onChange={e => setBusqueda(e.target.value)}
+          style={{ width: '100%', maxWidth: 320, padding: '.5rem .85rem', borderRadius: 'var(--r2)', border: '1.5px solid var(--border)', background: 'var(--surface2)', color: 'var(--text)', fontSize: '.85rem' }}
+        />
+      </div>
+
+      <div style={{ overflowX: 'auto', border: '1px solid var(--border)', borderRadius: 'var(--r2)' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '.85rem' }}>
+          <thead>
+            <tr style={{ background: 'var(--surface2)' }}>
+              <th style={{ textAlign: 'left', padding: '.7rem .9rem', color: 'var(--text3)', fontSize: '.72rem', fontWeight: 700 }}>USUARIO</th>
+              <th style={{ textAlign: 'left', padding: '.7rem .9rem', color: 'var(--text3)', fontSize: '.72rem', fontWeight: 700 }}>ESPACIOS</th>
+              <th style={{ textAlign: 'left', padding: '.7rem .9rem', color: 'var(--text3)', fontSize: '.72rem', fontWeight: 700 }}>RESERVAS</th>
+              <th style={{ textAlign: 'right', padding: '.7rem .9rem', color: 'var(--text3)', fontSize: '.72rem', fontWeight: 700 }}>% COMISIÓN</th>
+              <th style={{ width: 90 }} />
+            </tr>
+          </thead>
+          <tbody>
+            {filtrados.map(u => (
+              <tr key={u.id} style={{ borderTop: '1px solid var(--border)', background: 'var(--surface)' }}>
+                <td style={{ padding: '.7rem .9rem' }}>
+                  <div style={{ fontWeight: 700 }}>{u.nombre}</div>
+                  <div style={{ fontSize: '.76rem', color: 'var(--text3)' }}>{u.email}</div>
+                </td>
+                <td style={{ padding: '.7rem .9rem', color: 'var(--text2)' }}>{u.espacios_count}</td>
+                <td style={{ padding: '.7rem .9rem', color: 'var(--text2)' }}>{u.reservas_count}</td>
+                <td style={{ padding: '.7rem .9rem', textAlign: 'right' }}>
+                  {editId === u.id ? (
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      step="0.5"
+                      value={editValue}
+                      onChange={e => setEditValue(e.target.value)}
+                      autoFocus
+                      style={{ width: 80, textAlign: 'right', padding: '.3rem .5rem', borderRadius: 'var(--r1)', border: '1.5px solid var(--orange)', background: 'var(--surface2)', color: 'var(--text)', fontSize: '.85rem' }}
+                    />
+                  ) : (
+                    <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, color: u.comision_pct === 0 ? 'var(--mint)' : 'var(--text)' }}>
+                      {u.comision_pct}%
+                    </span>
+                  )}
+                </td>
+                <td style={{ padding: '.7rem .9rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                  {editId === u.id ? (
+                    <div style={{ display: 'flex', gap: '.35rem', justifyContent: 'flex-end' }}>
+                      <button
+                        onClick={() => guardar(u)}
+                        disabled={saving}
+                        style={{ padding: '.3rem .6rem', borderRadius: 'var(--r1)', border: 'none', background: 'var(--mint)', color: '#0f172a', fontWeight: 700, cursor: 'pointer', fontSize: '.76rem', opacity: saving ? .6 : 1 }}
+                      >
+                        ✓
+                      </button>
+                      <button
+                        onClick={() => setEditId(null)}
+                        disabled={saving}
+                        style={{ padding: '.3rem .6rem', borderRadius: 'var(--r1)', border: '1px solid var(--border)', background: 'transparent', color: 'var(--text2)', cursor: 'pointer', fontSize: '.76rem' }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => empezarEdicion(u)}
+                      style={{ padding: '.3rem .7rem', borderRadius: 'var(--r1)', border: '1px solid var(--border)', background: 'transparent', color: 'var(--text2)', cursor: 'pointer', fontSize: '.76rem' }}
+                    >
+                      Editar
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {!filtrados.length && (
+        <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text3)' }}>
+          <div style={{ fontSize: '2.5rem', marginBottom: '.5rem' }}>💰</div>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>Sin resultados</div>
+        </div>
+      )}
+    </>
+  );
+}
+
 // ── Tab: Solicitudes de mejora de puntuación ──────────────────
 
 interface SolicitudPuntuacion {
@@ -2702,6 +2872,7 @@ export default function AdminPage() {
     { key: 'campanas',             label: '📣 Campañas' },
     { key: 'marketing',            label: '📨 Marketing & Difusión' },
     { key: 'usuarios',             label: '👤 Usuarios' },
+    { key: 'comisiones',           label: '💰 Comisiones' },
     { key: 'conversaciones',       label: '💬 Conversaciones' },
     { key: 'publicaciones',        label: '🏠 Publicaciones' },
     { key: 'calendario',           label: '📅 Calendario' },
@@ -2731,6 +2902,7 @@ export default function AdminPage() {
           {tab === 'campanas'            && token && <TabCampanas token={token} />}
           {tab === 'marketing'           && token && <TabMarketing token={token} />}
           {tab === 'usuarios'            && token && <TabUsuarios token={token} />}
+          {tab === 'comisiones'          && token && <TabComisiones token={token} />}
           {tab === 'conversaciones'      && token && <TabConversaciones token={token} />}
           {tab === 'publicaciones'       && token && <TabPublicaciones token={token} />}
           {tab === 'calendario'          && token && <TabCalendarioAdmin token={token} />}

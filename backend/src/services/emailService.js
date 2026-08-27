@@ -811,10 +811,10 @@ async function sendEscrowRetenidoDemandante(toEmail, nombre, { espacioNombre, mo
 }
 
 // ── Escrow: pago retenido — al oferente ─────────────────────────
-async function sendEscrowRetenidoOferente(toEmail, nombre, { demandanteNombre, espacioNombre, monto, reservaId, fechaDesde }) {
+async function sendEscrowRetenidoOferente(toEmail, nombre, { demandanteNombre, espacioNombre, monto, reservaId, fechaDesde, comisionPct = 15 }) {
   if (!await emailConfig.isEnabled('escrow_retenido')) return;
   const montoTotal = Number(monto);
-  const comision   = Math.round(montoTotal * 0.15);
+  const comision   = Math.round(montoTotal * (Number(comisionPct) / 100));
   const montoNeto  = montoTotal - comision;
   const html = baseTemplate('Reserva pagada — depósito en garantía', `
     <h2>💰 Reserva pagada — pago en custodia</h2>
@@ -831,7 +831,7 @@ async function sendEscrowRetenidoOferente(toEmail, nombre, { demandanteNombre, e
         <span style="color:#e2e8f0;font-weight:600;">$${montoTotal.toLocaleString('es-AR')}</span>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #1e293b;">
-        <span style="color:#94a3b8;font-size:13px;">Comisión TodasMisCosas (15%)</span>
+        <span style="color:#94a3b8;font-size:13px;">Comisión TodasMisCosas (${Number(comisionPct)}%)</span>
         <span style="color:#ef4444;font-weight:600;">- $${comision.toLocaleString('es-AR')}</span>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;">

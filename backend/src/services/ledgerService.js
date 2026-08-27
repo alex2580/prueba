@@ -1,7 +1,5 @@
 const { query } = require('../db/connection');
 
-const COMISION = 0.15;
-
 async function _insertar(reservaId, tipo, descripcion, debit, credit, monto, moneda = 'ARS') {
   await query(
     `INSERT INTO movimientos_ledger
@@ -23,10 +21,13 @@ async function registrarPago(reservaId, clienteId, monto, descripcion) {
 }
 
 // Cliente confirma acceso → escrow se libera en dos movimientos:
-//   tmc.escrow → proveedor (85%)
-//   tmc.escrow → tmc.comision (15%)
-async function registrarLiberacion(reservaId, proveedorId, montoTotal, descripcion) {
-  const comision = Math.round(Number(montoTotal) * COMISION);
+//   tmc.escrow → proveedor (100% - comisionPct)
+//   tmc.escrow → tmc.comision (comisionPct)
+// comisionPct es el % fijado en la reserva al momento del pago (ver
+// pagosController), no el valor actual de usuarios.comision_pct — un cambio
+// de % en el panel admin no debe afectar reservas ya pagadas.
+async function registrarLiberacion(reservaId, proveedorId, montoTotal, descripcion, comisionPct = 15) {
+  const comision = Math.round(Number(montoTotal) * (Number(comisionPct) / 100));
   const neto     = Number(montoTotal) - comision;
 
   await _insertar(
@@ -39,7 +40,7 @@ async function registrarLiberacion(reservaId, proveedorId, montoTotal, descripci
 
   await _insertar(
     reservaId, 'comision',
-    `Comisión TMC 15% — reserva ${reservaId}`,
+    `Comisión TMC ${comisionPct}% — reserva ${reservaId}`,
     'tmc.escrow',
     'tmc.comision',
     comision

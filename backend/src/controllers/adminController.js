@@ -706,7 +706,51 @@ module.exports = {
   getMovimientos,
   getAuditoriaPerfil,
   purgarChatRetencion,
+  getComisiones,
+  actualizarComision,
 };
+
+// ── GET /api/admin/comisiones ──────────────────────────────────
+async function getComisiones(req, res, next) {
+  try {
+    const usuarios = await query(`
+      SELECT u.id, u.nombre, u.email, u.tipo, u.comision_pct,
+             COUNT(DISTINCT e.id) AS espacios_count,
+             COUNT(DISTINCT r.id) AS reservas_count
+      FROM usuarios u
+      LEFT JOIN espacios e ON e.oferente_id = u.id AND e.activo = TRUE
+      LEFT JOIN reservas r ON r.usuario_id = u.id AND r.estado != 'cancelada'
+      WHERE u.tipo != 'admin'
+      GROUP BY u.id
+      ORDER BY u.nombre ASC
+    `);
+    res.json(usuarios);
+  } catch (err) {
+    next(err);
+  }
+}
+
+// ── PATCH /api/admin/usuarios/:id/comision ─────────────────────
+async function actualizarComision(req, res, next) {
+  try {
+    const { id } = req.params;
+    const pct = Number(req.body.comision_pct);
+    if (!Number.isFinite(pct) || pct < 0 || pct > 100) {
+      return res.status(400).json({ error: 'El % de comisión debe ser un número entre 0 y 100' });
+    }
+
+    const usuario = await queryOne('SELECT id, tipo FROM usuarios WHERE id = ?', [id]);
+    if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
+    if (usuario.tipo === 'admin') {
+      return res.status(403).json({ error: 'No aplica a administradores' });
+    }
+
+    await query('UPDATE usuarios SET comision_pct = ? WHERE id = ?', [pct, id]);
+    res.json({ ok: true, comision_pct: pct });
+  } catch (err) {
+    next(err);
+  }
+}
 
 // ── POST /api/admin/chat/purgar ───────────────────────────────
 async function purgarChatRetencion(req, res, next) {

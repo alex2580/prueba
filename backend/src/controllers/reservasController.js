@@ -564,10 +564,18 @@ async function confirmarAcceso(req, res, next) {
     archivarConversacion(reserva.espacio_id, reserva.usuario_id)
       .catch(e => console.warn('Chat archivar:', e.message));
 
-    // Registro contable: tmc.escrow → proveedor (85%) + tmc.comision (15%)
+    // Registro contable: tmc.escrow → proveedor + tmc.comision, según el %
+    // fijado en la reserva al pagar. Reservas pagadas antes de tener
+    // comision_pct_aplicado (migración add-comision-pct) lo derivan del
+    // neto ya guardado, para no reabrir esa cuenta con un % distinto.
+    const comisionPctLiberacion = reserva.comision_pct_aplicado != null
+      ? Number(reserva.comision_pct_aplicado)
+      : (Number(reserva.precio_total) > 0
+          ? Math.round((1 - Number(reserva.escrow_neto_oferente) / Number(reserva.precio_total)) * 100)
+          : 15);
     ledgerService.registrarLiberacion(
       reserva.id, reserva.oferente_id, reserva.precio_total,
-      `Acceso confirmado — ${reserva.espacio_nombre}`
+      `Acceso confirmado — ${reserva.espacio_nombre}`, comisionPctLiberacion
     ).catch(e => console.warn('Ledger liberacion:', e.message));
 
     // Transferencia automática al alias de MP del proveedor. Si falla (scope

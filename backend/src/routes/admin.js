@@ -49,6 +49,10 @@ router.get('/usuarios',                         ctrl.getUsuarios);
 router.patch('/usuarios/:id/bloquear',          ctrl.bloquearUsuario);
 router.patch('/usuarios/:id/desbloquear',       ctrl.desbloquearUsuario);
 
+// Comisiones por usuario
+router.get('/comisiones',                       ctrl.getComisiones);
+router.patch('/usuarios/:id/comision',          ctrl.actualizarComision);
+
 // Solicitudes de mejora de puntuación
 router.get('/solicitudes-puntuacion',                      ctrl.getSolicitudesPuntuacion);
 router.patch('/solicitudes-puntuacion/:id/estado',         ctrl.actualizarEstadoSolicitud);

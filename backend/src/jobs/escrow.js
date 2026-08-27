@@ -43,11 +43,16 @@ async function procesarEscrowAutorelease() {
       archivarConversacion(reserva.espacio_id, reserva.usuario_id)
         .catch(e => console.warn(`[escrow] Chat archivar reserva ${reserva.id}:`, e.message));
 
-      // Registro contable: tmc.escrow → proveedor (85%) + tmc.comision (15%)
-      // (mismo movimiento que confirmarAcceso, acá disparado por el cron en vez del cliente)
+      // Registro contable: tmc.escrow → proveedor + tmc.comision, según el %
+      // fijado en la reserva al pagar (mismo criterio que confirmarAcceso).
+      const comisionPctLiberacion = reserva.comision_pct_aplicado != null
+        ? Number(reserva.comision_pct_aplicado)
+        : (Number(reserva.precio_total) > 0
+            ? Math.round((1 - Number(reserva.escrow_neto_oferente) / Number(reserva.precio_total)) * 100)
+            : 15);
       await ledgerService.registrarLiberacion(
         reserva.id, reserva.oferente_id, reserva.precio_total,
-        `Auto-liberación 48hs — ${reserva.espacio_nombre}`
+        `Auto-liberación 48hs — ${reserva.espacio_nombre}`, comisionPctLiberacion
       ).catch(e => console.warn(`[escrow] Ledger liberacion reserva ${reserva.id}:`, e.message));
 
       const neto = Number(reserva.escrow_neto_oferente) || Math.round(Number(reserva.precio_total) * 0.85);

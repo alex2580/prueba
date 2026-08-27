@@ -59,17 +59,14 @@ async function _procesarPagada(reserva, paymentId) {
     ? reserva.fecha_hasta.toISOString().slice(0, 10)
     : String(reserva.fecha_hasta).slice(0, 10);
 
-  // Inicializar escrow — 0% comisión si el oferente es early adopter vigente
-  const esEarlyAdopter = oferente &&
-    oferente.early_adopter === 1 &&
-    oferente.early_adopter_hasta &&
-    new Date(oferente.early_adopter_hasta) > new Date();
-  const netoOferente = esEarlyAdopter
-    ? Number(reserva.precio_total)
-    : Math.round(Number(reserva.precio_total) * 0.85);
+  // Inicializar escrow — % de comisión configurado por admin para este oferente
+  // (tabla Comisiones del panel admin), fijado en la reserva al momento del pago
+  // para que no cambie si el admin ajusta el % después.
+  const comisionPct = oferente ? Number(oferente.comision_pct) : 15;
+  const netoOferente = Math.round(Number(reserva.precio_total) * (1 - comisionPct / 100));
   await query(
-    `UPDATE reservas SET escrow_liberado = 0, escrow_neto_oferente = ? WHERE id = ?`,
-    [netoOferente, reserva.id]
+    `UPDATE reservas SET escrow_liberado = 0, escrow_neto_oferente = ?, comision_pct_aplicado = ? WHERE id = ?`,
+    [netoOferente, comisionPct, reserva.id]
   ).catch(e => console.warn('SET escrow:', e.message));
 
   // Registro contable: cliente → tmc.escrow
@@ -89,6 +86,7 @@ async function _procesarPagada(reserva, paymentId) {
     emailService.sendEscrowRetenidoOferente(oferente.email, oferente.nombre, {
       demandanteNombre: usuario.nombre, espacioNombre: espacio.nombre,
       monto: reserva.precio_total, reservaId: reserva.id, fechaDesde: fDesde,
+      comisionPct,
     }).catch(e => console.warn('Email escrow oferente:', e.message));
   }
 
