@@ -707,10 +707,10 @@ Browser
 
 <table>
   <tr><th>Tabla</th><th>Registros clave</th><th>Para qué</th></tr>
-  <tr><td><code>usuarios</code></td><td>id, supabase_id, nombre, email, tel, tipo, activo</td><td>Todos los usuarios del sistema</td></tr>
+  <tr><td><code>usuarios</code></td><td>id, supabase_id, nombre, email, tel, tipo, activo, comision_pct, verificado, mp_user_id</td><td>Todos los usuarios del sistema</td></tr>
   <tr><td><code>espacios</code></td><td>id, nombre, barrio, precio_dia, precio_mes, lat, lng, activo, inactiva_auto</td><td>Publicaciones de espacios de almacenamiento</td></tr>
   <tr><td><code>espacio_fotos</code></td><td>espacio_id, url, orden</td><td>Fotos asociadas a cada espacio</td></tr>
-  <tr><td><code>reservas</code></td><td>id, espacio_id, usuario_id, fecha_desde, fecha_hasta, precio_total, estado, mp_payment_id</td><td>Reservas entre demandante y espacio</td></tr>
+  <tr><td><code>reservas</code></td><td>id, espacio_id, usuario_id, fecha_desde, fecha_hasta, precio_total, estado, mp_payment_id, comision_pct_aplicado</td><td>Reservas entre demandante y espacio</td></tr>
   <tr><td><code>reserva_extensiones</code></td><td>id, reserva_id, nueva_fecha_hasta, precio, estado</td><td>Extensiones de reservas pagadas</td></tr>
   <tr><td><code>reviews</code></td><td>espacio_id, autor_id, rating (1-5), texto</td><td>Reseñas de demandantes sobre espacios</td></tr>
   <tr><td><code>conversaciones</code></td><td>espacio_id, demandante_id, oferente_id, ultimo_msg</td><td>Hilos de chat entre usuarios</td></tr>
@@ -1319,6 +1319,8 @@ POST /api/reservas (crear)
   <tr><td>PATCH</td><td>/admin/solicitudes-puntuacion/:id/estado</td><td>✅ Admin</td><td>Actualizar estado de solicitud (contactado / resuelto)</td></tr>
   <tr><td>GET</td><td>/admin/publicaciones</td><td>✅ Admin</td><td>Todas las publicaciones del sistema (activas e inactivas) con precio, rating, badge de estado</td></tr>
   <tr><td>PATCH</td><td>/admin/publicaciones/:id/disponible</td><td>✅ Admin</td><td>Activar o pausar un espacio (actualiza <code>activo</code> y <code>disponible</code> simultáneamente)</td></tr>
+  <tr><td>GET</td><td>/admin/comisiones</td><td>✅ Admin</td><td>Listado de usuarios con su % de comisión (<code>comision_pct</code>) y conteos de espacios/reservas</td></tr>
+  <tr><td>PATCH</td><td>/admin/usuarios/:id/comision</td><td>✅ Admin</td><td>Actualizar el % de comisión de un usuario (0–100)</td></tr>
   <tr><td>GET</td><td>/health</td><td>—</td><td>Health check del backend</td></tr>
 </table>
 
@@ -1408,6 +1410,21 @@ curl http://localhost:4000/health</pre>
   <tr><td>Consultar estado de pago</td><td>API GET /v1/payments/:id para verificar si fue aprobado</td></tr>
 </table>
 <p>Se usa la librería oficial <code>mercadopago</code> v2.0.15. El access token distingue entre producción y sandbox.</p>
+
+<h2>Mercado Pago Connect (OAuth) <span class="badge badge-orange">pendiente migración VPS</span></h2>
+<table>
+  <tr><th>Para qué</th><th>Cómo</th></tr>
+  <tr><td>Conectar cuenta del proveedor</td><td>Botón "Conectar con Mercado Pago" en <code>/panel</code> → OAuth → <code>mp_user_id</code>/<code>mp_access_token</code> cifrados en <code>usuarios</code></td></tr>
+  <tr><td>Transferencia automática al liberar el escrow</td><td><code>mercadopagoService.transferirDinero()</code> identifica al proveedor por su <code>mp_user_id</code> real (reemplaza el intento anterior con <code>cbu_alias</code> tipeado a mano, descartado por <code>401 Unauthorized use of live credentials</code>)</td></tr>
+</table>
+<p>Si la transferencia falla o el proveedor no conectó cuenta, cae al aviso manual de siempre (email al admin) sin romper el flujo — <code>reservas.payout_estado</code>/<code>payout_error</code>. Migración <code>add-mp-connect.js</code> y 4 env vars (<code>MP_CLIENT_ID</code>, <code>MP_CLIENT_SECRET</code>, <code>MP_CONNECT_REDIRECT_URI</code>, <code>TOKEN_ENCRYPTION_KEY</code>) pendientes en el VPS.</p>
+
+<h2>Didit (verificación de identidad) <span class="badge badge-orange">pendiente migración VPS</span></h2>
+<table>
+  <tr><th>Para qué</th><th>Cómo</th></tr>
+  <tr><td>Verificar identidad del proveedor antes de publicar</td><td>DNI + selfie con prueba de vida, comparado contra RENAPER — corre 100% en la infraestructura de Didit, TMC solo guarda el resultado (<code>usuarios.verificado</code>/<code>verificado_at</code>/<code>didit_session_id</code>)</td></tr>
+</table>
+<p>Gate en <code>espaciosController.crear</code>, mismo patrón que el gate de conectar Mercado Pago. Es verificación de identidad, no antecedentes penales (la Ley 25.326 reserva esa consulta a autoridades públicas). Migración <code>add-didit-verificacion.js</code>, cuenta/workflow de Didit y 4 env vars pendientes en el VPS.</p>
 
 <h2>Hostinger SMTP <span class="badge badge-green">activo</span></h2>
 <table>
@@ -1570,6 +1587,13 @@ curl http://localhost:4000/health</pre>
   </tr>
 </table>
 <p>Detalle completo en <code>docs/snapshot-v1.12.0-22jun2026.md</code>.</p>
+
+<h2>Cambios v1.17.0 — 26 agosto 2026</h2>
+<ul>
+  <li><b>Comisión configurable por usuario:</b> reemplaza el 15% fijo (y el <code>early_adopter</code> automático de 0%, dado de baja) por <code>usuarios.comision_pct</code> gestionado desde el tab "💰 Comisiones" del admin. Se fija en <code>reservas.comision_pct_aplicado</code> al pagar. Migración pendiente: <code>add-comision-pct.js</code>.</li>
+  <li><b>Verificación de identidad — Didit:</b> DNI + selfie con prueba de vida contra RENAPER, gate antes de publicar un espacio. Migración pendiente: <code>add-didit-verificacion.js</code> + cuenta/workflow Didit.</li>
+  <li><b>Mercado Pago Connect:</b> el proveedor conecta su cuenta de MP vía OAuth; la transferencia automática al liberar el escrow lo identifica por <code>mp_user_id</code> en vez de un alias tipeado a mano (intento anterior, descartado). Migración pendiente: <code>add-mp-connect.js</code> + 4 env vars.</li>
+</ul>
 
 <h2>Cambios v1.16.0 — 30 junio 2026</h2>
 <table>
@@ -1883,10 +1907,10 @@ curl http://localhost:4000/health</pre>
 <table>
   <tr><th>Paso</th><th>Actor</th><th>Qué ocurre</th><th>Donde</th></tr>
   <tr><td>1</td><td>Cliente</td><td>Desde la fecha de inicio, puede pulsar "✅ Confirmar acceso al espacio". Esto cierra el chat</td><td><code>EstadoReserva.tsx</code></td></tr>
-  <tr><td>2</td><td>Backend</td><td><code>POST /api/reservas/:id/confirmar-acceso</code>: marca <code>escrow_liberado=1</code>. Envía instrucción de transferencia a admin, aviso al proveedor y confirmación al cliente</td><td><code>reservasController.confirmarAcceso()</code></td></tr>
-  <tr><td>3</td><td>Admin</td><td>Recibe email con CBU/alias del proveedor e instrucción de transferir el 85% del monto</td><td><code>sendEscrowLiberadoAdmin()</code></td></tr>
+  <tr><td>2</td><td>Backend</td><td><code>POST /api/reservas/:id/confirmar-acceso</code>: marca <code>escrow_liberado=1</code>. Intenta la transferencia automática al proveedor vía Mercado Pago Connect (<code>mercadopagoService.transferirDinero()</code>, ver §13); si falla o el proveedor no conectó cuenta, cae al aviso manual de siempre</td><td><code>reservasController.confirmarAcceso()</code></td></tr>
+  <tr><td>3</td><td>Admin (fallback)</td><td>Si la transferencia automática falló, recibe email con CBU/alias del proveedor para transferir a mano</td><td><code>sendEscrowLiberadoAdmin()</code></td></tr>
   <tr><td>4</td><td>Sistema (fallback)</td><td>Cron job cada hora: libera automáticamente escrows donde <code>fecha_desde</code> tiene 48+ horas sin confirmación manual del cliente</td><td><code>jobs/escrow.js</code></td></tr>
-  <tr><td>5</td><td>Ledger</td><td>Registra movimiento <code>liberacion</code> (85% al proveedor) y <code>comision</code> (15% TMC) en <code>movimientos_ledger</code></td><td><code>ledgerService</code></td></tr>
+  <tr><td>5</td><td>Ledger</td><td>Registra movimiento <code>liberacion</code> (proveedor) y <code>comision</code> (TMC) en <code>movimientos_ledger</code>, según el % de <code>usuarios.comision_pct</code> configurado para ese proveedor (default 15%, editable por admin — ver tab "💰 Comisiones"), fijado en <code>reservas.comision_pct_aplicado</code> al momento del pago</td><td><code>ledgerService</code></td></tr>
 </table>
 
 <h2>G. Reviews y cierre</h2>

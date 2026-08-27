@@ -2743,3 +2743,57 @@ engineering + marketing + sales + product-management + legal + desktop-commander
 - Referencia por tabs (7 instalados): `docs/DATA-IMPORTANTE/claude-plugins-engineering-marketing-sales.html` (actualizado a 7 tabs)
 
 **Pendientes (14):** `langfuse`, `apollo`, `postiz`, `brand-voice` (alta prioridad) + 10 más. Ver memoria `project_plugins_pendientes.md`.
+
+---
+
+## Comisión configurable por usuario · 26 Ago 2026
+
+Reemplaza la comisión fija del 15% (con el mecanismo de `early_adopter` dando 0% temporal a quienes venían de la waitlist) por un **% configurable por proveedor**, gestionado desde un tab nuevo en el panel admin.
+
+- Nueva columna `usuarios.comision_pct` (default 15.00) y `reservas.comision_pct_aplicado` — el % se fija en la reserva al momento del pago, así un cambio posterior del admin no afecta reservas ya pagadas.
+- Tab **"💰 Comisiones"** en `/admin`: tabla con usuario, espacios, reservas y % editable inline. Endpoints `GET/PATCH /api/admin/comisiones` y `/api/admin/usuarios/:id/comision`.
+- Se dio de baja el mecanismo automático de `early_adopter` (3 meses al 0% para altas desde la waitlist) — de acá en más el 0% se otorga a mano por usuario desde este tab. La migración hace backfill a 0% de quienes tenían la promo vigente, para no cortarla a mitad de camino.
+- Afecta también los emails de "pago recibido en escrow" (ya no dicen "15%" fijo, muestran el % real) y el registro contable interno (`movimientos_ledger`).
+- **Migración pendiente en el VPS:** `node backend/src/db/add-comision-pct.js` (Guille).
+
+## Verificación de identidad biométrica de proveedores — Didit · 26 Ago 2026
+
+Antes de publicar un espacio, el proveedor tiene que verificar su identidad: DNI + selfie con prueba de vida, comparado contra RENAPER. Corre 100% en la infraestructura de Didit — TMC nunca guarda fotos ni datos del documento, solo el resultado (`usuarios.verificado`/`verificado_at`/`didit_session_id`). Mismo patrón de gate que ya existía para conectar Mercado Pago (`espaciosController.crear`).
+
+**Límite legal deliberado:** es verificación de identidad, no antecedentes penales — la Ley 25.326 reserva esa consulta a autoridades públicas. Si se quisiera algo relacionado, la única vía legal es que el usuario suba voluntariamente su propio Certificado de Antecedentes Penales.
+
+**Pendiente:** migración `add-didit-verificacion.js` en el VPS + cuenta y workflow de Didit (ID Verification + Liveness + Face Match) + 4 env vars + apuntar el webhook de Didit.
+
+## Pago directo al proveedor — Mercado Pago Connect · 26 Ago 2026
+
+El cobro sigue entrando y quedando retenido en la cuenta central de MP (custodia real, sin cambios). Lo que cambia es cómo se identifica al proveedor para transferirle su parte al liberar el depósito:
+
+- **Primer intento (probado con plata real, descartado):** alias de MP tipeado a mano por el proveedor (`usuarios.cbu_alias`). Rechazado siempre por MP con `401 Unauthorized use of live credentials`, con o sin el permiso "Online Payout" habilitado.
+- **Segundo intento (actual):** el proveedor conecta su propia cuenta de MP vía OAuth (botón "Conectar con Mercado Pago" en `/panel`), igual que ya lo hacía TME. `transferirDinero()` identifica al destinatario por su `mp_user_id` real en vez de un alias suelto. Pendiente confirmar con una transferencia real una vez cargadas las env vars.
+- Si la transferencia automática falla (o el proveedor todavía no conectó cuenta), cae al aviso manual de siempre por email — nunca se rompe el flujo, solo se pierde la automatización puntual.
+- **Pendiente:** migración `add-mp-connect.js` en el VPS + 4 env vars (`MP_CLIENT_ID`, `MP_CLIENT_SECRET`, `MP_CONNECT_REDIRECT_URI`, `TOKEN_ENCRYPTION_KEY`) + marcar la app de MP como "Marketplace" en el dashboard de developers.
+
+## Home: carrusel de destacados + tagline rotativo · 17 Ago 2026
+
+- **Carrusel de destacados** (portado de TME): banner full-bleed con autoplay, hasta 3 espacios, prioridad a los marcados a mano por admin (`destacado_admin`) y relleno automático por `reservas_mes`. `destacado_admin` pasó de booleano a **tri-estado** (`NULL` automático / `1` forzado destacado / `0` forzado excluido) — antes desmarcar a mano un espacio no lo sacaba del carrusel si tenía reservas. Toggle ⭐ en el tab Publicaciones del admin, cicla los 3 estados.
+- **Tagline rotativo** debajo del H1 de la home (varias frases, cambia cada pocos segundos), reemplazando el texto estático anterior.
+- Barra de filtros flotando sobre el carrusel, títulos de flujo simplificados en la home.
+
+## Campaña "Lo que no usás, rinde" — ingreso extra · 27 Jul – 19 Ago 2026
+
+Segmento de captación de proveedores por intención de generar ingreso extra con espacio ocioso (no por datos crediticios de terceros — ver decisión explícita en memoria). Incluye: doc de campaña con pestañas de tamaño de mercado (TAM), funnel de conversión y canales (orgánico primero), y una **calculadora de ingreso estimado** ya construida y linkeada desde el botón "Publicá tu espacio" del flujo real de publicación. Meta: 15 proveedores captados en la ventana de la campaña.
+
+## Documentación y contenido — Jul/Ago 2026
+
+Trabajo de research, marketing y arquitectura que no tocó código de producto (sin efecto en `todasmiscosas.com`), guardado en `docs/DATA-IMPORTANTE/` y `docs/negocio/`:
+
+- **Arquitectura:** diagrama de arquitectura + modelo de datos ER, mapa de documentación (radiografía del INDEX de docs).
+- **Expo Real Estate Argentina 2026:** guía de networking completa (speech ~60-70s, agenda paso a paso, directorio de 54 sponsors/partners, demo poblado con datos ficticios y resumen ejecutivo en PDF para repartir).
+- **Contenido LinkedIn:** kit multiplicado desde un post de la campaña waitlist (ganchos, espejos, carrusel, newsletter, comentarios).
+- **Sponsoreo VIP:** propuesta de remeras en trapitos/gimnasios + créditos (no equity) a cambio de sponsoreo.
+- **"Oficina virtual":** 4 perfiles de subagentes globales de Claude Code (Finanzas, Administrativo, Facturación, Arquitectura/Seguridad).
+- **Evaluaciones técnicas:** Hermes Agent (NousResearch, MIT) y DigitalPlat FreeDomain — ninguna se adoptó todavía, quedan como research guardado.
+
+## Fix de seguridad · Jul 2026
+
+`package-lock.json` del backend desincronizado del `package.json` — se sincronizó y se actualizó Next.js del frontend por una vulnerabilidad crítica reportada en ese momento.
