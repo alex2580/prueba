@@ -2797,3 +2797,7 @@ Trabajo de research, marketing y arquitectura que no tocó código de producto (
 ## Fix de seguridad · Jul 2026
 
 `package-lock.json` del backend desincronizado del `package.json` — se sincronizó y se actualizó Next.js del frontend por una vulnerabilidad crítica reportada en ese momento.
+
+## Presentación para proveedores por Zoom · 27 Ago 2026
+
+Slide deck navegable (11 pantallas, HTML+PDF, `docs/DATA-IMPORTANTE/TMC-TME-presentacion-proveedores-*`) para presentar TMC + TME a prospectos nuevos por videollamada, pensado para el primer contacto con una red de inmobiliarias/alquileres con volumen a nivel país. Explica en lenguaje simple qué es cada plataforma, por qué le sirve puntualmente a una red de inmobiliarias (espacio ocioso, guardado para sus propios clientes en mudanza, eventos de la red) y cómo empezar. Dos variantes de la slide de ingresos: una genérica (sin número, deja abierta la negociación por volumen) y otra con el % explícito (85%/15% TMC, 100%/0% TME).
