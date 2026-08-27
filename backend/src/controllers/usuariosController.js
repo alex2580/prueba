@@ -30,7 +30,7 @@ async function perfil(req, res, next) {
     let usuario;
     try {
       usuario = await queryOne(
-        `SELECT id, nombre, email, tel, dni, pais, tipo, verificado, avatar_url, created_at,
+        `SELECT id, nombre, email, tel, dni, pais, tipo, verificado, verificado_at, avatar_url, created_at,
                 direccion, piso, departamento, lat, lng, cbu_alias,
                 mp_user_id, mp_connected_at, (mp_access_token IS NOT NULL) AS mp_conectado
          FROM usuarios WHERE id = ?`,
@@ -115,7 +115,7 @@ async function actualizar(req, res, next) {
     let updated;
     try {
       updated = await queryOne(
-        `SELECT id, nombre, email, tel, dni, pais, tipo, verificado, avatar_url,
+        `SELECT id, nombre, email, tel, dni, pais, tipo, verificado, verificado_at, avatar_url,
                 direccion, piso, departamento, lat, lng, cbu_alias,
                 mp_user_id, mp_connected_at, (mp_access_token IS NOT NULL) AS mp_conectado
          FROM usuarios WHERE id = ?`,

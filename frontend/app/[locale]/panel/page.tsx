@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader } from '@googlemaps/js-api-loader';
 import { useAuth } from '@/contexts/AuthContext';
 import { useReservas } from '@/hooks/useReservas';
-import { espaciosAPI, reservasAPI, usuariosAPI, reviewsAPI, favoritosAPI, chatAPI, mpConnectAPI } from '@/lib/api';
+import { espaciosAPI, reservasAPI, usuariosAPI, reviewsAPI, favoritosAPI, chatAPI, mpConnectAPI, diditAPI } from '@/lib/api';
 import { useConversaciones } from '@/hooks/useChat';
 import { ConversacionList } from '@/components/chat/ConversacionList';
 import { MensajesConversacion } from '@/components/chat/MensajesConversacion';
@@ -122,12 +122,30 @@ export default function PanelPage() {
 
   const [mpConectando, setMpConectando] = useState(false);
   const [mpError, setMpError] = useState(false);
+  const [diditIniciando, setDiditIniciando] = useState(false);
+  const [diditError, setDiditError] = useState(false);
 
   useEffect(() => {
     const mp = searchParams.get('mp');
     if (mp === 'error') setMpError(true);
     if (mp === 'connected') { refreshUser(); router.replace('/panel'); }
+
+    const didit = searchParams.get('didit');
+    if (didit === 'return') { refreshUser(); router.replace('/panel'); }
   }, [searchParams, refreshUser, router]);
+
+  async function iniciarVerificacion() {
+    if (!token) return;
+    setDiditIniciando(true);
+    setDiditError(false);
+    try {
+      const d = await diditAPI.iniciar(token);
+      window.location.href = d.url;
+    } catch {
+      setDiditError(true);
+      setDiditIniciando(false);
+    }
+  }
 
   async function conectarMercadoPago() {
     if (!token) return;
@@ -1611,6 +1629,44 @@ export default function PanelPage() {
                   {mpError && (
                     <div style={{ fontSize: '.75rem', color: 'var(--red)', marginTop: '.3rem' }}>
                       No se pudo completar la conexión con Mercado Pago. Probá de nuevo.
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Verificación de identidad — solo para oferentes */}
+              {isOferente && (
+                <div>
+                  <label className="form-label">
+                    Verificación de identidad
+                    {!user?.verificado && (
+                      <span style={{ fontSize: '.7rem', color: 'var(--amber)', marginLeft: '.4rem' }}>
+                        ⚠️ Obligatorio para publicar
+                      </span>
+                    )}
+                  </label>
+                  {user?.verificado ? (
+                    <div style={{ marginTop: '.4rem' }}>
+                      <span style={{ fontSize: '.85rem' }}>
+                        ✅ Identidad verificada
+                        {user.verificado_at && (
+                          <span style={{ color: 'var(--text3)' }}> desde el {new Date(user.verificado_at).toLocaleDateString('es-AR')}</span>
+                        )}
+                      </span>
+                    </div>
+                  ) : (
+                    <div style={{ marginTop: '.4rem' }}>
+                      <Button type="button" onClick={iniciarVerificacion} disabled={diditIniciando} size="sm">
+                        {diditIniciando ? 'Redirigiendo…' : 'Verificar mi identidad'}
+                      </Button>
+                      <div style={{ fontSize: '.72rem', color: 'var(--text3)', marginTop: '.3rem' }}>
+                        Confirmá que sos vos con tu DNI y una selfie — lo hace Didit, nosotros no guardamos tus fotos.
+                      </div>
+                    </div>
+                  )}
+                  {diditError && (
+                    <div style={{ fontSize: '.75rem', color: 'var(--red)', marginTop: '.3rem' }}>
+                      No se pudo iniciar la verificación. Probá de nuevo.
                     </div>
                   )}
                 </div>

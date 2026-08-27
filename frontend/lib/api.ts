@@ -207,6 +207,11 @@ export const mpConnectAPI = {
     fetchAPI<{ ok: boolean }>('/api/mp-connect/disconnect', { method: 'POST' }, token),
 };
 
+export const diditAPI = {
+  iniciar: (token: string) =>
+    fetchAPI<{ url: string }>('/api/didit/iniciar', { method: 'POST' }, token),
+};
+
 export const usuariosAPI = {
   me: (token: string) =>
     fetchAPI<Usuario>('/api/usuarios/me', {}, token),

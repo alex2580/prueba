@@ -25,6 +25,7 @@ export interface Usuario {
   mp_user_id?: number | null;
   mp_connected_at?: string | null;
   mp_conectado?: boolean;
+  verificado_at?: string | null;
 }
 
 export interface PerfilPublico {

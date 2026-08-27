@@ -574,7 +574,7 @@ export default function PublicarPage() {
           {error && (
             <div className="alert alert--error" style={{ marginBottom: '1rem' }}>
               {error}
-              {error.includes('Mercado Pago') && (
+              {(error.includes('Mercado Pago') || error.includes('verificar tu identidad')) && (
                 <>
                   {' '}
                   <button
