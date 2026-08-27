@@ -19,6 +19,9 @@ import { SiteHeader } from '@/components/ui/SiteHeader';
 import { ContactoForm } from '@/components/contacto/ContactoForm';
 import { ComoFuncionaFlow, ICONOS_RESERVAR, ICONOS_PUBLICAR, type Paso } from '@/components/ui/ComoFuncionaFlow';
 import { TaglineRotativo } from '@/components/ui/TaglineRotativo';
+import { waitlistAPI } from '@/lib/api';
+
+const CUPOS_0_COMISION = 50;
 
 const MapaEspacios = dynamic(() => import('@/components/mapa/MapaEspacios').then(m => ({ default: m.MapaEspacios })), { ssr: false });
 const MarkerEspacioCard = dynamic(() => import('@/components/mapa/MarkerEspacio').then(m => ({ default: m.MarkerEspacioCard })), { ssr: false });
@@ -155,6 +158,13 @@ export default function HomePage() {
   }
 
   const [contactoOpen, setContactoOpen] = useState(false);
+  const [cuposProveedor, setCuposProveedor] = useState<number | null>(null);
+
+  useEffect(() => {
+    waitlistAPI.contador()
+      .then(d => setCuposProveedor(Math.max(0, CUPOS_0_COMISION - d.proveedores)))
+      .catch(() => {});
+  }, []);
 
   function handleMarkerClick(espacio: Espacio) {
     setSelectedEspacio(espacio);
@@ -630,7 +640,13 @@ export default function HomePage() {
             {/* Banner Waitlist */}
             <div style={{ background: 'linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%)', borderBottom: '1px solid #FDBA74', padding: '.75rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.75rem', flexWrap: 'wrap', textAlign: 'center' }}>
               <span style={{ fontSize: '.88rem', color: '#92400E', fontWeight: 600 }}>
-                🚀 Estamos en lanzamiento — ¡Anotate a la lista de espera y accedé a beneficios exclusivos!
+                {cuposProveedor === null ? (
+                  <>🚀 Estamos en lanzamiento — ¡Anotate a la lista de espera y accedé a beneficios exclusivos!</>
+                ) : cuposProveedor > 0 ? (
+                  <>🚀 Quedan <strong>{cuposProveedor} cupo{cuposProveedor !== 1 ? 's' : ''}</strong> con <strong>0% de comisión</strong> para los primeros {CUPOS_0_COMISION} proveedores — anotate antes de que se agoten</>
+                ) : (
+                  <>🚀 Los cupos con 0% de comisión ya se agotaron — anotate igual, vas a ser de los primeros en enterarte cuando abramos tu zona</>
+                )}
               </span>
               <a href="/es/waitlist" style={{ display: 'inline-block', background: 'var(--orange)', color: '#fff', fontWeight: 800, fontSize: '.82rem', padding: '.35rem .9rem', borderRadius: 99, textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0 }}>
                 Anotarme →
