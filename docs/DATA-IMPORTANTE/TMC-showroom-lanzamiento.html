@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Showroom TMC — Plan de Lanzamiento</title>
+<style>
+:root{
+  --mint:#a8e6cf; --mint-d:#4d9d7c;
+  --lav:#c4b5fd; --lav-d:#6d4fc9;
+  --peach:#fed7aa; --peach-d:#c2691a;
+  --sky:#bae6fd; --sky-d:#0369a1;
+  --rose:#fecdd3; --rose-d:#be123c;
+  --van:#fef3c7; --van-d:#92651a;
+  --text:#1e293b; --text2:#475569; --text3:#94a3b8;
+  --border:#e2e8f0; --bg:#fbfaf7; --white:#fff;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14.5px;line-height:1.6;}
+
+.header{background:linear-gradient(135deg,#fef3c7 0%,#fed7aa 45%,#fecdd3 100%);padding:40px 48px 30px;}
+.hl{font-size:1rem;font-weight:800;color:var(--peach-d);letter-spacing:.08em;text-transform:uppercase;}
+.ht{font-size:2rem;font-weight:900;color:var(--text);margin:8px 0 6px;letter-spacing:-.5px;}
+.hs{color:var(--text2);font-size:.9rem;max-width:60ch;}
+.hchips{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;}
+.chip{background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.7);border-radius:20px;padding:5px 14px;font-size:.75rem;color:var(--text2);font-weight:600;}
+.chip strong{color:var(--text);}
+
+.tabs{position:sticky;top:0;z-index:10;background:var(--white);border-bottom:1px solid var(--border);display:flex;gap:2px;padding:0 40px;overflow-x:auto;}
+.tab-btn{border:none;background:none;padding:16px 18px;font-size:.85rem;font-weight:700;color:var(--text3);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:.15s;font-family:inherit;}
+.tab-btn:hover{color:var(--text2);}
+.tab-btn.active{color:var(--text);border-bottom-color:var(--peach-d);}
+
+.content{max-width:920px;margin:0 auto;padding:40px 40px 90px;}
+.pane{display:none;}
+.pane.active{display:block;animation:fade .25s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+h2.sec-title{font-size:1.3rem;font-weight:900;margin-bottom:6px;}
+p.sec-sub{color:var(--text3);font-size:.82rem;margin-bottom:28px;}
+
+/* slogans */
+.slogan-featured{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:36px;}
+.slogan-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px 20px;border-left:5px solid var(--peach);}
+.slogan-card.mint{border-left-color:var(--mint);}
+.slogan-card.lav{border-left-color:var(--lav);}
+.slogan-card.sky{border-left-color:var(--sky);}
+.slogan-card.rose{border-left-color:var(--rose);}
+.slogan-num{font-size:.68rem;font-weight:800;color:var(--text3);letter-spacing:.05em;margin-bottom:6px;}
+.slogan-txt{font-size:1rem;font-weight:700;line-height:1.35;color:var(--text);}
+
+.cat-block{margin-bottom:26px;}
+.cat-head{font-size:.85rem;font-weight:800;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.cat-head .dot{width:10px;height:10px;border-radius:50%;}
+.cat-list{display:flex;flex-direction:column;gap:6px;}
+.cat-item{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:.87rem;color:var(--text);}
+.cat-item b{color:var(--text3);font-weight:700;margin-right:6px;font-size:.78rem;}
+
+/* brief */
+.brief-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:30px;}
+@media(max-width:700px){.brief-grid{grid-template-columns:1fr;}}
+.brief-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:20px 22px;}
+.brief-card h3{font-size:.82rem;text-transform:uppercase;letter-spacing:.05em;color:var(--peach-d);margin-bottom:10px;}
+.brief-card p, .brief-card li{font-size:.87rem;color:var(--text2);line-height:1.55;}
+.brief-card ul{padding-left:18px;margin-top:4px;}
+.brief-card .num{font-size:1.5rem;font-weight:900;color:var(--text);}
+
+table.plan{width:100%;border-collapse:collapse;background:var(--white);border-radius:14px;overflow:hidden;border:1px solid var(--border);margin-bottom:10px;}
+table.plan th{background:var(--van);color:var(--van-d);text-align:left;padding:10px 14px;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;}
+table.plan td{padding:10px 14px;font-size:.83rem;border-top:1px solid var(--border);color:var(--text2);vertical-align:top;}
+table.plan tr:hover td{background:#fafafa;}
+
+.risk{display:flex;gap:12px;background:var(--white);border:1px solid var(--border);border-left:4px solid var(--rose);border-radius:10px;padding:14px 16px;margin-bottom:10px;}
+.risk .ico{font-size:1.1rem;}
+.risk b{display:block;font-size:.87rem;margin-bottom:3px;}
+.risk span.mit{display:block;font-size:.8rem;color:var(--text2);margin-top:4px;}
+.risk span.mit b{display:inline;font-size:.8rem;color:var(--mint-d);}
+
+/* countdown */
+.week{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:20px 22px;margin-bottom:14px;position:relative;padding-left:26px;}
+.week::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;border-radius:6px 0 0 6px;background:var(--sky);}
+.week.w2::before{background:var(--mint);}
+.week.w3::before{background:var(--lav);}
+.week.w4::before{background:var(--peach);}
+.week.open::before{background:var(--rose);}
+.week-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;flex-wrap:wrap;gap:6px;}
+.week-title{font-weight:800;font-size:.95rem;}
+.week-date{font-size:.72rem;color:var(--text3);font-weight:700;background:var(--bg);padding:3px 10px;border-radius:12px;}
+.week ul{padding-left:18px;}
+.week li{font-size:.85rem;color:var(--text2);margin-bottom:4px;}
+
+/* mockup */
+.mockup-note{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin-bottom:22px;}
+.mockup-link{display:inline-flex;align-items:center;gap:8px;background:var(--text);color:#fff;padding:10px 18px;border-radius:10px;text-decoration:none;font-weight:700;font-size:.85rem;margin-top:12px;}
+.mockup-link:hover{opacity:.88;}
+.piece-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;}
+.piece{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px;}
+.piece .pt{font-weight:800;font-size:.88rem;margin-bottom:6px;}
+.piece .pd{font-size:.8rem;color:var(--text2);line-height:1.5;}
+
+/* reels */
+.reel{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:20px 22px;margin-bottom:16px;}
+.reel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.reel-title{font-weight:800;font-size:.95rem;}
+.reel-len{font-size:.72rem;color:var(--text3);font-weight:700;background:var(--bg);padding:3px 10px;border-radius:12px;}
+.shot{display:flex;gap:10px;padding:7px 0;border-top:1px dashed var(--border);}
+.shot:first-of-type{border-top:none;}
+.shot .sn{font-size:.72rem;font-weight:800;color:var(--text3);min-width:70px;}
+.shot .sd{font-size:.85rem;color:var(--text2);}
+.shot .sd em{color:var(--peach-d);font-style:normal;font-weight:700;}
+
+/* invitacion */
+.msg-box{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:26px 28px;position:relative;}
+.msg-box::before{content:"✉️";position:absolute;top:-14px;left:22px;background:var(--van);border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:1rem;border:1px solid var(--border);}
+.msg-text{font-size:.92rem;line-height:1.75;color:var(--text);white-space:pre-line;}
+.msg-adjust{margin-top:18px;font-size:.82rem;color:var(--text2);background:var(--bg);padding:12px 16px;border-radius:10px;}
+
+.print-btn{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;border:none;border-radius:50px;padding:12px 20px;font-size:.85rem;font-weight:700;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.18);z-index:20;}
+.print-btn:hover{opacity:.9;}
+
+footer{background:#fbfaf7;border-top:1px solid var(--border);color:var(--text3);text-align:center;padding:22px;font-size:.72rem;}
+
+@media print{
+  .tabs, .print-btn{display:none;}
+  .pane{display:block !important;page-break-before:always;}
+  .pane:first-of-type{page-break-before:auto;}
+}
+@media(max-width:600px){
+  .header{padding:26px 20px 20px;}
+  .content{padding:24px 18px 60px;}
+  .tabs{padding:0 12px;}
+  .brief-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="hl">☕ Showroom TMC</div>
+  <div class="ht">Plan de Lanzamiento — Café gratis, se vende espacio</div>
+  <div class="hs">TodasMisCosas.com · Espacio en la casa de Guille (sin costo de alquiler) · Apertura estimada <strong>29 sep 2026</strong></div>
+  <div class="hchips">
+    <div class="chip"><strong>30</strong> slogans creados</div>
+    <div class="chip"><strong>9</strong> preseleccionados</div>
+    <div class="chip">Campaign brief <strong>4 semanas</strong></div>
+    <div class="chip">Cuenta regresiva <strong>de producción</strong></div>
+  </div>
+</div>
+
+<div class="tabs" id="tabs">
+  <button class="tab-btn active" data-tab="slogans">🎤 Slogans</button>
+  <button class="tab-btn" data-tab="brief">📋 Brief de campaña</button>
+  <button class="tab-btn" data-tab="countdown">📅 Cuenta regresiva</button>
+  <button class="tab-btn" data-tab="mockup">🎨 Dirección de arte</button>
+  <button class="tab-btn" data-tab="reels">🎬 Reels</button>
+  <button class="tab-btn" data-tab="invitacion">✉️ Invitación B2B</button>
+</div>
+
+<div class="content">
+
+  <!-- ================= SLOGANS ================= -->
+  <div class="pane active" id="pane-slogans">
+    <h2 class="sec-title">30 slogans, 5 temáticas</h2>
+    <p class="sec-sub">El café es la excusa — todos empujan al mismo lugar: hacer espacio en tu vida.</p>
+
+    <div class="cat-head"><span class="dot" style="background:var(--peach)"></span>Preseleccionados para cartelería / redes</div>
+    <div class="slogan-featured">
+      <div class="slogan-card"><div class="slogan-num">#1 · Espacio</div><div class="slogan-txt">"Entrá vos. Que tus cosas se queden ahí afuera."</div></div>
+      <div class="slogan-card"><div class="slogan-num">#3 · Espacio</div><div class="slogan-txt">"Una medialuna ocupa 8 cm². Tus trastos, un cuarto entero."</div></div>
+      <div class="slogan-card mint"><div class="slogan-num">#9 · Pensar</div><div class="slogan-txt">"Diez minutos de café, un año de espacio recuperado."</div></div>
+      <div class="slogan-card lav"><div class="slogan-num">#13 · Crear</div><div class="slogan-txt">"Imaginá ese cuarto vacío. Ahora imaginá qué harías con él."</div></div>
+      <div class="slogan-card sky"><div class="slogan-num">#19 · Humor</div><div class="slogan-txt">"Entrá por el café, salí sabiendo dónde metiste el arbolito de Navidad."</div></div>
+      <div class="slogan-card sky"><div class="slogan-num">#20 · Humor</div><div class="slogan-txt">"Café gratis para quien tenga algo escondido debajo de la cama. O sea, todos."</div></div>
+      <div class="slogan-card rose"><div class="slogan-num">#23 · Directo</div><div class="slogan-txt">"Somos el único lugar donde entrar te hace tener menos cosas."</div></div>
+      <div class="slogan-card rose"><div class="slogan-num">#27 · Directo</div><div class="slogan-txt">"Entrá a tomar algo. Salí con un lugar donde poner todo."</div></div>
+      <div class="slogan-card rose"><div class="slogan-num">#30 · Directo</div><div class="slogan-txt">"Gratis el café. Impagable, dejar de tropezar con tus propias cosas."</div></div>
+    </div>
+
+    <div class="cat-block">
+      <div class="cat-head"><span class="dot" style="background:var(--peach)"></span>Juego con el espacio</div>
+      <div class="cat-list">
+        <div class="cat-item"><b>02</b>"El café es gratis. El espacio que te devolvemos, también vale."</div>
+        <div class="cat-item"><b>04</b>"Achicá tu casa un rato — quedate a tomar un café."</div>
+        <div class="cat-item"><b>05</b>"Lo único que tenés que guardar acá es el vasito."</div>
+        <div class="cat-item"><b>06</b>"Entre estas paredes cabe lo que en tu casa ya no."</div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <div class="cat-head"><span class="dot" style="background:var(--mint)"></span>Invitación a pensar</div>
+      <div class="cat-list">
+        <div class="cat-item"><b>07</b>"Sentate. Pensá qué hay en tu placard que no ves hace un año."</div>
+        <div class="cat-item"><b>08</b>"El café te despierta. Lo que hablamos acá, te reordena."</div>
+        <div class="cat-item"><b>10</b>"¿Y si esa bici del pasillo valiera un cortado gratis para siempre?"</div>
+        <div class="cat-item"><b>11</b>"Vení a pensar en voz alta lo que hace rato pensás solo."</div>
+        <div class="cat-item"><b>12</b>"No vendemos café. Vendemos la pregunta que te vas a hacer después."</div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <div class="cat-head"><span class="dot" style="background:var(--lav)"></span>Invitación a crear / imaginar</div>
+      <div class="cat-list">
+        <div class="cat-item"><b>14</b>"Un espacio libre es un lienzo en blanco. Nosotros ponemos el café."</div>
+        <div class="cat-item"><b>15</b>"Diseñá tu casa de nuevo, sin tirar nada."</div>
+        <div class="cat-item"><b>16</b>"Acá no se guarda café. Se guardan ideas de lo que podría ser tu living."</div>
+        <div class="cat-item"><b>17</b>"Tu depósito ideal existe. Empieza en esta mesa, con leche y espuma."</div>
+        <div class="cat-item"><b>18</b>"Creá el espacio que todavía no tenés."</div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <div class="cat-head"><span class="dot" style="background:var(--sky)"></span>Divertidos / con sonrisa</div>
+      <div class="cat-list">
+        <div class="cat-item"><b>21</b>"La medialuna es gratis. La excusa para no ordenar el garage, se termina hoy."</div>
+        <div class="cat-item"><b>22</b>"Tomate un café con nosotros. Dejá el sillón de tu tía en otro lado."</div>
+        <div class="cat-item"><b>24</b>"Café con leche, charla sin humo: ¿qué es eso que no usás hace dos años?"</div>
+        <div class="cat-item"><b>25</b>"Veniamos por el espacio, nos quedamos por las medialunas. O al revés."</div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <div class="cat-head"><span class="dot" style="background:var(--rose)"></span>Directos / cierre de experiencia</div>
+      <div class="cat-list">
+        <div class="cat-item"><b>26</b>"No es una cafetería. Es la sala de espera de tu casa más ordenada."</div>
+        <div class="cat-item"><b>28</b>"El café dura cinco minutos. Lo que resolvés acá, dura años."</div>
+        <div class="cat-item"><b>29</b>"Esto no es marketing de café. Es la puerta de entrada a más lugar en tu vida."</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= BRIEF ================= -->
+  <div class="pane" id="pane-brief">
+    <h2 class="sec-title">Campaign brief — lanzamiento del showroom</h2>
+    <p class="sec-sub">Objetivo, audiencia, mensajes, canales y métricas para las 4 semanas post-apertura.</p>
+
+    <div class="brief-grid">
+      <div class="brief-card">
+        <h3>Objetivo primario</h3>
+        <p>Convertir tráfico del local en registros calificados de TMC.</p>
+        <div class="num">150 registros</div>
+        <p>en 4 semanas desde la apertura (~30% de conversión visita → registro)</p>
+      </div>
+      <div class="brief-card">
+        <h3>Objetivos secundarios</h3>
+        <ul>
+          <li>500+ visitas físicas en el período de lanzamiento</li>
+          <li>Recall espontáneo de marca TMC en la zona</li>
+          <li>Contenido reutilizable (fotos, testimonios) para prospecting a consorcios/inmobiliarias</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="brief-grid">
+      <div class="brief-card">
+        <h3>Audiencia primaria</h3>
+        <p>Vecino/transeúnte de la zona, 28-55 años, depto chico o casa con objetos acumulados. Entra por el café sin saber qué es TMC. Etapa: desconocimiento total.</p>
+      </div>
+      <div class="brief-card">
+        <h3>Audiencia secundaria</h3>
+        <p>Administradores de consorcio y agentes inmobiliarios ya relevados en la campaña de prospecting. El local les da un lugar físico y tangible para llevar prospectos.</p>
+      </div>
+    </div>
+
+    <div class="brief-card" style="margin-bottom:30px;">
+      <h3>Mensaje central</h3>
+      <p style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:14px;">No vendés tu tiempo por un café gratis — descubrís cuánto vale el lugar que no sabías que tenías.</p>
+      <ul>
+        <li><b>Dolor → alivio:</b> tenés cosas guardadas en cualquier lado, hay alguien cerca con lugar de sobra</li>
+        <li><b>Confianza:</b> no es una app más, es un local real en tu barrio</li>
+        <li><b>Oportunidad económica:</b> ese cuarto que no usás puede pagarte algo</li>
+        <li><b>Bajo compromiso:</b> veniamos por el café, nos vamos con una cuenta creada</li>
+      </ul>
+    </div>
+
+    <h3 style="font-size:.95rem;margin-bottom:12px;">Estrategia de canales</h3>
+    <table class="plan">
+      <tr><th>Canal</th><th>Formato</th><th>Prioridad</th></tr>
+      <tr><td>Local físico</td><td>Cartelería, mesa de registro, QR en cada mesa</td><td>Must</td></tr>
+      <tr><td>Instagram/Facebook orgánico</td><td>Reels, historias, UGC de visitantes</td><td>Must</td></tr>
+      <tr><td>Redes pagas geo-targeted</td><td>Ads 2-3km alrededor del local</td><td>Should</td></tr>
+      <tr><td>Prensa/radio de barrio</td><td>Nota o mención puntual</td><td>Should</td></tr>
+      <tr><td>Outreach a consorcios/inmobiliarias</td><td>Invitación personalizada al local</td><td>Must</td></tr>
+      <tr><td>Volanteo en la cuadra</td><td>Flyer con QR</td><td>Nice-to-have</td></tr>
+    </table>
+
+    <h3 style="font-size:.95rem;margin:26px 0 12px;">Métricas de éxito</h3>
+    <table class="plan">
+      <tr><th>Métrica</th><th>Meta</th><th>Cómo se mide</th></tr>
+      <tr><td>Visitas al showroom</td><td>500+ en 4 semanas</td><td>Conteo manual en mostrador</td></tr>
+      <tr><td>Registros calificados</td><td>150 (30% conversión)</td><td>Formulario vinculado al backend TMC</td></tr>
+      <tr><td>Costo por lead</td><td>—</td><td>(café + medialunas + cartelería) / registros — sin alquiler</td></tr>
+      <tr><td>Reuniones cerradas B2B</td><td>3-5</td><td>Seguimiento manual del outreach</td></tr>
+    </table>
+
+    <h3 style="font-size:.95rem;margin:26px 0 12px;">Riesgos y mitigación</h3>
+    <div class="risk"><div class="ico">⚠️</div><div><b>Entra por el café, se va sin registrarse</b><span class="mit"><b>Mitigación:</b> registro &lt;2 min, incentivo extra (sorteo semanal)</span></div></div>
+    <div class="risk"><div class="ico">⚠️</div><div><b>Espacio doméstico sin capacidad para el tráfico esperado</b><span class="mit"><b>Mitigación:</b> confirmar con Guille baño, accesibilidad y horarios antes de imprimir cartelería</span></div></div>
+    <div class="risk"><div class="ico">⚠️</div><div><b>Buen alcance en redes pero poca conversión de proveedores de espacio</b><span class="mit"><b>Mitigación:</b> no depender solo del tráfico espontáneo — activar el outreach directo a consorcios/inmobiliarias en paralelo</span></div></div>
+  </div>
+
+  <!-- ================= COUNTDOWN ================= -->
+  <div class="pane" id="pane-countdown">
+    <h2 class="sec-title">Cuenta regresiva de producción</h2>
+    <p class="sec-sub">Desde hoy (29 ago) hasta la apertura estimada (29 sep 2026). Ajustar semanas si la fecha exacta cambia.</p>
+
+    <div class="week">
+      <div class="week-head"><span class="week-title">Semana 1</span><span class="week-date">29 ago – 4 sep</span></div>
+      <ul>
+        <li>Validar con Guille el slogan final de vidriera y el mockup de dirección de arte</li>
+        <li>Confirmar capacidad física del espacio: tráfico esperado, baño, accesibilidad</li>
+        <li>Definir el formulario de registro y su conexión al backend de TMC (proveedor vs. cliente)</li>
+      </ul>
+    </div>
+
+    <div class="week w2">
+      <div class="week-head"><span class="week-title">Semana 2</span><span class="week-date">5 – 11 sep</span></div>
+      <ul>
+        <li>Producción de cartelería (vidriera, standee de mesa, menú) según mockup validado</li>
+        <li>Armar el kit de prensa de una página</li>
+        <li>Arrancar contacto con consorcios/inmobiliarias para agendar visitas post-apertura</li>
+      </ul>
+    </div>
+
+    <div class="week w3">
+      <div class="week-head"><span class="week-title">Semana 3</span><span class="week-date">12 – 18 sep</span></div>
+      <ul>
+        <li>Instalar señalética en el espacio</li>
+        <li>Grabar y publicar el primer post "teaser" (sin fecha exacta, generar intriga)</li>
+        <li>Coordinar ads geo-targeted para arrancar la semana de apertura</li>
+        <li>Enviar nota de prensa local con antelación</li>
+      </ul>
+    </div>
+
+    <div class="week w4">
+      <div class="week-head"><span class="week-title">Semana 4</span><span class="week-date">19 – 25 sep</span></div>
+      <ul>
+        <li>Soft-run interno: probar el flujo completo (entra → café → registro)</li>
+        <li>Confirmar logística diaria de insumos (compra y stock de café/medialunas)</li>
+        <li>Posts de cuenta regresiva en redes con fecha ya confirmada</li>
+      </ul>
+    </div>
+
+    <div class="week open">
+      <div class="week-head"><span class="week-title">🎉 Apertura</span><span class="week-date">26 – 29 sep</span></div>
+      <ul>
+        <li>26-28 sep: últimos ajustes, vidriera colgada, todo instalado</li>
+        <li>29 sep: apertura — arranca el calendario de 4 semanas del brief de campaña</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================= MOCKUP ================= -->
+  <div class="pane" id="pane-mockup">
+    <h2 class="sec-title">Dirección de arte</h2>
+    <p class="sec-sub">Concepto: un café que mide en m², no en ml — estética de plano/blueprint, corregida entre vitrina y mesa.</p>
+
+    <div class="mockup-note">
+      <p style="font-size:.9rem;color:var(--text2);">El mockup interactivo completo (vidriera, mesa/menú, story de Instagram) está publicado como artifact para revisión visual — pensado como propuesta, no como arte final de impresión.</p>
+      <a class="mockup-link" href="https://claude.ai/code/artifact/a1c5c00d-93e0-4ca3-8cdf-faccc280883d" target="_blank">🔗 Ver mockup interactivo</a>
+    </div>
+
+    <div class="piece-grid">
+      <div class="piece">
+        <div class="pt">🪟 Vidriera</div>
+        <div class="pd">Decal de vereda con slogan grande de humor (#6 o #9) + tag rojo "☕ café gratis adentro". El texto grande frena al que camina, el tag resuelve la duda a distancia.</div>
+      </div>
+      <div class="piece">
+        <div class="pt">🪑 Mesa / standee</div>
+        <div class="pd">Parado en cada mesa: dato duro ("una medialuna ocupa 8cm²...") + QR de registro. Apunta al momento de menor resistencia: sentado, con café en mano.</div>
+      </div>
+      <div class="piece">
+        <div class="pt">📋 Menú del día</div>
+        <div class="pd">Café y medialuna "gratis", y como último ítem: "tu placard liberado — impagable". Convierte el pitch de TMC en algo que se lee como carta, no como publicidad.</div>
+      </div>
+      <div class="piece">
+        <div class="pt">📱 Story de Instagram</div>
+        <div class="pd">Mismo sistema visual que la vidriera, slogan reflexivo (#4) porque en redes hay más tiempo de lectura que caminando por la vereda.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= REELS ================= -->
+  <div class="pane" id="pane-reels">
+    <h2 class="sec-title">Guiones de Reels — semana 1</h2>
+    <p class="sec-sub">Cuatro piezas cortas, grabables con el celular en el showroom.</p>
+
+    <div class="reel">
+      <div class="reel-head"><span class="reel-title">1 · El arbolito de Navidad</span><span class="reel-len">15-20 seg · humor</span></div>
+      <div class="shot"><span class="sn">Toma 1 (2s)</span><span class="sd">Primer plano de una taza de café humeante en el mostrador. <em>Texto: "Entrá por el café..."</em></span></div>
+      <div class="shot"><span class="sn">Toma 2 (3s)</span><span class="sd">Alguien completando el registro rápido en QR/tablet</span></div>
+      <div class="shot"><span class="sn">Toma 3 (4s)</span><span class="sd">Corte a un placard/balcón desordenado típico. <em>Texto: "...salí sabiendo dónde metiste el arbolito de Navidad"</em></span></div>
+      <div class="shot"><span class="sn">Cierre (3s)</span><span class="sd">Logo TMC + dirección y horario. Audio: trend liviano/cómico, sin voz en off</span></div>
+    </div>
+
+    <div class="reel">
+      <div class="reel-head"><span class="reel-title">2 · Debajo de la cama</span><span class="reel-len">10-14 seg · humor directo</span></div>
+      <div class="shot"><span class="sn">Toma 1 (3s)</span><span class="sd">Mostrador, alguien sirviendo café. <em>Texto: "Café gratis para quien tenga algo escondido debajo de la cama"</em></span></div>
+      <div class="shot"><span class="sn">Toma 2 (3s)</span><span class="sd">Pausa, gente en el local mirándose entre sí, sonriendo. <em>Texto: "O sea, vos"</em></span></div>
+      <div class="shot"><span class="sn">Toma 3 (3s)</span><span class="sd">CTA con dirección y horario. Audio: silencio + "ding" cómico en el corte</span></div>
+    </div>
+
+    <div class="reel">
+      <div class="reel-head"><span class="reel-title">3 · El dato duro</span><span class="reel-len">10-14 seg · reflexivo</span></div>
+      <div class="shot"><span class="sn">Toma 1 (3s)</span><span class="sd">Primer plano extremo de una medialuna. <em>Texto: "Esto ocupa 8 cm²"</em></span></div>
+      <div class="shot"><span class="sn">Toma 2 (3s)</span><span class="sd">Corte a plano abierto de un cuarto/garage lleno de cosas. <em>Texto: "Esto, un cuarto entero"</em></span></div>
+      <div class="shot"><span class="sn">Toma 3 (4s)</span><span class="sd">Logo + "TMC: encontrá quién tiene el lugar que a vos te sobra o falta". Audio: instrumental, tono más serio</span></div>
+    </div>
+
+    <div class="reel">
+      <div class="reel-head"><span class="reel-title">4 · Detrás de escena</span><span class="reel-len">estilo vlog · prueba social</span></div>
+      <div class="shot"><span class="sn">Contenido</span><span class="sd">Día en el showroom: la cafetera, gente entrando, alguien completando el registro, charla corta sin guion ("¿por qué viniste?")</span></div>
+      <div class="shot"><span class="sn">Cierre</span><span class="sd"><em>Texto: "Día 3. Ya son [X] personas."</em> Objetivo: humanizar, no vender directamente</span></div>
+    </div>
+  </div>
+
+  <!-- ================= INVITACION ================= -->
+  <div class="pane" id="pane-invitacion">
+    <h2 class="sec-title">Invitación a consorcios e inmobiliarias</h2>
+    <p class="sec-sub">Mensaje base para la audiencia secundaria B2B — administradores de consorcio y agentes inmobiliarios.</p>
+
+    <div class="msg-box">
+      <div class="msg-text">Hola [Nombre], ¿cómo va?
+
+Te escribo porque abrimos un showroom de TMC acá cerca [dirección/zona] — un lugar físico donde mostramos cómo funciona la plataforma de espacio entre vecinos, con café y medialunas de cortesía.
+
+Sé que como [administrador de consorcio / agente inmobiliario] seguramente te cruzás todo el tiempo con gente que necesita resolver el tema del espacio — bauleras que sobran, mudanzas con cosas de más, vecinos preguntando dónde guardar algo. Te quería invitar a pasar vos, o mandar a algún cliente tuyo, a tomar un café y ver el modelo en persona. Sin vueltas, 15 minutos.
+
+[Días y horario del showroom]. Cualquier día te esperamos — avisame si querés que coordinemos un horario puntual.
+
+Abrazo, [firma]</div>
+    </div>
+
+    <div class="msg-adjust">Ajustable en tono según si es alguien ya contactado antes o un contacto nuevo frío — para nuevos, agregar una línea de cómo se llegó a su nombre/edificio antes del pitch. Reusa la base de contactos de la campaña de prospecting a consorcios/inmobiliarias/mudanzas.</div>
+  </div>
+
+</div>
+
+<button class="print-btn" onclick="window.print()">🖨️ Exportar / Imprimir</button>
+
+<footer>TodasMisCosas.com · Documento generado 29 ago 2026 · Showroom de lanzamiento</footer>
+
+<script>
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('pane-'+btn.dataset.tab).classList.add('active');
+  });
+});
+</script>
+
+</body>
+</html>

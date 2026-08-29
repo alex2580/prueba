@@ -2801,3 +2801,13 @@ Trabajo de research, marketing y arquitectura que no tocó código de producto (
 ## Presentación para proveedores por Zoom · 27 Ago 2026
 
 Slide deck navegable (11 pantallas, HTML+PDF, `docs/DATA-IMPORTANTE/TMC-TME-presentacion-proveedores-*`) para presentar TMC + TME a prospectos nuevos por videollamada, pensado para el primer contacto con una red de inmobiliarias/alquileres con volumen a nivel país. Explica en lenguaje simple qué es cada plataforma, por qué le sirve puntualmente a una red de inmobiliarias (espacio ocioso, guardado para sus propios clientes en mudanza, eventos de la red) y cómo empezar. Dos variantes de la slide de ingresos: una genérica (sin número, deja abierta la negociación por volumen) y otra con el % explícito (85%/15% TMC, 100%/0% TME).
+
+## Showroom TMC — plan de lanzamiento · 29 Ago 2026
+
+Plan completo (`docs/DATA-IMPORTANTE/TMC-showroom-lanzamiento.html`) para un showroom físico en un espacio libre de la casa de Guille (sin costo de alquiler) que regala café y medialunas para captar registros de TMC — no vende café, vende la experiencia de "hacer espacio". Apertura estimada: **29 sep 2026**.
+
+- 30 slogans creativos en 5 temáticas (espacio, reflexión, creatividad, humor, directo), 9 preseleccionados para cartelería/redes.
+- Campaign brief completo: objetivo de 150 registros calificados en 4 semanas, audiencia primaria (vecinos de la zona) y secundaria (consorcios/inmobiliarias), estrategia de canales, calendario semana a semana, métricas y riesgos.
+- Cuenta regresiva de producción semana a semana desde hoy hasta la apertura.
+- Mockup de dirección de arte (vidriera, mesa/menú, story de Instagram) con estética "plano/blueprint" — sin validar todavía con Guille.
+- 4 guiones de Reels y mensaje de invitación para consorcios/inmobiliarias, listos para usar.
