@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC + TME — Propuesta de Analítica Web</title>
+<style>
+:root{
+  --gold:#f59e0b;--navy:#0f172a;--text:#1e293b;--text2:#475569;--text3:#94a3b8;
+  --border:#e2e8f0;--bg:#f8fafc;--white:#fff;--orange:#e8622a;--green:#059669;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:13.5px;line-height:1.65;}
+
+.header{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 55%,#1e293b 100%);padding:36px 48px 28px;}
+.hl{font-size:1.1rem;font-weight:900;color:var(--gold);letter-spacing:.06em;}
+.ht{font-size:1.6rem;font-weight:900;color:#f1f5f9;margin:6px 0 4px;letter-spacing:-.3px;}
+.hs{color:#64748b;font-size:.83rem;}
+.hchips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+.chip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:20px;padding:4px 14px;font-size:.72rem;color:#94a3b8;}
+.chip strong{color:#f1f5f9;}
+
+.content{max-width:960px;margin:0 auto;padding:40px 48px 80px;}
+.sec{font-size:1rem;font-weight:800;color:var(--text);margin:34px 0 14px;}
+.sec:first-child{margin-top:0;}
+.ssub{font-size:.78rem;color:var(--text3);margin:-10px 0 16px;}
+
+.alert{background:#fefce8;border:1px solid #fde047;border-left:4px solid #eab308;border-radius:12px;padding:12px 16px;font-size:.78rem;color:#713f12;margin-bottom:24px;}
+.alert strong{color:#422006;}
+
+.note{background:#eff6ff;border:1px solid #bfdbfe;border-left:4px solid #3b82f6;border-radius:12px;padding:14px 18px;font-size:.8rem;color:#1e3a5f;margin-bottom:24px;line-height:1.7;}
+.note strong{color:#0f172a;}
+
+table{width:100%;border-collapse:collapse;background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:8px;}
+th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top;}
+th{background:#f1f5f9;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);}
+td{font-size:.79rem;color:var(--text2);}
+td.k{font-weight:700;color:var(--navy);white-space:nowrap;}
+td code{font-family:'Consolas','Monaco',monospace;font-size:.76rem;background:#f1f5f9;padding:1px 5px;border-radius:4px;color:var(--orange);}
+tr:last-child td{border-bottom:none;}
+
+.cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
+.card-t{font-weight:800;font-size:.85rem;color:var(--text);margin-bottom:6px;}
+.card-d{font-size:.78rem;color:var(--text2);line-height:1.6;}
+
+.reco{background:linear-gradient(135deg,#ecfdf5,#f0fdfa);border:1.5px solid #6ee7b7;border-radius:16px;padding:22px 26px;margin-bottom:20px;}
+.reco-tag{display:inline-block;background:var(--green);color:#fff;font-size:.68rem;font-weight:800;letter-spacing:.05em;padding:3px 10px;border-radius:20px;margin-bottom:10px;}
+.reco-t{font-size:1.02rem;font-weight:800;color:#065f46;margin-bottom:8px;}
+.reco-d{font-size:.83rem;color:#065f46;line-height:1.7;}
+.reco-d strong{color:#064e3b;}
+
+ul.dec{list-style:none;}
+ul.dec li{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:8px;font-size:.81rem;color:var(--text2);}
+ul.dec li strong{color:var(--text);}
+
+.tag{font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:5px;display:inline-block;}
+.t-ok{background:#dcfce7;color:#166534;}
+.t-pend{background:#fef9c3;color:#854d0e;}
+.t-no{background:#fee2e2;color:#991b1b;}
+
+.qbox{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px 22px;}
+.qbox ol{margin-left:18px;}
+.qbox li{font-size:.82rem;color:var(--text2);margin-bottom:10px;line-height:1.6;}
+.qbox li strong{color:var(--text);}
+
+footer{background:var(--navy);color:#334155;text-align:center;padding:20px;font-size:.72rem;}
+
+@media(max-width:700px){
+  .header{padding:22px 16px 18px;}
+  .content{padding:24px 14px 48px;}
+  .cards{grid-template-columns:1fr;}
+  table{font-size:.72rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="hl">PROPUESTA · PARA REVISAR CON GUILLE</div>
+  <div class="ht">Analítica web: TMC + TME</div>
+  <div class="hs">Cuántas visitas tenemos, cuánto tiempo se quedan y qué secciones miran más — sin nada automático corriendo de fondo.</div>
+  <div class="hchips">
+    <span class="chip"><strong>Estado:</strong> nada implementado todavía</span>
+    <span class="chip"><strong>Alcance:</strong> TodasMisCosas.com + TodosMisEventos</span>
+    <span class="chip"><strong>Modelo:</strong> consulta on-demand, sin reportes automáticos</span>
+    <span class="chip">2 sep 2026</span>
+  </div>
+</div>
+
+<div class="content">
+
+  <div class="sec">Qué queremos medir</div>
+  <div class="ssub">Las 3 preguntas que disparó este pedido — hoy ninguna de las dos plataformas mide nada de esto.</div>
+  <div class="cards">
+    <div class="card">
+      <div class="card-t">📈 Visitas</div>
+      <div class="card-d">Cuánta gente entra a cada sitio, por día/semana/mes. Visitantes únicos vs. sesiones totales.</div>
+    </div>
+    <div class="card">
+      <div class="card-t">⏱️ Permanencia promedio</div>
+      <div class="card-d">Cuánto tiempo se queda una persona navegando antes de irse. Sirve para detectar páginas que "espantan".</div>
+    </div>
+    <div class="card">
+      <div class="card-t">🗺️ Secciones más visitadas</div>
+      <div class="card-d">Qué páginas concentran el tráfico — home, buscador de espacios/eventos, detalle, publicar, etc.</div>
+    </div>
+  </div>
+
+  <div class="sec">Qué significa "on-demand" acá</div>
+  <div class="note">
+    Ojo con una confusión posible: para que estas 3 métricas existan, <strong>alguna pieza tiene que estar corriendo todo el tiempo en segundo plano</strong> — un script chiquito en cada página que registra "alguien entró acá" cada vez que un visitante entra. Eso es inevitable con cualquier herramienta de analítica, incluida esta propuesta.<br><br>
+    Lo que <strong>sí</strong> es 100% opcional y queda tal como lo pediste es la parte de <strong>reportes y alertas automáticas</strong>: nada te va a mandar un email semanal, ningún cron va a generar un PDF solo, ningún agente de IA va a estar mirando los números por su cuenta. Vos (o Guille) entran a ver los datos <strong>cuando quieren</strong>, ni un minuto antes.
+  </div>
+
+  <div class="sec">Opciones evaluadas</div>
+  <div class="ssub">Comparadas contra lo que ya sabemos de TMC/TME: VPS propio en Hostinger, stack Next.js + Express + MySQL, cultura conservadora con datos personales (ver el enfoque con Didit/RENAPER).</div>
+  <table>
+    <tr>
+      <th>Opción</th>
+      <th>Dónde vive la data</th>
+      <th>Mide las 3 cosas</th>
+      <th>Costo</th>
+      <th>Esfuerzo</th>
+      <th>Contras</th>
+    </tr>
+    <tr>
+      <td class="k">Google Analytics 4</td>
+      <td>Servidores de Google (afuera)</td>
+      <td><span class="tag t-ok">SÍ</span> — de sobra, incluye mucho más</td>
+      <td>Gratis</td>
+      <td>Bajo — 1 script + variable de entorno</td>
+      <td>Sale de nuestra infra, cookies de terceros, probablemente pide banner de consentimiento, dashboard sobrecargado para lo que necesitamos</td>
+    </tr>
+    <tr>
+      <td class="k">Microsoft Clarity</td>
+      <td>Servidores de Microsoft (afuera)</td>
+      <td><span class="tag t-ok">SÍ</span> — sesiones, páginas/sesión, tiempo activo</td>
+      <td>Gratis</td>
+      <td>Bajo — 1 script, ni siquiera necesita a Guille</td>
+      <td>Mismo tema de datos afuera; el fuerte de Clarity son heatmaps y grabaciones de sesión, no un reporte numérico prolijo</td>
+    </tr>
+    <tr>
+      <td class="k">Umami (self-hosted)</td>
+      <td><strong>Nuestro VPS Hostinger</strong></td>
+      <td><span class="tag t-ok">SÍ</span> — pageviews, sesiones, duración promedio, páginas top, todo out-of-the-box</td>
+      <td>Gratis (open source, MIT)</td>
+      <td>Medio — Guille tiene que levantar un contenedor Docker + Postgres nuevo en el VPS</td>
+      <td>Requiere mantenimiento mínimo de un servicio más corriendo en el VPS (actualizaciones ocasionales)</td>
+    </tr>
+    <tr>
+      <td class="k">Tabla propia + script de reporte</td>
+      <td><strong>Nuestra MySQL, junto a todo lo demás</strong></td>
+      <td><span class="tag t-pend">A MEDIAS</span> — hay que programar la duración de sesión a mano (no es trivial)</td>
+      <td>Gratis</td>
+      <td>Alto — nueva tabla, endpoint de logging, JS de tracking, y el script de reporte en sí</td>
+      <td>Reinventamos algo que las otras 3 opciones ya resuelven bien y probado; más superficie para bugs</td>
+    </tr>
+  </table>
+
+  <div class="sec">Recomendación</div>
+  <div class="reco">
+    <span class="reco-tag">SUGERENCIA</span>
+    <div class="reco-t">Umami self-hosted como base, con Microsoft Clarity de acompañamiento</div>
+    <div class="reco-d">
+      <strong>Umami</strong> responde las 3 preguntas originales (visitas, permanencia, secciones) con un dashboard simple, sin mandar un solo dato a un tercero — coherente con cómo ya venimos tratando datos de usuarios en TMC (ver la decisión de que la verificación de identidad corra 100% en infra de Didit sin que nosotros guardemos nada de más). Es gratis, liviano (~2KB de script por página) y no necesita cookies ni banner de consentimiento porque no identifica personas.<br><br>
+      <strong>Clarity</strong> lo sumaría aparte, sin costo ni infra propia, solo para lo que Umami no cubre bien: ver grabaciones de sesión y mapas de calor cuando algo específico no cierra (por ejemplo, si una sección tiene mucha visita pero poca conversión). Ya estaba en tu lista de conectores pendientes, así que esto lo resuelve de paso.<br><br>
+      Ninguna de las dos agrega automatización: el script mide en segundo plano (inevitable), pero el dashboard se abre solo cuando alguien entra a mirarlo.
+    </div>
+  </div>
+
+  <div class="sec">Qué necesitaríamos de cada uno</div>
+  <ul class="dec">
+    <li><strong>Umami:</strong> Guille — un subdominio nuevo (ej. <code>stats.todasmiscosas.com</code>) + levantar el contenedor Docker/Postgres en el VPS. Alejandro/Claude — agregar el script de tracking en <code>layout.tsx</code> de TMC y de TME (una línea, detrás de una env var para poder apagarlo fácil).</li>
+    <li><strong>Clarity:</strong> Nada de Guille. Alejandro crea la cuenta gratis en clarity.microsoft.com, y se agrega el mismo tipo de script.</li>
+    <li><strong>En ambos casos:</strong> nada se activa solo — se instala, se prueba, y quedan ahí disponibles para consultar cuando quieran. Se puede sacar en cualquier momento borrando una línea.</li>
+  </ul>
+
+  <div class="sec">Preguntas para la reunión con Guille</div>
+  <div class="qbox">
+    <ol>
+      <li><strong>¿Vale la pena el contenedor extra en el VPS</strong> por Umami, o preferimos arrancar solo con Clarity (cero infra) y evaluar Umami más adelante si hace falta más detalle?</li>
+      <li><strong>¿Instalamos en TMC y TME al mismo tiempo</strong> o probamos primero en uno de los dos un par de semanas?</li>
+      <li><strong>¿Alguna objeción legal/privacidad</strong> — aunque Umami no usa cookies ni guarda IP identificable, vale confirmarlo antes de sumar cualquier tracking, por la misma lógica conservadora que usamos con Didit.</li>
+    </ol>
+  </div>
+
+</div>
+
+<footer>TodasMisCosas.com + TodosMisEventos — Propuesta de analítica web · 2 sep 2026 · Documento de trabajo, sin implementar</footer>
+
+</body>
+</html>
