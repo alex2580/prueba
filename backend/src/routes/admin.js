@@ -66,6 +66,9 @@ router.patch('/publicaciones/:id/destacar',                ctrl.toggleDestacadoA
 // Operaciones / Finanzas
 router.get('/operaciones',                                 ctrl.getOperaciones);
 router.get('/movimientos',                                 ctrl.getMovimientos);
+router.get('/payouts',                                     ctrl.getPayoutsPendientes);
+router.get('/payouts/export',                              ctrl.exportPayouts);
+router.post('/payouts/marcar-transferido',                 ctrl.marcarPayoutTransferido);
 
 // Configuración de emails
 router.get('/email-config',                                ctrl.getEmailConfig);

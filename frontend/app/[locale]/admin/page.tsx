@@ -324,6 +324,19 @@ interface ResumenMovimientos {
   saldo_escrow: number;
 }
 
+interface PayoutPendiente {
+  id: string;
+  escrow_liberado_at: string;
+  precio_total: number;
+  escrow_neto_oferente: number | null;
+  payout_estado: string | null;
+  payout_error: string | null;
+  espacio_nombre: string;
+  oferente_id: string;
+  oferente_nombre: string;
+  oferente_cbu: string | null;
+}
+
 function tipoMovColor(tipo: string): string {
   const m: Record<string, string> = {
     pago:        'var(--mint)',
@@ -342,6 +355,98 @@ function tipoMovLabel(tipo: string): string {
     cancelacion: '↩️ Reintegro',
   };
   return m[tipo] ?? tipo;
+}
+
+function TabPayoutsPendientes({ token }: { token: string }) {
+  const [payouts, setPayouts] = useState<PayoutPendiente[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [seleccionados, setSeleccionados] = useState<Set<string>>(new Set());
+  const [marcando, setMarcando] = useState(false);
+  const [descargando, setDescargando] = useState(false);
+
+  const cargar = useCallback(() => {
+    setLoading(true);
+    fetch('/api/admin/payouts', { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then(data => setPayouts(Array.isArray(data) ? data : []))
+      .finally(() => setLoading(false));
+  }, [token]);
+
+  useEffect(() => { cargar(); }, [cargar]);
+
+  function toggle(id: string) {
+    setSeleccionados(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  }
+
+  async function descargarCSV() {
+    setDescargando(true);
+    try {
+      const res = await fetch('/api/admin/payouts/export', { headers: { Authorization: `Bearer ${token}` } });
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `tmc-pagos-proveedores-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setDescargando(false);
+    }
+  }
+
+  async function marcarTransferidos() {
+    if (!seleccionados.size) return;
+    setMarcando(true);
+    try {
+      await fetch('/api/admin/payouts/marcar-transferido', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ reserva_ids: Array.from(seleccionados) }),
+      });
+      setSeleccionados(new Set());
+      cargar();
+    } finally {
+      setMarcando(false);
+    }
+  }
+
+  if (loading) return <p style={{ color: 'var(--text3)' }}>Cargando…</p>;
+  if (!payouts.length) return null;
+
+  return (
+    <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '1rem', marginBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.75rem', flexWrap: 'wrap', gap: '.5rem' }}>
+        <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
+          🏦 Pagos pendientes a proveedores ({payouts.length})
+        </div>
+        <div style={{ display: 'flex', gap: '.5rem' }}>
+          <Button variant="secondary" size="sm" onClick={descargarCSV} disabled={descargando}>
+            {descargando ? 'Descargando…' : '⬇️ Descargar CSV'}
+          </Button>
+          <Button variant="primary" size="sm" onClick={marcarTransferidos} disabled={!seleccionados.size || marcando}>
+            {marcando ? 'Marcando…' : `Marcar transferidos (${seleccionados.size})`}
+          </Button>
+        </div>
+      </div>
+      <div style={{ display: 'grid', gap: '.5rem' }}>
+        {payouts.map(p => (
+          <label key={p.id} style={{ display: 'flex', alignItems: 'center', gap: '.6rem', fontSize: '.82rem', padding: '.5rem .6rem', borderRadius: 'var(--r1)', background: 'var(--surface2)', cursor: 'pointer' }}>
+            <input type="checkbox" checked={seleccionados.has(p.id)} onChange={() => toggle(p.id)} />
+            <span style={{ flex: 1 }}>
+              <strong>{p.oferente_nombre}</strong> — {p.espacio_nombre}
+              {!p.oferente_cbu && <span style={{ color: 'var(--red)', marginLeft: '.5rem' }}>⚠️ sin CBU/alias cargado</span>}
+              {p.payout_error && <span style={{ color: 'var(--text3)', marginLeft: '.5rem' }}>({p.payout_error})</span>}
+            </span>
+            <span style={{ fontWeight: 700 }}>{formatARS(Number(p.escrow_neto_oferente) || 0)}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function TabMovimientos({ token }: { token: string }) {
@@ -370,6 +475,8 @@ function TabMovimientos({ token }: { token: string }) {
 
   return (
     <>
+      <TabPayoutsPendientes token={token} />
+
       {/* Resumen */}
       {resumen && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '.75rem', marginBottom: '1.5rem' }}>

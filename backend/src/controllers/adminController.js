@@ -650,6 +650,81 @@ async function getMovimientos(req, res, next) {
   }
 }
 
+// Reservas con la garantía liberada pero sin transferencia automática exitosa
+// al proveedor (el intento vía Mercado Pago falla siempre hoy — ver CLAUDE.md,
+// "Decisiones de arquitectura"). Se pagan a mano por lote desde el banco.
+const PAYOUTS_PENDIENTES_SQL = `
+  SELECT r.id, r.escrow_liberado_at, r.precio_total, r.escrow_neto_oferente,
+         r.payout_estado, r.payout_error,
+         e.nombre AS espacio_nombre,
+         u.id AS oferente_id, u.nombre AS oferente_nombre, u.cbu_alias AS oferente_cbu
+  FROM reservas r
+  JOIN espacios e ON r.espacio_id = e.id
+  JOIN usuarios u ON e.oferente_id = u.id
+  WHERE r.escrow_liberado = 1
+    AND (r.payout_estado IS NULL OR r.payout_estado = 'fallido')
+  ORDER BY r.escrow_liberado_at ASC
+`;
+
+// ── GET /api/admin/payouts ──────────────────────────────────────
+async function getPayoutsPendientes(req, res, next) {
+  try {
+    const pendientes = await query(PAYOUTS_PENDIENTES_SQL);
+    res.json(pendientes);
+  } catch (err) {
+    next(err);
+  }
+}
+
+// ── GET /api/admin/payouts/export ───────────────────────────────
+// CSV agrupado por proveedor (un pago por CBU/alias, aunque tenga varias
+// reservas liberadas) listo para subir al pago por lote del home banking.
+async function exportPayouts(req, res, next) {
+  try {
+    const pendientes = await query(PAYOUTS_PENDIENTES_SQL);
+    const porProveedor = new Map();
+    for (const r of pendientes) {
+      if (!r.oferente_cbu) continue; // sin CBU/alias cargado, no se puede incluir en el archivo
+      if (!porProveedor.has(r.oferente_id)) {
+        porProveedor.set(r.oferente_id, { cbu: r.oferente_cbu, nombre: r.oferente_nombre, monto: 0, reservaIds: [] });
+      }
+      const acc = porProveedor.get(r.oferente_id);
+      acc.monto += Number(r.escrow_neto_oferente) || 0;
+      acc.reservaIds.push(r.id);
+    }
+
+    const filas = ['cbu_alias,nombre,monto,concepto'];
+    for (const { cbu, nombre, monto, reservaIds } of porProveedor.values()) {
+      const concepto = `TMC reservas ${reservaIds.join('|')}`;
+      filas.push(`${cbu},"${nombre.replace(/"/g, '')}",${monto.toFixed(2)},"${concepto}"`);
+    }
+
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="tmc-pagos-proveedores-${new Date().toISOString().slice(0, 10)}.csv"`);
+    res.send(filas.join('\n'));
+  } catch (err) {
+    next(err);
+  }
+}
+
+// ── POST /api/admin/payouts/marcar-transferido ─────────────────
+// Confirmación manual después de subir el archivo al banco.
+async function marcarPayoutTransferido(req, res, next) {
+  try {
+    const { reserva_ids } = req.body;
+    if (!Array.isArray(reserva_ids) || !reserva_ids.length) {
+      return res.status(400).json({ error: 'reserva_ids requerido' });
+    }
+    await query(
+      `UPDATE reservas SET payout_estado = 'transferido', payout_error = NULL WHERE id IN (${reserva_ids.map(() => '?').join(',')})`,
+      reserva_ids
+    );
+    res.json({ ok: true, actualizadas: reserva_ids.length });
+  } catch (err) {
+    next(err);
+  }
+}
+
 // ── GET /api/admin/email-config ────────────────────────────────
 async function getEmailConfig(req, res, next) {
   try {
@@ -704,6 +779,9 @@ module.exports = {
   updateEmailConfig,
   sincronizarPendientes,
   getMovimientos,
+  getPayoutsPendientes,
+  exportPayouts,
+  marcarPayoutTransferido,
   getAuditoriaPerfil,
   purgarChatRetencion,
   getComisiones,
