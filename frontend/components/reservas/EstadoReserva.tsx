@@ -68,6 +68,19 @@ export function EstadoReserva({ reserva, onCancelar, onArrepentirse, onPagar, on
         </div>
       )}
 
+      {reserva.qr_image && (
+        <div style={{
+          background: 'var(--surface2)', border: '1px solid var(--border)',
+          borderRadius: 'var(--r2)', padding: '.9rem 1rem',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '.5rem',
+          marginBottom: '.9rem',
+        }}>
+          <div style={{ fontSize: '.78rem', color: 'var(--text3)' }}>📱 Mostrale este QR al proveedor al llegar</div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={reserva.qr_image} alt="QR de acceso" width={160} height={160} style={{ borderRadius: 'var(--r1)' }} />
+        </div>
+      )}
+
 
       {(reserva.estado === 'pendiente' || reserva.estado === 'confirmada') && (
         <div style={{ display: 'flex', gap: '.6rem' }}>

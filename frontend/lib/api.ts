@@ -113,6 +113,9 @@ export const reservasAPI = {
 
   confirmarAcceso: (id: string, token: string) =>
     fetchAPI<{ ok: boolean; message: string }>(`/api/reservas/${id}/confirmar-acceso`, { method: 'POST' }, token),
+
+  checkinPorQR: (qrToken: string, token: string) =>
+    fetchAPI<{ ok: boolean; reserva: { id: string; espacio_nombre: string; usuario_nombre: string } }>(`/api/reservas/checkin/${qrToken}`, { method: 'POST' }, token),
 };
 
 // ── Reviews ────────────────────────────────────────────────────

@@ -17,6 +17,7 @@ router.get('/:id',           requireAuth, ctrl.obtener);
 router.post('/',             requireAuth, validarReserva, ctrl.crear);
 router.post('/:id/extender',        requireAuth, ctrl.extender);
 router.post('/:id/confirmar-acceso', requireAuth, ctrl.confirmarAcceso);
+router.post('/checkin/:token',       requireAuth, ctrl.checkinPorQR);
 router.patch('/:id/estado',  requireAuth, ctrl.cambiarEstado);
 router.delete('/:id',        requireAuth, ctrl.cancelar);
 router.patch('/:id/ocultar', requireAuth, ctrl.ocultar);

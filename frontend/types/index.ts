@@ -139,6 +139,7 @@ export interface Reserva {
   mp_status?: string;
   notas?: string;
   pin_acceso?: string;
+  qr_image?: string | null;
   espacio_seguridad?: Record<string, boolean>;
   created_at: string;
   updated_at?: string;

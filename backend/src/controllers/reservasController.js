@@ -4,6 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 const emailService = require('../services/emailService');
 const mercadopagoService = require('../services/mercadopagoService');
 const ledgerService = require('../services/ledgerService');
+const { generarQRToken, generarQRDataURL } = require('../services/qrService');
 const { archivarConversacion } = require('./chatController');
 
 function expandirRango(fechaDesde, fechaHasta) {
@@ -59,7 +60,14 @@ async function listar(req, res, next) {
          ORDER BY r.created_at DESC`;
 
     const reservas = await query(sql, [req.user.id, req.user.id]);
-    res.json(reservas.map(parseSeguridad));
+    const conQR = await Promise.all(reservas.map(async (r) => {
+      parseSeguridad(r);
+      if (r.estado === 'pagada' && !r.escrow_liberado && r.qr_token) {
+        r.qr_image = await generarQRDataURL(r.qr_token);
+      }
+      return r;
+    }));
+    res.json(conQR);
   } catch (err) {
     next(err);
   }
@@ -118,7 +126,12 @@ async function obtener(req, res, next) {
     );
     reserva.servicios = servicios;
 
-    res.json(parseSeguridad(reserva));
+    let qr_image = null;
+    if (reserva.estado === 'pagada' && !reserva.escrow_liberado && reserva.qr_token) {
+      qr_image = await generarQRDataURL(reserva.qr_token);
+    }
+
+    res.json({ ...parseSeguridad(reserva), qr_image });
   } catch (err) {
     next(err);
   }
@@ -201,13 +214,14 @@ async function crear(req, res, next) {
     const precio_total = dias * espacio.precio_dia;
 
     const pin = String(Math.floor(1000 + Math.random() * 9000));
+    const qrToken = generarQRToken();
     const diasJsonStr = esMododia ? JSON.stringify(diasOrdenados) : null;
 
     const reserva = await transaction(async (conn) => {
       await conn.execute(
-        `INSERT INTO reservas (espacio_id, usuario_id, fecha_desde, fecha_hasta, precio_total, notas, pin_acceso, modo, dias_json)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [espacio_id, req.user.id, fdDesde, fdHasta, precio_total, notas || '', pin, modo || null, diasJsonStr]
+        `INSERT INTO reservas (espacio_id, usuario_id, fecha_desde, fecha_hasta, precio_total, notas, pin_acceso, qr_token, modo, dias_json)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [espacio_id, req.user.id, fdDesde, fdHasta, precio_total, notas || '', pin, qrToken, modo || null, diasJsonStr]
       );
       const [rows] = await conn.execute(
         'SELECT * FROM reservas WHERE usuario_id = ? ORDER BY created_at DESC LIMIT 1',
@@ -517,11 +531,7 @@ async function ocultar(req, res, next) {
   }
 }
 
-// POST /api/reservas/:id/confirmar-acceso  (demandante confirma que ingresó al espacio)
-async function confirmarAcceso(req, res, next) {
-  try {
-    const reserva = await queryOne(
-      `SELECT r.*,
+const RESERVA_CON_OFERENTE_SQL = `SELECT r.*,
               e.nombre AS espacio_nombre, e.oferente_id,
               u.nombre AS usuario_nombre, u.email AS usuario_email,
               u2.nombre AS oferente_nombre, u2.email AS oferente_email,
@@ -530,9 +540,107 @@ async function confirmarAcceso(req, res, next) {
        JOIN espacios e ON r.espacio_id = e.id
        JOIN usuarios u ON r.usuario_id = u.id
        JOIN usuarios u2 ON e.oferente_id = u2.id
-       WHERE r.id = ?`,
-      [req.params.id]
-    );
+       WHERE`;
+
+function chequearVentanaAcceso(reserva) {
+  const hoy   = new Date();
+  const desde = new Date(reserva.fecha_desde);
+  // Ignorar hora — comparar solo fecha
+  hoy.setHours(0, 0, 0, 0);
+  desde.setHours(0, 0, 0, 0);
+  if (hoy < desde) {
+    const dStr = String(reserva.fecha_desde).slice(0, 10);
+    return `No podés confirmar el acceso antes de la fecha de inicio (${dStr})`;
+  }
+  return null;
+}
+
+// Confirmar acceso (botón del cliente o QR escaneado por el proveedor) llegan
+// ambos acá — comparten la liberación real del escrow para no duplicar el
+// registro contable, el intento de payout automático, ni los emails.
+async function liberarEscrow(reserva) {
+  const neto = Number(reserva.escrow_neto_oferente) || Math.round(Number(reserva.precio_total) * 0.85);
+
+  await query(
+    `UPDATE reservas SET escrow_liberado = 1, escrow_liberado_at = NOW() WHERE id = ?`,
+    [reserva.id]
+  );
+
+  archivarConversacion(reserva.espacio_id, reserva.usuario_id)
+    .catch(e => console.warn('Chat archivar:', e.message));
+
+  // Registro contable: tmc.escrow → proveedor + tmc.comision, según el %
+  // fijado en la reserva al pagar. Reservas pagadas antes de tener
+  // comision_pct_aplicado (migración add-comision-pct) lo derivan del
+  // neto ya guardado, para no reabrir esa cuenta con un % distinto.
+  const comisionPctLiberacion = reserva.comision_pct_aplicado != null
+    ? Number(reserva.comision_pct_aplicado)
+    : (Number(reserva.precio_total) > 0
+        ? Math.round((1 - Number(reserva.escrow_neto_oferente) / Number(reserva.precio_total)) * 100)
+        : 15);
+  ledgerService.registrarLiberacion(
+    reserva.id, reserva.oferente_id, reserva.precio_total,
+    `Acceso confirmado — ${reserva.espacio_nombre}`, comisionPctLiberacion
+  ).catch(e => console.warn('Ledger liberacion:', e.message));
+
+  // Transferencia automática a la cuenta de MP conectada del proveedor. Si
+  // falla (scope no habilitado, cuenta no conectada, etc.) cae al aviso
+  // manual de siempre — el admin nunca se queda sin la info para transferir
+  // a mano.
+  let payoutOk = false;
+  if (reserva.oferente_mp_user_id) {
+    try {
+      const payout = await mercadopagoService.transferirDinero({
+        mpUserId: reserva.oferente_mp_user_id,
+        monto: neto,
+        referencia: reserva.id,
+        descripcion: `Liberación depósito en garantía — ${reserva.espacio_nombre}`,
+      });
+      await query(
+        `UPDATE reservas SET payout_estado = 'transferido', payout_mp_id = ? WHERE id = ?`,
+        [String(payout.id), reserva.id]
+      );
+      payoutOk = true;
+    } catch (e) {
+      console.warn('Transferencia automática falló:', e.message);
+      await query(
+        `UPDATE reservas SET payout_estado = 'fallido', payout_error = ? WHERE id = ?`,
+        [String(e.message).slice(0, 255), reserva.id]
+      ).catch(() => {});
+    }
+  }
+
+  const adminEmail = process.env.ADMIN_EMAILS || 'contacto@todasmiscosas.com';
+  emailService.sendEscrowLiberadoAdmin(adminEmail, {
+    reservaId: reserva.id,
+    espacioNombre: reserva.espacio_nombre,
+    oferenteNombre: reserva.oferente_nombre,
+    oferenteCbu: reserva.oferente_cbu || '(sin CBU/alias registrado)',
+    monto: neto,
+    demandanteNombre: reserva.usuario_nombre,
+    autoRelease: false,
+    payoutOk,
+  }).catch(e => console.warn('Email escrow admin:', e.message));
+
+  emailService.sendAccesoConfirmadoOferente(reserva.oferente_email, reserva.oferente_nombre, {
+    espacioNombre: reserva.espacio_nombre,
+    monto: neto,
+    reservaId: reserva.id,
+    autoRelease: false,
+  }).catch(e => console.warn('Email acceso oferente:', e.message));
+
+  emailService.sendAccesoConfirmadoDemandante(reserva.usuario_email, reserva.usuario_nombre, {
+    espacioNombre: reserva.espacio_nombre,
+    reservaId: reserva.id,
+  }).catch(e => console.warn('Email acceso demandante:', e.message));
+
+  return { payoutOk };
+}
+
+// POST /api/reservas/:id/confirmar-acceso  (demandante confirma que ingresó al espacio)
+async function confirmarAcceso(req, res, next) {
+  try {
+    const reserva = await queryOne(`${RESERVA_CON_OFERENTE_SQL} r.id = ?`, [req.params.id]);
     if (!reserva) return res.status(404).json({ error: 'Reserva no encontrada' });
     if (reserva.usuario_id !== req.user.id) {
       return res.status(403).json({ error: 'Solo el demandante puede confirmar el acceso' });
@@ -544,89 +652,10 @@ async function confirmarAcceso(req, res, next) {
       return res.status(409).json({ error: 'El escrow ya fue liberado para esta reserva' });
     }
 
-    const hoy   = new Date();
-    const desde = new Date(reserva.fecha_desde);
-    // Ignorar hora — comparar solo fecha
-    hoy.setHours(0, 0, 0, 0);
-    desde.setHours(0, 0, 0, 0);
-    if (hoy < desde) {
-      const dStr = String(reserva.fecha_desde).slice(0, 10);
-      return res.status(409).json({ error: `No podés confirmar el acceso antes de la fecha de inicio (${dStr})` });
-    }
+    const errorVentana = chequearVentanaAcceso(reserva);
+    if (errorVentana) return res.status(409).json({ error: errorVentana });
 
-    const neto = Number(reserva.escrow_neto_oferente) || Math.round(Number(reserva.precio_total) * 0.85);
-
-    await query(
-      `UPDATE reservas SET escrow_liberado = 1, escrow_liberado_at = NOW() WHERE id = ?`,
-      [reserva.id]
-    );
-
-    archivarConversacion(reserva.espacio_id, reserva.usuario_id)
-      .catch(e => console.warn('Chat archivar:', e.message));
-
-    // Registro contable: tmc.escrow → proveedor + tmc.comision, según el %
-    // fijado en la reserva al pagar. Reservas pagadas antes de tener
-    // comision_pct_aplicado (migración add-comision-pct) lo derivan del
-    // neto ya guardado, para no reabrir esa cuenta con un % distinto.
-    const comisionPctLiberacion = reserva.comision_pct_aplicado != null
-      ? Number(reserva.comision_pct_aplicado)
-      : (Number(reserva.precio_total) > 0
-          ? Math.round((1 - Number(reserva.escrow_neto_oferente) / Number(reserva.precio_total)) * 100)
-          : 15);
-    ledgerService.registrarLiberacion(
-      reserva.id, reserva.oferente_id, reserva.precio_total,
-      `Acceso confirmado — ${reserva.espacio_nombre}`, comisionPctLiberacion
-    ).catch(e => console.warn('Ledger liberacion:', e.message));
-
-    // Transferencia automática al alias de MP del proveedor. Si falla (scope
-    // no habilitado, alias inválido, etc.) cae al aviso manual de siempre —
-    // el admin nunca se queda sin la info necesaria para transferir a mano.
-    let payoutOk = false;
-    if (reserva.oferente_mp_user_id) {
-      try {
-        const payout = await mercadopagoService.transferirDinero({
-          mpUserId: reserva.oferente_mp_user_id,
-          monto: neto,
-          referencia: reserva.id,
-          descripcion: `Liberación depósito en garantía — ${reserva.espacio_nombre}`,
-        });
-        await query(
-          `UPDATE reservas SET payout_estado = 'transferido', payout_mp_id = ? WHERE id = ?`,
-          [String(payout.id), reserva.id]
-        );
-        payoutOk = true;
-      } catch (e) {
-        console.warn('Transferencia automática falló:', e.message);
-        await query(
-          `UPDATE reservas SET payout_estado = 'fallido', payout_error = ? WHERE id = ?`,
-          [String(e.message).slice(0, 255), reserva.id]
-        ).catch(() => {});
-      }
-    }
-
-    const adminEmail = process.env.ADMIN_EMAILS || 'contacto@todasmiscosas.com';
-    emailService.sendEscrowLiberadoAdmin(adminEmail, {
-      reservaId: reserva.id,
-      espacioNombre: reserva.espacio_nombre,
-      oferenteNombre: reserva.oferente_nombre,
-      oferenteCbu: reserva.oferente_cbu || '(sin CBU/alias registrado)',
-      monto: neto,
-      demandanteNombre: reserva.usuario_nombre,
-      autoRelease: false,
-      payoutOk,
-    }).catch(e => console.warn('Email escrow admin:', e.message));
-
-    emailService.sendAccesoConfirmadoOferente(reserva.oferente_email, reserva.oferente_nombre, {
-      espacioNombre: reserva.espacio_nombre,
-      monto: neto,
-      reservaId: reserva.id,
-      autoRelease: false,
-    }).catch(e => console.warn('Email acceso oferente:', e.message));
-
-    emailService.sendAccesoConfirmadoDemandante(reserva.usuario_email, reserva.usuario_nombre, {
-      espacioNombre: reserva.espacio_nombre,
-      reservaId: reserva.id,
-    }).catch(e => console.warn('Email acceso demandante:', e.message));
+    const { payoutOk } = await liberarEscrow(reserva);
 
     res.json({
       ok: true,
@@ -639,4 +668,30 @@ async function confirmarAcceso(req, res, next) {
   }
 }
 
-module.exports = { listar, recibidas, obtener, crear, cambiarEstado, cancelar, extender, ocultar, confirmarAcceso };
+// POST /api/reservas/checkin/:token — el proveedor escanea el QR del cliente
+async function checkinPorQR(req, res, next) {
+  try {
+    const reserva = await queryOne(`${RESERVA_CON_OFERENTE_SQL} r.qr_token = ?`, [req.params.token]);
+    if (!reserva) return res.status(404).json({ error: 'QR no válido' });
+    if (reserva.oferente_id !== req.user.id && req.user.tipo !== 'admin') {
+      return res.status(403).json({ error: 'Solo el proveedor del espacio puede confirmar el acceso' });
+    }
+    if (reserva.estado !== 'pagada') {
+      return res.status(409).json({ error: 'Solo se puede confirmar el acceso en reservas en estado pagada' });
+    }
+    if (reserva.escrow_liberado) {
+      return res.status(409).json({ error: 'El escrow ya fue liberado para esta reserva', reserva });
+    }
+
+    const errorVentana = chequearVentanaAcceso(reserva);
+    if (errorVentana) return res.status(409).json({ error: errorVentana });
+
+    await liberarEscrow(reserva);
+
+    res.json({ ok: true, reserva: { id: reserva.id, espacio_nombre: reserva.espacio_nombre, usuario_nombre: reserva.usuario_nombre } });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { listar, recibidas, obtener, crear, cambiarEstado, cancelar, extender, ocultar, confirmarAcceso, checkinPorQR };
