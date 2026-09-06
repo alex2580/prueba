@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC/TME — Calendario de Eventos e Inversores</title>
+<style>
+:root{
+  --mint:#a8e6cf; --mint-d:#4d9d7c;
+  --lav:#c4b5fd; --lav-d:#6d4fc9;
+  --peach:#fed7aa; --peach-d:#c2691a;
+  --sky:#bae6fd; --sky-d:#0369a1;
+  --rose:#fecdd3; --rose-d:#be123c;
+  --van:#fef3c7; --van-d:#92651a;
+  --text:#1e293b; --text2:#475569; --text3:#94a3b8;
+  --border:#e2e8f0; --bg:#fbfaf7; --white:#fff;
+  --orange:#e8622a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14.5px;line-height:1.65;}
+.header{background:linear-gradient(135deg,#bae6fd 0%,#c4b5fd 45%,#fed7aa 100%);padding:40px 48px 30px;}
+.hl{font-size:1rem;font-weight:800;color:var(--sky-d);letter-spacing:.08em;text-transform:uppercase;}
+.ht{font-size:2rem;font-weight:900;color:var(--text);margin:8px 0 6px;letter-spacing:-.5px;}
+.hs{color:var(--text2);font-size:.92rem;max-width:70ch;}
+.hchips{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;}
+.chip{background:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.8);border-radius:20px;padding:5px 14px;font-size:.75rem;color:var(--text2);font-weight:600;}
+.chip strong{color:var(--text);}
+.tabs{position:sticky;top:0;z-index:10;background:var(--white);border-bottom:1px solid var(--border);display:flex;gap:2px;padding:0 40px;overflow-x:auto;}
+.tab-btn{border:none;background:none;padding:16px 18px;font-size:.85rem;font-weight:700;color:var(--text3);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:.15s;font-family:inherit;}
+.tab-btn:hover{color:var(--text2);}
+.tab-btn.active{color:var(--text);border-bottom-color:var(--orange);}
+.content{max-width:980px;margin:0 auto;padding:40px 40px 90px;}
+.pane{display:none;}
+.pane.active{display:block;animation:fade .25s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+h2.sec-title{font-size:1.3rem;font-weight:900;margin-bottom:6px;}
+p.sec-sub{color:var(--text3);font-size:.82rem;margin-bottom:26px;}
+h3{font-size:1rem;font-weight:800;margin:26px 0 10px;color:var(--text);}
+p{margin-bottom:12px;color:var(--text2);}
+strong{color:var(--text);}
+ul,ol{margin:0 0 14px 22px;color:var(--text2);}
+li{margin-bottom:6px;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:20px 22px;margin-bottom:16px;border-left:5px solid var(--border);}
+.card.mint{border-left-color:var(--mint);}
+.card.lav{border-left-color:var(--lav);}
+.card.peach{border-left-color:var(--peach);}
+.card.sky{border-left-color:var(--sky);}
+.card.rose{border-left-color:var(--rose);}
+.card.van{border-left-color:var(--van);}
+.card-label{font-size:.68rem;font-weight:800;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
+.card-title{font-size:1.05rem;font-weight:800;margin-bottom:6px;}
+table{width:100%;border-collapse:collapse;margin:14px 0 22px;font-size:.85rem;}
+th{background:var(--bg);text-align:left;padding:10px 12px;font-weight:800;color:var(--text2);border-bottom:2px solid var(--border);}
+td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+.tag{display:inline-block;font-size:.68rem;font-weight:800;padding:3px 10px;border-radius:20px;margin-right:6px;}
+.tag.tmc{background:#dbeafe;color:#1d4ed8;}
+.tag.tme{background:#ffedd5;color:#9a3412;}
+.tag.both{background:#ede9fe;color:#5b21b6;}
+.tag.urgente{background:#fee2e2;color:#b91c1c;}
+.tag.media{background:#fef9c3;color:#854d0e;}
+.tag.baja{background:#dcfce7;color:#166534;}
+.tag.pasado{background:#f1f5f9;color:#64748b;}
+.callout{background:var(--van);border-radius:12px;padding:16px 18px;margin:16px 0;font-size:.88rem;color:#78500f;}
+.callout b{color:#5c3d0b;}
+.callout.rojo{background:#fee2e2;color:#7f1d1d;}
+.callout.rojo b{color:#7f1d1d;}
+.source-note{font-size:.72rem;color:var(--text3);margin-top:-8px;margin-bottom:18px;}
+.next-action{background:linear-gradient(135deg,#dcfce7,#bae6fd);border-radius:16px;padding:22px 24px;margin-bottom:16px;}
+.next-action h4{margin:0 0 6px;font-size:1rem;}
+.next-action p{margin:0;}
+footer{text-align:center;padding:30px;color:var(--text3);font-size:.78rem;border-top:1px solid var(--border);}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="hl">Investigación · TMC + TME</div>
+  <div class="ht">Calendario de eventos e inversores — Buenos Aires</div>
+  <div class="hs">Próximos eventos, expos y ámbitos de captación de inversores en Buenos Aires que pueden servirle a TodasMisCosas y TodosMisEventos, con fechas verificadas en fuentes oficiales.</div>
+  <div class="hchips">
+    <span class="chip">🗓️ Investigado <strong>6 sep 2026</strong></span>
+    <span class="chip">📍 Alcance: <strong>CABA, resto de 2026</strong></span>
+    <span class="chip">📌 Estado: <strong>informativo, sin acción tomada</strong></span>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('resumen')">📅 Calendario</button>
+  <button class="tab-btn" onclick="showTab('inversores')">💰 Inversores/Startups</button>
+  <button class="tab-btn" onclick="showTab('realestate')">🏢 Real Estate</button>
+  <button class="tab-btn" onclick="showTab('turismo')">✈️ Turismo/Eventos</button>
+  <button class="tab-btn" onclick="showTab('accion')">✅ Qué hacer ahora</button>
+</div>
+
+<div class="content">
+
+  <!-- CALENDARIO -->
+  <div class="pane active" id="resumen">
+    <h2 class="sec-title">Calendario general</h2>
+    <p class="sec-sub">Todo lo relevante encontrado, ordenado por fecha. El semáforo de urgencia indica cuánto margen de reacción queda desde hoy (6 sep 2026).</p>
+
+    <table>
+      <tr><th>Fecha</th><th>Evento</th><th>Relevante para</th><th>Urgencia</th></tr>
+      <tr><td><b>26-29 sep</b></td><td>FIT 2026 — Feria Internacional de Turismo</td><td><span class="tag tme">TME</span><span class="tag tmc">TMC*</span></td><td><span class="tag media">Media</span></td></tr>
+      <tr><td><b>29-30 sep</b></td><td>IE Venture Day — semifinales virtuales</td><td><span class="tag both">TMC/TME</span></td><td><span class="tag urgente">🔴 Urgente</span></td></tr>
+      <tr><td><b>20-31 oct</b></td><td>Tecweek Buenos Aires 2026</td><td><span class="tag both">TMC/TME</span></td><td><span class="tag media">Media</span></td></tr>
+      <tr><td><b>21 oct</b></td><td>IE Venture Day — final presencial</td><td><span class="tag both">TMC/TME</span></td><td><span class="tag urgente">🔴 Urgente</span></td></tr>
+      <tr><td><b>1 dic</b></td><td>Foro Argentino de Inversiones — ARCAP</td><td><span class="tag both">TMC/TME</span></td><td><span class="tag baja">Baja (todavía "save the date")</span></td></tr>
+    </table>
+
+    <h3>Ya pasaron este año (para tener de referencia, no accionables)</h3>
+    <table>
+      <tr><th>Fecha</th><th>Evento</th><th>Nota</th></tr>
+      <tr><td>24-27 jun</td><td>BATEV — Construcción y Vivienda</td><td><span class="tag pasado">Pasado</span> Próxima edición: 2027</td></tr>
+      <tr><td>11 jun</td><td>Experiencia Endeavor Buenos Aires</td><td><span class="tag pasado">Pasado</span> Anotar para el año que viene</td></tr>
+      <tr><td>12-13 ago</td><td>Expo Real Estate Argentina (16ª edición)</td><td><span class="tag pasado">Pasado</span> Próxima edición: probablemente 2027</td></tr>
+      <tr><td>2 sep</td><td>Urban Cities Buenos Aires (Congreso Ciudades Inteligentes)</td><td><span class="tag pasado">Pasado</span> Primera edición — ver si repite en 2027</td></tr>
+    </table>
+
+    <div class="callout">
+      <b>*Sobre FIT y TMC:</b> el cruce con TMC es más tangencial (turistas con equipaje/mudanzas) que con TME (turismo↔eventos es un cruce directo). Se incluye igual por el volumen de público (2 días abiertos al público general en La Rural).
+    </div>
+  </div>
+
+  <!-- INVERSORES -->
+  <div class="pane" id="inversores">
+    <h2 class="sec-title">Inversores y ecosistema startup</h2>
+    <p class="sec-sub">Útil para TMC y TME por igual — ambas están buscando validación, networking y eventualmente capital.</p>
+
+    <div class="card rose">
+      <div class="card-label">🔴 Urgente — inscripción cierra pronto</div>
+      <div class="card-title">IE Venture Day Buenos Aires</div>
+      <p><b>Semifinales virtuales:</b> 29-30 de septiembre · <b>Final presencial:</b> 21 de octubre, como parte de Tecweek.</p>
+      <p>Startups aplican, hasta 20 pasan a semifinales virtuales, hasta 10 finalistas compiten en persona frente a un jurado de inversores internacionales, con entrenamiento de pitch incluido antes de la final. Es exactamente el formato de conectar con fondos reales.</p>
+      <p style="margin-bottom:0"><b>La inscripción cerraría ~20 de septiembre</b> según las fuentes consultadas — no se pudo confirmar la fecha exacta en la página oficial (devolvió error al consultarla). <b>Confirmar cuanto antes en la fuente oficial antes de descartarlo por tiempo.</b></p>
+    </div>
+
+    <div class="card sky">
+      <div class="card-label">Media urgencia</div>
+      <div class="card-title">Tecweek Buenos Aires 2026</div>
+      <p><b>20 al 31 de octubre.</b> El evento paraguas de innovación/tecnología de Buenos Aires — charlas de IA, startups, producto y negocios, más networking con inversores y compañías del ecosistema.</p>
+      <p style="margin-bottom:0">Formato mixto: algunas actividades son gratis (Tecweek Emprende, Tecweek IA, Tecweek Joven), otras pagas (Argentina Fintech Forum, LABITCONF, SAIA Conf). IE Venture Day corre adentro de esta semana. Conviene revisar la agenda completa cuando se publique el detalle día por día.</p>
+    </div>
+
+    <div class="card mint">
+      <div class="card-label">Baja urgencia por ahora</div>
+      <div class="card-title">Foro Argentino de Inversiones 2026 — ARCAP</div>
+      <p><b>1 de diciembre · Palacio Libertad, Buenos Aires.</b> El evento de capital privado, venture capital, emprendimiento e innovación más grande del año en Argentina, organizado por ARCAP (Asociación Argentina de Capital Privado, Emprendedor y Semilla), con proyección internacional.</p>
+      <p style="margin-bottom:0">Al momento de esta investigación todavía está en fase "save the date" — las entradas todavía no salieron a la venta. Anotar la fecha y volver a revisar en octubre/noviembre cuando abra la inscripción.</p>
+    </div>
+
+    <div class="card van">
+      <div class="card-label">Ya pasó — referencia para 2027</div>
+      <div class="card-title">Experiencia Endeavor Buenos Aires</div>
+      <p style="margin-bottom:0">Se realizó el 11 de junio de 2026 en el Centro de Convenciones de Buenos Aires — más de 4.000 asistentes entre fundadores en etapa temprana, inversores y mentores. Endeavor también organizó ediciones en Córdoba (14 may) y Patagonia (20 ago). Anotar para buscar la fecha 2027 con tiempo.</p>
+    </div>
+  </div>
+
+  <!-- REAL ESTATE -->
+  <div class="pane" id="realestate">
+    <h2 class="sec-title">Real estate y desarrollo urbano — foco TMC</h2>
+    <p class="sec-sub">Los tres eventos grandes de este rubro ya pasaron este año. No hay nada específico de real estate antes de fin de 2026 en Buenos Aires — la próxima ventana es 2027.</p>
+
+    <div class="card van">
+      <div class="card-title">Expo Real Estate Argentina — 16ª edición</div>
+      <p><b>12-13 de agosto de 2026 · Hilton Buenos Aires</b> (ya pasó). +150 stands, +300 opciones de inversión, +90 speakers confirmados, presencia internacional (Miami, Dubai, Panamá, España, Uruguay). Incluyó el Congreso de Desarrollos e Inversiones Inmobiliarias Argentinas (CEDU+AEV).</p>
+      <p style="margin-bottom:0">TMC ya tiene un documento previo sobre esta expo (<code>TMC-resumen-ejecutivo-expo-real-estate.html</code> en esta misma carpeta) — reusar esa base cuando se confirme la edición 2027.</p>
+    </div>
+
+    <div class="card van">
+      <div class="card-title">BATEV — Construcción y Vivienda (31ª edición)</div>
+      <p style="margin-bottom:0"><b>24-27 de junio de 2026 · La Rural.</b> Organizado por CEDU+AEV (Cámara Empresaria de Desarrolladores Urbanos). El encuentro de referencia de la industria de la construcción en Argentina. Próxima edición: 2027.</p>
+    </div>
+
+    <div class="card van">
+      <div class="card-title">Urban Cities Buenos Aires — Congreso Federal de Ciudades Inteligentes</div>
+      <p style="margin-bottom:0"><b>2 de septiembre de 2026</b> (primera edición). Foco en innovación urbana y ciudades inteligentes — más amplio que real estate puro, pero con cruce de intereses (tecnología aplicada a la ciudad). Al ser primera edición, no hay certeza todavía de que se repita anualmente — revisar a mediados de 2027.</p>
+    </div>
+  </div>
+
+  <!-- TURISMO -->
+  <div class="pane" id="turismo">
+    <h2 class="sec-title">Turismo y eventos — foco TME</h2>
+    <p class="sec-sub">El cruce turismo↔eventos es directo para TME: viajeros buscando planes/eventos en destino.</p>
+
+    <div class="card sky">
+      <div class="card-title">FIT 2026 — Feria Internacional de Turismo (30ª edición)</div>
+      <p><b>26 al 29 de septiembre · La Rural, Buenos Aires.</b> La edición más grande de su historia: +20.000 m² expositivos, +350 expositores confirmados. País invitado: República Dominicana.</p>
+      <ul style="margin-bottom:8px">
+        <li><b>Sábado 26 y domingo 27:</b> abierta al público general, 14 a 21hs.</li>
+        <li><b>Lunes 28 y martes 29:</b> jornadas profesionales y comerciales, 10 a 19hs.</li>
+      </ul>
+      <p style="margin-bottom:0">Participar como expositor requiere contacto directo con Ferias Argentinas (Viamonte 640, piso 8 — <code>fpalomeque@feriarg.com.ar</code>). No se confirmó si existe una categoría específica para tecnología/marketplaces de eventos — habría que consultar directo si interesa un stand o presencia. Alternativa de menor esfuerzo: asistir como visitante en los días de público general para relevar competencia/oportunidades de partnership con agencias de turismo.</p>
+    </div>
+  </div>
+
+  <!-- ACCION -->
+  <div class="pane" id="accion">
+    <h2 class="sec-title">Qué hacer ahora</h2>
+    <p class="sec-sub">Priorizado por margen de tiempo real, no por importancia del evento.</p>
+
+    <div class="next-action">
+      <h4>1️⃣ Esta semana — confirmar el plazo real de IE Venture Day</h4>
+      <p>Es lo único con deadline inminente (~20 de septiembre según fuentes secundarias, sin confirmar en la fuente oficial). Si se confirma y TMC quiere aplicar, hay que armar el material de aplicación ya. Si el plazo ya pasó o no aplica este año, descartar y anotar para 2027.</p>
+    </div>
+
+    <div class="next-action">
+      <h4>2️⃣ Próximas 2 semanas — decidir sobre FIT y Tecweek</h4>
+      <p>FIT (26-29 sep) es el más cercano en el calendario — decidir si vale ir de visitante (barato, útil para TME) o si se justifica el esfuerzo de armar una presencia de expositor. Tecweek (20-31 oct) da más margen — revisar agenda completa cuando se publique día por día y elegir qué sub-eventos convienen.</p>
+    </div>
+
+    <div class="next-action">
+      <h4>3️⃣ Para más adelante — anotar y esperar apertura</h4>
+      <p>Foro Argentino de Inversiones de ARCAP (1 dic) sigue en fase "save the date" — volver a revisar en octubre/noviembre cuando se abra la inscripción y se sepa el costo de entrada.</p>
+    </div>
+
+    <div class="callout rojo">
+      <b>Ninguna fecha de este documento reemplaza confirmar en la fuente oficial antes de tomar una decisión con costo o esfuerzo real</b> (comprar pasaje, armar un stand, preparar un pitch) — varias fechas vienen de fuentes secundarias (notas de prensa) porque las páginas oficiales no siempre cargaron completas al momento de esta investigación.
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  TodasMisCosas.com + TodosMisEventos.com · Documento de referencia interna, informativo · Investigado 6 septiembre 2026<br>
+  Fuentes: tecweek.com.ar, arcap.org, luma.com, fit.org.ar, idep.gov.ar, mercado.com.ar, areasglobales.com.ar, endeavor.org.ar
+</footer>
+
+<script>
+function showTab(id){
+  document.querySelectorAll('.pane').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+</script>
+
+</body>
+</html>
