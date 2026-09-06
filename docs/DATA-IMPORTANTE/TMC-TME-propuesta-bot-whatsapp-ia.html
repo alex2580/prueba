@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propuesta: Bot de WhatsApp con IA — TMC + TME</title>
+<style>
+:root{
+  --gold:#f59e0b;--navy:#0f172a;--text:#1e293b;--text2:#475569;--text3:#94a3b8;
+  --border:#e2e8f0;--bg:#f8fafc;--white:#fff;
+  --mint:#a8e6cf;--lav:#c4b5fd;--peach:#fed7aa;--sky:#bae6fd;
+  --rose:#fecdd3;--van:#fef3c7;--sage:#bbf7d0;--teal:#99f6e4;
+  --tmc:#e8622a;--tme:#e8622a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14.5px;line-height:1.65;}
+
+.header{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 55%,#1e293b 100%);padding:36px 48px 28px;}
+.hl{font-size:1.05rem;font-weight:900;color:var(--gold);letter-spacing:.06em;}
+.ht{font-size:1.7rem;font-weight:900;color:#f1f5f9;margin:6px 0 4px;letter-spacing:-.3px;}
+.hs{color:#94a3b8;font-size:.85rem;}
+.hchips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+.chip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:20px;padding:4px 14px;font-size:.72rem;color:#94a3b8;}
+.chip strong{color:#f1f5f9;}
+
+.content{max-width:920px;margin:0 auto;padding:32px 48px 80px;}
+
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:24px;border-bottom:2px solid var(--border);padding-bottom:0;}
+.tab-btn{background:none;border:none;padding:10px 16px;font-size:.85rem;font-weight:700;color:var(--text3);cursor:pointer;border-bottom:3px solid transparent;transition:.15s;font-family:inherit;}
+.tab-btn:hover{color:var(--text);}
+.tab-btn.active{color:var(--tmc);border-bottom-color:var(--tmc);}
+.tab-content{display:none;animation:fadein .25s;}
+.tab-content.active{display:block;}
+@keyframes fadein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+h2{font-size:1.2rem;font-weight:900;margin:26px 0 10px;color:var(--text);}
+h2:first-child{margin-top:0;}
+h3{font-size:.95rem;font-weight:800;margin:20px 0 8px;color:var(--text);}
+p{margin-bottom:12px;color:var(--text2);font-size:.88rem;}
+ul,ol{margin:0 0 14px 22px;color:var(--text2);font-size:.88rem;}
+li{margin-bottom:6px;}
+strong{color:var(--text);}
+
+.card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:14px;border-left:5px solid var(--border);}
+.card.mint{border-left-color:var(--mint);}
+.card.lav{border-left-color:var(--lav);}
+.card.peach{border-left-color:var(--peach);}
+.card.sky{border-left-color:var(--sky);}
+.card.rose{border-left-color:var(--rose);}
+.card-title{font-weight:800;font-size:.95rem;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+.card p{margin-bottom:0;}
+
+.flow{display:flex;flex-direction:column;gap:0;margin:16px 0;}
+.flow-step{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-bottom:1px dashed var(--border);}
+.flow-step:last-child{border-bottom:none;}
+.flow-n{width:30px;height:30px;border-radius:50%;background:var(--van);color:#92400e;font-weight:900;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.flow-body{flex:1;padding-top:2px;}
+.flow-body b{display:block;font-size:.88rem;color:var(--text);margin-bottom:2px;}
+.flow-body span{font-size:.8rem;color:var(--text2);}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0;}
+.compare .box{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
+.compare .box h4{font-size:.82rem;font-weight:800;margin-bottom:8px;text-transform:uppercase;letter-spacing:.03em;}
+.compare .before h4{color:#b91c1c;}
+.compare .after h4{color:#166534;}
+
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.82rem;}
+th{background:var(--bg);text-align:left;padding:9px 12px;font-weight:800;color:var(--text2);border-bottom:2px solid var(--border);}
+td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text2);}
+tr:last-child td{border-bottom:none;}
+
+.tag{display:inline-block;font-size:.66rem;font-weight:700;padding:2px 9px;border-radius:5px;margin-right:4px;}
+.t-tmc{background:#dbeafe;color:#1d4ed8;}
+.t-tme{background:#ffedd5;color:#9a3412;}
+.t-fase{background:#dcfce7;color:#166534;}
+.t-pend{background:#fee2e2;color:#b91c1c;}
+
+.alert{background:#fefce8;border:1px solid #fde047;border-left:4px solid #eab308;border-radius:12px;padding:14px 18px;font-size:.85rem;color:#713f12;margin:16px 0;}
+.source{background:#eff6ff;border:1px solid #bfdbfe;border-left:4px solid #3b82f6;border-radius:12px;padding:14px 18px;font-size:.85rem;color:#1e3a8a;margin:16px 0;}
+.source a{color:#1d4ed8;font-weight:700;}
+
+.printbtn{position:fixed;bottom:22px;right:22px;background:var(--tmc);color:#fff;border:none;padding:12px 20px;border-radius:30px;font-weight:800;font-size:.82rem;cursor:pointer;box-shadow:0 6px 20px rgba(232,98,42,.35);z-index:99;}
+.printbtn:hover{background:#d1551f;}
+
+footer{background:var(--navy);color:#475569;text-align:center;padding:22px;font-size:.75rem;margin-top:20px;}
+
+@media print{
+  .tabs,.printbtn{display:none!important;}
+  .tab-content{display:block!important;page-break-after:always;}
+}
+@media(max-width:640px){
+  .header{padding:24px 18px 20px;}
+  .content{padding:22px 16px 60px;}
+  .compare{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="hl">💬 PROPUESTA · PARA REVISAR CON GUILLE</div>
+  <div class="ht">Bot de WhatsApp con IA para TMC + TME</div>
+  <div class="hs">Inspirado en Tutti (usetutti.io) · Nada implementado — documento de discusión</div>
+  <div class="hchips">
+    <div class="chip"><strong>Alta de espacio/evento</strong> por chat</div>
+    <div class="chip"><strong>0</strong> líneas de código tocadas</div>
+    <div class="chip"><strong>5 sep 2026</strong></div>
+  </div>
+</div>
+
+<div class="content">
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab(0,this)">1. Qué vimos</button>
+    <button class="tab-btn" onclick="showTab(1,this)">2. TMC</button>
+    <button class="tab-btn" onclick="showTab(2,this)">3. TME</button>
+    <button class="tab-btn" onclick="showTab(3,this)">4. Fases</button>
+    <button class="tab-btn" onclick="showTab(4,this)">5. Pendientes</button>
+  </div>
+
+  <!-- TAB 1 -->
+  <div class="tab-content active">
+    <h2>¿Qué es Tutti?</h2>
+    <p>Tutti es un asistente de IA metido adentro de WhatsApp para oficios independientes (electricistas, plomeros, albañiles). El profesional manda un audio, una foto o un texto, y en segundos recibe un presupuesto en PDF, una factura o el registro de un cobro — sin instalar ninguna app nueva y sin llenar ningún formulario.</p>
+
+    <div class="source">
+      🔗 Fuente revisada: <a href="https://usetutti.io/" target="_blank">usetutti.io</a> — 2.300+ usuarios en España, planes desde $99/mes.
+    </div>
+
+    <h3>Por qué funciona</h3>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-n">1</div>
+        <div class="flow-body"><b>Cero curva de aprendizaje</b><span>El canal ya lo usan todos los días — no hay que aprender una app ni un panel nuevo.</span></div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-n">2</div>
+        <div class="flow-body"><b>Entrada no estructurada, salida estructurada</b><span>El usuario manda lo que tiene a mano (foto, audio, texto suelto) y la IA lo convierte en un documento prolijo.</span></div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-n">3</div>
+        <div class="flow-body"><b>Contexto persistente</b><span>El bot recuerda clientes, tarifas y trabajos anteriores del usuario — no es un FAQ que arranca de cero cada vez.</span></div>
+      </div>
+    </div>
+
+    <h3>La idea que traemos a TMC/TME</h3>
+    <div class="card mint">
+      <div class="card-title">💡 El mismo patrón, aplicado a un problema distinto</div>
+      <p>Tutti usa esto para generar <em>documentos</em>. Nosotros lo podemos usar para resolver el problema real de TMC/TME: <strong>la fricción de completar un formulario web</strong> a la hora de publicar un espacio o crear un evento — sobre todo con proveedores/organizadores de perfil poco técnico.</p>
+    </div>
+
+    <div class="alert">
+      ⚠️ Esto conecta directo con lo que ya tenías identificado como prioridad pendiente (bot de WhatsApp en la lista de agentes/conectores de TMC). Este documento le pone forma concreta a esa idea, no es un proyecto nuevo desde cero.
+    </div>
+  </div>
+
+  <!-- TAB 2 -->
+  <div class="tab-content">
+    <h2><span class="tag t-tmc">TMC</span> Alta de espacio por WhatsApp</h2>
+    <p>Hoy publicar un espacio significa entrar a <code>/publicar</code>, completar título, descripción, categoría, precio, fotos y disponibilidad en un formulario largo. Muchos proveedores potenciales tienen el espacio (un galpón, una cochera libre) pero no llegan a completar el alta.</p>
+
+    <div class="compare">
+      <div class="box before">
+        <h4>❌ Hoy</h4>
+        <p style="font-size:.82rem;">Proveedor entra a la web → llena formulario de 6+ campos → sube fotos una por una → elige categoría y precio a ciegas → publica.</p>
+      </div>
+      <div class="box after">
+        <h4>✅ Propuesta</h4>
+        <p style="font-size:.82rem;">Proveedor manda 2-3 fotos + un audio contando el espacio → la IA arma el listing completo → proveedor solo confirma o edita.</p>
+      </div>
+    </div>
+
+    <h3>Flujo propuesto</h3>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-n">1</div>
+        <div class="flow-body"><b>Proveedor manda por WhatsApp</b><span>Ej: 3 fotos del galpón + audio "tengo un galpón de 20m² en Palermo, seco, con luz, entra un auto".</span></div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-n">2</div>
+        <div class="flow-body"><b>La IA arma el borrador</b><span>Título, descripción, categoría (galpón/cochera/depósito), m² estimados, precio sugerido según zona y categoría (usando datos de espacios similares ya publicados).</span></div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-n">3</div>
+        <div class="flow-body"><b>Proveedor confirma por chat</b><span>"Dale, publicalo" o "cambiale el precio a $X" — sin volver a la web.</span></div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-n">4</div>
+        <div class="flow-body"><b>Publicación queda activa</b><span>Pasa por el mismo gate de verificación Didit y MP Connect que ya existe — el bot no salta ningún control actual.</span></div>
+      </div>
+    </div>
+
+    <h3>Otro uso: estado de cuenta por chat</h3>
+    <div class="card peach">
+      <div class="card-title">💰 Consulta de liquidación</div>
+      <p>Con el pago directo al proveedor ya resuelto (transferencia por lote/MP Connect), el complemento natural es que el proveedor le pregunte al bot <em>"¿cuánto me depositaron este mes?"</em> y reciba la respuesta con el detalle, sin entrar al panel.</p>
+    </div>
+
+    <h3>Por qué le sirve al negocio</h3>
+    <ul>
+      <li>Ataca directo el problema de conversión de la campaña de captación de proveedores ("Lo que no usás, rinde") — gente con espacio disponible que hoy no se pone a llenar un formulario.</li>
+      <li>Sirve especialmente para el segmento de consorcios/inmobiliarias que se está prospectando — perfiles que gestionan por WhatsApp, no por panel web.</li>
+    </ul>
+  </div>
+
+  <!-- TAB 3 -->
+  <div class="tab-content">
+    <h2><span class="tag t-tme">TME</span> Creación de evento por WhatsApp</h2>
+    <p>El formulario de <code>/crear</code> en TME ya se identificó como punto de fricción (campos obligatorios extensos). El mismo patrón de Tutti aplica: un organizador no técnico (profesor de yoga, salón de fiestas, club de barrio) puede armar el evento por chat en vez de por formulario.</p>
+
+    <h3>Flujo propuesto</h3>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-n">1</div>
+        <div class="flow-body"><b>Organizador manda por WhatsApp</b><span>Audio contando el evento + fotos del lugar/actividad. Ej: "el sábado a las 19h hago una clase de yoga al aire libre en Bosques de Palermo, entrada $3000".</span></div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-n">2</div>
+        <div class="flow-body"><b>La IA arma el borrador del evento</b><span>Título, descripción, categoría, fecha/hora, ubicación, precio de entrada, tipo (público/privado/lista cerrada).</span></div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-n">3</div>
+        <div class="flow-body"><b>Imagen de portada generada por IA</b><span>Si el organizador no tiene una foto que sirva de portada, se genera una a partir de la descripción — mismo concepto que los "renders IA" de Tutti.</span></div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-n">4</div>
+        <div class="flow-body"><b>Organizador confirma y publica</b><span>Sin pasar por el formulario largo.</span></div>
+      </div>
+    </div>
+
+    <h3>Otro uso: liquidación post-evento por chat</h3>
+    <div class="card sky">
+      <div class="card-title">📊 Resumen automático al cerrar el evento</div>
+      <p>Con MP Connect ya funcionando (cobro directo al organizador), el bot le puede mandar automáticamente el resumen de ventas apenas cierra el evento — entradas vendidas, recaudado, comisión aplicada — sin que tenga que entrar a "Mis Eventos".</p>
+    </div>
+
+    <h3>Por qué le sirve al negocio</h3>
+    <ul>
+      <li>Baja la barrera de entrada para el tipo de organizador que más volumen podría traer (actividades recurrentes chicas: clases, ferias de barrio, juntadas) y que hoy probablemente abandona el formulario a mitad de camino.</li>
+      <li>La portada generada por IA resuelve un problema real: muchos eventos se publican sin imagen atractiva porque el organizador no tiene una a mano.</li>
+    </ul>
+  </div>
+
+  <!-- TAB 4 -->
+  <div class="tab-content">
+    <h2>Fases de implementación sugeridas</h2>
+    <p>Ninguna fase está implementada — es una secuencia sugerida para no atacar todo junto.</p>
+
+    <table>
+      <tr><th>Fase</th><th>Qué incluye</th><th>Por qué primero/después</th></tr>
+      <tr>
+        <td><span class="tag t-fase">Fase 1</span></td>
+        <td>Bot de WhatsApp solo para <strong>alta de espacio en TMC</strong> (el caso con problema de conversión más claro y medible)</td>
+        <td>Menor superficie de riesgo, un solo flujo, fácil de medir contra el formulario actual (A/B de conversión)</td>
+      </tr>
+      <tr>
+        <td><span class="tag t-fase">Fase 2</span></td>
+        <td>Consulta de estado de cuenta/liquidación por chat (TMC) — reusa el mismo canal ya montado</td>
+        <td>Bajo esfuerzo incremental una vez que el bot ya existe y tiene contexto del usuario</td>
+      </tr>
+      <tr>
+        <td><span class="tag t-fase">Fase 3</span></td>
+        <td>Portar el flujo de alta a <strong>creación de evento en TME</strong> + imagen de portada por IA</td>
+        <td>Mismo motor, distinto formulario destino — se valida primero en TMC antes de duplicar el esfuerzo</td>
+      </tr>
+      <tr>
+        <td><span class="tag t-fase">Fase 4</span></td>
+        <td>Liquidación post-evento automática por chat (TME) + soporte conversacional general (dudas de reserva/reclamos)</td>
+        <td>Requiere más alcance de contexto (historial de conversación, no solo un alta puntual)</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- TAB 5 -->
+  <div class="tab-content">
+    <h2>Decisiones pendientes para hablar con Guille</h2>
+
+    <div class="card rose">
+      <div class="card-title"><span class="tag t-pend">Técnico</span> ¿Qué API de WhatsApp?</div>
+      <p>WhatsApp Business API oficial (Meta, requiere BSP intermediario y tiene costo por conversación) vs. una librería no oficial (más barata/rápida de prototipar pero contra los términos de servicio de Meta y con riesgo de baneo del número). Para producción real, la vía sostenible es la oficial.</p>
+    </div>
+
+    <div class="card rose">
+      <div class="card-title"><span class="tag t-pend">Técnico</span> ¿Dónde vive el "cerebro" del bot?</div>
+      <p>Ya existe la fábrica de n8n corriendo local (Ollama + Whisper + Piper) usada para la fábrica de reels — se podría reusar esa infraestructura para el procesamiento de audio/imagen del bot, o evaluar directamente la API de un modelo con visión (para leer las fotos del espacio/evento).</p>
+    </div>
+
+    <div class="card rose">
+      <div class="card-title"><span class="tag t-pend">Producto</span> ¿Publicación automática o siempre con confirmación humana?</div>
+      <p>Por moderación de contenido y para no saltarse los filtros ya existentes (contactFilter, verificación Didit, gate de MP Connect), la propuesta es que el bot arme el <strong>borrador</strong> y el proveedor/organizador confirme desde el chat o desde el panel — nunca publicar sin confirmación.</p>
+    </div>
+
+    <div class="card rose">
+      <div class="card-title"><span class="tag t-pend">Negocio</span> ¿Arranca por TMC o por el segmento de consorcios/inmobiliarias que se está prospectando?</div>
+      <p>Si el foco de corto plazo es la red de inmobiliarias (que gestiona por WhatsApp de forma natural), podría tener sentido priorizar esa fase 1 pensando ya en ese perfil de usuario.</p>
+    </div>
+
+    <div class="alert">
+      📌 Nada de esto está implementado. Es un documento de discusión para llevar a la próxima reunión con Guille — no bloquea ni reemplaza ningún trabajo en curso.
+    </div>
+  </div>
+
+</div>
+
+<button class="printbtn" onclick="window.print()">🖨️ Exportar / Imprimir</button>
+
+<footer>TodasMisCosas.com + TodosMisEventos.com · Documento de discusión, sin código tocado · Generado 5 sep 2026</footer>
+
+<script>
+function showTab(i,btn){
+  document.querySelectorAll('.tab-content').forEach((el,idx)=>el.classList.toggle('active',idx===i));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+</script>
+
+</body>
+</html>
