@@ -39,6 +39,7 @@ jobs:
           cd /var/www/todasmiscosas
           git fetch origin
           git reset --hard origin/master
-          cd frontend && npm ci --prefer-offline && npm run build
+          cd backend && npm ci --prefer-offline
+          cd ../frontend && npm ci --prefer-offline && npm run build
           cd .. && pm2 restart all
           echo "✅ Deploy OK"
