@@ -11,7 +11,7 @@ const supabase = createClient(
 
 const authCache = new Map();
 const CACHE_TTL = 30 * 1000;
-const CUPOS_0_COMISION_WAITLIST = 50; // mismo número que CUPOS_0_COMISION en la home (frontend/app/[locale]/page.tsx)
+const CUPOS_0_COMISION_WAITLIST = 200; // mismo número que CUPOS_0_COMISION en la home (frontend/app/[locale]/page.tsx)
 setInterval(() => {
   const now = Date.now();
   for (const [k, v] of authCache) if (v.expiresAt <= now) authCache.delete(k);

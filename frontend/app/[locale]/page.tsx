@@ -21,7 +21,7 @@ import { ComoFuncionaFlow, ICONOS_RESERVAR, ICONOS_PUBLICAR, type Paso } from '@
 import { TaglineRotativo } from '@/components/ui/TaglineRotativo';
 import { waitlistAPI } from '@/lib/api';
 
-const CUPOS_0_COMISION = 50;
+const CUPOS_0_COMISION = 200;
 
 const MapaEspacios = dynamic(() => import('@/components/mapa/MapaEspacios').then(m => ({ default: m.MapaEspacios })), { ssr: false });
 const MarkerEspacioCard = dynamic(() => import('@/components/mapa/MarkerEspacio').then(m => ({ default: m.MarkerEspacioCard })), { ssr: false });
